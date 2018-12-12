@@ -10,7 +10,8 @@ from parlai.mturk.tasks.react_task_demo.react_custom_no_extra_deps.worlds \
     import AskerOnboardingWorld, AnswererOnboardingWorld, \
     EvaluatorOnboardingWorld, MultiRoleAgentWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
-from task_config import task_config
+from parlai.mturk.tasks.react_task_demo.react_custom_no_extra_deps.task_config\
+    import task_config
 import os
 
 
@@ -40,6 +41,7 @@ def main():
         mturk_agent_ids=mturk_agent_roles,
         use_db=True,
     )
+
     mturk_manager.setup_server(
         task_directory_path=os.path.dirname(os.path.abspath(__file__)))
 

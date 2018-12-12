@@ -1,17 +1,29 @@
+/*
+ * Copyright (c) 2017-present, Facebook, Inc.
+ * All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {ToggleButtonGroup, ToggleButton, Button, FormControl,
-  ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup} from 'react-bootstrap';
-import {getCorrectComponent, setCustomComponents} from './task_components/core_components.jsx';
+  ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup,
+  Nav, NavItem} from 'react-bootstrap';
+import {BaseFrontend, getCorrectComponent, setCustomComponents} from './task_components/core_components.jsx';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 import 'fetch';
+import $ from 'jquery';
+
+// TODO split components into other files, this app is getting complex
 
 // Init display components
 setCustomComponents({});
 
 var AppURLStates = Object.freeze({
-  init:0, tasks:1, unsupported:2, runs:3, workers:4, assignments:5,
+  init:0, home:1, unsupported:2, runs:3, workers:4, assignments:5, tasks: 6,
 });
 
 function convert_time(timestamp){
@@ -160,6 +172,12 @@ class NavLink extends React.Component {
           {this.props.children}
         </a>
       );
+    } else if (this.props.type == 'task') {
+      return (
+        <a href={'/app/tasks/' + this.props.target}>
+          {this.props.children}
+        </a>
+      );
     } else {
       return (
         <span>{this.props.children}</span>
@@ -200,7 +218,7 @@ class SharedTable extends React.Component {
   }
 }
 
-class TaskTable extends React.Component {
+class RunTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {used_cols: [
@@ -261,6 +279,89 @@ class TaskTable extends React.Component {
       case 'maximum': return item.maximum;
       case 'completed': return item.completed;
       case 'failed': return item.failed;
+      default: return 'Invalid column ' + header_name;
+    }
+  }
+
+  render() {
+    return (
+      <SharedTable
+        getColumnFormatter={this.getColumnFormatter.bind(this)}
+        used_cols={this.state.used_cols}
+        data={this.props.data}
+        title={this.props.title}
+      />
+    );
+  }
+}
+
+class TaskTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {used_cols: [
+      'task_name', 'internal', 'react_frontend', 'has_custom', 'active_runs',
+      'all_runs', 'dir',
+    ]};
+  }
+
+  getColumnFormatter(row_name) {
+    return {
+      id: row_name,
+      Header: props => this.getHeaderValue(row_name),
+      accessor: item => this.getColumnValue(row_name, item),
+      Cell: props => this.getColumnCell(row_name, props),
+    };
+  }
+
+  getHeaderValue(header_name) {
+    switch(header_name) {
+      case 'task_name':
+        return <span>Task Name</span>;
+      case 'internal':
+        return <span>Internal</span>;
+      case 'react_frontend':
+        return <span>Demoable</span>;
+      case 'has_custom':
+        return <span>Custom Components</span>;
+      case 'active_runs':
+        return <span>Active Runs</span>;
+      case 'all_runs':
+        return <span>Total Runs</span>;
+      case 'dir':
+        return <span>Task Directory</span>;
+      default:
+        return <span>Invalid column {header_name}</span>;
+    }
+  }
+
+  getColumnCell(header_name, props) {
+    // TODO add table row/icon for `notes` that appear on hover
+    switch(header_name) {
+      case 'task_name':
+        return <NavLink type='task' target={props.row.task_name}>
+          {props.value}
+        </NavLink>;
+      case 'internal':
+      case 'react_frontend':
+      case 'has_custom':
+        return <span>{props.value ? 'Yes' : 'No'}</span>;
+      case 'active_runs':
+      case 'all_runs':
+      case 'dir':
+      default:
+        return <span>{props.value}</span>;
+    }
+  }
+
+  getColumnValue(header_name, item) {
+    switch(header_name) {
+      case 'task_name': return item.task_name;
+      case 'internal': return item.internal;
+      case 'react_frontend': return item.react_frontend;
+      case 'has_custom': return item.has_custom;
+      case 'active_runs': return item.active_runs;
+      case 'all_runs': return item.all_runs;
+      case 'dir': return item.dir;
       default: return 'Invalid column ' + header_name;
     }
   }
@@ -613,7 +714,7 @@ class RunPanel extends React.Component {
   renderRunInfo() {
     return (
       <div>
-        <TaskTable
+        <RunTable
           data={[this.state.data.run_details]}
           title={'Baseline info for this run'}/>
         <AssignmentTable
@@ -1409,6 +1510,62 @@ class WorkerPanel extends React.Component {
   }
 }
 
+class RunListPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {tasks_loading: true, items: null, error: false};
+  }
+
+  fetchRunData() {
+    fetch('/run_list')
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            tasks_loading: false,
+            items: result
+          });
+        },
+        (error) => {
+          this.setState({
+            tasks_loading: false,
+            error: error
+          });
+        }
+      )
+  }
+
+  componentDidMount() {
+    this.setState({tasks_loading: true});
+    this.fetchRunData();
+  }
+
+  render() {
+    var content;
+    if (this.state.tasks_loading) {
+      content = <span>Runs are currently loading...</span>;
+    } else if (this.state.error !== false) {
+      console.log(this.state.error)
+      content = <span>Runs loading failed...</span>;
+    } else {
+      content = <RunTable data={this.state.items} title={'Local Runs'}/>;
+    }
+
+    return (
+      <Panel>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3">
+            Running Task List
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Body>
+          {content}
+        </Panel.Body>
+      </Panel>
+    )
+  }
+}
+
 class TaskListPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -1416,7 +1573,7 @@ class TaskListPanel extends React.Component {
   }
 
   fetchTaskData() {
-    fetch('/tasks')
+    fetch('/task_list')
       .then(res => res.json())
       .then(
         (result) => {
@@ -1447,14 +1604,14 @@ class TaskListPanel extends React.Component {
       console.log(this.state.error)
       content = <span>Tasks loading failed...</span>;
     } else {
-      content = <TaskTable data={this.state.items} title={'Local Runs'}/>;
+      content = <TaskTable data={this.state.items} title={'Discovered Tasks'}/>;
     }
 
     return (
       <Panel>
         <Panel.Heading>
           <Panel.Title componentClass="h3">
-            Running Tasks List
+            All Tasks List
           </Panel.Title>
         </Panel.Heading>
         <Panel.Body>
@@ -1525,6 +1682,269 @@ class WorkerListPanel extends React.Component {
   }
 }
 
+class DemoTaskPanel extends React.Component {
+  _socket = null;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      run_id: null,
+      task_loading: true,
+      error: false,
+      volume: 0,
+      worker_data: {},
+      workers: [],
+      active_worker: 0,
+      connected: false,
+    };
+  }
+
+  componentDidMount() {
+    this.startTask();
+    this.connectSocket();
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.active_worker != prevState.active_worker) {
+      $('div#message-pane-segment').animate({
+        scrollTop: $('div#message-pane-segment').get(0).scrollHeight
+      }, 500);
+      $("input#id_text_input").focus();
+    }
+  }
+
+  _handleMessage(evt) {
+    let msg = JSON.parse(evt.data);
+    if (msg.command == 'sync') {
+      this.handleNewData(msg);
+    }
+  }
+
+  connectSocket() {
+    if (this._socket) {
+      return;
+    }
+    var url = window.location;
+    var ws_protocol = null;
+    if (url.protocol == "https:") {
+      ws_protocol = 'wss';
+    } else {
+      ws_protocol = 'ws';
+    }
+
+    var socket = new WebSocket(ws_protocol + '://' + url.host + '/socket');
+
+    socket.onmessage = (evt) => this._handleMessage(evt);
+
+    socket.onopen = () => {
+      this.setState({connected: true});
+    };
+
+    socket.onerror = socket.onclose = () => {
+      this.setState({connected: false}, function () {
+        this._socket = null;
+      });
+    };
+
+    this._socket = socket;
+  }
+
+  startTask() {
+    // Send a launch task request to the server, unpack the resulting
+    // task config and pull the custom frontend for the task.
+    this.setState({submitting: true});
+    postData('/run_task/' + this.props.task_id)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.handleNewData(result);
+          try {
+            import(
+              /* webpackMode: "eager" */
+              `./task_components/${this.props.task_id}/components/custom.jsx`
+            ).then((custom) => {
+              setCustomComponents(custom.default);
+              if (result.task_config.frame_height === undefined) {
+                result.task_config.frame_height = 650;
+              }
+              this.setState({
+                task_loading: false, task_config: result.task_config});
+            });
+          } catch (err) {
+            // Custom react module not found
+            if (result.task_config.frame_height === undefined) {
+              result.task_config.frame_height = 650;
+            }
+            this.setState({
+              task_loading: false, task_config: result.task_config});
+          }
+
+        },
+        (error) => {
+          this.setState({
+            task_loading: false,
+            error: error,
+          });
+          console.log(error);
+          window.alert('Starting demo task failed. Error logged to console');
+        }
+      );
+  }
+
+  handleNewData(result) {
+    // Unpack data from an array of the return value of
+    // MockTurkAgent.get_update_packet()
+    let worker_names = result.data.map((w) => w.worker_id);
+    let curr_worker_data = this.state.worker_data;
+    result.data.map((w) => {
+      if (curr_worker_data[w.worker_id] === undefined) {
+        curr_worker_data[w.worker_id] = {
+          task_done: false,
+          done_text: null,
+          chat_state: 'waiting',
+          messages: [],
+          agent_id: null,
+          context: {},
+          world_state: null,
+          worker_id: w.worker_id,
+        };
+      }
+      let chat_state = 'waiting';
+      if (w.task_done) {
+        chat_state = 'done';
+      } else if (w.wants_message) {
+        chat_state = 'text_input';
+      }
+      let curr_worker = curr_worker_data[w.worker_id];
+      curr_worker.messages = curr_worker.messages.concat(w.new_messages);
+      curr_worker.task_done = w.task_done;
+      curr_worker.done_text = w.done_text;
+      curr_worker.world_state = w.status;
+      curr_worker.chat_state = chat_state;
+      curr_worker.agent_id = w.agent_id;
+      if (w.all_messages.length > curr_worker.messages.length) {
+        // If somehow the messages got out of sync, just grab the full message
+        // list. This isn't great to do all the time (as then messages would
+        // need to wait to be recieved by the server before we could even
+        // display them. This also solves eventual 'refresh' issues)
+        curr_worker.messages = w.all_messages;
+      }
+    });
+    this.setState({workers: worker_names, worker_data: curr_worker_data})
+  }
+
+  sendMessage(message, data, callback, worker) {
+    let msg = JSON.stringify(
+      {'text': message, 'data': data,
+       'sender': worker.worker_id, 'id': worker.agent_id});
+    this._socket.send(msg);
+    worker.messages.push({
+      id: worker.agent_id,
+      text: message,
+      data: data,
+      message_id: (new Date()).getTime(),
+      is_review: false,
+    });
+    worker.wants_message = false;
+    worker.chat_state = 'waiting';
+    this.setState({worker_data: this.state.worker_data});
+    callback();
+  }
+
+  renderSingleTaskPanel(worker_id) {
+    let worker = this.state.worker_data[worker_id];
+    let task_config = this.state.task_config;
+    return (
+      <div style={{height: task_config.frame_height}}>
+        <BaseFrontend
+          task_done={worker.task_done}
+          done_text={worker.done_text}
+          chat_state={worker.chat_state}
+          onMessageSend={(m, d, c) => this.sendMessage(m, d, c, worker)}
+          socket_status={'connected'}
+          messages={worker.messages}
+          agent_id={worker.agent_id}
+          task_description={task_config.task_description}
+          initialization_status={'done'}
+          is_cover_page={false}
+          frame_height={task_config.frame_height}
+          context={worker.context}
+          world_state={worker.world_state}
+          v_id={worker.agent_id}
+          allDoneCallback={() => console.log('all done called')}
+          volume={this.state.volume}
+          onVolumeChange={(v) => this.setState({volume: v})}
+        />
+      </div>
+    );
+  }
+
+  renderTaskPanel() {
+    let nav_items = this.state.workers.map((agent_id, idx) => {
+      return (
+        <NavItem
+          eventKey={idx}
+          key={agent_id + '-selector'}
+          title={'View as ' + agent_id}>
+          {agent_id}
+        </NavItem>
+      )
+    });
+    let task_panels = this.state.workers.map((agent_id, idx) => {
+      let display = null;
+      if (idx != this.state.active_worker) {
+        display = {display: 'none'}
+      }
+      return (
+        <div style={display} key={agent_id + '-task-display'}>
+          {this.renderSingleTaskPanel(this.state.workers[idx])}
+        </div>
+      )
+    });
+    // Active panel must be first in the array for jquery to target properly
+    let front_panel = task_panels.splice(this.state.active_worker, 1)
+    task_panels.unshift(front_panel);
+    return (
+      <div>
+        <Nav
+          bsStyle="tabs"
+          justified
+          activeKey={this.state.active_worker}
+          onSelect={key => this.setState({active_worker: key})}
+        >
+          {nav_items}
+        </Nav>
+        {task_panels}
+      </div>
+    );
+  }
+
+  render() {
+    var content;
+    if (this.state.task_loading) {
+      content = <span>Task data is currently loading...</span>;
+    } else if (this.state.error !== false) {
+      console.log(this.state.error)
+      content = <span>Task loading failed...</span>;
+    } else {
+      content = this.renderTaskPanel();
+    }
+
+    return (
+      <Panel>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3">
+            Demo task for {this.props.task_id}
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Body>
+          {content}
+        </Panel.Body>
+      </Panel>
+    )
+  }
+}
+
 class MainApp extends React.Component {
   constructor(props) {
     super(props);
@@ -1537,7 +1957,7 @@ class MainApp extends React.Component {
         <span>Welcome to the ParlAI-Dashboard. Use the button to begin</span>
         <Button
           bsStyle="info"
-          href="/app/tasks">
+          href="/app/home">
             Click me
         </Button>
       </div>
@@ -1550,7 +1970,7 @@ class MainApp extends React.Component {
         <span>Oops something happened! use this button to return </span>
         <Button
           bsStyle="info"
-          href="/app/tasks">
+          href="/app/home">
             Click me
         </Button>
       </div>
@@ -1558,10 +1978,23 @@ class MainApp extends React.Component {
   }
 
   renderTaskPage() {
+    // View should show runs of this task and datasets related to it. Should
+    // also have a demo of the task at the bottom
+    let run_task_list = null;
+    return (
+      <div style={{width: '100%'}}>
+        {run_task_list}
+        <DemoTaskPanel task_id = {this.state.args[0]} />
+      </div>
+    )
+  }
+
+  renderHomePage() {
     return (
       <div style={{width: '900px'}}>
-        <TaskListPanel/>
+        <RunListPanel/>
         <WorkerListPanel/>
+        <TaskListPanel />
       </div>
     );
   }
@@ -1593,14 +2026,16 @@ class MainApp extends React.Component {
   render() {
     if (this.state.url_state == AppURLStates.init) {
       return this.renderInitPage();
-    } else if (this.state.url_state == AppURLStates.tasks) {
-      return this.renderTaskPage();
+    } else if (this.state.url_state == AppURLStates.home) {
+      return this.renderHomePage();
     } else if (this.state.url_state == AppURLStates.runs) {
       return this.renderRunPage();
     } else if (this.state.url_state == AppURLStates.assignments) {
       return this.renderAssignmentPage();
     } else if (this.state.url_state == AppURLStates.workers) {
       return this.renderWorkerPage();
+    } else if (this.state.url_state == AppURLStates.tasks) {
+      return this.renderTaskPage();
     } else {
       return this.renderUnsupportedPage();
     }

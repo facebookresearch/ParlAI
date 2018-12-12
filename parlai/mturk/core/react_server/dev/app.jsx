@@ -15,6 +15,7 @@ import CustomComponents from './components/custom.jsx';
 import SocketHandler from './components/socket_handler.jsx';
 import {MTurkSubmitForm, allDoneCallback} from './components/mturk_submit_form.jsx';
 import 'fetch';
+import $ from 'jquery';
 
 var UseCustomComponents = {}
 if (Object.keys(BuiltCustomComponents).length) {
@@ -38,7 +39,7 @@ function getHitConfig(callback_function) {
   $.ajax({
     url: '/get_hit_config',
     timeout: 3000 // in milliseconds
-  }).retry({times: 10, timeout: 3000}).then(
+  }).then(
     function(data) {
       if (callback_function) {
         callback_function(data);

@@ -10,7 +10,8 @@ from parlai.mturk.tasks.react_task_demo.react_custom_with_deps.worlds import \
     AskerOnboardingWorld, AnswererOnboardingWorld, EvaluatorOnboardingWorld, \
     MultiRoleAgentWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
-from task_config import task_config
+from parlai.mturk.tasks.react_task_demo.react_custom_with_deps.task_config \
+    import task_config
 import os
 
 

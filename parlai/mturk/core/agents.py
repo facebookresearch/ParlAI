@@ -184,6 +184,13 @@ class MTurkAgent(Agent):
 
         self.msg_queue = Queue()
 
+    def _get_episode_done_msg(self, text):
+        return {
+            'id': self.id,
+            'text': text,
+            'episode_done': True
+        }
+
     def set_status(self, status):
         """Set the status of this agent on the task, update db"""
         self.state.set_status(status)
@@ -228,7 +235,6 @@ class MTurkAgent(Agent):
 
     def get_status(self):
         """Get the status of this agent on its task"""
-
         return self.state.get_status()
 
     def submitted_hit(self):
@@ -330,21 +336,11 @@ class MTurkAgent(Agent):
         """Get a new act message if one exists, return None otherwise"""
         # See if any agent has disconnected
         if self.disconnected or self.some_agent_disconnected:
-            msg = {
-                'id': self.id,
-                'text': MTURK_DISCONNECT_MESSAGE,
-                'episode_done': True
-            }
-            return msg
+            return self._get_episode_done_msg(MTURK_DISCONNECT_MESSAGE)
 
         # Check if the current turker already returned the HIT
         if self.hit_is_returned:
-            msg = {
-                'id': self.id,
-                'text': RETURN_MESSAGE,
-                'episode_done': True
-            }
-            return msg
+            return self._get_episode_done_msg(RETURN_MESSAGE)
 
         if self.msg_queue is not None:
             # Check if Turker sends a message
@@ -368,12 +364,7 @@ class MTurkAgent(Agent):
             self.worker_id,
             self.assignment_id
         )
-        msg = {
-            'id': self.id,
-            'text': TIMEOUT_MESSAGE,
-            'episode_done': True
-        }
-        return msg
+        return self._get_episode_done_msg(TIMEOUT_MESSAGE)
 
     def request_message(self):
         if not (self.disconnected or self.some_agent_disconnected or

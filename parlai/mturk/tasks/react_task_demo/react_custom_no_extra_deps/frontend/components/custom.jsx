@@ -8,6 +8,7 @@
 
 import React from 'react';
 import {FormControl, Button} from 'react-bootstrap';
+import $ from 'jquery';
 
 // Create custom components
 class EvaluatorIdleResponse extends React.Component {

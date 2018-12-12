@@ -10,6 +10,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {FormControl, Button} from 'react-bootstrap';
 import Slider from 'rc-slider';
+import $ from 'jquery';
 
 import 'rc-slider/assets/index.css';
 
@@ -76,7 +77,7 @@ class MessageList extends React.Component {
         message={m.text}
         context={m.context}
         message_id={m.message_id}
-        duration={this.props.is_review ? m.duration : null}/>
+        duration={this.props.is_review ? m.duration : undefined}/>
     );
   }
 
@@ -242,10 +243,11 @@ class ChatPane extends React.Component {
     super(props);
     this.state = {chat_height: this.getChatHeight()}
   }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.message_count != prevProps.message_count) {
-      $('div#right-top-pane').animate({
-        scrollTop: $('div#right-top-pane').get(0).scrollHeight
+      $('div#message-pane-segment').animate({
+        scrollTop: $('div#message-pane-segment').get(0).scrollHeight
       }, 500);
     }
   }

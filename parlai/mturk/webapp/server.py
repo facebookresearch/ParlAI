@@ -18,12 +18,14 @@ import json
 import logging
 import os
 import time
+import threading
 import traceback
-
+import asyncio
 import sh
 import shlex
 import shutil
 import subprocess
+import uuid
 
 import tornado.ioloop
 import tornado.web
@@ -32,6 +34,7 @@ import tornado.escape
 
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 from parlai.mturk.core.mturk_manager import MTurkManager
+from parlai.mturk.webapp.run_mocks.mock_turk_manager import MockTurkManager
 from parlai import __path__ as parlai_path
 parlai_path = parlai_path[0]
 
@@ -73,6 +76,27 @@ def get_path(filename):
     return os.path.join(cwd, filename)
 
 
+def get_mturk_task_module(task_name, target_module):
+    full_location = tasks[task_name]
+    guess_loc = full_location.split('tasks/')[1]
+    guess_class = '.'.join(guess_loc.split('/'))
+    task_module = target_module.format(guess_class)
+    base_format = 'parlai.mturk.tasks.{}'
+    if 'parlai_internal' in full_location:
+        base_format = 'parlai_internal.mturk.tasks.{}'
+    find_location = base_format.format(task_module)
+    # Try to find the task at specified location
+    return importlib.import_module(find_location)
+
+
+def get_run_module(task_name):
+    return get_mturk_task_module(task_name, '{}.run')
+
+
+def get_config_module(task_name):
+    return get_mturk_task_module(task_name, '{}.task_config')
+
+
 tornado_settings = {
     "autoescape": None,
     "debug": IS_DEBUG,
@@ -80,6 +104,12 @@ tornado_settings = {
     "template_path": get_path('static'),
     "compiled_template_cache": False
 }
+
+
+class PacketWrap(object):
+    def __init__(self, data):
+        self.data = data
+        self.id = None
 
 
 class Application(tornado.web.Application):
@@ -97,7 +127,9 @@ class Application(tornado.web.Application):
 
         handlers = [
             (r"/app/(.*)", AppHandler, {'app': self}),
-            (r"/tasks", TaskListHandler, {'app': self}),
+            (r"/run_list", RunListHandler, {'app': self}),
+            (r"/task_list", TaskListHandler, {'app': self}),
+            (r"/run_task/(.*)", TaskRunHandler, {'app': self}),
             (r"/workers", WorkerListHandler, {'app': self}),
             (r"/runs/(.*)", RunHandler, {'app': self}),
             (r"/workers/(.*)", WorkerHandler, {'app': self}),
@@ -108,7 +140,7 @@ class Application(tornado.web.Application):
             (r"/block/(.*)", BlockHandler, {'app': self}),
             (r"/bonus/(.*)", BonusHandler, {'app': self}),
             (r"/error/(.*)", ErrorHandler, {'app': self}),
-            (r"/socket", SocketHandler, {'app': self}),
+            (r"/socket", TaskSocketHandler, {'app': self}),
             (r"/", RedirectHandler),
         ]
         super(Application, self).__init__(handlers, **tornado_settings)
@@ -125,50 +157,6 @@ def send_to_sources(handler, msg):
     target_sources = handler.sources.values()
     for source in target_sources:
         source.write_message(json.dumps(msg))
-
-
-class SocketHandler(tornado.websocket.WebSocketHandler):
-    def initialize(self, app):
-        self.port = app.port
-        self.state = app.state
-        self.subs = app.subs
-        self.sources = app.sources
-
-    def check_origin(self, origin):
-        return True
-
-    def broadcast_default(self, target_subs=None):
-        # TODO create any default content that needs to go in msg
-        # if target_subs is None:
-        #     target_subs = self.subs.values()
-        # broadcast_msg(self, msg, target_subs)
-        pass
-
-    def open(self):
-        self.sid = get_rand_id()
-        if self not in list(self.subs.values()):
-            self.subs[self.sid] = self
-        logging.info(
-            'Opened new socket from ip: {}'.format(self.request.remote_ip))
-
-        self.write_message(
-            json.dumps({'command': 'register', 'data': self.sid}))
-        self.broadcast_default([self])
-
-    def on_message(self, message):
-        logging.info('from web client: {}'.format(message))
-        msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
-
-        cmd = msg.get('cmd')
-
-        # TODO flesh out with stubs as they develop
-        if cmd == 'todo':
-            # Do something
-            pass
-
-    def on_close(self):
-        if self in list(self.subs.values()):
-            self.subs.pop(self.sid, None)
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -217,10 +205,10 @@ class RedirectHandler(tornado.web.RequestHandler):
 
     def get(self):
         print('redirecting')
-        self.redirect('/app/tasks')
+        self.redirect('/app/home')
 
 
-class TaskListHandler(BaseHandler):
+class RunListHandler(BaseHandler):
     def initialize(self, app):
         self.state = app.state
         self.subs = app.subs
@@ -244,6 +232,39 @@ class TaskListHandler(BaseHandler):
             result['run_status'] = 'unimplemented'
 
         self.write(json.dumps(processed_results))
+
+
+class TaskListHandler(BaseHandler):
+    def initialize(self, app):
+        self.state = app.state
+        self.subs = app.subs
+        self.sources = app.sources
+        self.port = app.port
+        self.data_handler = app.data_handler
+
+    def get(self):
+        results = {t: {'task_name': t, 'dir': v} for t, v in tasks.items()}
+        for task_name, directory in tasks.items():
+            results[task_name]['internal'] = 'parlai_internal' in directory
+            results[task_name]['has_custom'] = False
+            results[task_name]['react_frontend'] = False
+            try:
+                config = get_config_module(task_name)
+                frontend_version = config.task_config.get('frontend_version')
+                if (frontend_version is not None and frontend_version >= 1):
+                    results[task_name]['react_frontend'] = True
+                if os.path.isfile(os.path.join(
+                        directory, 'frontend', 'components', 'custom.jsx')):
+                    results[task_name]['has_custom'] = True
+            except Exception as e:
+                print('Exception {} when loading task details for {}'.format(
+                    e, task_name
+                ))
+                pass
+            results[task_name]['active_runs'] = 'unimplemented'  # TODO
+            results[task_name]['all_runs'] = 'unimplemented'  # TODO
+
+        self.write(json.dumps(list(results.values())))
 
 
 def merge_assignments_with_pairings(assignments, pairings, log_id):
@@ -371,16 +392,10 @@ class AssignmentHandler(BaseHandler):
         }
 
         # Get assignment instruction html. This can be much improved
-        taskname = '_'.join(run_id.split('_')[:-1])
-        guess_loc = tasks[taskname].split('tasks/')[1]
-        guess_class = '.'.join(guess_loc.split('/'))
-        base_format = 'parlai.mturk.tasks.{}.task_config'
-        if 'parlai_internal' in guess_loc:
-            base_format = 'parlai_internal.mturk.tasks.{}.task_config'
-        find_location = base_format.format(guess_class)
+        task_name = '_'.join(run_id.split('_')[:-1])
         try:
             # Try to find the task at specified location
-            t = importlib.import_module(find_location)
+            t = get_config_module(task_name)
             task_instructions = t.task_config['task_description']
         except ImportError:
             task_instructions = None
@@ -481,6 +496,115 @@ class ErrorHandler(BaseHandler):
         raise Exception(error_text)
 
 
+class TaskSocketHandler(tornado.websocket.WebSocketHandler):
+    def initialize(self, app):
+        self.app = app
+        self.sources = app.sources
+
+    def check_origin(self, origin):
+        return True
+
+    def _run_socket(self):
+        time.sleep(2)
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        while self.alive and self.app.manager is not None:
+            try:
+                self.write_message(json.dumps({
+                    'data': [agent.get_update_packet()
+                             for agent in self.app.manager.agents],
+                    'command': 'sync'
+                }))
+                time.sleep(0.2)
+            except tornado.websocket.WebSocketClosedError:
+                self.alive = False
+                self.app.manager.timeout_all_agents()
+
+    def open(self):
+        self.sid = str(hex(int(time.time() * 10000000))[2:])
+        self.alive = True
+        if self not in list(self.sources.values()):
+            self.sources[self.sid] = self
+        logging.info('Opened task socket from ip: {}'.format(
+            self.request.remote_ip))
+
+        self.write_message(
+            json.dumps({'command': 'alive', 'data': 'socket_alive'}))
+
+        t = threading.Thread(target=self._run_socket)
+        t.start()
+
+    def on_message(self, message):
+        logging.info('from frontend client: {}'.format(message))
+        msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
+        message = msg['text']
+        data = msg['data']
+        sender_id = msg['sender']
+        agent_id = msg['id']
+        act = {
+            'id': agent_id,
+            'data': data,
+            'text': message,
+            'message_id': str(uuid.uuid4()),
+        }
+        t = threading.Thread(
+            target=self.app.manager.on_new_message,
+            args=(sender_id, PacketWrap(act)),
+            daemon=True)
+        t.start()
+
+    def on_close(self):
+        self.alive = False
+        if self in list(self.sources.values()):
+            self.sources.pop(self.sid, None)
+
+
+class TaskRunHandler(BaseHandler):
+    def initialize(self, app):
+        self.app = app
+
+    def post(self, task_target):
+        """Requests to /run_task/{task_id} will launch a task locally
+        for the given task. It will die after 20 mins if it doesn't end
+        on its own.
+        """
+        try:
+            # Load the run and task_config modules from the expected locations
+            t = get_run_module(task_target)
+            conf = get_config_module(task_target)
+            # Set the run file's MTurkManager module to be MockTurkManager
+            t.MTurkManager = MockTurkManager
+            MockTurkManager.current_manager = None
+
+            # Start a task thread, then wait for the task to be running
+            task_thread = threading.Thread(target=t.main, name='Demo-Thread')
+            task_thread.start()
+            while MockTurkManager.current_manager is None:
+                time.sleep(1)
+            time.sleep(1)
+            manager = MockTurkManager.current_manager
+
+            # Register the current manager, then alive the agents
+            self.app.manager = manager
+            for agent in manager.agents:
+                manager.worker_alive(
+                    agent.worker_id, agent.hit_id, agent.assignment_id)
+
+            # Tell frontend we're done, and give the initial packets.
+            data = {
+                'started': True,
+                'data': [agent.get_update_packet() for agent in manager.agents],
+                'task_config': conf.task_config,
+            }
+            self.write(json.dumps(data))
+        except Exception as e:
+            data = {
+                'error': e,
+            }
+            print(repr(e))
+            print(traceback.format_exc())
+            self.write(json.dumps(data))
+
+
 def start_server(port=DEFAULT_PORT, hostname=DEFAULT_HOSTNAME,
                  db_file=DEFAULT_DB_FILE, is_sandbox=False):
     print("It's Alive!")
@@ -508,6 +632,7 @@ def crawl_dir_for_tasks(search_dir):
             found_dirs.update(crawl_dir_for_tasks(full_sub_dir))
     return found_dirs
 
+
 def rebuild_source():
     # TODO move task parsing to its own helper file
     # Copy files to the correct locations,
@@ -525,13 +650,9 @@ def rebuild_source():
             os.path.join(parlai_int_path, 'mturk', 'tasks')
         tasks.update(crawl_dir_for_tasks(parlai_internal_task_dir))
 
-    print (tasks)
-
     for task, task_dir in tasks.items():
         if os.path.exists(os.path.join(task_dir, 'frontend')):
             copy_dirs[task] = os.path.join(task_dir, 'frontend')
-
-    print (copy_dirs)
 
     for task, task_dir in copy_dirs.items():
         was_built = False
