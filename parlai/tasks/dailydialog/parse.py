@@ -13,11 +13,11 @@ uncompressing the original directory and all subdirectories.
 import json
 import os
 import re
-import pprint
 from collections import Counter
 
 BADSENT = r'\.(\w)'
 
+# set each of these and rerun the script
 FOLD = "validation"
 FOLD_OUT = "valid"
 # FOLD = "train"
@@ -62,6 +62,8 @@ ALL_COUNTS = Counter()
 
 def cleanup_text(text):
     text = text.strip()
+
+    # Prefer non-unicode special character
     SWITCH_LIST = [
         ("\u2019", "'"),
         ("\u2018", "'"),
@@ -76,7 +78,7 @@ def cleanup_text(text):
     for before, after in SWITCH_LIST:
         text = text.replace(before, after)
 
-    # fix some shitty sentence tokenization
+    # fix some broken sentence tokenization
     text = re.sub(BADSENT, r' . \1', text)
 
     ALL_COUNTS.update([t for t in text.split() if len(t) == 1 and ord(t) > 127])
@@ -126,6 +128,3 @@ for acts, emotions, raw_text in zip(f_acts, f_emotions, f_texts):
     f_out.write(outline + '\n')
 
 f_out.close()
-
-pprint.pprint(ALL_COUNTS.most_common(50))
-print(json.dumps(ALL_COUNTS.most_common(50)))

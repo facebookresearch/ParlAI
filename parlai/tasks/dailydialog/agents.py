@@ -18,7 +18,8 @@ Every conversation contains entries with special fields (see the paper):
 - act_type
 - topic
 
-This teacher plays both sides of the conversation.
+This teacher plays both sides of the conversation, once acting as Speaker 1, and
+once acting as Speaker 2.
 """
 
 import os
@@ -47,7 +48,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
         self.num_exs = sum(len(d['dialogue']) for d in self.data)
 
-        # we play both sides
+        # we learn from both sides of every conversation
         self.num_eps = 2 * len(self.data)
         self.reset()
 
@@ -65,7 +66,7 @@ class DefaultTeacher(FixedDialogTeacher):
                 self.data.append(json.loads(line))
 
     def get(self, episode_idx, entry_idx=0):
-        # we play both sides!
+        # Sometimes we're speaker 1 and sometimes we're speaker 2
         speaker_id = episode_idx % 2
         full_eps = self.data[episode_idx // 2]
 
