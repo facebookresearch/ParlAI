@@ -176,7 +176,14 @@ class TrainLoop():
             opt['init_model'] = opt['model_file'] + '.checkpoint'
         # Possibly build a dictionary (not all models do this).
         if opt['dict_build_first'] and 'dict_file' in opt:
-            if opt['dict_file'] is None and opt.get('model_file'):
+            # If data built via pytorch data teacher, we need to load prebuilt dict
+            if opt.get('pytorch_teacher_task') and opt.get('pytorch_preprocess'):
+                opt['dict_file'] = os.path.join(
+                    opt.get('datapath', '.'),
+                    '{}_pyt_data'.format(opt['pytorch_teacher_task'].replace(':', '_')),
+                    opt['datatype'].split(':')[0],
+                    'dict')
+            elif opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             print("[ building dictionary first... ]")
             build_dict(opt, skip_if_built=True)

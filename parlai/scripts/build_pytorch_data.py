@@ -17,6 +17,7 @@ are used in a flattened episode.
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.utils import ProgressLogger
+from parlai.scripts.build_dict import build_dict
 import copy
 import os
 import json
@@ -50,6 +51,9 @@ def make_serializable(obj):
 def build_data(opt):
     if not opt.get('model', False):
         opt['model'] = 'repeat_label'
+    preprocess = opt.get('pytorch_preprocess', True)
+    if preprocess:
+        dictionary = build_dict(opt, skip_if_built=True)
     agent = create_agent(opt)
     # If build teacher not specified, we are simply looking for the file
     if not opt.get('pytorch_teacher_task', None):
@@ -75,15 +79,16 @@ def build_data(opt):
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     ordered_opt['task'] = ordered_opt['pytorch_teacher_task']
+    ordered_opt.pop('pytorch_teacher_dataset')
     ordered_opt['no_cuda'] = True
     world_data = create_task(ordered_opt, agent)
     teacher = world_data.agents[0]
     agent = world_data.agents[1]
+
     datapath = os.path.join(opt.get('datapath', '.'),
                             '{}_pyt_data'.format(
                                 ordered_opt['task'].replace(':', '_')),
                             dt)
-    preprocess = opt.get('pytorch_preprocess', True)
     if preprocess:
         datapath += '_{}_preprocess'.format(agent.getID().replace(':', '_'))
     if os.path.isdir(datapath):
@@ -145,6 +150,9 @@ def build_data(opt):
     with open(os.path.join(datapath, 'data_length'), 'w') as pytorch_data_len:
         pytorch_data_len.write(json.dumps({'num_eps': num_eps,
                                            'num_exs': num_exs}))
+    if preprocess and dictionary:
+        dict_file = os.path.join(datapath, 'dict')
+        dictionary.save(dict_file, sort=True)
 
     print('[ pytorch data built. ]')
     return datapath

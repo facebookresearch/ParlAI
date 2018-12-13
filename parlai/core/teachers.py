@@ -371,10 +371,9 @@ class FixedDialogTeacher(Teacher):
         return observation
 
     def batch_act(self, observations):
-        """Returns an entire batch of examples instead of just one."""
-        warnings.warn('batch_act is deprecated. Please use PytorchDataTeacher '
-                      'for your batch sorting needs.',
-                      DeprecationWarning)
+        """Returns an entire batch of examples instead of just one.
+           Note: Currently used by PytorchDataTeacher.
+        """
         # we ignore observations
         if not hasattr(self, 'epochDone'):
             # reset if haven't yet

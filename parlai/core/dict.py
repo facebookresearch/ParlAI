@@ -222,6 +222,13 @@ class DictionaryAgent(Agent):
                 self.add_token(self.unk_token)
 
             loaded = False
+            # If data built via pytorch data teacher, we need to load prebuilt dict
+            if opt.get('pytorch_teacher_task') and opt.get('pytorch_preprocess'):
+                opt['dict_file'] = os.path.join(
+                    opt.get('datapath', '.'),
+                    '{}_pyt_data'.format(opt['pytorch_teacher_task'].replace(':', '_')),
+                    opt['datatype'].split(':')[0],
+                    'dict')
             if opt.get('dict_file'):
                 opt['dict_file'] = modelzoo_path(opt.get('datapath'),
                                                  opt['dict_file'])
