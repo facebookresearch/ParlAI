@@ -1,0 +1,60 @@
+{% extends "core.html" %}
+{% block main_pane %}
+<div id="main-pane" style="width: 100%; height: {{frame_height}}px; background-color: #dff0d8; padding: 30px; overflow:scroll;  ">
+<span id="task-description" style="font-size: 16px"></span>
+<hr style="border-top: 1px solid #555" />
+<span id="task-personality" style="font-size: 16px"></span>
+</div>
+<div id="bottom-pane" style="width: 100%; background-color: #eee;">
+    <div id="response-type-idle" class="response-type-module" style="display:none">
+    </div>
+    <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display: none;">
+        <div style="height: 50px; width: 100%; display: block; float: left; ">
+            <button class="btn btn-primary" style="width: 230px; height: 100%; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_send_msg_button">I am ready, continue</button>
+        </div>
+    </div>
+    <div id="response-type-waiting" class="response-type-module" style="height: 50px; width: 100%; display: block; float: left; ">
+        <span id="waiting" style="font-size: 16pt; padding-top: 30px; padding-left: 30px; margin-right: 15px">Task Loading...</span>
+    </div>
+    <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+        <span id="disconnect" style="font-size: 14pt;margin-right: 15px"></span>
+        <button id="done-button" type="button" class="btn btn-primary btn-lg">
+            <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+        </button>
+    </div>
+    <div id="response-type-inactive" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+        <span id="inactive" style="font-size: 16px"></span>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional_scripts %}
+<script type="text/javascript">
+
+  var old_msg_function = handle_new_message
+
+  handle_new_message = function(new_message_id, message) {
+    if(message.text === undefined) {
+      $("div#response-type-waiting").css("display", "");
+      return
+    }
+    old_msg_function.apply(old_msg_function, [new_message_id, message])
+    console.log(message)
+    var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+
+    if ("show_personality" in message) {
+        $("span#task-personality").html(message_text);
+      }
+    if ("task_description" in message) {
+        $("span#task-description").html(message.role_task_description);
+    }
+  }
+
+  function window_resize() {
+  }
+  $(window).resize(window_resize);
+  window.setTimeout(function(){$('#id_send_msg_button').focus()}, 1000);
+  function scroll_conversation_to_bottom() {}
+
+</script>
+{% endblock %}
