@@ -5,7 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.agents import create_task_agent_from_taskname, create_agent
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import AttrDict, ProgressLogger
+from parlai.core.utils import AttrDict
 from parlai.mturk.core.mturk_manager import MTurkManager
 from worlds import \
     MTurkWizardOfWikipediaWorld, RoleOnboardWorld, PersonasGenerator, \
@@ -33,7 +33,6 @@ def setup_retriever(opt):
 
 def setup_title_to_passage(opt):
     print('[ Setting up Title to Passage Dict ]')
-    logger = ProgressLogger(should_humanize=False, throttle=0.1)
     saved_dp = os.path.join(os.getcwd() + '/data/', 'title_to_passage.pkl')
     if os.path.exists(saved_dp):
         print('[ Loading from saved location, {} ]'.format(saved_dp))
@@ -62,14 +61,16 @@ def setup_title_to_passage(opt):
     title_to_passage = {}
     i = 0
     length = teacher.num_episodes()
+    pbar = tqdm.tqdm(total=length)
     while not teacher.epoch_done():
-        logger.log(i, length)
+        pbar.update(1)
         i += 1
         action = teacher.act()
         title = action['text']
         if title in topics:
             text = action['labels'][0]
             title_to_passage[title] = text
+    pbar.close()
     print('[ Finished Building Title to Passage dict; saving now]')
     with open(saved_dp, 'wb') as f:
         pickle.dump(title_to_passage, f)

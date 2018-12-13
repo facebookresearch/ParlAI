@@ -15,9 +15,8 @@ import os
 import re
 import sys
 import time
+import tqdm
 import xml.etree.ElementTree as ET
-
-from parlai.core.utils import ProgressLogger
 
 NUM_MOVIE_FOLDERS = 140044
 NUM_SUBTITLES_FILES = 446612
@@ -296,10 +295,8 @@ def create_fb_format(inpath, outpath, use_history):
 
     processor = DataProcessor(use_history)
 
-    logger = ProgressLogger()
-
     with multiprocessing.Pool(processes=os.cpu_count()) as pool:
-        for i, s in enumerate(pool.imap(processor, movie_dirs.items())):
+        for i, s in enumerate(pool.imap(processor, tqdm.tqdm(movie_dirs.items()))):
             handle = ftrain
             # TODO: Shall we use smaller valid/test sets? Even 10% is A LOT here
             if i % 10 == 0:
@@ -307,7 +304,6 @@ def create_fb_format(inpath, outpath, use_history):
             if i % 10 == 1:
                 handle = fvalid
             handle.write(s)
-            logger.log(i, total_files)
 
     ftrain.close()
     fvalid.close()

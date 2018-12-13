@@ -16,13 +16,13 @@ are used in a flattened episode.
 """
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.core.utils import ProgressLogger
 import copy
 import os
 import json
 import random
 import collections
 import torch
+import tqdm
 from collections import deque
 
 
@@ -103,8 +103,11 @@ def build_data(opt):
     include_labels = opt.get('pytorch_include_labels', True)
     context_length = opt.get('pytorch_context_length', -1)
     context = deque(maxlen=context_length if context_length > 0 else None)
-    logger = ProgressLogger(should_humanize=False, throttle=0.1)
     total_exs = world_data.num_examples()
+    pbar = tqdm.tqdm(
+        total=total_exs, unit='ex', unit_scale=True,
+        desc='Building pytorch data'
+    )
     idx_to_char = []
     cumulative_char_len = 0
     # pass examples to dictionary
@@ -131,7 +134,7 @@ def build_data(opt):
                     ex['preprocessed'] = True
                 num_eps += 1
                 num_exs += 1
-                logger.log(num_exs, total_exs)
+                pbar.update(1)
                 ex_len = pytorch_data.write(json.dumps(make_serializable(ex)) + "\n")
                 idx_to_char.append(cumulative_char_len)
                 cumulative_char_len += ex_len
@@ -139,6 +142,7 @@ def build_data(opt):
             episode_done = False
             current.clear()
             context.clear()
+    pbar.close()
 
     with open(os.path.join(datapath, 'char_index'), 'w') as char_index:
         json.dump(idx_to_char, char_index)

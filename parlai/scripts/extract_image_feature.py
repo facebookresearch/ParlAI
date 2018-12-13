@@ -27,11 +27,11 @@ import copy
 import os
 import json
 import datetime
+import tqdm
 
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import ProgressLogger
 
 
 def setup_args(parser=None):
@@ -85,19 +85,18 @@ def extract_feats(opt):
     opt['num_epochs'] = 1
     opt['use_hdf5'] = False
     opt['num_load_threads'] = 20
-    logger = ProgressLogger(should_humanize=False, throttle=0.1)
     print("[ Loading Images ]")
     # create repeat label agent and assign it to the specified task
     if opt.get('pytorch_teacher_dataset') is None:
         agent = RepeatLabelAgent(opt)
         world = create_task(opt, agent)
 
-        exs_seen = 0
         total_exs = world.num_examples()
+        pbar = tqdm.tqdm(unit='ex', total=total_exs)
         while not world.epoch_done():
             world.parley()
-            exs_seen += bsz
-            logger.log(exs_seen, total_exs)
+            pbar.update(bsz)
+        pbar.close()
     elif opt.get('use_hdf5_extraction', False):
         '''One can specify a Pytorch Dataset for custom image loading'''
         nw = opt.get('numworkers', 1)
@@ -128,11 +127,13 @@ def extract_feats(opt):
             world = create_task(opt, agent)
             exs_seen = 0
             total_exs = world.num_examples()
+            pbar = tqdm.tqdm(unit='ex', total=total_exs)
             print('[ Computing and Saving Image Features ]')
             while exs_seen < total_exs:
                 world.parley()
                 exs_seen += bsz
-                logger.log(exs_seen, total_exs)
+                pbar.update(bsz)
+            pbar.close()
             print('[ Feature Computation Done ]')
             with open(images_built_file, 'w') as write:
                 write.write(str(datetime.datetime.today()))
