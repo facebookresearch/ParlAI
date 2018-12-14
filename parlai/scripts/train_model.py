@@ -31,6 +31,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
 from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
+from parlai.scripts.build_pytorch_data import get_pyt_dict_file
 import math
 import os
 
@@ -178,11 +179,7 @@ class TrainLoop():
         if opt['dict_build_first'] and 'dict_file' in opt:
             # If data built via pytorch data teacher, we need to load prebuilt dict
             if opt.get('pytorch_teacher_task') and opt.get('pytorch_preprocess'):
-                opt['dict_file'] = os.path.join(
-                    opt.get('datapath', '.'),
-                    '{}_pyt_data'.format(opt['pytorch_teacher_task'].replace(':', '_')),
-                    opt['datatype'].split(':')[0],
-                    'dict')
+                opt['dict_file'] = get_pyt_dict_file(opt)
             elif opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             print("[ building dictionary first... ]")

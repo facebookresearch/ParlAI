@@ -27,6 +27,14 @@ import torch
 from collections import deque
 
 
+def get_pyt_dict_file(opt):
+    return os.path.join(
+        opt.get('datapath', '.'),
+        '{}_pyt_data'.format(opt['pytorch_teacher_task'].replace(':', '_')),
+        opt['datatype'].split(':')[0],
+        'dict')
+
+
 def setup_args():
     from parlai.core.params import ParlaiParser
     return ParlaiParser(True, True, 'Builds a pytorch data file.')
@@ -151,8 +159,7 @@ def build_data(opt):
         pytorch_data_len.write(json.dumps({'num_eps': num_eps,
                                            'num_exs': num_exs}))
     if preprocess and dictionary:
-        dict_file = os.path.join(datapath, 'dict')
-        dictionary.save(dict_file, sort=True)
+        dictionary.save(get_dict_file(opt), sort=True)
 
     print('[ pytorch data built. ]')
     return datapath
