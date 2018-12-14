@@ -600,14 +600,14 @@ class BatchWorld(World):
             if batch_actions[i] is None:
                 # shouldn't send None, should send empty observations
                 batch_actions[i] = [{}] * len(self.worlds)
+            if index == index_acting:
+                return None  # don't observe yourself talking
             if hasattr(w, 'observe'):
                 # The world has its own observe function, which the action
                 # first goes through (agents receive messages via the world,
                 # not from each other).
                 observation = w.observe(agents[index], validate(batch_actions[i]))
             else:
-                if index == index_acting:
-                    return None  # don't observe yourself talking
                 observation = validate(batch_actions[i])
             observation = agents[index].observe(observation)
             if observation is None:

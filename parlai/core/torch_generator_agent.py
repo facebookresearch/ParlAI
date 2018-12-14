@@ -441,8 +441,6 @@ class TorchGeneratorAgent(TorchAgent):
     def train_step(self, batch):
         """Train on a single batch of examples."""
         batchsize = batch.text_vec.size(0)
-        if not hasattr(batch, 'labels_vec'):
-            return
         # helps with memory usage
         self._init_cuda_buffer(self.model, self.criterion, batchsize,
                                self.truncate or 180)

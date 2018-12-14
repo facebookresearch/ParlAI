@@ -68,6 +68,7 @@ class TouristLanguage(nn.Module):
                 max_sample_length=20, beam_width=4, train=True):
 
         batch = batch._asdict()
+        print('batch', batch);
         batch_size = batch['text_vec'].size(0)
         obs_seq_len = batch['see_mask'][:, :, 0].sum(1).long()
         move_mask = lengths_to_mask(batch['move_lengths'])

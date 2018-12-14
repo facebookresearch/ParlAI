@@ -127,8 +127,22 @@ class GuideAgent(TTWAgent):
         out = self.model.forward(batch)
 
         #TODO: move the loss function out of the model
-        # out['sl_loss'].backward()
+        out['sl_loss'].backward()
         self.update_params()
+
+    def eval_step(self, batch):
+
+        if  batch.valid_indices == None \
+            or torch.sum(batch.move_vec) == 0 \
+            or torch.sum(batch.see_vec) == 0 \
+            or sum(batch.move_vec.size()) == 0 \
+            or sum(batch.see_vec.size()) == 0 \
+            or batch.see_vec.size(0) < 120:
+            return
+
+        out = self.model.forward(batch)
+        predictions = {'text':out['text'] for x in out}
+        return Output(self.v2t(predictions))
 
     def batchify(self, obs_batch, **kwargs):
         batch = super().batchify(obs_batch, **kwargs)
@@ -313,12 +327,12 @@ class TouristAgent(TTWAgent):
 
         # we need to wait to build up some memory so batch sizes
         # are reasonable.
-        if torch.sum(batch.move_vec) == 0 \
+        if  batch.valid_indices == None \
+            or torch.sum(batch.move_vec) == 0 \
             or torch.sum(batch.see_vec) == 0 \
             or sum(batch.move_vec.size()) == 0 \
             or sum(batch.see_vec.size()) == 0 \
-            or batch.see_vec.size(0) < 120 \
-            or batch.valid_indices == None:
+            or batch.see_vec.size(0) < 120:
             return
 
         self.zero_grad()
@@ -329,11 +343,21 @@ class TouristAgent(TTWAgent):
         self.update_params()
 
     def eval_step(self, batch):
+
+        if  batch.valid_indices == None \
+            or torch.sum(batch.move_vec) == 0 \
+            or torch.sum(batch.see_vec) == 0 \
+            or sum(batch.move_vec.size()) == 0 \
+            or sum(batch.see_vec.size()) == 0 \
+            or batch.see_vec.size(0) < 120:
+            return
+
         out = self.model.forward(batch, train=False)
         predictions = {'text':out['text'] for x in out}
         return Output(self.v2t(predictions))
 
-class TalkTheWalkTeacher(FixedDialogTeacher):
+
+class TTWTeacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -356,19 +380,8 @@ class TalkTheWalkTeacher(FixedDialogTeacher):
         self.examples_count = 0
 
         for episode in self.episodes:
-            self.data.append([])
-            e = {x:y for x,y in episode.items() if x in ['start_location',
-                'neighborhood', 'boundaries', 'target_location', 'landmarks']}
-            e['episode_done'] = False
-            dialog = episode['dialog']
-            for i,msg in enumerate(dialog):
-                if msg['id'] == 'Tourist' and not msg['text'].startswith('ACTION'):
-                    e['labels'] = [msg['text']]
-                else:
-                    e['text'] = msg['text']
-                self.examples_count += 1
-                self.data[-1].append(e)
-                e = {'episode_done':i == len(dialog)-2}
+            self._setup_episode(episode)
+
 
     def get(self, episode_idx, entry_idx=0):
         return self.data[episode_idx][entry_idx]
@@ -384,5 +397,49 @@ class TalkTheWalkTeacher(FixedDialogTeacher):
     def num_examples(self):
         return self.examples_count
 
-class DefaultTeacher(TalkTheWalkTeacher):
+class GuideTeacher(TTWTeacher):
+    def _setup_episode(self, episode):
+        example = {x:y for x,y in episode.items() if x in ['start_location',
+            'neighborhood', 'boundaries', 'target_location', 'landmarks']}
+
+        dialog = episode['dialog']
+        if dialog:
+            self.data.append([])
+            for i,msg in enumerate(dialog):
+                if msg['id'] == 'Guide':
+                    example['labels'] = [msg['text']]
+                    self.examples_count += 1
+                    self.data[-1].append(example)
+                    example = {}
+                elif not msg['text'].startswith('ACTION'):
+                    example['text'] = example.get('text', '') + msg['text'] + '\n'
+            if self.data[-1]:
+                self.data[-1][-1]['episode_done'] = True
+            else:
+                self.data.pop()
+
+
+class TouristTeacher(TTWTeacher):
+    def _setup_episode(self, episode):
+        example = {x:y for x,y in episode.items() if x in ['start_location',
+            'neighborhood', 'boundaries', 'target_location', 'landmarks']}
+
+        dialog = episode['dialog']
+        if dialog:
+            self.data.append([])
+            for i,msg in enumerate(dialog):
+                if msg['id'] == 'Tourist':
+                    example['labels'] = [msg['text']]
+                    self.examples_count += 1
+                    self.data[-1].append(example)
+                    example = {}
+                else:
+                    example['text'] = example.get('text', '') + msg['text'] + '\n'
+            if self.data[-1]:
+                self.data[-1][-1]['episode_done'] = True
+            else:
+                self.data.pop()
+
+
+class DefaultTeacher(TouristTeacher):
     pass

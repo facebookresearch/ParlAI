@@ -1,4 +1,5 @@
-from parlai.core.worlds import ExecutableWorld
+from collections import defaultdict
+from parlai.core.worlds import DialogPartnerWorld, ExecutableWorld
 from parlai.tasks.talkthewalk.ttw.dict import Dictionary, LandmarkDictionary, ActionAgnosticDictionary, ActionAwareDictionary, TextrecogDict, \
     START_TOKEN, END_TOKEN
 import json
@@ -13,10 +14,11 @@ BOUNDARIES = {
     'eastvillage':  [3, 4],
 }
 
-class DefaultWorld(ExecutableWorld):
+class SimulateWorld(ExecutableWorld):
 
     boundaries = None
     neighborhood = None
+    location_history = []
     agent_location = None
     target_location = None
 
@@ -38,8 +40,29 @@ class DefaultWorld(ExecutableWorld):
         shared_data['feature_loader'] = self.feature_loader
         return shared_data
 
+    def parley(self):
+        acts = self.acts
+        agents = self.agents
+        tourist = agents[0]
+        guide = agents[1]
+
+        #allow tourist to move indefinately and then speak
+        while True:
+            acts[0] = tourist.act()
+            acts[0] = tourist.observe(self.observe(tourist, acts[0]))
+            if not acts[0].get('text', '').startswith('ACTION'):
+                break
+
+        guide.observe(self.observe(guide, acts[0]))
+        acts[1] = guide.act()
+        tourist.observe(self.observe(tourist, acts[1]))
+        self.update_counters()
+
+    def episode_done(self):
+        return self.acts[1].startswith('EVALUATE')
+
     def observe(self, agent, act):
-        act = copy.copy(act)
+        act = defaultdict(list, copy.copy(act))
         self.boundaries = act.get('boundaries') or self.boundaries
         self.neighborhood = act.get('neighborhood') or self.neighborhood
         self.agent_location = act.get('start_location') or \
@@ -51,33 +74,29 @@ class DefaultWorld(ExecutableWorld):
 
         text = act.get('text')
 
-        #update agent location based on movements and generate observations
         if text and text.startswith('ACTION'):
-            act.pop('text', None)
             self.agent_location = self.map.step_aware(
                     text,
                     self.agent_location,
                     self.boundaries)
 
-            if agent.id == 'tourist':
-                if text == ('ACTION:FORWARD'):
-                    act['see'] = self.feature_loader.get(
-                            self.neighborhood,
-                            self.agent_location)
+            if text == ('ACTION:FORWARD'):
+                act['see'] = self.feature_loader.get(
+                        self.neighborhood,
+                        self.agent_location)
+                act['text']+='\n'+" ".join(act['see'])
 
-                #tourist agent only uses location to calculate deltas
-                act['location'] = self.agent_location
+            #tourist agent only uses location to calculate deltas
+            act['location'] = self.agent_location
 
-        if agent.id == 'guide':
-            act['landmarks'], act['target_location'] = \
-                self.map.get_landmarks(self.neighborhood, self.boundaries,
-                        self.target_location)
+        # if agent.id == 'guide':
+        #     act['landmarks'], act['target_location'] = \
+        #         self.map.get_landmarks(self.neighborhood, self.boundaries,
+        #                 self.target_location)
 
-        #filter out some examples for now
-        if [x for x in act if x in ['see', 'text', 'labels']]:
-            return act
-        else:
-            return {'episode_done': False}
+        print('act', act);
+        return act
+
 
 class Map(object):
     """Map with landmarks"""
