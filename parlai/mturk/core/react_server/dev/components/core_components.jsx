@@ -8,7 +8,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {FormControl, Button} from 'react-bootstrap';
+import {FormControl, Button, ButtonGroup} from 'react-bootstrap';
 import Slider from 'rc-slider';
 import $ from 'jquery';
 
@@ -315,16 +315,58 @@ class IdleResponse extends React.Component {
 class DoneButton extends React.Component {
   // This component is responsible for initiating the click
   // on the mturk form's submit button.
+  constructor(props) {
+    super(props);
+    this.state = {
+      'current_button': null,
+      'submitted': false,
+      'text': '',
+      'dropdown_value': null,
+
+    };
+  }
+
   render() {
+    let review_flow = null;
+    if (this.props.display_feedback) {
+      let dropdown = null;
+      let other_input = null;
+      if (this.state.current_button < 3) {
+        // show bad feedback dropdown
+      } else if (this.state.current_button > 3) {
+        // show good feedback dropdown
+      }
+      if (dropdown != null && dropdown_value == 'other') {
+        // show other text input box
+      }
+      review_flow = (
+        <div>
+          Rate your chat partner (fully optional):
+          <ButtonGroup>
+            <Button>1</Button>
+            <Button>2</Button>
+            <Button>3</Button>
+            <Button>4</Button>
+            <Button>5</Button>
+          </ButtonGroup>
+          {dropdown}
+          {other_input}
+          <Button>Submit</Button>
+        </div>
+      );
+    }
     return (
-      <button
-        id="done-button" type="button"
-        className="btn btn-primary btn-lg"
-        onClick={() => this.props.allDoneCallback()}>
-          <span
-            className="glyphicon glyphicon-ok-circle"
-            aria-hidden="true" /> Done with this HIT
-      </button>
+      <div>
+        <button
+          id="done-button" type="button"
+          className="btn btn-primary btn-lg"
+          onClick={() => this.props.allDoneCallback()}>
+            <span
+              className="glyphicon glyphicon-ok-circle"
+              aria-hidden="true" /> Done with this HIT
+        </button>
+        {review_buttons}
+      </div>
     );
   }
 }

@@ -185,6 +185,7 @@ class MainApp extends React.Component {
           allDoneCallback={() => allDoneCallback()}
           volume={this.state.volume}
           onVolumeChange={(v) => this.setState({volume: v})}
+          display_feedback={DISPLAY_FEEDBACK}
         />
         <MTurkSubmitForm
           assignment_id={this.state.assignment_id}
