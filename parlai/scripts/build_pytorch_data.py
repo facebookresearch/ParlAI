@@ -92,7 +92,6 @@ def build_data(opt):
     world_data = create_task(ordered_opt, agent)
     teacher = world_data.agents[0]
     agent = world_data.agents[1]
-
     datapath = os.path.join(opt.get('datapath', '.'),
                             '{}_pyt_data'.format(
                                 ordered_opt['task'].replace(':', '_')),
