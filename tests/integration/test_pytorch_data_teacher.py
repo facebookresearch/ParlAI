@@ -31,16 +31,6 @@ parser_defaults = {
     'batch_length_range': 5,
 }
 
-skip_shuffle = os.environ.get('TRAVIS') or True
-skip_pyt_train = os.environ.get('TRAVIS') or True
-skip_pyt_preprocess = False
-skip_pyt_preprocess_train = os.environ.get('TRAVIS') or True
-skip_pyt_batchsort = False
-skip_pyt_batchsort_train = os.environ.get('TRAVIS') or True
-skip_pytd_teacher = False
-skip_pyt_batchsort_field = False
-skip_pyt_multitask = False
-
 
 def set_model_file(defaults):
     defaults['model_file'] = os.path.join(tempfile.mkdtemp(), 'model')
@@ -60,7 +50,6 @@ def solved_task(str_output):
 class TestPytorchDataTeacher(unittest.TestCase):
     """Various tests for PytorchDataTeacher"""
 
-    @unittest.skipIf(skip_shuffle, "")
     def test_shuffle(self):
         """Simple test to ensure that dataloader is initialized with correct
             data sampler
@@ -97,8 +86,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
                             type(teacher.pytorch_dataloader.sampler) is RandomSampler,
                             'PytorchDataTeacher failed with args: {}'.format(opt)
                         )
+        print('\n------Passed `test_shuffle`------\n')
 
-    @unittest.skipIf(skip_pyt_train, "")
     def test_pyt_train(self):
         """
             Integration test: ensure that pytorch data teacher can successfully
@@ -126,21 +115,21 @@ class TestPytorchDataTeacher(unittest.TestCase):
                 defaults['datatype'] = dt
                 defaults['shuffle'] = True  # for train:stream
                 parser.set_defaults(**defaults)
-                TrainLoop(parser).train()
+                TrainLoop(parser.parse_args()).train()
             str_output = f.getvalue()
             self.assertTrue(solved_task(str_output),
                             'Teacher could not teach seq2seq with args: '
                             '{}; here is str_output: {}'.format(
                                 defaults, str_output
                             ))
+        print('\n------Passed `test_pyt_train`------\n')
 
-    @unittest.skipIf(skip_pyt_preprocess, "")
     def test_pyt_preprocess(self):
         """
             Test that the preprocess functionality works with the PytorchDataTeacher
             with a sample TorchAgent (here, the Seq2seq model).
 
-            This tests two whether the action provided by the preprocessed teacher
+            This tests whether the action provided by the preprocessed teacher
             is equivalent to the agent's observation after the agent processes it.
 
         """
@@ -185,8 +174,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
                                     val1,
                                     val2)
                                 )
+        print('\n------Passed `test_pyt_preprocess`------\n')
 
-    @unittest.skipIf(skip_pyt_preprocess_train, "")
     def test_pyt_preprocess_train(self):
         """
             Test that the preprocess functionality works with the PytorchDataTeacher
@@ -206,13 +195,13 @@ class TestPytorchDataTeacher(unittest.TestCase):
             defaults['datatype'] = 'train'
             defaults['pytorch_preprocess'] = True
             parser.set_defaults(**defaults)
-            TrainLoop(parser).train()
+            TrainLoop(parser.parse_args()).train()
 
         str_output = f.getvalue()
         self.assertTrue(solved_task(str_output),
                         'Teacher could not teach seq2seq with preprocessed obs')
+        print('\n------Passed `test_pyt_preprocess_train`------\n')
 
-    @unittest.skipIf(skip_pyt_batchsort, "")
     def test_pyt_batchsort(self):
         """
             Tests that batchsort *works* for two epochs; that is, that
@@ -279,8 +268,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
         check_equal_act_lists(bsrt_acts_ep1, no_bsrt_acts_ep1)
         check_equal_act_lists(bsrt_acts_ep2, no_bsrt_acts_ep2)
+        print('\n------Passed `test_pyt_batchsort`------\n')
 
-    @unittest.skipIf(skip_pyt_batchsort_train, "")
     def test_pyt_batchsort_train(self):
         """
             Tests the functionality of training with batchsort
@@ -312,14 +301,15 @@ class TestPytorchDataTeacher(unittest.TestCase):
                 if preprocess:
                     defaults['batch_sort_field'] = 'text_vec'
                 parser.set_defaults(**defaults)
-                TrainLoop(parser).train()
+                TrainLoop(parser.parse_args()).train()
 
             str_output = f.getvalue()
             self.assertTrue(solved_task(str_output),
                             'Teacher could not teach seq2seq with batch sort '
-                            'and args {}'.format((dt, preprocess)))
+                            'and args {} and output {}'.format((dt, preprocess),
+                                                               str_output))
+        print('\n------Passed `test_pyt_batchsort_train`------\n')
 
-    @unittest.skipIf(skip_pytd_teacher, "")
     def test_pytd_teacher(self):
         """
             Test that the pytorch teacher works with given Pytorch Datasets
@@ -359,8 +349,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
             self.assertTrue(pytorch_teacher_act[key] == regular_teacher_act[key],
                             'PytorchDataTeacher does not have the same value '
                             'as regular teacher for act key: {}'.format(key))
+        print('\n------Passed `test_pytd_teacher`------\n')
 
-    @unittest.skipIf(skip_pyt_batchsort_field, "")
     def test_pyt_batchsort_field(self):
         """
             Test that the batchsort actually works for Pytorch Data Teacher
@@ -405,7 +395,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
             lengths = [[ep_length(b[field]) for b in bb if field in b]
                        for bb in batch_sort_acts[:-2]]  # exclude last batch
             # verify batch lengths
-
             for batch_lens in lengths:
                 self.assertLessEqual(max(batch_lens) - min(batch_lens), max_range,
                                      'PytorchDataTeacher batching does not give '
@@ -417,8 +406,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults['batch_sort_field'] = 'text_vec'
         defaults['pytorch_preprocess'] = True
         verify_batch_lengths(defaults)
+        print('\n------Passed `test_pyt_batchsort_field`------\n')
 
-    @unittest.skipIf(skip_pyt_multitask, "")
     def test_pyt_multitask(self):
         """
             Unit test for ensuring that PytorchDataTeacher correctly handles
@@ -492,6 +481,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
         del defaults['task']
         defaults['pytorch_teacher_dataset'] = '{},{}'.format(dataset1, dataset2)
         run_display_test(defaults, eps_and_exs_counts[4])
+        print('\n------Passed `test_pyt_multitask`------\n')
 
 
 if __name__ == '__main__':

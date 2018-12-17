@@ -159,7 +159,7 @@ def build_data(opt):
         pytorch_data_len.write(json.dumps({'num_eps': num_eps,
                                            'num_exs': num_exs}))
     if preprocess and dictionary:
-        dictionary.save(get_dict_file(opt), sort=True)
+        dictionary.save(get_pyt_dict_file(opt), sort=True)
 
     print('[ pytorch data built. ]')
     return datapath

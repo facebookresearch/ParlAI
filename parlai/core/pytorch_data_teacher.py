@@ -43,6 +43,8 @@ from threading import Thread, Condition, RLock
 """
 # Maps episode length to list of episodes
 length_to_eps = {}
+# Set of episode indices already in the cache
+ep_indices = set()
 # List of batches if popping batches
 batches = []
 # If all episodes have been loaded into memory
@@ -137,13 +139,17 @@ def batch_cache(function):
             for i in range(1, caller.batch_length_range)
         ])
         lengths = [max(i, 1) for i in lengths]
-        in_cache = False
-        for l in lengths:
-            if l in length_to_eps:
-                with cache_lock:
-                    length_to_eps[l]['ep_list'] += [(ep_idx, episode)]
-                in_cache = True
-                break
+        in_cache = ep_idx in ep_indices
+        # first check if episode can go in existing bucket
+        if not in_cache:
+            for l in lengths:
+                if l in length_to_eps:
+                    with cache_lock:
+                        length_to_eps[l]['ep_list'] += [(ep_idx, episode)]
+                        ep_indices.add(ep_idx)
+                    in_cache = True
+                    break
+        # otherwise, make a new bucket
         if not in_cache:
             with cache_lock:
                 length_to_eps[length] = {
@@ -151,6 +157,7 @@ def batch_cache(function):
                     'ep_list': [(ep_idx, episode)],
                     'bucket_complete': False
                 }
+                ep_indices.add(ep_idx)
         if ep_idx == caller.dataset.num_episodes() - 1:
             consolidate(caller)
             with add_to_cache_cv:
