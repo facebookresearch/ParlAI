@@ -21,7 +21,7 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
-from parlai.core.worlds import create_task
+from parlai.core.worlds import create_task, BatchWorld
 from parlai.core.utils import TimeLogger
 from parlai.tasks.talkthewalk.agents import TouristAgent, GuideAgent
 from parlai.tasks.talkthewalk.worlds import SimulateWorld
@@ -34,8 +34,9 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, True, 'Evaluate a model')
     parser.add_parlai_data_path()
     # Get command line arguments
+    parser.add_argument('-tmf', '--tourist-model-file', type=str)
+    parser.add_argument('-gmf', '--guide-model-file', type=str)
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('--metrics', type=str, default="all",
                         help="list of metrics to show/compute, e.g. "
@@ -47,10 +48,10 @@ def setup_args(parser=None):
 
 def run(opt):
     opt = copy.deepcopy(opt)
-    opt['model'] = 'parlai.tasks.talkthewalk.agents:TouristAgent'
 
+    opt['model_file'] = opt['tourist_model_file']
     tourist = create_agent(opt)
-    opt['model'] = 'parlai.tasks.talkthewalk.agents:GuideAgent'
+    opt['model_file'] = opt['guide_model_file']
     guide = create_agent(opt)
 
     world = SimulateWorld(opt, [tourist, guide])
@@ -74,13 +75,9 @@ def run(opt):
         world.parley()
         if opt['display_examples']:
             print(world.display() + "\n~~")
-        if log_time.time() > log_every_n_secs:
-            report = world.report()
-            text, report = log_time.log(report['exs'], world.num_examples(),
-                                        report)
-            print(text)
         if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
             break
+
     if world.epoch_done():
         print("EPOCH DONE")
     print('finished evaluating task using datatype {}'.format(

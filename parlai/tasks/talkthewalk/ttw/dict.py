@@ -147,7 +147,7 @@ class ActionAgnosticDictionary:
     def decode(self, id):
         return self.agnostic_id2act[id-1]
 
-    def encode_from_location(self, old_loc, new_loc):
+    def move_from_location(self, old_loc, new_loc):
         """Determine if tourist went up, down, left, or right"""
         step_to_dir = {
             0: {
@@ -164,7 +164,10 @@ class ActionAgnosticDictionary:
         }
 
         step = [new_loc[0] - old_loc[0], new_loc[1] - old_loc[1]]
-        act = self.agnostic_act2id[step_to_dir[step[0]][step[1]]]
+        return step_to_dir[step[0]][step[1]]
+
+    def encode_from_location(self, old_loc, new_loc):
+        act = self.agnostic_act2id[self.move_from_location(old_loc, new_loc)]
         return act + 1
 
     def __len__(self):
