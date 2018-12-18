@@ -134,6 +134,7 @@ class MTurkManager():
         self.db_logger = None
         self.logging_permitted = False
         self.task_state = self.STATE_CREATED
+        self._assert_opts()
 
     @staticmethod
     def make_taskless_instance(is_sandbox=False):
@@ -154,6 +155,11 @@ class MTurkManager():
         return manager
 
     # Helpers and internal manager methods #
+
+    def _assert_opts(self):
+        """Manages ensuring everything about the passed in options make sense
+        in that they don't conflict in some way or another"""
+        pass
 
     def _init_state(self):
         """Initialize everything in the worker, task, and thread states"""
@@ -957,6 +963,7 @@ class MTurkManager():
         self.is_unique = self.opt['unique_worker']
         self.max_hits_per_worker = self.opt.get('max_hits_per_worker', 0)
         mturk_utils.create_hit_config(
+            opt=self.opt,
             task_description=self.opt['task_description'],
             unique_worker=self.is_unique,
             is_sandbox=self.opt['is_sandbox']
@@ -1518,6 +1525,7 @@ class MTurkManager():
         for _i in range(num_hits):
             mturk_page_url, hit_id, mturk_response = \
                 mturk_utils.create_hit_with_hit_type(
+                    opt=self.opt,
                     page_url=mturk_chat_url,
                     hit_type_id=hit_type_id,
                     num_assignments=1,

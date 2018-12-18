@@ -8,7 +8,10 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {FormControl, Button, ButtonGroup} from 'react-bootstrap';
+import {
+  FormControl, Button, ButtonGroup, InputGroup, MenuItem, DropdownButton,
+  OverlayTrigger, Tooltip
+} from 'react-bootstrap';
 import Slider from 'rc-slider';
 import $ from 'jquery';
 
@@ -261,6 +264,12 @@ class ChatPane extends React.Component {
     return this.props.frame_height - bottom_height;
   }
 
+  handleResize() {
+    if (this.getChatHeight() != this.state.chat_height) {
+      this.setState({chat_height: this.getChatHeight()});
+    }
+  }
+
   render () {
     let v_id = this.props.v_id;
     let XMessageList = getCorrectComponent('XMessageList', v_id);
@@ -278,9 +287,7 @@ class ChatPane extends React.Component {
     };
 
     window.setTimeout(() => {
-      if (this.getChatHeight() != this.state.chat_height) {
-        this.setState({chat_height: this.getChatHeight()});
-      }
+      this.handleResize()
     }, 10);
 
     top_pane_style['height'] = (this.state.chat_height) + 'px'
@@ -312,66 +319,195 @@ class IdleResponse extends React.Component {
   }
 }
 
-class DoneButton extends React.Component {
-  // This component is responsible for initiating the click
-  // on the mturk form's submit button.
+class ReviewButtons extends React.Component {
+  GOOD_REASONS = [
+    'not specified',
+    'Interesting/Creative',
+    'other',
+  ]
+
+  BAD_REASONS = [
+    'not specified',
+    "Didn't understand task",
+    "Bad grammar/spelling",
+    "Total nonsense",
+    "slow responder",
+    'other',
+  ]
+
+  RATING_VALUES = [1, 2, 3, 4, 5]
+
+  RATING_TITLES = [
+    'Terrible', 'Bad', 'Average/Good',
+    'Great', 'Above and Beyond'
+  ]
+
   constructor(props) {
     super(props);
     this.state = {
-      'current_button': null,
+      'current_rating': null,
+      'submitting': false,
       'submitted': false,
       'text': '',
-      'dropdown_value': null,
-
+      'dropdown_value': 'not specified',
     };
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    this.props.onInputResize();
+  }
+
+  render() {
+    // Create basic button selector
+    let current_rating = this.state.current_rating;
+    let button_vals = this.RATING_VALUES;
+    let rating_titles = this.RATING_TITLES;
+    let buttons = button_vals.map (
+      (v) => {
+        let use_style = 'info';
+        if (v < 3) {
+          use_style = 'danger';
+        } else if (v > 3) {
+          use_style = 'success'
+        }
+
+        let tooltip = <Tooltip id={"tooltip-"+v}>{rating_titles[v-1]}</Tooltip>;
+        return (
+          <OverlayTrigger
+            placement="top" overlay={tooltip} key={'select-rating-' + v}>
+            <Button
+              onClick={() => this.setState({
+                'current_rating': v,
+                'text': '',
+                'dropdown_value': 'not specified',
+              })}
+              bsStyle={current_rating == v ? use_style : 'default'}
+              disabled={this.state.submitting}
+            >
+              {v}
+            </Button>
+          </OverlayTrigger>
+        );
+      }
+    )
+
+    // Dropdown and other only appear in some cases
+    let dropdown = null;
+    let other_input = null;
+    let reason_input = null;
+    if (current_rating != null && current_rating != 3) {
+      let options = current_rating > 3 ? this.GOOD_REASONS : this.BAD_REASONS;
+      let dropdown_vals = options.map((opt) => (
+        <MenuItem
+          key={'dropdown-item-' + opt}
+          eventKey={opt}
+          onSelect={(key) => this.setState({dropdown_value: key, text: ''})}
+        >
+          {opt}
+        </MenuItem>
+      ))
+      dropdown = (
+        <DropdownButton
+          dropup={true}
+          componentClass={InputGroup.Button}
+          title={this.state.dropdown_value}
+          id={'review-dropdown'}
+          disabled={this.state.submitting}
+        >
+          {dropdown_vals}
+        </DropdownButton>
+      );
+    }
+
+    // Create other text
+    if (dropdown != null && this.state.dropdown_value == 'other') {
+      // Optional input for if the user says other
+      other_input = <FormControl
+        type="text"
+        placeholder="Enter reason (optional)"
+        value={this.state.text}
+        onChange={(t) => this.setState({text: t.target.value})}
+        disabled={this.state.submitting}
+      />;
+    }
+    if (dropdown != null) {
+      reason_input = <div style={{marginBottom: '8px'}}>
+        Give a reason for your rating (optional):
+        <InputGroup>
+          {dropdown}
+          {other_input}
+        </InputGroup>
+      </div>
+    }
+
+    // Assemble flow components
+    let disable_submit = (this.state.submitting || current_rating == null);
+    let review_flow = (
+      <div>
+        Rate your chat partner (fully optional & confidential. 3 is average):
+        <br />
+        <ButtonGroup>
+          {buttons}
+        </ButtonGroup>
+        {reason_input}
+        <div style={{marginBottom: '8px'}}>
+          <Button
+            disabled={disable_submit}
+            onClick={() => {
+              this.setState({'submitting': true})
+              let feedback_data = {
+                rating: this.state.current_rating,
+                reason_category: this.state.dropdown_value,
+                reason: this.state.text,
+              }
+              this.props.onMessageSend(
+                '[PEER_REVIEW]',
+                feedback_data,
+                () => this.setState({submitted: true}),
+                true, // This is a system message, shouldn't be put in feed
+              )
+            }}
+          >
+            {this.state.submitted ? 'Submitted!' : 'Submit review'}
+          </Button> (press this before Done to submit feedback)
+        </div>
+      </div>
+    );
+    return review_flow;
+  }
+}
+
+class DoneButton extends React.Component {
+  // This component is responsible for initiating the click
+  // on the mturk form's submit button.
   render() {
     let review_flow = null;
     if (this.props.display_feedback) {
-      let dropdown = null;
-      let other_input = null;
-      if (this.state.current_button < 3) {
-        // show bad feedback dropdown
-      } else if (this.state.current_button > 3) {
-        // show good feedback dropdown
-      }
-      if (dropdown != null && dropdown_value == 'other') {
-        // show other text input box
-      }
-      review_flow = (
-        <div>
-          Rate your chat partner (fully optional):
-          <ButtonGroup>
-            <Button>1</Button>
-            <Button>2</Button>
-            <Button>3</Button>
-            <Button>4</Button>
-            <Button>5</Button>
-          </ButtonGroup>
-          {dropdown}
-          {other_input}
-          <Button>Submit</Button>
-        </div>
-      );
+      review_flow = <ReviewButtons {...this.props} />;
     }
     return (
       <div>
-        <button
-          id="done-button" type="button"
-          className="btn btn-primary btn-lg"
-          onClick={() => this.props.allDoneCallback()}>
-            <span
-              className="glyphicon glyphicon-ok-circle"
-              aria-hidden="true" /> Done with this HIT
-        </button>
-        {review_buttons}
+        {review_flow}
+        <div>
+          <button
+            id="done-button" type="button"
+            className="btn btn-primary btn-lg"
+            onClick={() => this.props.allDoneCallback()}>
+              <span
+                className="glyphicon glyphicon-ok-circle"
+                aria-hidden="true" /> Done with this HIT
+          </button>
+        </div>
       </div>
     );
   }
 }
 
 class DoneResponse extends React.Component {
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    this.props.onInputResize();
+  }
+
   render () {
     let v_id = this.props.v_id;
     let XDoneButton = getCorrectComponent('XDoneButton', v_id);
@@ -421,6 +557,7 @@ class TextResponse extends React.Component {
     if (this.props.active && !prevProps.active) {
       $("input#id_text_input").focus();
     }
+    this.props.onInputResize();
   }
 
   tryMessageSend() {
@@ -532,6 +669,14 @@ class ResponsePane extends React.Component {
 }
 
 class RightPane extends React.Component {
+  handleResize() {
+    if (this.chat_pane !== undefined) {
+      if (this.chat_pane.handleResize !== undefined) {
+        this.chat_pane.handleResize();
+      }
+    }
+  }
+
   render () {
     let v_id = this.props.v_id;
     let XChatPane = getCorrectComponent('XChatPane', v_id);
@@ -545,8 +690,12 @@ class RightPane extends React.Component {
 
     return (
       <div id="right-pane" style={right_pane}>
-        <XChatPane message_count={this.props.messages.length} {...this.props} />
-        <XResponsePane {...this.props} />
+        <XChatPane
+          message_count={this.props.messages.length}
+          {...this.props}
+          ref={(pane) => {this.chat_pane = pane}}
+        />
+        <XResponsePane {...this.props} onInputResize={() => this.handleResize()}/>
       </div>
     );
   }

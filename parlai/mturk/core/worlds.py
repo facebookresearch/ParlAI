@@ -25,7 +25,16 @@ class MTurkDataWorld(World):
                 'agent_id': agent.id,
                 'assignment_id': agent.assignment_id,
                 'messages': agent.get_messages(),
+                'given_feedback': agent.feedback,
             }
+
+        # In simple pairing case, attach the feedback right here
+        if len(workers) == 2:
+            data = save_data['worker_data']
+            a_0 = workers[0]
+            a_1 = workers[1]
+            data[a_0.worker_id]['gotten_feedback'] = a_1.feedback
+            data[a_1.worker_id]['gotten_feedback'] = a_0.feedback
 
         return save_data
 
