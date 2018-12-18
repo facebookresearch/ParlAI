@@ -159,7 +159,15 @@ class MTurkManager():
     def _assert_opts(self):
         """Manages ensuring everything about the passed in options make sense
         in that they don't conflict in some way or another"""
-        pass
+        if self.opt.get('allow_reviews') and len(self.mturk_agent_ids) != 2:
+            shared_utils.print_and_log(
+                logging.WARN,
+                '[OPT CONFIGURATION ISSUE] '
+                'allow_reviews is currently only supported on 2 person tasks, '
+                'overriding this value to false.',
+                should_print=True
+            )
+            self.opt['allow_reviews'] = False
 
     def _init_state(self):
         """Initialize everything in the worker, task, and thread states"""
