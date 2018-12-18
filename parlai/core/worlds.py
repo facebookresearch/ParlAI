@@ -981,9 +981,6 @@ def create_task(opt, user_agents, default_world=None):
     see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``
     for list of tasks.
     """
-    if opt.get('multigpu') and opt.get('numthreads', 1) != 1:
-        return DistributedWorld(opt)
-
     if not (opt.get('task') or
             opt.get('pytorch_teacher_task') or
             opt.get('pytorch_teacher_dataset')):
@@ -1018,49 +1015,3 @@ def create_task(opt, user_agents, default_world=None):
         world = BatchWorld(opt, world)
 
     return world
-
-
-class DistributedProcess(Process):
-    def __init__(self, rank_id, opt, shared):
-        opt = copy.deepcopy(opt)
-        opt['distrank'] = rank_id
-        opt['multigpu'] = False
-        self.total_rank = opt['numthreads']
-        opt['numthreads'] = 1
-        self.rank_id = rank_id
-        self.opt = opt
-        super().__init__(daemon=True)
-
-    def run(self):
-        print("In a sub process", self.rank_id)
-        import torch
-        torch.cuda.set_device(self.rank_id)
-        torch.distributed.init_process_group(
-            backend='nccl',
-            init_method='tcp://localhost:31337',
-            world_size=self.total_rank,
-            rank=self.rank_id,
-        )
-        print("Past here")
-        from parlai.core.agents import create_agent
-        self.agent = create_agent(self.opt)
-        self.world = create_task(opt, agent)
-
-
-class DistributedWorld(World):
-    def __init__(self, opt):
-        import torch
-        self.num_procs = torch.cuda.device_count()
-        self.port = 14811
-        self.procs = []
-        for i in range(self.num_procs):
-            self.procs.append(DistributedProcess(i, opt, None))
-        for p in self.procs:
-            p.start()
-
-    def parley(self):
-        pass
-
-    def shutdown(self):
-        for p in self.procs:
-            p.join()

@@ -363,7 +363,7 @@ class TorchGeneratorAgent(TorchAgent):
         self.criterion = nn.CrossEntropyLoss(
             ignore_index=self.NULL_IDX, reduction='sum'
         )
-        if self.use_cuda and self.opt.get('numthreads', 1) == 1:
+        if self.use_cuda:
             self.criterion.cuda()
 
     def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
