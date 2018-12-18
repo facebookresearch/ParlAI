@@ -549,6 +549,7 @@ class MTurkManager():
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             agent.log_reconnect()
             agent.alived = True
+            conversation_id = agent.conversation_id
             if agent.get_status() == AssignState.STATUS_NONE:
                 # See if assigned an onboarding world, update state if so
                 if self.is_onboarding_world(conversation_id):
