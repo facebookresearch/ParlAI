@@ -10,7 +10,7 @@ import os
 
 import torch
 from torch import nn
-
+import pdb
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once
@@ -224,13 +224,16 @@ class TorchRankerAgent(TorchAgent):
                     "".format(m='candidates' if mode == 'train' else 'eval-candidates'))
 
             cands = batch.candidates
-            cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
+            cand_vecs = padded_3d(batch.candidate_vecs, self.NULL_IDX, use_cuda=self.use_cuda)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
+                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1)) + self.NULL_IDX
+                    if cand_vecs[i].size(1) < len(label_vec):
+                        label_vec = label_vec[0:cand_vecs[i].size(1)]
                     label_vec_pad[0:label_vec.size(0)] = label_vec
                     label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
+
 
         elif source == 'fixed':
             warn_once(
@@ -285,7 +288,7 @@ class TorchRankerAgent(TorchAgent):
 
     def update_params(self):
         """Do optim step and clip gradients if needed."""
-        if self.clip > 0:
+        if hasattr(self, 'clip') and self.clip > 0:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
