@@ -393,7 +393,6 @@ class TransformerDecoderLayer(nn.Module):
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.selfattn_norm = nn.LayerNorm([embedding_size])
         self.norm1 = nn.LayerNorm([embedding_size])
 
         self.encoder_attention = MultiHeadAttention(
