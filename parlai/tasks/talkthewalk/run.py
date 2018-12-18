@@ -6,16 +6,9 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-"""Basic example which iterates through the tasks specified and
-evaluates the given model on them.
-
-Examples
---------
-
-.. code-block:: shell
-
-  python run.py -t "babi:Task1k:2" -m "repeat_label"
-  python run.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
+"""
+Runs Talk the Walk Simulation using pretrained model files for tourist and
+agent.
 """
 
 from parlai.core.params import ParlaiParser
@@ -23,10 +16,16 @@ from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
 from parlai.core.worlds import create_task, BatchWorld
 from parlai.core.utils import TimeLogger
-from parlai.tasks.talkthewalk.agents import TouristAgent, GuideAgent
 from parlai.tasks.talkthewalk.worlds import SimulateWorld
 
-import random, copy
+import random, copy, os
+
+from build import build
+
+def _path(opt):
+    build(opt)
+    dt = opt['datatype'].split(':')[0]
+    opt['ttw_data'] = os.path.join(opt['datapath'], 'TalkTheWalk')
 
 
 def setup_args(parser=None):
@@ -37,6 +36,7 @@ def setup_args(parser=None):
     parser.add_argument('-tmf', '--tourist-model-file', type=str)
     parser.add_argument('-gmf', '--guide-model-file', type=str)
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
+    parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('--metrics', type=str, default="all",
                         help="list of metrics to show/compute, e.g. "
@@ -48,6 +48,7 @@ def setup_args(parser=None):
 
 def run(opt):
     opt = copy.deepcopy(opt)
+    _path(opt)
 
     opt['model_file'] = opt['tourist_model_file']
     tourist = create_agent(opt)
@@ -89,7 +90,4 @@ def run(opt):
 
 if __name__ == '__main__':
     parser = setup_args()
-    #need to load these from a file
-    parser.add_model_subargs(model='parlai.tasks.talkthewalk.agents:GuideAgent')
-    parser.add_model_subargs(model='parlai.tasks.talkthewalk.agents:TouristAgent')
     run(parser.parse_args(print_args=False))

@@ -564,8 +564,8 @@ def add_task_flags_to_agent_opt(agent, opt, flags):
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
-
-
+            
+            
 def create_task_agent_from_taskname(opt):
     """Create task agent(s) assuming the input ``task_dir:teacher_class``.
 

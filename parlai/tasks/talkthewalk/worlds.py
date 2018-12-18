@@ -1,12 +1,9 @@
 from collections import defaultdict
 from parlai.core.worlds import DialogPartnerWorld, ExecutableWorld
-from parlai.tasks.talkthewalk.ttw.dict import Dictionary, LandmarkDictionary, ActionAgnosticDictionary, ActionAwareDictionary, TextrecogDict, \
-    START_TOKEN, END_TOKEN
 import json
 import numpy as np
 import os
 import copy
-from .build import build
 from random import choice, randint
 
 BOUNDARIES = {
@@ -22,11 +19,6 @@ def is_action(msg, forward=False):
         return msg and (msg == 'ACTION:FORWARD' or msg == 'ACTION : FORWARD')
     return msg and msg.startswith('ACTION')
 
-def _path(opt):
-    build(opt)
-    dt = opt['datatype'].split(':')[0]
-    opt['ttw_data'] = os.path.join(opt['datapath'], 'TalkTheWalk')
-
 
 class Simulator():
 
@@ -38,9 +30,7 @@ class Simulator():
 
 
     def __init__(self, opt):
-        _path(opt)
         self.map = Map(opt['ttw_data'])
-        self.act_dict = ActionAgnosticDictionary()
         self.feature_loader = GoldstandardFeatures(self.map)
 
     def _get_random_location(self):
@@ -174,7 +164,6 @@ class Map(object):
         super(Map, self).__init__()
         self.coord_to_landmarks = dict()
         self.include_empty_corners = include_empty_corners
-        self.landmark_dict = LandmarkDictionary()
         self.data_dir = data_dir
         self.landmarks = dict()
 
@@ -184,7 +173,6 @@ class Map(object):
             self.landmarks[neighborhood] = json.load(open(os.path.join(data_dir, neighborhood, "map.json")))
             for landmark in self.landmarks[neighborhood]:
                 coord = self.transform_map_coordinates(landmark)
-                # landmark_idx = self.landmark_dict.encode(landmark['type'])
                 self.coord_to_landmarks[neighborhood][coord[0]][coord[1]].append(landmark['type'])
 
     def transform_map_coordinates(self, landmark):

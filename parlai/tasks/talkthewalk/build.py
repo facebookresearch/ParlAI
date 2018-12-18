@@ -10,7 +10,6 @@
 import parlai.core.build_data as build_data
 import os
 import json
-from .ttw.dict import Dictionary
 
 
 def build(opt):
@@ -34,17 +33,6 @@ def build(opt):
         train_set = json.load(open(os.path.join(dpath, 'talkthewalk.train.json')))
         valid_set = json.load(open(os.path.join(dpath, 'talkthewalk.valid.json')))
         test_set = json.load(open(os.path.join(dpath, 'talkthewalk.test.json')))
-
-        dictionary = Dictionary()
-        for set in [train_set, valid_set, test_set]:
-            for config in set:
-                for msg in config['dialog']:
-                    if msg['id'] == 'Tourist':
-                        if msg['text'] not in ['ACTION:TURNLEFT', 'ACTION:TURNRIGHT', 'ACTION:FORWARD']:
-                            if len(msg['text'].split(' ')) > 2:
-                                dictionary.add(msg['text'])
-
-        dictionary.save(os.path.join(dpath, 'dict.txt'))
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
