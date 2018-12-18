@@ -128,6 +128,27 @@ class GuideTeacher(TTWTeacher):
             ep[-1]['episode_done'] = True
         return ep
 
+class GuideLocalizeTeacher(TTWTeacher):
+    def _setup_episode(self, episode):
+        ep = []
+        example = {'episode_done': False, 'text': self.sim.get_text_map()}
+        for msg in episode['dialog']:
+            text = msg['text']
+            if msg['id'] == 'Guide':
+                example['text'] = example.get('text', '') + text + '\n'
+            elif msg['id'] == 'Tourist' and not is_action(text):
+                example['text'] = example.get('text', '') + text + '\n'
+                example['labels'] = [self.sim.get_agent_location()]
+                ep.append(example)
+                example = {'episode_done': False}
+
+            self.sim.execute(text)
+
+        if len(ep):
+            ep[-1]['episode_done'] = True
+        return ep
+
+
 
 
 class DefaultTeacher(TouristTeacher):

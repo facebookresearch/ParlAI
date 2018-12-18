@@ -61,11 +61,14 @@ class Simulator():
                 self.boundaries,
                 self.target_location)
 
+    def get_agent_location(self):
+        return str((self.agent_location[0]-self.boundaries[0])*4 +
+                (self.agent_location[1]-self.boundaries[1]))
+
     def get_text_map(self):
         L = [y for x in zip(*self.landmarks) for y in x]
-
         txt = '\n'.join([(str(i) + ':' + ' and '.join(x)) for i,x in enumerate(L)])
-        txt+= '\n' + str(self.target_location[0] + 4*self.target_location[1])+':Target'+'\n'
+        txt+= '\n' + str(self.target_location[0]*4 + self.target_location[1])+':Target'+'\n'
         return txt
 
     def get_current_view(self):
