@@ -20,6 +20,7 @@ client = None
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 
+
 def setup_aws_credentials():
     try:
         # Use existing credentials
