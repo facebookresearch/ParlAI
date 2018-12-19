@@ -753,7 +753,6 @@ class RunPanel extends React.Component {
 
 class AssignmentFeedback extends React.Component {
   render() {
-    console.log(this.props.data);
     let review_data = this.props.data.task.data;
     var content = null;
     var bsStyle = null;
@@ -802,7 +801,8 @@ class AssignmentFeedback extends React.Component {
     return (
       <Panel
         id="assignment_instruction_div"
-        bsStyle={bsStyle}>
+        bsStyle={bsStyle}
+        defaultExpanded={given_feedback || gotten_feedback}>
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Feedback

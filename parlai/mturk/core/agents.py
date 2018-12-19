@@ -321,7 +321,7 @@ class MTurkAgent(Agent):
             self.msg_queue.put(data)
 
     def flush_msg_queue(self):
-        """Clear all messages in the message queue"""
+        """Clear all messages in the message queue. Return flushed messages"""
         messages = []
         if self.msg_queue is None:
             return []
