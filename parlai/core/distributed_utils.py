@@ -97,13 +97,12 @@ def override_print(suppress=False, prefix=None):
     builtins.print = new_print
 
 
-def all_gather_list(data, group=None, max_size=16384):
+def all_gather_list(data, max_size=16384):
     """Gathers arbitrary data from all nodes into a list.
     Similar to :func:`~torch.distributed.all_gather` but for arbitrary Python
     data. Note that *data* must be picklable.
     Args:
         data (Any): data from the local worker to be gathered on other workers
-        group (optional): group of the collective
         max_size (int, optional): maximum size of the data to be gathered
             across workers
     """
@@ -138,7 +137,7 @@ def all_gather_list(data, group=None, max_size=16384):
     buffer_rank[1] = enc_size % 255
     buffer_rank[2: enc_size + 2] = torch.ByteTensor(list(enc))
 
-    dist.all_reduce(buffer, group=group)
+    dist.all_reduce(buffer)
 
     result = []
     for i in range(world_size):

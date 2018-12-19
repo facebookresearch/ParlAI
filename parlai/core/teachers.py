@@ -273,19 +273,10 @@ class FixedDialogTeacher(Teacher):
         """
         if num_eps is None:
             num_eps = self.num_episodes()
-            if self.opt.get('distributed_world_size'):
-                dist_world_size = self.opt['distributed_world_size']
-                new_num_eps = num_eps // dist_world_size
-                if self.opt['rank'] < num_eps % dist_world_size:
-                    new_num_eps += 1
-                num_eps = new_num_eps
         if loop is None:
             loop = self.training
         if self.random:
             new_idx = random.randrange(num_eps)
-            if self.opt.get('distributed_world_size'):
-                dist_world_size = self.opt['distributed_world_size']
-                new_idx = new_idx * dist_world_size + self.opt['rank']
         else:
             with self._lock():
                 self.index.value += 1

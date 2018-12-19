@@ -28,13 +28,14 @@ Examples
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer
+from parlai.core.utils import Timer, round_sigfigs
 from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.core.distributed_utils import (
-    sync_object, sync_sum, is_primary_worker
+    sync_object, sync_sum, is_primary_worker, all_gather_list, num_workers,
+    is_distributed
 )
-import math
+import numpy as np
 import os
 
 
@@ -111,17 +112,20 @@ def setup_args(parser=None):
 
 
 def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None):
-    """Eval on validation/test data.
-    - Agent is the agent to use for the evaluation.
-    - opt is the options that specific the task, eval_task, etc
-    - datatype is the datatype to use, such as "valid" or "test"
-    - write_log specifies to write metrics to file if the model_file is set
-    - max_exs limits the number of examples if max_exs > 0
-    - valid_world can be an existing world which will be reset instead of reinitialized
+    """
+    Eval on validation/test data.
+
+    :param agent: the agent to use for the evaluation.
+    :param opt: the options that specific the task, eval_task, etc
+    :param datatype: the datatype to use, such as "valid" or "test"
+    :param bool write_log: specifies to write metrics to file if the model_file is set
+    :param int max_exs: limits the number of examples if max_exs > 0
+    :param World valid_world: can be an existing world, which will be reset
+        instead of reinitialized
     """
     if not is_primary_worker():
-        # if we aren't the primary worker, skip running evaluation
-        return None, None
+        # just use the model's
+        return sync_object(None), None
 
     print('[ running eval: ' + datatype + ' ]')
     if 'stream' in opt['datatype']:
@@ -163,7 +167,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         f.write(metrics + '\n')
         f.close()
 
-    return valid_report, valid_world
+    return sync_object(valid_report), valid_world
 
 
 def save_best_valid(model_file, best_valid):
@@ -233,11 +237,15 @@ class TrainLoop():
             valid_world=self.valid_world)
 
         # logging
-        if opt['tensorboard_log'] is True:
+        if opt['tensorboard_log'] is True and is_primary_worker():
             self.writer.add_metrics('valid', int(
-                math.floor(self.train_time.time())), valid_report)
+                np.floor(self.train_time.time())), valid_report)
         # saving
-        if opt.get('model_file') and opt.get('save_after_valid'):
+        if (
+            opt.get('model_file') and
+            opt.get('save_after_valid') and
+            is_primary_worker()
+        ):
             print("[ saving model checkpoint: " +
                   opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
@@ -266,7 +274,7 @@ class TrainLoop():
                 if self.best_valid is not None else ''))
             self.best_valid = new_valid
             self.impatience = 0
-            if opt.get('model_file'):
+            if opt.get('model_file') and is_primary_worker():
                 print("[ saving best valid model: " + opt['model_file'] + " ]")
                 self.agent.save(opt['model_file'])
                 print("[ saving best valid metric: " +
@@ -291,35 +299,68 @@ class TrainLoop():
             return True
         return False
 
+    def _sync_training_metrics(self, metrics):
+        """
+        Sync training metrics across workers. A handful of special cases are handled
+        as exceptions, and the remaining metrics are simply averaged across workers.
+        """
+        if not is_distributed():
+            # nothing special needed
+            return metrics
+
+        all_versions = all_gather_list(metrics)
+        finalized = {}
+        to_average = {}
+        for m in all_versions:
+            for k, v in m.items():
+                if k == 'num_epochs':
+                    # just drop this metric
+                    pass
+                elif k == 'exs':
+                    # sum across:
+                    if k not in finalized:
+                        finalized[k] = 0
+                    finalized[k] += v
+                else:
+                    if k not in to_average:
+                        to_average[k] = []
+                    to_average[k].append(v)
+        for k, vals in to_average.items():
+            finalized[k] = np.mean(vals)
+
+        return finalized
+
+    def _nice_format(self, dictionary):
+        return {k: round_sigfigs(v, 4) for k, v in dictionary.items()}
+
     def log(self):
         opt = self.opt
         if opt['display_examples']:
             print(self.world.display() + '\n~~')
         logs = []
         # get report
-        # TODO: sync this object across
-        train_report = self.world.report(compute_time=True)
+        train_report = self._sync_training_metrics(self.world.report(compute_time=True))
         self.world.reset_metrics()
 
         # time elapsed
-        logs.append('time:{}s'.format(math.floor(self.train_time.time())))
+        logs.append('time:{}s'.format(np.floor(self.train_time.time())))
         total_exs = sync_sum(self.world.get_total_exs())
         logs.append('total_exs:{}'.format(total_exs))
 
-        exs_per_ep = sync_sum(self.world.num_examples())
+        exs_per_ep = self.world.num_examples()
         if exs_per_ep:
             logs.append('epochs:{}'.format(
                 round(total_exs / exs_per_ep, 2)))
 
         if 'time_left' in train_report:
             logs.append('time_left:{}s'.format(
-                math.floor(train_report.pop('time_left', ""))))
+                np.floor(train_report.pop('time_left', ""))))
 
-        log = '[ {} ] {}'.format(' '.join(logs), train_report)
+        log = '[ {} ] {}'.format(' '.join(logs), self._nice_format(train_report))
         print(log)
         self.log_time.reset()
 
-        if opt['tensorboard_log'] is True:
+        if opt['tensorboard_log'] is True and is_primary_worker():
             self.writer.add_metrics('train', total_exs, train_report)
 
     def train(self):
@@ -378,8 +419,6 @@ class TrainLoop():
         v_report, v_world = run_eval(self.agent, opt, 'valid', write_log=True)
         t_report, t_world = run_eval(self.agent, opt, 'test', write_log=True)
 
-        v_report = sync_object(v_report)
-        t_report = sync_object(t_report)
         if v_world:
             v_world.shutdown()
         if t_world:
