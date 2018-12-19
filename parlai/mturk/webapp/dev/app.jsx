@@ -1342,7 +1342,7 @@ class AssignmentView extends React.Component {
     }).catch((err) => {
       // Custom react module not found
       this.props.setCustomComponents({});
-    );
+    });
   }
 
   getOnboardingChat() {
@@ -1842,14 +1842,13 @@ class DemoTaskPanel extends React.Component {
             this.setState({
               task_loading: false, task_config: result.task_config});
           }).catch((err) => {
-          // Custom react module not found
-          if (result.task_config.frame_height === undefined) {
-            result.task_config.frame_height = 650;
-          }
-          this.setState({
-            task_loading: false, task_config: result.task_config});
-          );
-
+            // Custom react module not found
+            if (result.task_config.frame_height === undefined) {
+              result.task_config.frame_height = 650;
+            }
+            this.setState({
+              task_loading: false, task_config: result.task_config});
+          });
         },
         (error) => {
           this.setState({
