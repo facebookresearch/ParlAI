@@ -31,6 +31,9 @@ from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
 from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
+from parlai.core.distributed_utils import (
+    sync_object, sync_sum, is_primary_worker
+)
 import math
 import os
 
@@ -116,6 +119,10 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
     - max_exs limits the number of examples if max_exs > 0
     - valid_world can be an existing world which will be reset instead of reinitialized
     """
+    if not is_primary_worker():
+        # if we aren't the primary worker, skip running evaluation
+        return None, None
+
     print('[ running eval: ' + datatype + ' ]')
     if 'stream' in opt['datatype']:
         datatype += ':stream'
@@ -290,15 +297,16 @@ class TrainLoop():
             print(self.world.display() + '\n~~')
         logs = []
         # get report
+        # TODO: sync this object across
         train_report = self.world.report(compute_time=True)
         self.world.reset_metrics()
 
         # time elapsed
         logs.append('time:{}s'.format(math.floor(self.train_time.time())))
-        total_exs = self.world.get_total_exs()
+        total_exs = sync_sum(self.world.get_total_exs())
         logs.append('total_exs:{}'.format(total_exs))
 
-        exs_per_ep = self.world.num_examples()
+        exs_per_ep = sync_sum(self.world.num_examples())
         if exs_per_ep:
             logs.append('epochs:{}'.format(
                 round(total_exs / exs_per_ep, 2)))
@@ -323,36 +331,44 @@ class TrainLoop():
                 world.parley()
                 self.parleys += 1
 
+                # get the total training examples
+                total_epochs = sync_sum(world.get_total_epochs())
+                # and use the primary worker's timings for everything
+                train_time, log_time, validate_time = sync_object((
+                    self.train_time.time(),
+                    self.log_time.time(),
+                    self.validate_time.time()
+                ))
+
                 # check counters and timers
-                if world.get_total_epochs() >= self.max_num_epochs:
+                if total_epochs >= self.max_num_epochs:
                     self.log()
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
-                        self.max_num_epochs, self.train_time.time()))
+                        self.max_num_epochs, train_time))
                     break
-                if self.train_time.time() > self.max_train_time:
-                    print('[ max_train_time elapsed:{}s ]'.format(
-                        self.train_time.time()))
+                if train_time > self.max_train_time:
+                    print('[ max_train_time elapsed:{}s ]'.format(train_time))
                     break
-                if self.log_time.time() > self.log_every_n_secs:
+                if log_time > self.log_every_n_secs:
                     self.log()
-                if self.validate_time.time() > self.val_every_n_secs:
-                    stop_training = self.validate()
-                    if stop_training:
-                        break
-                if (world.get_total_epochs() - self.last_valid_epoch >=
-                        self.val_every_n_epochs):
-                    stop_training = self.validate()
-                    self.last_valid_epoch = world.get_total_epochs()
+                if (
+                    validate_time > self.val_every_n_secs or
+                    total_epochs - self.last_valid_epoch >= self.val_every_n_epochs
+                ):
+                    stop_training = sync_object(self.validate())
+                    self.last_valid_epoch = total_epochs
                     if stop_training:
                         break
                 if (self.save_time.time() > self.save_every_n_secs and
-                        opt.get('model_file')):
-                    print("[ saving model checkpoint: " +
-                          opt['model_file'] + ".checkpoint ]")
+                        opt.get('model_file') and
+                        is_primary_worker()):
+                    print("[ saving model checkpoint: {}.checkpoint".format(
+                        opt['model_file']
+                    ))
                     self.agent.save(opt['model_file'] + '.checkpoint')
                     self.save_time.reset()
 
-        if not self.saved:
+        if not self.saved and is_primary_worker():
             # save agent
             self.agent.save(opt['model_file'])
         elif opt.get('model_file'):
@@ -361,8 +377,13 @@ class TrainLoop():
 
         v_report, v_world = run_eval(self.agent, opt, 'valid', write_log=True)
         t_report, t_world = run_eval(self.agent, opt, 'test', write_log=True)
-        v_world.shutdown()
-        t_world.shutdown()
+
+        v_report = sync_object(v_report)
+        t_report = sync_object(t_report)
+        if v_world:
+            v_world.shutdown()
+        if t_world:
+            t_world.shutdown()
         return v_report, t_report
 
 

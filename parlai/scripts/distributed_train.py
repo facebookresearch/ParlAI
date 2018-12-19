@@ -15,7 +15,6 @@ This script will launch N subprocess, each which runs the full
 training loop independently.
 """
 
-import builtins
 import copy
 import torch
 try:
@@ -25,20 +24,7 @@ except RuntimeError:
 from torch.multiprocessing import Process
 import torch.distributed as dist
 import parlai.scripts.train_model as single_train
-
-
-def __override_print(suppress_output=False, prefix=None):
-    builtin_print = builtins.print
-
-    def new_print(*args, **kwargs):
-        if suppress_output:
-            return
-        elif prefix:
-            builtin_print(prefix, *args, **kwargs)
-        else:
-            builtin_print(*args, **kwargs)
-
-    builtins.print = new_print
+import parlai.core.distributed_utils as distributed_utils
 
 
 class DistributedProcess(Process):
@@ -49,9 +35,8 @@ class DistributedProcess(Process):
         super().__init__(daemon=True)
 
     def run(self):
-        __override_print(
-            suppress_output=not self.opt.get('verbose_workers'),
-            prefix="[rank{:2d}]".format(self.opt['rank']),
+        distributed_utils.override_print(
+            prefix='[rank{:2d}]'.format(self.rank)
         )
         print("Launching Process #{}".format(self.rank))
         torch.cuda.set_device(self.opt['gpu'])
@@ -67,30 +52,12 @@ class DistributedProcess(Process):
 
 def main():
     parser = single_train.setup_args()
-    grp = parser.add_argument_group('Distributed Training')
-    grp.add_argument(
-        '--distributed-world-size', type=int,
-        default=torch.cuda.device_count(),
-        help='Number of workers.'
-    )
-    # TODO: use --debug or --verbose instead?
-    grp.add_argument(
-        '--verbose-workers', type='bool', default=False,
-        help='Additional workers stay silent.',
-        hidden=True,
-    )
+    parser.add_distributed_training_args()
+    parser.set_defaults(distributed_world_size=torch.cuda.device_count())
     opt = parser.parse_args()
-    assert opt.get('numthreads') == 1
 
     opt_copies = []
     processes = []
-
-    if 'train:stream' in opt['datatype'] or 'ordered' in opt['datatype']:
-        raise ValueError(
-            "You should not combine ordered streaming with distributed training "
-            "because all workers will have exactly the same minibatches, "
-            "defeating the purpose."
-        )
 
     for rank in range(opt['distributed_world_size']):
         optc = copy.deepcopy(opt)

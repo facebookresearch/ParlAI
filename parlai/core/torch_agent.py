@@ -22,6 +22,7 @@ from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor, NEAR_INF
+from parlai.core.distributed_utils import is_primary_worker
 
 try:
     import torch
@@ -403,7 +404,7 @@ class TorchAgent(Agent):
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
         """
-        if self.get('rank', 0) != 0:
+        if not is_primary_worker():
             # we're in distributed mode, copying embeddings in the workers
             # slows things down considerably
             return

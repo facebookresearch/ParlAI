@@ -368,6 +368,20 @@ class ParlaiParser(argparse.ArgumentParser):
 
         self.add_pytorch_datateacher_args()
 
+    def add_distributed_training_args(self):
+        grp = self.add_argument_group('Distributed Training')
+        grp.add_argument(
+            '--distributed-world-size', type=int,
+            help='Number of workers.'
+        )
+        # TODO: use --debug or --verbose instead?
+        grp.add_argument(
+            '--verbose-workers', type='bool', default=False,
+            help='Additional workers stay silent.',
+            hidden=True,
+        )
+        return grp
+
     def add_pytorch_datateacher_args(self):
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
