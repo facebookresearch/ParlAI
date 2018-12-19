@@ -1334,12 +1334,17 @@ class AssignmentView extends React.Component {
   constructor(props) {
     super(props);
     let task_name = props.data.task_name;
-    import(
-      /* webpackMode: "eager" */
-      `./task_components/${task_name}/components/custom.jsx`
-    ).then((custom) => {
-      this.props.setCustomComponents(custom.default);
-    });
+    try {
+      import(
+        /* webpackMode: "eager" */
+        `./task_components/${task_name}/components/custom.jsx`
+      ).then((custom) => {
+        this.props.setCustomComponents(custom.default);
+      });
+    } catch (err) {
+      // Custom react module not found
+      this.props.setCustomComponents({});
+    }
   }
 
   getOnboardingChat() {
