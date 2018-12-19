@@ -446,7 +446,7 @@ class ReviewButtons extends React.Component {
     let disable_submit = (this.state.submitting || current_rating == null);
     let review_flow = (
       <div>
-        Rate your chat partner (fully optional & confidential. 3 is average):
+        Rate your chat partner (fully optional & confidential):
         <br />
         <ButtonGroup>
           {buttons}
