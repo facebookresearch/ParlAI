@@ -168,6 +168,19 @@ class MTurkManager():
                 should_print=True
             )
             self.opt['allow_reviews'] = False
+        if self.opt.get('frontend_version', 0) < 1:
+            # Ensure no react only features have been set
+            features = ['frame_height', 'allow_reviews', 'block_mobile']
+            for feat in features:
+                if self.opt.get(feat) is not None:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        '[OPT CONFIGURATION ISSUE] '
+                        '{} only works when using the react frontend '
+                        '(frontend_version >= 1), so this option will be '
+                        'ignored'.format(feat),
+                        should_print=True
+                    )
 
     def _init_state(self):
         """Initialize everything in the worker, task, and thread states"""

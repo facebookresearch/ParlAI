@@ -9,8 +9,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  FormControl, Button, ButtonGroup, InputGroup, MenuItem, DropdownButton,
-  OverlayTrigger, Tooltip
+  FormControl, Button, ButtonGroup, InputGroup, MenuItem, DropdownButton
 } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import $ from 'jquery';
@@ -321,18 +320,18 @@ class IdleResponse extends React.Component {
 
 class ReviewButtons extends React.Component {
   GOOD_REASONS = [
-    'not specified',
+    'Not specified',
     'Interesting/Creative',
-    'other',
+    'Other',
   ]
 
   BAD_REASONS = [
-    'not specified',
+    'Not specified',
     "Didn't understand task",
     "Bad grammar/spelling",
     "Total nonsense",
-    "slow responder",
-    'other',
+    "Slow responder",
+    'Other',
   ]
 
   RATING_VALUES = [1, 2, 3, 4, 5]
@@ -344,17 +343,24 @@ class ReviewButtons extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      'current_rating': null,
-      'submitting': false,
-      'submitted': false,
-      'text': '',
-      'dropdown_value': 'not specified',
-    };
+    let init_state = props.init_state
+    if (init_state !== undefined) {
+      this.state = init_state;
+    } else {
+      this.state = {
+        'current_rating': null,
+        'submitting': false,
+        'submitted': false,
+        'text': '',
+        'dropdown_value': 'Not specified',
+      };
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    this.props.onInputResize();
+    if (this.props.onInputResize !== undefined) {
+      this.props.onInputResize();
+    }
   }
 
   render() {
@@ -371,22 +377,18 @@ class ReviewButtons extends React.Component {
           use_style = 'success'
         }
 
-        let tooltip = <Tooltip id={"tooltip-"+v}>{rating_titles[v-1]}</Tooltip>;
         return (
-          <OverlayTrigger
-            placement="top" overlay={tooltip} key={'select-rating-' + v}>
-            <Button
-              onClick={() => this.setState({
-                'current_rating': v,
-                'text': '',
-                'dropdown_value': 'not specified',
-              })}
-              bsStyle={current_rating == v ? use_style : 'default'}
-              disabled={this.state.submitting}
-            >
-              {v}
-            </Button>
-          </OverlayTrigger>
+          <Button
+            onClick={() => this.setState({
+              'current_rating': v,
+              'text': '',
+              'dropdown_value': 'Not specified',
+            })}
+            bsStyle={current_rating == v ? use_style : 'default'}
+            disabled={this.state.submitting}
+          >
+            {rating_titles[v-1]}
+          </Button>
         );
       }
     )
@@ -420,7 +422,7 @@ class ReviewButtons extends React.Component {
     }
 
     // Create other text
-    if (dropdown != null && this.state.dropdown_value == 'other') {
+    if (dropdown != null && this.state.dropdown_value == 'Other') {
       // Optional input for if the user says other
       other_input = <FormControl
         type="text"
@@ -451,25 +453,35 @@ class ReviewButtons extends React.Component {
         </ButtonGroup>
         {reason_input}
         <div style={{marginBottom: '8px'}}>
-          <Button
-            disabled={disable_submit}
-            onClick={() => {
-              this.setState({'submitting': true})
-              let feedback_data = {
-                rating: this.state.current_rating,
-                reason_category: this.state.dropdown_value,
-                reason: this.state.text,
-              }
-              this.props.onMessageSend(
-                '[PEER_REVIEW]',
-                feedback_data,
-                () => this.setState({submitted: true}),
-                true, // This is a system message, shouldn't be put in feed
-              )
-            }}
-          >
-            {this.state.submitted ? 'Submitted!' : 'Submit review'}
-          </Button> (press this before Done to submit feedback)
+          <ButtonGroup style={{marginBottom: '8px'}}>
+            <Button
+              disabled={disable_submit}
+              bsStyle="info"
+              onClick={() => {
+                this.setState({'submitting': true});
+                let feedback_data = {
+                  rating: this.state.current_rating,
+                  reason_category: this.state.dropdown_value,
+                  reason: this.state.text,
+                };
+                this.props.onMessageSend(
+                  '[PEER_REVIEW]',
+                  feedback_data,
+                  () => this.setState({submitted: true}),
+                  true, // This is a system message, shouldn't be put in feed
+                );
+                this.props.onChoice(true);
+              }}
+            >
+              {this.state.submitted ? 'Submitted!' : 'Submit Review'}
+            </Button>
+            <Button
+              disabled={this.state.submitting}
+              onClick={() => this.props.onChoice(false)}
+            >
+              Decline Review
+            </Button>
+          </ButtonGroup>
         </div>
       </div>
     );
@@ -480,23 +492,56 @@ class ReviewButtons extends React.Component {
 class DoneButton extends React.Component {
   // This component is responsible for initiating the click
   // on the mturk form's submit button.
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      feedback_shown: this.props.display_feedback,
+      feedback_given: null,
+    };
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.onInputResize !== undefined) {
+      this.props.onInputResize();
+    }
+  }
+
   render() {
     let review_flow = null;
+    let done_button = (
+      <button
+        id="done-button" type="button"
+        className="btn btn-primary btn-lg"
+        onClick={() => this.props.allDoneCallback()}>
+          <span
+            className="glyphicon glyphicon-ok-circle"
+            aria-hidden="true" /> Done with this HIT
+      </button>
+    );
     if (this.props.display_feedback) {
-      review_flow = <ReviewButtons {...this.props} />;
+      if (this.state.feedback_shown) {
+        let XReviewButtons = getCorrectComponent(
+          'XReviewButtons', this.props.v_id);
+        review_flow = (
+          <XReviewButtons
+            {...this.props}
+            onChoice={(did_give) => this.setState({
+              feedback_shown: false,
+              feedback_given: did_give
+            })}
+          />
+        );
+        done_button = null;
+      } else if (this.state.feedback_given) {
+        review_flow = <span>Thanks for the feedback!</span>;
+      }
     }
     return (
       <div>
         {review_flow}
         <div>
-          <button
-            id="done-button" type="button"
-            className="btn btn-primary btn-lg"
-            onClick={() => this.props.allDoneCallback()}>
-              <span
-                className="glyphicon glyphicon-ok-circle"
-                aria-hidden="true" /> Done with this HIT
-          </button>
+          {done_button}
         </div>
       </div>
     );
@@ -813,6 +858,7 @@ component_list = {
   'XMessageList': ['MessageList', MessageList],
   'XChatMessage': ['ChatMessage', ChatMessage],
   'XTaskDescription': ['XTaskDescription', TaskDescription],
+  'XReviewButtons': ['XReviewButtons', ReviewButtons],
 };
 
 export {

@@ -20,11 +20,15 @@ class MTurkDataWorld(World):
         }
 
         for agent in workers:
+            messages = agent.get_messages()
+            # filter out peer feedback
+            save_messages = [m for m in messages
+                             if m['text'] != '[PEER_REVIEW]']
             save_data['worker_data'][agent.worker_id] = {
                 'worker_id': agent.worker_id,
                 'agent_id': agent.id,
                 'assignment_id': agent.assignment_id,
-                'messages': agent.get_messages(),
+                'messages': save_messages,
                 'given_feedback': agent.feedback,
             }
 

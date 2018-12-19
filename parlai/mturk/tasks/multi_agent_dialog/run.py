@@ -74,7 +74,7 @@ def main():
             mturk_agent_2 = workers[1]
 
             # Create the local human agents
-            human_agent_1 = LocalHumanAgent(opt=None)
+            human_agent_1 = LocalHumanAgent(opt={})
             human_agent_1.id = human_agent_1_id
 
             world = MTurkMultiAgentDialogWorld(
