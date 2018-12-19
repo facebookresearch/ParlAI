@@ -386,6 +386,7 @@ class ReviewButtons extends React.Component {
             })}
             bsStyle={current_rating == v ? use_style : 'default'}
             disabled={this.state.submitting}
+            key={'button-rating-' + v}
           >
             {rating_titles[v-1]}
           </Button>

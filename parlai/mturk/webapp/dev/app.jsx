@@ -802,7 +802,7 @@ class AssignmentFeedback extends React.Component {
       <Panel
         id="assignment_instruction_div"
         bsStyle={bsStyle}
-        defaultExpanded={given_feedback || gotten_feedback}>
+        defaultExpanded={!!(given_feedback || gotten_feedback)}>
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Feedback
