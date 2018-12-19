@@ -1452,8 +1452,9 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         mturk_utils.subscribe_to_hits.assert_called_with(
             fake_hit, manager.is_sandbox, manager.topic_arn)
         self.assertEqual(
-            len(mturk_utils.create_hit_with_hit_type.call_args_list), 6)
+            len(mturk_utils.create_hit_with_hit_type.call_args_list), 5)
         mturk_utils.create_hit_with_hit_type.assert_called_with(
+            opt=manager.opt,
             page_url=mturk_chat_url,
             hit_type_id=fake_hit,
             num_assignments=1,
