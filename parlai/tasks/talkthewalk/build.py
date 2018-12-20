@@ -29,10 +29,5 @@ def build(opt):
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
-
-        train_set = json.load(open(os.path.join(dpath, 'talkthewalk.train.json')))
-        valid_set = json.load(open(os.path.join(dpath, 'talkthewalk.valid.json')))
-        test_set = json.load(open(os.path.join(dpath, 'talkthewalk.test.json')))
-
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

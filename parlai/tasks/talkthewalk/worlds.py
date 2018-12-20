@@ -119,12 +119,12 @@ class SimulateWorld(ExecutableWorld):
 
         if agents:
             self.send_map(self.guide)
-            self.send_location(self.tourist)
+            self.send_view(self.tourist)
 
     def send_map(self, agent):
         agent.observe({'text': self.sim.get_text_map()})
 
-    def send_location(self, agent):
+    def send_view(self, agent):
         agent.observe({'text': self.sim.get_current_view()})
 
     def share(self):
@@ -164,7 +164,7 @@ class Map(object):
     """Map with landmarks"""
 
     def __init__(self, data_dir, include_empty_corners=True):
-        super(Map, self).__init__()
+        super().__init__()
         self.coord_to_landmarks = dict()
         self.include_empty_corners = include_empty_corners
         self.data_dir = data_dir

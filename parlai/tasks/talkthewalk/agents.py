@@ -38,7 +38,6 @@ class TTWTeacher(FixedDialogTeacher):
         self.opt = opt
         self.datatype = self.opt.get('datatype')
         self.training = self.datatype.startswith('train')
-        self.num_epochs = self.opt.get('num_epochs', 0)
         data_path, datafile = _path(opt)
 
         if shared:
@@ -50,6 +49,11 @@ class TTWTeacher(FixedDialogTeacher):
         self.reset()
 
 
+    def _setup_episode(episode):
+        """Process one episode in an example."""
+        raise NotImplementedError(
+            'Abstract class: user must implement _setup_episode')
+
     def _setup_data(self, datafile):
         self.episodes = json.load(open(datafile))
         self.data = []
@@ -58,8 +62,8 @@ class TTWTeacher(FixedDialogTeacher):
         for episode in self.episodes:
             init = {x:y for x,y in episode.items() if x in ['start_location',
                 'neighborhood', 'boundaries', 'target_location']}
-            self.sim.init_sim(**init)
             if episode:
+                self.sim.init_sim(**init)
                 episode = self._setup_episode(episode)
                 if episode:
                     self.data.append(episode)
