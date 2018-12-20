@@ -63,9 +63,9 @@ class MessengerAgent(Agent):
                 '{} could not be extracted to an observed message'.format(resp)
             )
 
-    def observe_typing_on(self):
+    def observe_typing_on(self, persona_id=None):
         """Allow agent to observe typing indicator"""
-        self.manager.message_sender.typing_on(self.id)
+        self.manager.message_sender.typing_on(self.id, persona_id=persona_id)
 
     def put_data(self, message):
         """Put data into the message queue if it hasn't already been seen"""
