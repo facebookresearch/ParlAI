@@ -127,7 +127,6 @@ class ChatDisplay extends React.Component {
       <Panel
         id="message_display_div"
         bsStyle="info"
-        style={{float: 'right', 'width': '58%'}}
         defaultExpanded>
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
@@ -752,6 +751,73 @@ class RunPanel extends React.Component {
   }
 }
 
+class AssignmentFeedback extends React.Component {
+  render() {
+    let review_data = this.props.data.task.data;
+    var content = null;
+    var bsStyle = null;
+    let given_feedback = null;
+    let received_feedback = null;
+    if (review_data !== undefined) {
+      given_feedback = review_data.given_feedback;
+      received_feedback = review_data.received_feedback;
+    }
+    if (!given_feedback && !received_feedback) {
+      content = "No feedback is associated with this assignment."
+      bsStyle = "default"
+    } else {
+      let XReviewButtons = getCorrectComponent('XReviewButtons', null);
+      let given_feedback_content = <span>No provided feedback</span>;
+      if (given_feedback !== undefined) {
+        let init_state = {
+          'current_rating': given_feedback.rating,
+          'submitting': true,
+          'submitted': true,
+          'text': given_feedback.reason,
+          'dropdown_value': given_feedback.reason_category,
+        };
+        given_feedback_content = <XReviewButtons init_state={init_state} />;
+      }
+      let received_feedback_content = <span>No provided feedback</span>;
+      if (received_feedback !== undefined) {
+        let init_state = {
+          'current_rating': received_feedback.rating,
+          'submitting': true,
+          'submitted': true,
+          'text': received_feedback.reason,
+          'dropdown_value': received_feedback.reason_category,
+        };
+        received_feedback_content = <XReviewButtons init_state={init_state} />;
+      }
+      content = <div>
+        <h1>Given feedback</h1>
+        {given_feedback_content}
+        <h1>Received feedback</h1>
+        {received_feedback_content}
+      </div>;
+      bsStyle = "info"
+    }
+
+    return (
+      <Panel
+        id="assignment_instruction_div"
+        bsStyle={bsStyle}
+        defaultExpanded={!!(given_feedback || received_feedback)}>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3" toggle>
+            Feedback
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body>
+            {content}
+          </Panel.Body>
+        </Panel.Collapse>
+      </Panel>
+    );
+  }
+}
+
 class AssignmentInstructions extends React.Component {
   render() {
     let instructions = this.props.data;
@@ -769,8 +835,7 @@ class AssignmentInstructions extends React.Component {
     return (
       <Panel
         id="assignment_instruction_div"
-        bsStyle={bsStyle}
-        style={{float: 'left', 'width': '40%'}}>
+        bsStyle={bsStyle}>
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Task Instructions
@@ -1274,6 +1339,9 @@ class AssignmentView extends React.Component {
       `./task_components/${task_name}/components/custom.jsx`
     ).then((custom) => {
       this.props.setCustomComponents(custom.default);
+    }).catch((err) => {
+      // Custom react module not found
+      this.props.setCustomComponents({});
     });
   }
 
@@ -1281,9 +1349,7 @@ class AssignmentView extends React.Component {
     let onboard_data = this.props.data.onboarding;
     if (onboard_data === null) {
       return (
-        <Panel
-          id="message_display_div_onboarding"
-          style={{float: 'right', 'width': '58%'}}>
+        <Panel id="message_display_div_onboarding">
           <Panel.Heading>
             <Panel.Title componentClass="h3" toggle>
               Onboarding Chat Window
@@ -1395,17 +1461,24 @@ class AssignmentPanel extends React.Component {
         <AssignmentTable
           data={[this.state.data.assignment_details]}
           title={'State info for this assignment'}/>
-        <AssignmentInstructions
-          data={[this.state.data.assignment_instructions]}
-          custom_components={this.state.custom_components}/>
-        <AssignmentView
-          data={this.state.data.assignment_content}
-          title={'Assignment Content'}
-          custom_components={this.state.custom_components}
-          setCustomComponents={(module) => {
-            setCustomComponents(module);
-            this.setState({custom_components: module});
-          }}/>
+        <div id='left-assign-pane' style={{float: 'left', 'width': '40%'}}>
+          <AssignmentInstructions
+            data={[this.state.data.assignment_instructions]}
+            custom_components={this.state.custom_components}/>
+          <AssignmentFeedback
+            data={this.state.data.assignment_content}
+            custom_components={this.state.custom_components}/>
+        </div>
+        <div id='right-assign-pane' style={{float: 'right', 'width': '58%'}}>
+          <AssignmentView
+            data={this.state.data.assignment_content}
+            title={'Assignment Content'}
+            custom_components={this.state.custom_components}
+            setCustomComponents={(module) => {
+              setCustomComponents(module);
+              this.setState({custom_components: module});
+            }}/>
+        </div>
         <AssignmentReviewer
           data={this.state.data.assignment_details}
           onUpdate={() => this.fetchRunData()}/>
@@ -1758,27 +1831,24 @@ class DemoTaskPanel extends React.Component {
       .then(
         (result) => {
           this.handleNewData(result);
-          try {
-            import(
-              /* webpackMode: "eager" */
-              `./task_components/${this.props.task_id}/components/custom.jsx`
-            ).then((custom) => {
-              setCustomComponents(custom.default);
-              if (result.task_config.frame_height === undefined) {
-                result.task_config.frame_height = 650;
-              }
-              this.setState({
-                task_loading: false, task_config: result.task_config});
-            });
-          } catch (err) {
+          import(
+            /* webpackMode: "eager" */
+            `./task_components/${this.props.task_id}/components/custom.jsx`
+          ).then((custom) => {
+            setCustomComponents(custom.default);
+            if (result.task_config.frame_height === undefined) {
+              result.task_config.frame_height = 650;
+            }
+            this.setState({
+              task_loading: false, task_config: result.task_config});
+          }).catch((err) => {
             // Custom react module not found
             if (result.task_config.frame_height === undefined) {
               result.task_config.frame_height = 650;
             }
             this.setState({
               task_loading: false, task_config: result.task_config});
-          }
-
+          });
         },
         (error) => {
           this.setState({

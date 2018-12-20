@@ -134,6 +134,7 @@ class MTurkManager():
         self.db_logger = None
         self.logging_permitted = False
         self.task_state = self.STATE_CREATED
+        self._assert_opts()
 
     @staticmethod
     def make_taskless_instance(is_sandbox=False):
@@ -154,6 +155,32 @@ class MTurkManager():
         return manager
 
     # Helpers and internal manager methods #
+
+    def _assert_opts(self):
+        """Manages ensuring everything about the passed in options make sense
+        in that they don't conflict in some way or another"""
+        if self.opt.get('allow_reviews') and len(self.mturk_agent_ids) != 2:
+            shared_utils.print_and_log(
+                logging.WARN,
+                '[OPT CONFIGURATION ISSUE] '
+                'allow_reviews is currently only supported on 2 person tasks, '
+                'overriding this value to false.',
+                should_print=True
+            )
+            self.opt['allow_reviews'] = False
+        if self.opt.get('frontend_version', 0) < 1:
+            # Ensure no react only features have been set
+            features = ['frame_height', 'allow_reviews', 'block_mobile']
+            for feat in features:
+                if self.opt.get(feat) is not None:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        '[OPT CONFIGURATION ISSUE] '
+                        '{} only works when using the react frontend '
+                        '(frontend_version >= 1), so this option will be '
+                        'ignored'.format(feat),
+                        should_print=True
+                    )
 
     def _init_state(self):
         """Initialize everything in the worker, task, and thread states"""
@@ -958,6 +985,7 @@ class MTurkManager():
         self.is_unique = self.opt['unique_worker']
         self.max_hits_per_worker = self.opt.get('max_hits_per_worker', 0)
         mturk_utils.create_hit_config(
+            opt=self.opt,
             task_description=self.opt['task_description'],
             unique_worker=self.is_unique,
             is_sandbox=self.opt['is_sandbox']
@@ -1519,6 +1547,7 @@ class MTurkManager():
         for _i in range(num_hits):
             mturk_page_url, hit_id, mturk_response = \
                 mturk_utils.create_hit_with_hit_type(
+                    opt=self.opt,
                     page_url=mturk_chat_url,
                     hit_type_id=hit_type_id,
                     num_assignments=1,

@@ -19,7 +19,6 @@ aws_profile_name = 'parlai_mturk'
 client = None
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
-mturk_hit_frame_height = 650
 
 
 def setup_aws_credentials():
@@ -134,7 +133,7 @@ def check_mturk_balance(balance_needed, is_sandbox):
         return True
 
 
-def create_hit_config(task_description, unique_worker, is_sandbox):
+def create_hit_config(opt, task_description, unique_worker, is_sandbox):
     """Writes a HIT config to file"""
     mturk_submit_url = 'https://workersandbox.mturk.com/mturk/externalSubmit'
     if not is_sandbox:
@@ -144,7 +143,9 @@ def create_hit_config(task_description, unique_worker, is_sandbox):
         'is_sandbox': is_sandbox,
         'mturk_submit_url': mturk_submit_url,
         'unique_worker': unique_worker,
-        'frame_height': mturk_hit_frame_height
+        'frame_height': opt.get('frame_height', 650),
+        'allow_reviews': opt.get('allow_reviews', False),
+        'block_mobile': opt.get('block_mobile', True),
     }
     hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
     if os.path.exists(hit_config_file_path):
@@ -321,7 +322,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
     return hit_type_id
 
 
-def create_hit_with_hit_type(page_url, hit_type_id, num_assignments,
+def create_hit_with_hit_type(opt, page_url, hit_type_id, num_assignments,
                              is_sandbox):
     """Creates the actual HIT given the type and page to direct clients to"""
     page_url = page_url.replace('&', '&amp;')
@@ -334,7 +335,7 @@ def create_hit_with_hit_type(page_url, hit_type_id, num_assignments,
             '<ExternalURL>{}</ExternalURL>'  # noqa: E131
             '<FrameHeight>{}</FrameHeight>'
         '</ExternalQuestion>'
-        ''.format(amazon_ext_url, page_url, mturk_hit_frame_height)
+        ''.format(amazon_ext_url, page_url, opt.get('frame_height', 650))
     )
 
     client = get_mturk_client(is_sandbox)
