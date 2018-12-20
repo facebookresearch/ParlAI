@@ -320,25 +320,25 @@ class IdleResponse extends React.Component {
 
 class ReviewButtons extends React.Component {
   GOOD_REASONS = [
-    'Not specified',
-    'Interesting/Creative',
-    'Other',
+    "Not specified",
+    "Interesting/Creative",
+    "Other",
   ]
 
   BAD_REASONS = [
-    'Not specified',
+    "Not specified",
     "Didn't understand task",
     "Bad grammar/spelling",
     "Total nonsense",
     "Slow responder",
-    'Other',
+    "Other",
   ]
 
   RATING_VALUES = [1, 2, 3, 4, 5]
 
   RATING_TITLES = [
-    'Terrible', 'Bad', 'Average/Good',
-    'Great', 'Above and Beyond'
+    "Terrible", "Bad", "Average/Good",
+    "Great", "Above and Beyond"
   ]
 
   constructor(props) {

@@ -757,12 +757,12 @@ class AssignmentFeedback extends React.Component {
     var content = null;
     var bsStyle = null;
     let given_feedback = null;
-    let gotten_feedback = null;
+    let received_feedback = null;
     if (review_data !== undefined) {
       given_feedback = review_data.given_feedback;
-      gotten_feedback = review_data.gotten_feedback;
+      received_feedback = review_data.received_feedback;
     }
-    if (!given_feedback && !gotten_feedback) {
+    if (!given_feedback && !received_feedback) {
       content = "No feedback is associated with this assignment."
       bsStyle = "default"
     } else {
@@ -778,22 +778,22 @@ class AssignmentFeedback extends React.Component {
         };
         given_feedback_content = <XReviewButtons init_state={init_state} />;
       }
-      let gotten_feedback_content = <span>No provided feedback</span>;
-      if (gotten_feedback !== undefined) {
+      let received_feedback_content = <span>No provided feedback</span>;
+      if (received_feedback !== undefined) {
         let init_state = {
-          'current_rating': gotten_feedback.rating,
+          'current_rating': received_feedback.rating,
           'submitting': true,
           'submitted': true,
-          'text': gotten_feedback.reason,
-          'dropdown_value': gotten_feedback.reason_category,
+          'text': received_feedback.reason,
+          'dropdown_value': received_feedback.reason_category,
         };
-        gotten_feedback_content = <XReviewButtons init_state={init_state} />;
+        received_feedback_content = <XReviewButtons init_state={init_state} />;
       }
       content = <div>
         <h1>Given feedback</h1>
         {given_feedback_content}
         <h1>Received feedback</h1>
-        {gotten_feedback_content}
+        {received_feedback_content}
       </div>;
       bsStyle = "info"
     }
@@ -802,7 +802,7 @@ class AssignmentFeedback extends React.Component {
       <Panel
         id="assignment_instruction_div"
         bsStyle={bsStyle}
-        defaultExpanded={!!(given_feedback || gotten_feedback)}>
+        defaultExpanded={!!(given_feedback || received_feedback)}>
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Feedback

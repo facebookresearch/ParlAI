@@ -37,8 +37,8 @@ class MTurkDataWorld(World):
             data = save_data['worker_data']
             a_0 = workers[0]
             a_1 = workers[1]
-            data[a_0.worker_id]['gotten_feedback'] = a_1.feedback
-            data[a_1.worker_id]['gotten_feedback'] = a_0.feedback
+            data[a_0.worker_id]['received_feedback'] = a_1.feedback
+            data[a_1.worker_id]['received_feedback'] = a_0.feedback
 
         return save_data
 
