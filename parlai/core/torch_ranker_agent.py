@@ -28,7 +28,7 @@ class TorchRankerAgent(TorchAgent):
                  '(see TorchRankerAgent._build_candidates() for details).')
         agent.add_argument(
             '-ecands', '--eval-candidates', type=str,
-            choices=['batch', 'inline', 'fixed', 'vocab'],
+            choices=['batch', 'inline', 'fixed', 'vocab', 'custom'],
             help='The source of candidates during evaluation (defaults to the same'
                  'value as --candidates if no flag is given)')
         agent.add_argument(
@@ -183,6 +183,8 @@ class TorchRankerAgent(TorchAgent):
                 universe of possible candidates is very small.
             * vocab: one global candidate list, extracted from the vocabulary with the
                 exception of self.NULL_IDX.
+            * custom: get custom candidates list for each observation. In order to use
+                this, the agent must implment a `_get_custom_candidates` function.
         """
         label_vecs = batch.label_vec  # [bsz] list of lists of LongTensors
         label_inds = None
@@ -190,6 +192,11 @@ class TorchRankerAgent(TorchAgent):
 
         if label_vecs is not None:
             assert label_vecs.dim() == 2
+
+        if source == 'custom':
+            # we replace label candidates with custom label candidates
+            # during the call to `set_label_cands_vecs`
+            source = 'inline'
 
         if source == 'batch':
             warn_once(
@@ -329,6 +336,35 @@ class TorchRankerAgent(TorchAgent):
                 opt['dict_file'] = model_file + '.dict'
 
         return model_file, opt
+
+    def _get_custom_candidates(self, obs):
+        """Sets custom candidates for the observation."""
+        raise NotImplementedError(
+            'Abstract class: user must implement _get_custom_candidates()')
+
+    def _set_label_cands_vec(self, obs, add_start, add_end, truncate):
+        """Sets the 'label_candidates_vec' field in the observation.
+        In the event that we want to use custom candidates, we replace the
+        label candidates here.
+
+        Overriding from TorchAgent."""
+
+        if self.opt.get('candidates') == 'custom':
+            obs['label_candidates'] = self._get_custom_candidates(obs)
+
+        if 'label_candidates_vecs' in obs:
+            if truncate is not None:
+                # check truncation of pre-computed vectors
+                vecs = obs['label_candidates_vecs']
+                for i, c in enumerate(vecs):
+                    vecs[i] = self._check_truncate(c, truncate)
+        elif obs.get('label_candidates'):
+            obs['label_candidates'] = list(obs['label_candidates'])
+            obs['label_candidates_vecs'] = [
+                self._vectorize_text(c, add_start, add_end, truncate, False)
+                for c in obs['label_candidates']]
+
+        return obs
 
     def set_vocab_candidates(self, shared):
         """Load the tokens from the vocab as candidates
