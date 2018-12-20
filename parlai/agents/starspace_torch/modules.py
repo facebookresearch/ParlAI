@@ -35,6 +35,7 @@ class Starspace(nn.Module):
         xs_emb = self.encoder(xs)
         if self.lins > 0:
             xs_emb = self.lin(xs_emb)
+        ys_emb = None
         if ys is not None:
             # training includes the correct example first.
             ys_emb = self.encoder2(ys)
@@ -43,8 +44,11 @@ class Starspace(nn.Module):
             cands = cands.view(-1, cands.size(-1))
             cands_emb = self.encoder2(cands)
             cands_emb = cands_emb.view(bsz, -1, cands_emb.size(-1))
-            ys_emb = ys_emb.unsqueeze(1)
-            ys_emb = torch.cat([ys_emb, cands_emb], dim=1)
+            if ys_emb is not None:
+                ys_emb = ys_emb.unsqueeze(1)
+                ys_emb = torch.cat([ys_emb, cands_emb], dim=1)
+            else:
+                ys_emb = cands_emb
         return xs_emb, ys_emb
 
 

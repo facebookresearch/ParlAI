@@ -98,13 +98,11 @@ class StarspaceTorchAgent(TorchRankerAgent):
             choices=['batch', 'inline', 'fixed', 'vocab'],
             help='The source of candidates during training '
                  '(see TorchRankerAgent._build_candidates() for details).')
-        # agent.add_argument('-hist', '--history-length', default=10000, type=int,
-        #                    help='Number of past tokens to remember. ')
-        # agent.add_argument('-histr', '--history-replies',
-        #                    default='label_else_model', type=str,
-        #                    choices=['none', 'model', 'label',
-        #                             'label_else_model'],
-        #                    help='Keep replies in the history, or not.')
+        agent.add_argument(
+            '-ecands', '--eval-candidates', type=str, default='inline',
+            choices=['batch', 'inline', 'fixed', 'vocab', 'custom'],
+            help='The source of candidates during evaluation (defaults to the same'
+                 'value as --candidates if no flag is given)')
         StarspaceTorchAgent.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
@@ -130,17 +128,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
             margin=opt['margin'], size_average=False
         )
         self.reset()
-        # self.fixedCands = False
-        # self.fixedX = None
-        # if self.opt.get('fixed_candidates_file'):
-        #     self.fixedCands_txt = load_cands(self.opt.get('fixed_candidates_file'))
-        #     fcs = []
-        #     for c in self.fixedCands_txt:
-        #         fcs.append(torch.LongTensor(self.parse(c)).unsqueeze(0))
-        #     self.fixedCands = fcs
-        #     print("[loaded candidates]")
 
-    ##### TO IMPLEMENT
     def build_model(self):
         print("[ creating StarspaceTorchAgent ]")
         # this is not a shared instance of this class, so do full init
@@ -169,6 +157,10 @@ class StarspaceTorchAgent(TorchRankerAgent):
         self.model.train()
         self.optimizer.zero_grad()
 
+        if not batch.candidates:
+            print('No negatives yet!')
+            return Output()
+
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
 
@@ -180,7 +172,6 @@ class StarspaceTorchAgent(TorchRankerAgent):
                 cand_vecs
             )
 
-        # scores = self.score_candidates(batch, cand_vecs)
         xe, ye = self.model(
             batch.text_vec,
             ys=batch.label_vec,
@@ -225,11 +216,43 @@ class StarspaceTorchAgent(TorchRankerAgent):
         return Output(preds)
 
     def eval_step(self, batch):
-        import pdb; pdb.set_trace()
+        """Evaluate a single batch of examples."""
+        if batch.text_vec is None:
+            return
+        batchsize = batch.text_vec.size(0)
+        self.model.eval()
 
+        cands, cand_vecs, label_inds = self._build_candidates(
+            batch, source=self.opt['eval_candidates'], mode='eval')
 
+        xe, ye = self.model(
+            batch.text_vec,
+            ys=None,
+            cands=cand_vecs
+        )
 
-    #################
+        xe_cat = torch.cat([xe.unsqueeze(1)] * ye.size(1), dim=1)
+        scores = nn.CosineSimilarity(dim=-1).forward(xe_cat, ye)
+        _, ranks = scores.sort(1, descending=True)
+
+        # Update metrics
+        if label_inds is not None:
+            loss = self.rank_loss(scores, label_inds)
+            self.metrics['loss'] += loss.item()
+            self.metrics['examples'] += batchsize
+            for b in range(batchsize):
+                rank = (ranks[b] == label_inds[b]).nonzero().item()
+                self.metrics['rank'] += 1 + rank
+
+        cand_preds = []
+        for i, ordering in enumerate(ranks):
+            if cand_vecs.dim() == 2:
+                cand_list = cands
+            elif cand_vecs.dim() == 3:
+                cand_list = cands[i]
+            cand_preds.append([cand_list[rank] for rank in ordering])
+        preds = [cand_preds[i][0] for i in range(batchsize)]
+        return Output(preds, cand_preds)
 
     def _get_custom_candidates(self, obs):
         """Sets custom candidates for the observation."""
@@ -301,65 +324,12 @@ class StarspaceTorchAgent(TorchRankerAgent):
         shared['model'] = self.model
         return shared
 
-    def parse(self, text):
-        """Convert string to token indices."""
-        return self.dict.txt2vec(text)
-
-    # def t2v(self, text):
-    #     p = self.dict.txt2vec(text)
-    #     return torch.LongTensor(p).unsqueeze(1)
-    #
-    # def v2t(self, vec):
-    #     """Convert token indices to string of tokens."""
-    #     new_vec = []
-    #     for i in vec:
-    #         new_vec.append(i)
-    #     return self.dict.vec2txt(new_vec)
-
-    # def observe(self, observation):
-    #     self.episode_done = observation['episode_done']
-    #     # shallow copy observation (deep copy can be expensive)
-    #     obs = observation.copy()
-    #     obs['text2vec'] = maintain_dialog_history(
-    #         self.history, obs,
-    #         historyLength=self.opt['history_length'],
-    #         useReplies=self.opt['history_replies'],
-    #         dict=self.dict, useStartEndIndices=False)
-    #     self.observation = obs
-    #     return obs
-
     def same(self, labels, cand):
-        for label in labels:
-            if label == cand:
-                return True
+        if labels:
+            for label in labels:
+                if label == cand:
+                    return True
         return False
-
-    def dict_neighbors(self, word, useRHS=False):
-        input = self.t2v(word)
-        W = self.model.encoder.lt.weight
-        q = W[input.data[0][0]]
-        if useRHS:
-            W = self.model.encoder2.lt.weight
-        score = torch.Tensor(W.size(0))
-        for i in range(W.size(0)):
-            score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0).data[0]
-        val, ind = score.sort(descending=True)
-        for i in range(20):
-            print(
-                str(ind[i]) + " [" + str(val[i]) + "]: " +
-                self.v2t(torch.Tensor([ind[i]]))
-            )
-
-    def compute_metrics(self, loss, scores):
-        metrics = {}
-        pos = scores[0]
-        cnt = 0
-        for i in range(1, len(scores)):
-            if scores[i] >= pos:
-                cnt += 1
-        metrics['mean_rank'] = cnt
-        metrics['loss'] = loss
-        return metrics
 
     def input_dropout(self, xs, ys, negs):
         def dropout(x, rate):
@@ -379,153 +349,25 @@ class StarspaceTorchAgent(TorchRankerAgent):
             negs2.append(dropout(n, rate))
         return xs2, ys2, negs2
 
-    def predict(self, xs, ys=None, cands=None, cands_txt=None, obs=None):
-        """Produce a prediction from our model.
-
-        Update the model using the targets if available, otherwise rank
-        candidates as well if they are available and param is set.
-        """
-        is_training = ys is not None
-        if is_training:
-            negs = self.get_negs(xs, ys)
-            if is_training and len(negs) > 0:
-                self.model.train()
-                self.optimizer.zero_grad()
-                if self.opt.get('input_dropout', 0) > 0:
-                    xs, ys, negs = self.input_dropout(xs, ys, negs)
-                xe, ye = self.model(xs, ys, negs)
-                y = -torch.ones(xe.size(0))
-                y[0] = 1
-                loss = self.criterion(xe, ye, y)
-                loss.backward()
-                self.optimizer.step()
-                pred = nn.CosineSimilarity().forward(xe, ye)
-                metrics = self.compute_metrics(loss.item(), pred.data.squeeze())
-                return [{'metrics': metrics}]
-        else:
-            self.model.eval()
-            if cands is None or cands[0] is None:
-                # cannot predict without candidates.
-                if self.fixedCands:
-                    cands = [self.fixedCands]
-                    cands_txt = [self.fixedCands_txt]
-                else:
-                    return [{'text': 'I dunno.'}]
-                # test set prediction uses fixed candidates
-                if self.fixedX is None:
-                    xe, ye = self.model(xs, ys, self.fixedCands)
-                    self.fixedX = ye
-                else:
-                    # fixed candidate embed vectors are cached, dont't recompute
-                    blah = torch.LongTensor([1])
-                    xe, ye = self.model(xs, ys, [blah])
-                    ye = self.fixedX
-            else:
-                # test set prediction uses candidates
-                xe, ye = self.model(xs, ys, cands[0])
-            pred = nn.CosineSimilarity().forward(xe, ye)
-            # This is somewhat costly which we could avoid if we do not evalute ranking.
-            # i.e. by only doing: val,ind = pred.max(0)
-            val, ind = pred.sort(descending=True)
-            # predict the highest scoring candidate, and return it.
-            ypred = cands_txt[0][ind.data[0]]
-            tc = []
-            for i in range(min(100, ind.size(0))):
-                tc.append(cands_txt[0][ind.data[i]])
-            ret = [{'text': ypred, 'text_candidates': tc}]
-            return ret
-        return [{'id': self.getID()}]
-
-    # def vectorize(self, observations):
-    #     """Convert a list of observations into input & target tensors."""
-    #     def valid(obs):
-    #         # check if this is an example our model should actually process
-    #         return 'text2vec' in obs and len(obs['text2vec']) > 0
-    #     try:
-    #         # valid examples and their indices
-    #         valid_inds, exs = zip(*[(i, ex) for i, ex in
-    #                                 enumerate(observations) if valid(ex)])
-    #     except ValueError:
-    #         # zero examples to process in this batch, so zip failed to unpack
-    #         return None, None, None, None
-    #
-    #     # `x` text is already tokenized and truncated
-    #     # sort by length so we can use pack_padded
-    #     parsed_x = [ex['text2vec'] for ex in exs]
-    #     x_lens = [len(x) for x in parsed_x]
-    #     ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
-    #
-    #     exs = [exs[k] for k in ind_sorted]
-    #     valid_inds = [valid_inds[k] for k in ind_sorted]
-    #     parsed_x = [parsed_x[k] for k in ind_sorted]
-    #
-    #     labels_avail = any(['labels' in ex for ex in exs])
-    #
-    #     max_x_len = max([len(x) for x in parsed_x])
-    #     for x in parsed_x:
-    #         x += [self.NULL_IDX] * (max_x_len - len(x))
-    #     xs = torch.LongTensor(parsed_x)
-    #
-    #     # set up the target tensors
-    #     ys = None
-    #     labels = None
-    #     if labels_avail:
-    #         # randomly select one of the labels to update on, if multiple
-    #         labels = [random.choice(ex.get('labels', [''])) for ex in exs]
-    #         # parse each label and append END
-    #         parsed_y = [deque(maxlen=self.truncate) for _ in labels]
-    #         for dq, y in zip(parsed_y, labels):
-    #             dq.extendleft(reversed(self.parse(y)))
-    #         max_y_len = max(len(y) for y in parsed_y)
-    #         for y in parsed_y:
-    #             y += [self.NULL_IDX] * (max_y_len - len(y))
-    #         ys = torch.LongTensor(parsed_y)
-    #
-    #     cands = []
-    #     cands_txt = []
-    #     if ys is None:
-    #         # only build candidates in eval mode.
-    #         for o in observations:
-    #             if o.get('label_candidates', False):
-    #                 cs = []
-    #                 ct = []
-    #                 for c in o['label_candidates']:
-    #                     cs.append(torch.LongTensor(self.parse(c)).unsqueeze(0))
-    #                     ct.append(c)
-    #                 cands.append(cs)
-    #                 cands_txt.append(ct)
-    #             else:
-    #                 cands.append(None)
-    #                 cands_txt.append(None)
-    #     return xs, ys, cands, cands_txt
+    def observe(self, observation):
+        labels = observation.get('labels')
+        if not labels:
+            labels = observation.get('eval_labels')
+        if labels:
+            for label in labels:
+                self.add_to_ys_cache(label)
+        return super(StarspaceTorchAgent, self).observe(observation)
 
     def add_to_ys_cache(self, ys):
-        # TODO: fix this function; we are adding text here
-        # also, this should be called at the time of observation
-        if ys is None or len(ys) == 0:
+        if not ys:
             return
         if len(self.ys_cache) < self.ys_cache_sz:
-            self.ys_cache.append(copy.deepcopy(ys))
+            self.ys_cache.append(ys)
         else:
             ind = random.randint(0, self.ys_cache_sz - 1)
-            self.ys_cache[ind] = copy.deepcopy(ys)
-    #
-    # def batch_act(self, observations):
-    #     batchsize = len(observations)
-    #     # initialize a table of replies with this agent's id
-    #     # convert the observations into batches of inputs and targets
-    #     # valid_inds tells us the indices of all valid examples
-    #     # e.g. for input [{}, {'text': 'hello'}, {}, {}], valid_inds is [1]
-    #     # since the other three elements had no 'text' field
-    #     xs, ys, cands, cands_txt = self.vectorize(observations)
-    #     batch_reply = self.predict(xs, ys, cands, cands_txt, observations)
-    #     while len(batch_reply) < batchsize:
-    #         batch_reply.append({'id': self.getID()})
-    #     self.add_to_ys_cache(ys)
-    #     return batch_reply
+            self.ys_cache[ind] = ys
 
     def shutdown(self):
-        # """Save the state of the model when shutdown."""
         super().shutdown()
 
     def save(self, path=None):
