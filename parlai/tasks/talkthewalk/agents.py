@@ -36,8 +36,6 @@ class TTWTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
-        self.datatype = self.opt.get('datatype')
-        self.training = self.datatype.startswith('train')
         data_path, datafile = _path(opt)
 
         if shared:
