@@ -136,40 +136,6 @@ def aggregate_metrics(reporters):
     return m
 
 
-def compute_time_metrics(world, max_time):
-    # Determine time_left and num_epochs
-    exs_per_epoch = world.num_examples() if world.num_examples() else 0
-    num_epochs = world.opt.get('num_epochs', 0)
-    max_exs = exs_per_epoch * num_epochs
-    total_exs = world.get_total_exs()
-
-    m = {}
-    if (max_exs > 0 and total_exs > 0) or max_time > 0:
-        m = {}
-        time_left = None
-        time = world.get_time()
-        total_epochs = world.get_total_epochs()
-
-        if (num_epochs > 0 and total_exs > 0 and max_exs > 0):
-            exs_per_sec = time / total_exs
-            time_left = (max_exs - total_exs) * exs_per_sec
-        if max_time > 0:
-            other_time_left = max_time - time
-            if time_left is not None:
-                time_left = min(time_left, other_time_left)
-            else:
-                time_left = other_time_left
-        if time_left is not None:
-            m['time_left'] = math.floor(time_left)
-        if num_epochs > 0:
-            if (total_exs > 0 and exs_per_epoch > 0):
-                display_epochs = int(total_exs / exs_per_epoch)
-            else:
-                display_epochs = total_epochs
-            m['num_epochs'] = display_epochs
-    return m
-
-
 class Metrics(object):
     """Class that maintains evaluation metrics over dialog."""
 

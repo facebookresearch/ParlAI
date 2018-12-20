@@ -66,10 +66,16 @@ def main():
         optc['gpu'] = rank % torch.cuda.device_count()
         p = DistributedProcess(optc)
         processes.append(p)
-        p.start()
 
-    for p in processes:
-        p.join()
+    try:
+        for p in processes:
+            p.start()
+
+        for p in processes:
+            p.join()
+    except KeyboardInterrupt:
+        for p in processes:
+            p.terminate()
 
 
 if __name__ == '__main__':

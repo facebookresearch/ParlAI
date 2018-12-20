@@ -34,6 +34,7 @@ import torch.nn.functional as F
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs, warn_once
 from parlai.core.thread_utils import SharedTable
+from parlai.core.distributed_utils import is_distributed
 
 
 class TorchGeneratorModel(nn.Module):
@@ -325,7 +326,7 @@ class TorchGeneratorAgent(TorchAgent):
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type'))
 
-        if shared is None and opt.get('distributed_world_size'):
+        if shared is None and is_distributed():
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model,
                 device_ids=[self.opt['gpu']],

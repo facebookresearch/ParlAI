@@ -28,12 +28,11 @@ Examples
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer, round_sigfigs
+from parlai.core.utils import Timer, round_sigfigs, warn_once
 from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.core.distributed_utils import (
-    sync_object, sync_sum, is_primary_worker, all_gather_list, num_workers,
-    is_distributed
+    sync_object, is_primary_worker, all_gather_list, is_distributed, num_workers
 )
 import numpy as np
 import os
@@ -333,37 +332,66 @@ class TrainLoop():
     def _nice_format(self, dictionary):
         return {k: round_sigfigs(v, 4) for k, v in dictionary.items()}
 
+    def _compute_eta(self, epochs_completed, time_elapsed):
+        """
+        Computes the estimated seconds remaining in training.
+
+        :param float epochs_completed: number of epochs already completed.
+        :param float time_elapsed: total time spent already, in seconds.
+        :return: ETA in seconds, or None if not computable
+        """
+        # start off with no estimate
+        eta = None
+
+        # Determine time_left and num_epochs
+        max_epochs = self.opt.get('num_epochs', 0)
+        if max_epochs > 0 and epochs_completed > 0:
+            epoch_progress = epochs_completed / max_epochs
+            eta = (1 - epoch_progress) * time_elapsed / epoch_progress
+
+        max_training_time = self.opt.get('max_training_time', -1)
+        if max_training_time > 0:
+            time_left = max_training_time - time_elapsed
+            if eta is None or time_left < eta:
+                eta = time_left
+
+        return eta
+
     def log(self):
         opt = self.opt
         if opt['display_examples']:
             print(self.world.display() + '\n~~')
         logs = []
         # get report
-        train_report = self._sync_training_metrics(self.world.report(compute_time=True))
+        train_report = self._sync_training_metrics(self.world.report())
         self.world.reset_metrics()
 
         # time elapsed
         logs.append('time:{}s'.format(np.floor(self.train_time.time())))
-        total_exs = sync_sum(self.world.get_total_exs())
-        logs.append('total_exs:{}'.format(total_exs))
+        logs.append('total_exs:{}'.format(self._total_exs))
 
-        exs_per_ep = self.world.num_examples()
-        if exs_per_ep:
-            logs.append('epochs:{}'.format(
-                round(total_exs / exs_per_ep, 2)))
+        if self._total_epochs >= 0:
+            # only if it's unbounded
+            logs.append('epochs:{}'.format(round(self._total_epochs, 2)))
 
-        if 'time_left' in train_report:
-            logs.append('time_left:{}s'.format(
-                np.floor(train_report.pop('time_left', ""))))
+        time_left = self._compute_eta(self._total_epochs, self.train_time.time())
+        if time_left is not None:
+            logs.append('time_left:{}s'.format(max(0, np.ceil(time_left))))
 
         log = '[ {} ] {}'.format(' '.join(logs), self._nice_format(train_report))
         print(log)
         self.log_time.reset()
 
         if opt['tensorboard_log'] is True and is_primary_worker():
-            self.writer.add_metrics('train', total_exs, train_report)
+            self.writer.add_metrics('train', self._total_exs, train_report)
 
     def train(self):
+        if is_distributed():
+            warn_once(
+                "Distributed training outputs average-per-worker metrics during "
+                "training, and may be slightly distorted. Validation/test are "
+                "unadulterated."
+            )
         opt = self.opt
         world = self.world
         with world:
@@ -372,8 +400,11 @@ class TrainLoop():
                 world.parley()
                 self.parleys += 1
 
-                # get the total training examples
-                total_epochs = sync_sum(world.get_total_epochs())
+                # get the total training examples done, comptue epochs
+                self._total_epochs = num_workers() * self.world.get_total_epochs()
+                exs_per_epoch = self.world.num_examples()
+                self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))
+
                 # and use the primary worker's timings for everything
                 train_time, log_time, validate_time = sync_object((
                     self.train_time.time(),
@@ -382,7 +413,7 @@ class TrainLoop():
                 ))
 
                 # check counters and timers
-                if total_epochs >= self.max_num_epochs:
+                if self._total_epochs >= self.max_num_epochs:
                     self.log()
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
                         self.max_num_epochs, train_time))
@@ -394,15 +425,18 @@ class TrainLoop():
                     self.log()
                 if (
                     validate_time > self.val_every_n_secs or
-                    total_epochs - self.last_valid_epoch >= self.val_every_n_epochs
+                    self._total_epochs - self.last_valid_epoch
+                        >= self.val_every_n_epochs
                 ):
-                    stop_training = sync_object(self.validate())
-                    self.last_valid_epoch = total_epochs
+                    stop_training = self.validate()
+                    self.last_valid_epoch = self._total_epochs
                     if stop_training:
                         break
-                if (self.save_time.time() > self.save_every_n_secs and
-                        opt.get('model_file') and
-                        is_primary_worker()):
+                if (
+                    self.save_time.time() > self.save_every_n_secs and
+                    opt.get('model_file') and
+                    is_primary_worker()
+                ):
                     print("[ saving model checkpoint: {}.checkpoint".format(
                         opt['model_file']
                     ))

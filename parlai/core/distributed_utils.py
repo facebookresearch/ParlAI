@@ -150,7 +150,7 @@ def all_gather_list(data, max_size=16384):
     return result
 
 
-def sync_object(data, max_size=16384):
+def sync_object(data, max_size=1024):
     """
     Syncs an object among all workers, overriding everyone's version with the
     primary worker's. Data must be pickleable.
@@ -159,10 +159,7 @@ def sync_object(data, max_size=16384):
         return data
 
     # prepare the buffer
-    if (
-        not hasattr(all_gather_list, '_buffer') or
-        sync_object._buffer.numel() < max_size
-    ):
+    if (not hasattr(sync_object, '_buffer') or sync_object._buffer.numel() < max_size):
         # cuda is safe because distributed mode is only okay with CUDA
         sync_object._buffer = torch.cuda.ByteTensor(max_size)
 
