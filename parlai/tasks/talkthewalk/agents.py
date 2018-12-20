@@ -86,12 +86,12 @@ class TouristTeacher(TTWTeacher):
         for msg in episode['dialog']:
             text = msg['text']
             if msg['id'] == 'Tourist':
-                if self.opt['train_actions'] or not is_action(text):
+                if self.opt.get('train_actions') or not is_action(text):
                     example['labels'] = [text]
                     ep.append(example)
                     example = {'episode_done': False}
                 # add movements to text history if not training on them
-                if not self.opt['train_actions'] and is_action(text):
+                if not self.opt.get('train_actions') and is_action(text):
                     example['text'] = example.get('text', '') + text + '\n'
             elif msg['id'] == 'Guide':
                 example['text'] = example.get('text', '') + text + '\n'
@@ -111,7 +111,7 @@ class GuideTeacher(TTWTeacher):
         for msg in episode['dialog']:
             text = msg['text']
             if msg['id'] == 'Guide':
-                if self.opt['train_actions'] or not text.startswith('EVALUATE'):
+                if self.opt.get('train_actions') or not text.startswith('EVALUATE'):
                     example['labels'] = [text]
                     ep.append(example)
                     example = {'episode_done': False}
