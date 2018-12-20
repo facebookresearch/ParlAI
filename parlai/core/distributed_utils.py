@@ -150,7 +150,7 @@ def all_gather_list(data, max_size=16384):
     return result
 
 
-def sync_object(data, max_size=1024):
+def sync_object(data, max_size=16384):
     """
     Syncs an object among all workers, overriding everyone's version with the
     primary worker's. Data must be pickleable.
@@ -182,7 +182,7 @@ def sync_object(data, max_size=1024):
 
     if not is_primary_worker():
         # deserialize the data
-        enc_size = buffer[0] * 255 + buffer[1]
+        enc_size = buffer[0].item() * 255 + buffer[1].item()
         data = pickle.loads(bytes(buffer[2: enc_size + 2].tolist()))
 
     return data

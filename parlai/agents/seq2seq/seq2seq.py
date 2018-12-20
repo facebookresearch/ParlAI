@@ -154,15 +154,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
         if self.use_cuda:
             self.model.cuda()
-            if self.multigpu:
-                self.model = torch.nn.DataParallel(self.model)
-                self.model.encoder = self.model.module.encoder
-                self.model.decoder = self.model.module.decoder
-                self.model.longest_label = self.model.module.longest_label
-                self.model.output = self.model.module.output
-                self.model.reorder_encoder_states = (
-                    self.model.module.reorder_encoder_states
-                )
 
         return self.model
 
@@ -195,7 +186,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
         if path and hasattr(self, 'model'):
             model = {}
-            if self.multigpu:
+            if hasattr(self.model, 'module'):
                 model['model'] = self.model.module.state_dict()
             else:
                 model['model'] = self.model.state_dict()
