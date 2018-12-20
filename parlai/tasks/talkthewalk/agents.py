@@ -5,24 +5,20 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from parlai.core.teachers import FbDialogTeacher
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 from .worlds import Simulator, is_action
-from collections import namedtuple
-from torch.utils.data.dataset import Dataset
-from torch import nn, optim
-import torch
-import copy
 import json
 import os
+
 
 def _path(opt):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
     opt['ttw_data'] = os.path.join(opt['datapath'], 'TalkTheWalk')
-    return opt['ttw_data'], os.path.join(opt['ttw_data'], 'talkthewalk.' + dt + '.json')
+    return opt['ttw_data'], os.path.join(opt['ttw_data'],
+                                         'talkthewalk.' + dt + '.json')
 
 
 class TTWTeacher(FixedDialogTeacher):
@@ -31,7 +27,8 @@ class TTWTeacher(FixedDialogTeacher):
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('Talk the Walk Teacher Arguments')
         agent.add_argument('--train-actions',
-                type=bool, default=False, help='Train model to take actions')
+                           type='bool', default=False, help='Train model to \
+                           take actions')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -46,7 +43,6 @@ class TTWTeacher(FixedDialogTeacher):
             self._setup_data(datafile)
         self.reset()
 
-
     def _setup_episode(episode):
         """Process one episode in an example."""
         raise NotImplementedError(
@@ -58,15 +54,14 @@ class TTWTeacher(FixedDialogTeacher):
         self.examples_count = 0
 
         for episode in self.episodes:
-            init = {x:y for x,y in episode.items() if x in ['start_location',
-                'neighborhood', 'boundaries', 'target_location']}
+            init = {x: y for x, y in episode.items() if x in ['start_location',
+                    'neighborhood', 'boundaries', 'target_location']}
             if episode:
                 self.sim.init_sim(**init)
                 episode = self._setup_episode(episode)
                 if episode:
                     self.data.append(episode)
                     self.examples_count += len(episode)
-
 
     def get(self, episode_idx, entry_idx=0):
         return self.data[episode_idx][entry_idx]
@@ -109,7 +104,6 @@ class TouristTeacher(TTWTeacher):
         return ep
 
 
-
 class GuideTeacher(TTWTeacher):
     def _setup_episode(self, episode):
         ep = []
@@ -130,6 +124,7 @@ class GuideTeacher(TTWTeacher):
             ep[-1]['episode_done'] = True
         return ep
 
+
 class GuideLocalizeTeacher(TTWTeacher):
     def _setup_episode(self, episode):
         ep = []
@@ -149,8 +144,6 @@ class GuideLocalizeTeacher(TTWTeacher):
         if len(ep):
             ep[-1]['episode_done'] = True
         return ep
-
-
 
 
 class DefaultTeacher(TouristTeacher):

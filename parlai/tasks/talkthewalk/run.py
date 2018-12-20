@@ -14,17 +14,17 @@ agent.
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
-from parlai.core.worlds import create_task, BatchWorld
-from parlai.core.utils import TimeLogger
+from parlai.core.worlds import BatchWorld, HogwildWorld
 from parlai.tasks.talkthewalk.worlds import SimulateWorld
 
-import random, copy, os
+import copy
+import os
 
 from build import build
 
+
 def _path(opt):
     build(opt)
-    dt = opt['datatype'].split(':')[0]
     opt['ttw_data'] = os.path.join(opt['datapath'], 'TalkTheWalk')
 
 
@@ -46,6 +46,7 @@ def setup_args(parser=None):
     parser.set_defaults(datatype='valid')
     return parser
 
+
 def run(opt):
     opt = copy.deepcopy(opt)
     _path(opt)
@@ -64,10 +65,6 @@ def run(opt):
     elif opt.get('batchsize', 1) > 1:
         # otherwise check if should use batchworld
         world = BatchWorld(opt, world)
-
-    log_time = TimeLogger()
-
-    log_every_n_secs = opt.get('log_every_n_secs', -1)
 
     # Show some example dialogs:
     cnt = 0

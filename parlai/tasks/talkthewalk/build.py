@@ -9,7 +9,6 @@
 
 import parlai.core.build_data as build_data
 import os
-import json
 
 
 def build(opt):
