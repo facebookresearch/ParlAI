@@ -8,7 +8,6 @@
 #
 # Simple implementation of the starspace algorithm, slightly adapted for dialogue.
 # See: https://arxiv.org/abs/1709.03856
-# TODO: move this over to TorchRankerAgent when it is ready.
 
 from parlai.core.dict import DictionaryAgent
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -18,7 +17,6 @@ from .modules import Starspace
 import torch
 from torch import optim
 import torch.nn as nn
-import copy
 import os
 import random
 import json
@@ -142,7 +140,8 @@ class StarspaceTorchAgent(TorchRankerAgent):
 
         self.model = Starspace(self.opt, len(self.dict), self.dict)
         if self.opt.get('model_file') and os.path.isfile(self.opt['model_file']):
-            self.load(self.opt['model_file'])
+            _ = self.load(self.opt['model_file'])
+            self.reset()
         else:
             self._init_embeddings()
         self.model.share_memory()
@@ -165,18 +164,22 @@ class StarspaceTorchAgent(TorchRankerAgent):
             batch, source=self.opt['candidates'], mode='train')
 
         if self.opt.get('input_dropout', 0) > 0:
-            # TODO: fix this input dropout function!!!!!!
-            batch, cand_vecs = self.input_dropout(
+            batch_text, batch_label, batch_cand_vecs = self.input_dropout(
                 batch.text_vec,
                 batch.label_vec,
                 cand_vecs
             )
-
-        xe, ye = self.model(
-            batch.text_vec,
-            ys=batch.label_vec,
-            cands=cand_vecs
-        )
+            xe, ye = self.model(
+                batch_text,
+                ys=batch_label,
+                cands=batch_cand_vecs
+            )
+        else:
+            xe, ye = self.model(
+                batch.text_vec,
+                ys=batch.label_vec,
+                cands=cand_vecs
+            )
 
         xe_cat = torch.cat([xe.unsqueeze(1)] * ye.size(1), dim=1)
         y = -torch.ones(xe_cat.size(0), xe_cat.size(1))
@@ -202,18 +205,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
 
-        # Get predictions but not full rankings for the sake of speed
-        for i in range(batchsize):
-            cands[i] = [batch.labels[i]] + cands[i]
-
-        if cand_vecs.dim() == 2:
-            preds = [cands[ordering[0]] for ordering in ranks]
-        elif cand_vecs.dim() == 3:
-            preds = [cands[i][ordering[0]] for i, ordering in enumerate(ranks)]
-
-        # TODO: this is kinda wrong? this isn't really the label candidate ranking
-        # but it will tell us the accuracy
-        return Output(preds)
+        return Output()
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
@@ -235,14 +227,10 @@ class StarspaceTorchAgent(TorchRankerAgent):
         scores = nn.CosineSimilarity(dim=-1).forward(xe_cat, ye)
         _, ranks = scores.sort(1, descending=True)
 
-        # Update metrics
-        if label_inds is not None:
-            loss = self.rank_loss(scores, label_inds)
-            self.metrics['loss'] += loss.item()
-            self.metrics['examples'] += batchsize
-            for b in range(batchsize):
-                rank = (ranks[b] == label_inds[b]).nonzero().item()
-                self.metrics['rank'] += 1 + rank
+        self.metrics['examples'] += batchsize
+        for b in range(batchsize):
+            rank = (ranks[b] == label_inds[b]).nonzero().item()
+            self.metrics['rank'] += 1 + rank
 
         cand_preds = []
         for i, ordering in enumerate(ranks):
@@ -252,7 +240,17 @@ class StarspaceTorchAgent(TorchRankerAgent):
                 cand_list = cands[i]
             cand_preds.append([cand_list[rank] for rank in ordering])
         preds = [cand_preds[i][0] for i in range(batchsize)]
+
         return Output(preds, cand_preds)
+
+    def observe(self, observation):
+        labels = observation.get('labels')
+        if not labels:
+            labels = observation.get('eval_labels')
+        if labels:
+            for label in labels:
+                self.add_to_ys_cache(label)
+        return super(StarspaceTorchAgent, self).observe(observation)
 
     def _get_custom_candidates(self, obs):
         """Sets custom candidates for the observation."""
@@ -300,6 +298,53 @@ class StarspaceTorchAgent(TorchRankerAgent):
             print('Initialized embeddings for {} tokens ({}%) from {}.'
                   ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
 
+    def same(self, labels, cand):
+        if labels:
+            for label in labels:
+                if label == cand:
+                    return True
+        return False
+
+    def input_dropout(self, xs, ys, negs):
+        """Dropout some input elements"""
+
+        def dropout(x, rate):
+            bsz = x.size(0)
+            x_len = x.size(1)
+            xd = [[] for _ in range(bsz)]
+            for i in range(x_len):
+                if random.uniform(0, 1) > rate:
+                    for j in range(bsz):
+                        xd[j].append(x[j][i].item())
+            if len(xd[0]) == 0:
+                # pick one random thing to put in xd
+                for j in range(bsz):
+                    xd[j].append(x[j][random.randint(0, x_len - 1)])
+            if self.use_cuda:
+                return torch.LongTensor(xd).cuda()
+            else:
+                return torch.LongTensor(xd)
+
+        rate = self.opt.get('input_dropout')
+
+        # NOTE: we drop out uniformly along the batch so that we don't need
+        # to perform padding again
+        xs2 = dropout(xs, rate)
+        ys2 = dropout(ys, rate)
+        negs2 = dropout(negs.view(-1, negs.size(-1)), rate)
+        negs2 = negs2.view(negs.size(0), negs.size(1), -1)
+
+        return xs2, ys2, negs2
+
+    def add_to_ys_cache(self, ys):
+        if not ys:
+            return
+        if len(self.ys_cache) < self.ys_cache_sz:
+            self.ys_cache.append(ys)
+        else:
+            ind = random.randint(0, self.ys_cache_sz - 1)
+            self.ys_cache[ind] = ys
+
     def optimizer_reset(self):
         lr = self.opt['learningrate']
         optim_class = StarspaceTorchAgent.OPTIM_OPTS[self.opt['optimizer']]
@@ -308,8 +353,6 @@ class StarspaceTorchAgent(TorchRankerAgent):
 
     def reset(self):
         """Reset observation and episode_done."""
-        # self.observation = None
-        # self.episode_done = True
         self.observation = {}
         self.history.clear()
         self.replies.clear()
@@ -323,70 +366,3 @@ class StarspaceTorchAgent(TorchRankerAgent):
         shared['dict'] = self.dict
         shared['model'] = self.model
         return shared
-
-    def same(self, labels, cand):
-        if labels:
-            for label in labels:
-                if label == cand:
-                    return True
-        return False
-
-    def input_dropout(self, xs, ys, negs):
-        def dropout(x, rate):
-            xd = []
-            for i in x[0]:
-                if random.uniform(0, 1) > rate:
-                    xd.append(i)
-            if len(xd) == 0:
-                # pick one random thing to put in xd
-                xd.append(x[0][random.randint(0, x.size(1)-1)])
-            return torch.LongTensor(xd).unsqueeze(0)
-        rate = self.opt.get('input_dropout')
-        xs2 = dropout(xs, rate)
-        ys2 = dropout(ys, rate)
-        negs2 = []
-        for n in negs:
-            negs2.append(dropout(n, rate))
-        return xs2, ys2, negs2
-
-    def observe(self, observation):
-        labels = observation.get('labels')
-        if not labels:
-            labels = observation.get('eval_labels')
-        if labels:
-            for label in labels:
-                self.add_to_ys_cache(label)
-        return super(StarspaceTorchAgent, self).observe(observation)
-
-    def add_to_ys_cache(self, ys):
-        if not ys:
-            return
-        if len(self.ys_cache) < self.ys_cache_sz:
-            self.ys_cache.append(ys)
-        else:
-            ind = random.randint(0, self.ys_cache_sz - 1)
-            self.ys_cache[ind] = ys
-
-    def shutdown(self):
-        super().shutdown()
-
-    def save(self, path=None):
-        """Save model parameters if model_file is set."""
-        path = self.opt.get('model_file', None) if path is None else path
-        if path and hasattr(self, 'model'):
-            data = {}
-            data['model'] = self.model.state_dict()
-            data['optimizer'] = self.optimizer.state_dict()
-            data['opt'] = self.opt
-            with open(path, 'wb') as handle:
-                torch.save(data, handle)
-            with open(path + '.opt', 'w') as handle:
-                json.dump(self.opt, handle)
-
-    def load(self, path):
-        """Return opt and model states."""
-        print('Loading existing model params from ' + path)
-        data = torch.load(path, map_location=lambda cpu, _: cpu)
-        self.model.load_state_dict(data['model'])
-        self.reset()
-        self.optimizer.load_state_dict(data['optimizer'])

@@ -14,22 +14,24 @@ import torch.nn as nn
 class Starspace(nn.Module):
     def __init__(self, opt, num_features, dict):
         super().__init__()
+        self.opt = opt
+
+        # set up encoder
         self.lt = nn.Embedding(num_features, opt['embeddingsize'], 0,
                                sparse=True, max_norm=opt['embeddingnorm'])
+        self.encoder = Encoder(self.lt, dict)
         if not opt['tfidf']:
             dict = None
-        self.encoder = Encoder(self.lt, dict)
         if not opt['share_embeddings']:
             self.lt2 = nn.Embedding(num_features, opt['embeddingsize'], 0,
                                     sparse=True, max_norm=opt['embeddingnorm'])
             self.encoder2 = Encoder(self.lt2, dict)
         else:
             self.encoder2 = self.encoder
-        self.opt = opt
+
+        # set up linear layer(s)
         self.lin = nn.Linear(opt['embeddingsize'], opt['embeddingsize'], bias=False)
-        self.lins = 0
-        if 'lins' in opt:
-            self.lins = opt['lins']
+        self.lins = opt.get('lins', 0)
 
     def forward(self, xs, ys=None, cands=None):
         xs_emb = self.encoder(xs)
@@ -45,6 +47,7 @@ class Starspace(nn.Module):
             cands_emb = self.encoder2(cands)
             cands_emb = cands_emb.view(bsz, -1, cands_emb.size(-1))
             if ys_emb is not None:
+                # during training, we have the correct answer first
                 ys_emb = ys_emb.unsqueeze(1)
                 ys_emb = torch.cat([ys_emb, cands_emb], dim=1)
             else:
@@ -57,9 +60,9 @@ class Encoder(nn.Module):
         super().__init__()
         self.lt = shared_lt
         if dict is not None:
-            l = len(dict)
-            freqs = torch.Tensor(l)
-            for i in range(l):
+            num_words = len(dict)
+            freqs = torch.Tensor(num_words)
+            for i in range(num_words):
                 ind = dict.ind2tok[i]
                 freq = dict.freq[ind]
                 freqs[i] = 1.0 / (1.0 + math.log(1.0 + freq))
@@ -70,14 +73,17 @@ class Encoder(nn.Module):
     def forward(self, xs):
         xs_emb = self.lt(xs)
         if self.freqs is not None:
-            # TODO: fix this, it may or may not be broken
             # tfidf embeddings
-            l = xs.size(1)
-            w = torch.Tensor(l)
-            for i in range(l):
-                w[i] = self.freqs[xs.data[0][i]]
-            w = w.mul(1 / w.norm())
-            xs_emb = xs_emb.squeeze(0).t().matmul(w.unsqueeze(1)).t()
+            bsz = xs.size(0)
+            len_x = xs.size(1)
+            x_scale = torch.Tensor(bsz, len_x)
+            for i in range(len_x):
+                for j in range(bsz):
+                    x_scale[j][i] = self.freqs[xs.data[j][i]]
+            x_scale = x_scale.mul(1 / x_scale.norm())
+            if xs_emb.is_cuda:
+                x_scale = x_scale.cuda()
+            xs_emb = xs_emb.transpose(1, 2).matmul(x_scale.unsqueeze(-1)).squeeze(-1)
         else:
             # basic embeddings (faster)
             xs_emb = xs_emb.mean(1)
