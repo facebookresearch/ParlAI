@@ -5,11 +5,11 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 
-from .base import TTWTeacher
+from .base import TTWBase
 from .worlds import is_action
 
 
-class TouristTeacher(TTWTeacher):
+class TouristTeacher(TTWBase):
     def _setup_episode(self, episode):
         ep = []
         example = {'episode_done': False}
@@ -34,7 +34,7 @@ class TouristTeacher(TTWTeacher):
         return ep
 
 
-class GuideTeacher(TTWTeacher):
+class GuideTeacher(TTWBase):
     def _setup_episode(self, episode):
         ep = []
         example = {'episode_done': False, 'text': self.sim.get_text_map()}
@@ -55,7 +55,7 @@ class GuideTeacher(TTWTeacher):
         return ep
 
 
-class GuideLocalizeTeacher(TTWTeacher):
+class GuideLocalizeTeacher(TTWBase):
     def _setup_episode(self, episode):
         ep = []
         example = {'episode_done': False, 'text': self.sim.get_text_map()}

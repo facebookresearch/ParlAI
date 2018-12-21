@@ -20,7 +20,7 @@ def _path(opt):
     return opt['ttw_data'], os.path.join(opt['ttw_data'],
                                          'talkthewalk.' + dt + '.json')
 
-class TTWTeacher(FixedDialogTeacher):
+class TTWBase(FixedDialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
