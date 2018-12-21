@@ -20,6 +20,7 @@ def _path(opt):
     return opt['ttw_data'], os.path.join(opt['ttw_data'],
                                          'talkthewalk.' + dt + '.json')
 
+
 class TTWBase(FixedDialogTeacher):
 
     @staticmethod
@@ -51,7 +52,6 @@ class TTWBase(FixedDialogTeacher):
         shared['cands'] = self.label_candidates
         return shared
 
-
     def _setup_episode(self, episode):
         """Process one episode in an example."""
         raise NotImplementedError(
@@ -65,7 +65,7 @@ class TTWBase(FixedDialogTeacher):
         for episode in self.episodes:
             if episode:
                 init = {x: y for x, y in episode.items() if x in ['start_location',
-                    'neighborhood', 'boundaries', 'target_location']}
+                        'neighborhood', 'boundaries', 'target_location']}
                 self.sim.init_sim(**init)
 
                 episode = self._setup_episode(episode)
@@ -88,5 +88,3 @@ class TTWBase(FixedDialogTeacher):
 
     def num_examples(self):
         return self.examples_count
-
-
