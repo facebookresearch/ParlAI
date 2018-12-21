@@ -315,7 +315,7 @@ class TrainLoop():
                 if k == 'num_epochs':
                     # just drop this metric
                     pass
-                elif k == 'exs':
+                elif k == 'exs' or k == 'total_skipped_batches':
                     # sum across:
                     if k not in finalized:
                         finalized[k] = 0
