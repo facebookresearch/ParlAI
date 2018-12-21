@@ -376,8 +376,8 @@ class ParlaiParser(argparse.ArgumentParser):
         )
         # TODO: use --debug or --verbose instead?
         grp.add_argument(
-            '--verbose-workers', type='bool', default=False,
-            help='Additional workers stay silent.',
+            '--verbose', type='bool', default=False,
+            help='All workers print output.',
             hidden=True,
         )
         return grp
