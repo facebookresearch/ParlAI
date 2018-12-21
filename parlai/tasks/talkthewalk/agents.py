@@ -76,6 +76,7 @@ class TTWTeacher(FixedDialogTeacher):
                             [x['labels'][0] for x in episode])
                     self.data.append(episode)
                     self.examples_count += len(episode)
+        self.label_candidates = list(self.label_candidates)
 
     def get(self, episode_idx, entry_idx=0):
         example = self.data[episode_idx][entry_idx]
