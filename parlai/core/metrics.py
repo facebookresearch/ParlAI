@@ -15,7 +15,6 @@ from parlai.core.utils import round_sigfigs, no_lock
 from collections import Counter
 
 import re
-import math
 
 try:
     from nltk.translate import bleu_score as nltkbleu
