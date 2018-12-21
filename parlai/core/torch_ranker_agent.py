@@ -439,6 +439,9 @@ class TorchRankerAgent(TorchAgent):
 
         self.fixed_candidates will contain a [num_cands] list of strings
         self.fixed_candidate_vecs will contain a [num_cands, seq_len] LongTensor
+            (or optionally a FloatTensor if a child class overrides
+            vectorize_fixed_candidates() to produce encoded vectors instead of just
+            vectorized ones)
 
         See the note on the --fixed-candidate-vecs flag for an explanation of the
         'reuse', 'replace', or path options.
