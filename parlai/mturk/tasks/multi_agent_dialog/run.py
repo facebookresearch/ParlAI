@@ -11,7 +11,7 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.multi_agent_dialog.worlds import \
     MTurkMultiAgentDialogWorld, MTurkMultiAgentDialogOnboardWorld
 from parlai.agents.local_human.local_human import LocalHumanAgent
-from task_config import task_config
+from parlai.mturk.tasks.multi_agent_dialog.task_config import task_config
 
 
 def main():
@@ -74,7 +74,7 @@ def main():
             mturk_agent_2 = workers[1]
 
             # Create the local human agents
-            human_agent_1 = LocalHumanAgent(opt=None)
+            human_agent_1 = LocalHumanAgent(opt={})
             human_agent_1.id = human_agent_1_id
 
             world = MTurkMultiAgentDialogWorld(

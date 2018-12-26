@@ -1274,6 +1274,9 @@ class AssignmentView extends React.Component {
       `./task_components/${task_name}/components/custom.jsx`
     ).then((custom) => {
       this.props.setCustomComponents(custom.default);
+    }).catch((error) => {
+      console.log('No custom components found');
+      this.props.setCustomComponents({});
     });
   }
 
@@ -1758,27 +1761,24 @@ class DemoTaskPanel extends React.Component {
       .then(
         (result) => {
           this.handleNewData(result);
-          try {
-            import(
-              /* webpackMode: "eager" */
-              `./task_components/${this.props.task_id}/components/custom.jsx`
-            ).then((custom) => {
-              setCustomComponents(custom.default);
-              if (result.task_config.frame_height === undefined) {
-                result.task_config.frame_height = 650;
-              }
-              this.setState({
-                task_loading: false, task_config: result.task_config});
-            });
-          } catch (err) {
+          import(
+            /* webpackMode: "eager" */
+            `./task_components/${this.props.task_id}/components/custom.jsx`
+          ).then((custom) => {
+            setCustomComponents(custom.default);
+            if (result.task_config.frame_height === undefined) {
+              result.task_config.frame_height = 650;
+            }
+            this.setState({
+              task_loading: false, task_config: result.task_config});
+          }).catch((err) => {
             // Custom react module not found
             if (result.task_config.frame_height === undefined) {
               result.task_config.frame_height = 650;
             }
             this.setState({
               task_loading: false, task_config: result.task_config});
-          }
-
+          });
         },
         (error) => {
           this.setState({
