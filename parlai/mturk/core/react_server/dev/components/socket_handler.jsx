@@ -289,8 +289,10 @@ class SocketHandler extends React.Component {
       true,
       true,
       (msg) => {
-        this.props.messages.push(msg.data);
-        this.props.onSuccessfulSend();
+        if (!is_system) {
+          this.props.messages.push(msg.data);
+          this.props.onSuccessfulSend();
+        }
         if (callback !== undefined) {
           callback();
         }
