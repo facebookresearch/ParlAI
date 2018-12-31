@@ -15,13 +15,15 @@ from parlai.scripts.build_pytorch_data import build_data
 from .agents import get_agent_module
 import json
 import math
+import collections
 import random
+import os
 from functools import wraps
 import importlib
 from functools import lru_cache
 try:
     import torch  # noqa: F401
-except Exception as e:
+except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
@@ -29,14 +31,16 @@ import ctypes
 from threading import Thread, Condition, RLock
 
 
-'''
+"""
+    BATCH SORT CACHE
+
     Maps episode length to dictionary with following keys:
         current_idx: which episode in the list are we at (if simply indexing
             into list)
         ep_list: list of episodes of the length of the key
         bucket_complete: if there are no more episodes left to consider in
             the bucket
-'''
+"""
 # Maps episode length to list of episodes
 length_to_eps = {}
 # List of batches if popping batches
@@ -125,9 +129,23 @@ def batch_cache(function):
         '''Helper function for flattening a list'''
         return [item for sublist in l for item in sublist]
 
+    def ep_length(val):
+        '''Determines the length of an episode, given the specified value'''
+        if isinstance(val, (int, bytes, bool)):
+            return 1
+        if isinstance(val, str):
+            return len(val.split(' '))
+        if isinstance(val, (collections.Mapping,
+                            collections.Sequence,
+                            torch.Tensor)):
+            if (isinstance(val, collections.Mapping) and
+                    val.get('deserialized_tensor', False)):
+                return len(val['value'])
+            return len(val)
+
     def put_in_cache(ep_idx, episode, caller):
         '''Put episode `ep_idx` into cache'''
-        length = episode['text'].count(' ')
+        length = ep_length(episode[caller.batch_sort_field])
         lengths = [length] + flatten([
             [length + i, length + (i * -1)]
             for i in range(1, caller.batch_length_range)
@@ -155,9 +173,10 @@ def batch_cache(function):
     @wraps(function)
     def wrapper(*args):
         caller = args[0]
+        batch_sort = caller.batch_sort
         batch_cache_type = caller.batch_cache_type
         bsz = caller.bsz
-        if batch_cache_type == 'none' or not caller.datatype.startswith('train'):
+        if not batch_sort or not caller.datatype.startswith('train'):
             return function(*args)
         # If Loader, put episodes in cache
         if isinstance(caller, LoaderProcess):
@@ -326,8 +345,10 @@ class LoaderProcess(Thread):
         )
         self.datatype = opt.get('datatype')
         self.data = enumerate(self.dataloader)
+        self.batch_sort = opt.get('pytorch_teacher_batch_sort')
         self.batch_cache_type = opt.get('batch_sort_cache')
         self.batch_length_range = opt.get('batch_length_range')
+        self.batch_sort_field = opt.get('batch_sort_field')
 
     def run(self):
         while True:
@@ -343,8 +364,18 @@ class LoaderProcess(Thread):
             return None
 
 
-# Default collate function (for how to prepare a batch)
+"""
+    Collating, deserializing, processing batches
+"""
+TORCH_DTYPES = [torch.float32, torch.float64, torch.float16, torch.uint8,
+                torch.int8, torch.int16, torch.int32, torch.int64]
+STR_TO_TORCH_DTYPE = {str(d): d for d in TORCH_DTYPES}
+
+
 def default_collate(batch):
+    """
+        Default collate function, used for ParlAIDataset and StreamDataset
+    """
     new_batch = []
     for b in batch:
         idx = b[0]
@@ -356,22 +387,69 @@ def default_collate(batch):
     return new_batch
 
 
+def deserialize(obj):
+    """
+        Deserializes lists into Tensors
+    """
+    for key in obj:
+        if type(obj[key]) is dict and obj[key].get('deserialized_tensor', False):
+            dtype = STR_TO_TORCH_DTYPE[obj[key]['type']]
+            val = obj[key]['value']
+            del obj[key]
+            obj[key] = torch.as_tensor(val, dtype=dtype)
+    return obj
+
+
+def process(ex_or_batch):
+    """
+        Process examples/batches, i.e. deserialize if necessary
+    """
+    if type(ex_or_batch) is list:
+        if all([ep.get('preprocessed') for ep in ex_or_batch]):
+            ex_or_batch = [deserialize(ep) for ep in ex_or_batch]
+    else:
+        if ex_or_batch.get('preprocessed'):
+            ex_or_batch = deserialize(ex_or_batch)
+    return ex_or_batch
+
+
+"""
+    ParlAI Implementations of Pytorch Datasets
+"""
+
+
 class StreamDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt):
         self.opt = opt
         self.datatype = opt.get('datatype')
-        self.datafile = build_data(self.opt)
-        self.data_gen = self._data_generator(self.datafile)
-        self.length_datafile = self.datafile + ".length"
+        self.datapath = build_data(self.opt)
+        self.data_gen = self._data_generator()
+        self.length_datafile = os.path.join(self.datapath, 'data_length')
+        self.char_index_file = os.path.join(self.datapath, 'char_index')
+        self.datafile = os.path.join(self.datapath, 'data')
         self.training = self.datatype.startswith('train')
+        self.ordered = ('ordered' in self.datatype or
+                        ('stream' in self.datatype and not opt.get('shuffle')))
         self._load_lens()
 
     def __getitem__(self, index):
-        while True:
-            idx, ep = next(self.data_gen)
-            if idx == index:
-                return (index, ep)
+        if self.ordered or not self.training:
+            while True:
+                idx, ep = next(self.data_gen)
+                if idx == index:
+                    return (index, ep)
+        else:
+            episode = []
+            episode_done = False
+            with open(self.datafile) as f:
+                ex_offset = self.char_index[index]
+                f.seek(ex_offset)
+                while not episode_done:
+                    example = json.loads(f.readline())
+                    episode.append(example)
+                    episode_done = example['episode_done']
+            return (index, episode)
 
     def __len__(self):
         return self.num_episodes()
@@ -381,14 +459,16 @@ class StreamDataset(Dataset):
             lengths = json.load(length)
             self.num_eps = lengths['num_eps']
             self.num_exs = lengths['num_exs']
+        with open(self.char_index_file) as char:
+            self.char_index = json.load(char)
 
-    def _data_generator(self, datafile):
+    def _data_generator(self):
         while True:
-            for idx, episode in self._read_episode(self.datafile):
+            for idx, episode in self._read_episode():
                 yield idx, episode
 
-    def _read_episode(self, datafile):
-        read = open(datafile)
+    def _read_episode(self):
+        read = open(self.datafile)
         episode = []
         for idx, line in enumerate(read):
             example = json.loads(line)
@@ -410,11 +490,12 @@ class ParlAIDataset(Dataset):
     def __init__(self, opt):
         self.opt = opt
         self.datatype = opt.get('datatype')
-        self.datafile = build_data(self.opt)
-        self._setup_data()
-        self.length_datafile = self.datafile + ".length"
+        self.datapath = build_data(self.opt)
+        self.length_datafile = os.path.join(self.datapath, 'data_length')
+        self.datafile = os.path.join(self.datapath, 'data')
         self.training = self.datatype.startswith('train')
         self._load_lens()
+        self._setup_data()
 
     def __getitem__(self, index):
         return index, self.data[index]
@@ -429,6 +510,7 @@ class ParlAIDataset(Dataset):
             self.num_exs = lengths['num_exs']
 
     def _setup_data(self):
+        print('----------\n[ loading pytorch data ]\n----------')
         self.data = []
         with open(self.datafile) as f:
             for line in f:
@@ -454,35 +536,39 @@ class ParlAIConcatDataset(ConcatDataset):
 
 
 class PytorchDataTeacher(FixedDialogTeacher):
-
+    """
+        A teacher that loads data using Pytorch Datasets. For details on how
+        to use, please follow the tutorial here:
+        http://parl.ai/static/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader
+    """
     def __init__(self, opt, shared=None):
         opt['batch_sort'] = False
         super().__init__(opt, shared)
         self.use_batch_act = self.bsz > 1
         self.num_workers = opt['numworkers']
+        self.batch_sort = opt.get('pytorch_teacher_batch_sort')
         self.batch_cache_type = opt.get('batch_sort_cache')
+        self.batch_sort_field = opt.get('batch_sort_field')
         # One can specify a collate function to use for preparing a batch
         self.opt = opt.copy()
         self.is_shared = shared is not None
         dataset_classes = self.get_dataset_class(opt)
+        self.ordered = ('ordered' in self.datatype or
+                        ('stream' in self.datatype and not opt.get('shuffle')))
 
         if not shared:
-            streaming = False
             if len(dataset_classes) > 1:
                 datasets = []
                 for class_name, collate_fn, task_name in dataset_classes:
                     opt['pytorch_teacher_task'] = task_name
                     opt['task'] = task_name
                     datasets.append(class_name(opt))
-                    streaming = streaming or (class_name == StreamDataset)
                     self.collate_fn = collate_fn
                 self.dataset = ParlAIConcatDataset(datasets)
             else:
                 class_name, self.collate_fn, task_name = dataset_classes[0]
-                streaming = class_name == StreamDataset
                 self.dataset = class_name(opt)
-            self.streaming = 'stream' in self.datatype or streaming
-            if self.streaming or not opt.get('shuffle'):
+            if self.ordered or not self.training:
                 data_sampler = sampler.SequentialSampler(self.dataset)
                 pin_memory = False
             else:
@@ -498,8 +584,9 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 pin_memory=pin_memory,
                 drop_last=False,
             )
+
             self.lastYs = [None] * self.bsz
-            if self.batch_cache_type != 'none':
+            if self.batch_sort:
                 self.loader_process = LoaderProcess(opt)
                 self.loader_process.start()
             self.data = enumerate(self.pytorch_dataloader)
@@ -548,7 +635,10 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 self.reset_data()
         if self.episode_done:
             try:
-                self.episode_idx, self.episode = next(self.data)
+                self.episode_idx, episode = next(self.data)
+                if self.collate_fn == default_collate:
+                    episode = [ex[1] for ex in episode]
+                self.episode = process(episode)
                 self.entry_idx = 0
                 epoch_done = False
             except StopIteration:
@@ -558,8 +648,6 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.entry_idx += 1
 
         if not epoch_done:
-            if self.collate_fn == default_collate:
-                self.episode[self.entry_idx] = self.episode[self.entry_idx][1]
             ex = self.episode[self.entry_idx]
             self.episode_done = ex['episode_done']
             if (self.episode_done and
@@ -584,6 +672,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.batch_idx, batch = self.get_next_batch()
             if self.collate_fn == default_collate:
                 batch = [b[1] for b in batch]
+            batch = process(batch)
             epoch_done = False
         except StopIteration:
             batch = [{'episode_done': True, 'id': self.getID()}] * self.bsz

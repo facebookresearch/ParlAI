@@ -642,15 +642,19 @@ class MessengerManager():
 
     # Agent Interaction Functions #
 
-    def observe_message(self, receiver_id, text, quick_replies=None):
+    def observe_message(self, receiver_id, text, quick_replies=None,
+                        persona_id=None):
         """Send a message through the message manager"""
         return self.message_sender.send_fb_message(receiver_id, text, True,
-                                                   quick_replies=quick_replies)
+                                                   quick_replies=quick_replies,
+                                                   persona_id=persona_id)
 
-    def observe_payload(self, receiver_id, data, quick_replies=None):
+    def observe_payload(self, receiver_id, data, quick_replies=None,
+                        persona_id=None):
         """Send a payload through the message manager"""
         return self.message_sender.send_fb_payload(receiver_id, data,
-                                                   quick_replies=None)
+                                                   quick_replies=quick_replies,
+                                                   persona_id=persona_id)
 
     def upload_attachment(self, payload):
         """Uploads an attachment and returns an attachment ID

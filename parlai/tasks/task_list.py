@@ -821,4 +821,38 @@ task_list = [
             "very long time to run"
         ),
     },
+    {
+        "id": "Wizard_of_Wikipedia",
+        "display_name": "Wizard_of_Wikipedia",
+        "task": "wizard_of_wikipedia",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "A dataset with conversations directly grounded with knowledge "
+            "retrieved from Wikipedia. Contains 201k utterances from 22k "
+            "dialogues spanning over 1300 diverse topics, split into train, "
+            "test, and valid sets. The test and valid sets are split "
+            "into two sets each: one with overlapping topics with the train "
+            "set, and one with unseen topics."
+            "See https://arxiv.org/abs/1811.01241 for more information."
+        ),
+        "notes": (
+            "To access the different valid/test splits (unseen/seen), specify "
+            "the corresponding split (`random_split` for seen, `topic_split` "
+            "for unseen) after the last colon in the task. "
+            "E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`"
+        ),
+    },
+    {
+        "id": "DailyDialog",
+        "display_name": "Daily Dialog",
+        "task": "dailydialog",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "A dataset of chitchat dialogues with strong annotations for "
+            "topic, emotion and utterance act. This version contains both sides "
+            "of every conversation, and uses the official train/valid/test splits "
+            "from the original authors. See https://arxiv.org/abs/1710.03957 "
+            "for more information."
+        )
+    },
 ]

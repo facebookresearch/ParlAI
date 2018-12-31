@@ -182,7 +182,7 @@ There's a few more complex steps to actually completing a parley in this world.
    agent, we do two steps:
 
    a. Call ``BatchWorld.batch_act()``. This method first checks if the **original**
-      isntance of the agent (not the copies) has a function named ``batch_act``
+      instance of the agent (not the copies) has a function named ``batch_act``
       implemented and does not have an attribute ``use_batch_act`` set to ``False``.
       This function is described more below. If condition is not met,
       the BatchWorld's ``batch_act`` method iterates through each agent copy in the
@@ -202,6 +202,10 @@ above to improve performance.
 
 Batched Teachers
 ~~~~~~~~~~~~~~~~
+**Note: Batched Teachers are deprecated in ParlAI. To make use of batch sorting
+as described here, please use ``-pybsrt`` with the ``PytorchDataTeacher``
+(see the tutorial below on this page)**
+
 Batched teachers need to consider everything that a Hogwild Teacher does (see above)
 except for thread safety--for example, they also need to make sure they sync
 which example index they are on so that they don't repeat or skip valid/test examples.
@@ -394,7 +398,7 @@ are two ways of doing this:
 
   a) Run the following command::
 
-      python examples/build_pytorch_data.py -pyt <TEACHER> --datatype <DATATYPE> (--datafile <DATAFILE>)
+      python examples/build_pytorch_data.py -pyt <TEACHER> --datatype <DATATYPE>
 
   b) The following are the parameters to specify:
 
@@ -403,12 +407,6 @@ are two ways of doing this:
 
       2) ``--datatype`` - This is one of ``train, valid, test``, depending on
             what data you would like to use.
-
-      3) ``--pytorch-datafile`` - **(Optional)** This is the path to the file that has the data
-          you would like to be loading. **(Recommended)** Alternatively, in
-          the teacher specified in the first argument, you can simply
-          set the ``self.datafile`` attribute to the datafile, allowing you
-          to not need to specify this command line argument
 
   c) **(Recommended)** Simply run ``examples/train_model.py`` with the same
      arguments listed above; this will build the data first before running
@@ -500,11 +498,16 @@ batch sorter that uses aggressive caching to create and provide
 batches of similarly sized examples to models nearly as quickly (if not as quickly) as
 can be provided without sorting.
 
-To use the batch sorting method, just specify the following two command line
-arguments:
+To use the batch sorting method, just specify the following command line
+argument:
 
-1. ``--batch-sort-cache`` - set this parameter to either ``pop`` or ``index``;
-this simply controls the method used for returning batches from a cache (either is fine)
+1. ``-pybsrt`` - set this parameter to ``true`` to enable batch sorting
+
+Additional arguments that may be of interest to you:
+
+1. ``--batch-sort-field`` - this specifies the field on which the examples will
+be sorted into batches. The default is 'text', and thus batch sorting will
+return batches with similarly sized 'text' fields.
 
 2. ``--batch-length-range`` - this indicates the degree of variation allowed in
 a batch; e.g., by how many characters each example in a cache will, at most, deviate.

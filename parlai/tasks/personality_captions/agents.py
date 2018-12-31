@@ -52,6 +52,7 @@ class DefaultDataset(Dataset):
         self.training = self.datatype.startswith('train')
         self.include_image = opt.get('include_image')
         self.include_personality = opt.get('include_personality')
+        self.num_test_labels = opt.get('num_test_labels', 1)
         data_path, personalities_data_path, self.image_path = _path(opt)
         self.image_loader = ImageLoader(opt)
         self._setup_data(data_path, personalities_data_path)
@@ -80,10 +81,14 @@ class DefaultDataset(Dataset):
         if self.opt.get('extract_image', False):
             ep['image_id'] = data['image_hash']
             return ep
-        if not self.opt['datatype'].startswith('test'):
-            ep['labels'] = [data['comment']]
+        ep['labels'] = [data['comment']]
+        if self.num_test_labels == 5 and 'test' in self.datatype:
+            ep['labels'] += data['additional_comments']
         if not self.training:
-            ep['label_candidates'] = data['candidates']
+            if self.num_test_labels == 5 and 'test' in self.datatype:
+                ep['label_candidates'] = data['500_candidates']
+            else:
+                ep['label_candidates'] = data['candidates']
 
         return (index, ep)
 
@@ -122,6 +127,7 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
         self.datatype = opt.get('datatype').split(':')[0]
         self.include_personality = opt.get('include_personality')
         self.include_image = opt.get('include_image')
+        self.num_test_labels = opt.get('num_test_labels')
         if shared and 'data' in shared:
             self.data = shared['data']
             self.image_loader = shared['image_loader']
@@ -139,6 +145,12 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
         agent.add_argument('--include-image', type='bool',
                            default=True,
                            help='Whether to provide image to agent')
+        agent.add_argument('--num-test-labels', type=int, default=1,
+                           choices=[1, 5],
+                           help='Provide model with either 1 or 5 possible '
+                           'labels for each test example. The number of label '
+                           'candidates for each case is 100 and 500 '
+                           'respectively.')
         agent.add_argument('--yfcc-path', type=str, default=None,
                            help='Path to yfcc images (if not downloaded '
                                 'via the provided download script)')
@@ -175,9 +187,14 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
             'episode_done': True,
             'labels': [data['comment']],
         }
+        if self.num_test_labels == 5 and 'test' in self.datatype:
+            action['labels'] += data['additional_comments']
 
         if 'candidates' in data:
-            action['label_candidates'] = data['candidates']
+            if self.num_test_labels == 5 and 'test' in self.datatype:
+                action['label_candidates'] = data['500_candidates']
+            else:
+                action['label_candidates'] = data['candidates']
 
         return action
 
