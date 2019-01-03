@@ -85,10 +85,13 @@ class MessengerAgent(Agent):
                 'seq': seq,
                 'text': text,
             }
+            # the fields 'report_sender' and 'sticker_sender' below are
+            # internal features
             action = {
                 'episode_done': False,
                 'text': text,
                 'id': self.disp_id,
+                'report_sender': message['message'].get('report_sender', None),
                 'sticker_sender': message.get('sticker_sender', None),
                 'img_attempt': img_attempt,
             }
