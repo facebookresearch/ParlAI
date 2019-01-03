@@ -108,17 +108,10 @@ class StarspaceTorchAgent(TorchRankerAgent):
         opt = self.opt
         self.reset_metrics()
         self.id = 'Starspace'
-        self.NULL_IDX = 0
-        self.cands = torch.LongTensor(1, 1, 1)
+
         self.ys_cache = []
         self.ys_cache_sz = opt['cache_size']
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
-        if shared:
-            torch.set_num_threads(1)
-            # set up shared properties
-            self.dict = shared['dict']
-        else:
-            self.build_model()
 
         # set up criterion
         self.criterion = torch.nn.CosineEmbeddingLoss(
@@ -223,11 +216,9 @@ class StarspaceTorchAgent(TorchRankerAgent):
             ys=None,
             cands=cand_vecs
         )
-
         xe = torch.cat([xe for _ in range(ye.size(1))], dim=1)
 
         scores = nn.CosineSimilarity(dim=-1).forward(xe, ye)
-
         _, ranks = scores.sort(1, descending=True)
 
         self.metrics['examples'] += batchsize
