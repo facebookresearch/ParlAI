@@ -193,11 +193,6 @@ class TorchRankerAgent(TorchAgent):
         if label_vecs is not None:
             assert label_vecs.dim() == 2
 
-        if source == 'custom':
-            # we replace label candidates with custom label candidates
-            # during the call to `set_label_cands_vecs`
-            source = 'inline'
-
         if source == 'batch':
             warn_once(
                 '[ Executing {} mode with batch labels as set of candidates. ]'
@@ -218,7 +213,7 @@ class TorchRankerAgent(TorchAgent):
             cand_vecs = label_vecs
             label_inds = label_vecs.new_tensor(range(batchsize))
 
-        elif source == 'inline':
+        elif source == 'inline' or source == 'custom':
             warn_once(
                 '[ Executing {} mode with provided inline set of candidates ]'
                 ''.format(mode)
