@@ -69,7 +69,7 @@ class MainApp extends React.Component {
     this.state = {
       task_description: null,
       mturk_submit_url: null,
-      frame_height: 650,
+      frame_height: FRAME_HEIGHT,
       socket_status: null,
       hit_id: HIT_ID, // gotten from template
       assignment_id: ASSIGNMENT_ID, // gotten from template
@@ -96,7 +96,7 @@ class MainApp extends React.Component {
 
   handleIncomingHITData(data) {
     let task_description = data['task_description'];
-    if (isMobile() && block_mobile) {
+    if (isMobile() && BLOCK_MOBILE) {
       task_description = (
         "<h1>Sorry, this task cannot be completed on mobile devices. " +
         "Please use a computer.</h1><br>Task Description follows:<br>" +
@@ -115,11 +115,11 @@ class MainApp extends React.Component {
     getHitConfig((data) => this.handleIncomingHITData(data));
   }
 
-  onMessageSend(text, data, callback) {
+  onMessageSend(text, data, callback, is_system) {
     if (text == '') {
       return;
     }
-    this.socket_handler.handleQueueMessage(text, data, callback);
+    this.socket_handler.handleQueueMessage(text, data, callback, is_system);
   }
 
   render() {
@@ -171,7 +171,7 @@ class MainApp extends React.Component {
           task_done={this.state.task_done}
           done_text={this.state.done_text}
           chat_state={this.state.chat_state}
-          onMessageSend={(m, d, c) => this.onMessageSend(m, d, c)}
+          onMessageSend={(m, d, c, s) => this.onMessageSend(m, d, c, s)}
           socket_status={this.state.socket_status}
           messages={this.state.messages}
           agent_id={this.state.agent_id}
@@ -185,6 +185,7 @@ class MainApp extends React.Component {
           allDoneCallback={() => allDoneCallback()}
           volume={this.state.volume}
           onVolumeChange={(v) => this.setState({volume: v})}
+          display_feedback={DISPLAY_FEEDBACK}
         />
         <MTurkSubmitForm
           assignment_id={this.state.assignment_id}
