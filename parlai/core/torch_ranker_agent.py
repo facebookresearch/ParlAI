@@ -73,7 +73,9 @@ class TorchRankerAgent(TorchAgent):
             self.model.cuda()
             self.rank_loss.cuda()
 
-        if not shared:
+        if shared:
+            self.optimizer = shared["optimizer"]
+        else:
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(optim_params)
 
@@ -230,8 +232,8 @@ class TorchRankerAgent(TorchAgent):
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1)) \
-                                    + self.NULL_IDX
+                    label_vec_pad = (label_vec.new_zeros(cand_vecs[i].size(1))
+                                     .fill_(self.NULL_IDX))
                     if cand_vecs[i].size(1) < len(label_vec):
                         label_vec = label_vec[0:cand_vecs[i].size(1)]
                     label_vec_pad[0:label_vec.size(0)] = label_vec
@@ -286,11 +288,12 @@ class TorchRankerAgent(TorchAgent):
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
+        shared['optimizer'] = self.optimizer
         return shared
 
     def update_params(self):
         """Do optim step and clip gradients if needed."""
-        if hasattr(self, 'clip') and self.clip > 0:
+        if self.get('clip', 0) > 0:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
