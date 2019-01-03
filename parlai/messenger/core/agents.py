@@ -85,6 +85,8 @@ class MessengerAgent(Agent):
                 'seq': seq,
                 'text': text,
             }
+            # the fields 'report_sender' and 'sticker_sender' below are
+            # internal features
             action = {
                 'episode_done': False,
                 'text': text,
