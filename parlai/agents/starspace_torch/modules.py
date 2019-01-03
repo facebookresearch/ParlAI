@@ -16,12 +16,11 @@ class Starspace(nn.Module):
         super().__init__()
         self.opt = opt
 
-        # set up encoder
         self.lt = nn.Embedding(num_features, opt['embeddingsize'], 0,
                                sparse=True, max_norm=opt['embeddingnorm'])
-        self.encoder = Encoder(self.lt, dict)
         if not opt['tfidf']:
             dict = None
+        self.encoder = Encoder(self.lt, dict)
         if not opt['share_embeddings']:
             self.lt2 = nn.Embedding(num_features, opt['embeddingsize'], 0,
                                     sparse=True, max_norm=opt['embeddingnorm'])
@@ -37,18 +36,17 @@ class Starspace(nn.Module):
         xs_emb = self.encoder(xs)
         if self.lins > 0:
             xs_emb = self.lin(xs_emb)
-        ys_emb = None
+        xs_emb = xs_emb.unsqueeze(1)
         if ys is not None:
             # training includes the correct example first.
-            ys_emb = self.encoder2(ys)
+            ys_emb = self.encoder2(ys).unsqueeze(1)
         if cands is not None:
             bsz = cands.size(0)
             cands = cands.view(-1, cands.size(-1))
             cands_emb = self.encoder2(cands)
             cands_emb = cands_emb.view(bsz, -1, cands_emb.size(-1))
-            if ys_emb is not None:
+            if ys is not None:
                 # during training, we have the correct answer first
-                ys_emb = ys_emb.unsqueeze(1)
                 ys_emb = torch.cat([ys_emb, cands_emb], dim=1)
             else:
                 ys_emb = cands_emb
@@ -76,15 +74,18 @@ class Encoder(nn.Module):
             # tfidf embeddings
             bsz = xs.size(0)
             len_x = xs.size(1)
-            x_scale = torch.Tensor(bsz, len_x)
+            if xs_emb.is_cuda:
+                x_scale = torch.Tensor(bsz, len_x).cuda()
+            else:
+                x_scale = torch.Tensor(bsz, len_x)
             for i in range(len_x):
                 for j in range(bsz):
                     x_scale[j][i] = self.freqs[xs.data[j][i]]
             x_scale = x_scale.mul(1 / x_scale.norm())
-            if xs_emb.is_cuda:
-                x_scale = x_scale.cuda()
             xs_emb = xs_emb.transpose(1, 2).matmul(x_scale.unsqueeze(-1)).squeeze(-1)
         else:
             # basic embeddings (faster)
-            xs_emb = xs_emb.mean(1)
+            x_lens = torch.sum(xs.ne(0).int(), dim=1).float().unsqueeze(-1)
+            # take the mean over the non-zero elements
+            xs_emb = xs_emb.sum(dim=1) / x_lens.clamp(min=1e-20)
         return xs_emb

@@ -19,7 +19,6 @@ from torch import optim
 import torch.nn as nn
 import os
 import random
-import json
 
 
 class StarspaceTorchAgent(TorchRankerAgent):
@@ -140,7 +139,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
 
         self.model = Starspace(self.opt, len(self.dict), self.dict)
         if self.opt.get('model_file') and os.path.isfile(self.opt['model_file']):
-            _ = self.load(self.opt['model_file'])
+            self.load(self.opt['model_file'])
             self.reset()
         else:
             self._init_embeddings()
@@ -180,22 +179,24 @@ class StarspaceTorchAgent(TorchRankerAgent):
                 ys=batch.label_vec,
                 cands=cand_vecs
             )
+        xe = torch.cat([xe for _ in range(ye.size(1))], dim=1)
 
-        xe_cat = torch.cat([xe.unsqueeze(1)] * ye.size(1), dim=1)
-        y = -torch.ones(xe_cat.size(0), xe_cat.size(1))
-        y_0 = torch.ones(xe_cat.size(0))
-        y[:, 0] = y_0
         if self.use_cuda:
-            y = y.cuda()
+            y = -torch.ones(xe.size(0), xe.size(1)).cuda()
+            y_0 = torch.ones(xe.size(0)).cuda()
+        else:
+            y = -torch.ones(xe.size(0), xe.size(1))
+            y_0 = torch.ones(xe.size(0))
+        y[:, 0] = y_0
 
         loss = self.criterion(
-            xe_cat.view(-1, xe_cat.size(-1)),
-            ye.view(-1, xe_cat.size(-1)),
+            xe.view(-1, xe.size(-1)),
+            ye.view(-1, xe.size(-1)),
             y.view(-1)
         )
         loss.backward()
         self.optimizer.step()
-        scores = nn.CosineSimilarity(dim=-1).forward(xe_cat, ye)
+        scores = nn.CosineSimilarity(dim=-1).forward(xe, ye)
 
         # Update metrics
         self.metrics['loss'] += loss.item()
@@ -223,8 +224,10 @@ class StarspaceTorchAgent(TorchRankerAgent):
             cands=cand_vecs
         )
 
-        xe_cat = torch.cat([xe.unsqueeze(1)] * ye.size(1), dim=1)
-        scores = nn.CosineSimilarity(dim=-1).forward(xe_cat, ye)
+        xe = torch.cat([xe for _ in range(ye.size(1))], dim=1)
+
+        scores = nn.CosineSimilarity(dim=-1).forward(xe, ye)
+
         _, ranks = scores.sort(1, descending=True)
 
         self.metrics['examples'] += batchsize
@@ -240,7 +243,6 @@ class StarspaceTorchAgent(TorchRankerAgent):
                 cand_list = cands[i]
             cand_preds.append([cand_list[rank] for rank in ordering])
         preds = [cand_preds[i][0] for i in range(batchsize)]
-
         return Output(preds, cand_preds)
 
     def observe(self, observation):
@@ -251,6 +253,18 @@ class StarspaceTorchAgent(TorchRankerAgent):
             for label in labels:
                 self.add_to_ys_cache(label)
         return super(StarspaceTorchAgent, self).observe(observation)
+
+    def vectorize(self, obs, add_start=False, add_end=False, truncate=None,
+                  split_lines=False):
+        """Overrride method from Torch Agent so that by default we do not add
+        start and end indices."""
+        return super(StarspaceTorchAgent, self).vectorize(
+            obs,
+            add_start=add_start,
+            add_end=add_end,
+            truncate=truncate,
+            split_lines=split_lines,
+        )
 
     def _get_custom_candidates(self, obs):
         """Sets custom candidates for the observation."""
