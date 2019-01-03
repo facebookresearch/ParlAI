@@ -181,6 +181,7 @@ class MTurkAgent(Agent):
         self.recieved_packets = {}
         self.creation_time = time.time()
         self.alived = True  # Used for restoring state after refresh
+        self.feedback = None
 
         self.msg_queue = Queue()
 
@@ -320,11 +321,13 @@ class MTurkAgent(Agent):
             self.msg_queue.put(data)
 
     def flush_msg_queue(self):
-        """Clear all messages in the message queue"""
+        """Clear all messages in the message queue. Return flushed messages"""
+        messages = []
         if self.msg_queue is None:
-            return
+            return []
         while not self.msg_queue.empty():
-            self.msg_queue.get()
+            messages.append(self.msg_queue.get())
+        return messages
 
     def reduce_state(self):
         """Cleans up resources related to maintaining complete state"""
@@ -638,6 +641,11 @@ class MTurkAgent(Agent):
             if did_complete and self.db_logger is not None:
                 self.db_logger.log_submit_assignment(
                     self.worker_id, self.assignment_id)
+            # Grab feedback message if it happens to exist
+            messages = self.flush_msg_queue()
+            for m in messages:
+                if m['text'] == '[PEER_REVIEW]':
+                    self.feedback = m['data']
             return did_complete
 
     def update_agent_id(self, agent_id):

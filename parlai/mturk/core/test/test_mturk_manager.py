@@ -1454,6 +1454,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.assertEqual(
             len(mturk_utils.create_hit_with_hit_type.call_args_list), 5)
         mturk_utils.create_hit_with_hit_type.assert_called_with(
+            opt=manager.opt,
             page_url=mturk_chat_url,
             hit_type_id=fake_hit,
             num_assignments=1,

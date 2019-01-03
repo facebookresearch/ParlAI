@@ -219,13 +219,22 @@ app.post('/sns_posts', async function (req, res, next) {
 // Renders the chat page by setting up the template_context given the
 // sent params for the request
 app.get('/chat_index', async function (req, res) {
+  var config_vars = _load_hit_config();
+  var frame_height = config_vars.frame_height || 650;
+  var allow_reviews = config_vars.allow_reviews || false;
+  var block_mobile = config_vars.block_mobile;
+  block_mobile = (block_mobile === undefined) ? true : block_mobile;
+
   var params = req.query;
   var template_context = {
     worker_id: params['workerId'],
     hit_id: params['hitId'],
     task_group_id: params['task_group_id'],
     assignment_id: params['assignmentId'],
-    is_cover_page: params['assignmentId'] == 'ASSIGNMENT_ID_NOT_AVAILABLE'
+    is_cover_page: params['assignmentId'] == 'ASSIGNMENT_ID_NOT_AVAILABLE',
+    allow_reviews: allow_reviews,
+    frame_height: frame_height,
+    block_mobile: block_mobile
   };
 
   res.render('index.html', template_context);
