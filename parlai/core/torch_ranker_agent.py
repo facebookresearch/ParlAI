@@ -74,7 +74,9 @@ class TorchRankerAgent(TorchAgent):
             self.rank_loss.cuda()
 
         if shared:
-            self.optimizer = shared["optimizer"]
+            # We don't use get here because hasattr is used on optimizer later.
+            if 'optimizer' in shared:
+                self.optimizer = shared['optimizer']
         else:
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(optim_params)
@@ -293,7 +295,7 @@ class TorchRankerAgent(TorchAgent):
 
     def update_params(self):
         """Do optim step and clip gradients if needed."""
-        if self.get('clip', 0) > 0:
+        if hasattr(self, 'clip') and self.clip > 0:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
