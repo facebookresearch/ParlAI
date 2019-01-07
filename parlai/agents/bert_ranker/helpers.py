@@ -10,6 +10,7 @@ import torch
 try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig
     from pytorch_pretrained_bert import BertAdam
+    from pytorch_pretrained_bert import BertModel  # NOQA
 except ImportError:
     raise Exception(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
                      "pip install pytorch-pretrained-bert"))
