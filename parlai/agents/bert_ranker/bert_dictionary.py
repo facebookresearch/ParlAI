@@ -11,7 +11,6 @@ try:
 except ImportError:
     raise Exception(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
                      "pip install pytorch-pretrained-bert"))
-import torch
 
 
 class BertDictionaryAgent(DictionaryAgent):
