@@ -73,8 +73,13 @@ class TorchRankerAgent(TorchAgent):
             self.model.cuda()
             self.rank_loss.cuda()
 
-        optim_params = [p for p in self.model.parameters() if p.requires_grad]
-        self.init_optim(optim_params)
+        if shared:
+            # We don't use get here because hasattr is used on optimizer later.
+            if 'optimizer' in shared:
+                self.optimizer = shared['optimizer']
+        else:
+            optim_params = [p for p in self.model.parameters() if p.requires_grad]
+            self.init_optim(optim_params)
 
     def score_candidates(self, batch, cand_vecs):
         """Given a batch and candidate set, return scores (for ranking)"""
@@ -224,11 +229,15 @@ class TorchRankerAgent(TorchAgent):
                     "".format(m='candidates' if mode == 'train' else 'eval-candidates'))
 
             cands = batch.candidates
-            cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
+            cand_vecs = padded_3d(batch.candidate_vecs, self.NULL_IDX,
+                                  use_cuda=self.use_cuda)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
+                    label_vec_pad = (label_vec.new_zeros(cand_vecs[i].size(1))
+                                     .fill_(self.NULL_IDX))
+                    if cand_vecs[i].size(1) < len(label_vec):
+                        label_vec = label_vec[0:cand_vecs[i].size(1)]
                     label_vec_pad[0:label_vec.size(0)] = label_vec
                     label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
 
@@ -281,11 +290,12 @@ class TorchRankerAgent(TorchAgent):
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
+        shared['optimizer'] = self.optimizer
         return shared
 
     def update_params(self):
         """Do optim step and clip gradients if needed."""
-        if self.clip > 0:
+        if hasattr(self, 'clip') and self.clip > 0:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
 
