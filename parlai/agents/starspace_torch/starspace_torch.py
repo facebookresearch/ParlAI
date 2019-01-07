@@ -65,7 +65,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
             '-margin', '--margin', type=float, default=0.1,
             help='margin')
         agent.add_argument(
-            '--input_dropout', type=float, default=0,
+            '--input-dropout', type=float, default=0,
             help='fraction of input/output features to dropout during training')
         agent.add_argument(
             '-opt', '--optimizer', default='sgd',
@@ -314,21 +314,15 @@ class StarspaceTorchAgent(TorchRankerAgent):
         """Dropout some input elements"""
 
         def dropout(x, rate):
-            bsz = x.size(0)
             x_len = x.size(1)
-            xd = [[] for _ in range(bsz)]
-            for i in range(x_len):
-                if random.uniform(0, 1) > rate:
-                    for j in range(bsz):
-                        xd[j].append(x[j][i].item())
-            if len(xd[0]) == 0:
-                # pick one random thing to put in xd
-                for j in range(bsz):
-                    xd[j].append(x[j][random.randint(0, x_len - 1)])
+            num_keep = x_len - int(rate * x_len)
+            idxs = sorted(random.sample(list(range(x_len)), num_keep))
             if self.use_cuda:
-                return torch.LongTensor(xd).cuda()
+                to_keep = torch.LongTensor(idxs).cuda()
             else:
-                return torch.LongTensor(xd)
+                to_keep = torch.LongTensor(idxs)
+            new_x = x[:, to_keep]
+            return new_x
 
         rate = self.opt.get('input_dropout')
 

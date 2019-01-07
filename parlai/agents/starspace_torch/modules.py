@@ -38,7 +38,6 @@ class Starspace(nn.Module):
             xs_emb = self.lin(xs_emb)
         xs_emb = xs_emb.unsqueeze(1)
         if ys is not None:
-            # training includes the correct example first.
             ys_emb = self.encoder2(ys).unsqueeze(1)
         if cands is not None:
             bsz = cands.size(0)
