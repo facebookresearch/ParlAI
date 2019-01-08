@@ -14,6 +14,7 @@ from task_config import task_config
 from parlai.core.dict import DictionaryAgent
 import os
 import copy
+import tqdm
 import pickle
 import parlai.core.build_data as build_data
 from urllib.parse import unquote

@@ -25,7 +25,6 @@ from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
 import copy
 import os
-import sys
 import tqdm
 
 
@@ -106,7 +105,7 @@ def build_dict(opt, skip_if_built=False):
         log_every_n_secs = opt.get('log_every_n_secs', None)
         if log_every_n_secs:
             pbar = tqdm.tqdm(
-                total=total, desc='Building dictionary', unit='ex', 
+                total=total, desc='Building dictionary', unit='ex',
                 unit_scale=True
             )
         else:

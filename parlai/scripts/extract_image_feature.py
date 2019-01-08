@@ -163,7 +163,10 @@ def extract_feats(opt):
         print("[ Beginning image extraction for {} images ]".format(dt.split(':')[0]))
         hdf5_file = h5py.File(hdf5_path, 'w')
         idx = 0
-        for ex in iter(dataloader):
+        iterator = tqdm.tqdm(
+            dataloader, unit='batch', unit_scale=True, total=total_exs // bsz
+        )
+        for ex in iterator:
             if ex['image_id'] in image_id_to_index:
                 continue
             else:
@@ -188,7 +191,6 @@ def extract_feats(opt):
                     dtype='f')
 
             hdf5_dataset[idx] = img
-            logger.log(idx, num_images)
             idx += 1
 
         hdf5_file.close()
