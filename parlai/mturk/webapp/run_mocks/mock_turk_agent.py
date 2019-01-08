@@ -88,6 +88,7 @@ class MockTurkAgent(MTurkAgent):
         gotten_act = super().act(timeout, blocking)
         if gotten_act is not None:
             self.wants_message = False
+            gotten_act['episode_done'] = gotten_act.get('episode_done', False)
         return gotten_act
 
     def episode_done(self):
