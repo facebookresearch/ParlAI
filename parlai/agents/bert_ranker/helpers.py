@@ -13,7 +13,7 @@ try:
     from pytorch_pretrained_bert import BertModel  # NOQA
 except ImportError:
     raise ImportError(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
-                     "pip install pytorch-pretrained-bert"))
+                       "pip install pytorch-pretrained-bert"))
 from parlai.core.utils import _ellipse
 
 

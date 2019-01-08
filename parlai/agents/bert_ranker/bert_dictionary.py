@@ -10,7 +10,7 @@ try:
     from pytorch_pretrained_bert import BertTokenizer
 except ImportError:
     raise ImportError(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
-                     "pip install pytorch-pretrained-bert"))
+                       "pip install pytorch-pretrained-bert"))
 
 
 class BertDictionaryAgent(DictionaryAgent):

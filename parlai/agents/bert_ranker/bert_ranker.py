@@ -16,6 +16,6 @@ class BertRankerAgent(TorchAgent):
 
     def __init__(self, opt, shared=None):
         raise RuntimeError("You must specify which ranker to use. Choices: \n"
-                        "-m bert_ranker:BiEncoderRanker \n"
-                        "-m bert_ranker:CrossEncoderRanker \n"
-                        "-m bert_ranker:BothEncoderRanker")
+                           "-m bert_ranker:BiEncoderRanker \n"
+                           "-m bert_ranker:CrossEncoderRanker \n"
+                           "-m bert_ranker:BothEncoderRanker")
