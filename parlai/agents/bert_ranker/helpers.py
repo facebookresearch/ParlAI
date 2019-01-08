@@ -12,7 +12,7 @@ try:
     from pytorch_pretrained_bert import BertAdam
     from pytorch_pretrained_bert import BertModel  # NOQA
 except ImportError:
-    raise Exception(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
+    raise ImportError(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
                      "pip install pytorch-pretrained-bert"))
 from parlai.core.utils import _ellipse
 
@@ -21,8 +21,6 @@ def add_common_args(parser):
     """Add command line arguments for this agent."""
     TorchRankerAgent.add_cmdline_args(parser)
     parser = parser.add_argument_group('Bert Ranker Arguments')
-    parser.add_argument('--history-length', type=int, default=5,
-                        help='Number of previous line to keep for inference')
     parser.add_argument('--num-samples', type=int, default=131800,
                         help='Number of samples in the task (temporary)')
     parser.add_argument('--bert-id', type=str, default='bert-base-uncased')
@@ -35,8 +33,6 @@ def add_common_args(parser):
                         help="Which layer of Bert do we use? Default=-1=last one.")
     parser.add_argument('--predefined-candidates-path', type=str, default=None,
                         help="Path to a list of candidates")
-    parser.add_argument('--token-cap', type=int, default=320,
-                        help="Cap number of tokens")
     parser.add_argument('--out-dim', type=int, default=768,
                         help="For biencoder, output dimension")
     parser.add_argument('--topn', type=int, default=10,

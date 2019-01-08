@@ -9,12 +9,12 @@ from parlai.core.dict import DictionaryAgent
 try:
     from pytorch_pretrained_bert import BertTokenizer
 except ImportError:
-    raise Exception(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
+    raise ImportError(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
                      "pip install pytorch-pretrained-bert"))
 
 
 class BertDictionaryAgent(DictionaryAgent):
-    """ Hack to use the Torch Agent with the wordpiece dictionary of Huggin Face.
+    """ Allow to use the Torch Agent with the wordpiece dictionary of Huggin Face.
     """
 
     def __init__(self, opt):

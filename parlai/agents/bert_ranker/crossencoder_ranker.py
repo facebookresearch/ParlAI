@@ -7,8 +7,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .bert_dictionary import BertDictionaryAgent
-from .helpers import get_bert_optimizer, BertWrapper, BertModel, \
-    add_common_args, surround
+from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
+                      add_common_args, surround)
 import torch
 import json
 
@@ -83,7 +83,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             obs,
             add_start=True,
             add_end=True,
-            truncate=self.opt["token_cap"])
+            truncate=self.opt["truncate"])
 
     def _set_text_vec(self, obs, truncate, split_lines):
         super()._set_text_vec(obs, truncate, split_lines)

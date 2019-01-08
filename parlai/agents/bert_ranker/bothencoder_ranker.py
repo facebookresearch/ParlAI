@@ -80,7 +80,7 @@ class BothEncoderRankerAgent(TorchAgent):
             obs,
             add_start=True,
             add_end=True,
-            truncate=self.opt["token_cap"])
+            truncate=self.opt["truncate"])
 
     def _set_text_vec(self, obs, truncate, split_lines):
         super()._set_text_vec(obs, truncate, split_lines)
