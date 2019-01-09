@@ -231,7 +231,9 @@ class TorchRankerAgent(TorchAgent):
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
                     if cand_vecs[i].size(1) < label_vec.size(0):
-                        # cand vecs do not contain label_vec
+                        # cand_vecs do not contain label_vec, otherwise
+                        # the cand_vecs matrix would at least be as long as the
+                        # label_vec
                         match = None
                     else:
                         label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
@@ -288,7 +290,7 @@ class TorchRankerAgent(TorchAgent):
     @staticmethod
     def _find_match(cand_vecs, label_vec):
         matches = ((cand_vecs == label_vec).sum(1) == cand_vecs.size(1)).nonzero()
-        return matches[0] if (len(matches.tolist()) > 0) else None
+        return matches[0] if (len(matches) > 0) else None
 
     def share(self):
         """Share model parameters."""
