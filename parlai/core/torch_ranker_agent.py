@@ -237,7 +237,7 @@ class TorchRankerAgent(TorchAgent):
                         label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
                         label_vec_pad[0:label_vec.size(0)] = label_vec
                         match = self._find_match(cand_vecs[i], label_vec_pad)
-                    if not match:
+                    if match is None:
                         if source == 'custom':
                             warn_once(
                                 'Your set of custom candidates does not '
