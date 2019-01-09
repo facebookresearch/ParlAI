@@ -15,7 +15,6 @@ from parlai.core.torch_agent import Output
 from .modules import Starspace
 
 import torch
-from torch import optim
 import torch.nn as nn
 import os
 import random
@@ -24,22 +23,6 @@ import random
 class StarspaceTorchAgent(TorchRankerAgent):
     """Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856
     """
-
-    OPTIM_OPTS = {
-        'adadelta': optim.Adadelta,
-        'adagrad': optim.Adagrad,
-        'adam': optim.Adam,
-        'adamax': optim.Adamax,
-        'asgd': optim.ASGD,
-        'lbfgs': optim.LBFGS,
-        'rmsprop': optim.RMSprop,
-        'rprop': optim.Rprop,
-        'sgd': optim.SGD,
-    }
-
-    @staticmethod
-    def dictionary_class():
-        return DictionaryAgent
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -53,7 +36,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
             '-enorm', '--embeddingnorm', type=float, default=10,
             help='max norm of word embeddings')
         agent.add_argument(
-            '-shareEmb', '--share-embeddings', type='bool', default=True,
+            '-shareemb', '--share-embeddings', type='bool', default=True,
             help='whether LHS and RHS share embeddings')
         agent.add_argument(
             '--lins', default=0, type=int,
@@ -67,17 +50,6 @@ class StarspaceTorchAgent(TorchRankerAgent):
         agent.add_argument(
             '--input-dropout', type=float, default=0,
             help='fraction of input/output features to dropout during training')
-        agent.add_argument(
-            '-opt', '--optimizer', default='sgd',
-            choices=StarspaceTorchAgent.OPTIM_OPTS.keys(),
-            help='Choose between pytorch optimizers. '
-                 'Any member of torch.optim is valid and will '
-                 'be used with default params except learning '
-                 'rate (as specified by -lr).')
-        agent.add_argument(
-            '-tr', '--truncate', default=1000, type=int,
-            help='Truncate input lengths to increase speed / '
-                 'use less memory.')
         agent.add_argument(
             '-k', '--neg-samples', type=int, default=10,
             help='number k of negative samples per example')
@@ -105,6 +77,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
+
         opt = self.opt
         self.reset_metrics()
         self.id = 'Starspace'
@@ -129,13 +102,15 @@ class StarspaceTorchAgent(TorchRankerAgent):
             self.opt['dict_file'] = self.opt['model_file'] + '.dict'
         # load dictionary and basic tokens & vectors
         self.dict = DictionaryAgent(self.opt)
-
         self.model = Starspace(self.opt, len(self.dict), self.dict)
         if self.opt.get('model_file') and os.path.isfile(self.opt['model_file']):
             self.load(self.opt['model_file'])
             self.reset()
         else:
-            self._init_embeddings()
+            self._copy_embeddings(
+                self.model.lt.weight,
+                self.opt.get('embedding_type', 'random')
+            )
         self.model.share_memory()
         if self.use_cuda:
             self.model.cuda()
@@ -174,12 +149,8 @@ class StarspaceTorchAgent(TorchRankerAgent):
             )
         xe = torch.cat([xe for _ in range(ye.size(1))], dim=1)
 
-        if self.use_cuda:
-            y = -torch.ones(xe.size(0), xe.size(1)).cuda()
-            y_0 = torch.ones(xe.size(0)).cuda()
-        else:
-            y = -torch.ones(xe.size(0), xe.size(1))
-            y_0 = torch.ones(xe.size(0))
+        y = -torch.ones(xe.size(0), xe.size(1)).to(xe.device)
+        y_0 = torch.ones(xe.size(0)).to(xe.device)
         y[:, 0] = y_0
 
         loss = self.criterion(
@@ -237,6 +208,8 @@ class StarspaceTorchAgent(TorchRankerAgent):
         return Output(preds, cand_preds)
 
     def observe(self, observation):
+        # During observe, we add each of the labels to the ys_cache as a set
+        # of possible negative candidates to use for the future
         labels = observation.get('labels')
         if not labels:
             labels = observation.get('eval_labels')
@@ -280,29 +253,6 @@ class StarspaceTorchAgent(TorchRankerAgent):
         # if we aren't training, return label candidates if available
         return obs.get('label_candidates')
 
-    def _init_embeddings(self, log=True):
-        """Copy embeddings from the pretrained embeddings to the lookuptable.
-
-        :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
-        :param emb_type: pretrained embedding type
-        """
-        weight = self.model.lt.weight
-        emb_type = self.opt.get('embedding_type', 'random')
-        if emb_type == 'random':
-            return
-        embs, name = self._get_embtype(self, emb_type)
-        cnt = 0
-        for w, i in self.dict.tok2ind.items():
-            if w in embs.stoi:
-                vec = self._project_vec(self,
-                                        embs.vectors[embs.stoi[w]],
-                                        weight.size(1))
-                weight.data[i] = vec
-                cnt += 1
-        if log:
-            print('Initialized embeddings for {} tokens ({}%) from {}.'
-                  ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
-
     def same(self, labels, cand):
         if labels:
             for label in labels:
@@ -317,10 +267,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
             x_len = x.size(1)
             num_keep = x_len - int(rate * x_len)
             idxs = sorted(random.sample(list(range(x_len)), num_keep))
-            if self.use_cuda:
-                to_keep = torch.LongTensor(idxs).cuda()
-            else:
-                to_keep = torch.LongTensor(idxs)
+            to_keep = torch.LongTensor(idxs).to(x.device)
             new_x = x[:, to_keep]
             return new_x
 
@@ -358,10 +305,3 @@ class StarspaceTorchAgent(TorchRankerAgent):
         self.reset_metrics()
         # reset optimizer
         self.optimizer_reset()
-
-    def share(self):
-        """Share internal states between parent and child instances."""
-        shared = super().share()
-        shared['dict'] = self.dict
-        shared['model'] = self.model
-        return shared

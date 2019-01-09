@@ -15,15 +15,17 @@ class Starspace(nn.Module):
     def __init__(self, opt, num_features, dict):
         super().__init__()
         self.opt = opt
-
-        self.lt = nn.Embedding(num_features, opt['embeddingsize'], 0,
-                               sparse=True, max_norm=opt['embeddingnorm'])
+        self.null_idx = dict.tok2ind[dict.null_token]
+        self.lt = nn.Embedding(num_features, opt['embeddingsize'],
+                               self.null_idx, sparse=True,
+                               max_norm=opt['embeddingnorm'])
         if not opt['tfidf']:
             dict = None
         self.encoder = Encoder(self.lt, dict)
         if not opt['share_embeddings']:
-            self.lt2 = nn.Embedding(num_features, opt['embeddingsize'], 0,
-                                    sparse=True, max_norm=opt['embeddingnorm'])
+            self.lt2 = nn.Embedding(num_features, opt['embeddingsize'],
+                                    self.null_idx, sparse=True,
+                                    max_norm=opt['embeddingnorm'])
             self.encoder2 = Encoder(self.lt2, dict)
         else:
             self.encoder2 = self.encoder
@@ -33,6 +35,9 @@ class Starspace(nn.Module):
         self.lins = opt.get('lins', 0)
 
     def forward(self, xs, ys=None, cands=None):
+        if not ys and not cands:
+            raise RuntimeError('Both ys and cands are undefined. We need at '
+                               'least one to compute RHS embedding.')
         xs_emb = self.encoder(xs)
         if self.lins > 0:
             xs_emb = self.lin(xs_emb)
@@ -56,6 +61,7 @@ class Encoder(nn.Module):
     def __init__(self, shared_lt, dict):
         super().__init__()
         self.lt = shared_lt
+        self.null_idx = dict.tok2ind[dict.null_token]
         if dict is not None:
             num_words = len(dict)
             freqs = torch.Tensor(num_words)
@@ -73,10 +79,7 @@ class Encoder(nn.Module):
             # tfidf embeddings
             bsz = xs.size(0)
             len_x = xs.size(1)
-            if xs_emb.is_cuda:
-                x_scale = torch.Tensor(bsz, len_x).cuda()
-            else:
-                x_scale = torch.Tensor(bsz, len_x)
+            x_scale = torch.Tensor(bsz, len_x).to(xs.device)
             for i in range(len_x):
                 for j in range(bsz):
                     x_scale[j][i] = self.freqs[xs.data[j][i]]
@@ -84,7 +87,8 @@ class Encoder(nn.Module):
             xs_emb = xs_emb.transpose(1, 2).matmul(x_scale.unsqueeze(-1)).squeeze(-1)
         else:
             # basic embeddings (faster)
-            x_lens = torch.sum(xs.ne(0).int(), dim=1).float().unsqueeze(-1)
+            x_lens = torch.sum(xs.ne(self.null_idx).int(),
+                               dim=1).float().unsqueeze(-1)
             # take the mean over the non-zero elements
             xs_emb = xs_emb.sum(dim=1) / x_lens.clamp(min=1e-20)
         return xs_emb
