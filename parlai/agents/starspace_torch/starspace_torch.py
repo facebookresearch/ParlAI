@@ -64,7 +64,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
             help='size of negative sample cache to draw from')
         agent.add_argument(
             '-cands', '--candidates', type=str, default='custom',
-            choices=['batch', 'inline', 'fixed', 'vocab'],
+            choices=['batch', 'inline', 'fixed', 'vocab', 'custom'],
             help='The source of candidates during training '
                  '(see TorchRankerAgent._build_candidates() for details).')
         agent.add_argument(
@@ -127,7 +127,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
             print('No negatives yet!')
             return Output()
 
-        cands, cand_vecs, label_inds = self._build_candidates(
+        cands, cand_vecs, _ = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
 
         if self.opt.get('input_dropout', 0) > 0:
@@ -167,7 +167,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
         self.metrics['examples'] += batchsize
         _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
-            rank = (ranks[b] == label_inds[b]).nonzero().item()
+            rank = (ranks[b] == 0).nonzero().item()
             self.metrics['rank'] += 1 + rank
 
         return Output()
@@ -249,7 +249,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
             if self.opt['parrot_neg']:
                 query = self.history.split('\n')[-1]
                 cands.append(query)
-                return cands
+            return cands
         # if we aren't training, return label candidates if available
         return obs.get('label_candidates')
 

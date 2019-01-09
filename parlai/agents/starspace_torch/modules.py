@@ -21,12 +21,12 @@ class Starspace(nn.Module):
                                max_norm=opt['embeddingnorm'])
         if not opt['tfidf']:
             dict = None
-        self.encoder = Encoder(self.lt, dict)
+        self.encoder = Encoder(self.lt, dict, null_idx=self.null_idx)
         if not opt['share_embeddings']:
             self.lt2 = nn.Embedding(num_features, opt['embeddingsize'],
                                     self.null_idx, sparse=True,
                                     max_norm=opt['embeddingnorm'])
-            self.encoder2 = Encoder(self.lt2, dict)
+            self.encoder2 = Encoder(self.lt2, dict, null_idx=self.null_idx)
         else:
             self.encoder2 = self.encoder
 
@@ -35,7 +35,7 @@ class Starspace(nn.Module):
         self.lins = opt.get('lins', 0)
 
     def forward(self, xs, ys=None, cands=None):
-        if not ys and not cands:
+        if ys is None and cands is None:
             raise RuntimeError('Both ys and cands are undefined. We need at '
                                'least one to compute RHS embedding.')
         xs_emb = self.encoder(xs)
@@ -58,10 +58,10 @@ class Starspace(nn.Module):
 
 
 class Encoder(nn.Module):
-    def __init__(self, shared_lt, dict):
+    def __init__(self, shared_lt, dict, null_idx=0):
         super().__init__()
         self.lt = shared_lt
-        self.null_idx = dict.tok2ind[dict.null_token]
+        self.null_idx = null_idx
         if dict is not None:
             num_words = len(dict)
             freqs = torch.Tensor(num_words)

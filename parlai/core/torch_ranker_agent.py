@@ -230,9 +230,29 @@ class TorchRankerAgent(TorchAgent):
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
-                    label_vec_pad[0:label_vec.size(0)] = label_vec
-                    label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
+                    if cand_vecs[i].size(1) < label_vec.size(0):
+                        # cand vecs do not contain label_vec
+                        match = None
+                    else:
+                        label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
+                        label_vec_pad[0:label_vec.size(0)] = label_vec
+                        match = self._find_match(cand_vecs[i], label_vec_pad)
+                    if not match:
+                        if source == 'custom':
+                            warn_once(
+                                'Your set of custom candidates does not '
+                                'contain the label. '
+                                'Check if this is expected behavior. '
+                            )
+                            label_inds = None
+                            break
+                        else:
+                            raise RuntimeError(
+                                'Your set of inline label candidates does not '
+                                'contain the label. Please check your task.'
+                            )
+                    else:
+                        label_inds[i] = match
 
         elif source == 'fixed':
             warn_once(
@@ -267,7 +287,8 @@ class TorchRankerAgent(TorchAgent):
 
     @staticmethod
     def _find_match(cand_vecs, label_vec):
-        return ((cand_vecs == label_vec).sum(1) == cand_vecs.size(1)).nonzero()[0]
+        matches = ((cand_vecs == label_vec).sum(1) == cand_vecs.size(1)).nonzero()
+        return matches[0] if (len(matches.tolist()) > 0) else None
 
     def share(self):
         """Share model parameters."""
