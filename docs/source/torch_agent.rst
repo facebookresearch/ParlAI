@@ -26,18 +26,15 @@ Torch Agent
 -----------------------------------
 .. automodule:: parlai.core.torch_agent
   :members:
-  :exclude-members: __dict__,__weakref__
 
 
 Torch Ranker Agent
 -----------------------------------
 .. automodule:: parlai.core.torch_ranker_agent
   :members:
-  :exclude-members: __dict__,__weakref__
 
 
 Torch Generator Agent
 -----------------------------------
 .. automodule:: parlai.core.torch_generator_agent
   :members:
-  :exclude-members: __dict__,__weakref__
