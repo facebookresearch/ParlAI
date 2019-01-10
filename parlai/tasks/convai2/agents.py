@@ -7,6 +7,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.teachers import FbDialogTeacher
+from parlai.core.utils import warn_once
 from .build import build
 
 import copy
@@ -27,7 +28,7 @@ def _path(opt, persona, use_cands):
     build(opt)
     datatype = opt['datatype'].split(':')[0]
     if datatype == 'test':
-        print("WARNING: Test set not included. Setting datatype to valid.")
+        warn_once("WARNING: Test set not included. Setting datatype to valid.")
         datatype = 'valid'
     dt = datatype + '_' + persona
     cands = '' if use_cands else '_no_cands'
