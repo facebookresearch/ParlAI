@@ -110,11 +110,15 @@ def setup_args(parser=None):
     return parser
 
 
-def _maybe_load_world(agent, opt, datatype):
+def _maybe_load_eval_world(agent, opt, datatype):
     if not is_primary_worker():
         # only need the validation on the main worker
         return None
+    else:
+        return load_eval_world(agent, opt, datatype)
 
+
+def load_eval_world(agent, opt, datatype):
     if 'stream' in opt['datatype']:
         datatype += ':stream'
     opt = opt.copy()
@@ -238,7 +242,7 @@ class TrainLoop():
 
         if self.valid_world is None:
             # we need to load the world now
-            self.valid_world = _maybe_load_world(self.agent, opt, 'valid')
+            self.valid_world = _maybe_load_eval_world(self.agent, opt, 'valid')
 
         # run evaluation on valid set
         valid_report = sync_object(run_eval(
@@ -247,8 +251,7 @@ class TrainLoop():
 
         # logging
         if opt['tensorboard_log'] is True and is_primary_worker():
-            self.writer.add_metrics('valid', int(
-                np.floor(self.train_time.time())), valid_report)
+            self.writer.add_metrics('valid', int(self.train_time.time()), valid_report)
         # saving
         if (
             opt.get('model_file') and
@@ -460,15 +463,15 @@ class TrainLoop():
             # reload best validation model
             self.agent = create_agent(opt)
 
-        v_report = run_eval(self.valid_world, opt, 'valid', write_log=True)
-        test_world = _maybe_load_world(self.agent, opt, 'test')
+        valid_world = _maybe_load_eval_world(self.agent, opt, 'valid')
+        v_report = run_eval(valid_world, opt, 'valid', write_log=True)
+        test_world = _maybe_load_eval_world(self.agent, opt, 'test')
         t_report = run_eval(test_world, opt, 'test', write_log=True)
-
-        # TODO: are these really needed
-        if self.valid_world:
-            self.valid_world.shutdown()
+        if valid_world:
+            valid_world.shutdown()
         if test_world:
             test_world.shutdown()
+
         return v_report, t_report
 
 

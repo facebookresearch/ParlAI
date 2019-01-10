@@ -27,6 +27,7 @@ def _path(opt, persona, use_cands):
     build(opt)
     datatype = opt['datatype'].split(':')[0]
     if datatype == 'test':
+        print("WARNING: Test set not included. Setting datatype to valid.")
         datatype = 'valid'
     dt = datatype + '_' + persona
     cands = '' if use_cands else '_no_cands'
