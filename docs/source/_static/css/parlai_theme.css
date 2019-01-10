@@ -17,6 +17,10 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.capti
     font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
 }
 
+nav p.caption {
+    color: #fcfcfc;
+}
+
 /* Use white for docs background */
 .wy-side-nav-search {
     background-color: #fff;
