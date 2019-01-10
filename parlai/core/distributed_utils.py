@@ -78,9 +78,15 @@ def is_primary_worker():
 
 def override_print(suppress=False, prefix=None):
     """
-    Overrides the builtin print, to either mute or annotate the output of
-    individual workers. Mutes if suppress is True, and this is not the
-    primary or only worker.
+    Overrides the builtin print, to either mute or annotate the output with a
+    given prefix.
+
+    Recommended usage is to call this with suppress=True for all non-primary workers,
+    or call with with a prefix of rank on all workers.
+
+    :param bool suppress: if true, all future print statements are noops.
+    :param str prefix: if not None, this string is prefixed to all future print
+        statements.
     """
     builtin_print = builtins.print
 
@@ -101,12 +107,12 @@ def all_gather_list(data, max_size=16384):
     """Gathers arbitrary data from all nodes into a list.
     Similar to :func:`~torch.distributed.all_gather` but for arbitrary Python
     data. Note that *data* must be picklable.
-    Args:
-        data (Any): data from the local worker to be gathered on other workers
-        max_size (int, optional): maximum size of the data to be gathered
-            across workers
-    """
 
+    :param data: data from the local worker to be gathered on other workers
+    :param int max_size: maximum size of the data to be gathered across workers
+
+    :returns: a list containing [data1, data2, ...] of all workers
+    """
     if not is_distributed():
         # fall back to just keeping things basic if we're not distributed
         return [data]
@@ -144,9 +150,15 @@ def all_gather_list(data, max_size=16384):
         out_buffer = buffer[i * max_size: (i + 1) * max_size]
         size = (255 * out_buffer[0].item()) + out_buffer[1].item()
         if size > 0:
-            result.append(
-                pickle.loads(bytes(out_buffer[2:size+2].tolist()))
-            )
+            try:
+                result.append(pickle.loads(bytes(out_buffer[2:size+2].tolist())))
+            except pickle.UnpicklingError:
+                raise RuntimeError(
+                    'There was an unpickling error in sync_object. This likely means '
+                    'your workers got out of syncronization (e.g. one is expecting to '
+                    'sync and another is not.)'
+                )
+
     return result
 
 
@@ -183,7 +195,14 @@ def sync_object(data, max_size=16384):
     if not is_primary_worker():
         # deserialize the data
         enc_size = buffer[0].item() * 255 + buffer[1].item()
-        data = pickle.loads(bytes(buffer[2: enc_size + 2].tolist()))
+        try:
+            data = pickle.loads(bytes(buffer[2: enc_size + 2].tolist()))
+        except pickle.UnpicklingError:
+            raise RuntimeError(
+                'There was an unpickling error in sync_object. This likely means '
+                'your workers got out of syncronization (e.g. one is expecting to '
+                'sync and another is not.)'
+            )
 
     return data
 
