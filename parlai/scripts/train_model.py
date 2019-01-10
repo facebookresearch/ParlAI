@@ -400,7 +400,7 @@ class TrainLoop():
                 world.parley()
                 self.parleys += 1
 
-                # get the total training examples done, comptue epochs
+                # get the total training examples done, compute epochs
                 self._total_epochs = num_workers() * self.world.get_total_epochs()
                 exs_per_epoch = self.world.num_examples()
                 self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))

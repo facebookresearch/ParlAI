@@ -188,9 +188,10 @@ class Seq2seqAgent(TorchGeneratorAgent):
             model = {}
             if hasattr(self.model, 'module'):
                 model['model'] = self.model.module.state_dict()
+                model['longest_label'] = self.model.module.longest_label
             else:
                 model['model'] = self.model.state_dict()
-            model['longest_label'] = self.model.longest_label
+                model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
             model['optimizer_type'] = self.opt['optimizer']
 
