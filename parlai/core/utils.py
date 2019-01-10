@@ -888,6 +888,7 @@ def msg_to_str(msg, ignore_fields=''):
 def set_namedtuple_defaults(namedtuple, default=None):
     """Set *all* of the fields for a given nametuple to a singular value.
 
+    Additionally removes the default docstring for each field.
     Modifies the tuple in place, but returns it anyway.
 
     More info:
@@ -899,6 +900,8 @@ def set_namedtuple_defaults(namedtuple, default=None):
     :returns: the modified namedtuple
     """
     namedtuple.__new__.__defaults__ = (default,) * len(namedtuple._fields)
+    for f in namedtuple._fields:
+        del getattr(namedtuple, f).__doc__
     return namedtuple
 
 
