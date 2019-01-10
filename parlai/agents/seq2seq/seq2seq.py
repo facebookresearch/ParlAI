@@ -208,10 +208,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         # set loaded states if applicable
-        if self.multigpu:
-            self.model.module.load_state_dict(states['model'])
-        else:
-            self.model.load_state_dict(states['model'])
+        self.model.load_state_dict(states['model'])
         if 'longest_label' in states:
             self.model.longest_label = states['longest_label']
         return states

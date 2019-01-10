@@ -110,39 +110,44 @@ def setup_args(parser=None):
     return parser
 
 
-def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None):
+def _maybe_load_world(agent, opt, datatype):
+    if not is_primary_worker():
+        # only need the validation on the main worker
+        return None
+
+    if 'stream' in opt['datatype']:
+        datatype += ':stream'
+    opt = opt.copy()
+    opt['datatype'] = datatype
+    if opt.get('evaltask'):
+        opt['task'] = opt['evaltask']
+    if opt.get('eval_batchsize'):
+        # override eval time batchsize
+        opt['batchsize'] = opt['eval_batchsize']
+    if opt.get('validation_share_agent', False):
+        valid_agent = create_agent_from_shared(agent.share())
+    else:
+        valid_agent = agent
+
+    valid_world = create_task(opt, valid_agent)
+    return valid_world
+
+
+def run_eval(valid_world, opt, datatype, max_exs=-1, write_log=False):
     """
     Eval on validation/test data.
 
-    :param agent: the agent to use for the evaluation.
+    :param valid_world: the pre-created validation world.
     :param opt: the options that specific the task, eval_task, etc
     :param datatype: the datatype to use, such as "valid" or "test"
     :param bool write_log: specifies to write metrics to file if the model_file is set
     :param int max_exs: limits the number of examples if max_exs > 0
-    :param World valid_world: can be an existing world, which will be reset
-        instead of reinitialized
     """
-    if not is_primary_worker():
-        # just use the model's
-        return sync_object(None), None
+    if valid_world is None:
+        # This isn't the primary worker, so we can just skip evaluation
+        return None
 
     print('[ running eval: ' + datatype + ' ]')
-    if 'stream' in opt['datatype']:
-        datatype += ':stream'
-
-    if valid_world is None:
-        opt = opt.copy()
-        opt['datatype'] = datatype
-        if opt.get('evaltask'):
-            opt['task'] = opt['evaltask']
-        if opt.get('eval_batchsize'):
-            # override eval time batchsize
-            opt['batchsize'] = opt['eval_batchsize']
-        if opt.get('validation_share_agent', False):
-            valid_agent = create_agent_from_shared(agent.share())
-        else:
-            valid_agent = agent
-        valid_world = create_task(opt, valid_agent)
     valid_world.reset()
     cnt = 0
     while not valid_world.epoch_done():
@@ -166,7 +171,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         f.write(metrics + '\n')
         f.close()
 
-    return sync_object(valid_report), valid_world
+    return valid_report
 
 
 def save_best_valid(model_file, best_valid):
@@ -230,10 +235,15 @@ class TrainLoop():
 
     def validate(self):
         opt = self.opt
+
+        if self.valid_world is None:
+            # we need to load the world now
+            self.valid_world = _maybe_load_world(self.agent, opt, 'valid')
+
         # run evaluation on valid set
-        valid_report, self.valid_world = run_eval(
-            self.agent, opt, 'valid', opt['validation_max_exs'],
-            valid_world=self.valid_world)
+        valid_report = sync_object(run_eval(
+            self.valid_world, opt, 'valid', opt['validation_max_exs'],
+        ))
 
         # logging
         if opt['tensorboard_log'] is True and is_primary_worker():
@@ -450,13 +460,15 @@ class TrainLoop():
             # reload best validation model
             self.agent = create_agent(opt)
 
-        v_report, v_world = run_eval(self.agent, opt, 'valid', write_log=True)
-        t_report, t_world = run_eval(self.agent, opt, 'test', write_log=True)
+        v_report = run_eval(self.valid_world, opt, 'valid', write_log=True)
+        test_world = _maybe_load_world(self.agent, opt, 'test')
+        t_report = run_eval(test_world, opt, 'test', write_log=True)
 
-        if v_world:
-            v_world.shutdown()
-        if t_world:
-            t_world.shutdown()
+        # TODO: are these really needed
+        if self.valid_world:
+            self.valid_world.shutdown()
+        if test_world:
+            test_world.shutdown()
         return v_report, t_report
 
 
