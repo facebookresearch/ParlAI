@@ -38,19 +38,25 @@ class EvaluatorIdleResponse extends React.Component {
 class NumericResponse extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {'textval': ''};
+    this.state = {'textval': '', 'sending': false};
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+    // Only change in the active status of this component should cause a
+    // focus event. Not having this would make the focus occur on every
+    // state update (including things like volume changes)
     if (this.props.active && !prevProps.active) {
       $("input#id_text_input").focus();
     }
+    this.props.onInputResize();
   }
 
   tryMessageSend() {
-    if (this.state.textval != '' && this.props.active) {
+    if (this.state.textval != '' && this.props.active && !this.state.sending) {
+      this.setState({sending: true});
       this.props.onMessageSend(
-        this.state.textval, {}, () => this.setState({textval: ''}));
+        this.state.textval, {},
+        () => this.setState({textval: '', 'sending': false}));
     }
   }
 
@@ -97,7 +103,7 @@ class NumericResponse extends React.Component {
         placeholder="Please enter here..."
         onKeyPress={(e) => this.handleKeyPress(e)}
         onChange={(e) => this.updateValue(e.target.value)}
-        disabled={!this.props.active}/>
+        disabled={!this.props.active || this.state.sending}/>
     );
 
     // TODO attach send message callback
@@ -106,7 +112,8 @@ class NumericResponse extends React.Component {
         className="btn btn-primary"
         style={submit_style}
         id="id_send_msg_button"
-        disabled={this.state.textval == '' || !this.props.active}
+        disabled={
+          this.state.textval == '' || !this.props.active || this.state.sending}
         onClick={() => this.tryMessageSend()}>
           Send
       </Button>
@@ -129,13 +136,14 @@ class NumericResponse extends React.Component {
 class EvaluationResponse extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {'textval': ''};
+    this.state = {'textval': '', sending: false};
   }
 
   tryMessageSend(value) {
-    if (this.props.active) {
+    if (this.props.active && !this.state.sending) {
+      this.setState({sending: true});
       this.props.onMessageSend(
-        value, {}, () => this.setState({textval: ''}));
+        value, {}, () => this.setState({textval: '', sending: false}));
     }
   }
 
@@ -162,7 +170,7 @@ class EvaluationResponse extends React.Component {
         className="btn btn-danger"
         style={submit_style}
         id="id_reject_chat_button"
-        disabled={!this.props.active}
+        disabled={!this.props.active || this.state.sending}
         onClick={() => this.tryMessageSend('reject')}>
           Reject
       </Button>
@@ -173,7 +181,7 @@ class EvaluationResponse extends React.Component {
         className="btn btn-success"
         style={submit_style}
         id="id_approve_chat_button"
-        disabled={!this.props.active}
+        disabled={!this.props.active || this.state.sending}
         onClick={() => this.tryMessageSend('approve')}>
           Approve
       </Button>
