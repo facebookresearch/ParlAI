@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 from parlai.core.utils import ProgressLogger
 
-NUM_MOVIE_FOLDERS = 140044
+NUM_MOVIE_FOLDERS = 140045
 NUM_SUBTITLES_FILES = 446612
 
 MAX_TIME_DIFFERENCE_S = 2
@@ -335,13 +335,11 @@ def build(datapath, use_history):
 
         untar_path = os.path.join(dpath, 'OpenSubtitles2018', 'xml', 'en')
 
-        if len(glob.glob(untar_path + '/*/*/*.xml.gz')) != NUM_SUBTITLES_FILES:
+        if len(glob.glob(untar_path + '/*/*/*.xml')) != NUM_SUBTITLES_FILES:
             # Download the data.
-            url = (
-                'http://opus.lingfil.uu.se/download.php?f=OpenSubtitles2018/en.tar.gz'
-            )
-            build_data.download(url, dpath, 'OpenSubtitles2018.tar.gz')
-            build_data.untar(dpath, 'OpenSubtitles2018.tar.gz')
+            url = 'https://object.pouta.csc.fi/OPUS-OpenSubtitles/v2018/xml/en.zip'
+            build_data.download(url, dpath, 'OpenSubtitles2018.zip')
+            build_data.untar(dpath, 'OpenSubtitles2018.zip')
 
         create_fb_format(untar_path, dpath, use_history)
 
