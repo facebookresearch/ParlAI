@@ -374,7 +374,6 @@ class ParlaiParser(argparse.ArgumentParser):
             '--distributed-world-size', type=int,
             help='Number of workers.'
         )
-        # TODO: use --debug or --verbose instead?
         grp.add_argument(
             '--verbose', type='bool', default=False,
             help='All workers print output.',

@@ -104,7 +104,6 @@ def main():
     try:
         spawncontext.join()
     except KeyboardInterrupt:
-        print("killing subprocesses.")
         # tell the subprocesses to stop too
         for p in spawncontext.processes:
             if p.is_alive():

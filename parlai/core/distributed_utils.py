@@ -154,9 +154,9 @@ def all_gather_list(data, max_size=16384):
                 result.append(pickle.loads(bytes(out_buffer[2:size+2].tolist())))
             except pickle.UnpicklingError:
                 raise RuntimeError(
-                    'There was an unpickling error in sync_object. This likely means '
-                    'your workers got out of syncronization (e.g. one is expecting to '
-                    'sync and another is not.)'
+                    'There was an unpickling error in all_gather_list. This likely '
+                    'means your workers got out of syncronization (e.g. one is '
+                    'expecting to sync and another is not.)'
                 )
 
     return result
@@ -180,9 +180,7 @@ def sync_object(data, max_size=16384):
     if is_primary_worker():
         enc = pickle.dumps(data)
         enc_size = len(enc)
-        if enc_size + 2 > max_size:
-            raise ValueError('encoded data exceeds max_size')
-        if enc_size > 255 * 255:
+        if (enc_size + 2 > max_size) or (enc_size > 255 * 255):
             # can't store the size in the first 2 bytes
             raise ValueError('encoded data exceeds max_size')
 
@@ -199,22 +197,9 @@ def sync_object(data, max_size=16384):
             data = pickle.loads(bytes(buffer[2: enc_size + 2].tolist()))
         except pickle.UnpicklingError:
             raise RuntimeError(
-                'There was an unpickling error in sync_object. This likely means '
-                'your workers got out of syncronization (e.g. one is expecting to '
-                'sync and another is not.)'
+                'There was an unpickling error in sync_object. This likely '
+                'means your workers got out of syncronization (e.g. one is '
+                'expecting to sync and another is not.)'
             )
 
     return data
-
-
-def sync_sum(number):
-    """
-    Compute the sum of a single number across all workers.
-    """
-    if not is_distributed():
-        return number
-
-    buffer = torch.cuda.FloatTensor([number])
-    dist.all_reduce(buffer)
-    # cast to the original type
-    return type(number)(buffer.item())
