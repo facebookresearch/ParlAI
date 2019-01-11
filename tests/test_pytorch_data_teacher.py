@@ -6,8 +6,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.scripts.build_dict import build_dict
-from parlai.scripts.display_data import setup_args as display_setup_args, \
-    display_data
+from parlai.scripts.display_data import setup_args as display_setup_args
 from parlai.scripts.train_model import setup_args as train_setup_args
 from parlai.core.agents import create_task_agent_from_taskname, create_agent
 from parlai.core.worlds import create_task
@@ -264,81 +263,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults['pytorch_preprocess'] = True
         verify_batch_lengths(defaults)
         print('\n------Passed `test_pyt_batchsort_field`------\n')
-
-    def test_pyt_multitask(self):
-        """
-            Unit test for ensuring that PytorchDataTeacher correctly handles
-            multitasking.
-
-            This test will iterate through the following scenarios:
-                1. 2 `pytorch_teacher_task`s
-                2. 1 `pytorch_teacher_task`, 1 regular ParlAI task
-                3. 1 `pytorch_teacher_task`, 1 `pytorch_teacher_dataset`
-                4. 1 `pytorch_teacher_dataset`, 1 regular ParlAI task
-                5. 2 `pytorch_teacher_dataset`s
-
-        """
-
-        def run_display_test(defaults, ep_and_ex_counts):
-            f = io.StringIO()
-            with redirect_stdout(f):
-                parser = display_setup_args()
-                parser.set_defaults(**defaults)
-                opt = parser.parse_args()
-                display_data(opt)
-            str_output = f.getvalue()
-            self.assertTrue(
-                '[ loaded {} episodes with a total of {} examples ]'.format(
-                    ep_and_ex_counts[0], ep_and_ex_counts[1]
-                ) in str_output,
-                'PytorchDataTeacher multitasking failed with '
-                'following args: {}'.format(opt)
-            )
-
-        task1 = 'babi:task1k:1'
-        task2 = 'babi:task1k:2'
-        dataset1 = 'flickr30k'
-        dataset2 = 'vqa_v1'
-
-        # Expected example and episode counts
-        eps_and_exs_counts = [
-            (1800, 1800),
-            (1080, 1800),
-            (29900, 29900),
-            (29180, 29900),
-            (277349, 277349)
-        ]
-        defaults = parser_defaults.copy()
-
-        # 1.
-        print('Multitask Test 1')
-        defaults['pytorch_teacher_task'] = '{},{}'.format(task1, task2)
-        run_display_test(defaults, eps_and_exs_counts[0])
-
-        # 2.
-        print('Multitask Test 2')
-        defaults['pytorch_teacher_task'] = task1
-        defaults['task'] = task2
-        run_display_test(defaults, eps_and_exs_counts[1])
-
-        # 3.
-        print('Multitask Test 3')
-        del defaults['task']
-        defaults['pytorch_teacher_dataset'] = dataset1
-        run_display_test(defaults, eps_and_exs_counts[2])
-
-        # 4.
-        print('Multitask Test 4')
-        del defaults['pytorch_teacher_task']
-        defaults['task'] = task1
-        run_display_test(defaults, eps_and_exs_counts[3])
-
-        # 5.
-        print('Multitask Test 5')
-        del defaults['task']
-        defaults['pytorch_teacher_dataset'] = '{},{}'.format(dataset1, dataset2)
-        run_display_test(defaults, eps_and_exs_counts[4])
-        print('\n------Passed `test_pyt_multitask`------\n')
 
 
 if __name__ == '__main__':
