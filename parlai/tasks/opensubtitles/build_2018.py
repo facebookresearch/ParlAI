@@ -28,7 +28,7 @@ MAX_WORD_LENGTH = 20
 
 # remove brackets
 CLEAN_BRACKETS_REGEX = re.compile(
-    '<!--.*?-->|<[^>]*>|\([^\)]*\)|\[[^\]]*\]|\{[^\}]*\}|##|~'
+    r'<!--.*?-->|<[^>]*>|\([^\)]*\)|\[[^\]]*\]|\{[^\}]*\}|##|~'
 )
 # Usually, unbalanced brackets correspond to very noisy sentences
 # '#' is usually pretty bad and means lyrics of the song
@@ -257,7 +257,7 @@ class DataProcessor(object):
                         data.add(conversation_to_fb_format(conversation))
                     else:
                         data.add(conversation_to_basic_format(conversation))
-            except ET.ParseError as e:
+            except ET.ParseError:
                 # TODO: We possibly can log these errors,
                 # but I'm not sure how it would intervene with the PrograssLogger
                 pass
