@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 from parlai.core.utils import ProgressLogger
 
-NUM_MOVIE_FOLDERS = 140045
+NUM_MOVIE_FOLDERS = 140044
 NUM_SUBTITLES_FILES = 446612
 
 MAX_TIME_DIFFERENCE_S = 2
@@ -83,7 +83,7 @@ def get_list_of_files(top_path):
     result = {}
     for path, dirs, files in os.walk(top_path):
         for filename in files:
-            if filename.endswith('.xml.gz'):
+            if filename.endswith('.xml'):
                 full_filename = os.path.realpath(os.path.join(path, filename))
                 assert os.path.isfile(full_filename), 'Bad file ' + full_filename
                 movie_id = get_movie_id(full_filename)
@@ -333,7 +333,7 @@ def build(datapath, use_history):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        untar_path = os.path.join(dpath, 'OpenSubtitles2018', 'xml', 'en')
+        untar_path = os.path.join(dpath, 'OpenSubtitles', 'xml', 'en')
 
         if len(glob.glob(untar_path + '/*/*/*.xml')) != NUM_SUBTITLES_FILES:
             # Download the data.
