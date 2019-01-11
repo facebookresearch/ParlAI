@@ -35,8 +35,6 @@ class BatchSortCache(object):
     """
         Object that encapsulates the functionality of the batch sort cache.
 
-        Note: is now an object to restrict lock instantiation when not importing the file
-
         Maps episode length to dictionary with following keys:
             current_idx: which episode in the list are we at (if simply indexing
                 into list)
@@ -79,7 +77,8 @@ class BatchSortCache(object):
         def get_cache_size():
             '''Returns number of available episodes '''
             return sum(
-                len(v['ep_list']) - v['current_idx']for k, v in cls.length_to_eps.items()
+                len(v['ep_list']) - v['current_idx']
+                for k, v in cls.length_to_eps.items()
             )
 
         def get_available_buckets(bsz):
@@ -88,7 +87,8 @@ class BatchSortCache(object):
                 return {
                     k: v
                     for k, v in cls.length_to_eps.items()
-                    if not v['bucket_complete'] or len(v['ep_list']) - v['current_idx'] > 0
+                    if not v['bucket_complete']
+                    or len(v['ep_list']) - v['current_idx'] > 0
                 }
             else:
                 return {
@@ -241,7 +241,8 @@ class BatchSortCache(object):
                                     batch = ep_list
                                 elif num_eps - current_idx > 0:
                                     batch = ep_list[current_idx:]
-                                    cls.length_to_eps[length]['current_idx'] = num_eps - 1
+                                    cls.length_to_eps[length]['current_idx'] = \
+                                        num_eps - 1
                                 cls.length_to_eps[length]['bucket_complete'] = True
 
                     if batch is not None:
