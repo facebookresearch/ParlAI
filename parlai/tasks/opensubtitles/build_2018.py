@@ -28,7 +28,7 @@ MAX_WORD_LENGTH = 20
 
 # remove brackets
 CLEAN_BRACKETS_REGEX = re.compile(
-    '<!--.*?-->|<[^>]*>|\([^\)]*\)|\[[^\]]*\]|\{[^\}]*\}|##|~'
+    r'<!--.*?-->|<[^>]*>|\([^\)]*\)|\[[^\]]*\]|\{[^\}]*\}|##|~'
 )
 # Usually, unbalanced brackets correspond to very noisy sentences
 # '#' is usually pretty bad and means lyrics of the song
@@ -83,7 +83,7 @@ def get_list_of_files(top_path):
     result = {}
     for path, dirs, files in os.walk(top_path):
         for filename in files:
-            if filename.endswith('.xml.gz'):
+            if filename.endswith('.xml'):
                 full_filename = os.path.realpath(os.path.join(path, filename))
                 assert os.path.isfile(full_filename), 'Bad file ' + full_filename
                 movie_id = get_movie_id(full_filename)
@@ -257,7 +257,7 @@ class DataProcessor(object):
                         data.add(conversation_to_fb_format(conversation))
                     else:
                         data.add(conversation_to_basic_format(conversation))
-            except ET.ParseError as e:
+            except ET.ParseError:
                 # TODO: We possibly can log these errors,
                 # but I'm not sure how it would intervene with the PrograssLogger
                 pass
@@ -333,15 +333,13 @@ def build(datapath, use_history):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        untar_path = os.path.join(dpath, 'OpenSubtitles2018', 'xml', 'en')
+        untar_path = os.path.join(dpath, 'OpenSubtitles', 'xml', 'en')
 
-        if len(glob.glob(untar_path + '/*/*/*.xml.gz')) != NUM_SUBTITLES_FILES:
+        if len(glob.glob(untar_path + '/*/*/*.xml')) != NUM_SUBTITLES_FILES:
             # Download the data.
-            url = (
-                'http://opus.lingfil.uu.se/download.php?f=OpenSubtitles2018/en.tar.gz'
-            )
-            build_data.download(url, dpath, 'OpenSubtitles2018.tar.gz')
-            build_data.untar(dpath, 'OpenSubtitles2018.tar.gz')
+            url = 'https://object.pouta.csc.fi/OPUS-OpenSubtitles/v2018/xml/en.zip'
+            build_data.download(url, dpath, 'OpenSubtitles2018.zip')
+            build_data.untar(dpath, 'OpenSubtitles2018.zip')
 
         create_fb_format(untar_path, dpath, use_history)
 
