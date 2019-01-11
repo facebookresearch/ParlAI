@@ -1,6 +1,7 @@
 # ParlAI Projects
 
 Here we list projects undertaken in the ParlAI framework that are shared publicly, either in the form of papers, public tasks (with leaderboards) and shared model code.
+
 This directory contains subfolders for some of the projects which are housed in the ParlAI repo, others are maintained via external websites.
 
 
@@ -29,15 +30,15 @@ _Competition on dialogue chitchat based on the PersonaChat task._
 _Task & models for chitchat with a given persona._
 
 - **Mastering the Dungeon** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/mastering_the_dungeon). 
-_Task & models for training grounded agents in a text adventure game via MTurk_
+_Task & models for training grounded agents in a text adventure game via MTurk._
 
 - **Talk The Walk** [[paper]](https://arxiv.org/abs/1807.03367). 
-_Task & models for grounded dialogue for the task of navigating New York City streets_
+_Task & models for grounded dialogue for the task of navigating New York City streets._
 
 - **HotPotQA** [[external website]](https://hotpotqa.github.io/). 
-_QA task with multi-hop reasoning. Task built with ParlAI Mturk_
+_QA task with multi-hop reasoning. Task built with ParlAI Mturk._
 
 - **CoQA** [[external website]](https://stanfordnlp.github.io/coqa/). 
-_QA task with a series of interconnected questions. Task built with ParlAI Mturk_
+_QA task with a series of interconnected questions. Task built with ParlAI Mturk._
 
 
