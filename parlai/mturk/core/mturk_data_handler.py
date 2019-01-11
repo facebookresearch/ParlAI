@@ -136,6 +136,7 @@ class MTurkDataHandler():
                 del custom_data['needs-pickle']
             custom_file = os.path.join(target_dir_custom, 'data.json')
             force_dir(custom_file)
+            print('Saving data to {}.'.format(custom_file))
             with open(custom_file, 'w') as outfile:
                 json.dump(custom_data, outfile)
         worker_data = prepped_save_data['worker_data']
