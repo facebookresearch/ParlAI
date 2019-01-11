@@ -177,6 +177,9 @@ class TorchAgent(Agent):
             '-histsz', '--history-size', default=-1, type=int,
             help='Number of past dialog utterances to remember.')
         agent.add_argument(
+            '-pl', '--pad-left', default=False, type="bool",
+            help='Pad to the left when padding is needed.')
+        agent.add_argument(
             '-pt', '--person-tokens', type='bool', default=False,
             help='add person tokens to history. adds __p1__ in front of input '
                  'text and __p2__ in front of past labels when available or '
@@ -267,6 +270,7 @@ class TorchAgent(Agent):
         self.history = deque(maxlen=self.histsz)
         # truncate == 0 might give funny behavior
         self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
+        self.pad_left = opt['pad_left']
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
@@ -628,7 +632,8 @@ class TorchAgent(Agent):
         xs, x_lens = None, None
         if any('text_vec' in ex for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(_xs, self.NULL_IDX, self.use_cuda)
+            xs, x_lens = padded_tensor(_xs, self.NULL_IDX, self.use_cuda,
+                                       left_padded=self.pad_left)
             if sort:
                 sort = False  # now we won't sort on labels
                 xs, x_lens, valid_inds, exs = argsort(
@@ -648,7 +653,8 @@ class TorchAgent(Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
-            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda)
+            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda,
+                                       left_padded=self.pad_left)
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
                     y_lens, ys, valid_inds, label_vecs, labels, y_lens,

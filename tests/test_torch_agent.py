@@ -434,6 +434,19 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(batch.labels, obs_batch[2][lab_key])
             self.assertEqual(list(batch.valid_indices), [2])
 
+            # temporarily switch the state of pad_left to test it
+            agent.pad_left = True  # seems odd. Maybe should add it as param.
+            batch = agent.batchify(obs_vecs)
+            self.assertEqual(batch.text_vec.tolist(),
+                             [[0, 1, 2, 3, 4, 5],
+                              [1, 2, 3, 4, 5, 6],
+                              [0, 0, 0, 0, 1, 2]])
+            self.assertEqual(batch.label_vec.tolist(),
+                             [[0, 0, 0, 0, 1],
+                              [1, 2, 3, 4, 5],
+                              [0, 0, 0, 1, 2]])
+            agent.pad_left = False
+
         obs_cands = [
             agent.vectorize({'label_candidates': ['A', 'B', 'C']}),
             agent.vectorize({'label_candidates': ['1', '2', '5', '3', 'Sir']}),
