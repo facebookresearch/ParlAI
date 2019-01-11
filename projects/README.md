@@ -20,10 +20,9 @@ _Task & models for chitchat with a given persona._
 - **ConvAI2 Competition** [[website]](http://convai.io/). 
 _Competition on dialogue chitchat based on the PersonaChat task._
 
-
 - **Dialogue Natural Language Inference** [[website]](https://wellecks.github.io/dialogue_nli/). 
-  _Task for improving dialogue consistency._
-
+  _Task and method for improving dialogue consistency._
+  
 ## Knowledge Grounded
 
 - **Wizard of Wikipedia** [[paper]](https://openreview.net/forum?id=r1l73iRqKm). 
@@ -52,6 +51,9 @@ _QA task with multi-hop reasoning. Task built with ParlAI Mturk._
 
 - **CoQA** [[external website]](https://stanfordnlp.github.io/coqa/). 
 _QA task with a series of interconnected questions. Task built with ParlAI Mturk._
+
+- **DrQA** [[parlai agent]](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/drqa) [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/drqa) [[external website]](https://github.com/facebookresearch/DrQA) [[paper]](https://arxiv.org/abs/1704.00051). 
+_QA model for answering questions by retrieving and reading knowledge._
 
 
 
