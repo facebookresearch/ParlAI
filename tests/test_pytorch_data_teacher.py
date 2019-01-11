@@ -8,7 +8,7 @@
 from parlai.scripts.build_dict import build_dict
 from parlai.scripts.display_data import setup_args as display_setup_args, \
     display_data
-from parlai.scripts.train_model import TrainLoop, setup_args as train_setup_args
+from parlai.scripts.train_model import setup_args as train_setup_args
 from parlai.core.agents import create_task_agent_from_taskname, create_agent
 from parlai.core.worlds import create_task
 from parlai.core.pytorch_data_teacher import ep_length
@@ -48,7 +48,7 @@ def solved_task(str_output):
 
 
 class TestPytorchDataTeacher(unittest.TestCase):
-    """Various tests for PytorchDataTeacher"""
+    """Various Unit tests for PytorchDataTeacher"""
 
     def test_shuffle(self):
         """Simple test to ensure that dataloader is initialized with correct
@@ -87,42 +87,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
                             'PytorchDataTeacher failed with args: {}'.format(opt)
                         )
         print('\n------Passed `test_shuffle`------\n')
-
-    def test_pyt_train(self):
-        """
-            Integration test: ensure that pytorch data teacher can successfully
-            teach Seq2Seq model to fully solve the babi:task10k:1 task.
-
-            The Seq2Seq model can solve the babi:task10k:1 task with the normal
-            ParlAI setup, and thus should be able to with a PytorchDataTeacher
-
-            This tests the following setups:
-                1. -dt train
-                2. -dt train:stream
-                3. -dt train:stream:ordered
-        """
-        dts = [
-               'train',
-               'train:stream',
-               'train:stream:ordered']
-        for dt in dts:
-            print('Testing test_pyt_train with dt: {}'.format(dt))
-            f = io.StringIO()
-            with redirect_stdout(f):
-                parser = train_setup_args()
-                defaults = parser_defaults.copy()
-                set_model_file(defaults)
-                defaults['datatype'] = dt
-                defaults['shuffle'] = True  # for train:stream
-                parser.set_defaults(**defaults)
-                TrainLoop(parser.parse_args()).train()
-            str_output = f.getvalue()
-            self.assertTrue(solved_task(str_output),
-                            'Teacher could not teach seq2seq with args: '
-                            '{}; here is str_output: {}'.format(
-                                defaults, str_output
-                            ))
-        print('\n------Passed `test_pyt_train`------\n')
 
     def test_pyt_preprocess(self):
         """
@@ -175,32 +139,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
                                     val2)
                                 )
         print('\n------Passed `test_pyt_preprocess`------\n')
-
-    def test_pyt_preprocess_train(self):
-        """
-            Test that the preprocess functionality works with the PytorchDataTeacher
-            with a sample TorchAgent (here, the Seq2seq model).
-
-            This tests whether an agent can train to completion with
-            these preprocessed examples
-        """
-
-        # Second, check that the model will train
-        print('Testing test_pyt_preprocess training')
-        f = io.StringIO()
-        with redirect_stdout(f):
-            parser = train_setup_args()
-            defaults = parser_defaults.copy()
-            set_model_file(defaults)
-            defaults['datatype'] = 'train'
-            defaults['pytorch_preprocess'] = True
-            parser.set_defaults(**defaults)
-            TrainLoop(parser.parse_args()).train()
-
-        str_output = f.getvalue()
-        self.assertTrue(solved_task(str_output),
-                        'Teacher could not teach seq2seq with preprocessed obs')
-        print('\n------Passed `test_pyt_preprocess_train`------\n')
 
     def test_pyt_batchsort(self):
         """
@@ -269,87 +207,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
         check_equal_act_lists(bsrt_acts_ep1, no_bsrt_acts_ep1)
         check_equal_act_lists(bsrt_acts_ep2, no_bsrt_acts_ep2)
         print('\n------Passed `test_pyt_batchsort`------\n')
-
-    def test_pyt_batchsort_train(self):
-        """
-            Tests the functionality of training with batchsort
-            under the following conditions:
-
-            1. -dt train --pytorch_preprocess False
-            2. -dt train:stream --pytorch_preprocess False
-            3. -dt train --pytorch_preprocess True --batch_sort_field text_vec
-        """
-        # Next, check that training works
-        dt_and_preprocess = [
-            ('train', False),
-            ('train:stream', False),
-            ('train', True)
-        ]
-        for dt, preprocess in dt_and_preprocess:
-            print('Testing test_pyt_batchsort with -dt {} and --preprocess {}'.format(
-                dt, preprocess
-            ))
-            f = io.StringIO()
-            with redirect_stdout(f):
-                parser = train_setup_args()
-                defaults = parser_defaults.copy()
-                set_model_file(defaults)
-                defaults['datatype'] = dt
-                defaults['pytorch_preprocess'] = preprocess
-                defaults['pytorch_teacher_batch_sort'] = True
-                defaults['batchsize'] = 50
-                if preprocess:
-                    defaults['batch_sort_field'] = 'text_vec'
-                parser.set_defaults(**defaults)
-                TrainLoop(parser.parse_args()).train()
-
-            str_output = f.getvalue()
-            self.assertTrue(solved_task(str_output),
-                            'Teacher could not teach seq2seq with batch sort '
-                            'and args {} and output {}'.format((dt, preprocess),
-                                                               str_output))
-        print('\n------Passed `test_pyt_batchsort_train`------\n')
-
-    def test_pytd_teacher(self):
-        """
-            Test that the pytorch teacher works with given Pytorch Datasets
-            as well
-
-            I'll be using the Flickr30k dataset to ensure that the observations
-            are the same.
-        """
-        defaults = parser_defaults.copy()
-        defaults['datatype'] = 'train:stream'
-        defaults['image_mode'] = 'ascii'
-
-        f = io.StringIO()
-
-        with redirect_stdout(f):
-            # Get processed act from agent
-            parser = display_setup_args()
-            defaults['pytorch_teacher_dataset'] = 'flickr30k'
-            del defaults['pytorch_teacher_task']
-            parser.set_defaults(**defaults)
-            opt = parser.parse_args()
-            teacher = create_task_agent_from_taskname(opt)[0]
-            pytorch_teacher_act = teacher.act()
-
-            parser = display_setup_args()
-            defaults['task'] = 'flickr30k'
-            del defaults['pytorch_teacher_dataset']
-            parser.set_defaults(**defaults)
-            opt = parser.parse_args()
-            teacher = create_task_agent_from_taskname(opt)[0]
-            regular_teacher_act = teacher.act()
-
-        keys = set(pytorch_teacher_act.keys()).intersection(
-            set(regular_teacher_act.keys()))
-        self.assertTrue(len(keys) != 0)
-        for key in keys:
-            self.assertTrue(pytorch_teacher_act[key] == regular_teacher_act[key],
-                            'PytorchDataTeacher does not have the same value '
-                            'as regular teacher for act key: {}'.format(key))
-        print('\n------Passed `test_pytd_teacher`------\n')
 
     def test_pyt_batchsort_field(self):
         """
