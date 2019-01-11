@@ -134,6 +134,7 @@ class MTurkManager():
         self.db_logger = None
         self.logging_permitted = False
         self.task_state = self.STATE_CREATED
+        self._assert_opts()
 
     @staticmethod
     def make_taskless_instance(is_sandbox=False):
@@ -154,6 +155,32 @@ class MTurkManager():
         return manager
 
     # Helpers and internal manager methods #
+
+    def _assert_opts(self):
+        """Manages ensuring everything about the passed in options make sense
+        in that they don't conflict in some way or another"""
+        if self.opt.get('allow_reviews') and len(self.mturk_agent_ids) != 2:
+            shared_utils.print_and_log(
+                logging.WARN,
+                '[OPT CONFIGURATION ISSUE] '
+                'allow_reviews is currently only supported on 2 person tasks, '
+                'overriding this value to false.',
+                should_print=True
+            )
+            self.opt['allow_reviews'] = False
+        if self.opt.get('frontend_version', 0) < 1:
+            # Ensure no react only features have been set
+            features = ['frame_height', 'allow_reviews', 'block_mobile']
+            for feat in features:
+                if self.opt.get(feat) is not None:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        '[OPT CONFIGURATION ISSUE] '
+                        '{} only works when using the react frontend '
+                        '(frontend_version >= 1), so this option will be '
+                        'ignored'.format(feat),
+                        should_print=True
+                    )
 
     def _init_state(self):
         """Initialize everything in the worker, task, and thread states"""
@@ -248,8 +275,15 @@ class MTurkManager():
             target=update_status, name='Hit-Status-Thread', daemon=True)
         hit_status_thread.start()
 
+    def _should_use_time_logs(self):
+        # Used to ensure time logs are properly tracked. Can be overridden for
+        # testing
+        return self.is_sandbox
+
     def _reset_time_logs(self, init_load=False, force=False):
         # Uses a weak lock file to try to prevent clobbering between threads
+        if not self._should_use_time_logs():
+            return  # sandbox doesn't check logs
         file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
         file_lock = os.path.join(parent_dir, TIME_LOGS_FILE_LOCK)
         with LockFile(file_lock) as _lock_file:
@@ -278,6 +312,8 @@ class MTurkManager():
                             pickle.HIGHEST_PROTOCOL)
 
     def _log_working_time(self, mturk_agent):
+        if not self._should_use_time_logs():
+            return  # sandbox does not log working time
         additional_time = time.time() - mturk_agent.creation_time
         worker_id = mturk_agent.worker_id
         file_path = os.path.join(parent_dir, TIME_LOGS_FILE_NAME)
@@ -540,6 +576,7 @@ class MTurkManager():
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             agent.log_reconnect()
             agent.alived = True
+            conversation_id = agent.conversation_id
             if agent.get_status() == AssignState.STATUS_NONE:
                 # See if assigned an onboarding world, update state if so
                 if self.is_onboarding_world(conversation_id):
@@ -801,6 +838,7 @@ class MTurkManager():
                 'static': [],
                 'components': [],
                 'css': [],
+                'needs_build': None,
             }
         if not task_directory_path:
             task_directory_path = os.path.join(
@@ -815,6 +853,11 @@ class MTurkManager():
         try:
             frontend_contents = os.listdir(
                 os.path.join(task_directory_path, 'frontend'))
+            if 'package.json' in frontend_contents:
+                # We take a package file to mean that this component will
+                # need to be built separately before importing
+                self.task_files_to_copy['needs_build'] = \
+                    os.path.join(task_directory_path, 'frontend')
             for dir in frontend_contents:
                 if dir in self.task_files_to_copy:
                     for file_name in os.listdir(os.path.join(
@@ -942,6 +985,7 @@ class MTurkManager():
         self.is_unique = self.opt['unique_worker']
         self.max_hits_per_worker = self.opt.get('max_hits_per_worker', 0)
         mturk_utils.create_hit_config(
+            opt=self.opt,
             task_description=self.opt['task_description'],
             unique_worker=self.is_unique,
             is_sandbox=self.opt['is_sandbox']
@@ -1503,6 +1547,7 @@ class MTurkManager():
         for _i in range(num_hits):
             mturk_page_url, hit_id, mturk_response = \
                 mturk_utils.create_hit_with_hit_type(
+                    opt=self.opt,
                     page_url=mturk_chat_url,
                     hit_type_id=hit_type_id,
                     num_assignments=1,

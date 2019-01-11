@@ -753,4 +753,17 @@ task_list = [
             "E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`"
         ),
     },
+    {
+        "id": "DailyDialog",
+        "display_name": "Daily Dialog",
+        "task": "dailydialog",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "A dataset of chitchat dialogues with strong annotations for "
+            "topic, emotion and utterance act. This version contains both sides "
+            "of every conversation, and uses the official train/valid/test splits "
+            "from the original authors. See https://arxiv.org/abs/1710.03957 "
+            "for more information."
+        )
+    },
 ]

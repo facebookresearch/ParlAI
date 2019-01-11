@@ -216,7 +216,7 @@ class SocketManager():
         self.is_shutdown = False
         self.send_lock = threading.Condition()
         self.packet_map_lock = threading.Condition()
-        self.worker_assign_ids = {} # mapping from connection id to pair
+        self.worker_assign_ids = {}  # mapping from connection id to pair
 
         # setup the socket
         self._setup_socket()

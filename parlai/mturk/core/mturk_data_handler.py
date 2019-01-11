@@ -600,7 +600,7 @@ class MTurkDataHandler():
             results = c.fetchone()
             return results
 
-    def get_all_run_data(self, start=0, count=100):
+    def get_all_run_data(self, start=0, count=1000):
         """get all the run data for all task_group_ids."""
         with self.table_access_condition:
             conn = self._get_connection()
