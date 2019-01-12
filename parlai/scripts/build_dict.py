@@ -25,7 +25,7 @@ from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
 import copy
 import os
-import sys
+import tqdm
 
 
 def setup_args(parser=None):
@@ -97,10 +97,19 @@ def build_dict(opt, skip_if_built=False):
         world_dict = create_task(ordered_opt, dictionary)
         # pass examples to dictionary
         print('[ running dictionary over data.. ]')
-        log_every_n_secs = opt.get('log_every_n_secs', -1)
-        if log_every_n_secs <= 0:
-            log_every_n_secs = float('inf')
         log_time = TimeLogger()
+        total = world_dict.num_examples()
+        if opt['dict_maxexs'] > 0:
+            total = min(total, opt['dict_maxexs'])
+
+        log_every_n_secs = opt.get('log_every_n_secs', None)
+        if log_every_n_secs:
+            pbar = tqdm.tqdm(
+                total=total, desc='Building dictionary', unit='ex',
+                unit_scale=True
+            )
+        else:
+            pbar = None
         while not world_dict.epoch_done():
             cnt += 1
             if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
@@ -108,12 +117,10 @@ def build_dict(opt, skip_if_built=False):
                 # don't wait too long...
                 break
             world_dict.parley()
-            if log_time.time() > log_every_n_secs:
-                sys.stdout.write('\r')
-                text, _log = log_time.log(cnt, max(opt.get('dict_maxexs', 0),
-                                                   world_dict.num_examples()))
-                sys.stdout.write(text)
-                sys.stdout.flush()
+            if pbar:
+                pbar.update(1)
+        if pbar:
+            pbar.close()
 
     dictionary.save(opt['dict_file'], sort=True)
     print('[ dictionary built with {} tokens in {}s ]'.format(
