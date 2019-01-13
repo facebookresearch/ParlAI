@@ -69,13 +69,13 @@ def build(opt):
         # Download the data
         url = "https://msmarco.blob.core.windows.net/msmarco/"
 
-        fname = "train_v1.1.json.gz"
+        fname = "train_v2.1.json.gz"
         build_data.download(url + fname, dpath, 'train.gz')
 
-        fname = "dev_v1.1.json.gz"
+        fname = "dev_v2.1.json.gz"
         build_data.download(url + fname, dpath, 'valid.gz')
 
-        fname = "test_public_v1.1.json.gz"
+        fname = "test_public_v2.1.json.gz"
         build_data.download(url + fname, dpath, 'test.gz')
 
         create_fb_format(dpath, "train", os.path.join(dpath, 'train.gz'))
