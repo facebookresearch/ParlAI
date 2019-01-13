@@ -453,7 +453,7 @@ class OutputLayer(nn.Module):
             scores = F.linear(e, self.weight, self.bias)
 
         if self.padding_idx >= 0:
-            scores[:, :, self.padding_idx] = -NEAR_INF
+            scores[:, self.padding_idx] = -NEAR_INF
 
         return scores
 
