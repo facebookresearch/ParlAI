@@ -271,7 +271,9 @@ class TorchRankerAgent(TorchAgent):
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
-                    label_inds[i] = self._find_match(cand_vecs, label_vec)
+                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(0))
+                    label_vec_pad[0:label_vec.size(0)] = label_vec
+                    label_inds[i] = self._find_match(cand_vecs, label_vec_pad)
 
         elif source == 'vocab':
             warn_once(
