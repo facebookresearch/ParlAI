@@ -130,7 +130,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
             val1 = agent_processed_observation[key]
             val2 = teacher_processed_act[key]
             if type(val1) is torch.Tensor:
-                self.assertTrue(bool(torch.all(torch.eq(val1, val2))))
+                self.assertTrue(bool(torch.all(torch.eq(val1, val2))),
+                                '{}\n\n --not equal to-- \n\n{}'.format(
+                                    val1,
+                                    val2)
+                                )
             else:
                 self.assertTrue(val1 == val2,
                                 '{}\n\n --not equal to-- \n\n{}'.format(
