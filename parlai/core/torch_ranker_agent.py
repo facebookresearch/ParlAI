@@ -236,7 +236,9 @@ class TorchRankerAgent(TorchAgent):
                         # label_vec
                         match = None
                     else:
-                        label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
+                        label_vec_pad = label_vec.new_zeros(
+                            cand_vecs[i].size(1)
+                        )._fill(self.NULL_IDX)
                         label_vec_pad[0:label_vec.size(0)] = label_vec
                         match = self._find_match(cand_vecs[i], label_vec_pad)
                     if match is None:
