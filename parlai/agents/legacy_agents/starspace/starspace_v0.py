@@ -14,7 +14,7 @@ from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import maintain_dialog_history, load_cands
 from parlai.core.torch_agent import TorchAgent
-from .modules import Starspace
+from .modules_v0 import Starspace
 
 import torch
 from torch import optim
@@ -311,7 +311,7 @@ class StarspaceAgent(Agent):
         for n in negs:
             negs2.append(dropout(n, rate))
         return xs2, ys2, negs2
-    
+
     def predict(self, xs, ys=None, cands=None, cands_txt=None, obs=None):
         """Produce a prediction from our model.
 
