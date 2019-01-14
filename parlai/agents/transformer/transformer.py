@@ -51,6 +51,7 @@ class TransformerRankerAgent(TorchRankerAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
+        super(TransformerRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
         # memory and knowledge arguments
@@ -71,10 +72,17 @@ class TransformerRankerAgent(TorchRankerAgent):
                            help='If true, use the memories to help with predictions')
         agent.add_argument('--scores-norm', choices={'dot', 'sqrt', 'dim'},
                            default='dot', hidden=True)
+        agent.add_argument('-tr', '--truncate', default=1024, type=int,
+                           help='Truncate input lengths')
+        agent.add_argument('-opt', '--optimizer', default='adamax',
+                           choices=cls.OPTIM_OPTS,
+                           help='Choose between pytorch optimizers. '
+                                'Any member of torch.optim should be valid.')
+        agent.add_argument('-lr', '--learningrate', type=float, default=0.0001,
+                           help='learning rate')
 
         cls.dictionary_class().add_cmdline_args(argparser)
 
-        super(cls, TransformerRankerAgent).add_cmdline_args(argparser)
         return agent
 
     def build_model(self, states=None):

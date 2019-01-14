@@ -161,6 +161,14 @@ class TorchAgent(Agent):
             '-lr', '--learningrate', type=float, default=1,
             help='learning rate')
         agent.add_argument(
+            '-lrfac', '--lr-factor', type=float, default=0.5,
+            help='factor for scheduler to reduce learning rate by'
+        )
+        agent.add_argument(
+            '-lrpat', '--lr-patience', type=int, default=3,
+            help='patience for scheduler decreasing learning rate'
+        )
+        agent.add_argument(
             '-clip', '--gradient-clip', type=float, default=0.1,
             help='gradient clipping using l2 norm')
         agent.add_argument(
@@ -193,6 +201,10 @@ class TorchAgent(Agent):
                  'input instead of at the beginning of the input. this is '
                  'useful for tasks that include some kind of context before '
                  'the actual utterance (e.g. squad, babi, personachat).')
+        agent.add_argument(
+            '--join-history-tok', type=str, default='\n',
+            help='Join history lines with this token, defaults to newline'
+        )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
         # user tries to present multiple of them
@@ -270,7 +282,7 @@ class TorchAgent(Agent):
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
-    def init_optim(self, params, optim_states=None, saved_optim_type=None):
+    def init_optim(self, opt, params, optim_states=None, saved_optim_type=None):
         """Initialize optimizer with model parameters.
 
         :param params:       parameters from the model, for example:
@@ -313,9 +325,16 @@ class TorchAgent(Agent):
                         for k, v in state.items():
                             if isinstance(v, torch.Tensor):
                                 state[k] = v.cuda()
-        # TODO: Move scheduler params to command line args
-        self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-            self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
+        if opt.get('lr_factor', 0.5) < 1:
+            self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+                self.optimizer,
+                'min',
+                factor=opt.get('lr_factor', 0.5),
+                patience=opt.get('lr_patience', 3),
+                verbose=True
+            )
+        else:
+            self.scheduler = None
 
     def receive_metrics(self, metrics_dict):
         """Use the metrics to decide when to adjust LR schedule.
@@ -325,7 +344,7 @@ class TorchAgent(Agent):
         this to work.
         Override this to override the behavior.
         """
-        if 'loss' in metrics_dict:
+        if 'loss' in metrics_dict and self.scheduler is not None:
             self.scheduler.step(metrics_dict['loss'])
 
     def _get_embtype(self, emb_type):
@@ -490,7 +509,7 @@ class TorchAgent(Agent):
         if 'text_vec' in obs:
             # check truncation of pre-computed vectors
             obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate)
-            if split_lines and 'memory_vecs' in obs:
+            if 'memory_vecs' in obs:
                 obs['memory_vecs'] = [self._check_truncate(m, truncate)
                                       for m in obs['memory_vecs']]
         elif 'text' in obs:
@@ -723,7 +742,8 @@ class TorchAgent(Agent):
             return token + ' ' + text
 
     def get_dialog_history(self, observation, reply=None,
-                           add_person_tokens=False, add_p1_after_newln=False):
+                           add_person_tokens=False, add_p1_after_newln=False,
+                           join_history_tok='\n'):
         """Retrieve dialog history and add current observations to it.
 
         :param observation:        current observation
@@ -738,6 +758,8 @@ class TorchAgent(Agent):
                                    tasks that include some kind of context
                                    before the actual utterance (e.g. squad,
                                    babi, personachat).
+        :param join_history_tok:   join strings in self.history list with this
+                                   token
 
         :return: observation with text replaced with full dialog
         """
@@ -760,10 +782,12 @@ class TorchAgent(Agent):
             self.history.append(obs['text'])
 
         if len(self.history) > 0:
-            obs['text'] = '\n'.join(self.history)
+            obs['text'] = join_history_tok.join(self.history)
         if obs.get('episode_done', True):
             # end of this episode, clear the history
             self.history.clear()
+        if obs is None:
+            import pdb; pdb.set_trace()
         return obs
 
     def last_reply(self, use_label=True):
@@ -842,7 +866,8 @@ class TorchAgent(Agent):
             use_label=(self.opt.get('use_reply', 'label') == 'label'))
         self.observation = self.get_dialog_history(
             observation, reply=reply, add_person_tokens=self.add_person_tokens,
-            add_p1_after_newln=self.opt.get('add_p1_after_newln', False))
+            add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
+            join_history_tok=self.opt.get('join_history_tok', '\n'))
         return self.vectorize(self.observation, truncate=self.truncate)
 
     def save(self, path=None):

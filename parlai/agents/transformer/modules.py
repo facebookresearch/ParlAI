@@ -44,6 +44,7 @@ def _build_encoder(opt, dictionary, embedding=None, padding_idx=None, reduction=
         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
         embeddings_scale=opt['embeddings_scale'],
         reduction=reduction,
+        n_positions=opt.get('truncate', 1024)
     )
 
 
@@ -209,6 +210,7 @@ class TransformerEncoder(nn.Module):
         learn_positional_embeddings=False,
         embeddings_scale=False,
         reduction=True,
+        n_positions=1024,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -224,7 +226,6 @@ class TransformerEncoder(nn.Module):
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
             'Transformer embedding size must be a multiple of n_heads'
-        n_positions = 1024  # TODO: use truncate or sth
 
         # check input formats:
         if embedding is not None:

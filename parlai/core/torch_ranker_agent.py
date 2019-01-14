@@ -43,6 +43,10 @@ class TorchRankerAgent(TorchAgent):
                  "<cands_name> is the name of the file (not the full path) passed by "
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
+        agent.add_argument(
+            '--init-model', type=str, default=None,
+            help='Initialize model with weights from this file.'
+        )
 
     def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary
@@ -79,7 +83,7 @@ class TorchRankerAgent(TorchAgent):
                 self.optimizer = shared['optimizer']
         else:
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
-            self.init_optim(optim_params)
+            self.init_optim(opt, optim_params)
 
     def score_candidates(self, batch, cand_vecs):
         """Given a batch and candidate set, return scores (for ranking)"""
