@@ -104,7 +104,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
         str_output = f.getvalue()
         self.assertTrue(solved_task(str_output),
-                        'Teacher could not teach seq2seq with preprocessed obs')
+                        'Teacher could not teach seq2seq with preprocessed obs, '
+                        'output: {}'.format(str_output))
         print('\n------Passed `test_pyt_preprocess_train`------\n')
 
     def test_pyt_batchsort_train(self):

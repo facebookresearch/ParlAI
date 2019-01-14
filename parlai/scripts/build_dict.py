@@ -56,7 +56,6 @@ def build_dict(opt, skip_if_built=False):
         print('Tried to build dictionary but `--dict-file` is not set. Set ' +
               'this param so the dictionary can be saved.')
         return
-
     if skip_if_built and os.path.isfile(opt['dict_file']):
         # Dictionary already built, skip all loading or setup
         print("[ dictionary already built .]")
@@ -82,7 +81,7 @@ def build_dict(opt, skip_if_built=False):
     ordered_opt['batchsize'] = 1
     ordered_opt['image_mode'] = 'none'
     ordered_opt['pytorch_teacher_batch_sort'] = False
-    if ordered_opt['task'] == 'pytorch_teacher':
+    if ordered_opt['task'] == 'pytorch_teacher' or not ordered_opt['task']:
         pytorch_teacher_task = ordered_opt.get('pytorch_teacher_task', '')
         if pytorch_teacher_task != '':
             ordered_opt['task'] = pytorch_teacher_task

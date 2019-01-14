@@ -16,7 +16,7 @@ are used in a flattened episode.
 """
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.scripts.build_dict import build_dict
+from parlai.scripts.build_dict import build_dict, setup_args as dict_setup
 import copy
 import os
 import json
@@ -28,6 +28,8 @@ from collections import deque
 
 
 def get_pyt_dict_file(opt):
+    if not opt['pytorch_teacher_task']:
+        opt['pytorch_teacher_task'] = opt['task']
     return os.path.join(
         opt.get('datapath', '.'),
         '{}_pyt_data'.format(opt['pytorch_teacher_task'].replace(':', '_')),
@@ -37,7 +39,8 @@ def get_pyt_dict_file(opt):
 
 def setup_args():
     from parlai.core.params import ParlaiParser
-    return ParlaiParser(True, True, 'Builds a pytorch data file.')
+    parser = ParlaiParser(True, True, 'Builds a pytorch data file.')
+    return dict_setup(parser)
 
 
 def make_serializable(obj):
@@ -60,7 +63,11 @@ def build_data(opt):
     if not opt.get('model', False):
         opt['model'] = 'repeat_label'
     preprocess = opt.get('pytorch_preprocess', True)
-    dictionary = build_dict(opt, skip_if_built=True)
+    opt['dict_file'] = get_pyt_dict_file(opt)
+    dictionary = None
+    if 'dict_maxexs' in opt:
+        # Note: only build dictionary if dict loop args specified
+        dictionary = build_dict(opt, skip_if_built=True)
     agent = create_agent(opt)
     # If build teacher not specified, we are simply looking for the file
     if not opt.get('pytorch_teacher_task', None):
