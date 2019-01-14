@@ -20,7 +20,7 @@ import os
 import random
 
 
-class StarspaceTorchAgent(TorchRankerAgent):
+class StarspaceAgent(TorchRankerAgent):
     """Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856
     """
 
@@ -72,7 +72,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
             choices=['batch', 'inline', 'fixed', 'vocab', 'custom'],
             help='The source of candidates during evaluation (defaults to the same'
                  'value as --candidates if no flag is given)')
-        StarspaceTorchAgent.dictionary_class().add_cmdline_args(argparser)
+        StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -93,7 +93,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
         self.reset()
 
     def build_model(self):
-        print("[ creating StarspaceTorchAgent ]")
+        print("[ creating StarspaceAgent ]")
         # this is not a shared instance of this class, so do full init
         if (self.opt.get('model_file') and
                 (os.path.isfile(self.opt.get('model_file') + '.dict')
@@ -216,13 +216,13 @@ class StarspaceTorchAgent(TorchRankerAgent):
         if labels:
             for label in labels:
                 self.add_to_ys_cache(label)
-        return super(StarspaceTorchAgent, self).observe(observation)
+        return super(StarspaceAgent, self).observe(observation)
 
     def vectorize(self, obs, add_start=False, add_end=False, truncate=None,
                   split_lines=False):
         """Overrride method from Torch Agent so that by default we do not add
         start and end indices."""
-        return super(StarspaceTorchAgent, self).vectorize(
+        return super(StarspaceAgent, self).vectorize(
             obs,
             add_start=add_start,
             add_end=add_end,
@@ -293,7 +293,7 @@ class StarspaceTorchAgent(TorchRankerAgent):
 
     def optimizer_reset(self):
         lr = self.opt['learningrate']
-        optim_class = StarspaceTorchAgent.OPTIM_OPTS[self.opt['optimizer']]
+        optim_class = StarspaceAgent.OPTIM_OPTS[self.opt['optimizer']]
         kwargs = {'lr': lr}
         self.optimizer = optim_class(self.model.parameters(), **kwargs)
 
