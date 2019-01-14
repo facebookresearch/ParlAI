@@ -178,7 +178,7 @@ class TrainLoop():
         # Possibly build a dictionary (not all models do this).
         if opt['dict_build_first'] and 'dict_file' in opt:
             # If data built via pytorch data teacher, we need to load prebuilt dict
-            if opt.get('pytorch_teacher_task') and opt.get('pytorch_preprocess'):
+            if opt.get('pytorch_teacher_task'):
                 opt['dict_file'] = get_pyt_dict_file(opt)
             elif opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'

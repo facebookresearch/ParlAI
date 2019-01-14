@@ -60,8 +60,7 @@ def build_data(opt):
     if not opt.get('model', False):
         opt['model'] = 'repeat_label'
     preprocess = opt.get('pytorch_preprocess', True)
-    if preprocess:
-        dictionary = build_dict(opt, skip_if_built=True)
+    dictionary = build_dict(opt, skip_if_built=True)
     agent = create_agent(opt)
     # If build teacher not specified, we are simply looking for the file
     if not opt.get('pytorch_teacher_task', None):
@@ -98,7 +97,7 @@ def build_data(opt):
                             dt)
     if preprocess:
         datapath += '_{}_preprocess'.format(agent.getID().replace(':', '_'))
-    if os.path.isdir(datapath):
+    if os.path.isdir(datapath) and 'data_length' in os.listdir(datapath):
         # Data already built
         print("[ pytorch data already built, at {}. ]".format(datapath))
         return datapath
@@ -155,13 +154,12 @@ def build_data(opt):
             current.clear()
             context.clear()
     pbar.close()
-
     with open(os.path.join(datapath, 'char_index'), 'w') as char_index:
         json.dump(idx_to_char, char_index)
     with open(os.path.join(datapath, 'data_length'), 'w') as pytorch_data_len:
         pytorch_data_len.write(json.dumps({'num_eps': num_eps,
                                            'num_exs': num_exs}))
-    if preprocess and dictionary:
+    if dictionary:
         dictionary.save(get_pyt_dict_file(opt), sort=True)
 
     print('[ pytorch data built. ]')
