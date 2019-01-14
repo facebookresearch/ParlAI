@@ -34,7 +34,15 @@ structures for accessing textual dialog data and utilized by ``DialogTeacher``
 
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
-from .utils import AttrDict, flatten, sort_data, make_batches, no_lock, str_to_msg
+from .utils import (
+    AttrDict,
+    flatten,
+    sort_data,
+    make_batches,
+    no_lock,
+    str_to_msg,
+    warn_once,
+)
 
 from functools import lru_cache
 
