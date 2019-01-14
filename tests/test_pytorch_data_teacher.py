@@ -139,7 +139,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
                                 )
         print('\n------Passed `test_pyt_preprocess`------\n')
 
-    def test_pyt_batchsort(self):
+    def test_valid_pyt_batchsort(self):
         """
             Tests that batchsort *works* for two epochs; that is, that
             every example is seen both epochs
