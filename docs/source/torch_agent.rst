@@ -8,14 +8,14 @@
 core.torch_agent
 ===================================
 
-Torch Agent implement much of the boilerplate necessary for implementing
+Torch Agent implements much of the boilerplate necessary for creating
 a neural dialogue agent, so you can focus on modeling. Torch Agent limits its
 functionality to maintaining dialogue history, transforming text into vectors of
 indicies, and loading/saving models. The user is required to implement their own
 logic in methods like `train_step` and `eval_step`.
 
 
-Torch Ranker Agent and Torch Generator more specialized stub methods, and provide
+Torch Ranker Agent and Torch Generator have more specialized stub methods, and provide
 many rich features and benefits. Torch Ranker Agent assumes your model ranks possible
 responses from a set of possible candidates, and provides options around negative
 sampling, candidate sampling, and large-scale candidate prediction. Torch Generator
