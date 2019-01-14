@@ -19,7 +19,6 @@ import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
-from parlai.core.pytorch_data_teacher import get_dataset_classes
 
 
 def get_model_name(opt):
@@ -468,6 +467,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def add_pyt_dataset_args(self, opt):
         """Add arguments specific to specified pytorch dataset"""
+        from parlai.core.pytorch_data_teacher import get_dataset_classes
         dataset_classes = get_dataset_classes(opt)
         for dataset, _, _ in dataset_classes:
             try:

@@ -16,6 +16,7 @@ are used in a flattened episode.
 """
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from parlai.scripts.build_dict import build_dict, setup_args as dict_setup
 import copy
 import os
 import json
@@ -26,9 +27,20 @@ import tqdm
 from collections import deque
 
 
+def get_pyt_dict_file(opt):
+    if not opt['pytorch_teacher_task']:
+        opt['pytorch_teacher_task'] = opt['task']
+    return os.path.join(
+        opt.get('datapath', '.'),
+        '{}_pyt_data'.format(opt['pytorch_teacher_task'].replace(':', '_')),
+        opt['datatype'].split(':')[0],
+        'dict')
+
+
 def setup_args():
     from parlai.core.params import ParlaiParser
-    return ParlaiParser(True, True, 'Builds a pytorch data file.')
+    parser = ParlaiParser(True, True, 'Builds a pytorch data file.')
+    return dict_setup(parser)
 
 
 def make_serializable(obj):
@@ -50,6 +62,12 @@ def make_serializable(obj):
 def build_data(opt):
     if not opt.get('model', False):
         opt['model'] = 'repeat_label'
+    preprocess = opt.get('pytorch_preprocess', True)
+    opt['dict_file'] = get_pyt_dict_file(opt)
+    dictionary = None
+    if 'dict_maxexs' in opt:
+        # Note: only build dictionary if dict loop args specified
+        dictionary = build_dict(opt, skip_if_built=True)
     agent = create_agent(opt)
     # If build teacher not specified, we are simply looking for the file
     if not opt.get('pytorch_teacher_task', None):
@@ -75,6 +93,7 @@ def build_data(opt):
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     ordered_opt['task'] = ordered_opt['pytorch_teacher_task']
+    ordered_opt.pop('pytorch_teacher_dataset')
     ordered_opt['no_cuda'] = True
     world_data = create_task(ordered_opt, agent)
     teacher = world_data.agents[0]
@@ -83,10 +102,9 @@ def build_data(opt):
                             '{}_pyt_data'.format(
                                 ordered_opt['task'].replace(':', '_')),
                             dt)
-    preprocess = opt.get('pytorch_preprocess', True)
     if preprocess:
         datapath += '_{}_preprocess'.format(agent.getID().replace(':', '_'))
-    if os.path.isdir(datapath):
+    if os.path.isdir(datapath) and 'data_length' in os.listdir(datapath):
         # Data already built
         print("[ pytorch data already built, at {}. ]".format(datapath))
         return datapath
@@ -143,12 +161,13 @@ def build_data(opt):
             current.clear()
             context.clear()
     pbar.close()
-
     with open(os.path.join(datapath, 'char_index'), 'w') as char_index:
         json.dump(idx_to_char, char_index)
     with open(os.path.join(datapath, 'data_length'), 'w') as pytorch_data_len:
         pytorch_data_len.write(json.dumps({'num_eps': num_eps,
                                            'num_exs': num_exs}))
+    if dictionary:
+        dictionary.save(get_pyt_dict_file(opt), sort=True)
 
     print('[ pytorch data built. ]')
     return datapath

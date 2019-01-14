@@ -591,6 +591,7 @@ class BatchWorld(World):
             self.worlds.append(shared['world_class'](opt, None, shared))
         self.batch_observations = [None] * len(self.world.get_agents())
         self.first_batch = None
+        self.acts = [None] * len(self.world.get_agents())
 
     def batch_observe(self, index, batch_actions, index_acting):
         batch_observations = []
@@ -649,6 +650,7 @@ class BatchWorld(World):
         for agent_idx in range(num_agents):
             # The agent acts.
             batch_act = self.batch_act(agent_idx, batch_observations[agent_idx])
+            self.acts[agent_idx] = batch_act
             # We possibly execute this action in the world.
             if hasattr(self.world, 'execute'):
                 for w in self.worlds:
@@ -981,12 +983,19 @@ def create_task(opt, user_agents, default_world=None):
     see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``
     for list of tasks.
     """
-    if not (opt.get('task') or
-            opt.get('pytorch_teacher_task') or
-            opt.get('pytorch_teacher_dataset')):
+    task = opt.get('task')
+    pyt_task = opt.get('pytorch_teacher_task')
+    pyt_dataset = opt.get('pytorch_teacher_dataset')
+    if not (task or pyt_task or pyt_dataset):
         raise RuntimeError('No task specified. Please select a task with ' +
                            '--task {task_name}.')
-    if not opt.get('task'):
+    # When building pytorch data, there is a point where task and pyt_task
+    # are the same; make sure we discount that case.
+    pyt_multitask = task is not None and (
+                        (pyt_task is not None and pyt_task != task)
+                        or (pyt_dataset is not None and pyt_dataset != task)
+                    )
+    if not task:
         opt['task'] = 'pytorch_teacher'
     if type(user_agents) != list:
         user_agents = [user_agents]
@@ -995,6 +1004,8 @@ def create_task(opt, user_agents, default_world=None):
     # (e.g. "#QA" to the list of tasks that are QA tasks).
     opt = copy.deepcopy(opt)
     opt['task'] = ids_to_tasks(opt['task'])
+    if pyt_multitask and 'pytorch_teacher' not in opt['task']:
+        opt['task'] += ',pytorch_teacher'
     print('[creating task(s): ' + opt['task'] + ']')
 
     # check if single or multithreaded, and single-example or batched examples
