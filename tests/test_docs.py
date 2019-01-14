@@ -29,7 +29,6 @@ class TestDocs(unittest.TestCase):
             cwd=DOCS_DIR,
             universal_newlines=True,
         )
-
         self.assertEqual(
             call.returncode, 0,
             'Failed to compile docs:\n{}'.format(call.stderr)
