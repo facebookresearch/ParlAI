@@ -5,23 +5,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.agents.transformer.transformer import TransformerRankerAgent
-from parlai.core.utils import set_namedtuple_defaults
-from parlai.core.torch_agent import Batch as TABatch, TorchAgent
-
-from collections import namedtuple
-
-#
-# # extend the default batch
-# Batch = namedtuple(
-#     'Batch', TABatch._fields + (
-#         # needed for evaluation metrics
-#         'checked_sentence', 'all_labels',
-#         # needed for the model
-#         'cs_ids', 'know_vec', 'ck_mask', 'use_cs_ids',
-#         'knowledge',
-#     )
-# )
-# set_namedtuple_defaults(Batch)
+from parlai.core.torch_agent import TorchAgent
 
 
 class WizardTransformerRankerAgent(TransformerRankerAgent):
@@ -66,7 +50,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             self.opt['use_memories'] = True
         self.chosen_sentence = (opt.get('chosen_sentence', False) and
                                 self.use_knowledge)
-        # TODO: fix knowledge dropout
+        # TODO: add knowledge dropout capability
 
     def vectorize_knowledge(self, observation):
         if not self.use_knowledge:
