@@ -251,6 +251,11 @@ class TorchGeneratorAgent(TorchAgent):
                                 'the beam search')
         agent.add_argument('--beam-block-ngram', type=int, default=0, hidden=True,
                            help='Block all repeating ngrams up to history length n-1')
+        agent.add_argument('--beam-num-iterations', type=int, default=1, hidden=True,
+                           help='Iterative beam is done when this param is > 1')
+        agent.add_argument('--beam-min-distance', type=int, default=1, hidden=True,
+                           help='Minimum dist threshold for iterative beam block, '
+                                'can work only when beam-num-iterations > 1')
         agent.add_argument('--skip-generation', type='bool', default=False, hidden=True,
                            help='Skip beam search. Useful for speeding up training, '
                                 'if perplexity is the validation metric.')
@@ -281,6 +286,10 @@ class TorchGeneratorAgent(TorchAgent):
         self.beam_min_n_best = opt.get('beam_min_n_best', 3)
         self.beam_min_length = opt.get('beam_min_length', 3)
         self.beam_block_ngram = opt.get('beam_block_ngram', 0)
+        self.beam_num_iterations = opt.get('beam_num_iterations', 1)
+        self.beam_min_distance = opt.get('beam_min_distance', 1)
+        if self.beam_num_iterations > 1:
+            assert opt['batchsize'] == 1, 'beam_num_iterations > 1 requires bs == 1'
         self.skip_generation = opt.get('skip_generation', False)
 
         if shared:
@@ -515,10 +524,18 @@ class TorchGeneratorAgent(TorchAgent):
                 pad=self.NULL_IDX,
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
-                block_ngram=self.beam_block_ngram
+                block_ngram=self.beam_block_ngram,
+                num_iterations=self.beam_num_iterations,
+                min_distance=self.beam_min_distance
             )
             beam_preds_scores, _, beams = out
             preds, scores = zip(*beam_preds_scores)
+
+            if self.beam_num_iterations > 1:
+                # here the best candidate w.r.t. logprob is selected
+                # user can implement any other way to choose the best one
+                best_score_idx = torch.argmax(torch.Tensor(scores))
+                preds, scores = [preds[best_score_idx]], [scores[best_score_idx]]
 
             if self.beam_dot_log is True:
                 self._write_beam_dots(batch.text_vec, beams)
@@ -565,7 +582,8 @@ class TorchGeneratorAgent(TorchAgent):
         return Output(text, cand_choices)
 
     def beam_search(self, model, batch, beam_size, start=1, end=2,
-                    pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0):
+                    pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0,
+                    num_iterations=1, min_distance=1):
         """Beam search given the model and Batch
 
 
@@ -592,14 +610,19 @@ class TorchGeneratorAgent(TorchAgent):
             - beams :list of Beam instances defined in Beam class, can be used for any
               following postprocessing, e.g. dot logging.
         """
-        encoder_states = model.encoder(batch.text_vec)
+        bsz = len(batch.text_lengths)
+        if num_iterations > 1:
+            assert bsz == 1, 'num_iterations > 1 requires bsz == 1'
+            encoder_states = model.encoder(batch.text_vec.expand([num_iterations, -1]))
+            bsz = num_iterations
+        else:
+            encoder_states = model.encoder(batch.text_vec)
         dev = batch.text_vec.device
 
-        bsz = len(batch.text_lengths)
         beams = [
             Beam(beam_size, min_length=min_length, padding_token=pad,
                  bos_token=start, eos_token=end, min_n_best=min_n_best,
-                 cuda=dev, block_ngram=block_ngram)
+                 cuda=dev, block_ngram=block_ngram, min_distance=min_distance)
             for i in range(bsz)
         ]
 
@@ -624,7 +647,12 @@ class TorchGeneratorAgent(TorchAgent):
             score = F.log_softmax(score, dim=-1)
             for i, b in enumerate(beams):
                 if not b.done():
-                    b.advance(score[i])
+                    partial_hyps = []
+                    if num_iterations > 1:
+                        for j in range(i):
+                            if len(beams[j].outputs) > 1:
+                                partial_hyps.extend(beams[j].partial_hyps)
+                    b.advance(score[i], partial_hyps)
             incr_state_inds = torch.cat(
                 [beam_size * i +
                     b.get_backtrack_from_current_step() for i, b in enumerate(beams)])
@@ -736,7 +764,7 @@ class Beam(object):
     """Generic beam class. It keeps information about beam_size hypothesis."""
 
     def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1,
-                 eos_token=2, min_n_best=3, cuda='cpu', block_ngram=0):
+                 eos_token=2, min_n_best=3, cuda='cpu', block_ngram=0, min_distance=1):
         """Instantiate Beam object.
 
         :param beam_size: number of hypothesis in the beam
@@ -747,6 +775,7 @@ class Beam(object):
         :param min_n_best: Beam will not be done unless this amount of finished
                            hypothesis (with EOS) is done
         :param cuda: What device to use for computations
+        :param min_distance: Iterative beam distance threshold
         """
         self.beam_size = beam_size
         self.min_length = min_length
@@ -773,12 +802,21 @@ class Beam(object):
         self.n_best_counter = 0
         self.min_n_best = min_n_best
         self.block_ngram = block_ngram
-        self.partial_hyps = [[self.bos] for i in range(beam_size)]
+        self.partial_hyps = [[] for i in range(beam_size)]
+        self.min_distance = min_distance
 
     @staticmethod
     def find_ngrams(input_list, n):
         """Get list of ngrams with context length n-1"""
         return list(zip(*[input_list[i:] for i in range(n)]))
+
+    def hamming_dist(self, l1, l2):
+        assert len(l1) == len(l2), 'Hamming distance requires same length lists'
+        res = 0
+        for i in range(len(l1)):
+            if l1[i] != l2[i]:
+                res += 1
+        return res
 
     def get_output_from_current_step(self):
         """Get the outputput at the current step."""
@@ -788,7 +826,7 @@ class Beam(object):
         """Get the backtrack at the current step."""
         return self.bookkeep[-1]
 
-    def advance(self, softmax_probs):
+    def advance(self, softmax_probs, neighbor_partial_hyps):
         """Advance the beam one step."""
         voc_size = softmax_probs.size(-1)
         current_length = len(self.all_scores) - 1
@@ -807,7 +845,7 @@ class Beam(object):
                            self.scores.unsqueeze(1).expand_as(softmax_probs))
             for i in range(self.outputs[-1].size(0)):
                 if self.block_ngram > 0:
-                    current_hypo = self.partial_hyps[i][1:]
+                    current_hypo = self.partial_hyps[i]
                     current_ngrams = []
                     for ng in range(self.block_ngram):
                         ngrams = Beam.find_ngrams(current_hypo, ng)
@@ -817,6 +855,17 @@ class Beam(object):
                     if any(v > 1 for k, v in counted_ngrams.items()):
                         # block this hypothesis hard
                         beam_scores[i] = -NEAR_INF
+
+                # iterative beam block
+                if len(neighbor_partial_hyps) > 0:
+                    current_hypo = self.partial_hyps[i]
+                    current_hyp_length = len(current_hypo)
+                    for neighbor_cand in neighbor_partial_hyps:
+                        if len(neighbor_cand) == current_length + 1:
+                            dist = self.hamming_dist(neighbor_cand[:current_length], current_hypo)
+                            if dist < self.min_distance:
+                                last_token = neighbor_cand[-1]
+                                beam_scores[i][last_token] = -NEAR_INF
 
                 #  if previous output hypo token had eos
                 # we penalize those word probs to never be chosen
