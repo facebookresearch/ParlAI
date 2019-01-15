@@ -16,8 +16,7 @@ import datetime
 import os
 import requests
 import shutil
-
-from parlai.core.utils import ProgressLogger
+import tqdm
 
 
 def built(path, version_string=None):
@@ -56,7 +55,7 @@ def download(url, path, fname, redownload=False):
     retry = 5
     exp_backoff = [2 ** r for r in reversed(range(retry))]
 
-    logger = ProgressLogger()
+    pbar = tqdm.tqdm(unit='B', unit_scale=True, desc='Downloading {}'.format(fname))
 
     while download and retry >= 0:
         resume_file = outfile + '.part'
@@ -84,6 +83,7 @@ def download(url, path, fname, redownload=False):
                 total_size = int(response.headers.get('Content-Length', -1))
                 # server returns remaining size if resuming, so adjust total
                 total_size += resume_pos
+                pbar.total = total_size
                 done = resume_pos
 
                 with open(resume_file, mode) as f:
@@ -95,12 +95,12 @@ def download(url, path, fname, redownload=False):
                             if total_size < done:
                                 # don't freak out if content-length was too small
                                 total_size = done
-                            logger.log(done, total_size)
+                                pbar.total = total_size
+                            pbar.update(len(chunk))
                     break
             except requests.exceptions.ConnectionError:
                 retry -= 1
-                # TODO Better way to clean progress bar?
-                print(''.join([' '] * 60), end='\r')
+                pbar.clear()
                 if retry >= 0:
                     print('Connection error, retrying. (%d retries left)' % retry)
                     time.sleep(exp_backoff[retry])
@@ -113,13 +113,14 @@ def download(url, path, fname, redownload=False):
         raise RuntimeWarning('Connection broken too many times. Stopped retrying.')
 
     if download and retry > 0:
-        logger.log(done, total_size, force=True)
-        print()
+        pbar.update(done - pbar.n)
         if done < total_size:
             raise RuntimeWarning('Received less data than specified in ' +
                                  'Content-Length header for ' + url + '.' +
                                  ' There may be a download problem.')
         move(resume_file, outfile)
+
+    pbar.close()
 
 
 def make_dir(path):

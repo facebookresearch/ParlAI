@@ -593,7 +593,7 @@ class DoneResponse extends React.Component {
 class TextResponse extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {'textval': ''};
+    this.state = {'textval': '', 'sending': false};
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -607,9 +607,11 @@ class TextResponse extends React.Component {
   }
 
   tryMessageSend() {
-    if (this.state.textval != '' && this.props.active) {
+    if (this.state.textval != '' && this.props.active && !this.state.sending) {
+      this.setState({sending: true});
       this.props.onMessageSend(
-        this.state.textval, {}, () => this.setState({textval: ''}));
+        this.state.textval, {},
+        () => this.setState({textval: '', 'sending': false}));
     }
   }
 
@@ -648,7 +650,7 @@ class TextResponse extends React.Component {
         placeholder="Please enter here..."
         onKeyPress={(e) => this.handleKeyPress(e)}
         onChange={(e) => this.setState({textval: e.target.value})}
-        disabled={!this.props.active}/>
+        disabled={!this.props.active || this.state.sending}/>
     );
 
     let submit_button = (
@@ -656,7 +658,8 @@ class TextResponse extends React.Component {
         className="btn btn-primary"
         style={submit_style}
         id="id_send_msg_button"
-        disabled={this.state.textval == '' || !this.props.active}
+        disabled={
+          this.state.textval == '' || !this.props.active || this.state.sending}
         onClick={() => this.tryMessageSend()}>
           Send
       </Button>

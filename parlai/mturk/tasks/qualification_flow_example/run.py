@@ -10,7 +10,8 @@ from parlai.mturk.tasks.qualification_flow_example.worlds import \
     QualificationFlowOnboardWorld, QualificationFlowSoloWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
 import parlai.mturk.core.mturk_utils as mturk_utils
-from task_config import task_config
+from parlai.mturk.tasks.qualification_flow_example.task_config import \
+    task_config
 import os
 import random
 

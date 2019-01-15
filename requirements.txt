@@ -4,3 +4,4 @@ Pillow
 pyzmq
 h5py
 gitpython
+tqdm

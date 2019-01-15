@@ -7,9 +7,9 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 import os
 import json
+import tqdm
 from parlai.core.build_data import download
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import ProgressLogger
 import parlai.core.build_data as build_data
 
 
@@ -35,7 +35,6 @@ def download_images(opt):
                            'the path to the folder via the `--yfcc-path` '
                            'command line argument.')
     image_prefix = 'https://multimedia-commons.s3-us-west-2.amazonaws.com/data/images'
-    logger = ProgressLogger(throttle=0.1, should_humanize=False)
     hashes = []
     for dt in ['train', 'val', 'test']:
         with open(os.path.join(dpath, '{}.json'.format(dt))) as f:
@@ -44,14 +43,13 @@ def download_images(opt):
     os.makedirs(image_path, exist_ok=True)
 
     print('[downloading images to {}]'.format(image_path))
-    for i, (p_hash) in enumerate(hashes):
+    for i, (p_hash) in enumerate(tqdm.tqdm(hashes, unit='img')):
         image_url = '{}/{}/{}/{}.jpg'.format(
             image_prefix,
             p_hash[:3],
             p_hash[3:6],
             p_hash)
         download(image_url, image_path, '{}.jpg'.format(p_hash))
-        logger.log(i, len(hashes))
     build_data.mark_done(image_path, version)
 
 

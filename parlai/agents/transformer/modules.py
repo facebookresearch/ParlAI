@@ -301,9 +301,9 @@ class TransformerEncoderLayer(nn.Module):
         self.attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm1 = nn.LayerNorm([embedding_size])
+        self.norm1 = nn.LayerNorm(embedding_size)
         self.ffn = TransformerFFN(embedding_size, ffn_size, dropout=relu_dropout)
-        self.norm2 = nn.LayerNorm([embedding_size])
+        self.norm2 = nn.LayerNorm(embedding_size)
 
     def forward(self, tensor, mask):
         tensor = tensor + self.attention(tensor, mask=mask)
@@ -393,16 +393,15 @@ class TransformerDecoderLayer(nn.Module):
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.selfattn_norm = nn.LayerNorm([embedding_size])
-        self.norm1 = nn.LayerNorm([embedding_size])
+        self.norm1 = nn.LayerNorm(embedding_size)
 
         self.encoder_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm2 = nn.LayerNorm([embedding_size])
+        self.norm2 = nn.LayerNorm(embedding_size)
 
         self.ffn = TransformerFFN(embedding_size, ffn_size, dropout=relu_dropout)
-        self.norm3 = nn.LayerNorm([embedding_size])
+        self.norm3 = nn.LayerNorm(embedding_size)
 
     def forward(self, x, encoder_output, encoder_mask):
         decoder_mask = self._create_selfattn_mask(x)

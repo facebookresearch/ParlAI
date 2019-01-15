@@ -18,7 +18,7 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger
+from parlai.core.utils import TimeLogger, warn_once
 
 
 def setup_args(parser=None):
@@ -65,11 +65,11 @@ def verify(opt, printargs=None, print_parser=None):
 
         act = world.acts[0]
         if 'text' not in act:
-            print("warning: missing text field")
+            warn_once("warning: missing text field")
             counts['missing_text'] += 1
 
         if 'labels' not in act and 'eval_labels' not in act:
-            print("warning: missing labels/eval_labels field")
+            warn_once("warning: missing labels/eval_labels field")
             counts['missing_labels'] += 1
         else:
             if 'label_candidates' not in act:
@@ -77,7 +77,7 @@ def verify(opt, printargs=None, print_parser=None):
             else:
                 for c in act['label_candidates']:
                     if c == '':
-                        print("warning: empty string label_candidate")
+                        warn_once("warning: empty string label_candidate")
                         counts['empty_label_candidates'] += 1
 
         if log_time.time() > log_every_n_secs:
@@ -97,6 +97,7 @@ def verify(opt, printargs=None, print_parser=None):
 
 if __name__ == '__main__':
     parser = setup_args()
-    report_text, report_log = \
-        verify(parser.parse_args(print_args=False), print_parser=parser)
+    report_text, report_log = verify(
+        parser.parse_args(print_args=False), print_parser=parser
+    )
     print(report_text)

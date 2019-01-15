@@ -1339,8 +1339,8 @@ class AssignmentView extends React.Component {
       `./task_components/${task_name}/components/custom.jsx`
     ).then((custom) => {
       this.props.setCustomComponents(custom.default);
-    }).catch((err) => {
-      // Custom react module not found
+    }).catch((error) => {
+      console.log('No custom components found');
       this.props.setCustomComponents({});
     });
   }

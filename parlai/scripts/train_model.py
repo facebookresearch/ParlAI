@@ -31,6 +31,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.utils import Timer
 from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
+from parlai.scripts.build_pytorch_data import get_pyt_dict_file
 import math
 import os
 
@@ -176,7 +177,10 @@ class TrainLoop():
             opt['init_model'] = opt['model_file'] + '.checkpoint'
         # Possibly build a dictionary (not all models do this).
         if opt['dict_build_first'] and 'dict_file' in opt:
-            if opt['dict_file'] is None and opt.get('model_file'):
+            # If data built via pytorch data teacher, we need to load prebuilt dict
+            if opt.get('pytorch_teacher_task'):
+                opt['dict_file'] = get_pyt_dict_file(opt)
+            elif opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             print("[ building dictionary first... ]")
             build_dict(opt, skip_if_built=True)
