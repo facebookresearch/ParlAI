@@ -23,6 +23,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
+from parlai.core.distributed_utils import is_distributed
 import copy
 import os
 import tqdm
@@ -56,11 +57,15 @@ def build_dict(opt, skip_if_built=False):
         print('Tried to build dictionary but `--dict-file` is not set. Set ' +
               'this param so the dictionary can be saved.')
         return
-
     if skip_if_built and os.path.isfile(opt['dict_file']):
         # Dictionary already built, skip all loading or setup
         print("[ dictionary already built .]")
         return None
+
+    if is_distributed():
+        raise ValueError(
+            'Dictionaries should be pre-built before distributed train.'
+        )
 
     if opt.get('dict_class'):
         # Custom dictionary class
@@ -81,7 +86,8 @@ def build_dict(opt, skip_if_built=False):
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     ordered_opt['image_mode'] = 'none'
-    if ordered_opt['task'] == 'pytorch_teacher':
+    ordered_opt['pytorch_teacher_batch_sort'] = False
+    if ordered_opt['task'] == 'pytorch_teacher' or not ordered_opt['task']:
         pytorch_teacher_task = ordered_opt.get('pytorch_teacher_task', '')
         if pytorch_teacher_task != '':
             ordered_opt['task'] = pytorch_teacher_task

@@ -14,6 +14,7 @@ from torch import nn
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once
+from parlai.core.distributed_utils import is_distributed
 
 
 class TorchRankerAgent(TorchAgent):
@@ -80,6 +81,13 @@ class TorchRankerAgent(TorchAgent):
         else:
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(optim_params)
+
+        if shared is None and is_distributed():
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model,
+                device_ids=[self.opt['gpu']],
+                broadcast_buffers=False,
+            )
 
     def score_candidates(self, batch, cand_vecs):
         """Given a batch and candidate set, return scores (for ranking)"""

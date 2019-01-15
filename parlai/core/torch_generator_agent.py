@@ -34,6 +34,7 @@ import torch.nn.functional as F
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs, warn_once
 from parlai.core.thread_utils import SharedTable
+from parlai.core.distributed_utils import is_distributed
 
 
 class TorchGeneratorModel(nn.Module):
@@ -318,6 +319,13 @@ class TorchGeneratorAgent(TorchAgent):
             else:
                 states = {}
 
+        if shared is None and is_distributed():
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model,
+                device_ids=[self.opt['gpu']],
+                broadcast_buffers=False,
+            )
+
         if 'train' in opt.get('datatype', ''):
             # do this regardless of share state, but don't
             self.init_optim(
@@ -359,15 +367,16 @@ class TorchGeneratorAgent(TorchAgent):
         if self.use_cuda:
             self.criterion.cuda()
 
-    def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
+    def _init_cuda_buffer(self, batchsize, maxlen, force=False):
         """Pre-initialize CUDA buffer by doing fake forward pass."""
-        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
+        if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
-                print('preinitializing pytorch cuda buffer')
                 dummy_xs = torch.ones(batchsize, maxlen).long().cuda()
                 dummy_ys = torch.ones(batchsize, 2).long().cuda()
-                scores, _, _ = model(dummy_xs, dummy_ys)
-                loss = criterion(scores.view(-1, scores.size(-1)), dummy_ys.view(-1))
+                scores, _, _ = self.model(dummy_xs, dummy_ys)
+                loss = self.criterion(
+                    scores.view(-1, scores.size(-1)), dummy_ys.view(-1)
+                )
                 loss.backward()
                 self.buffer_initialized = True
             except RuntimeError as e:
@@ -442,8 +451,7 @@ class TorchGeneratorAgent(TorchAgent):
         """Train on a single batch of examples."""
         batchsize = batch.text_vec.size(0)
         # helps with memory usage
-        self._init_cuda_buffer(self.model, self.criterion, batchsize,
-                               self.truncate or 180)
+        self._init_cuda_buffer(batchsize, self.truncate or 256)
         self.model.train()
         self.zero_grad()
 
@@ -468,6 +476,9 @@ class TorchGeneratorAgent(TorchAgent):
                       'if this happens frequently, decrease batchsize or '
                       'truncate the inputs to the model.')
                 self.metrics['total_skipped_batches'] += 1
+                # gradients are synced on backward, now this model is going to be
+                # out of sync! catch up with the other workers
+                self._init_cuda_buffer(8, 8, True)
             else:
                 raise e
 

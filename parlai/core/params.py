@@ -19,7 +19,6 @@ import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
-from parlai.core.pytorch_data_teacher import get_dataset_classes
 
 
 def get_model_name(opt):
@@ -368,6 +367,19 @@ class ParlaiParser(argparse.ArgumentParser):
 
         self.add_pytorch_datateacher_args()
 
+    def add_distributed_training_args(self):
+        grp = self.add_argument_group('Distributed Training')
+        grp.add_argument(
+            '--distributed-world-size', type=int,
+            help='Number of workers.'
+        )
+        grp.add_argument(
+            '--verbose', type='bool', default=False,
+            help='All workers print output.',
+            hidden=True,
+        )
+        return grp
+
     def add_pytorch_datateacher_args(self):
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
@@ -468,6 +480,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def add_pyt_dataset_args(self, opt):
         """Add arguments specific to specified pytorch dataset"""
+        from parlai.core.pytorch_data_teacher import get_dataset_classes
         dataset_classes = get_dataset_classes(opt)
         for dataset, _, _ in dataset_classes:
             try:
