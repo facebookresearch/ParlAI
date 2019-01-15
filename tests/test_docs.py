@@ -14,13 +14,20 @@ import os
 import unittest
 import parlai
 import subprocess
+try:
+    import sphinx
+    SKIP_TEST = False
+except ImportError:
+    SKIP_TEST = True
 
 # find the source directory for parlai
 SOURCE_ROOT = os.path.dirname(os.path.dirname(parlai.__file__))
 DOCS_DIR = os.path.join(SOURCE_ROOT, "docs")
 
 
+
 class TestDocs(unittest.TestCase):
+    unittest.skipIf(SKIP_TEST, "Sphinx not installed.")
     def test_docs_build(self):
         call = subprocess.run(
             ["make", "html"],

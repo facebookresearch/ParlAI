@@ -5,5 +5,4 @@ pyzmq
 h5py
 gitpython
 tqdm
-sphinx
 flake8
