@@ -441,57 +441,6 @@ def no_lock():
     return single_nolock
 
 
-class ProgressLogger(object):
-    """Throttles and display progress in human readable form."""
-
-    def __init__(self, throttle=1, should_humanize=True):
-        """Initialize Progress logger.
-
-        :param throttle: default 1, number in seconds to use as throttle rate
-        :param should_humanize: default True, whether to humanize data units
-        """
-        self.latest = time.time()
-        self.throttle_speed = throttle
-        self.should_humanize = should_humanize
-
-    def humanize(self, num, suffix='B'):
-        """Convert units to more human-readable format."""
-        if num < 0:
-            return num
-        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
-            if abs(num) < 1024.0:
-                return "%3.1f%s%s" % (num, unit, suffix)
-            num /= 1024.0
-        return "%.1f%s%s" % (num, 'Yi', suffix)
-
-    def log(self, curr, total, width=40, force=False):
-        """Display a bar showing the current progress."""
-        if curr == 0 and total == -1:
-            print('[ no data received for this file ]', end='\r')
-            return
-        curr_time = time.time()
-        if not force and curr_time - self.latest < self.throttle_speed:
-            return
-        else:
-            self.latest = curr_time
-
-        self.latest = curr_time
-        done = min(curr * width // total, width)
-        remain = width - done
-
-        if self.should_humanize:
-            curr = self.humanize(curr)
-            total = self.humanize(total)
-
-        progress = '[{}{}] {} / {}'.format(
-            ''.join(['|'] * done),
-            ''.join(['.'] * remain),
-            curr,
-            total
-        )
-        print(progress, end='\r')
-
-
 class PaddingUtils(object):
     """Helps with padding input and target tensors.
 

@@ -47,6 +47,9 @@ class BatchSortCache(object):
         if not hasattr(cls, 'length_to_eps'):
             # Maps episode length to list of episodes
             cls.length_to_eps = {}
+        if not hasattr(cls, 'ep_indices'):
+            # Set of episode indices already in the cache
+            cls.ep_indices = set()
         if not hasattr(cls, 'batches'):
             # List of batches if popping batches
             cls.batches = []
@@ -142,20 +145,6 @@ class BatchSortCache(object):
             '''Helper function for flattening a list'''
             return [item for sublist in l for item in sublist]
 
-        def ep_length(val):
-            '''Determines the length of an episode, given the specified value'''
-            if isinstance(val, (int, bytes, bool)):
-                return 1
-            if isinstance(val, str):
-                return len(val.split(' '))
-            if isinstance(val, (collections.Mapping,
-                                collections.Sequence,
-                                torch.Tensor)):
-                if (isinstance(val, collections.Mapping) and
-                        val.get('deserialized_tensor', False)):
-                    return len(val['value'])
-                return len(val)
-
         def put_in_cache(ep_idx, episode, caller):
             '''Put episode `ep_idx` into cache'''
             length = ep_length(episode[caller.batch_sort_field])
@@ -164,13 +153,17 @@ class BatchSortCache(object):
                 for i in range(1, caller.batch_length_range)
             ])
             lengths = [max(i, 1) for i in lengths]
-            in_cache = False
-            for l in lengths:
-                if l in cls.length_to_eps:
-                    with cls.cache_lock:
-                        cls.length_to_eps[l]['ep_list'] += [(ep_idx, episode)]
-                    in_cache = True
-                    break
+            in_cache = ep_idx in cls.ep_indices
+            # first check if episode can go in existing bucket
+            if not in_cache:
+                for l in lengths:
+                    if l in cls.length_to_eps:
+                        with cls.cache_lock:
+                            cls.length_to_eps[l]['ep_list'] += [(ep_idx, episode)]
+                            cls.ep_indices.add(ep_idx)
+                        in_cache = True
+                        break
+            # otherwise, make a new bucket
             if not in_cache:
                 with cls.cache_lock:
                     cls.length_to_eps[length] = {
@@ -178,6 +171,7 @@ class BatchSortCache(object):
                         'ep_list': [(ep_idx, episode)],
                         'bucket_complete': False
                     }
+                    cls.ep_indices.add(ep_idx)
             if ep_idx == caller.dataset.num_episodes() - 1:
                 consolidate(caller)
                 with cls.add_to_cache_cv:
@@ -254,6 +248,21 @@ class BatchSortCache(object):
                         return teacher.batch_idx + 1, batch
 
         return wrapper
+
+
+def ep_length(val):
+    '''Determines the length of an episode, given the specified value'''
+    if isinstance(val, (int, bytes, bool)):
+        return 1
+    if isinstance(val, str):
+        return len(val.replace('\n', ' ').split(' '))
+    if isinstance(val, (collections.Mapping,
+                        collections.Sequence,
+                        torch.Tensor)):
+        if (isinstance(val, collections.Mapping) and
+                val.get('deserialized_tensor', False)):
+            return len(val['value'])
+        return len(val)
 
 
 # Get Datasets from the options
@@ -360,7 +369,7 @@ class LoaderProcess(Thread):
         self.datatype = opt.get('datatype')
         self.data = enumerate(self.dataloader)
         self.batch_sort = opt.get('pytorch_teacher_batch_sort')
-        self.batch_cache_type = opt.get('batch_sort_cache')
+        self.batch_cache_type = opt.get('batch_sort_cache_type')
         self.batch_length_range = opt.get('batch_length_range')
         self.batch_sort_field = opt.get('batch_sort_field')
 
@@ -560,8 +569,9 @@ class PytorchDataTeacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         self.use_batch_act = self.bsz > 1
         self.num_workers = opt['numworkers']
-        self.batch_sort = opt.get('pytorch_teacher_batch_sort')
-        self.batch_cache_type = opt.get('batch_sort_cache')
+        self.batch_sort = opt.get('pytorch_teacher_batch_sort') and \
+            'train' in self.datatype
+        self.batch_cache_type = opt.get('batch_sort_cache_type')
         self.batch_sort_field = opt.get('batch_sort_field')
         # One can specify a collate function to use for preparing a batch
         self.opt = opt.copy()
@@ -569,19 +579,25 @@ class PytorchDataTeacher(FixedDialogTeacher):
         dataset_classes = self.get_dataset_class(opt)
         self.ordered = ('ordered' in self.datatype or
                         ('stream' in self.datatype and not opt.get('shuffle')))
+        if self.ordered:
+            # force index for ordered, so that we see every example
+            self.batch_cache_type = 'index'
 
         if not shared:
             BatchSortCache.create()
             if len(dataset_classes) > 1:
                 datasets = []
                 for class_name, collate_fn, task_name in dataset_classes:
-                    opt['pytorch_teacher_task'] = task_name
-                    opt['task'] = task_name
-                    datasets.append(class_name(opt))
+                    dataset_opt = opt.copy()
+                    dataset_opt['pytorch_teacher_task'] = task_name
+                    dataset_opt['task'] = task_name
+                    datasets.append(class_name(dataset_opt))
                     self.collate_fn = collate_fn
+                self.id = ','.join([d[2] for d in dataset_classes])
                 self.dataset = ParlAIConcatDataset(datasets)
             else:
                 class_name, self.collate_fn, task_name = dataset_classes[0]
+                self.id = task_name
                 self.dataset = class_name(opt)
             if self.ordered or not self.training:
                 data_sampler = sampler.SequentialSampler(self.dataset)
@@ -610,6 +626,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
             self.pytorch_dataloader = shared['pytorch_dataloader']
             self.lastYs = shared['lastYs']
             self.data = shared['data']
+            self.id = shared['id']
 
         self.num_batches = math.ceil(self.dataset.num_episodes() / self.bsz)
         self.reset()
@@ -639,6 +656,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
         shared['pytorch_dataloader'] = self.pytorch_dataloader
         shared['dataset'] = self.dataset
         shared['data'] = self.data
+        shared['id'] = self.id
         return shared
 
     def next_example(self):

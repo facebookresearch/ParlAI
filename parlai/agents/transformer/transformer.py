@@ -25,12 +25,12 @@ warn_once(
 def add_common_cmdline_args(argparser):
     argparser.add_argument('-esz', '--embedding-size', type=int, default=300,
                            help='Size of all embedding layers')
-    argparser.add_argument('--n-layers', type=int, default=2)
-    argparser.add_argument('--ffn-size', type=int, default=300,
+    argparser.add_argument('-nl', '--n-layers', type=int, default=2)
+    argparser.add_argument('-hid', '--ffn-size', type=int, default=300,
                            help='Hidden size of the FFN layers')
     argparser.add_argument('--attention-dropout', type=float, default=0.0)
     argparser.add_argument('--relu-dropout', type=float, default=0.0)
-    argparser.add_argument('--n-heads', type=int, default=3)
+    argparser.add_argument('--n-heads', type=int, default=2)
     argparser.add_argument('--learn-positional-embeddings', type='bool', default=False)
     argparser.add_argument('--embeddings-scale', type='bool', default=True)
 
