@@ -5,10 +5,10 @@
   LICENSE file in the root directory of this source tree. An additional grant
   of patent rights can be found in the PATENTS file in the same directory.
 
-agents.remote_agent
-==========================================================
+agents.example_seq2seq
+======================
 
-Remote agent for connecting to nonlocal and/or nonpython agent.
+Reference implementation for a simplified Seq2Seq model.
 
-.. automodule:: parlai.agents.remote_agent.remote_agent
+.. automodule:: parlai.agents.example_seq2seq.example_seq2seq
   :members:

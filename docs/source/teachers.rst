@@ -9,4 +9,3 @@ core.teachers
 ===================================
 .. automodule:: parlai.core.teachers
   :members:
-  :exclude-members: __dict__,__weakref__

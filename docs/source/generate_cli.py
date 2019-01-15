@@ -46,7 +46,7 @@ def main():
         fout.write('.. automodule:: parlai.scripts.{}\n'.format(script_name))
 
         # fout.write('   :members:\n')
-        # fout.write('   :exclude-members: __dict__,__weakref__,setup_args\n')
+        # fout.write('   :exclude-members: setup_args\n')
         fout.write('\n')
         fout.write('CLI help\n')
         fout.write('~~~~~~~~\n\n\n')

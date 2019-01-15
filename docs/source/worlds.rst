@@ -9,4 +9,3 @@ core.worlds
 ===================================
 .. automodule:: parlai.core.worlds
   :members:
-  :exclude-members: __dict__,__weakref__

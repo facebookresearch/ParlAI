@@ -9,4 +9,3 @@ core.agents
 ===================================
 .. automodule:: parlai.core.agents
   :members:
-  :exclude-members: __dict__,__weakref__

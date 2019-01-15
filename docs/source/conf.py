@@ -58,8 +58,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'ParlAI'
-copyright = '2017, FAIR'
-author = 'FAIR'
+copyright = '2018, Facebook AI Research'
+author = 'Facebook AI Research'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -88,9 +88,12 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
-autodoc_member_order = 'bysource'
-
-autodoc_default_flags = ['special-members']
+autodoc_default_options = {
+    'exclude-members': '__dict__,__weakref__',
+    'special-members': '__init__',
+    'member-order': 'bysource',
+    'show-inheritance': True,
+}
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -99,6 +102,7 @@ autodoc_default_flags = ['special-members']
 #
 html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

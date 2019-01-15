@@ -9,4 +9,3 @@ core.utils
 ===================================
 .. automodule:: parlai.core.utils
   :members:
-  :exclude-members: __dict__,__weakref__
