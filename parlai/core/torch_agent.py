@@ -362,8 +362,6 @@ class TorchAgent(Agent):
                 end = 1.0
                 progress = min(1.0, step / self.opt['warmup_updates'])
                 lr_mult = start + (end - start) * progress
-                if step > 0:
-                    print("lr_mult [{}] = {:.6f}".format(step, lr_mult))
                 return lr_mult
 
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
@@ -1052,7 +1050,6 @@ class TorchAgent(Agent):
         """
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
-        print("Calling update_params")
 
         # compute warmup adjustment if needed
         if self.opt.get('warmup_updates', -1) > 1:
@@ -1060,7 +1057,8 @@ class TorchAgent(Agent):
                 raise RuntimeError(
                     'Looks like you forgot to call build_lr_scheduler'
                 )
-            self.warmup_scheduler.step(epoch=self._number_training_updates)
+            if self._number_training_updates <= self.opt['warmup_updates']:
+                self.warmup_scheduler.step(epoch=self._number_training_updates)
 
         if self.opt.get('gradient_clip', -1) > 0:
             torch.nn.utils.clip_grad_norm_(
