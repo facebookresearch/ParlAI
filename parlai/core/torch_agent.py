@@ -192,7 +192,7 @@ class TorchAgent(Agent):
         # lr scheduler
         agent.add_argument(
             '--lr-scheduler', type=str, default='reduceonplateau',
-            choices=['reduceonplateau', 'none'],
+            choices=['reduceonplateau', 'none', 'fixed'],
             help='Learning rate scheduler.'
         )
         agent.add_argument(
@@ -384,7 +384,6 @@ class TorchAgent(Agent):
                 patience=patience,
                 verbose=True
             )
-
         elif self.opt.get('lr_scheduler') == 'fixed':
             self.scheduler = optim.lr_scheduler.StepLR(
                 self.optimizer,
