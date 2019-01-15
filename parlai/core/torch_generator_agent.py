@@ -329,7 +329,9 @@ class TorchGeneratorAgent(TorchAgent):
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
-                saved_optim_type=states.get('optimizer_type'))
+                saved_optim_type=states.get('optimizer_type')
+            )
+            self.build_lr_scheduler()
 
         self.reset()
 
@@ -385,16 +387,6 @@ class TorchGeneratorAgent(TorchAgent):
                     raise RuntimeError(m)
                 else:
                     raise e
-
-    def zero_grad(self):
-        """Zero out optimizer."""
-        self.optimizer.zero_grad()
-
-    def update_params(self):
-        """Do one optimization step."""
-        if self.clip > 0:
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
-        self.optimizer.step()
 
     def reset_metrics(self):
         """Reset metrics for reporting loss and perplexity."""
@@ -479,13 +471,6 @@ class TorchGeneratorAgent(TorchAgent):
                 self._init_cuda_buffer(8, 8, True)
             else:
                 raise e
-
-    def _pick_cands(self, cand_preds, cand_inds, cands):
-        cand_replies = [None] * len(cands)
-        for idx, order in enumerate(cand_preds):
-            batch_idx = cand_inds[idx]
-            cand_replies[batch_idx] = [cands[batch_idx][i] for i in order]
-        return cand_replies
 
     def _write_beam_dots(self, text_vecs, beams):
         """Write the beam dot files to disk."""
