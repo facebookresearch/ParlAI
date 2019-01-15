@@ -298,6 +298,7 @@ class TorchAgent(Agent):
 
         # for the LR scheduler
         self._number_training_updates = 0
+        self.random = random.Random(42)  # fixed random seed
         # which row in the batch this instance is
         self.batch_idx = shared and shared.get('batchindex') or 0
         # can remember as few as zero utterances if desired
