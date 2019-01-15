@@ -38,7 +38,7 @@ def _mock_train(**args):
 class TestStarspace(unittest.TestCase):
     """Checks that seq2seq can learn some very basic tasks."""
 
-    def test_labelcands_nomemnn(self):
+    def test_labelcands_starspace(self):
         """This test uses a single-turn task, so doesn't test memories."""
 
         stdout, valid, test = _mock_train(
@@ -59,7 +59,7 @@ class TestStarspace(unittest.TestCase):
             "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
         )
 
-    def test_labelcands_multi(self):
+    def test_labelcands_multi_starspace(self):
         """This test uses a multi-turn task and multithreading."""
         stdout, valid, test = _mock_train(
             task='integration_tests:MultiturnCandidateTeacher',
