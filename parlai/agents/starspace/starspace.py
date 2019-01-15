@@ -92,6 +92,16 @@ class StarspaceAgent(TorchRankerAgent):
         )
         self.reset()
 
+    @staticmethod
+    def model_version():
+        """Return current version of this model, counting up from 0.
+        Models may not be backwards-compatible with older versions.
+        Version 1 split from version 0 on Jan 15, 2019.
+        To use version 0, use --model legacy:starspace:0
+        (legacy agent code is located in parlai/agents/legacy_agents).
+        """
+        return 1
+
     def build_model(self):
         print("[ creating StarspaceAgent ]")
         # this is not a shared instance of this class, so do full init
