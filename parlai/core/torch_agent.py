@@ -22,6 +22,7 @@ from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor, NEAR_INF
+from parlai.core.distributed_utils import is_primary_worker
 
 try:
     import torch
@@ -200,10 +201,6 @@ class TorchAgent(Agent):
         gpugroup.add_argument(
             '-gpu', '--gpu', type=int, default=-1, help='which GPU to use')
         gpugroup.add_argument(
-            '--multigpu', type='bool', default=False,
-            help='Suggest model should employ multiple GPUs. Not all models '
-                 'respect this flag.')
-        gpugroup.add_argument(
             '--no-cuda', default=False, action='store_true', dest='no_cuda',
             help='disable GPUs even if available. otherwise, will use GPUs if '
                  'available on the device.')
@@ -238,18 +235,11 @@ class TorchAgent(Agent):
 
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
-        self.multigpu = False
         if self.use_cuda:
-            if opt['multigpu'] and opt['gpu'] != -1:
-                raise ValueError("Can't use --multigpu and --gpu together.")
-            self.multigpu = opt.get('multigpu') and opt.get('batchsize') > 1
             if not shared:
                 print('[ Using CUDA ]')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
-            # It's up to the user of TorchAgent to handle multiple GPU issues.
-            # A typical approach would be to employ nn.DataParallel
-            # (https://pytorch.org/docs/0.4.1/nn.html?highlight=dataparallel#torch.nn.DataParallel)
 
         # now set up any fields that all instances may need
         self.id = 'TorchAgent'  # child can override
@@ -403,6 +393,10 @@ class TorchAgent(Agent):
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
         """
+        if not is_primary_worker():
+            # we're in distributed mode, copying embeddings in the workers
+            # slows things down considerably
+            return
         embs, name = self._get_embtype(emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():
@@ -855,7 +849,11 @@ class TorchAgent(Agent):
         if path:
             states = {}
             if hasattr(self, 'model'):  # save model params
-                states['model'] = self.model.state_dict()
+                if hasattr(self.model, 'module'):
+                    # did we wrap in a DistributedDataParallel
+                    states['model'] = self.model.module.state_dict()
+                else:
+                    states['model'] = self.model.state_dict()
             if hasattr(self, 'optimizer'):  # save optimizer params
                 states['optimizer'] = self.optimizer.state_dict()
 

@@ -160,7 +160,7 @@ class PerplexityWorld(World):
             self.metrics['num_tokens'] = 0
             self.metrics['num_unk'] = 0
 
-    def report(self, compute_time=None):
+    def report(self):
         m = {}
         with self._lock():
             m['exs'] = self.metrics['exs']
