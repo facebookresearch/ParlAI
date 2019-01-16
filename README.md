@@ -334,4 +334,4 @@ Please cite the [arXiv paper](https://arxiv.org/abs/1705.06476) if you use ParlA
 ```
 
 ## License
-ParlAI is BSD-licensed. We also provide an additional patent grant.
+ParlAI is MIT licensed. See the LICENSE file for details.
