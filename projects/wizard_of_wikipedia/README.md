@@ -39,9 +39,8 @@ for those interested in replication, analysis, or additional data collection
 ### Retrieval Models
 
 Model                                | Paper          | Test Seen R@1 | Test Unseen R@1
----------------------------------------------------------------------------------------
+------------------------------------ | -------------- | ------------- | ---------------
 Transformer MemNet (w/ pretraining)  | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 87.4 | 69.8
---------------------------------------------------------------------------------
 BoW Memnet                           | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 71.3 | 33.1
 IR baseline                          | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 17.8 | 14.2
 Random                               | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) |  1.0 |  1.0
@@ -49,10 +48,9 @@ Random                               | [Dinan et al. (2019)](https://arxiv.org/a
 ### Generative Models
 
 Model                                | Paper          | Test Seen PPL | Test Unseen PPL
----------------------------------------------------------------------------------------
+------------------------------------ | -------------- | ------------- | ---------------
 Two-Stage Transformer Memnet         | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 46.5 | 84.8
 End-to-end Transformer MemNet        | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 63.5 | 97.3
---------------------------------------------------------------------------------
 Vanilla Transformer (no knowledge)   | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 41.8 | 87.0
 
 
