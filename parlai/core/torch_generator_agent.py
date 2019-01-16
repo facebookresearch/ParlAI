@@ -535,7 +535,8 @@ class TorchGeneratorAgent(TorchAgent):
                 # here the best candidate w.r.t. logprob is selected
                 # user can implement any other way to choose the best one
                 best_score_idx = torch.argmax(torch.Tensor(scores))
-                preds, scores = [preds[best_score_idx]], [scores[best_score_idx]]
+                preds = [preds[best_score_idx]]
+                scores = [scores[best_score_idx]]
 
             if self.beam_dot_log is True:
                 self._write_beam_dots(batch.text_vec, beams)
@@ -612,7 +613,8 @@ class TorchGeneratorAgent(TorchAgent):
         """
         bsz = len(batch.text_lengths)
         if num_iterations > 1:
-            assert bsz == 1, 'num_iterations > 1 requires bsz == 1'
+            if bsz == 1:
+                raise ValueError('num_iterations > 1 requires bsz == 1')
             encoder_states = model.encoder(batch.text_vec.expand([num_iterations, -1]))
             bsz = num_iterations
         else:
@@ -640,7 +642,7 @@ class TorchGeneratorAgent(TorchAgent):
 
             score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
             # only need the final hidden state to make the word prediction
-            score = score[:, -1, :]
+            score = score[:, -1, :].unsqueeze(1)
             score = model.output(score)
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)
@@ -827,7 +829,12 @@ class Beam(object):
         return self.bookkeep[-1]
 
     def advance(self, softmax_probs, neighbor_partial_hyps):
-        """Advance the beam one step."""
+        """Advance the beam one step.
+        :param softmax_probs: scores for all hypos in the beam, [beamsize, vocsize]
+        :param neighbor_partial_hyps: list of lists with partial hypotheses from other
+        beam instances. Used to implement iterbeam blocking, i.e. we get partial
+        hypotheses from 'previous' beam iterations done this timestep.
+        """
         voc_size = softmax_probs.size(-1)
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
@@ -861,8 +868,9 @@ class Beam(object):
                     current_hypo = self.partial_hyps[i]
                     current_hyp_length = len(current_hypo)
                     for neighbor_cand in neighbor_partial_hyps:
-                        if len(neighbor_cand) == current_length + 1:
-                            dist = self.hamming_dist(neighbor_cand[:current_length], current_hypo)
+                        if len(neighbor_cand) == current_hyp_length + 1:
+                            dist = self.hamming_dist(neighbor_cand[:current_hyp_length],
+                                                     current_hypo)
                             if dist < self.min_distance:
                                 last_token = neighbor_cand[-1]
                                 beam_scores[i][last_token] = -NEAR_INF
