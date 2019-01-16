@@ -36,7 +36,7 @@ End goal is general dialogue, which includes many different skills
 - helps to reduce overfitting of models to specific datasets         
 
 End goal is real dialogue with people
-- train and evaluate on live dialogue with humans via Mechanical Turk
+- train and evaluate on live dialogue with humans via Mechanical Turk or Messenger
 - easy setup for connecting turkers with your dialogue agent
 - allow to compare different research groups turk experiments
 
@@ -52,7 +52,6 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 - Can use Mechanical Turk to run / collect data / evaluate.
 - Python framework.
 - Examples of training with PyTorch.
-- Uses zmq to talk to other toolboxes not in Python, examples of Lua Torch given.
 - Supports batch and hogwild training and evaluation of models.
 
 ## Basic Examples
