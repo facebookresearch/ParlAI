@@ -1,6 +1,6 @@
 # Wizard of Wikipedia: Knowledge-Powered Conversational Agents
 
-<p align="center"><img width="20%" src="parrot.png" /></p>
+<p align="center"><img width="10%" src="parrot.png" /></p>
 
 The Wizard of Wikipedia is an open-domain dialogue task for training agents
 that can converse knowledgably about a open-domain topics!
