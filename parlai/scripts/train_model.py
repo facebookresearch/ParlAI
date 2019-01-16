@@ -313,6 +313,29 @@ class TrainLoop():
             return True
         return False
 
+    def _average_dicts(self, all_versions):
+        # instead of a list-of-dicts with like keys, make a dict-of-lists with
+        # keys to reduce
+        to_reduce = {}
+        for d in all_versions:
+            for k, v in d.items():
+                if k not in to_reduce:
+                    to_reduce[k] = []
+                to_reduce[k].append(v)
+        # now perform the reduction
+        finalized = {}
+        for k, values in to_reduce.items():
+            if k == 'exs' or k == 'total_skipped_batches':
+                # sum across workers
+                finalized[k] = np.sum(values)
+            elif isinstance(values[0], dict):
+                # do the same procedure recursively
+                finalized[k] = self._average_dicts(values)
+            else:
+                # all other cases, take the mean across the workers
+                finalized[k] = np.mean(values)
+        return finalized
+
     def _sync_training_metrics(self, metrics):
         """
         Sync training metrics across workers. A handful of special cases are handled
@@ -321,28 +344,19 @@ class TrainLoop():
         if not is_distributed():
             # nothing special needed
             return metrics
-
         all_versions = all_gather_list(metrics)
-        finalized = {}
-        to_average = {}
-        for m in all_versions:
-            for k, v in m.items():
-                if k == 'exs' or k == 'total_skipped_batches':
-                    # sum across:
-                    if k not in finalized:
-                        finalized[k] = 0
-                    finalized[k] += v
-                else:
-                    if k not in to_average:
-                        to_average[k] = []
-                    to_average[k].append(v)
-        for k, vals in to_average.items():
-            finalized[k] = np.mean(vals)
-
-        return finalized
+        return self._average_dicts(all_versions)
 
     def _nice_format(self, dictionary):
-        return {k: round_sigfigs(v, 4) for k, v in dictionary.items()}
+        rounded = {}
+        for k, v in dictionary.items():
+            if isinstance(v, dict):
+                rounded[k] = self._nice_format(v)
+            elif isinstance(v, float):
+                rounded[k] = round_sigfigs(v, 4)
+            else:
+                rounded[k] = v
+        return rounded
 
     def _compute_eta(self, epochs_completed, time_elapsed):
         """
