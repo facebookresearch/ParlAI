@@ -73,12 +73,12 @@ class MessageList extends React.Component {
     // the m.id field.
     let XChatMessage = getCorrectComponent('XChatMessage', this.props.v_id);
     let onClickMessage = this.props.onClickMessage;
-    if (onClickMessage === undefined) {
+    if (typeof onClickMessage !== 'function') {
       onClickMessage = (idx) => {};
     }
     return messages.map(
       (m, idx) =>
-        <div key={m.message_id} onClick={() => this.props.onClickMessage(idx)}>
+        <div key={m.message_id} onClick={() => onClickMessage(idx)}>
           <XChatMessage
             is_self={m.id == agent_id}
             agent_id={m.id}
