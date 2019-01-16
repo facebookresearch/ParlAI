@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------
 
-ParlAI (pronounced “par-lay”) is a framework for \ue AI research, implemented in Python.
+ParlAI (pronounced “par-lay”) is a framework for dialogue AI research, implemented in Python.
 
 Its goal is to provide researchers:
 - a unified framework for sharing, training and testing dialogue models
@@ -20,8 +20,6 @@ Our aim is for the number of tasks and agents that train on them to grow in a co
 ParlAI is described in the following paper:
 [“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476).
 
-
-We are in an early-release Beta. Expect some adventures and rough edges.<br>
 See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
 
 ## Goals
