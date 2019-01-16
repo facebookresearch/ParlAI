@@ -1877,6 +1877,7 @@ class DemoTaskPanel extends React.Component {
           context: {},
           world_state: null,
           worker_id: w.worker_id,
+          task_data: {},
         };
       }
       let chat_state = 'waiting';
@@ -1887,6 +1888,14 @@ class DemoTaskPanel extends React.Component {
       }
       let curr_worker = curr_worker_data[w.worker_id];
       curr_worker.messages = curr_worker.messages.concat(w.new_messages);
+      for (const idx in w.new_messages) {
+        let m = w.new_messages[idx];
+        if (m.task_data !== undefined) {
+          m.task_data.last_update = (new Date()).getTime();
+          curr_worker.task_data = Object.assign(
+            curr_worker.task_data, m.task_data);
+        }
+      }
       curr_worker.task_done = w.task_done;
       curr_worker.done_text = w.done_text;
       curr_worker.world_state = w.status;
@@ -1898,20 +1907,29 @@ class DemoTaskPanel extends React.Component {
         // need to wait to be recieved by the server before we could even
         // display them. This also solves eventual 'refresh' issues)
         curr_worker.messages = w.all_messages;
+        curr_worker.task_data = {};
+        for (const idx in w.all_messages) {
+          let m = w.all_messages[idx];
+          if (m.task_data !== undefined) {
+            m.task_data.last_update = (new Date()).getTime();
+            curr_worker.task_data = Object.assign(
+              curr_worker.task_data, m.task_data);
+          }
+        }
       }
     });
     this.setState({workers: worker_names, worker_data: curr_worker_data})
   }
 
-  sendMessage(message, data, callback, worker) {
+  sendMessage(message, task_data, callback, worker) {
     let msg = JSON.stringify(
-      {'text': message, 'data': data,
+      {'text': message, 'task_data': task_data,
        'sender': worker.worker_id, 'id': worker.agent_id});
     this._socket.send(msg);
     worker.messages.push({
       id: worker.agent_id,
       text: message,
-      data: data,
+      task_data: task_data,
       message_id: (new Date()).getTime(),
       is_review: false,
     });
@@ -1938,7 +1956,7 @@ class DemoTaskPanel extends React.Component {
           initialization_status={'done'}
           is_cover_page={false}
           frame_height={task_config.frame_height}
-          context={worker.context}
+          task_data={worker.task_data}
           world_state={worker.world_state}
           v_id={worker.agent_id}
           allDoneCallback={() => console.log('all done called')}
