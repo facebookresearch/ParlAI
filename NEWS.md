@@ -1,4 +1,6 @@
 <h2>News</h2>
+2019-01-16: ParlAI has been relicensed under the MIT open source license.
+
 2018-11-05: Added [Wizard of Wikipedia](https://arxiv.org/abs/1811.01241), a dataset for knowledge-powered conversation.
 
 2018-11-02: Added [Image-Chat](https://klshuster.github.io/image_chat/), a dataset for engaging personality-conditioned dialogue grounded in images.
