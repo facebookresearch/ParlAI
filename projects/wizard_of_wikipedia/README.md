@@ -1,9 +1,11 @@
-# ![mage](mage.png) Wizard of Wikipedia: Knowledge-Powered Conversational Agents
+# ![mage](mage.png) Wizard of Wikipedia:
+## Knowledge-Powered Conversational Agents
 
 ![Wizard Parrot](parrot.png)
 
-The Wizard of Wikipedia is an open-domain dialogue agent that can converse
-knowledgably about a open-domain topics! A detailed description may
+The Wizard of Wikipedia is an open-domain dialogue task for training agents
+that can converse knowledgably about a open-domain topics!
+A detailed description may
 be found in [Dinan et al. (ICLR 2019)](https://arxiv.org/abs/1811.01241).
 
 ## Abstract
