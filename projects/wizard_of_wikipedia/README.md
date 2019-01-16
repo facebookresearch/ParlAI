@@ -39,5 +39,10 @@ Finalized models are not yet released. Please check back here in the future.
 If you use the dataset or models in your own work, please cite with the
 following BibTex entry:
 
-    Paste here
+    @inproceedings{dinan2019wizard,
+      author={Emily Dinan and Stephen Roller and Kurt Shuster and Angela Fan and Michael Auli and Jason Weston},
+      title={{W}izard of {W}ikipedia: Knowledge-powered Conversational Agents},
+      booktitle = {Proceedings of the International Conference on Learning Representations (ICLR)},
+      year={2019},
+    }
 
