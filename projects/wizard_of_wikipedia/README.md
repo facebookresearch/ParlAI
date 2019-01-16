@@ -1,5 +1,4 @@
-# ![mage](mage.png) Wizard of Wikipedia:
-## Knowledge-Powered Conversational Agents
+# ![mage](mage.png) Wizard of Wikipedia: Knowledge-Powered Conversational Agents
 
 ![Wizard Parrot](parrot.png)
 
@@ -36,6 +35,13 @@ The ParlAI MTurk collection scripts are also
 for those interested in replication, analysis, or additional data collection
 
 ## Leaderboard
+
+### Human Evaluations
+Model                                | Paper          | Seen Rating   | Unseen Rating
+------------------------------------ | -------------- | ------------- | ---------------
+Retrieval Trans MemNet               | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 3.43 | 3.14
+Two-stage Generative Trans MemNet    | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 2.92 | 2.93
+Human performance                    | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 4.13 | 4.34
 
 ### Retrieval Models
 
