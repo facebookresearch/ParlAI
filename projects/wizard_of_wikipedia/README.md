@@ -5,7 +5,7 @@
 The Wizard of Wikipedia is an open-domain dialogue agent that can converse
 knowledgably about a open-domain topics!
 
-The [paper](https://arxiv.org/abs/1811.01241) will be presented at ICLR 2019.
+The [original paper](https://arxiv.org/abs/1811.01241) will be presented at ICLR 2019.
 
 ## Abstract
 
@@ -30,7 +30,33 @@ important research direction.
 You can train your own ParlAI agent on the Wizard of Wikipedia task with
 `-t wizard_of_wikipedia`.
 
-## Models
+The ParlAI MTurk collection scripts are also
+[made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/wizard_of_wikipedia),
+for those interested in replication, analysis, or additional data collection
+
+## Leaderboard
+
+### Retrieval Models
+
+Model                                | Paper          | Test Seen R@1 | Test Unseen R@1
+---------------------------------------------------------------------------------------
+Transformer MemNet (w/ pretraining)  | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 87.4 | 69.8
+--------------------------------------------------------------------------------
+BoW Memnet                           | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 71.3 | 33.1
+IR baseline                          | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 17.8 | 14.2
+Random                               | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) |  1.0 |  1.0
+
+### Generative Models
+
+Model                                | Paper          | Test Seen PPL | Test Unseen PPL
+---------------------------------------------------------------------------------------
+Two-Stage Transformer Memnet         | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 46.5 | 84.8
+End-to-end Transformer MemNet        | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 63.5 | 97.3
+--------------------------------------------------------------------------------
+Vanilla Transformer (no knowledge)   | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 41.8 | 87.0
+
+
+## Pretrained Models
 
 Finalized models are not yet released. Please check back here in the future.
 
