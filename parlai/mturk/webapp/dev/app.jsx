@@ -139,7 +139,9 @@ class ChatDisplay extends React.Component {
               v_id={this.props.agent_id}
               messages={this.props.messages}
               agent_id={this.props.agent_id}
-              is_review={true}/>
+              is_review={true}
+              onClickMessage={this.props.onUpdateContext}
+            />
           </Panel.Body>
         </Panel.Collapse>
       </Panel>
@@ -758,7 +760,7 @@ class AssignmentFeedback extends React.Component {
     var bsStyle = null;
     let given_feedback = null;
     let received_feedback = null;
-    if (review_data !== undefined) {
+    if (!!review_data) {
       given_feedback = review_data.given_feedback;
       received_feedback = review_data.received_feedback;
     }
@@ -806,6 +808,64 @@ class AssignmentFeedback extends React.Component {
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Feedback
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body>
+            {content}
+          </Panel.Body>
+        </Panel.Collapse>
+      </Panel>
+    );
+  }
+}
+
+class AssignmentContext extends React.Component {
+  getContext() {
+    if (this.props.data == undefined ||
+        this.props.data.task == undefined ||
+        this.props.data.task.data == undefined ||
+        this.props.data.task.data.messages == undefined) {
+      return null;
+    }
+    let messages = this.props.data.task.data.messages;
+    let context = {};
+    for (const idx in messages) {
+      if (!isNaN(this.props.max_idx) && idx == this.props.max_idx) {
+        break;
+      }
+      let m = messages[idx];
+      if (m.task_data !== undefined) {
+        context = Object.assign(context, m.task_data);
+      }
+    }
+    return context;
+  }
+
+  render() {
+    let task_data = this.getContext();
+    let content = null;
+    let bsStyle = null;
+    let expanded = true;
+    if (task_data === null) {
+      content = "No relevant context exists for this assignment."
+      bsStyle = "default"
+      expanded = false;
+    } else {
+      let XTaskDescription = getCorrectComponent(
+        'XContextView', this.props.data.task.data.agent_id);
+      content = <XTaskDescription task_data={task_data} />;
+      bsStyle = "info"
+    }
+
+    return (
+      <Panel
+        id="task_context_div"
+        bsStyle={bsStyle}
+        defaultExpanded={expanded}>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3" toggle>
+            Task Context
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
@@ -1402,7 +1462,9 @@ class AssignmentView extends React.Component {
         <ChatDisplay
           messages={messages}
           agent_id={agent_id}
-          is_onboarding={is_onboarding}/>
+          is_onboarding={is_onboarding}
+          onUpdateContext={this.props.onUpdateContext}
+        />
       );
     }
   }
@@ -1425,7 +1487,7 @@ class AssignmentPanel extends React.Component {
     super(props);
     this.state = {
       assignment_loading: true, items: null, error: false,
-      custom_components: {}
+      custom_components: {}, max_idx: null,
     };
   }
 
@@ -1463,8 +1525,12 @@ class AssignmentPanel extends React.Component {
           title={'State info for this assignment'}/>
         <div id='left-assign-pane' style={{float: 'left', 'width': '40%'}}>
           <AssignmentInstructions
-            data={[this.state.data.assignment_instructions]}
+            data={this.state.data.assignment_instructions}
             custom_components={this.state.custom_components}/>
+          <AssignmentContext
+            data={this.state.data.assignment_content}
+            custom_components={this.state.custom_components}
+            max_idx={this.state.max_idx}/>
           <AssignmentFeedback
             data={this.state.data.assignment_content}
             custom_components={this.state.custom_components}/>
@@ -1473,6 +1539,7 @@ class AssignmentPanel extends React.Component {
           <AssignmentView
             data={this.state.data.assignment_content}
             title={'Assignment Content'}
+            onUpdateContext={(idx) => this.setState({max_idx: idx})}
             custom_components={this.state.custom_components}
             setCustomComponents={(module) => {
               setCustomComponents(module);

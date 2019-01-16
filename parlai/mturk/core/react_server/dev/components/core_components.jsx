@@ -72,15 +72,21 @@ class MessageList extends React.Component {
     // on the thread - agent_ids for the sender of a message exist in
     // the m.id field.
     let XChatMessage = getCorrectComponent('XChatMessage', this.props.v_id);
+    let onClickMessage = this.props.onClickMessage;
+    if (onClickMessage === undefined) {
+      onClickMessage = (idx) => {};
+    }
     return messages.map(
-      m => <XChatMessage
-        key={m.message_id}
-        is_self={m.id == agent_id}
-        agent_id={m.id}
-        message={m.text}
-        task_data={m.task_data}
-        message_id={m.message_id}
-        duration={this.props.is_review ? m.duration : undefined}/>
+      (m, idx) =>
+        <div key={m.message_id} onClick={() => this.props.onClickMessage(idx)}>
+          <XChatMessage
+            is_self={m.id == agent_id}
+            agent_id={m.id}
+            message={m.text}
+            task_data={m.task_data}
+            message_id={m.message_id}
+            duration={this.props.is_review ? m.duration : undefined}/>
+        </div>
     );
   }
 
@@ -777,7 +783,8 @@ class ContextView extends React.Component {
       'To render context here, write or select a ContextView ' +
       'that can render your task_data, or write the desired ' +
       'content into the task_data.html field of your act');
-    if (this.props.task_data.html !== undefined) {
+    if (this.props.task_data !== undefined &&
+        this.props.task_data.html !== undefined) {
       context = this.props.task_data.html;
     }
     return (

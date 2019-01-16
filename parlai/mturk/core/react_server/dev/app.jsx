@@ -126,7 +126,7 @@ class MainApp extends React.Component {
     let socket_handler = null;
     if (!this.state.is_cover_page) {
       socket_handler = <SocketHandler
-        onMessageUpdate={(new_message) => {
+        onNewMessage={(new_message) => {
           this.state.messages.push(new_message);
           this.setState({messages: this.state.messages});
 
