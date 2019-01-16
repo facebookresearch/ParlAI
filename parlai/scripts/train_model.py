@@ -354,8 +354,10 @@ class TrainLoop():
         for k, v in dictionary.items():
             if isinstance(v, dict):
                 rounded[k] = self._nice_format(v)
-            else:
+            elif isinstance(v, float):
                 rounded[k] = round_sigfigs(v, 4)
+            else:
+                rounded[k] = v
         return rounded
 
     def _compute_eta(self, epochs_completed, time_elapsed):
