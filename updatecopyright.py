@@ -30,7 +30,7 @@ for line in sys.stdin:
         l for l in srclines
         if "of patent rights can be found in the PATENTS file in the same directory" not in l
     ]
-    src = "\n".join(srclines) + "\n"
+    src = "\n".join(srclines)
     if src != origsrc:
         with open(fn, 'w') as outf:
             outf.write(src)
