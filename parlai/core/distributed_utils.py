@@ -53,7 +53,7 @@ def is_distributed():
     """
     Returns True if we are in distributed mode.
     """
-    return TORCH_AVAILABLE and dist.is_initialized()
+    return TORCH_AVAILABLE and dist.is_available() and dist.is_initialized()
 
 
 def num_workers():
