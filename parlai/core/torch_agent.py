@@ -199,19 +199,21 @@ class TorchAgent(Agent):
         )
         agent.add_argument(
             '--lr-scheduler-patience', type=int, default=3,
-            help='LR scheduler patience. In number of validation runs.'
+            help='LR scheduler patience. In number of validation runs. If using '
+                 'fixed scheduler, LR is decayed every <patience> validations.'
         )
         agent.add_argument(
             '--lr-scheduler-decay', type=float, default=0.5,
-            help='Decay factor for LR scheduler.'
+            help='Decay factor for LR scheduler, or how much LR is multiplied by '
+                 'when it is lowered.'
         )
         agent.add_argument(
-            '--warmup-updates', type=int, default=-1,
+            '--warmup-updates', type=int, default=-1, hidden=True,
             help='Learning rate warmup period, in number of SGD updates. '
                  'Linearly scales up LR over period. Only enabled if > 0.'
         )
         agent.add_argument(
-            '--warmup-rate', type=float, default=1e-4,
+            '--warmup-rate', type=float, default=1e-4, hidden=True,
             help='Warmup learning rate *multiplier*. Initial LR is multiplied by '
                  'this value. Linearly adjusted up to 1.0 across --warmup-updates '
                  'steps.'
