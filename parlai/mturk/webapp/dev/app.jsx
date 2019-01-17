@@ -770,7 +770,7 @@ class AssignmentFeedback extends React.Component {
     } else {
       let XReviewButtons = getCorrectComponent('XReviewButtons', null);
       let given_feedback_content = <span>No provided feedback</span>;
-      if (given_feedback !== undefined) {
+      if (!!given_feedback) {
         let init_state = {
           'current_rating': given_feedback.rating,
           'submitting': true,
@@ -781,7 +781,7 @@ class AssignmentFeedback extends React.Component {
         given_feedback_content = <XReviewButtons init_state={init_state} />;
       }
       let received_feedback_content = <span>No provided feedback</span>;
-      if (received_feedback !== undefined) {
+      if (!!received_feedback) {
         let init_state = {
           'current_rating': received_feedback.rating,
           'submitting': true,
