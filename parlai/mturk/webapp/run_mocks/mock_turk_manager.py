@@ -126,7 +126,7 @@ class MockTurkManager():
         except Exception as e:
             import sys
             import traceback
-            print (e)
+            print(e)
             traceback.print_exc(file=sys.stdout)
             raise e
 

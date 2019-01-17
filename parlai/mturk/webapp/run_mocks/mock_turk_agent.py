@@ -76,7 +76,7 @@ class MockTurkAgent(MTurkAgent):
         return self._get_episode_done_msg(TIMEOUT_MESSAGE)
 
     def request_message(self):
-        if not(self.disconnected or self.some_agent_disconnected or
+        if not (self.disconnected or self.some_agent_disconnected or
                 self.hit_is_expired):
             self.wants_message = True
 
