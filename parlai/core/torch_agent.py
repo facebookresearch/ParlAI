@@ -23,7 +23,9 @@ import random
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor
+from parlai.core.utils import (
+    set_namedtuple_defaults, argsort, padded_tensor, warn_once
+)
 from parlai.core.distributed_utils import is_primary_worker
 
 try:
@@ -205,8 +207,8 @@ class TorchAgent(Agent):
         )
         agent.add_argument(
             '--warmup-updates', type=int, default=-1,
-            help='Learning rate warmup period. Linearly scales up LR over period.'
-                 'Only enabled if > 0.'
+            help='Learning rate warmup period, in number of SGD updates. '
+                 'Linearly scales up LR over period. Only enabled if > 0.'
         )
         agent.add_argument(
             '--warmup-rate', type=float, default=1e-4,
@@ -377,6 +379,13 @@ class TorchAgent(Agent):
 
         if self.opt.get('lr_scheduler') == 'none':
             self.scheduler = None
+        elif decay == 1.0:
+            warn_once(
+                "Your LR decay is set to 1.0. Assuming you meant you wanted "
+                "to disable learning rate scheduling. Adjust --lr-scheduler-decay "
+                "if this is not correct."
+            )
+            self.scheduler = None
         elif self.opt.get('lr_scheduler') == 'reduceonplateau':
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
                 self.optimizer,
@@ -391,9 +400,6 @@ class TorchAgent(Agent):
                 patience,
                 gamma=decay,
             )
-
-    def receive_training_metrics(self, metrics_dict):
-        pass
 
     def receive_metrics(self, metrics_dict):
         """Use the metrics to decide when to adjust LR schedule.
