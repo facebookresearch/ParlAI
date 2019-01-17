@@ -28,7 +28,7 @@ games are:
 
 Specifically for Task n' Talk (taken from Kottur et al. 2017):
 
-.. image:: _static/img/taskntalk.png
+.. image:: taskntalk.png
    :width: 90%
    :align: center
 
