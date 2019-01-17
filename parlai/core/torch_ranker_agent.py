@@ -79,6 +79,7 @@ class TorchRankerAgent(TorchAgent):
         else:
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(optim_params)
+            self.build_lr_scheduler()
 
         if shared is None and is_distributed():
             self.model = torch.nn.parallel.DistributedDataParallel(
@@ -103,7 +104,7 @@ class TorchRankerAgent(TorchAgent):
             return
         batchsize = batch.text_vec.size(0)
         self.model.train()
-        self.optimizer.zero_grad()
+        self.zero_grad()
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
@@ -298,12 +299,6 @@ class TorchRankerAgent(TorchAgent):
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
         shared['optimizer'] = self.optimizer
         return shared
-
-    def update_params(self):
-        """Do optim step and clip gradients if needed."""
-        if hasattr(self, 'clip') and self.clip > 0:
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
-        self.optimizer.step()
 
     def reset_metrics(self):
         """Reset metrics."""

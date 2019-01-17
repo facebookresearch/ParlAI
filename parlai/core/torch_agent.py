@@ -23,7 +23,9 @@ import random
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import set_namedtuple_defaults, argsort, padded_tensor
+from parlai.core.utils import (
+    set_namedtuple_defaults, argsort, padded_tensor, warn_once
+)
 from parlai.core.distributed_utils import is_primary_worker
 
 try:
@@ -189,6 +191,34 @@ class TorchAgent(Agent):
         agent.add_argument(
             '-mom', '--momentum', default=0, type=float,
             help='if applicable, momentum value for optimizer.')
+        # lr scheduler
+        agent.add_argument(
+            '--lr-scheduler', type=str, default='reduceonplateau',
+            choices=['reduceonplateau', 'none', 'fixed'],
+            help='Learning rate scheduler.'
+        )
+        agent.add_argument(
+            '--lr-scheduler-patience', type=int, default=3,
+            help='LR scheduler patience. In number of validation runs. If using '
+                 'fixed scheduler, LR is decayed every <patience> validations.'
+        )
+        agent.add_argument(
+            '--lr-scheduler-decay', type=float, default=0.5,
+            help='Decay factor for LR scheduler, or how much LR is multiplied by '
+                 'when it is lowered.'
+        )
+        agent.add_argument(
+            '--warmup-updates', type=int, default=-1, hidden=True,
+            help='Learning rate warmup period, in number of SGD updates. '
+                 'Linearly scales up LR over period. Only enabled if > 0.'
+        )
+        agent.add_argument(
+            '--warmup-rate', type=float, default=1e-4, hidden=True,
+            help='Warmup learning rate *multiplier*. Initial LR is multiplied by '
+                 'this value. Linearly adjusted up to 1.0 across --warmup-updates '
+                 'steps.'
+        )
+
         # preprocessing arguments
         agent.add_argument(
             '-rc', '--rank-candidates', type='bool', default=False,
@@ -270,7 +300,10 @@ class TorchAgent(Agent):
         self.START_IDX = self.dict[self.dict.start_token]
         self.END_IDX = self.dict[self.dict.end_token]
 
-        self.random = random.Random(42)  # fixed random seed
+        # for the LR scheduler
+        self._number_training_updates = 0
+        # fixed random seed
+        self.random = random.Random(42)
         # which row in the batch this instance is
         self.batch_idx = shared and shared.get('batchindex') or 0
         # can remember as few as zero utterances if desired
@@ -293,11 +326,8 @@ class TorchAgent(Agent):
                              skip loading optimizer states
         """
         opt = self.opt
-        # we only set up optimizers when training
-        self.clip = opt.get('gradient_clip', -1)
 
         # set up optimizer args
-        # TODO: move optimizer params to command line args
         lr = opt['learningrate']
         kwargs = {'lr': lr}
         if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop']:
@@ -325,9 +355,54 @@ class TorchAgent(Agent):
                         for k, v in state.items():
                             if isinstance(v, torch.Tensor):
                                 state[k] = v.cuda()
-        # TODO: Move scheduler params to command line args
-        self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-            self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
+
+    def build_lr_scheduler(self):
+        """
+        Create the learning rate scheduler, and assign it to self.scheduler.
+
+        This scheduler will be updated upon a call to receive_metrics.
+        """
+        if self.opt.get('warmup_updates', -1) > 0:
+            def _warmup_lr(step):
+                start = self.opt['warmup_rate']
+                end = 1.0
+                progress = min(1.0, step / self.opt['warmup_updates'])
+                lr_mult = start + (end - start) * progress
+                return lr_mult
+
+            self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
+                self.optimizer,
+                _warmup_lr,
+            )
+        else:
+            self.warmup_scheduler = None
+
+        patience = self.opt.get('lr_scheduler_patience', 3)
+        decay = self.opt.get('lr_scheduler_decay', 0.5)
+
+        if self.opt.get('lr_scheduler') == 'none':
+            self.scheduler = None
+        elif decay == 1.0:
+            warn_once(
+                "Your LR decay is set to 1.0. Assuming you meant you wanted "
+                "to disable learning rate scheduling. Adjust --lr-scheduler-decay "
+                "if this is not correct."
+            )
+            self.scheduler = None
+        elif self.opt.get('lr_scheduler') == 'reduceonplateau':
+            self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+                self.optimizer,
+                'min',
+                factor=decay,
+                patience=patience,
+                verbose=True
+            )
+        elif self.opt.get('lr_scheduler') == 'fixed':
+            self.scheduler = optim.lr_scheduler.StepLR(
+                self.optimizer,
+                patience,
+                gamma=decay,
+            )
 
     def receive_metrics(self, metrics_dict):
         """Use the metrics to decide when to adjust LR schedule.
@@ -337,8 +412,21 @@ class TorchAgent(Agent):
         this to work.
         Override this to override the behavior.
         """
-        if 'loss' in metrics_dict:
-            self.scheduler.step(metrics_dict['loss'])
+        if self.scheduler is None:
+            # no LR scheduler, just skip
+            return
+        if 'loss' not in metrics_dict:
+            # nothing to step on, just skip
+            return
+
+        if self.warmup_scheduler is not None:
+            if self._number_training_updates <= self.opt['warmup_updates']:
+                # we're not done warming up, so don't start using validation
+                # metrics to adjust schedule
+                return
+
+        # all other cases, we're ready to adjust the scheduler
+        self.scheduler.step(metrics_dict['loss'])
 
     def _get_embtype(self, emb_type):
         # set up preinitialized embeddings
@@ -953,9 +1041,44 @@ class TorchAgent(Agent):
     def train_step(self, batch):
         """Process one batch with training labels."""
         raise NotImplementedError(
-            'Abstract class: user must implement train_step')
+            'Abstract class: user must implement train_step'
+        )
 
     def eval_step(self, batch):
         """Process one batch but do not train on it."""
         raise NotImplementedError(
-            'Abstract class: user must implement eval_step')
+            'Abstract class: user must implement eval_step'
+        )
+
+    def update_params(self):
+        """
+        Perform step of optimization, clipping gradients and adjusting LR
+        schedule if needed.
+
+        It is recommended (but not forced) that you call this in train_step.
+        """
+        # keep track up number of steps, compute warmup factor
+        self._number_training_updates += 1
+
+        # compute warmup adjustment if needed
+        if self.opt.get('warmup_updates', -1) > 1:
+            if not hasattr(self, 'warmup_scheduler'):
+                raise RuntimeError(
+                    'Looks like you forgot to call build_lr_scheduler'
+                )
+            if self._number_training_updates <= self.opt['warmup_updates']:
+                self.warmup_scheduler.step(epoch=self._number_training_updates)
+
+        if self.opt.get('gradient_clip', -1) > 0:
+            torch.nn.utils.clip_grad_norm_(
+                self.model.parameters(), self.opt['gradient_clip']
+            )
+        self.optimizer.step()
+
+    def zero_grad(self):
+        """
+        Zero out optimizer.
+
+        It is recommended you call this in train_step.
+        """
+        self.optimizer.zero_grad()
