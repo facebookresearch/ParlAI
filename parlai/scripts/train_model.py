@@ -319,9 +319,7 @@ class TrainLoop():
         to_reduce = {}
         for d in all_versions:
             for k, v in d.items():
-                if k not in to_reduce:
-                    to_reduce[k] = []
-                to_reduce[k].append(v)
+                to_reduce.setdefault(k, []).append(v)
         # now perform the reduction
         finalized = {}
         for k, values in to_reduce.items():
