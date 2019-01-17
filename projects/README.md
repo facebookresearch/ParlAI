@@ -12,6 +12,11 @@ This directory also contains subfolders for some of the projects which are house
 - **Importance of Search Strategy** [[paper]](https://arxiv.org/abs/1811.00907). 
   _Analysis of the performance of search in generative models for chitchat tasks._
   
+## Interactive Learning
+
+- **Self-Feeding Chatbot** [[paper]](https://arxiv.org/abs/1901.05415)
+  _How an agent can learn from dialogue after deployment by imitating and asking for feedback._  
+  
 ## Chit-chat
 
 - **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat). 
