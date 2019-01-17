@@ -11,9 +11,9 @@ from parlai.core.params import ParlaiParser
 import parlai.core.build_data as build_data
 
 
-def download_images(opt):
-    dpath = os.path.join(opt['datapath'], 'personality_captions')
-    image_path = os.path.join(dpath, 'images')
+def download_images(opt, task='personality_captions'):
+    dpath = os.path.join(opt['datapath'], task)
+    image_path = os.path.join(opt['datapath'], 'yfcc_images')
     version = '1.0'
     response = input(
         'Please confirm that you have obtained permission '
@@ -34,14 +34,17 @@ def download_images(opt):
                            'command line argument.')
     image_prefix = 'https://multimedia-commons.s3-us-west-2.amazonaws.com/data/images'
     hashes = []
-    for dt in ['train', 'val', 'test']:
+    dts = ['train', 'val', 'test']
+    if task == 'image_chat':
+        dts[1] = 'valid'
+    for dt in dts:
         with open(os.path.join(dpath, '{}.json'.format(dt))) as f:
             data = json.load(f)
             hashes += [d['image_hash'] for d in data]
     os.makedirs(image_path, exist_ok=True)
 
     print('[downloading images to {}]'.format(image_path))
-    for i, (p_hash) in enumerate(tqdm.tqdm(hashes, unit='img')):
+    for _, (p_hash) in enumerate(tqdm.tqdm(hashes, unit='img')):
         image_url = '{}/{}/{}/{}.jpg'.format(
             image_prefix,
             p_hash[:3],
