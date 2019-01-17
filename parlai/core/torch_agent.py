@@ -213,7 +213,7 @@ class TorchAgent(Agent):
         agent.add_argument(
             '--warmup-rate', type=float, default=1e-4,
             help='Warmup learning rate *multiplier*. Initial LR is multiplied by '
-                 'this value. Linearly addjusted up to 1.0 across --warmup-updates '
+                 'this value. Linearly adjusted up to 1.0 across --warmup-updates '
                  'steps.'
         )
 
@@ -300,7 +300,8 @@ class TorchAgent(Agent):
 
         # for the LR scheduler
         self._number_training_updates = 0
-        self.random = random.Random(42)  # fixed random seed
+        # fixed random seed
+        self.random = random.Random(42)
         # which row in the batch this instance is
         self.batch_idx = shared and shared.get('batchindex') or 0
         # can remember as few as zero utterances if desired
