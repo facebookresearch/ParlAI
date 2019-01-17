@@ -43,6 +43,10 @@ class TorchRankerAgent(TorchAgent):
                  "<cands_name> is the name of the file (not the full path) passed by "
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
+        agent.add_argument(
+            '--init-model', type=str, default=None,
+            help='Load model weights from this file.'
+        )
 
     def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary

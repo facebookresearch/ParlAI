@@ -108,16 +108,24 @@ class StarspaceAgent(TorchRankerAgent):
     def build_model(self):
         print("[ creating StarspaceAgent ]")
         # this is not a shared instance of this class, so do full init
-        if (self.opt.get('model_file') and
-                (os.path.isfile(self.opt.get('model_file') + '.dict')
-                 or (self.opt['dict_file'] is None))):
+        # first check load path in case we need to override paths
+        if self.opt.get('init_model') and os.path.isfile(self.opt['init_model']):
+            # check first for 'init_model' for loading model from file
+            model_file = self.opt['init_model']
+
+        if self.opt.get('model_file') and os.path.isfile(self.opt['model_file']):
+            # next check for 'model_file', this would override init_model
+            model_file = self.opt['model_file']
+
+        if (model_file and os.path.isfile(model_file + '.dict')
+                or (self.opt['dict_file'] is None)):
             # set default dict-file if not set
             self.opt['dict_file'] = self.opt['model_file'] + '.dict'
         # load dictionary and basic tokens & vectors
         self.dict = DictionaryAgent(self.opt)
         self.model = Starspace(self.opt, len(self.dict), self.dict)
-        if self.opt.get('model_file') and os.path.isfile(self.opt['model_file']):
-            self.load(self.opt['model_file'])
+        if model_file and os.path.isfile(model_file):
+            self.load(model_file)
             self.reset()
         else:
             self._copy_embeddings(
@@ -260,8 +268,8 @@ class StarspaceAgent(TorchRankerAgent):
                     if len(cands) >= k:
                         break
             if self.opt['parrot_neg']:
-                query = self.history.split('\n')[-1]
-                cands.append(query)
+                if obs.get('text') is not None:
+                    cands.append(obs['text'])
             return cands
         # if we aren't training, return label candidates if available
         return obs.get('label_candidates')
