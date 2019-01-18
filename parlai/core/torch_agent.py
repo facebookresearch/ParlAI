@@ -406,10 +406,8 @@ class TorchAgent(Agent):
 
     def report(self):
         metrics = {}
-        if self._is_lr_warming_up():
-            metrics['warmup'] = 1
-        elif hasattr(self, 'scheduler') and self.scheduler is not None:
-            metrics['warmup'] = 0
+        # heads up, if you have multiple optimizers, or different parameter
+        # groups, this could be misleading
         current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
         metrics['lr'] = round_sigfigs(current_lr, 4)
         metrics['nu'] = self._number_training_updates
