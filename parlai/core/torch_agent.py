@@ -24,7 +24,7 @@ from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (
-    set_namedtuple_defaults, argsort, padded_tensor, warn_once
+    set_namedtuple_defaults, argsort, padded_tensor, warn_once, round_sigfigs
 )
 from parlai.core.distributed_utils import is_primary_worker
 
@@ -404,6 +404,24 @@ class TorchAgent(Agent):
                 gamma=decay,
             )
 
+    def report(self):
+        metrics = {}
+        # heads up, if you have multiple optimizers, or different parameter
+        # groups, this could be misleading
+        current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
+        metrics['lr'] = round_sigfigs(current_lr, 4)
+        metrics['num_updates'] = self._number_training_updates
+        return metrics
+
+    def _is_lr_warming_up(self):
+        """
+        Checks if we're warming up the learning rate.
+        """
+        return (
+            self.warmup_scheduler is not None and
+            self._number_training_updates <= self.opt['warmup_updates']
+        )
+
     def receive_metrics(self, metrics_dict):
         """Use the metrics to decide when to adjust LR schedule.
 
@@ -412,21 +430,27 @@ class TorchAgent(Agent):
         this to work.
         Override this to override the behavior.
         """
-        if self.scheduler is None:
-            # no LR scheduler, just skip
-            return
-        if 'loss' not in metrics_dict:
-            # nothing to step on, just skip
+        if self._is_lr_warming_up():
+            # we're not done warming up, so don't start using validation
+            # metrics to adjust schedule
             return
 
-        if self.warmup_scheduler is not None:
-            if self._number_training_updates <= self.opt['warmup_updates']:
-                # we're not done warming up, so don't start using validation
-                # metrics to adjust schedule
+        if self.opt['lr_scheduler'] == 'reduceonplateau':
+            if 'loss' not in metrics_dict:
+                # nothing to step on, just skip
+                warn_once("LR scheduler expected to see loss metric, but didn't.")
                 return
-
-        # all other cases, we're ready to adjust the scheduler
-        self.scheduler.step(metrics_dict['loss'])
+            self.scheduler.step(metrics_dict['loss'])
+        elif self.opt['lr_scheduler'] == 'fixed':
+            self.scheduler.step()
+        elif self.opt['lr_schedule'] == 'none':
+            # no adjustments, do nothing
+            pass
+        else:
+            raise ValueError(
+                "Don't know how to work with lr scheduler '{}'"
+                .format(self.opt['lr_schedulre'])
+            )
 
     def _get_embtype(self, emb_type):
         # set up preinitialized embeddings
@@ -1066,7 +1090,7 @@ class TorchAgent(Agent):
                 raise RuntimeError(
                     'Looks like you forgot to call build_lr_scheduler'
                 )
-            if self._number_training_updates <= self.opt['warmup_updates']:
+            if self._is_lr_warming_up():
                 self.warmup_scheduler.step(epoch=self._number_training_updates)
 
         if self.opt.get('gradient_clip', -1) > 0:
