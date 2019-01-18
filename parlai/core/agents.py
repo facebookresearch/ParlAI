@@ -549,6 +549,7 @@ def get_task_module(taskname):
     teacher_class = getattr(my_module, teacher)
     return teacher_class
 
+
 def add_task_flags_to_agent_opt(agent, opt, flags):
     """Allows to insert task flags in the task name itself, they are
     put inside the opt before the task is created.
@@ -562,8 +563,8 @@ def add_task_flags_to_agent_opt(agent, opt, flags):
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
-            
-            
+
+
 def create_task_agent_from_taskname(opt):
     """Create task agent(s) assuming the input ``task_dir:teacher_class``.
 

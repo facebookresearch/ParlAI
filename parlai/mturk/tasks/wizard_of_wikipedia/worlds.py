@@ -495,7 +495,9 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                      'chosen_topic': self.chosen_topic,
                      'wizard_good': convo_finished and self.good_wiz,
                      'good_wizard_worker': self.wizard_worker if self.good_wiz else '',
-                     'bad_wizard_worker': self.wizard_worker if not self.good_wiz else ''},
+                     'bad_wizard_worker': (
+                         self.wizard_worker if not self.good_wiz else ''
+                     )},
                     open(filename, 'wb'))
         print('{}: Data successfully saved at {}.'.format(
             self.world_tag,

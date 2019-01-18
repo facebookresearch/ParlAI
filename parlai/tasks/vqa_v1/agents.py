@@ -12,7 +12,7 @@ from parlai.tasks.coco_caption.build_2014 import buildImage as buildImage_2014
 from parlai.tasks.coco_caption.build_2015 import buildImage as buildImage_2015
 try:
     import torch
-except Exception as e:
+except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
 from parlai.agents.mlb_vqa.mlb_vqa import VqaDictionaryAgent

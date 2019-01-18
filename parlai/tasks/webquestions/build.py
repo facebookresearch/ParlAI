@@ -14,7 +14,7 @@ import re
 def parse_ans(a):
     a = a.lstrip('(list')
     ans = ''
-    for a in re.split('\(description', a):
+    for a in re.split(r'\(description', a):
         a = a.strip(' ()"()')
         ans = ans + '|' + a
     return ans.lstrip('|')
