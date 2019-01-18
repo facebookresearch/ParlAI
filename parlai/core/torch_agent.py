@@ -410,7 +410,7 @@ class TorchAgent(Agent):
         # groups, this could be misleading
         current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
         metrics['lr'] = round_sigfigs(current_lr, 4)
-        metrics['nu'] = self._number_training_updates
+        metrics['num_updates'] = self._number_training_updates
         return metrics
 
     def _is_lr_warming_up(self):
