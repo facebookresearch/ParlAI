@@ -420,6 +420,7 @@ class TorchGeneratorAgent(TorchAgent):
         Note that this includes predicting __END__ and __UNK__ tokens and may
         differ from a truly independent measurement.
         """
+        base = super().report()
         m = {}
         num_tok = self.metrics['num_tokens']
         if num_tok > 0:
@@ -434,8 +435,8 @@ class TorchGeneratorAgent(TorchAgent):
             m['total_skipped_batches'] = self.metrics['total_skipped_batches']
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
-            m[k] = round_sigfigs(v, 4)
-        return m
+            base[k] = round_sigfigs(v, 4)
+        return base
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
