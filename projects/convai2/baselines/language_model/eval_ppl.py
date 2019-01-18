@@ -50,11 +50,10 @@ class LanguageModelEntry(LanguageModelAgent):
 
         self.model.eval()
 
-        if obs['episode_done'] == True:
+        if obs['episode_done'] is True:
             self.reset_next = True
         else:
             self.reset_next = False
-
 
         if len(partial_out) == 0:
             # first observe 'PERSON2' token
@@ -63,22 +62,28 @@ class LanguageModelEntry(LanguageModelAgent):
             # feed in words one at a time
             obs['eval_labels'] = (partial_out[-1],)
 
-        data_list, targets_list, labels, valid_inds, y_lens = self.vectorize([obs], self.opt['seq_len'], False)
+        data_list, targets_list, labels, valid_inds, y_lens = self.vectorize(
+            [obs], self.opt['seq_len'], False
+        )
         data = data_list[0]
         targets = targets_list[0]
 
         if not self.seen:
-            output, hidden = self.model(data.transpose(0,1), self.hidden)
+            output, hidden = self.model(data.transpose(0, 1), self.hidden)
             self.hidden = self.repackage_hidden(hidden)
             # feed in end tokens
-            output, hidden = self.model(Variable(self.ends[:1].view(1,1)), self.hidden)
+            output, hidden = self.model(Variable(self.ends[:1].view(1, 1)), self.hidden)
             # feed in person2 tokens
-            output, hidden = self.model(targets.select(1,0).view(1, 1), self.hidden, no_pack=True)
+            output, hidden = self.model(
+                targets.select(1, 0).view(1, 1), self.hidden, no_pack=True
+            )
             self.hidden = self.repackage_hidden(hidden)
             output_flat = output.view(-1, len(self.dict))
             self.seen = True
         else:
-            output, hidden = self.model(targets.select(1,0).view(1, 1), self.hidden, no_pack=True)
+            output, hidden = self.model(
+                targets.select(1, 0).view(1, 1), self.hidden, no_pack=True
+            )
             self.hidden = self.repackage_hidden(hidden)
             output_flat = output.view(-1, len(self.dict))
 

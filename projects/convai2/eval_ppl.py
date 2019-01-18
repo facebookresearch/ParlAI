@@ -40,7 +40,10 @@ def next_word_probability(self, partial_out):
 
 from parlai.core.agents import Agent
 
-from parlai.scripts.eval_ppl import eval_ppl as run_eval_ppl, setup_args as setup_ppl_args
+from parlai.scripts.eval_ppl import (
+    eval_ppl as run_eval_ppl,
+    setup_args as setup_ppl_args
+)
 from projects.convai2.build_dict import build_dict
 
 
