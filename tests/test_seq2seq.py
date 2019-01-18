@@ -95,8 +95,7 @@ class TestSeq2Seq(unittest.TestCase):
             model='seq2seq',
             lr=LR,
             batchsize=BATCH_SIZE,
-            # beam search should work much faster than regular
-            num_epochs=BATCH_SIZE // 2,
+            num_epochs=NUM_EPOCHS,
             numthreads=1,
             no_cuda=True,
             embeddingsize=16,
