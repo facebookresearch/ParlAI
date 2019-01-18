@@ -16,6 +16,7 @@ from .modules import Starspace
 
 import torch
 import torch.nn as nn
+import numpy as np
 import os
 import random
 
@@ -109,6 +110,7 @@ class StarspaceAgent(TorchRankerAgent):
         print("[ creating StarspaceAgent ]")
         # this is not a shared instance of this class, so do full init
         # first check load path in case we need to override paths
+        model_file = None
         if self.opt.get('init_model') and os.path.isfile(self.opt['init_model']):
             # check first for 'init_model' for loading model from file
             model_file = self.opt['init_model']
@@ -179,6 +181,7 @@ class StarspaceAgent(TorchRankerAgent):
             ye.view(-1, xe.size(-1)),
             y.view(-1)
         )
+
         loss.backward()
         self.optimizer.step()
         scores = nn.CosineSimilarity(dim=-1).forward(xe, ye)
@@ -286,7 +289,7 @@ class StarspaceAgent(TorchRankerAgent):
 
         def dropout(x, rate):
             x_len = x.size(1)
-            num_keep = x_len - int(rate * x_len)
+            num_keep = max(np.random.binomial(x_len, rate), 1)
             idxs = sorted(random.sample(list(range(x_len)), num_keep))
             to_keep = torch.LongTensor(idxs).to(x.device)
             new_x = x[:, to_keep]
