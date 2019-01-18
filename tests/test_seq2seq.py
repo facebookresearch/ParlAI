@@ -126,6 +126,7 @@ class TestSeq2Seq(unittest.TestCase):
             "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
+
 class TestHogwildSeq2seq(unittest.TestCase):
     def test_generation_multi(self):
         """This test uses a multi-turn task and multithreading."""
