@@ -275,7 +275,6 @@ class TorchAgent(Agent):
         """Initialize agent."""
         super().__init__(opt, shared)
         opt = self.opt
-
         if not shared:
             # intitialize any important structures from scratch
             self.replies = {}  # past replies
@@ -327,9 +326,8 @@ class TorchAgent(Agent):
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
-    def init_optim(self, opt, params, optim_states=None, saved_optim_type=None):
+    def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """Initialize optimizer with model parameters.
-
         :param params:       parameters from the model, for example:
                              [p for p in model.parameters() if p.requires_grad]
         :param optim_states: optional argument providing states of optimizer
@@ -910,8 +908,6 @@ class TorchAgent(Agent):
         if obs.get('episode_done', True):
             # end of this episode, clear the history
             self.history.clear()
-        if obs is None:
-            import pdb; pdb.set_trace()
         return obs
 
     def last_reply(self, use_label=True):

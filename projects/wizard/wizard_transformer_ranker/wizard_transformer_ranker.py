@@ -7,6 +7,7 @@
 from parlai.agents.transformer.transformer import TransformerRankerAgent
 from parlai.core.torch_agent import TorchAgent
 
+import numpy as np
 
 class WizardTransformerRankerAgent(TransformerRankerAgent):
     @classmethod
@@ -21,10 +22,6 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         agent.add_argument(
             '--knowledge-dropout', type=float, default=0.7,
             help='dropout some knowledge during training'
-        )
-        agent.add_argument(
-            '--total-knowledge-dropout', type=float, default=0.0,
-            help='get rid of knowledge completely sometimes'
         )
         agent.add_argument(
             '--chosen-sentence', type='bool', default=False,
@@ -50,6 +47,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             self.opt['use_memories'] = True
         self.chosen_sentence = (opt.get('chosen_sentence', False) and
                                 self.use_knowledge)
+        self.knowledge_dropout = opt.get('knowledge_dropout', 0)
         # TODO: add knowledge dropout capability
 
     def vectorize_knowledge(self, observation):
@@ -68,12 +66,16 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             if observation.get('knowledge'):
                 observation['memory_vecs'] = []
                 for line in observation['knowledge'].split('\n'):
-                    observation['memory_vecs'].append(
-                        self._vectorize_text(
-                            line,
-                            truncate=self.truncate
+                    keep = 1
+                    if not observation.get('eval_labels'):
+                        keep = np.random.binomial(1, 1 - self.knowledge_dropout)
+                    if keep:
+                        observation['memory_vecs'].append(
+                            self._vectorize_text(
+                                line,
+                                truncate=self.truncate
+                            )
                         )
-                    )
 
         return observation
 
