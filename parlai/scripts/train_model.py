@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """The standard way to train a model. After training, also computes validation
 and test error.
 
@@ -28,10 +26,14 @@ Examples
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer
+from parlai.core.utils import Timer, round_sigfigs, warn_once
 from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
-import math
+from parlai.core.distributed_utils import (
+    sync_object, is_primary_worker, all_gather_list, is_distributed, num_workers
+)
+import numpy as np
+from parlai.scripts.build_pytorch_data import get_pyt_dict_file
 import os
 
 
@@ -107,32 +109,48 @@ def setup_args(parser=None):
     return parser
 
 
-def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None):
-    """Eval on validation/test data.
-    - Agent is the agent to use for the evaluation.
-    - opt is the options that specific the task, eval_task, etc
-    - datatype is the datatype to use, such as "valid" or "test"
-    - write_log specifies to write metrics to file if the model_file is set
-    - max_exs limits the number of examples if max_exs > 0
-    - valid_world can be an existing world which will be reset instead of reinitialized
-    """
-    print('[ running eval: ' + datatype + ' ]')
+def _maybe_load_eval_world(agent, opt, datatype):
+    if not is_primary_worker():
+        # only need the validation on the main worker
+        return None
+    else:
+        return load_eval_world(agent, opt, datatype)
+
+
+def load_eval_world(agent, opt, datatype):
     if 'stream' in opt['datatype']:
         datatype += ':stream'
+    opt = opt.copy()
+    opt['datatype'] = datatype
+    if opt.get('evaltask'):
+        opt['task'] = opt['evaltask']
+    if opt.get('eval_batchsize'):
+        # override eval time batchsize
+        opt['batchsize'] = opt['eval_batchsize']
+    if opt.get('validation_share_agent', False):
+        valid_agent = create_agent_from_shared(agent.share())
+    else:
+        valid_agent = agent
 
+    valid_world = create_task(opt, valid_agent)
+    return valid_world
+
+
+def run_eval(valid_world, opt, datatype, max_exs=-1, write_log=False):
+    """
+    Eval on validation/test data.
+
+    :param valid_world: the pre-created validation world.
+    :param opt: the options that specific the task, eval_task, etc
+    :param datatype: the datatype to use, such as "valid" or "test"
+    :param bool write_log: specifies to write metrics to file if the model_file is set
+    :param int max_exs: limits the number of examples if max_exs > 0
+    """
     if valid_world is None:
-        opt = opt.copy()
-        opt['datatype'] = datatype
-        if opt.get('evaltask'):
-            opt['task'] = opt['evaltask']
-        if opt.get('eval_batchsize'):
-            # override eval time batchsize
-            opt['batchsize'] = opt['eval_batchsize']
-        if opt.get('validation_share_agent', False):
-            valid_agent = create_agent_from_shared(agent.share())
-        else:
-            valid_agent = agent
-        valid_world = create_task(opt, valid_agent)
+        # This isn't the primary worker, so we can just skip evaluation
+        return None
+
+    print('[ running eval: ' + datatype + ' ]')
     valid_world.reset()
     cnt = 0
     while not valid_world.epoch_done():
@@ -156,7 +174,7 @@ def run_eval(agent, opt, datatype, max_exs=-1, write_log=False, valid_world=None
         f.write(metrics + '\n')
         f.close()
 
-    return valid_report, valid_world
+    return valid_report
 
 
 def save_best_valid(model_file, best_valid):
@@ -176,7 +194,10 @@ class TrainLoop():
             opt['init_model'] = opt['model_file'] + '.checkpoint'
         # Possibly build a dictionary (not all models do this).
         if opt['dict_build_first'] and 'dict_file' in opt:
-            if opt['dict_file'] is None and opt.get('model_file'):
+            # If data built via pytorch data teacher, we need to load prebuilt dict
+            if opt.get('pytorch_teacher_task'):
+                opt['dict_file'] = get_pyt_dict_file(opt)
+            elif opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
             print("[ building dictionary first... ]")
             build_dict(opt, skip_if_built=True)
@@ -220,17 +241,25 @@ class TrainLoop():
 
     def validate(self):
         opt = self.opt
+
+        if self.valid_world is None:
+            # we need to load the world now
+            self.valid_world = _maybe_load_eval_world(self.agent, opt, 'valid')
+
         # run evaluation on valid set
-        valid_report, self.valid_world = run_eval(
-            self.agent, opt, 'valid', opt['validation_max_exs'],
-            valid_world=self.valid_world)
+        valid_report = sync_object(run_eval(
+            self.valid_world, opt, 'valid', opt['validation_max_exs'],
+        ))
 
         # logging
-        if opt['tensorboard_log'] is True:
-            self.writer.add_metrics('valid', int(
-                math.floor(self.train_time.time())), valid_report)
+        if opt['tensorboard_log'] is True and is_primary_worker():
+            self.writer.add_metrics('valid', int(self.train_time.time()), valid_report)
         # saving
-        if opt.get('model_file') and opt.get('save_after_valid'):
+        if (
+            opt.get('model_file') and
+            opt.get('save_after_valid') and
+            is_primary_worker()
+        ):
             print("[ saving model checkpoint: " +
                   opt['model_file'] + ".checkpoint ]")
             self.agent.save(opt['model_file'] + '.checkpoint')
@@ -259,7 +288,7 @@ class TrainLoop():
                 if self.best_valid is not None else ''))
             self.best_valid = new_valid
             self.impatience = 0
-            if opt.get('model_file'):
+            if opt.get('model_file') and is_primary_worker():
                 print("[ saving best valid model: " + opt['model_file'] + " ]")
                 self.agent.save(opt['model_file'])
                 print("[ saving best valid metric: " +
@@ -284,37 +313,109 @@ class TrainLoop():
             return True
         return False
 
+    def _average_dicts(self, all_versions):
+        # instead of a list-of-dicts with like keys, make a dict-of-lists with
+        # keys to reduce
+        to_reduce = {}
+        for d in all_versions:
+            for k, v in d.items():
+                to_reduce.setdefault(k, []).append(v)
+        # now perform the reduction
+        finalized = {}
+        for k, values in to_reduce.items():
+            if k == 'exs' or k == 'total_skipped_batches':
+                # sum across workers
+                finalized[k] = np.sum(values)
+            elif isinstance(values[0], dict):
+                # do the same procedure recursively
+                finalized[k] = self._average_dicts(values)
+            else:
+                # all other cases, take the mean across the workers
+                finalized[k] = np.mean(values)
+        return finalized
+
+    def _sync_training_metrics(self, metrics):
+        """
+        Sync training metrics across workers. A handful of special cases are handled
+        as exceptions, and the remaining metrics are simply averaged across workers.
+        """
+        if not is_distributed():
+            # nothing special needed
+            return metrics
+        all_versions = all_gather_list(metrics)
+        return self._average_dicts(all_versions)
+
+    def _nice_format(self, dictionary):
+        rounded = {}
+        for k, v in dictionary.items():
+            if isinstance(v, dict):
+                rounded[k] = self._nice_format(v)
+            elif isinstance(v, float):
+                rounded[k] = round_sigfigs(v, 4)
+            else:
+                rounded[k] = v
+        return rounded
+
+    def _compute_eta(self, epochs_completed, time_elapsed):
+        """
+        Computes the estimated seconds remaining in training.
+
+        :param float epochs_completed: number of epochs already completed.
+        :param float time_elapsed: total time spent already, in seconds.
+        :return: ETA in seconds, or None if not computable
+        """
+        # start off with no estimate
+        eta = None
+
+        # Determine time_left and num_epochs
+        max_epochs = self.opt.get('num_epochs', 0)
+        if max_epochs > 0 and epochs_completed > 0:
+            epoch_progress = epochs_completed / max_epochs
+            eta = (1 - epoch_progress) * time_elapsed / epoch_progress
+
+        max_training_time = self.opt.get('max_training_time', -1)
+        if max_training_time > 0:
+            time_left = max_training_time - time_elapsed
+            if eta is None or time_left < eta:
+                eta = time_left
+
+        return eta
+
     def log(self):
         opt = self.opt
         if opt['display_examples']:
             print(self.world.display() + '\n~~')
         logs = []
         # get report
-        train_report = self.world.report(compute_time=True)
+        train_report = self._sync_training_metrics(self.world.report())
         self.world.reset_metrics()
 
         # time elapsed
-        logs.append('time:{}s'.format(math.floor(self.train_time.time())))
-        total_exs = self.world.get_total_exs()
-        logs.append('total_exs:{}'.format(total_exs))
+        logs.append('time:{}s'.format(np.floor(self.train_time.time())))
+        logs.append('total_exs:{}'.format(self._total_exs))
 
-        exs_per_ep = self.world.num_examples()
-        if exs_per_ep:
-            logs.append('epochs:{}'.format(
-                round(total_exs / exs_per_ep, 2)))
+        if self._total_epochs >= 0:
+            # only if it's unbounded
+            logs.append('epochs:{}'.format(round(self._total_epochs, 2)))
 
-        if 'time_left' in train_report:
-            logs.append('time_left:{}s'.format(
-                math.floor(train_report.pop('time_left', ""))))
+        time_left = self._compute_eta(self._total_epochs, self.train_time.time())
+        if time_left is not None:
+            logs.append('time_left:{}s'.format(max(0, np.ceil(time_left))))
 
-        log = '[ {} ] {}'.format(' '.join(logs), train_report)
+        log = '[ {} ] {}'.format(' '.join(logs), self._nice_format(train_report))
         print(log)
         self.log_time.reset()
 
-        if opt['tensorboard_log'] is True:
-            self.writer.add_metrics('train', total_exs, train_report)
+        if opt['tensorboard_log'] is True and is_primary_worker():
+            self.writer.add_metrics('train', self._total_exs, train_report)
 
     def train(self):
+        if is_distributed():
+            warn_once(
+                "Distributed training outputs average-per-worker metrics during "
+                "training, and may be slightly distorted. Validation/test are "
+                "unadulterated."
+            )
         opt = self.opt
         world = self.world
         with world:
@@ -323,46 +424,65 @@ class TrainLoop():
                 world.parley()
                 self.parleys += 1
 
+                # get the total training examples done, compute epochs
+                self._total_epochs = num_workers() * self.world.get_total_epochs()
+                exs_per_epoch = self.world.num_examples()
+                self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))
+
+                # and use the primary worker's timings for everything
+                train_time, log_time, validate_time = sync_object((
+                    self.train_time.time(),
+                    self.log_time.time(),
+                    self.validate_time.time()
+                ))
+
                 # check counters and timers
-                if world.get_total_epochs() >= self.max_num_epochs:
+                if self._total_epochs >= self.max_num_epochs:
                     self.log()
                     print('[ num_epochs completed:{} time elapsed:{}s ]'.format(
-                        self.max_num_epochs, self.train_time.time()))
+                        self.max_num_epochs, train_time))
                     break
-                if self.train_time.time() > self.max_train_time:
-                    print('[ max_train_time elapsed:{}s ]'.format(
-                        self.train_time.time()))
+                if train_time > self.max_train_time:
+                    print('[ max_train_time elapsed:{}s ]'.format(train_time))
                     break
-                if self.log_time.time() > self.log_every_n_secs:
+                if log_time > self.log_every_n_secs:
                     self.log()
-                if self.validate_time.time() > self.val_every_n_secs:
+                if (
+                    validate_time > self.val_every_n_secs or
+                    self._total_epochs - self.last_valid_epoch
+                        >= self.val_every_n_epochs
+                ):
                     stop_training = self.validate()
+                    self.last_valid_epoch = self._total_epochs
                     if stop_training:
                         break
-                if (world.get_total_epochs() - self.last_valid_epoch >=
-                        self.val_every_n_epochs):
-                    stop_training = self.validate()
-                    self.last_valid_epoch = world.get_total_epochs()
-                    if stop_training:
-                        break
-                if (self.save_time.time() > self.save_every_n_secs and
-                        opt.get('model_file')):
-                    print("[ saving model checkpoint: " +
-                          opt['model_file'] + ".checkpoint ]")
+                if (
+                    self.save_time.time() > self.save_every_n_secs and
+                    opt.get('model_file') and
+                    is_primary_worker()
+                ):
+                    print("[ saving model checkpoint: {}.checkpoint".format(
+                        opt['model_file']
+                    ))
                     self.agent.save(opt['model_file'] + '.checkpoint')
                     self.save_time.reset()
 
-        if not self.saved:
+        if not self.saved and is_primary_worker():
             # save agent
             self.agent.save(opt['model_file'])
         elif opt.get('model_file'):
             # reload best validation model
             self.agent = create_agent(opt)
 
-        v_report, v_world = run_eval(self.agent, opt, 'valid', write_log=True)
-        t_report, t_world = run_eval(self.agent, opt, 'test', write_log=True)
-        v_world.shutdown()
-        t_world.shutdown()
+        valid_world = _maybe_load_eval_world(self.agent, opt, 'valid')
+        v_report = run_eval(valid_world, opt, 'valid', write_log=True)
+        test_world = _maybe_load_eval_world(self.agent, opt, 'test')
+        t_report = run_eval(test_world, opt, 'test', write_log=True)
+        if valid_world:
+            valid_world.shutdown()
+        if test_world:
+            test_world.shutdown()
+
         return v_report, t_report
 
 

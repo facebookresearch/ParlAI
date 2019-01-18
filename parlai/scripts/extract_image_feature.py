@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 """Basic example which iterates through the tasks specified and load/extract
 the image features.
@@ -27,11 +25,11 @@ import copy
 import os
 import json
 import datetime
+import tqdm
 
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import ProgressLogger
 
 
 def setup_args(parser=None):
@@ -85,19 +83,16 @@ def extract_feats(opt):
     opt['num_epochs'] = 1
     opt['use_hdf5'] = False
     opt['num_load_threads'] = 20
-    logger = ProgressLogger(should_humanize=False, throttle=0.1)
     print("[ Loading Images ]")
     # create repeat label agent and assign it to the specified task
     if opt.get('pytorch_teacher_dataset') is None:
         agent = RepeatLabelAgent(opt)
         world = create_task(opt, agent)
 
-        exs_seen = 0
         total_exs = world.num_examples()
+        # TODO: wrap in a tqdm
         while not world.epoch_done():
             world.parley()
-            exs_seen += bsz
-            logger.log(exs_seen, total_exs)
     elif opt.get('use_hdf5_extraction', False):
         '''One can specify a Pytorch Dataset for custom image loading'''
         nw = opt.get('numworkers', 1)
@@ -128,11 +123,13 @@ def extract_feats(opt):
             world = create_task(opt, agent)
             exs_seen = 0
             total_exs = world.num_examples()
+            pbar = tqdm.tqdm(unit='ex', total=total_exs)
             print('[ Computing and Saving Image Features ]')
             while exs_seen < total_exs:
                 world.parley()
                 exs_seen += bsz
-                logger.log(exs_seen, total_exs)
+                pbar.update(bsz)
+            pbar.close()
             print('[ Feature Computation Done ]')
             with open(images_built_file, 'w') as write:
                 write.write(str(datetime.datetime.today()))
@@ -162,7 +159,10 @@ def extract_feats(opt):
         print("[ Beginning image extraction for {} images ]".format(dt.split(':')[0]))
         hdf5_file = h5py.File(hdf5_path, 'w')
         idx = 0
-        for ex in iter(dataloader):
+        iterator = tqdm.tqdm(
+            dataloader, unit='batch', unit_scale=True, total=total_exs // bsz
+        )
+        for ex in iterator:
             if ex['image_id'] in image_id_to_index:
                 continue
             else:
@@ -187,7 +187,6 @@ def extract_feats(opt):
                     dtype='f')
 
             hdf5_dataset[idx] = img
-            logger.log(idx, num_images)
             idx += 1
 
         hdf5_file.close()

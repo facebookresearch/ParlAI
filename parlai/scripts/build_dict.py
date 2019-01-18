@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """
 Generates a dictionary file from the training data.
 
@@ -23,9 +21,10 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
+from parlai.core.distributed_utils import is_distributed
 import copy
 import os
-import sys
+import tqdm
 
 
 def setup_args(parser=None):
@@ -56,11 +55,15 @@ def build_dict(opt, skip_if_built=False):
         print('Tried to build dictionary but `--dict-file` is not set. Set ' +
               'this param so the dictionary can be saved.')
         return
-
     if skip_if_built and os.path.isfile(opt['dict_file']):
         # Dictionary already built, skip all loading or setup
         print("[ dictionary already built .]")
         return None
+
+    if is_distributed():
+        raise ValueError(
+            'Dictionaries should be pre-built before distributed train.'
+        )
 
     if opt.get('dict_class'):
         # Custom dictionary class
@@ -81,7 +84,8 @@ def build_dict(opt, skip_if_built=False):
     ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     ordered_opt['image_mode'] = 'none'
-    if ordered_opt['task'] == 'pytorch_teacher':
+    ordered_opt['pytorch_teacher_batch_sort'] = False
+    if ordered_opt['task'] == 'pytorch_teacher' or not ordered_opt['task']:
         pytorch_teacher_task = ordered_opt.get('pytorch_teacher_task', '')
         if pytorch_teacher_task != '':
             ordered_opt['task'] = pytorch_teacher_task
@@ -97,10 +101,19 @@ def build_dict(opt, skip_if_built=False):
         world_dict = create_task(ordered_opt, dictionary)
         # pass examples to dictionary
         print('[ running dictionary over data.. ]')
-        log_every_n_secs = opt.get('log_every_n_secs', -1)
-        if log_every_n_secs <= 0:
-            log_every_n_secs = float('inf')
         log_time = TimeLogger()
+        total = world_dict.num_examples()
+        if opt['dict_maxexs'] > 0:
+            total = min(total, opt['dict_maxexs'])
+
+        log_every_n_secs = opt.get('log_every_n_secs', None)
+        if log_every_n_secs:
+            pbar = tqdm.tqdm(
+                total=total, desc='Building dictionary', unit='ex',
+                unit_scale=True
+            )
+        else:
+            pbar = None
         while not world_dict.epoch_done():
             cnt += 1
             if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
@@ -108,12 +121,10 @@ def build_dict(opt, skip_if_built=False):
                 # don't wait too long...
                 break
             world_dict.parley()
-            if log_time.time() > log_every_n_secs:
-                sys.stdout.write('\r')
-                text, _log = log_time.log(cnt, max(opt.get('dict_maxexs', 0),
-                                                   world_dict.num_examples()))
-                sys.stdout.write(text)
-                sys.stdout.flush()
+            if pbar:
+                pbar.update(1)
+        if pbar:
+            pbar.close()
 
     dictionary.save(opt['dict_file'], sort=True)
     print('[ dictionary built with {} tokens in {}s ]'.format(
