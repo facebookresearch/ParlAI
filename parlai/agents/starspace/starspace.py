@@ -289,7 +289,7 @@ class StarspaceAgent(TorchRankerAgent):
 
         def dropout(x, rate):
             x_len = x.size(1)
-            num_keep = max(np.random.binomial(x_len, rate), 1)
+            num_keep = max(np.random.binomial(x_len, 1 - rate), 1)
             idxs = sorted(random.sample(list(range(x_len)), num_keep))
             to_keep = torch.LongTensor(idxs).to(x.device)
             new_x = x[:, to_keep]
