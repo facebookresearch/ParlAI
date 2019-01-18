@@ -327,7 +327,6 @@ class TorchGeneratorAgent(TorchAgent):
         if 'train' in opt.get('datatype', ''):
             # do this regardless of share state, but don't
             self.init_optim(
-                opt,
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type')
