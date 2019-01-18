@@ -612,7 +612,7 @@ class TorchGeneratorAgent(TorchAgent):
 
             score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
             # only need the final hidden state to make the word prediction
-            score = score[:, -1, :]
+            score = score[:, -1:, :]
             score = model.output(score)
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)

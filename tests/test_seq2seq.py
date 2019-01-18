@@ -88,6 +88,43 @@ class TestSeq2Seq(unittest.TestCase):
             "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
+    def test_beamsearch(self):
+        """Ensures beam search can generate the correct response"""
+        stdout, valid, test = _mock_train(
+            task='integration_tests:NocandidateTeacher',
+            model='seq2seq',
+            lr=LR,
+            batchsize=BATCH_SIZE,
+            num_epochs=NUM_EPOCHS,
+            numthreads=1,
+            no_cuda=True,
+            embeddingsize=16,
+            hiddensize=16,
+            rnn_class='gru',
+            attention='general',
+            gradient_clip=1.0,
+            dropout=0.0,
+            lookuptable='all',
+            beam_size=4,
+        )
+
+        self.assertTrue(
+            valid['bleu'] > 0.95,
+            "valid bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout)
+        )
+        self.assertTrue(
+            test['bleu'] > 0.95,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+        )
+        self.assertTrue(
+            valid['ppl'] < 1.2,
+            "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+        )
+        self.assertTrue(
+            test['ppl'] < 1.2,
+            "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+        )
+
 
 class TestHogwildSeq2seq(unittest.TestCase):
     def test_generation_multi(self):
