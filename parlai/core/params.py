@@ -109,7 +109,8 @@ class ParlaiParser(argparse.ArgumentParser):
         loading models, including initializing arguments from that model.
         """
         super().__init__(description=description, allow_abbrev=False,
-                         conflict_handler='resolve')
+                         conflict_handler='resolve',
+                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
         self.register('type', 'bool', str2bool)
         self.register('type', 'class', str2class)
         self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
