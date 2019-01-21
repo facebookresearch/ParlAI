@@ -13,18 +13,23 @@ import os
 import parlai.core.build_data as build_data
 
 
-def read_gz(filename, delete_gz=True):
-    f = gzip.open(filename, 'rb')
+def read_file(filename):
     lines = [x.decode('utf-8') for x in f.readlines()]
-    if delete_gz:
-        os.remove(filename)
     return lines
+
+def convert_file(input_file_path, output_file_path):
+    with gzip.open('features_train.csv.gz') as f:
+       df = pd.read_json(input_file_path)
+    with open(output_file_path, 'w') as f:
+        for row in df.iterrows():
+            f.write(row[1].to_json() + '\n')
 
 
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
-
-    lines = read_gz(inpath)
+    output = outpath.split(".")[0] + ".jsonl"
+    convert_file(inpath, output)
+    lines = read_file(output)
 
     # save the raw json version for span selection task (default)
     fout1 = open(os.path.join(outpath, dtype + '.txt'), 'w')
