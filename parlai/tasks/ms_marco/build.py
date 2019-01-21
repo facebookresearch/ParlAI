@@ -18,7 +18,7 @@ def read_file(filename):
     return lines
 
 def convert_file(input_file_path, output_file_path):
-    with gzip.open('features_train.csv.gz') as f:
+    with gzip.open(input_file_path) as f:
        df = pd.read_json(input_file_path)
     with open(output_file_path, 'w') as f:
         for row in df.iterrows():
