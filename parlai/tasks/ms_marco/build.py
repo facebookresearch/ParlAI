@@ -23,8 +23,8 @@ def read_file(filename):
 def convert_file(input_file_path, output_file_path):
     print("pre gzip")
     with gzip.open(input_file_path) as f:
-       content = f.read()
-       df = pd.read_json(content)
+       df = pd.read_json(f)
+    
     print("file opened")
     with open(output_file_path, 'w') as f:
         for row in df.iterrows():
