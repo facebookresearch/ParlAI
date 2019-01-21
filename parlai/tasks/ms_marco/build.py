@@ -15,15 +15,18 @@ import parlai.core.build_data as build_data
 
 
 def read_file(filename):
+    print("reached line loading")
     lines = [x.decode('utf-8') for x in f.readlines()]
     return lines
 
 def convert_file(input_file_path, output_file_path):
     with gzip.open(input_file_path) as f:
        df = pd.read_json(input_file_path)
+    print("file opened")
     with open(output_file_path, 'w') as f:
         for row in df.iterrows():
             f.write(row[1].to_json() + '\n')
+    print("finish iterating")
 
 
 def create_fb_format(outpath, dtype, inpath):
