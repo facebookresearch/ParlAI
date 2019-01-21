@@ -84,7 +84,7 @@ def build(opt):
         fname = "dev_v2.1.json.gz"
         build_data.download(url + fname, dpath, 'valid.gz')
 
-        fname = "test_public_v2.1.json.gz"
+        fname = "eval_v2.1_public.json.gz"
         build_data.download(url + fname, dpath, 'test.gz')
 
         create_fb_format(dpath, "train", os.path.join(dpath, 'train.gz'))
