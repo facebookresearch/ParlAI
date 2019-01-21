@@ -9,6 +9,7 @@
 import gzip
 import json
 import os
+import pandas as pd
 
 import parlai.core.build_data as build_data
 
