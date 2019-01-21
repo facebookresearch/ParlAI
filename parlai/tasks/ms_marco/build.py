@@ -17,7 +17,7 @@ import parlai.core.build_data as build_data
 def read_file(filename):
     print("reached line loading")
     with open(filename) as f:
-        lines = [x.decode('utf-8') for x in f.readlines()]
+        lines = [x for x in f.readlines()]
     return lines
 
 def convert_file(input_file_path, output_file_path):
