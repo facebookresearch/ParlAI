@@ -16,12 +16,14 @@ import parlai.core.build_data as build_data
 
 def read_file(filename):
     print("reached line loading")
-    lines = [x.decode('utf-8') for x in f.readlines()]
+    with open(filename) as f:
+        lines = [x.decode('utf-8') for x in f.readlines()]
     return lines
 
 def convert_file(input_file_path, output_file_path):
+    print("pre gzip")
     with gzip.open(input_file_path) as f:
-       df = pd.read_json(input_file_path)
+       df = pd.read_json(f)
     print("file opened")
     with open(output_file_path, 'w') as f:
         for row in df.iterrows():
@@ -63,7 +65,7 @@ def create_fb_format(outpath, dtype, inpath):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MS_MARCO')
-    version = None
+    version = None 
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
