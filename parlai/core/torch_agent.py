@@ -20,6 +20,7 @@ from torch import optim
 from collections import deque, namedtuple
 import json
 import random
+import numpy as np
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
@@ -194,7 +195,7 @@ class TorchAgent(Agent):
         # lr scheduler
         agent.add_argument(
             '--lr-scheduler', type=str, default='reduceonplateau',
-            choices=['reduceonplateau', 'none', 'fixed'],
+            choices=['reduceonplateau', 'none', 'fixed', 'invsqrt'],
             help='Learning rate scheduler.'
         )
         agent.add_argument(
@@ -403,6 +404,26 @@ class TorchAgent(Agent):
                 patience,
                 gamma=decay,
             )
+        elif self.opt.get('lr_scheduler') == 'invsqrt':
+            if self.opt.get('warmup_updates', -1) <= 0:
+                raise ValueError(
+                    '--lr-scheduler invsqrt requires setting --warmup-updates'
+                )
+            warmup_updates = self.opt['warmup_updates']
+            decay_factor = np.sqrt(warmup_updates)
+
+            def _invsqrt_lr(step):
+                return decay_factor / np.sqrt(step)
+
+            self.scheduler = optim.lr_scheduler.LambdaLR(
+                self.optimizer,
+                _invsqrt_lr,
+            )
+        else:
+            raise ValueError(
+                "Don't know what to do with lr_scheduler '{}'"
+                .format(self.opt.get('lr_scheduler'))
+            )
 
     def report(self):
         metrics = {}
@@ -443,6 +464,9 @@ class TorchAgent(Agent):
             self.scheduler.step(metrics_dict['loss'])
         elif self.opt['lr_scheduler'] == 'fixed':
             self.scheduler.step()
+        elif self.opt['lr_scheduler'] == 'invsqrt':
+            # this is a training step lr scheduler, nothing to adjust in validation
+            pass
         elif self.opt['lr_schedule'] == 'none':
             # no adjustments, do nothing
             pass
@@ -1093,10 +1117,15 @@ class TorchAgent(Agent):
             if self._is_lr_warming_up():
                 self.warmup_scheduler.step(epoch=self._number_training_updates)
 
+        if self.opt.get('lr_scheduler') == 'invsqrt' and not self._is_lr_warming_up():
+            # training step scheduler
+            self.scheduler.step(self._number_training_updates)
+
         if self.opt.get('gradient_clip', -1) > 0:
             torch.nn.utils.clip_grad_norm_(
                 self.model.parameters(), self.opt['gradient_clip']
             )
+
         self.optimizer.step()
 
     def zero_grad(self):
