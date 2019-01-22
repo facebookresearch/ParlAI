@@ -220,7 +220,7 @@ class TorchAgent(Agent):
         )
         agent.add_argument(
             '--update-freq', type=int, default=-1, hidden=True,
-            help='Accumulate gradients N times before performing a backward.'
+            help='Accumulate gradients N times before performing an optimizer.step().'
         )
         # preprocessing arguments
         agent.add_argument(
