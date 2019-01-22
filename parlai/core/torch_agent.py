@@ -33,6 +33,18 @@ try:
 except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 
+# use this section to import any additional optimizers
+# they'll be added to TorchAgent.OPTIM_OPTS below
+extra_optims = {}
+try:
+    # https://openreview.net/pdf?id=S1fUpoR5FQ
+    from qhoptim.pyt import QHM, QHAdam
+    extra_optims['qhm'] = QHM
+    extra_optims['qhadam'] = QHAdam
+except ImportError:
+    # no QHM installed
+    pass
+
 
 Batch = namedtuple('Batch', [
     'text_vec', 'text_lengths', 'label_vec', 'label_lengths', 'labels',
@@ -143,8 +155,9 @@ class TorchAgent(Agent):
     For example:
     'adagrad': optim.Adagrad, 'adam': optim.Adad, 'sgd': optim.SGD
     """
-    OPTIM_OPTS = {k.lower(): v for k, v in optim.__dict__.items()
-                  if not k.startswith('__') and k[0].isupper()}
+    OPTIM_OPTS = {**{k.lower(): v for k, v in optim.__dict__.items()
+                  if not k.startswith('__') and k[0].isupper()},
+                  **extra_optims}
 
     P1_TOKEN = '__p1__'
     P2_TOKEN = '__p2__'
@@ -191,6 +204,17 @@ class TorchAgent(Agent):
         agent.add_argument(
             '-mom', '--momentum', default=0, type=float,
             help='if applicable, momentum value for optimizer.')
+        agent.add_argument(
+            '--nesterov', default=True, type='bool',
+            help='if applicable, whether to use nesterov momentum.')
+        agent.add_argument(
+            '-nu', '--nus', default='0.7', type=str,
+            help='if applicable, nu value(s) for optimizer. can use a single '
+                 'value like 0.7 or a comma-separated tuple like 0.7,1.0')
+        agent.add_argument(
+            '-beta', '--betas', default='0.9,0.999', type=str,
+            help='if applicable, beta value(s) for optimizer. can use a single '
+                 'value like 0.9 or a comma-separated tuple like 0.9,0.999')
         # lr scheduler
         agent.add_argument(
             '--lr-scheduler', type=str, default='reduceonplateau',
@@ -330,13 +354,28 @@ class TorchAgent(Agent):
         # set up optimizer args
         lr = opt['learningrate']
         kwargs = {'lr': lr}
-        if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop']:
+        if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop', 'qhm']:
+            # turn on momentum for optimizers that use it
             kwargs['momentum'] = opt['momentum']
-            if opt['optimizer'] == 'sgd':
-                kwargs['nesterov'] = True
-        if opt['optimizer'] == 'adam':
+            if opt['optimizer'] == 'sgd' and opt.get('nesterov', True):
+                # for sgd, maybe nesterov
+                kwargs['nesterov'] = opt.get('nesterov', True)
+            elif opt['optimizer'] == 'qhm':
+                # qhm needs a nu
+                nu = float(opt.get('nus', '0.7'))
+                kwargs['nu'] = nu
+        elif opt['optimizer'] == 'adam':
+            # turn on amsgrad for adam
             # amsgrad paper: https://openreview.net/forum?id=ryQu7f-RZ
             kwargs['amsgrad'] = True
+        elif opt['optimizer'] == 'qhadam':
+            # set nus for qhadam
+            nus = tuple(float(nu) for nu in opt.get('nus', '0.7,1.0').split(','))
+            kwargs['nus'] = nus
+        if opt['optimizer'] in ['adam', 'sparseadam', 'adamax', 'qhadam']:
+            # set betas for optims that use it
+            betas = tuple(float(b) for b in opt.get('betas', '0.9,0.999').split(','))
+            kwargs['betas'] = betas
 
         optim_class = self.OPTIM_OPTS[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
