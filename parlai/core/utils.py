@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
@@ -888,6 +886,7 @@ def msg_to_str(msg, ignore_fields=''):
 def set_namedtuple_defaults(namedtuple, default=None):
     """Set *all* of the fields for a given nametuple to a singular value.
 
+    Additionally removes the default docstring for each field.
     Modifies the tuple in place, but returns it anyway.
 
     More info:
@@ -899,6 +898,8 @@ def set_namedtuple_defaults(namedtuple, default=None):
     :returns: the modified namedtuple
     """
     namedtuple.__new__.__defaults__ = (default,) * len(namedtuple._fields)
+    for f in namedtuple._fields:
+        del getattr(namedtuple, f).__doc__
     return namedtuple
 
 

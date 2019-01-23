@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """Generates a pytorch data file from the training data; for use in the
 PytorchDataTeacher.
 
@@ -28,6 +26,8 @@ from collections import deque
 
 
 def get_pyt_dict_file(opt):
+    if os.path.exists(opt.get('dict_file', '')):
+        return opt['dict_file']
     if not opt['pytorch_teacher_task']:
         opt['pytorch_teacher_task'] = opt['task']
     return os.path.join(

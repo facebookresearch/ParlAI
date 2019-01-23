@@ -125,10 +125,10 @@ class StarspaceAgent(TorchRankerAgent):
         if model_file and os.path.isfile(model_file):
             self.load(model_file)
             self.reset()
-        else:
+        elif self.opt.get('embedding_type', 'random') != 'random':
             self._copy_embeddings(
                 self.model.lt.weight,
-                self.opt.get('embedding_type', 'random')
+                self.opt.get('embedding_type')
             )
         self.model.share_memory()
         if self.use_cuda:

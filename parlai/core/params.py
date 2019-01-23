@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """Provides an argument parser and a set of default command line options for
 using the ParlAI package.
 """
@@ -111,7 +109,8 @@ class ParlaiParser(argparse.ArgumentParser):
         loading models, including initializing arguments from that model.
         """
         super().__init__(description=description, allow_abbrev=False,
-                         conflict_handler='resolve')
+                         conflict_handler='resolve',
+                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
         self.register('type', 'bool', str2bool)
         self.register('type', 'class', str2class)
         self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
@@ -366,6 +365,19 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_parlai_data_path(parlai)
 
         self.add_pytorch_datateacher_args()
+
+    def add_distributed_training_args(self):
+        grp = self.add_argument_group('Distributed Training')
+        grp.add_argument(
+            '--distributed-world-size', type=int,
+            help='Number of workers.'
+        )
+        grp.add_argument(
+            '--verbose', type='bool', default=False,
+            help='All workers print output.',
+            hidden=True,
+        )
+        return grp
 
     def add_pytorch_datateacher_args(self):
         pytorch = self.add_argument_group('PytorchData Arguments')

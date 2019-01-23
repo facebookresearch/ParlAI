@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """
 Generates a dictionary file from the training data.
 
@@ -23,6 +21,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
+from parlai.core.distributed_utils import is_distributed
 import copy
 import os
 import tqdm
@@ -60,6 +59,11 @@ def build_dict(opt, skip_if_built=False):
         # Dictionary already built, skip all loading or setup
         print("[ dictionary already built .]")
         return None
+
+    if is_distributed():
+        raise ValueError(
+            'Dictionaries should be pre-built before distributed train.'
+        )
 
     if opt.get('dict_class'):
         # Custom dictionary class

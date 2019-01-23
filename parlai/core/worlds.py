@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """This class defines the basic environments that define how agents interact
 with one another.
 
@@ -55,7 +53,7 @@ try:
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
-from parlai.core.metrics import aggregate_metrics, compute_time_metrics
+from parlai.core.metrics import aggregate_metrics
 from parlai.core.utils import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
@@ -263,7 +261,7 @@ class DialogPartnerWorld(World):
         """Only the first agent indicates when the epoch is done."""
         return self.agents[0].epoch_done()
 
-    def report(self, compute_time=False):
+    def report(self):
         def show(metric):
             if ('all' in self.show_metrics or
                     metric in self.show_metrics or
@@ -283,10 +281,7 @@ class DialogPartnerWorld(World):
                         if show(k):
                             metrics[k] = v
         if metrics:
-            if compute_time and 'exs' in metrics:
-                self.total_exs += metrics['exs']
-                time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
-                metrics.update(time_metrics)
+            self.total_exs += metrics.get('exs', 0)
             return metrics
 
     @lru_cache(maxsize=1)
@@ -347,7 +342,7 @@ class MultiAgentDialogWorld(World):
                 done = True
         return done
 
-    def report(self, compute_time=False):
+    def report(self):
         metrics = {}
         for a in self.agents:
             if hasattr(a, 'report'):
@@ -358,10 +353,7 @@ class MultiAgentDialogWorld(World):
                         # this way model can't e.g. override accuracy to 100%
                         metrics[k] = v
         if metrics:
-            if compute_time and 'exs' in metrics:
-                self.total_exs += metrics['exs']
-                time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
-                metrics.update(time_metrics)
+            self.total_exs += metrics.get('exs', 0)
             return metrics
 
     def shutdown(self):
@@ -520,12 +512,9 @@ class MultiWorld(World):
         else:
             return ''
 
-    def report(self, compute_time=False):
+    def report(self):
         metrics = aggregate_metrics(self.worlds)
-        if compute_time:
-            self.total_exs += metrics['exs']
-            time_metrics = compute_time_metrics(self, self.opt['max_train_time'])
-            metrics.update(time_metrics)
+        self.total_exs += metrics.get('exs', 0)
         return metrics
 
     def reset(self):
@@ -695,8 +684,8 @@ class BatchWorld(World):
                 return False
         return True
 
-    def report(self, compute_time=False):
-        return self.world.report(compute_time)
+    def report(self):
+        return self.world.report()
 
     def reset(self):
         self.world.reset()
@@ -892,8 +881,8 @@ class HogwildWorld(World):
         else:
             return self.total_epochs
 
-    def report(self, compute_time=False):
-        return self.inner_world.report(compute_time)
+    def report(self):
+        return self.inner_world.report()
 
     def save_agents(self):
         self.inner_world.save_agents()
