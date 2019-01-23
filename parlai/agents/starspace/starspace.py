@@ -10,8 +10,9 @@
 # See: https://arxiv.org/abs/1709.03856
 
 from parlai.core.dict import DictionaryAgent
+from parlai.core.thread_utils import SharedTable
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-from parlai.core.torch_agent import Output
+from parlai.core.torch_agent import Output, TorchAgent
 from .modules import Starspace
 
 import torch
@@ -31,7 +32,6 @@ class StarspaceAgent(TorchRankerAgent):
         # Override TorchAgent and TorchRankerAgent defaults
         argparser.set_defaults(
             candidates='custom',
-            embeddingsize=300,
             eval_candidates='inline',
             learningrate=0.1,
             truncate=10000,
@@ -44,6 +44,10 @@ class StarspaceAgent(TorchRankerAgent):
         agent.add_argument(
             '-shareemb', '--share-embeddings', type='bool', default=True,
             help='whether LHS and RHS share embeddings')
+        agent.add_argument(
+            '-esz', '--embeddingsize', type=int, default=300,
+            help='size of the token embeddings'
+        )
         agent.add_argument(
             '--lins', default=0, type=int,
             help='If set to 1, add a linear layer between lhs and rhs.')
@@ -173,8 +177,6 @@ class StarspaceAgent(TorchRankerAgent):
             ye.view(-1, xe.size(-1)),
             y.view(-1)
         )
-        if loss.item() < 0.0001:
-            import pdb; pdb.set_trace()
 
         loss.backward()
         self.optimizer.step()
@@ -323,3 +325,22 @@ class StarspaceAgent(TorchRankerAgent):
         self.reset_metrics()
         # reset optimizer
         self.optimizer_reset()
+
+    def share(self):
+        """Share model parameters. Override from TorchRankerAgent to avoid
+        sharing the optimizer when numthreads > 1."""
+        shared = TorchAgent.share(self)
+        shared['model'] = self.model
+        if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
+            torch.set_num_threads(1)
+            # move metrics and model to shared memory
+            self.metrics = SharedTable(self.metrics)
+            self.model.share_memory()
+        shared['metrics'] = self.metrics
+        shared['fixed_candidates'] = self.fixed_candidates
+        shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
+        shared['vocab_candidates'] = self.vocab_candidates
+        shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
+        if self.opt.get('numthreads', 1) == 1:
+            shared['optimizer'] = self.optimizer
+        return shared
