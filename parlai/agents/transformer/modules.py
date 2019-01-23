@@ -563,6 +563,7 @@ class MultiHeadAttention(nn.Module):
         dot_prod.masked_fill_(attn_mask, -float(1e20))
 
         attn_weights = F.softmax(dot_prod / scale, dim=-1)
+        attn_weights = self.dropout(attn_weights)
 
         attentioned = attn_weights.bmm(v)
         attentioned = (
