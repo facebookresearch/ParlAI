@@ -15,9 +15,6 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
-        argparser.set_defaults(
-            learningrate=0.0001,
-        )
         super(WizardTransformerRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Wizard Transformer Ranker Arguments')
         agent.add_argument(
@@ -41,11 +38,16 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             '--data-parallel', type='bool', default=False,
             help='use model in data parallel, requires multiple gpus'
         )
+        argparser.set_defaults(
+            learningrate=0.0001,
+            eval_candidates='inline',
+        )
         return agent
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         opt['candidates'] = 'batch'  # this needs to be made the default
+        opt['eval_candidates'] = 'inline'
         super().__init__(opt, shared)
         self.use_knowledge = opt.get('use_knowledge', False)
         if self.use_knowledge:
