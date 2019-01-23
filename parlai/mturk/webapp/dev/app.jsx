@@ -161,6 +161,12 @@ class NavLink extends React.Component {
           {this.props.children}
         </a>
       );
+    } else if (this.props.type == 'review') {
+      return (
+        <a href={'/app/runs/' + this.props.target + '/review'}>
+          {this.props.children}
+        </a>
+      );
     } else if (this.props.type == 'worker') {
       return (
         <a href={'/app/workers/' + this.props.target}>
@@ -724,6 +730,11 @@ class RunPanel extends React.Component {
         <HitTable
           data={this.state.data.hits}
           title={'HITs from this run'}/>
+        <div>
+          <NavLink type={'review'} target={this.props.run_id}>
+            Review work from this run
+          </NavLink>
+        </div>
       </div>
     )
   }
@@ -1582,6 +1593,108 @@ class AssignmentPanel extends React.Component {
   }
 }
 
+class ReviewPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      assignment_loading: true, run_loading: false, error: false,
+      custom_components: {}, current_worker: null, ordering: 'default',
+      workers_remaining: [], assignments_remaining: 0,
+      assignments_by_worker: {},
+    };
+  }
+
+  parseRawRun(run_data) {
+    // Get reviewable assignments
+    let assignments = run_data.assignments;
+    let assignments_remaining = 0;
+    console.log(assignments);
+    let reviewable_assigns = assignments.filter(
+      assign => assign.status == 'Reviewable'
+    );
+    console.log(reviewable_assigns);
+    // Bucket assignments by worker
+    let assignments_by_worker = {};
+    for (const idx in reviewable_assigns) {
+      let assign = reviewable_assigns[idx];
+      if (assignments_by_worker[assign.worker_id] == undefined) {
+        assignments_by_worker[assign.worker_id] = {
+          assigns: [], bad_feedback: false, worker_id: assign.worker_id,
+        };
+      }
+      assignments_by_worker[assign.worker_id].assigns.push(assign);
+      assignments_remaining += 1;
+      if (!!assign.received_feedback && assign.received_feedback.rating < 3) {
+        assignments_by_worker[assign.worker_id].bad_feedback = true;
+      }
+    }
+    console.log(assignments_by_worker);
+    console.log(assignments_remaining);
+
+    // make an array to determine order to work through workers
+    let workers_left_order = Object.values(assignments_by_worker);
+
+    // Sort workers by the current ordering
+    let sortByAmount = (w1, w2) => w1.assigns.length - w2.assigns.length;
+    let sortByFeedback = (w1, w2) => (+w2.bad_feedback) - (+w1.bad_feedback);
+
+    let sortOrders = {
+      default: [sortByFeedback, sortByAmount],
+    }
+    let sortOrder = sortOrders[this.state.ordering];
+    let sortFn = (w1, w2) => {
+      let res = 0;
+      for (const idx in sortOrder) {
+        let useSort = sortOrder[idx];
+        res = useSort(w1, w2);
+        if (res != 0) {
+          return res;
+        }
+      }
+      return 0;
+    };
+    workers_left_order.sort(sortFn);
+    console.log(workers_left_order);
+    let workers_remaining = workers_left_order.map((w) => w.worker_id);
+    console.log(workers_remaining);
+    this.setState({
+      current_worker: workers_remaining[0],
+      workers_remaining: workers_remaining,
+      assignments_remaining: assignments_remaining,
+      assignments_by_worker: assignments_by_worker,
+    })
+  }
+
+  fetchRunData() {
+    fetch('/runs/' + this.props.run_id)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.parseRawRun(result);
+          this.setState({
+            run_loading: false,
+            run_data: result
+          });
+        },
+        (error) => {
+          this.setState({
+            run_loading: false,
+            error: true
+          });
+        }
+      )
+  }
+
+  componentDidMount() {
+    this.setState({worker_loading: true});
+    this.fetchRunData();
+  }
+
+  render() {
+    return <div>In progress</div>;
+  }
+}
+
 class WorkerPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -2171,6 +2284,15 @@ class MainApp extends React.Component {
   }
 
   renderRunPage() {
+    if (this.state.args.length > 1) {
+      if (this.state.args[1] == 'review') {
+        return (
+          <div>
+            <ReviewPanel run_id={this.state.args[0]}/>
+          </div>
+        );
+      }
+    }
     return (
       <div style={{width: '900px'}}>
         <RunPanel run_id={this.state.args[0]}/>
