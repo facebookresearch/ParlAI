@@ -139,7 +139,9 @@ class ChatDisplay extends React.Component {
               v_id={this.props.agent_id}
               messages={this.props.messages}
               agent_id={this.props.agent_id}
-              is_review={true}/>
+              is_review={true}
+              onClickMessage={this.props.onUpdateContext}
+            />
           </Panel.Body>
         </Panel.Collapse>
       </Panel>
@@ -758,7 +760,7 @@ class AssignmentFeedback extends React.Component {
     var bsStyle = null;
     let given_feedback = null;
     let received_feedback = null;
-    if (review_data !== undefined) {
+    if (!!review_data) {
       given_feedback = review_data.given_feedback;
       received_feedback = review_data.received_feedback;
     }
@@ -768,7 +770,7 @@ class AssignmentFeedback extends React.Component {
     } else {
       let XReviewButtons = getCorrectComponent('XReviewButtons', null);
       let given_feedback_content = <span>No provided feedback</span>;
-      if (given_feedback !== undefined) {
+      if (!!given_feedback) {
         let init_state = {
           'current_rating': given_feedback.rating,
           'submitting': true,
@@ -779,7 +781,7 @@ class AssignmentFeedback extends React.Component {
         given_feedback_content = <XReviewButtons init_state={init_state} />;
       }
       let received_feedback_content = <span>No provided feedback</span>;
-      if (received_feedback !== undefined) {
+      if (!!received_feedback) {
         let init_state = {
           'current_rating': received_feedback.rating,
           'submitting': true,
@@ -806,6 +808,64 @@ class AssignmentFeedback extends React.Component {
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Feedback
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Collapse>
+          <Panel.Body>
+            {content}
+          </Panel.Body>
+        </Panel.Collapse>
+      </Panel>
+    );
+  }
+}
+
+class AssignmentContext extends React.Component {
+  getContext() {
+    if (this.props.data == undefined ||
+        this.props.data.task == undefined ||
+        this.props.data.task.data == undefined ||
+        this.props.data.task.data.messages == undefined) {
+      return null;
+    }
+    let messages = this.props.data.task.data.messages;
+    let context = {};
+    for (const idx in messages) {
+      if (!isNaN(this.props.max_idx) && idx == this.props.max_idx) {
+        break;
+      }
+      let m = messages[idx];
+      if (m.task_data !== undefined) {
+        context = Object.assign(context, m.task_data);
+      }
+    }
+    return context;
+  }
+
+  render() {
+    let task_data = this.getContext();
+    let content = null;
+    let bsStyle = null;
+    let expanded = true;
+    if (task_data === null) {
+      content = "No relevant context exists for this assignment."
+      bsStyle = "default"
+      expanded = false;
+    } else {
+      let XTaskDescription = getCorrectComponent(
+        'XContextView', this.props.data.task.data.agent_id);
+      content = <XTaskDescription task_data={task_data} />;
+      bsStyle = "info"
+    }
+
+    return (
+      <Panel
+        id="task_context_div"
+        bsStyle={bsStyle}
+        defaultExpanded={expanded}>
+        <Panel.Heading>
+          <Panel.Title componentClass="h3" toggle>
+            Task Context
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
@@ -1402,7 +1462,9 @@ class AssignmentView extends React.Component {
         <ChatDisplay
           messages={messages}
           agent_id={agent_id}
-          is_onboarding={is_onboarding}/>
+          is_onboarding={is_onboarding}
+          onUpdateContext={this.props.onUpdateContext}
+        />
       );
     }
   }
@@ -1425,7 +1487,7 @@ class AssignmentPanel extends React.Component {
     super(props);
     this.state = {
       assignment_loading: true, items: null, error: false,
-      custom_components: {}
+      custom_components: {}, max_idx: null,
     };
   }
 
@@ -1463,8 +1525,12 @@ class AssignmentPanel extends React.Component {
           title={'State info for this assignment'}/>
         <div id='left-assign-pane' style={{float: 'left', 'width': '40%'}}>
           <AssignmentInstructions
-            data={[this.state.data.assignment_instructions]}
+            data={this.state.data.assignment_instructions}
             custom_components={this.state.custom_components}/>
+          <AssignmentContext
+            data={this.state.data.assignment_content}
+            custom_components={this.state.custom_components}
+            max_idx={this.state.max_idx}/>
           <AssignmentFeedback
             data={this.state.data.assignment_content}
             custom_components={this.state.custom_components}/>
@@ -1473,6 +1539,7 @@ class AssignmentPanel extends React.Component {
           <AssignmentView
             data={this.state.data.assignment_content}
             title={'Assignment Content'}
+            onUpdateContext={(idx) => this.setState({max_idx: idx})}
             custom_components={this.state.custom_components}
             setCustomComponents={(module) => {
               setCustomComponents(module);
@@ -1877,6 +1944,7 @@ class DemoTaskPanel extends React.Component {
           context: {},
           world_state: null,
           worker_id: w.worker_id,
+          task_data: {},
         };
       }
       let chat_state = 'waiting';
@@ -1887,6 +1955,14 @@ class DemoTaskPanel extends React.Component {
       }
       let curr_worker = curr_worker_data[w.worker_id];
       curr_worker.messages = curr_worker.messages.concat(w.new_messages);
+      for (const idx in w.new_messages) {
+        let m = w.new_messages[idx];
+        if (m.task_data !== undefined) {
+          m.task_data.last_update = (new Date()).getTime();
+          curr_worker.task_data = Object.assign(
+            curr_worker.task_data, m.task_data);
+        }
+      }
       curr_worker.task_done = w.task_done;
       curr_worker.done_text = w.done_text;
       curr_worker.world_state = w.status;
@@ -1898,20 +1974,29 @@ class DemoTaskPanel extends React.Component {
         // need to wait to be recieved by the server before we could even
         // display them. This also solves eventual 'refresh' issues)
         curr_worker.messages = w.all_messages;
+        curr_worker.task_data = {};
+        for (const idx in w.all_messages) {
+          let m = w.all_messages[idx];
+          if (m.task_data !== undefined) {
+            m.task_data.last_update = (new Date()).getTime();
+            curr_worker.task_data = Object.assign(
+              curr_worker.task_data, m.task_data);
+          }
+        }
       }
     });
     this.setState({workers: worker_names, worker_data: curr_worker_data})
   }
 
-  sendMessage(message, data, callback, worker) {
+  sendMessage(message, task_data, callback, worker) {
     let msg = JSON.stringify(
-      {'text': message, 'data': data,
+      {'text': message, 'task_data': task_data,
        'sender': worker.worker_id, 'id': worker.agent_id});
     this._socket.send(msg);
     worker.messages.push({
       id: worker.agent_id,
       text: message,
-      data: data,
+      task_data: task_data,
       message_id: (new Date()).getTime(),
       is_review: false,
     });
@@ -1938,7 +2023,7 @@ class DemoTaskPanel extends React.Component {
           initialization_status={'done'}
           is_cover_page={false}
           frame_height={task_config.frame_height}
-          context={worker.context}
+          task_data={worker.task_data}
           world_state={worker.world_state}
           v_id={worker.agent_id}
           allDoneCallback={() => console.log('all done called')}

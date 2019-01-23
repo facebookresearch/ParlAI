@@ -121,6 +121,7 @@ class Application(tornado.web.Application):
         self.manager = None  # MTurk manager for demo tasks
         self.mturk_manager = MTurkManager.make_taskless_instance(is_sandbox)
         self.mturk_manager.db_logger = self.data_handler
+        self.task_manager = None  # This is the task mturk manager
 
         # TODO load some state from DB
 
@@ -506,17 +507,17 @@ class TaskSocketHandler(tornado.websocket.WebSocketHandler):
     def _run_socket(self):
         time.sleep(2)
         asyncio.set_event_loop(asyncio.new_event_loop())
-        while self.alive and self.app.manager is not None:
+        while self.alive and self.app.task_manager is not None:
             try:
                 self.write_message(json.dumps({
                     'data': [agent.get_update_packet()
-                             for agent in self.app.manager.agents],
+                             for agent in self.app.task_manager.agents],
                     'command': 'sync'
                 }))
                 time.sleep(0.2)
             except tornado.websocket.WebSocketClosedError:
                 self.alive = False
-                self.app.manager.timeout_all_agents()
+                self.app.task_manager.timeout_all_agents()
 
     def open(self):
         self.sid = str(hex(int(time.time() * 10000000))[2:])
@@ -536,17 +537,17 @@ class TaskSocketHandler(tornado.websocket.WebSocketHandler):
         logging.info('from frontend client: {}'.format(message))
         msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
         message = msg['text']
-        data = msg['data']
+        task_data = msg['task_data']
         sender_id = msg['sender']
         agent_id = msg['id']
         act = {
             'id': agent_id,
-            'data': data,
+            'task_data': task_data,
             'text': message,
             'message_id': str(uuid.uuid4()),
         }
         t = threading.Thread(
-            target=self.app.manager.on_new_message,
+            target=self.app.task_manager.on_new_message,
             args=(sender_id, PacketWrap(act)),
             daemon=True)
         t.start()
@@ -583,7 +584,7 @@ class TaskRunHandler(BaseHandler):
             manager = MockTurkManager.current_manager
 
             # Register the current manager, then alive the agents
-            self.app.manager = manager
+            self.app.task_manager = manager
             for agent in manager.agents:
                 manager.worker_alive(
                     agent.worker_id, agent.hit_id, agent.assignment_id)
