@@ -203,7 +203,7 @@ class ChatBox extends React.Component {
   }
 
   componentDidMount() {
-    this.smoothlyAnimateToBottom();
+    this.instantlyJumpToBottom();
   }
 
   componentDidUpdate(prevProps, prevState) {
