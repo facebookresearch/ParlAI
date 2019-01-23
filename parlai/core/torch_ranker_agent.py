@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import os
 
@@ -14,6 +12,7 @@ from torch import nn
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once
+from parlai.core.distributed_utils import is_distributed
 
 
 class TorchRankerAgent(TorchAgent):
@@ -80,6 +79,14 @@ class TorchRankerAgent(TorchAgent):
         else:
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(optim_params)
+            self.build_lr_scheduler()
+
+        if shared is None and is_distributed():
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model,
+                device_ids=[self.opt['gpu']],
+                broadcast_buffers=False,
+            )
 
     def score_candidates(self, batch, cand_vecs):
         """Given a batch and candidate set, return scores (for ranking)"""
@@ -97,7 +104,7 @@ class TorchRankerAgent(TorchAgent):
             return
         batchsize = batch.text_vec.size(0)
         self.model.train()
-        self.optimizer.zero_grad()
+        self.zero_grad()
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
@@ -293,12 +300,6 @@ class TorchRankerAgent(TorchAgent):
         shared['optimizer'] = self.optimizer
         return shared
 
-    def update_params(self):
-        """Do optim step and clip gradients if needed."""
-        if hasattr(self, 'clip') and self.clip > 0:
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
-        self.optimizer.step()
-
     def reset_metrics(self):
         """Reset metrics."""
         super().reset_metrics()
@@ -308,6 +309,7 @@ class TorchRankerAgent(TorchAgent):
 
     def report(self):
         """Report loss and mean_rank from model's perspective."""
+        base = super().report()
         m = {}
         examples = self.metrics['examples']
         if examples > 0:
@@ -317,8 +319,8 @@ class TorchRankerAgent(TorchAgent):
             m['mean_rank'] = self.metrics['rank'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
-            m[k] = round_sigfigs(v, 4)
-        return m
+            base[k] = round_sigfigs(v, 4)
+        return base
 
     def _get_model_file(self, opt):
         model_file = None

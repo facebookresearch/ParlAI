@@ -8,6 +8,7 @@ install:
     - python setup.py develop
     - pip install gitpython nltk  # needed for some tests
     - pip install regex scipy scikit-learn pexpect  # tfidf-retriever dependencies
+    - pip install sphinx sphinx_rtd_theme  # doc generation
     # install pytorch non-cuda version
     - pip install torch torchvision --progress-bar off
     # Install mturk deps

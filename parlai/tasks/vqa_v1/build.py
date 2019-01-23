@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
@@ -30,7 +28,7 @@ def build(opt):
         fname4 = 'Annotations_Val_mscoco.zip'
         fname5 = 'Annotations_Train_mscoco.zip'
 
-        url = 'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/'
+        url = 'http://visualqa.org/data/mscoco/vqa/'
         build_data.download(url + fname1, dpath, fname1)
         build_data.download(url + fname2, dpath, fname2)
         build_data.download(url + fname3, dpath, fname3)

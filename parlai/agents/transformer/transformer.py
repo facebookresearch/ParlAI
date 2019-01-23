@@ -1,8 +1,6 @@
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 from parlai.core.agents import Agent
 from parlai.core.utils import warn_once
@@ -25,12 +23,12 @@ warn_once(
 def add_common_cmdline_args(argparser):
     argparser.add_argument('-esz', '--embedding-size', type=int, default=300,
                            help='Size of all embedding layers')
-    argparser.add_argument('--n-layers', type=int, default=2)
-    argparser.add_argument('--ffn-size', type=int, default=300,
+    argparser.add_argument('-nl', '--n-layers', type=int, default=2)
+    argparser.add_argument('-hid', '--ffn-size', type=int, default=300,
                            help='Hidden size of the FFN layers')
     argparser.add_argument('--attention-dropout', type=float, default=0.0)
     argparser.add_argument('--relu-dropout', type=float, default=0.0)
-    argparser.add_argument('--n-heads', type=int, default=3)
+    argparser.add_argument('--n-heads', type=int, default=2)
     argparser.add_argument('--learn-positional-embeddings', type='bool', default=False)
     argparser.add_argument('--embeddings-scale', type='bool', default=True)
 

@@ -1,9 +1,7 @@
 ..
-  Copyright (c) 2017-present, Facebook, Inc.
-  All rights reserved.
-  This source code is licensed under the BSD-style license found in the
-  LICENSE file in the root directory of this source tree. An additional grant
-  of patent rights can be found in the PATENTS file in the same directory.
+  Copyright (c) Facebook, Inc. and its affiliates.
+  This source code is licensed under the MIT license found in the
+  LICENSE file in the root directory of this source tree.
 
 .. ParlAI documentation master file, created by
    sphinx-quickstart on Wed Apr 19 15:46:54 2017.
@@ -31,21 +29,10 @@ ParlAI is a one-stop-shop for dialog research.
    tutorial_tensorboard
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Tasks
+   :maxdepth: 2
+   :caption: Tasks & Model Zoo
 
    tasks
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Scripts
-
-   cli_usage
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Model Zoo
-
    zoo
 
 .. toctree::
@@ -70,8 +57,13 @@ ParlAI is a one-stop-shop for dialog research.
 
   repeat_label
   unigram_agent
-  remote_agent
-  coopgame_agent
+  example_seq2seq
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Scripts
+
+   cli_usage
 
 
 Indices and tables
