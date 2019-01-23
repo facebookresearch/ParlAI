@@ -121,7 +121,15 @@ class MockTurkManager():
             agent.set_status(AssignState.STATUS_IN_TASK)
             agent.conversation_id = 'in_task'
 
-        task_function(mturk_manager=self, opt=self.opt, workers=agents)
+        try:
+            task_function(mturk_manager=self, opt=self.opt, workers=agents)
+        except Exception as e:
+            import sys
+            import traceback
+            print(e)
+            traceback.print_exc(file=sys.stdout)
+            raise e
+
         for agent in agents:
             agent.mock_status = AssignState.STATUS_DONE
             agent.set_status(AssignState.STATUS_DONE)

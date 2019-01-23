@@ -83,7 +83,7 @@ class MainApp extends React.Component {
       task_done: false,
       messages: [],
       agent_id: 'NewWorker',
-      context: {},
+      task_data: {},
       volume: 1 // min volume is 0, max is 1, TODO pull from local-storage?
     };
   }
@@ -126,7 +126,14 @@ class MainApp extends React.Component {
     let socket_handler = null;
     if (!this.state.is_cover_page) {
       socket_handler = <SocketHandler
-        onMessageUpdate={() => this.setState({messages: this.state.messages})}
+        onNewMessage={(new_message) => {
+          this.state.messages.push(new_message);
+          this.setState({messages: this.state.messages});
+
+        }}
+        onNewTaskData={(new_task_data) => this.setState(
+          {task_data: Object.assign(this.state.task_data, new_task_data)}
+        )}
         onRequestMessage={() => this.setState({chat_state: 'text_input'})}
         onTaskDone={() => this.setState({
           task_done: true, chat_state: 'done', done_text: ''
@@ -179,7 +186,7 @@ class MainApp extends React.Component {
           initialization_status={this.state.initialization_status}
           is_cover_page={this.state.is_cover_page}
           frame_height={this.state.frame_height}
-          context={this.state.context}
+          task_data={this.state.task_data}
           world_state={this.state.world_state}
           v_id={this.state.agent_id}
           allDoneCallback={() => allDoneCallback()}
