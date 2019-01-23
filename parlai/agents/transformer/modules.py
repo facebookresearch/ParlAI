@@ -68,7 +68,6 @@ class TransformerMemNetModel(nn.Module):
         super().__init__()
         self.opt = opt
         self.pad_idx = dictionary[dictionary.null_token]
-        self.scores_norm = opt['scores_norm']
 
         # set up embeddings
         self.embeddings = _create_embeddings(
@@ -133,16 +132,6 @@ class TransformerMemNetModel(nn.Module):
 
         return weights, context_h
 
-    def _score(self, output, cands):
-        if cands.dim() == 2:
-            return torch.matmul(output, cands.t())
-        elif cands.dim() == 3:
-            return torch.bmm(output.unsqueeze(1),
-                             cands.transpose(1, 2)).squeeze(1)
-        else:
-            raise RuntimeError('Unexpected candidate dimensions {}'
-                               ''.format(cands.dim()))
-
     def forward(self, xs, mems, cands):
         weights, context_h = self.encode_context_memory(xs, mems)
         cands_h = self.encode_cand(cands)
@@ -151,17 +140,7 @@ class TransformerMemNetModel(nn.Module):
             context_h = context_h / context_h.norm(2, dim=1, keepdim=True)
             cands_h = cands_h / cands_h.norm(2, dim=1, keepdim=True)
 
-        scores = self._score(context_h, cands_h)
-        if self.scores_norm == 'dot':
-            pass
-        elif self.scores_norm == 'sqrt':
-            scores /= math.sqrt(self.opt['embedding_size'])
-        elif self.scores_norm == 'dim':
-            scores /= self.opt['embedding_size']
-        else:
-            raise ValueError('Invalid --scores-norm')
-
-        return scores
+        return context_h, cands_h
 
 
 def create_position_codes(n_pos, dim, out):

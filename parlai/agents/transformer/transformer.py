@@ -11,6 +11,9 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from .modules import TransformerMemNetModel
 from .modules import TransformerGeneratorModel
 
+import torch
+import math
+
 
 warn_once(
     "Public release transformer models are currently in beta. The name of "
@@ -103,6 +106,16 @@ class TransformerRankerAgent(TorchRankerAgent):
         kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
         return super().get_dialog_history(*args, **kwargs)
 
+    def _score(self, output, cands):
+        if cands.dim() == 2:
+            return torch.matmul(output, cands.t())
+        elif cands.dim() == 3:
+            return torch.bmm(output.unsqueeze(1),
+                             cands.transpose(1, 2)).squeeze(1)
+        else:
+            raise RuntimeError('Unexpected candidate dimensions {}'
+                               ''.format(cands.dim()))
+
     def score_candidates(self, batch, cand_vecs):
         # convoluted check that not all memories are empty
         if (self.opt['use_memories'] and batch.memory_vecs is not None and
@@ -111,11 +124,24 @@ class TransformerRankerAgent(TorchRankerAgent):
         else:
             mems = None
 
-        return self.model(
+        context_h, cands_h = self.model(
             xs=batch.text_vec,
             mems=mems,
             cands=cand_vecs,
         )
+
+        scores = self._score(context_h, cands_h)
+
+        if self.opt['scores_norm'] == 'dot':
+            pass
+        elif self.opt['scores_norm'] == 'sqrt':
+            scores /= math.sqrt(self.opt['embedding_size'])
+        elif self.opt['scores_norm'] == 'dim':
+            scores /= self.opt['embedding_size']
+        else:
+            raise ValueError('Invalid --scores-norm')
+
+        return scores
 
 
 class TransformerGeneratorAgent(TorchGeneratorAgent):

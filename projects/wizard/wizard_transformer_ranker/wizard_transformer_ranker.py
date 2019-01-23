@@ -8,6 +8,7 @@ from parlai.agents.transformer.transformer import TransformerRankerAgent
 from parlai.core.torch_agent import TorchAgent
 
 import numpy as np
+import torch
 
 
 class WizardTransformerRankerAgent(TransformerRankerAgent):
@@ -36,6 +37,10 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             '--join-history-tok', type=str, default=' ',
             help='Join history lines with this token, defaults to newline'
         )
+        agent.add_argument(
+            '--data-parallel', type='bool', default=False,
+            help='use model in data parallel, requires multiple gpus'
+        )
         return agent
 
     def __init__(self, opt, shared=None):
@@ -48,7 +53,9 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         self.chosen_sentence = (opt.get('chosen_sentence', False) and
                                 self.use_knowledge)
         self.knowledge_dropout = opt.get('knowledge_dropout', 0)
-        # TODO: add knowledge dropout capability
+        self.data_parallel = opt.get('data_parallel') and self.use_cuda
+        if self.data_parallel:
+            self.model = torch.nn.DataParallel(self.model)
 
     def vectorize_knowledge(self, observation):
         observation['memory_vecs'] = []
@@ -57,11 +64,14 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
 
         checked = observation.get('checked_sentence', '')
 
+        to_vectorize = []
+
         if checked and self.checked_sentence:
             to_vectorize = [checked]
         elif (self.knowledge_dropout == 0 or
                 observation.get('eval_labels') is not None):
-            to_vectorize = observation['knowledge'].split('\n')[:-1]
+            if 'knowledge' in observation:
+                to_vectorize = observation['knowledge'].split('\n')[:-1]
         else:
             to_vectorize = []
             if checked:
