@@ -307,10 +307,13 @@ class ChatBox extends React.Component {
 class ChatNavbar extends React.Component {
 
   state = {
+    // TODO: replace hardcoded initial chat state with API integration
     chat: [{msg: "hey", owner: 3}, {msg: "anyone else there?", owner: 3}]
   }
 
   render () {
+    // const displayChatBox = true;
+    const displayChatBox = this.props.displayChatBox || false;
     let nav_style = {
       position: 'absolute', backgroundColor: '#EEEEEE', borderColor: '#e7e7e7',
       height: 46, top: 0, borderWidth: '0 0 1px', borderRadius: 0, right: 0,
@@ -320,10 +323,10 @@ class ChatNavbar extends React.Component {
       <div style={nav_style}>
         <ConnectionIndicator {...this.props} />
         <VolumeControl {...this.props} />
-        <ChatBox
+        {displayChatBox && <ChatBox
           off_chat_messages={this.state.chat}
           onMessageSend={(msg) => this.setState({chat: [...this.state.chat, {msg, owner: 0}]})}
-          has_new_message={2}/>
+          has_new_message={2}/> }
       </div>
     );
   }
