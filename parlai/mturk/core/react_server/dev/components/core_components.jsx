@@ -190,40 +190,42 @@ class ChatBox extends React.Component {
     msg: ''
   }
 
-  scrollToBottom() {
+  smoothlyAnimateToBottom() {
     if (this.bottomAnchorRef) {
       this.bottomAnchorRef.scrollIntoView({ block: "end", behavior: 'smooth' });
     }
   }
 
-  jumpToBottom() {
+  instantlyJumpToBottom() {
     if (this.chatContainerRef) {
       this.chatContainerRef.scrollTop = this.chatContainerRef.scrollHeight;
     }
   }
 
   componentDidMount() {
-    this.scrollToBottom();
+    this.smoothlyAnimateToBottom();
   }
 
   componentDidUpdate(prevProps, prevState) {
-
+    // Use requestAnimationFrame to defer UI-based updates
+    // until the next browser paint
     if (prevState.hidden === true && this.state.hidden === false) {
-      requestAnimationFrame(() => this.jumpToBottom());
-    } else if (prevProps.off_chat_messages !== this.props.off_chat_messages) {
-      // cDU gets called before any renders, so let's defer the UI-based scroll update
-      // until after the layout is updated with the new chat message
       requestAnimationFrame(() => {
-        this.scrollToBottom();
+        this.instantlyJumpToBottom();
       });
-      
+    } else if (prevProps.off_chat_messages !== this.props.off_chat_messages) {
+      requestAnimationFrame(() => {
+        this.smoothlyAnimateToBottom();
+      });
     }
   }
 
+  // TODO: Replace with enhanced logic to determine if the
+  // chat message belongs to the current user.
   isOwnMessage = message => message.owner === 0;
 
   render() {
-    const unread = this.props.has_new_message;
+    const unreadCount = this.props.has_new_message;
     const messages = this.props.off_chat_messages || [];
 
     return <div style={{float: "right", marginRight: 7}}>
@@ -232,9 +234,9 @@ class ChatBox extends React.Component {
         ref={el => {this.buttonRef = el}}
       >
         Chat Messages&nbsp;
-        {!!unread &&
+        {!!unreadCount &&
           (<Badge style={{backgroundColor: "#d9534f", marginLeft: 3}}>
-            {unread}
+            {unreadCount}
           </Badge>)
         }
       </Button>
@@ -295,7 +297,6 @@ class ChatBox extends React.Component {
             </InputGroup>
           </FormGroup>
         </form>
-
       </Popover>
     </Overlay>
   </div>;
