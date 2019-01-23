@@ -307,8 +307,11 @@ class ChatBox extends React.Component {
 class ChatNavbar extends React.Component {
 
   state = {
-    // TODO: replace hardcoded initial chat state with API integration
-    chat: [{msg: "hey", owner: 3}, {msg: "anyone else there?", owner: 3}]
+    // TODO: replace hardcoded initial chat state with some API integration
+    chat: [
+      {msg: "hey", owner: 3},
+      {msg: "anyone else there?", owner: 3},      
+    ]
   }
 
   render () {
