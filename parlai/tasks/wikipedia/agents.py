@@ -37,6 +37,7 @@ class FullTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
+        num_eps = 0
         for subdir in os.listdir(path):
             if subdir == 'README.md':
                 continue
@@ -45,13 +46,16 @@ class FullTeacher(DialogTeacher):
                 wiki_file_path = os.path.join(subdir_path, wiki_file)
                 with open(wiki_file_path) as wf:
                     for article_json in wf:
+                        num_eps += 1
+                        if num_eps == 1000:
+                            return
                         article = json.loads(article_json)
                         title = article['title']
                         text = article['text']
                         if self.key_value:
                             yield (title, [text]), True
                         else:
-                            yield (text, None), True
+                            yield (text, ['']), True
 
     def get_extraction_instructions(self):
         '''If one wants to run extraction themselves on a raw wikipedia dump'''
@@ -96,7 +100,7 @@ class SummaryTeacher(DialogTeacher):
                 if self.key_value:
                     yield (title, [text]), True
                 else:
-                    yield (title + '\n' + text, None), True
+                    yield (title + '\n' + text, ['']), True
 
 
 class DefaultTeacher(SummaryTeacher):
