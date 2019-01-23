@@ -49,7 +49,6 @@ class TestHogwild(unittest.TestCase):
                 parser.set_defaults(numthreads=nt)
                 for bs in [1, 2, 3]:
                     parser.set_defaults(batchsize=bs)
-                    parser.set_defaults(batch_sort=(bs % 2 == 0))
                     tl = TrainLoop(parser)
                     report_valid, report_test = tl.train()
                     # test final valid and test evals
@@ -89,7 +88,6 @@ class TestHogwild(unittest.TestCase):
                 parser.set_defaults(numthreads=nt)
                 for bs in [1, 2, 3]:
                     parser.set_defaults(batchsize=bs)
-                    parser.set_defaults(batch_sort=(bs % 2 == 0))
                     report = eval_model(parser, printargs=False)
                     self.assertEqual(report['exs'], NUM_EXS)
         finally:
