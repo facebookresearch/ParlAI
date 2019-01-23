@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 #
 # Simple implementation of the starspace algorithm, slightly adapted for dialogue.
 # See: https://arxiv.org/abs/1709.03856
@@ -125,7 +123,8 @@ class StarspaceAgent(Agent):
         else:
             print("[ creating StarspaceAgent ]")
             # this is not a shared instance of this class, so do full init
-            if opt['dict_file'] is None and opt.get('model_file'):
+            if (opt.get('model_file') and (os.path.isfile(opt.get('model_file') + '.dict')
+                                           or (opt['dict_file'] is None))):
                 # set default dict-file if not set
                 opt['dict_file'] = opt['model_file'] + '.dict'
             # load dictionary and basic tokens & vectors

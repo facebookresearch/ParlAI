@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import unittest
 import io
@@ -81,6 +79,43 @@ class TestSeq2Seq(unittest.TestCase):
             lookuptable='all',
         )
 
+        self.assertTrue(
+            valid['ppl'] < 1.2,
+            "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+        )
+        self.assertTrue(
+            test['ppl'] < 1.2,
+            "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+        )
+
+    def test_beamsearch(self):
+        """Ensures beam search can generate the correct response"""
+        stdout, valid, test = _mock_train(
+            task='integration_tests:NocandidateTeacher',
+            model='seq2seq',
+            lr=LR,
+            batchsize=BATCH_SIZE,
+            num_epochs=NUM_EPOCHS,
+            numthreads=1,
+            no_cuda=True,
+            embeddingsize=16,
+            hiddensize=16,
+            rnn_class='gru',
+            attention='general',
+            gradient_clip=1.0,
+            dropout=0.0,
+            lookuptable='all',
+            beam_size=4,
+        )
+
+        self.assertTrue(
+            valid['bleu'] > 0.95,
+            "valid bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout)
+        )
+        self.assertTrue(
+            test['bleu'] > 0.95,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+        )
         self.assertTrue(
             valid['ppl'] < 1.2,
             "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)

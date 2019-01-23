@@ -1,0 +1,711 @@
+{% extends "core.html" %}
+
+{% block left_pane %}
+  <div id="left-pane" class="col-xs-3" style="height: {{frame_height}}px; background-color: #dff0d8;">
+    <h1>Chat with Knowledge!</h1>
+    <div id="left-top-pane" style="height: 40%; overflow:auto;">
+      <hr style="border-top: 1px solid #555" />
+        <span id="wizard-task-description" style="font-size: 14px">
+        </span>
+    </div>
+    <div id="left-bottom-pane" style="height: 40%;">
+      <hr style="border-top: 1px solid #555" />
+      <h4 id='chosen-topic-header' style='display: none'>Passage for Chosen Topic</h4>
+      <div id="relevant-topics" style="font-size: 14px; height: 90%; overflow: auto">
+      </div>
+      <button class="btn btn-primary" type="button" style='font-size: 16px; disabled: true; display: none' id="submit-chosen-topic-button">Pick Topic</button>
+    </div>
+  </div>
+  <div id="passages-pane" class="col-xs-4" style="height: {{frame_height}}px; background-color: #dff0d8;">
+    <h1>Relevant Information</h1>
+    <b><span style="color: blue; font-size: 14px;">Click on a topic below to expand it. Then, click the checkbox next to the sentence that you use to craft your response, or check 'No Sentence Used.'</span></b>
+    <div class=\'form-check\'>
+        <input class="form-check-input" type="checkbox" value="" id="no_passages_used">
+        <b>No Sentence Used</b>
+    </div>
+    <div id="passages-main-pane" style="height: 80%;">
+      <hr style="border-top: 1px solid #555" />
+        <h4>Information about your partner's message</h4>
+        <div id="partner-retrieved-passages" style="font-size: 16px; height: 40%; overflow:auto;">
+        </div>
+        <h4>Information about your message</h4>
+        <div id="self-retrieved-passages" style="font-size: 16px; height: 40%; overflow:auto;">
+        </div>
+    </div>
+  </div>
+{% endblock %}
+{% block right_pane %}
+<div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+    <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        <div id="message_thread" style="width: 100%">
+        </div>
+        <div id="waiting-for-message" class="row" style="margin-left: 0; margin-right: 0; display: none">
+            <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
+                <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
+                    <?xml version="1.0" encoding="utf-8"?><svg width='25px' height='25px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-hourglass"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g><path fill="none" stroke="#007282" stroke-width="5" stroke-miterlimit="10" d="M58.4,51.7c-0.9-0.9-1.4-2-1.4-2.3s0.5-0.4,1.4-1.4 C70.8,43.8,79.8,30.5,80,15.5H70H30H20c0.2,15,9.2,28.1,21.6,32.3c0.9,0.9,1.4,1.2,1.4,1.5s-0.5,1.6-1.4,2.5 C29.2,56.1,20.2,69.5,20,85.5h10h40h10C79.8,69.5,70.8,55.9,58.4,51.7z" class="glass"></path><clipPath id="uil-hourglass-clip1"><rect x="15" y="20" width="70" height="25" class="clip"><animate attributeName="height" from="25" to="0" dur="1.5s" repeatCount="indefinite" values="25;0;0" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="20" to="45" dur="1.5s" repeatCount="indefinite" values="20;45;45" keyTimes="0;0.5;1"></animate></rect></clipPath><clipPath id="uil-hourglass-clip2"><rect x="15" y="55" width="70" height="25" class="clip"><animate attributeName="height" from="0" to="25" dur="1.5s" repeatCount="indefinite" values="0;25;25" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="80" to="55" dur="1.5s" repeatCount="indefinite" values="80;55;55" keyTimes="0;0.5;1"></animate></rect></clipPath><path d="M29,23c3.1,11.4,11.3,19.5,21,19.5S67.9,34.4,71,23H29z" clip-path="url(#uil-hourglass-clip1)" fill="#ffab00" class="sand"></path><path d="M71.6,78c-3-11.6-11.5-20-21.5-20s-18.5,8.4-21.5,20H71.6z" clip-path="url(#uil-hourglass-clip2)" fill="#ffab00" class="sand"></path><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="180 50 50" repeatCount="indefinite" dur="1.5s" values="0 50 50;0 50 50;180 50 50" keyTimes="0;0.7;1"></animateTransform></g></svg>
+                </div>
+                <span style="font-size: 16px">Waiting for the next person to speak...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        <div id="response-type-idle" class="response-type-module" style="display:none">
+        </div>
+        <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="height: 50px; width: 100%; display: block; float: left; ">
+                <input id="id_text_input" type="text" style="width: 60%; height: 100%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
+                <button class="btn btn-success" style="width: 88px; height: 100%; font-size: 16px; float: left; margin-left: 15px; padding: 0px; disabled: true; display:none" id="id_done_button">Done</button>
+                <button class="btn btn-primary" style="width: 88px; height: 100%; font-size: 16px; float: right; margin-left: 15px; padding: 0px; disabled: false;" id="id_send_msg_button">Send</button>
+            </div>
+        </div>
+        <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <span id="inactive" style="font-size: 14pt;margin-right: 15px"></span>
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block additional_scripts %}
+<script type="text/javascript">
+
+    var exceed_min_turns = false;
+    var evaluated_message = true;
+
+    // number of times they sent a message and received a warning
+    var num_tries = 0;
+
+    //chosen topic
+    var relevant_topics = [];
+    var chosen_topic = '';
+    var chosen_topic_id = '';
+
+    //Passages
+    var retrieved_passages = {partner: [], self: [], chosen_topic: []};
+    var clicked_passages = {partner: {}, self: {}, chosen_topic: []};
+    var checked_sentences = {partner: {}, self: {}, chosen_topic: []};
+    var checked_passages = {partner: {}, self: {}, chosen_topic: []};
+
+    STOPWORDS = ['', "\'\'", "\'d", "\'ll", "\'m", "\'re", "\'s", "\'ve", '*',
+                ',', '--', '.', '?', '\`\`', 'a', 'about', 'above', 'after',
+                'again', 'against', 'ain', 'all', 'also', 'am', 'an', 'and',
+                'any', 'are', 'aren', 'as', 'at', 'be', 'because', 'been',
+                'before', 'being', 'below', 'between', 'both', 'but', 'by',
+                'can', 'couldn', 'd',  'did', 'didn', 'do', 'does', 'doesn',
+                'doing', 'don', 'down', 'during', 'each', 'few', 'for', 'from',
+                'further', 'had', 'hadn', 'has', 'hasn', 'have', 'haven',
+                'having', 'he', 'her', 'here', 'hers', 'herself', 'him',
+                'himself', 'his', 'how', 'i', 'if', 'in', 'into', 'is', 'isn',
+                'it', 'its', 'itself', 'just', 'know', 'll', 'm', 'ma', 'me',
+                'mightn', 'more', 'most', 'mustn', 'my', 'myself', "n't",
+                'needn', 'no', 'nor', 'not', 'now', 'o', 'of', 'off', 'on',
+                'once', 'only', 'or', 'other', 'our', 'ours', 'ourselves',
+                'out', 'over', 'own', 'people', 're', 'really', 's', 'same',
+                'see', 'shan', 'she', 'should', 'shouldn', 'so', 'some',
+                'such', 't', 'than', 'that', 'the', 'their', 'theirs', 'them',
+                'themselves', 'then', 'there', 'these', 'they', 'this',
+                'those', 'through', 'to', 'too', 'under', 'until', 'up', 've',
+                'very', 'want', 'was', 'wasn', 'we', 'were', 'weren', 'what',
+                'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'will',
+                'with', 'won', 'wouldn', 'y', 'you', 'your', 'yours',
+                'yourself', 'yourselves'];
+
+    OFFENSIVE_WORDS = ['2g1c', '2 girls 1 cup', 'acrotomophilia',
+                       'alabama hot pocket', 'alaskan pipeline', 'anal',
+                       'anilingus', 'anus', 'apeshit', 'arsehole', 'ass',
+                       'asshole', 'assmunch', 'auto erotic', 'autoerotic',
+                       'babeland', 'baby batter', 'baby juice', 'ball gag',
+                       'ball gravy', 'ball kicking', 'ball licking', 'ball sack',
+                       'ball sucking', 'bangbros', 'bareback', 'barely legal',
+                       'barenaked', 'bastard', 'bastardo', 'bastinado', 'bbw',
+                       'bdsm', 'beaner', 'beaners', 'beaver cleaver',
+                       'beaver lips', 'bestiality', 'big black', 'big breasts',
+                       'big knockers', 'big tits', 'bimbos', 'birdlock', 'bitch',
+                       'bitches', 'black cock', 'blonde action',
+                       'blonde on blonde action', 'blowjob', 'blow job',
+                       'blow your load', 'blue waffle', 'blumpkin', 'bollocks',
+                       'bondage', 'boner', 'boob', 'boobs', 'booty call',
+                       'brown showers', 'brunette action', 'bukkake', 'bulldyke',
+                       'bullet vibe', 'bullshit', 'bung hole', 'bunghole',
+                       'busty', 'butt', 'buttcheeks', 'butthole', 'camel toe',
+                       'camgirl', 'camslut', 'camwhore', 'carpet muncher',
+                       'carpetmuncher', 'chocolate rosebuds', 'circlejerk',
+                       'cleveland steamer', 'clit', 'clitoris', 'clover clamps',
+                       'clusterfuck', 'cock', 'cocks', 'coprolagnia', 'coprophilia',
+                       'cornhole', 'coon', 'coons', 'creampie', 'cum', 'cumming',
+                       'cunnilingus', 'cunt', 'darkie', 'date rape', 'daterape',
+                       'deep throat', 'deepthroat', 'dendrophilia', 'dick',
+                       'dildo', 'dingleberry', 'dingleberries', 'dirty pillows',
+                       'dirty sanchez', 'doggie style', 'doggiestyle',
+                       'doggy style', 'doggystyle', 'dog style', 'dolcett',
+                       'domination', 'dominatrix', 'dommes', 'donkey punch',
+                       'double dong', 'double penetration', 'dp action',
+                       'dry hump', 'dvda', 'eat my ass', 'ecchi', 'ejaculation',
+                       'erotic', 'erotism', 'escort', 'eunuch', 'faggot',
+                       'fecal', 'felch', 'fellatio', 'feltch', 'female squirting',
+                       'femdom', 'figging', 'fingerbang', 'fingering', 'fisting',
+                       'foot fetish', 'footjob', 'frotting', 'fuck', 'fuck buttons',
+                       'fuckin', 'fucking', 'fucktards', 'fudge packer',
+                       'fudgepacker', 'futanari', 'gang bang', 'gay sex',
+                       'genitals', 'giant cock', 'girl on', 'girl on top',
+                       'girls gone wild', 'goatcx', 'goatse', 'god damn',
+                       'gokkun', 'golden shower', 'goodpoop', 'goo girl',
+                       'goregasm', 'grope', 'group sex', 'g-spot', 'guro',
+                       'hand job', 'handjob', 'hard core', 'hardcore', 'hentai',
+                       'homoerotic', 'honkey', 'hooker', 'hot carl', 'hot chick',
+                       'how to kill', 'how to murder', 'huge fat', 'humping',
+                       'incest', 'intercourse', 'jack off', 'jail bait',
+                       'jailbait', 'jelly donut', 'jerk off', 'jigaboo',
+                       'jiggaboo', 'jiggerboo', 'jizz', 'juggs', 'kike',
+                       'kinbaku', 'kinkster', 'kinky', 'knobbing',
+                       'leather restraint', 'leather straight jacket',
+                       'lemon party', 'lolita', 'lovemaking', 'make me come',
+                       'male squirting', 'masturbate', 'menage a trois', 'milf',
+                       'missionary position', 'motherfucker', 'mound of venus',
+                       'mr hands', 'muff diver', 'muffdiving', 'nambla',
+                       'nawashi', 'negro', 'neonazi', 'nigga', 'nigger',
+                       'nig nog', 'nimphomania', 'nipple', 'nipples',
+                       'nsfw images', 'nude', 'nudity', 'nympho',
+                       'nymphomania', 'octopussy', 'omorashi', 'one cup two girls',
+                       'one guy one jar', 'orgasm', 'orgy', 'paedophile',
+                       'paki', 'panties', 'panty', 'pedobear', 'pedophile',
+                       'pegging', 'penis', 'phone sex', 'piece of shit',
+                       'pissing', 'piss pig', 'pisspig', 'playboy',
+                       'pleasure chest', 'pole smoker', 'ponyplay', 'poof',
+                       'poon', 'poontang', 'punany', 'poop chute', 'poopchute',
+                       'porn', 'porno', 'pornography', 'prince albert piercing',
+                       'pthc', 'pubes', 'pussy', 'queaf', 'queef', 'quim',
+                       'raghead', 'raging boner', 'rape', 'raping', 'rapist',
+                       'rectum', 'reverse cowgirl', 'rimjob', 'rimming',
+                       'rosy palm', 'rosy palm and her 5 sisters',
+                       'rusty trombone', 'sadism', 'santorum', 'scat',
+                       'schlong', 'scissoring', 'semen', 'sex', 'sexo',
+                       'sexy', 'shaved beaver', 'shaved pussy', 'shemale',
+                       'shibari', 'shit', 'shitblimp', 'shitty', 'shota',
+                       'shrimping', 'skeet', 'slanteye', 'slut', 's&m', 'smut',
+                       'snatch', 'snowballing', 'sodomize', 'sodomy', 'spic',
+                       'splooge', 'splooge moose', 'spooge', 'spread legs',
+                       'spunk', 'strap on', 'strapon', 'strappado', 'strip club',
+                       'style doggy', 'suck', 'sucks', 'suicide girls',
+                       'sultry women', 'swastika', 'swinger', 'tainted love',
+                       'taste my', 'tea bagging', 'threesome', 'throating',
+                       'tied up', 'tight white', 'tit', 'tits', 'titties',
+                       'titty', 'tongue in a', 'topless', 'tosser', 'towelhead',
+                       'tranny', 'tribadism', 'tub girl', 'tubgirl', 'tushy',
+                       'twat', 'twink', 'twinkie', 'two girls one cup',
+                       'undressing', 'upskirt', 'urethra play', 'urophilia',
+                       'vagina', 'venus mound', 'vibrator', 'violet wand',
+                       'vorarephilia', 'voyeur', 'vulva', 'wank', 'wetback',
+                       'wet dream', 'white power', 'wrapping men',
+                       'wrinkled starfish', 'xx', 'xxx', 'yaoi',
+                       'yellow showers', 'yiffy', 'zoophilia'];
+
+    function split_tokenize(text) {
+       var res = text.toLowerCase().replace(/[.|. . .|,|;|:|!|\?|\(|\)]/g, function (x) {
+         return ` ${x} `;
+       });
+       return res.split(' ');
+    }
+
+    function handle_new_message(new_message_id, message) {
+      if(message.text === undefined) {
+        return;
+      }
+      var agent_id = message.id;
+      var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+      if (displayed_messages.indexOf(new_message_id) !== -1) {
+        // This message has already been seen and put up into the chat
+        log(new_message_id + ' was a repeat message', 1);
+        return;
+      }
+      log('New message, ' + new_message_id + ' from agent ' + agent_id, 1);
+      displayed_messages.push(new_message_id);
+      if ("relevant_topics" in message) {
+        $("button#submit-chosen-topic-button").show();
+        relevant_topics = message.relevant_topics;
+        handle_relevant_topics(message.relevant_topics);
+        $("button#id_send_msg_button").addClass("disabled");
+        $("button#id_send_msg_button").prop("disabled", true);
+      }
+      else{
+        $("button#submit-chosen-topic-button").prop("disabled", true);
+      }
+      if (message_text !== '') {
+        if (agent_id !== cur_agent_id) {
+          var display_id = agent_id == 'SYSTEM' ? agent_id : "Partner";
+          add_message_to_conversation(display_id, message_text, false);
+        } else {
+          var display_id = agent_id == 'SYSTEM' ? agent_id : "You";
+          add_message_to_conversation(display_id, message_text, true);
+        }
+      }
+      if ("description" in message) {
+        $("span#wizard-task-description").html(message.description);
+      }
+      if ("partner_retrieved_passages" in message) {
+        clicked_passages['partner'] = {};
+        checked_sentences['partner'] = {};
+        checked_passages['partner'] = {};
+        var passages = message.partner_retrieved_passages;
+        retrieved_passages['partner'] = passages;
+        handle_retrieved_passages(message, passages, "partner");
+      }
+      if ("self_retrieved_passages" in message) {
+        num_tries = 0;
+        clicked_passages['self'] = {};
+        checked_sentences['self'] = {};
+        checked_passages['self'] = {};
+        var passages = message.self_retrieved_passages;
+        retrieved_passages['self'] = passages;
+        handle_retrieved_passages(message, passages, "self");
+      }
+      if ("chosen_topic_passages" in message) {
+        checked_sentences['chosen_topic'] = {};
+        clicked_passages['chosen_topic'] = {};
+        checked_passages['chosen_topic'] = {};
+        var passages = message.chosen_topic_passages;
+        retrieved_passages['chosen_topic'] = passages;
+        handle_retrieved_passages(message, passages, "chosen_topic");
+      }
+      if ("exceed_min_turns" in message && message.exceed_min_turns == true) {
+        exceed_min_turns = true
+        $("button#id_done_button").css("disabled", false);
+        $("button#id_done_button").css("display", "");
+        $("input#id_text_input").css("width", "40%");
+        $(window).resize(window_resize);
+      }
+      var any_checked = false;
+      $("input[type='checkbox'].sentence-checkbox").each(function(index) {
+        any_checked = any_checked || $(this).is(':checked');
+      });
+      var no_passages = $('input#no_passages_used').is(':checked');
+      $("button#id_send_msg_button").prop("disabled", !(any_checked && evaluated_message || no_passages));
+    }
+
+    /*
+      Setup the retrieved passages in the chat window
+    */
+    function handle_retrieved_passages(message, passages, person) {
+      var title_id_to_passage_id = {};
+      var sent_id_to_sentence = {};
+      var list = $(`<ul id='${person}-retrieved-passages-list'></ul>`);
+      for (var idx in passages) {
+        title_and_content = passages[idx];
+        var title = title_and_content[0];
+        var title_id = title.replace(/[.,\'\"\/#!$%\^&\*;:{}=\-_`~()\?]/g,"");
+        title_id = `${person}_${idx}_${title_id.replace(/\s{1,}/g,"_")}`;
+        var passage_id = title_id + '_passage';
+        title_id_to_passage_id[title_id] = passage_id;
+        var sentences = title_and_content[1];
+        var passage = "";
+
+        //setup for checking Sentences
+        for (var sent_idx = 0; sent_idx < sentences.length; sent_idx++) {
+          var sentence = sentences[sent_idx];
+          var sentence_id = `${person}_${idx}_${sent_idx}`;
+          passage += `<div class=\'form-check\'>
+                        <input class="form-check-input sentence-checkbox" type="checkbox" value="" id="${sentence_id}">
+                        <span id="${sentence_id}_label">${sentence}</span>
+                      </div>`;
+          sent_id_to_sentence[sentence_id] = sentence;
+        }
+
+        var link = `<div class=\'form-check\'>
+                      <input class="form-check-input" type="checkbox" value="" id="${title_id}_checkbox">
+                      <a href='#' id=\'${title_id}\'>${title}</a>
+                    </div>`;
+        var div = `<div class="passage-sentences" id=\'${passage_id}\' style=\'display:none; font-size:14px\'>${passage}</div>`;
+        var li = $(`<li id=\'${title_id}_li\'>${link}${div}</li>`);
+        list.append(li);
+      }
+      // If it's the chosen topic, we put it in a different place
+      if(person == 'chosen_topic') {
+        list.addClass('list-style-type');
+        list.prop('list-style-type', 'none');
+        $(`h4#chosen-topic-header`).show();
+        $(`div#relevant-topics`).html(list);
+      }
+      $(`div#${person}-retrieved-passages`).html(list);
+
+      // Set up Passage Toggling
+      for (var t_id in title_id_to_passage_id) {
+        var p_id = title_id_to_passage_id[t_id];
+
+        // Clicking a link shows the passage under it, hides others, and checks its box
+        // Also, unchecks any other sentences
+        $(`a#${t_id}`).on('click', function(pass_id, p, clicked, title_id, checked, sents) {
+          $("button#id_send_msg_button").prop("disabled", true); //because we switched topics
+          var topic = $(`a#${title_id}`).text();
+          clicked[p][title_id] = topic;
+          // Delete everything from checked_passages and checked_sentences
+          for (var pp in checked) {
+            for (var c in checked[pp]) {
+              delete checked[pp][c];
+            }
+            for (var c in sents[pp]) {
+              delete sents[pp][c];
+            }
+          }
+          $(`div#${pass_id}`).toggle();
+          $(`input#${title_id}_checkbox`).prop('checked', !($(`input#${title_id}_checkbox`).prop('checked')));
+          if ($(`input#${title_id}_checkbox`).is(':checked')) {
+            checked[p][title_id] = topic;
+            //Uncheck everything
+            $('input#no_passages_used').prop('checked', false);
+            $("input[type='checkbox']").each(function(i) {
+              var checkbox_id = $(this).attr('id');
+              if (checkbox_id != `${title_id}_checkbox`) {
+                $(this).prop('checked', false);
+              }
+            });
+          }
+          else{
+            delete checked[p][title_id];
+          }
+          $(`ul#${p}-retrieved-passages-list`).children().each(function(i) {
+            if ($(this).children('div.passage-sentences').attr('id') != pass_id) {
+              $(this).children('div.passage-sentences').hide();
+            }
+          });
+        }.bind($(`a#${t_id}`), p_id, person, clicked_passages, t_id, checked_passages, checked_sentences));
+
+        //Checking a box shows the passage under it, hides others, adds topic to clicked, adds topic to selected
+        // Also, unchecks other sentences
+        $(`input#${t_id}_checkbox`).change(function(pass_id, p, clicked, title_id, checked, sents) {
+          $("button#id_send_msg_button").prop("disabled", true); //because we switched topics
+            var topic = $(`a#${title_id}`).text();
+            clicked[p][title_id] = topic;
+            // Delete everything from checked_passages and checked_sentences
+            for (var pp in checked) {
+              for (var c in checked[pp]) {
+                delete checked[pp][c];
+              }
+              for (var c in sents[pp]) {
+                delete sents[pp][c];
+              }
+            }
+            if(this.is(':checked')){
+              $('input#no_passages_used').prop('checked', false);
+              $(`div#${pass_id}`).show();
+              checked[p][title_id] = topic;
+              $(`ul#${p}-retrieved-passages-list`).children().each(function(i) {
+                if ($(this).children('div.passage-sentences').attr('id') != pass_id) {
+                  $(this).children('div.passage-sentences').hide();
+                }
+              });
+            }
+            else {
+              $(`div#${pass_id}`).hide();
+            }
+        }.bind($(`input#${t_id}_checkbox`), p_id, person, clicked_passages, t_id, checked_passages, checked_sentences));
+
+      }
+
+      //Setup Sentence Checking
+      for (var sent_id in sent_id_to_sentence) {
+        $(`input#${sent_id}`).change(function(s_id, p, checked_sents, sent_id_to_sent) {
+          // Delete everything from checked_sentences
+          for (var pp in checked_sents) {
+            for (var c in checked_sents[pp]) {
+              delete checked_sents[pp][c];
+            }
+          }
+          if(this.is(':checked')) {
+            $("button#id_send_msg_button").prop("disabled", false); //because we checked a sentence
+            checked_sents[p][s_id] = $(`span#${s_id}_label`).text();
+
+            // Removing check from "No Passages Used"
+            $('input#no_passages_used').prop('checked', false);
+            // Remove check from other sentences
+            for (var sent_id in sent_id_to_sent) {
+              if (sent_id != s_id) {
+                if ($(`input#${sent_id}`).prop('checked') == true) {
+                  $(`input#${sent_id}`).prop('checked', false);
+                }
+              }
+            }
+          }
+        }.bind($(`input#${sent_id}`), sent_id, person, checked_sentences, sent_id_to_sentence));
+      }
+
+      // Disable send button unless any checkbox is selected
+      $(".form-check-input").change(function() {
+        var any_checked = false;
+        $("input[type='checkbox'].sentence-checkbox").each(function(index) {
+          any_checked = any_checked || $(this).is(':checked');
+        });
+        var no_passages = $('input#no_passages_used').is(':checked');
+        $("button#id_send_msg_button").prop("disabled", !(any_checked && evaluated_message || no_passages));
+      });
+    }
+
+    /*
+      Show the topics to choose from in the left pane
+    */
+    function handle_relevant_topics(topics) {
+      var list = `<h4>Topics</h4><ul id='relevant-topics-list'>`;
+      for (var topic_idx = 0; topic_idx < topics.length; topic_idx++) {
+        var topic = topics[topic_idx];
+        var topic_check = `<div class=\'form-check\'>
+                            <input class="form-check-input topic-checkbox" type="checkbox" value="${topic_idx}" id="${topic_idx}_topic">
+                            <span id="${topic_idx}_label">${topic}</span>
+                          </div>`;
+        var li = `<li id="${topic_idx}_li">${topic_check}</li>`;
+        list += li;
+      }
+      list += '</ul>';
+      $(`div#relevant-topics`).html(`${list}`);
+      //Disable Button if not checked
+      $(".topic-checkbox").change(function() {
+        var any_checked=false;
+        $(".topic-checkbox").each(function(index) {
+          any_checked = any_checked || $(this).is(':checked');
+        });
+        $("button#submit-chosen-topic-button").prop('disabled', !any_checked);
+      });
+      for (var topic_idx = 0; topic_idx < topics.length; topic_idx++) {
+        //Check one, uncheck others
+        $(`input#${topic_idx}_topic`).change(function(t_id, rel_tops) {
+          if($(this).is(':checked')) {
+            chosen_topic = rel_tops[t_id];
+            $("input[type='checkbox']").each(function(index) {
+              if($(this).attr('id') != `${t_id}_topic`){
+                $(this).prop('checked', false);
+              }
+            });
+          }
+        }.bind($(`input#${topic_idx}_topic`), topic_idx, relevant_topics));
+      }
+    }
+
+    /*
+      Uncheck all other checkboxes if 'No Passages Used' checked
+    */
+    $('input#no_passages_used').change(function(checked_sents, checked_passes) {
+      if($(this).is(':checked')) {
+        $("input[type='checkbox']").each(function(index) {
+          if($(this).attr('id') != 'no_passages_used') {
+            $(this).prop('checked', false);
+          }
+        });
+        for (var pp in checked_sents) {
+          for (var c in checked_passes[pp]) {
+            delete checked_passes[pp][c];
+          }
+          for (var c in checked_sents[pp]) {
+            delete checked_sents[pp][c];
+          }
+        }
+        $("button#id_send_msg_button").prop("disabled", false); //because we checked no passages used
+      }
+    }.bind($('input#no_passages_used'), checked_sentences, checked_passages));
+
+    /*
+      Button Click Functions
+    */
+    $("button#id_done_button").on('click', function () {
+        var text = "I am done with the chat and clicked the 'Done' button, thank you!";
+        if (!(text == '')) {
+            $("button#id_done_button").css("disabled", true);
+            new_message_id = uuidv4();
+
+            send_packet(
+                TYPE_MESSAGE,
+                {text: text,
+                 id: cur_agent_id,
+                 message_id: new_message_id,
+                 episode_done: true},
+                true,
+                true,
+                function(msg) {
+                    $("button#id_done_button").css("disabled", false);
+                    $("input#id_text_input").val("");
+                    $("div#response-type-text-input").css("display", "none");
+                    handle_new_message(new_message_id, msg.data);
+                }
+            );
+        }
+    });
+
+    $("button#submit-chosen-topic-button").on('click', function () {
+      new_message_id = uuidv4();
+      chosen_topic = chosen_topic.substring(0, chosen_topic.lastIndexOf('(')-1);
+      send_packet(
+          TYPE_MESSAGE,
+          {text: chosen_topic,
+           id: cur_agent_id,
+           message_id: new_message_id,
+           episode_done: false},
+          true,
+          true,
+          function(msg) {
+            $("button#submit-chosen-topic-button").hide();
+            var topic_span = `<h4>Chosen Topic</h4><span style="color:blue; font-size: 20px">${chosen_topic}</span>`;
+            $(`div#relevant-topics`).html(`${topic_span}`);
+            $("button#id_send_msg_button").removeClass("disabled");
+            $("button#id_send_msg_button").prop("disabled", false);
+            after_send_packet();
+          }
+        );
+    });
+
+    $("button#id_send_msg_button").off('click');
+
+
+    // Handle submitting a message
+    $("button#id_send_msg_button").on('click', function () {
+      var text = $("input#id_text_input").val();
+      //Check for copy paste
+      for (var person in retrieved_passages) {
+        var passages = retrieved_passages[person];
+        for (var idx in passages) {
+          var content = passages[idx][1];
+          for (var sent_idx = 0; sent_idx < content.length; sent_idx++) {
+            var sentence = content[sent_idx];
+            if (text.includes(sentence)) {
+              // alert('Please do not copy and paste text from the passages');
+              new_message_id = uuidv4();
+              var msg = {id: "SYSTEM", text: "Please do not copy and paste text from the sentence; edit your response, and try again."};
+              handle_new_message(new_message_id, msg);
+              $("div#waiting-for-message").css("display", "none");
+              return;
+            }
+          }
+        }
+      }
+      //check for did you know
+      var did_you_know = ['Did you know', 'did you know', 'did u know'];
+      var contains_did_u_know = did_you_know.some(dyk => text.includes(dyk));
+      if (contains_did_u_know) {
+        new_message_id = uuidv4();
+        var msg = {id: "SYSTEM", text: "Please try to be more engaging, and not use the phrase \'did you know\' :)."};
+        handle_new_message(new_message_id, msg);
+        $("div#waiting-for-message").css("display", "none");
+        return;
+      }
+      //check for turker words
+      var turk_words = ['Turker', 'turker', 'turk', 'Turk'];
+      var contains_turk = split_tokenize(text).filter(word => turk_words.indexOf(word) !== -1);
+      if (contains_turk.length > 0) {
+        new_message_id =  uuidv4();
+        var msg = {id: "SYSTEM", text: "Please do not mention the mechanical turk task in the conversation."};
+        handle_new_message(new_message_id, msg);
+        $("div#waiting-for-message").css("display", "none");
+        return;
+      }
+      //check for offensive language
+      var offensive = split_tokenize(text).filter(word => OFFENSIVE_WORDS.indexOf(word) !== -1);
+      if (offensive.length > 0) {
+        new_message_id =  uuidv4();
+        var msg = {id: "SYSTEM", text: `We have detected the following offensive language in your message: ${offensive.join(', ')}. Please edit and send again.`};
+        handle_new_message(new_message_id, msg);
+        $("div#waiting-for-message").css("display", "none");
+        return;
+      }
+      if (!(text == '')) {
+        //Get Clicked Passages
+        var passages = {};
+        var sentences = {};
+        var topics = {};
+        var num_checked = 0;
+        var checked_sentence = '';
+        for (var person in clicked_passages) {
+          var clicked = clicked_passages[person];
+          var checked_sents = checked_sentences[person];
+          var checked_topics = checked_passages[person];
+          //Clicked Passages
+          for (var title_id in clicked) {
+            passages[title_id] = clicked[title_id];
+          }
+          //Checked Sentence
+          for (var sentence_id in checked_sents) {
+            sentences[sentence_id] = checked_sents[sentence_id];
+            checked_sentence = checked_sents[sentence_id];
+            num_checked += 1;
+          }
+          //Checked Passage
+          for (var title_id in checked_topics) {
+            topics[title_id] = checked_topics[title_id];
+            num_checked += 1;
+          }
+        }
+        if (num_checked == 0 || $("input#no_passages_used").is(':checked')) {
+          sentences['no_passages_used'] = 'no_passages_used';
+          topics['no_passages_used'] = 'no_passages_used';
+        }
+
+        if (checked_sentence != '' && !$("input#no_passages_used").is(':checked') && num_tries == 0) {
+          //Check if there is word overlap
+          //Method:
+          // 1. remove stopwords
+          // 2. take first four chars of each word
+          // 3. if less than 2 word overlap, send a message
+          num_tries += 1;
+          var checked_sent_words = split_tokenize(checked_sentence).filter(word => STOPWORDS.indexOf(word) === -1).map(word => word.slice(0, 4));
+          var text_words = split_tokenize(text).filter(word => STOPWORDS.indexOf(word) === -1).map(word => word.slice(0, 4));
+          num_overlap = text_words.filter(word => checked_sent_words.indexOf(word) !== -1).length;
+          if (num_overlap < 2) {
+            new_message_id =  uuidv4();
+            var msg = {id: "SYSTEM", text: "WARNING: Are you sure you are using the right checked sentence? We have detected a lack of similarity between the checked sentence and your message (please press send again if you intended to send this message)."};
+            handle_new_message(new_message_id, msg);
+            $("div#waiting-for-message").css("display", "none");
+            return;
+          }
+        }
+        // Disable the send button
+        $("button#id_send_msg_button").prop("disabled", true);
+        new_message_id = uuidv4();
+        //reset checkboxes
+        $("input[type='checkbox']").each(function(index) {
+            $(this).prop('checked', false);
+        });
+
+        // Send a packet
+        send_packet(
+          TYPE_MESSAGE,
+          {
+            text: text,
+            clicked_passages: passages,
+            checked_sentences: sentences,
+            checked_passages: topics,
+            id: cur_agent_id,
+            message_id: new_message_id,
+            episode_done: false
+          },
+          true,
+          true,
+          function(msg) {
+            // On callback disable the button and clear the text field
+            $("button#id_send_msg_button").prop("disabled", true);
+            $("input#id_text_input").val("");
+            $("div#response-type-text-input").css("display", "none");
+            // push the message into the conversation
+            handle_new_message(new_message_id, msg.data);
+            after_send_packet();
+          }
+        );
+      }
+    });
+
+
+
+    // On window resize, ensure that the UI is properly displayed
+    function window_resize() {
+      log("The window was resized", 4);
+      // Set the text input width to match the bottom width minus space
+      // for the done button
+      $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
+      if(exceed_min_turns == true) {
+        $("input#id_text_input").width($("input#id_text_input").width() - 100);
+      }
+
+      // Set the chat window height to be the remainder after removing the
+      // height of the text pane
+      var left_height = $("div#left-pane").height();
+      var text_height = $("div#right-bottom-pane").outerHeight();
+      $("div#right-top-pane").height((left_height - text_height) - 20);
+    }
+</script>
+{% endblock %}

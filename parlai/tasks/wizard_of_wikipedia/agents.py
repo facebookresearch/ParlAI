@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """
     A dataset with conversations directly grounded with knowledge
     retrieved from Wikipedia. Contains 201k utterances from 22k
@@ -191,7 +189,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.label_type = opt.get('label_type', 'chosen_sent')
+        self.label_type = opt.get('label_type', 'response')
         self.include_knowledge = opt.get('include_knowledge', True)
         self.include_checked_sentence = opt.get('include_checked_sentence', False)
         self.num_exs = sum(self.len_episode(i) for i in range(len(self.data)))
@@ -204,7 +202,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         agent = argparser.add_argument_group('Wizard Dialog Knowledge arguments')
         agent.add_argument('--label-type', type=str,
                            choices=['response', 'chosen_sent'],
-                           default='chosen_sent',
+                           default='response',
                            help='whether to populate label field with the '
                            'wizard response, or the chosen sentence')
         agent.add_argument('--include-knowledge', type='bool',

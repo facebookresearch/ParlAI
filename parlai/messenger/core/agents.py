@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import time
 from queue import Queue
@@ -42,6 +40,7 @@ class MessengerAgent(Agent):
                 self.id,
                 act['payload'],
                 act.get('quick_replies', None),
+                act.get('persona_id', None)
             )
         else:
             if act['id'] != '':
@@ -51,6 +50,7 @@ class MessengerAgent(Agent):
             resp = self.manager.observe_message(
                 self.id, msg,
                 act.get('quick_replies', None),
+                act.get('persona_id', None)
             )
         try:
             mid = resp[0]['message_id']
@@ -61,9 +61,9 @@ class MessengerAgent(Agent):
                 '{} could not be extracted to an observed message'.format(resp)
             )
 
-    def observe_typing_on(self):
+    def observe_typing_on(self, persona_id=None):
         """Allow agent to observe typing indicator"""
-        self.manager.message_sender.typing_on(self.id)
+        self.manager.message_sender.typing_on(self.id, persona_id=persona_id)
 
     def put_data(self, message):
         """Put data into the message queue if it hasn't already been seen"""
@@ -83,10 +83,13 @@ class MessengerAgent(Agent):
                 'seq': seq,
                 'text': text,
             }
+            # the fields 'report_sender' and 'sticker_sender' below are
+            # internal features
             action = {
                 'episode_done': False,
                 'text': text,
                 'id': self.disp_id,
+                'report_sender': message['message'].get('report_sender', None),
                 'sticker_sender': message.get('sticker_sender', None),
                 'img_attempt': img_attempt,
             }

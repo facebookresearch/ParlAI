@@ -1,9 +1,7 @@
 ..
-  Copyright (c) 2017-present, Facebook, Inc.
-  All rights reserved.
-  This source code is licensed under the BSD-style license found in the
-  LICENSE file in the root directory of this source tree. An additional grant
-  of patent rights can be found in the PATENTS file in the same directory.
+  Copyright (c) Facebook, Inc. and its affiliates.
+  This source code is licensed under the MIT license found in the
+  LICENSE file in the root directory of this source tree.
 
 Creating an Agent
 =================
@@ -96,9 +94,6 @@ through a bAbI episode they are (bAbI task 1 has five examples per episode).
 For the seq2seq agent, each shared agent is keeping track of the previous
 examples they've seen in this same episode, since each observation does not
 repeat previously seen but related information--the agent has to remember it.
-Note that this only applies when the ``batch-sort`` commandline parameter is
-disabled (it's enabled by default), but since it can be useful to disable it
-sometimes we'll go into more detail here.
 
 For example, in the first entry in the episode the agent could get something like the following:
 "John is in the bathroom. Mary is in the kitchen. Where is Mary?"

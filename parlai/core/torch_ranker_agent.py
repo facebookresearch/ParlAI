@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import os
 
@@ -14,6 +12,7 @@ from torch import nn
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, padded_tensor, warn_once
+from parlai.core.distributed_utils import is_distributed
 
 
 class TorchRankerAgent(TorchAgent):
@@ -69,7 +68,7 @@ class TorchRankerAgent(TorchAgent):
             '-im', '--init-model', type=str,
             help="The path to a saved model of the appropriate type to initialize with")
 
-    def __init__(self, opt, shared):
+    def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary
         # (e.g., a .dict file)
         model_file, opt = self._get_model_file(opt)
@@ -125,8 +124,21 @@ class TorchRankerAgent(TorchAgent):
             self.model.cuda()
             self.rank_loss.cuda()
 
-        optim_params = [p for p in self.model.parameters() if p.requires_grad]
-        self.init_optim(optim_params)
+        if shared:
+            # We don't use get here because hasattr is used on optimizer later.
+            if 'optimizer' in shared:
+                self.optimizer = shared['optimizer']
+        else:
+            optim_params = [p for p in self.model.parameters() if p.requires_grad]
+            self.init_optim(optim_params)
+            self.build_lr_scheduler()
+
+        if shared is None and is_distributed():
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model,
+                device_ids=[self.opt['gpu']],
+                broadcast_buffers=False,
+            )
 
     def score_candidates(self, batch, cand_vecs):
         """Given a batch and candidate set, return scores (for ranking)"""
@@ -144,7 +156,7 @@ class TorchRankerAgent(TorchAgent):
             return
         batchsize = batch.text_vec.size(0)
         self.model.train()
-        self.optimizer.zero_grad()
+        self.zero_grad()
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
@@ -288,14 +300,19 @@ class TorchRankerAgent(TorchAgent):
                 raise ValueError(
                     "If using candidate source 'inline', then batch.candidate_vecs "
                     "cannot be None. If your task does not have inline candidates, "
-                    "consider using one of --candidates={'batch','fixed','vocab'}.")
+                    "consider using one of --{m}={{'batch','fixed','vocab'}}."
+                    "".format(m='candidates' if mode == 'train' else 'eval-candidates'))
 
             cands = batch.candidates
-            cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
+            cand_vecs = padded_3d(batch.candidate_vecs, self.NULL_IDX,
+                                  use_cuda=self.use_cuda)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
+                    label_vec_pad = (label_vec.new_zeros(cand_vecs[i].size(1))
+                                     .fill_(self.NULL_IDX))
+                    if cand_vecs[i].size(1) < len(label_vec):
+                        label_vec = label_vec[0:cand_vecs[i].size(1)]
                     label_vec_pad[0:label_vec.size(0)] = label_vec
                     label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
 
@@ -353,13 +370,8 @@ class TorchRankerAgent(TorchAgent):
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
+        shared['optimizer'] = self.optimizer
         return shared
-
-    def update_params(self):
-        """Do optim step and clip gradients if needed."""
-        if self.clip > 0:
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
-        self.optimizer.step()
 
     def reset_metrics(self):
         """Reset metrics."""
@@ -370,7 +382,8 @@ class TorchRankerAgent(TorchAgent):
 
     def report(self):
         """Report loss and mean_rank from model's perspective."""
-        m = super().report()
+        base = super().report()
+        m = {}
         examples = self.metrics['examples']
         if examples > 0:
             m['examples'] = examples
@@ -379,11 +392,8 @@ class TorchRankerAgent(TorchAgent):
             m['mean_rank'] = self.metrics['rank'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
-            if isinstance(v, float):
-                m[k] = round_sigfigs(v, 4)
-            else:
-                m[k] = v
-        return m
+            base[k] = round_sigfigs(v, 4)
+        return base
 
     def _get_model_file(self, opt):
         model_file = None

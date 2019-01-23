@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 import os
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.multi_agent_dialog.worlds import \
     MTurkMultiAgentDialogWorld, MTurkMultiAgentDialogOnboardWorld
 from parlai.agents.local_human.local_human import LocalHumanAgent
-from task_config import task_config
+from parlai.mturk.tasks.multi_agent_dialog.task_config import task_config
 
 
 def main():
@@ -74,7 +72,7 @@ def main():
             mturk_agent_2 = workers[1]
 
             # Create the local human agents
-            human_agent_1 = LocalHumanAgent(opt=None)
+            human_agent_1 = LocalHumanAgent(opt={})
             human_agent_1.id = human_agent_1_id
 
             world = MTurkMultiAgentDialogWorld(

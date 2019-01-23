@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 task_config = {}
 
+
+task_config['frontend_version'] = 1
 
 """A short and descriptive title about the kind of task the HIT contains.
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,

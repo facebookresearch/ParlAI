@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 import json
 import logging
 import requests
@@ -147,7 +145,7 @@ class MessageSender():
         """
         self.auth_args = {'access_token': secret_token}
 
-    def send_sender_action(self, receiver_id, action):
+    def send_sender_action(self, receiver_id, action, persona_id=None):
         api_address = 'https://graph.facebook.com/v2.6/me/messages'
         message = {
             'recipient': {
@@ -155,6 +153,8 @@ class MessageSender():
             },
             "sender_action": action,
         }
+        if persona_id is not None:
+            message['persona_id'] = persona_id
         requests.post(
             api_address,
             params=self.auth_args,
@@ -164,10 +164,11 @@ class MessageSender():
     def send_read(self, receiver_id):
         self.send_sender_action(receiver_id, "mark_seen")
 
-    def typing_on(self, receiver_id):
-        self.send_sender_action(receiver_id, "typing_on")
+    def typing_on(self, receiver_id, persona_id=None):
+        self.send_sender_action(receiver_id, "typing_on", persona_id)
 
-    def send_fb_payload(self, receiver_id, payload, quick_replies=None):
+    def send_fb_payload(self, receiver_id, payload,
+                        quick_replies=None, persona_id=None):
         """Sends a payload to messenger, processes it if we can"""
         api_address = 'https://graph.facebook.com/v2.6/me/messages'
         if payload['type'] == 'list':
@@ -189,6 +190,8 @@ class MessageSender():
         if quick_replies is not None:
             quick_replies = [create_reply_option(x, x) for x in quick_replies]
             message['message']['quick_replies'] = quick_replies
+        if persona_id is not None:
+            payload['persona_id'] = persona_id
         response = requests.post(
             api_address,
             params=self.auth_args,
@@ -211,7 +214,7 @@ class MessageSender():
         return result
 
     def send_fb_message(self, receiver_id, message, is_response,
-                        quick_replies=None):
+                        quick_replies=None, persona_id=None):
         """Sends a message directly to messenger"""
         api_address = 'https://graph.facebook.com/v2.6/me/messages'
         if quick_replies is not None:
@@ -228,6 +231,8 @@ class MessageSender():
                 },
                 "message": m
             }
+            if persona_id is not None:
+                payload['persona_id'] = persona_id
             response = requests.post(
                 api_address,
                 params=self.auth_args,
@@ -249,6 +254,33 @@ class MessageSender():
             )
             results.append(result)
         return results
+
+    def create_persona(self, name, image_url):
+        """Creates a new persona and returns persona_id"""
+        api_address = 'https://graph.facebook.com/me/personas'
+        message = {'name': name, "profile_picture_url": image_url}
+        response = requests.post(
+            api_address,
+            params=self.auth_args,
+            json=message,
+        )
+        result = response.json()
+        shared_utils.print_and_log(
+            logging.INFO,
+            '"Facebook response from create persona: {}"'.format(result)
+        )
+        return result
+
+    def delete_persona(self, persona_id):
+        """Deletes the persona"""
+        api_address = 'https://graph.facebook.com/' + persona_id
+        response = requests.delete(api_address, params=self.auth_args)
+        result = response.json()
+        shared_utils.print_and_log(
+            logging.INFO,
+            '"Facebook response from delete persona: {}"'.format(result)
+        )
+        return result
 
     def upload_fb_attachment(self, payload):
         """Uploads an attachment using the Attachment Upload API and returns

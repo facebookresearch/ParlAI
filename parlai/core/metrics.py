@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """Provides standard metric evaluations for dialog.
 Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 between processes.
@@ -15,7 +13,6 @@ from parlai.core.utils import round_sigfigs, no_lock
 from collections import Counter
 
 import re
-import math
 
 try:
     from nltk.translate import bleu_score as nltkbleu
@@ -133,40 +130,6 @@ def aggregate_metrics(reporters):
     if num_tasks > 0:
         for k in sums.keys():
             m[k] = round_sigfigs(sums[k] / num_tasks, 4)
-    return m
-
-
-def compute_time_metrics(world, max_time):
-    # Determine time_left and num_epochs
-    exs_per_epoch = world.num_examples() if world.num_examples() else 0
-    num_epochs = world.opt.get('num_epochs', 0)
-    max_exs = exs_per_epoch * num_epochs
-    total_exs = world.get_total_exs()
-
-    m = {}
-    if (max_exs > 0 and total_exs > 0) or max_time > 0:
-        m = {}
-        time_left = None
-        time = world.get_time()
-        total_epochs = world.get_total_epochs()
-
-        if (num_epochs > 0 and total_exs > 0 and max_exs > 0):
-            exs_per_sec = time / total_exs
-            time_left = (max_exs - total_exs) * exs_per_sec
-        if max_time > 0:
-            other_time_left = max_time - time
-            if time_left is not None:
-                time_left = min(time_left, other_time_left)
-            else:
-                time_left = other_time_left
-        if time_left is not None:
-            m['time_left'] = math.floor(time_left)
-        if num_epochs > 0:
-            if (total_exs > 0 and exs_per_epoch > 0):
-                display_epochs = int(total_exs / exs_per_epoch)
-            else:
-                display_epochs = total_epochs
-            m['num_epochs'] = display_epochs
     return m
 
 
@@ -305,13 +268,13 @@ class Metrics(object):
                     self.metrics['f1'] / max(1, self.metrics['f1_cnt']),
                     4
                 )
-                if self.flags['has_text_cands']:
-                    for k in self.eval_pr:
-                        m['hits@' + str(k)] = round_sigfigs(
-                            self.metrics['hits@' + str(k)] /
-                            max(1, self.metrics['hits@_cnt']),
-                            3
-                        )
+            if self.flags['has_text_cands']:
+                for k in self.eval_pr:
+                    m['hits@' + str(k)] = round_sigfigs(
+                        self.metrics['hits@' + str(k)] /
+                        max(1, self.metrics['hits@_cnt']),
+                        3
+                    )
             for k in self.metrics_list:
                 if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':
                     m[k] = round_sigfigs(

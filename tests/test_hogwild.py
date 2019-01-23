@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
-from parlai.scripts.train_model import TrainLoop, run_eval, setup_args
+from parlai.scripts.train_model import TrainLoop, run_eval, setup_args, load_eval_world
 from parlai.scripts.eval_model import eval_model
 
 import unittest
@@ -51,21 +49,19 @@ class TestHogwild(unittest.TestCase):
                 parser.set_defaults(numthreads=nt)
                 for bs in [1, 2, 3]:
                     parser.set_defaults(batchsize=bs)
-                    parser.set_defaults(batch_sort=(bs % 2 == 0))
                     tl = TrainLoop(parser)
                     report_valid, report_test = tl.train()
                     # test final valid and test evals
                     self.assertEqual(report_valid['exs'], NUM_EXS)
                     self.assertEqual(report_test['exs'], NUM_EXS)
 
-                    report_full, _world = run_eval(
-                        tl.agent, tl.opt, 'valid',
-                        max_exs=-1, valid_world=tl.valid_world
-                    )
+                    valid_world = load_eval_world(tl.agent, tl.opt, 'valid')
+                    report_full = run_eval(valid_world, tl.opt, 'valid', max_exs=-1)
                     self.assertEqual(report_full['exs'], NUM_EXS)
-                    report_part, _world = run_eval(
-                        tl.agent, tl.opt, 'valid',
-                        max_exs=NUM_EXS / 5, valid_world=tl.valid_world
+                    valid_world = load_eval_world(tl.agent, tl.opt, 'valid')
+                    report_part = run_eval(
+                        valid_world, tl.opt, 'valid',
+                        max_exs=NUM_EXS / 5
                     )
                     self.assertTrue(report_part['exs'] < NUM_EXS)
         finally:
@@ -92,7 +88,6 @@ class TestHogwild(unittest.TestCase):
                 parser.set_defaults(numthreads=nt)
                 for bs in [1, 2, 3]:
                     parser.set_defaults(batchsize=bs)
-                    parser.set_defaults(batch_sort=(bs % 2 == 0))
                     report = eval_model(parser, printargs=False)
                     self.assertEqual(report['exs'], NUM_EXS)
         finally:

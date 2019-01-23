@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 try:
     import regex  # noqa: F401
@@ -88,6 +86,15 @@ class TfidfRetrieverAgent(Agent):
                   defaults to true for DBs built using ParlAI; for the DrQA \
                   wiki dump, it is necessary to set this to False to \
                   index into the DB appropriately')
+        parser.add_argument('--tfidf-context-length', default=-1, type=int,
+                            help='Number of past utterances to remember when '
+                                 'building flattened batches of data in multi-'
+                                 'example episodes.')
+        parser.add_argument('--tfidf-include-labels',
+                            default=True, type='bool',
+                            help='Specifies whether or not to include labels '
+                                 'as past utterances when building flattened '
+                                 'batches of data in multi-example episodes.')
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -126,9 +133,9 @@ class TfidfRetrieverAgent(Agent):
         self.cands_hash = {}  # cache for candidates
         self.triples_to_add = []  # in case we want to add more entries
 
-        clen = opt.get('context_length', -1)
+        clen = opt.get('tfidf_context_length', -1)
         self.context_length = clen if clen >= 0 else None
-        self.include_labels = opt.get('include_labels', True)
+        self.include_labels = opt.get('tfidf_include_labels', True)
         self.reset()
 
     def reset(self):

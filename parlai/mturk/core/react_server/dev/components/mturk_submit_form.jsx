@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import $ from 'jquery';
 
 // If we're in the amazon turk HIT page (within an iFrame) return True
 function inMTurkHITPage() {

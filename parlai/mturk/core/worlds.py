@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 from parlai.core.worlds import World
 
@@ -20,12 +18,25 @@ class MTurkDataWorld(World):
         }
 
         for agent in workers:
+            messages = agent.get_messages()
+            # filter out peer feedback
+            save_messages = [m for m in messages
+                             if m.get('text') != '[PEER_REVIEW]']
             save_data['worker_data'][agent.worker_id] = {
                 'worker_id': agent.worker_id,
                 'agent_id': agent.id,
                 'assignment_id': agent.assignment_id,
-                'messages': agent.get_messages(),
+                'messages': save_messages,
+                'given_feedback': agent.feedback,
             }
+
+        # In simple pairing case, attach the feedback right here
+        if len(workers) == 2:
+            data = save_data['worker_data']
+            a_0 = workers[0]
+            a_1 = workers[1]
+            data[a_0.worker_id]['received_feedback'] = a_1.feedback
+            data[a_1.worker_id]['received_feedback'] = a_0.feedback
 
         return save_data
 
