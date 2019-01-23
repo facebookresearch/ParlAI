@@ -9,10 +9,14 @@ from parlai.core.torch_agent import TorchAgent
 
 import numpy as np
 
+
 class WizardTransformerRankerAgent(TransformerRankerAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
+        argparser.set_defaults(
+            learningrate=0.0001,
+        )
         super(WizardTransformerRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Wizard Transformer Ranker Arguments')
         agent.add_argument(
@@ -32,10 +36,6 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             '--join-history-tok', type=str, default=' ',
             help='Join history lines with this token, defaults to newline'
         )
-        agent.add_argument(
-            '-lr', '--learningrate', type=float, default=0.0001,
-            help='learning rate'
-        )
         return agent
 
     def __init__(self, opt, shared=None):
@@ -51,31 +51,33 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         # TODO: add knowledge dropout capability
 
     def vectorize_knowledge(self, observation):
+        observation['memory_vecs'] = []
         if not self.use_knowledge:
-            observation['memory_vecs'] = []
             return observation
-        if self.chosen_sentence:
-            if observation.get('checked_sentence'):
-                observation['memory_vecs'] = [
-                    self._vectorize_text(
-                        observation['checked_sentence'],
-                        truncate=self.truncate
-                    )
-                ]
+
+        checked = observation.get('checked_sentence', '')
+
+        if checked and self.checked_sentence:
+            to_vectorize = [checked]
+        elif (self.knowledge_dropout == 0 or
+                observation.get('eval_labels') is not None):
+            to_vectorize = observation['knowledge'].split('\n')[:-1]
         else:
+            to_vectorize = []
+            if checked:
+                to_vectorize.append(checked)
             if observation.get('knowledge'):
-                observation['memory_vecs'] = []
-                for line in observation['knowledge'].split('\n'):
+                for line in observation['knowledge'].split('\n')[:-1]:
                     keep = 1
                     if not observation.get('eval_labels'):
                         keep = np.random.binomial(1, 1 - self.knowledge_dropout)
                     if keep:
-                        observation['memory_vecs'].append(
-                            self._vectorize_text(
-                                line,
-                                truncate=self.truncate
-                            )
-                        )
+                        to_vectorize.append(line)
+
+        observation['memory_vecs'] = [
+            self._vectorize_text(line, truncate=self.truncate) for line in
+            to_vectorize
+        ]
 
         return observation
 
