@@ -28,11 +28,16 @@ class StarspaceAgent(TorchRankerAgent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
+        # Override TorchAgent and TorchRankerAgent defaults
+        argparser.set_defaults(
+            candidates='custom',
+            embeddingsize=300,
+            eval_candidates='inline',
+            learningrate=0.1,
+            truncate=10000,
+        )
         TorchRankerAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('StarSpace Arguments')
-        agent.add_argument(
-            '-esz', '--embeddingsize', type=int, default=128,
-            help='size of the token embeddings')
         agent.add_argument(
             '-enorm', '--embeddingnorm', type=float, default=10,
             help='max norm of word embeddings')
@@ -42,9 +47,6 @@ class StarspaceAgent(TorchRankerAgent):
         agent.add_argument(
             '--lins', default=0, type=int,
             help='If set to 1, add a linear layer between lhs and rhs.')
-        agent.add_argument(
-            '-lr', '--learningrate', type=float, default=0.1,
-            help='learning rate')
         agent.add_argument(
             '-margin', '--margin', type=float, default=0.1,
             help='margin')
@@ -63,16 +65,6 @@ class StarspaceAgent(TorchRankerAgent):
         agent.add_argument(
             '-cs', '--cache-size', type=int, default=1000,
             help='size of negative sample cache to draw from')
-        agent.add_argument(
-            '-cands', '--candidates', type=str, default='custom',
-            choices=['batch', 'inline', 'fixed', 'vocab', 'custom'],
-            help='The source of candidates during training '
-                 '(see TorchRankerAgent._build_candidates() for details).')
-        agent.add_argument(
-            '-ecands', '--eval-candidates', type=str, default='inline',
-            choices=['batch', 'inline', 'fixed', 'vocab', 'custom'],
-            help='The source of candidates during evaluation (defaults to the same'
-                 'value as --candidates if no flag is given)')
         StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
@@ -181,6 +173,8 @@ class StarspaceAgent(TorchRankerAgent):
             ye.view(-1, xe.size(-1)),
             y.view(-1)
         )
+        if loss.item() < 0.0001:
+            import pdb; pdb.set_trace()
 
         loss.backward()
         self.optimizer.step()
