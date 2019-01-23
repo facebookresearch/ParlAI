@@ -1,0 +1,38 @@
+from argparse import ArgumentParser
+import json
+import os
+
+from parlai.core.teachers import FbDialogTeacher
+from parlai.projects.metadialog.utils import (
+    Parley,
+    extract_fb_episodes,
+    add_person_tokens,
+    episode_to_examples,
+)
+
+def setup_args():
+    argparser = ArgumentParser()
+    argparser.add_argument('-if', '--infile', type=str,
+        default=os.environ['PARLAIHOME'] + '/data/ConvAI2/valid_self_original.txt')
+    argparser.add_argument('-of', '--outfile', type=str,
+        default=os.environ['PARLAIHOME'] + '/data/convai2meta/valid.txt')
+    argparser.add_argument('-histsz', '--history-size', type=int, default=-1,
+        help="The number of turns to concatenate and include in the prompt."
+             "In general, include all turns and filter in the teacher.")
+    config = vars(argparser.parse_args())
+    return config
+
+def main(config):
+    """Converts a Fbdialog file of episodes into a json file of Parley examples"""
+    examples = []
+    for episode in extract_fb_episodes(config['infile']):
+        examples.extend(episode_to_examples(episode, config['history_size']))
+
+    with open(config['outfile'], 'w') as outfile:
+        for ex in examples:
+            outfile.write(json.dumps(ex.to_dict()) + '\n')
+
+
+if __name__ == '__main__':
+    config = setup_args()
+    main(config)

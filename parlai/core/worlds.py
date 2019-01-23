@@ -644,7 +644,6 @@ class BatchWorld(World):
         # During evaluation, complete one task at a time
         warn_once("Using modified BatchWorld to support MultitaskBatchWorld")
         teacher, learner = self.worlds[0].get_agents()
-        import pdb; pdb.set_trace()
         if learner.multitask:
             # Select subtask
             if self.opt['datatype'] == 'train':

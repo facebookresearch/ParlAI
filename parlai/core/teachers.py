@@ -196,12 +196,8 @@ class FixedDialogTeacher(Teacher):
                 incl = opt.get('include_labels', True)
                 flatdata = flatten(ordered_teacher,
                                    context_length=clen, include_labels=incl)
-                warn_once("Not sorting data anymore in DialogTeacher as of 11/22!")
-                # self.sorted_data = sort_data(flatdata)
-                self.sorted_data = flatdata
-                if opt.get('shuffle_examples', False):
-                    random.Random(42).shuffle(self.sorted_data)
 
+                self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
                 # one fixed-seed shuffle keeps determinism but makes sure that
                 # examples aren't presented in sorted order (bad for `-vme`)

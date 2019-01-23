@@ -187,15 +187,7 @@ class TorchAgent(Agent):
             '-lr', '--learningrate', type=float, default=1,
             help='learning rate')
         agent.add_argument(
-            '--scheduler', type=str, default='reduce_on_plateau',
-            choices=['reduce_on_plateau', 'inverse_decay'],
-            help='learning rate scheduler')
-        # TODO: move scheduler-specific flags elsewhere
-        agent.add_argument(
             '--init-lr', type=float, default=1e-5)
-        agent.add_argument(
-            '--warmup-steps', type=int, default=100)
-        # TODO: end
         agent.add_argument(
             '-clip', '--gradient-clip', type=float, default=0.1,
             help='gradient clipping using l2 norm')
@@ -1085,10 +1077,7 @@ class TorchAgent(Agent):
 
         # take a step
         if is_training:
-            # update lr if applicable (do before step to adjust for warmup)
             self.total_steps += 1
-            if self.opt['scheduler'] == 'inverse_decay':
-                self.scheduler.step(self.total_steps)
             output = self.train_step(batch)
         else:
             output = self.eval_step(batch)
