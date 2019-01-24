@@ -599,10 +599,8 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 self.dataset = class_name(opt)
             if self.ordered or not self.training:
                 data_sampler = sampler.SequentialSampler(self.dataset)
-                pin_memory = False
             else:
                 data_sampler = sampler.RandomSampler(self.dataset)
-                pin_memory = True
 
             self.pytorch_dataloader = DataLoader(
                 self.dataset,
@@ -610,7 +608,7 @@ class PytorchDataTeacher(FixedDialogTeacher):
                 sampler=data_sampler,
                 num_workers=self.num_workers,
                 collate_fn=self.collate_fn,
-                pin_memory=pin_memory,
+                pin_memory=False,
                 drop_last=False,
             )
 
