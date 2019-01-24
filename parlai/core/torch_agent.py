@@ -467,13 +467,13 @@ class TorchAgent(Agent):
         elif self.opt['lr_scheduler'] == 'invsqrt':
             # this is a training step lr scheduler, nothing to adjust in validation
             pass
-        elif self.opt['lr_schedule'] == 'none':
+        elif self.opt['lr_scheduler'] == 'none':
             # no adjustments, do nothing
             pass
         else:
             raise ValueError(
                 "Don't know how to work with lr scheduler '{}'"
-                .format(self.opt['lr_schedulre'])
+                .format(self.opt['lr_scheduler'])
             )
 
     def _get_embtype(self, emb_type):
