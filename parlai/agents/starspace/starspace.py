@@ -13,6 +13,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.thread_utils import SharedTable
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_agent import Output, TorchAgent
+from parlai.core.utils import padded_3d
 from .modules import Starspace
 
 import torch
@@ -89,6 +90,7 @@ class StarspaceAgent(TorchRankerAgent):
         )
         self.reset()
 
+    # TODO: undo these comments and the receive metrics function, just stashing
     # @staticmethod
     # def model_version():
     #     """Return current version of this model, counting up from 0.
@@ -291,13 +293,18 @@ class StarspaceAgent(TorchRankerAgent):
             return new_x
 
         rate = self.opt.get('input_dropout')
-
-        # NOTE: we drop out uniformly along the batch so that we don't need
-        # to perform padding again
         xs2 = dropout(xs, rate)
         ys2 = dropout(ys, rate)
-        negs2 = dropout(negs.view(-1, negs.size(-1)), rate)
-        negs2 = negs2.view(negs.size(0), negs.size(1), -1)
+        new_negs = []
+        # TODO: fix input dropout for batching
+        for i in range(negs.size(1)):
+            neg_tmp = dropout(negs[:, i, :], rate)
+            new_negs.append(neg_tmp)
+        negs2 = padded_3d(
+            new_negs,
+            self.dict.tok2ind[self.dict.null_token],
+            self.use_cuda
+        ).transpose(0, 1)
 
         return xs2, ys2, negs2
 
