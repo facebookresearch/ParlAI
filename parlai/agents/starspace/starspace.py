@@ -30,12 +30,6 @@ class StarspaceAgent(TorchRankerAgent):
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
         # Override TorchAgent and TorchRankerAgent defaults
-        argparser.set_defaults(
-            candidates='custom',
-            eval_candidates='inline',
-            learningrate=0.1,
-            truncate=10000,
-        )
         TorchRankerAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('StarSpace Arguments')
         agent.add_argument(
@@ -70,6 +64,12 @@ class StarspaceAgent(TorchRankerAgent):
             '-cs', '--cache-size', type=int, default=1000,
             help='size of negative sample cache to draw from')
         StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
+        argparser.set_defaults(
+            candidates='custom',
+            eval_candidates='inline',
+            learningrate=0.1,
+            truncate=10000,
+        )
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -177,7 +177,6 @@ class StarspaceAgent(TorchRankerAgent):
             ye.view(-1, xe.size(-1)),
             y.view(-1)
         )
-
         loss.backward()
         self.optimizer.step()
         scores = nn.CosineSimilarity(dim=-1).forward(xe, ye)

@@ -490,4 +490,5 @@ class StarspaceAgent(Agent):
         self.model.load_state_dict(data['model'])
         self.reset()
         self.optimizer.load_state_dict(data['optimizer'])
-        self.opt = self.override_opt(data['opt'])
+
+        #self.opt = self.override_opt(data['opt'])
