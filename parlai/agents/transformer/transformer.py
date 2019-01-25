@@ -72,7 +72,7 @@ class TransformerRankerAgent(TorchRankerAgent):
 
         cls.dictionary_class().add_cmdline_args(argparser)
 
-        super(cls, TransformerRankerAgent).add_cmdline_args(argparser)
+        super(TransformerRankerAgent, cls).add_cmdline_args(argparser)
         return agent
 
     def build_model(self, states=None):
