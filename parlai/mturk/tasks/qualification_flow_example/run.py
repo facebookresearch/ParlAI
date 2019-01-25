@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.qualification_flow_example.worlds import \
     QualificationFlowOnboardWorld, QualificationFlowSoloWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
 import parlai.mturk.core.mturk_utils as mturk_utils
-from task_config import task_config
+from parlai.mturk.tasks.qualification_flow_example.task_config import \
+    task_config
 import os
 import random
 

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import logging
 import os
@@ -123,7 +121,15 @@ class MockTurkManager():
             agent.set_status(AssignState.STATUS_IN_TASK)
             agent.conversation_id = 'in_task'
 
-        task_function(mturk_manager=self, opt=self.opt, workers=agents)
+        try:
+            task_function(mturk_manager=self, opt=self.opt, workers=agents)
+        except Exception as e:
+            import sys
+            import traceback
+            print(e)
+            traceback.print_exc(file=sys.stdout)
+            raise e
+
         for agent in agents:
             agent.mock_status = AssignState.STATUS_DONE
             agent.set_status(AssignState.STATUS_DONE)

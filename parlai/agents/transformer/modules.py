@@ -1,8 +1,6 @@
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import torch
 import torch.nn as nn
@@ -301,9 +299,9 @@ class TransformerEncoderLayer(nn.Module):
         self.attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm1 = nn.LayerNorm([embedding_size])
+        self.norm1 = nn.LayerNorm(embedding_size)
         self.ffn = TransformerFFN(embedding_size, ffn_size, dropout=relu_dropout)
-        self.norm2 = nn.LayerNorm([embedding_size])
+        self.norm2 = nn.LayerNorm(embedding_size)
 
     def forward(self, tensor, mask):
         tensor = tensor + self.attention(tensor, mask=mask)
@@ -393,16 +391,15 @@ class TransformerDecoderLayer(nn.Module):
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.selfattn_norm = nn.LayerNorm([embedding_size])
-        self.norm1 = nn.LayerNorm([embedding_size])
+        self.norm1 = nn.LayerNorm(embedding_size)
 
         self.encoder_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm2 = nn.LayerNorm([embedding_size])
+        self.norm2 = nn.LayerNorm(embedding_size)
 
         self.ffn = TransformerFFN(embedding_size, ffn_size, dropout=relu_dropout)
-        self.norm3 = nn.LayerNorm([embedding_size])
+        self.norm3 = nn.LayerNorm(embedding_size)
 
     def forward(self, x, encoder_output, encoder_mask):
         decoder_mask = self._create_selfattn_mask(x)
@@ -566,6 +563,7 @@ class MultiHeadAttention(nn.Module):
         dot_prod.masked_fill_(attn_mask, -float(1e20))
 
         attn_weights = F.softmax(dot_prod / scale, dim=-1)
+        attn_weights = self.dropout(attn_weights)
 
         attentioned = attn_weights.bmm(v)
         attentioned = (

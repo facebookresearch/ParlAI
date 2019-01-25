@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
@@ -439,57 +437,6 @@ single_nolock = NoLock()
 def no_lock():
     """Build a nolock for other classes to use for no-op locking."""
     return single_nolock
-
-
-class ProgressLogger(object):
-    """Throttles and display progress in human readable form."""
-
-    def __init__(self, throttle=1, should_humanize=True):
-        """Initialize Progress logger.
-
-        :param throttle: default 1, number in seconds to use as throttle rate
-        :param should_humanize: default True, whether to humanize data units
-        """
-        self.latest = time.time()
-        self.throttle_speed = throttle
-        self.should_humanize = should_humanize
-
-    def humanize(self, num, suffix='B'):
-        """Convert units to more human-readable format."""
-        if num < 0:
-            return num
-        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
-            if abs(num) < 1024.0:
-                return "%3.1f%s%s" % (num, unit, suffix)
-            num /= 1024.0
-        return "%.1f%s%s" % (num, 'Yi', suffix)
-
-    def log(self, curr, total, width=40, force=False):
-        """Display a bar showing the current progress."""
-        if curr == 0 and total == -1:
-            print('[ no data received for this file ]', end='\r')
-            return
-        curr_time = time.time()
-        if not force and curr_time - self.latest < self.throttle_speed:
-            return
-        else:
-            self.latest = curr_time
-
-        self.latest = curr_time
-        done = min(curr * width // total, width)
-        remain = width - done
-
-        if self.should_humanize:
-            curr = self.humanize(curr)
-            total = self.humanize(total)
-
-        progress = '[{}{}] {} / {}'.format(
-            ''.join(['|'] * done),
-            ''.join(['.'] * remain),
-            curr,
-            total
-        )
-        print(progress, end='\r')
 
 
 class PaddingUtils(object):
@@ -939,6 +886,7 @@ def msg_to_str(msg, ignore_fields=''):
 def set_namedtuple_defaults(namedtuple, default=None):
     """Set *all* of the fields for a given nametuple to a singular value.
 
+    Additionally removes the default docstring for each field.
     Modifies the tuple in place, but returns it anyway.
 
     More info:
@@ -950,6 +898,8 @@ def set_namedtuple_defaults(namedtuple, default=None):
     :returns: the modified namedtuple
     """
     namedtuple.__new__.__defaults__ = (default,) * len(namedtuple._fields)
+    for f in namedtuple._fields:
+        del getattr(namedtuple, f).__doc__
     return namedtuple
 
 

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """This file contains a list of all the tasks, their id and task name, description
 and the tags associated with them.
 """
@@ -730,6 +728,16 @@ task_list = [
             "If you have already downloaded the images, please specify with "
             "the `--yfcc-path` flag, as the image download script takes a "
             "very long time to run"
+        ),
+    },
+    {
+        "id": "TalkTheWalk",
+        "display_name": "Talk the Walk",
+        "task": "talkthewalk",
+        "tags": ["All", "Visual"],
+        "description": (
+            "Talk the walk dataset."
+            "See https://arxiv.org/abs/1807.03367 for more information."
         ),
     },
     {

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 from parlai.core.worlds import World
 
@@ -23,7 +21,7 @@ class MTurkDataWorld(World):
             messages = agent.get_messages()
             # filter out peer feedback
             save_messages = [m for m in messages
-                             if m['text'] != '[PEER_REVIEW]']
+                             if m.get('text') != '[PEER_REVIEW]']
             save_data['worker_data'][agent.worker_id] = {
                 'worker_id': agent.worker_id,
                 'agent_id': agent.id,
