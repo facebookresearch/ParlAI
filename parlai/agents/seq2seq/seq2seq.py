@@ -88,8 +88,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
         agent.add_argument('-idr', '--input-dropout', type=float, default=0.0,
                            help='Probability of replacing tokens with UNK in training.')
 
-        super(cls, Seq2seqAgent).add_cmdline_args(argparser)
-        Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
+        super(Seq2seqAgent, cls).add_cmdline_args(argparser)
         return agent
 
     @staticmethod

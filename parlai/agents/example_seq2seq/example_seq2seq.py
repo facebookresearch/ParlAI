@@ -82,10 +82,10 @@ class ExampleSeq2seqAgent(TorchAgent):
     <http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html>`_.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
-        TorchAgent.add_cmdline_args(argparser)
+        super(ExampleSeq2seqAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')
