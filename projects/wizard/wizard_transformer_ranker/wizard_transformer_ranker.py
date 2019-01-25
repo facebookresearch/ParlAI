@@ -39,15 +39,15 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             help='use model in data parallel, requires multiple gpus'
         )
         argparser.set_defaults(
-            learningrate=0.0001,
+            learningrate=0.0008,
             eval_candidates='inline',
+            lr_factor=1,
         )
         return agent
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         opt['candidates'] = 'batch'  # this needs to be made the default
-        opt['eval_candidates'] = 'inline'
         super().__init__(opt, shared)
         self.use_knowledge = opt.get('use_knowledge', False)
         if self.use_knowledge:
@@ -68,7 +68,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
 
         to_vectorize = []
 
-        if checked and self.checked_sentence:
+        if checked and self.chosen_sentence:
             to_vectorize = [checked]
         elif (self.knowledge_dropout == 0 or
                 observation.get('eval_labels') is not None):
