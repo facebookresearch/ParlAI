@@ -82,7 +82,7 @@ class TransformerMemNetModel(nn.Module):
 
         if opt.get('share_encoders'):
             self.cand_encoder = TransformerResponseWrapper(
-                self.context_encoder, self.context_encoder.out_dim, reduction=True,
+                self.context_encoder, self.context_encoder.out_dim,
             )
         else:
             self.cand_encoder = _build_encoder(
