@@ -438,6 +438,7 @@ def process(ex_or_batch):
     ParlAI Implementations of Pytorch Datasets
 """
 
+
 class StreamDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt):
