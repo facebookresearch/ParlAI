@@ -1146,6 +1146,7 @@ class ReviewButtonGroup extends React.Component {
             submitting: false,
           });
           this.props.onUpdate();
+          this.props.onReview(endpoint);
         },
         (error) => {
           this.setState({
@@ -1167,6 +1168,7 @@ class ReviewButtonGroup extends React.Component {
             submitting: false,
           });
           this.props.onUpdate();
+          this.props.onReview('reverse');
         },
         (error) => {
           this.setState({
@@ -1310,11 +1312,14 @@ class AssignmentReviewer extends React.Component {
   }
 
   getReviewSet() {
+    let onReview = this.props.onReview || function(review) {};
     return (
       <ReviewButtonGroup
         status={this.props.data.status}
         onUpdate={this.props.onUpdate}
-        assignment_id={this.props.data.assignment_id}/>
+        assignment_id={this.props.data.assignment_id}
+        onReview={(review) => onReview(review)}
+      />
     );
   }
 
@@ -1352,7 +1357,8 @@ class AssignmentReviewer extends React.Component {
 
   render() {
     var panel_body;
-    if (this.props.data.world_status != 'done') {
+    if (this.props.data.world_status != 'done' &&
+        this.props.data.world_status != 'partner disconnect') {
       panel_body = <span>Cannot review until the world is done.</span>;
     } else {
       var review_set = this.getReviewSet();
@@ -1521,6 +1527,12 @@ class AssignmentPanel extends React.Component {
       )
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.assignment_id !== prevProps.assignment_id) {
+      this.fetchRunData();
+    }
+  }
+
   componentDidMount() {
     this.setState({assignment_loading: true});
     this.fetchRunData();
@@ -1559,7 +1571,9 @@ class AssignmentPanel extends React.Component {
         </div>
         <AssignmentReviewer
           data={this.state.data.assignment_details}
-          onUpdate={() => this.fetchRunData()}/>
+          onUpdate={() => this.fetchRunData()}
+          onReview={this.props.onReview}
+        />
       </div>
     )
   }
@@ -1597,10 +1611,11 @@ class ReviewPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      assignment_loading: true, run_loading: false, error: false,
+      assignments_loading: true, error: false,
       custom_components: {}, current_worker: null, ordering: 'default',
       workers_remaining: [], assignments_remaining: 0,
-      assignments_by_worker: {},
+      assignments_by_worker: {}, current_assignment: null,
+      current_worker_stats: {'approved': 0, 'rejected': 0, 'remain': 0},
     };
   }
 
@@ -1608,11 +1623,9 @@ class ReviewPanel extends React.Component {
     // Get reviewable assignments
     let assignments = run_data.assignments;
     let assignments_remaining = 0;
-    console.log(assignments);
     let reviewable_assigns = assignments.filter(
       assign => assign.status == 'Reviewable'
     );
-    console.log(reviewable_assigns);
     // Bucket assignments by worker
     let assignments_by_worker = {};
     for (const idx in reviewable_assigns) {
@@ -1622,20 +1635,21 @@ class ReviewPanel extends React.Component {
           assigns: [], bad_feedback: false, worker_id: assign.worker_id,
         };
       }
-      assignments_by_worker[assign.worker_id].assigns.push(assign);
+
       assignments_remaining += 1;
       if (!!assign.received_feedback && assign.received_feedback.rating < 3) {
         assignments_by_worker[assign.worker_id].bad_feedback = true;
+        assignments_by_worker[assign.worker_id].assigns.unshift(assign);
+      } else {
+        assignments_by_worker[assign.worker_id].assigns.push(assign);
       }
     }
-    console.log(assignments_by_worker);
-    console.log(assignments_remaining);
 
     // make an array to determine order to work through workers
     let workers_left_order = Object.values(assignments_by_worker);
 
     // Sort workers by the current ordering
-    let sortByAmount = (w1, w2) => w1.assigns.length - w2.assigns.length;
+    let sortByAmount = (w1, w2) => w2.assigns.length - w1.assigns.length;
     let sortByFeedback = (w1, w2) => (+w2.bad_feedback) - (+w1.bad_feedback);
 
     let sortOrders = {
@@ -1654,14 +1668,19 @@ class ReviewPanel extends React.Component {
       return 0;
     };
     workers_left_order.sort(sortFn);
-    console.log(workers_left_order);
     let workers_remaining = workers_left_order.map((w) => w.worker_id);
-    console.log(workers_remaining);
+    let current_worker = workers_remaining.shift();
+    let current_worker_stats = {
+      'approved': 0,
+      'rejected': 0,
+      'remain': assignments_by_worker[current_worker].assigns.length
+    }
     this.setState({
-      current_worker: workers_remaining[0],
+      current_worker: current_worker,
       workers_remaining: workers_remaining,
       assignments_remaining: assignments_remaining,
       assignments_by_worker: assignments_by_worker,
+      current_worker_stats: current_worker_stats,
     })
   }
 
@@ -1672,13 +1691,13 @@ class ReviewPanel extends React.Component {
         (result) => {
           this.parseRawRun(result);
           this.setState({
-            run_loading: false,
+            assignments_loading: false,
             run_data: result
           });
         },
         (error) => {
           this.setState({
-            run_loading: false,
+            assignments_loading: false,
             error: true
           });
         }
@@ -1686,12 +1705,141 @@ class ReviewPanel extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({worker_loading: true});
+    this.setState({assignments_loading: true});
     this.fetchRunData();
   }
 
+  handleReview(review) {
+    // Update worker stats to reflect the type of review, then move to the
+    // next assignment
+    let worker_stats = this.state.current_worker_stats;
+    let assignments_remaining = this.state.assignments_remaining;
+    if (review == 'approve') {
+      worker_stats.approved += 1;
+      worker_stats.remain -= 1;
+      assignments_remaining -= 1;
+    } else if (review == 'reject') {
+      worker_stats.rejected += 1;
+      worker_stats.remain -= 1;
+      assignments_remaining -= 1;
+    } else if (review == 'reverse') {
+      worker_stats.approved += 1;
+      worker_stats.rejected -= 1;
+    }
+    this.setState({
+      current_worker_stats: worker_stats,
+      assignments_remaining: assignments_remaining,
+    });
+    this.nextAssignment();
+  }
+
+  nextAssignment() {
+    // Load the next valid assignment, selecting a new current worker if
+    // the current worker has no more assignments to review
+    let worker_stats = this.state.current_worker_stats;
+    let current_worker = this.state.current_worker;
+    if (worker_stats.remain == 0) {
+      current_worker = this.nextWorker();
+    }
+
+    let assignments = this.state.assignments_by_worker[current_worker].assigns;
+    let current_assignment = assignments.shift();
+    if (current_assignment) {
+      current_assignment = current_assignment.assignment_id;
+    }
+    this.setState({
+      current_assignment: current_assignment,
+      assignments_by_worker: this.state.assignments_by_worker,
+    });
+  }
+
+  nextWorker() {
+    // Move to the next worker in the remaining workers list
+    let current_worker = this.state.workers_remaining.shift();
+    let current_worker_stats = {
+      'approved': 0,
+      'rejected': 0,
+      'remain': this.state.assignments_by_worker[current_worker].assigns.length
+    }
+    this.setState({
+      current_worker: current_worker,
+      current_worker_stats: current_worker_stats,
+      workers_remaining: this.state.workers_remaining,
+    });
+
+    return current_worker;
+  }
+
+  getReviewOverview() {
+    let worker_stats = this.state.current_worker_stats;
+    let current_worker = this.state.current_worker;
+    let workers_remaining = this.state.workers_remaining;
+    let assignments_remaining = this.state.assignments_remaining;
+
+    let start_button = null;
+    if (this.state.current_assignment == null) {
+      start_button = <Button
+        bsStyle="primary"
+        onClick={() => this.nextAssignment()}>
+        Get Started!
+      </Button>
+    }
+
+    return (
+      <Panel
+        id="review_overview_panel"
+        bsStyle="primary">
+        <Panel.Heading>
+          <Panel.Title componentClass="h3">
+            Reviews toolbar for run {this.props.run_id}
+          </Panel.Title>
+        </Panel.Heading>
+        <Panel.Body>
+          <p>
+            Current worker: {current_worker}
+          </p>
+          <p>
+            Worker stats:
+            Approved - {worker_stats.approved} |
+            Rejected - {worker_stats.rejected} |
+            Remaining - {worker_stats.remain}
+          </p>
+          <p>
+            Workers remaining: {workers_remaining.length}
+          </p>
+          <p>
+            Total Assignments remaining: {assignments_remaining}
+          </p>
+          {start_button}
+        </Panel.Body>
+      </Panel>
+    );
+  }
+
   render() {
-    return <div>In progress</div>;
+    let content = <div> Loading... </div>;
+    if (this.state.assignments_loading == false) {
+      let assign_view = null;
+      if (this.state.current_assignment != null) {
+        assign_view = (
+          <AssignmentPanel
+            assignment_id={this.state.current_assignment}
+            onReview={(review) => this.handleReview(review)}
+          />
+        );
+      }
+      content = (
+        <div>
+          {this.getReviewOverview()}
+          {assign_view}
+        </div>
+      )
+    }
+    return (
+      <div>
+        {content}
+      </div>
+    );
   }
 }
 

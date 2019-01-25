@@ -379,49 +379,54 @@ class AssignmentHandler(BaseHandler):
         self.data_handler = app.data_handler
 
     def get(self, assignment_target):
-        # Extract assignment
-        assignments = [self.data_handler.get_assignment_data(
-            assignment_target)]
-        pairings = self.data_handler.get_pairings_for_assignment(
-            assignment_target)
-        processed_assignments = merge_assignments_with_pairings(
-            assignments, pairings, 'assignment {}'.format(assignment_target))
-        assignment = processed_assignments[0]
-
-        # Get assignment details to retrieve assignment content
-        run_id = assignment['run_id']
-        onboarding_id = assignment['onboarding_id']
-        conversation_id = assignment['conversation_id']
-        worker_id = assignment['worker_id']
-
-        onboard_data = None
-        if onboarding_id is not None:
-            onboard_data = MTurkDataHandler.get_conversation_data(
-                run_id, onboarding_id, worker_id, self.state['is_sandbox'])
-
-        assignment_content = {
-            'onboarding': onboard_data,
-            'task': MTurkDataHandler.get_conversation_data(
-                run_id, conversation_id, worker_id, self.state['is_sandbox']),
-            'task_name': '_'.join(run_id.split('_')[:-1]),
-        }
-
-        # Get assignment instruction html. This can be much improved
-        task_name = '_'.join(run_id.split('_')[:-1])
         try:
-            # Try to find the task at specified location
-            t = get_config_module(task_name)
-            task_instructions = t.task_config['task_description']
-        except ImportError:
-            task_instructions = None
+            # Extract assignment
+            assignments = [self.data_handler.get_assignment_data(
+                assignment_target)]
+            pairings = self.data_handler.get_pairings_for_assignment(
+                assignment_target)
+            processed_assignments = merge_assignments_with_pairings(
+                assignments, pairings, 'assignment {}'.format(assignment_target))
+            assignment = processed_assignments[0]
 
-        data = {
-            'assignment_details': assignment,
-            'assignment_content': assignment_content,
-            'assignment_instructions': task_instructions,
-        }
+            # Get assignment details to retrieve assignment content
+            run_id = assignment['run_id']
+            onboarding_id = assignment['onboarding_id']
+            conversation_id = assignment['conversation_id']
+            worker_id = assignment['worker_id']
 
-        self.write(json.dumps(data))
+            onboard_data = None
+            if onboarding_id is not None:
+                onboard_data = MTurkDataHandler.get_conversation_data(
+                    run_id, onboarding_id, worker_id, self.state['is_sandbox'])
+
+            assignment_content = {
+                'onboarding': onboard_data,
+                'task': MTurkDataHandler.get_conversation_data(
+                    run_id, conversation_id, worker_id, self.state['is_sandbox']),
+                'task_name': '_'.join(run_id.split('_')[:-1]),
+            }
+
+            # Get assignment instruction html. This can be much improved
+            task_name = '_'.join(run_id.split('_')[:-1])
+            try:
+                # Try to find the task at specified location
+                t = get_config_module(task_name)
+                task_instructions = t.task_config['task_description']
+            except ImportError:
+                task_instructions = None
+
+            data = {
+                'assignment_details': assignment,
+                'assignment_content': assignment_content,
+                'assignment_instructions': task_instructions,
+            }
+
+            self.write(json.dumps(data))
+        except Exception as e:
+            import traceback
+            traceback.print_exc();
+            raise(e)
 
 
 class ApprovalHandler(BaseHandler):
