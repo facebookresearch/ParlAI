@@ -438,7 +438,6 @@ def process(ex_or_batch):
     ParlAI Implementations of Pytorch Datasets
 """
 
-
 class StreamDataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
     def __init__(self, opt):
@@ -455,6 +454,8 @@ class StreamDataset(Dataset):
 
     def __getitem__(self, index):
         if self.ordered or not self.training:
+            if not hasattr(self, 'data_gen'):
+                self.data_gen = self._read_episode()
             while True:
                 idx, ep = next(self.data_gen)
                 if idx == index:
@@ -481,6 +482,11 @@ class StreamDataset(Dataset):
             self.num_exs = lengths['num_exs']
         with open(self.char_index_file) as char:
             self.char_index = json.load(char)
+
+    def _data_generator(self):
+        while True:
+            for idx, episode in self._read_episode():
+                yield idx, episode
 
     def _read_episode(self):
         read = open(self.datafile)
