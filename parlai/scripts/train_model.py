@@ -122,7 +122,13 @@ def load_eval_world(agent, opt, datatype):
         datatype += ':stream'
     opt = opt.copy()
     opt['datatype'] = datatype
+    if opt.get('pytorch_teacher_task'):
+        # never use pytorch teachers for evaluation
+        # but don't forget what we were normally using
+        opt['task'] = opt['pytorch_teacher_task']
+        del opt['pytorch_teacher_task']
     if opt.get('evaltask'):
+        # if a different eval task is specified, use it.
         opt['task'] = opt['evaltask']
     if opt.get('eval_batchsize'):
         # override eval time batchsize

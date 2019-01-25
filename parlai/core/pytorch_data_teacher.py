@@ -445,7 +445,6 @@ class StreamDataset(Dataset):
         self.opt = opt
         self.datatype = opt.get('datatype')
         self.datapath = build_data(self.opt)
-        self.data_gen = self._data_generator()
         self.length_datafile = os.path.join(self.datapath, 'data_length')
         self.char_index_file = os.path.join(self.datapath, 'char_index')
         self.datafile = os.path.join(self.datapath, 'data')
@@ -482,11 +481,6 @@ class StreamDataset(Dataset):
             self.num_exs = lengths['num_exs']
         with open(self.char_index_file) as char:
             self.char_index = json.load(char)
-
-    def _data_generator(self):
-        while True:
-            for idx, episode in self._read_episode():
-                yield idx, episode
 
     def _read_episode(self):
         read = open(self.datafile)
@@ -531,7 +525,6 @@ class ParlAIDataset(Dataset):
             self.num_exs = lengths['num_exs']
 
     def _setup_data(self):
-        print('----------\n[ loading pytorch data ]\n----------')
         self.data = []
         with open(self.datafile) as f:
             for line in f:
