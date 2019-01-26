@@ -304,7 +304,7 @@ class TestTorchAgent(unittest.TestCase):
                 # otherwise should still be the same one
                 self.assertIs(prev_mem[i], out_again['memory_vecs'][i])
         self.assertEqual([m.tolist() for m in out['memory_vecs']],
-                         [[1], [1], [1]])
+                         [[1], [5], [4]])
 
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batchify(self):
