@@ -228,9 +228,6 @@ class FairseqAgent(TorchAgent):
         """Add command-line arguments specifically for this agent."""
         # first we need to add the general torch agent operations
         super(FairseqAgent, cls).add_cmdline_args(argparser)
-        # Dictionary construction stuff. Using the subclass in case we end up
-        # needing any fairseq specific things
-        cls.dictionary_class().add_cmdline_args(argparser)
 
         # let's store any defaults that were overridden
         old_defaults = argparser._defaults
