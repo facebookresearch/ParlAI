@@ -271,7 +271,7 @@ class TestTorchAgent(unittest.TestCase):
             prev_vec = out['text_vec']
             out_again = agent.vectorize(out, truncate=1)
             self.assertIsNot(prev_vec, out_again['text_vec'])
-            self.assertEqual(out['text_vec'].tolist(), [1])
+            self.assertEqual(out['text_vec'].tolist(), [3])
 
         # test split_lines
         obs = {
@@ -294,7 +294,7 @@ class TestTorchAgent(unittest.TestCase):
         prev_mem = out['memory_vecs']
         out_again = agent.vectorize(out, truncate=1, split_lines=True)
         self.assertIsNot(prev_vec, out_again['text_vec'])
-        self.assertEqual(out['text_vec'].tolist(), [1])
+        self.assertEqual(out['text_vec'].tolist(), [3])
         self.assertIsNot(prev_mem, out_again['memory_vecs'])
         for i in range(len(prev_mem)):
             if len(prev_mem[i]) > 1:

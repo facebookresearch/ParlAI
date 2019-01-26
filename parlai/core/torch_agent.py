@@ -645,7 +645,7 @@ class TorchAgent(Agent):
             # check truncation of pre-computed vectors
             obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate, True)
             if split_lines and 'memory_vecs' in obs:
-                obs['memory_vecs'] = [self._check_truncate(m, truncate, True)
+                obs['memory_vecs'] = [self._check_truncate(m, truncate)
                                       for m in obs['memory_vecs']]
         elif 'text' in obs:
             # convert 'text' into tensor of dictionary indices
