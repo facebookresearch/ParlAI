@@ -238,6 +238,8 @@ class TorchGeneratorAgent(TorchAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         agent = argparser.add_argument_group('Torch Generator Agent')
+        agent.add_argument('--init-model', type=str, default=None,
+                           help='load dict/model/opts from this path')
         agent.add_argument('--beam-size', type=int, default=1,
                            help='Beam size, if 1 then greedy search')
         agent.add_argument('--beam-dot-log', type='bool', default=False, hidden=True,
