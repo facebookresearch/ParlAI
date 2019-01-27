@@ -11,26 +11,47 @@
 from parlai.core.teachers import DialogTeacher
 from .build import build
 import os
+import copy
 
+FILE_START = 'wiki1.'
+FILE_END = '.qa'
+
+def _path(opt):
+    build(opt)
+
+    dt = opt['datatype'].split(':')[0]
+
+    if dt == 'train':
+        suffix = 'train'
+    # Using matched set as valid and mismatched set as test
+    elif dt == 'valid':
+        suffix = 'dev'
+    elif dt == 'test':
+        suffix = 'test'
+    else:
+        raise RuntimeError('Not valid datatype.')
+
+    data_path = os.path.join(opt['datapath'], 'QA-SRL', FILE_START + suffix + FILE_END)
+    return data_path
 
 class QASRLTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
-        # store datatype
-        self.dt = opt['datatype'].split(':')[0]
+        opt = copy.deepcopy(opt)
+        data_path = _path(opt)
+
+        opt['datafile'] = data_path
 
         # store identifier for the teacher in the dialog
         self.id = 'qasrl'
 
         build(opt)
 
-        opt['datafile'] = os.path.join(opt['datapath'], 'QA-SRL')
-
         super().__init__(opt, shared)
 
     def setup_data(self, input_path):
 
         print('loading: ' + input_path)
-        file_path = os.path.join(input_path, 'wiki1.{}.qa'.format(self.dt))
+        file_path = os.path.join(input_path)
 
         new_episode = True
 
@@ -69,3 +90,5 @@ class QASRLTeacher(DialogTeacher):
 
 class DefaultTeacher(QASRLTeacher):
     pass
+
+

@@ -13,11 +13,27 @@ from .build import build
 import os
 import json
 
+def _datatype(opt):
+    build(opt)
+
+    dt = opt['datatype'].split(':')[0]
+
+    if dt == 'train':
+        suffix = 'train'
+    # Using matched set as valid and mismatched set as test
+    elif dt == 'valid':
+        suffix = 'dev'
+    elif dt == 'test':
+        suffix = 'test'
+    else:
+        raise RuntimeError('Not valid datatype.')
+
+    return suffix
 
 class WikiSQLTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
-        self.dt = opt['datatype'].split(':')[0]
+        self.dt = _datatype(opt)
 
         self.agg_ops = ['', 'MAX', 'MIN', 'COUNT', 'SUM', 'AVG']
         self.cond_ops = ['=', '>', '<', 'OP']
