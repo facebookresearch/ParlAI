@@ -16,9 +16,9 @@ from parlai.core.distributed_utils import is_distributed
 
 
 class TorchRankerAgent(TorchAgent):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        TorchAgent.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        super(TorchRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
             '-cands', '--candidates', type=str, default='inline',
