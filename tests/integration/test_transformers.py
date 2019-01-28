@@ -14,7 +14,7 @@ import shutil
 from parlai.scripts.train_model import TrainLoop, setup_args
 
 
-def _mock_train(outdir=None, keepoutdir=False, **args):
+def _mock_train(outdir=None, keepoutdir=False, override=None, **args):
     if not outdir:
         outdir = tempfile.mkdtemp()
     parser = setup_args()
@@ -24,7 +24,10 @@ def _mock_train(outdir=None, keepoutdir=False, **args):
     )
     stdout = io.StringIO()
     with contextlib.redirect_stdout(stdout):
-        tl = TrainLoop(parser.parse_args(print_args=False))
+        opt = parser.parse_args(print_args=False)
+        if override:
+            opt['override'] = override
+        tl = TrainLoop(opt)
         valid, test = tl.train()
     if not keepoutdir:
         shutil.rmtree(outdir)
@@ -221,19 +224,35 @@ class TestTransformerGenerator(unittest.TestCase):
             valid1['lr'],
             'Learning rate is not decreasing'
         )
+        # but make sure we're not loading the scheduler if we're fine tuning
         stdout3, valid3, test3 = _mock_train(
             init_model=os.path.join(outdir, 'model'),
+            keepoutdir=False,
             **BASE_ARGS,
         )
         self.assertEqual(
             valid3['num_updates'],
             valid1['num_updates'],
-            'Hard LR scheduler reset failed (num_updates).'
+            'Finetuning LR scheduler reset failed (num_updates).'
         )
         self.assertEqual(
             valid3['lr'],
             valid1['lr'],
-            'Hard LR scheduler reset failed.'
+            'Finetuning LR scheduler reset failed (lr).'
+        )
+        # and make sure we're not loading the scheduler if it changes
+        stdout4, valid4, test4 = _mock_train(
+            outdir=outdir,
+            keepoutdir=True,
+            override={
+                'lr_scheduler': 'reduceonplateau',
+            },
+            **BASE_ARGS,
+        )
+        self.assertEqual(
+            valid4['num_updates'],
+            valid1['num_updates'],
+            'LR scheduler change reset failed (num_updates).\n' + stdout4
         )
 
 
