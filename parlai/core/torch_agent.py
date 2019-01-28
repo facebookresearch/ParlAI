@@ -630,12 +630,14 @@ class TorchAgent(Agent):
         tensor = torch.LongTensor(vec)
         return tensor
 
-    def _check_truncate(self, vec, truncate):
+    def _check_truncate(self, vec, truncate, truncate_left=False):
         """Check that vector is truncated correctly."""
         if truncate is None:
             return vec
         if len(vec) <= truncate:
             return vec
+        if truncate_left:
+            return vec[-truncate:]
         else:
             return vec[:truncate]
 
@@ -646,9 +648,9 @@ class TorchAgent(Agent):
 
         if 'text_vec' in obs:
             # check truncation of pre-computed vectors
-            obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate)
+            obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate, True)
             if split_lines and 'memory_vecs' in obs:
-                obs['memory_vecs'] = [self._check_truncate(m, truncate)
+                obs['memory_vecs'] = [self._check_truncate(m, truncate, True)
                                       for m in obs['memory_vecs']]
         elif 'text' in obs:
             # convert 'text' into tensor of dictionary indices
