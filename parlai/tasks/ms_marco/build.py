@@ -9,27 +9,25 @@
 import gzip
 import json
 import os
-import pandas as pd
-
 import parlai.core.build_data as build_data
 
 
 def read_file(filename):
-    print("reached line loading")
     with open(filename) as f:
         lines = [x for x in f.readlines()]
     return lines
 
 def convert_file(input_file_path, output_file_path):
-    print("pre gzip")
+    print("GZIP file will now be loaded")
     with gzip.open(input_file_path) as f:
-       df = pd.read_json(f)
+       records = json.read(f)
     
-    print("file opened")
+    print("Output file opened")
     with open(output_file_path, 'w') as f:
-        for row in df.iterrows():
-            f.write(row[1].to_json() + '\n')
-    print("finish iterating")
+        for row in records:
+            f.write(json.dumps(row))
+            f.write('\n')
+    print("File finished iterating")
 
 
 def create_fb_format(outpath, dtype, inpath):
