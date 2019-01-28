@@ -219,7 +219,10 @@ class TorchAgent(Agent):
                  'this value. Linearly adjusted up to 1.0 across --warmup-updates '
                  'steps.'
         )
-
+        agent.add_argument(
+            '--update-freq', type=int, default=-1, hidden=True,
+            help='Accumulate gradients N times before performing an optimizer.step().'
+        )
         # preprocessing arguments
         agent.add_argument(
             '-rc', '--rank-candidates', type='bool', default=False,
@@ -301,6 +304,8 @@ class TorchAgent(Agent):
         self.START_IDX = self.dict[self.dict.start_token]
         self.END_IDX = self.dict[self.dict.end_token]
 
+        # for gradient acumulation
+        self._number_grad_accum = 0
         # for the LR scheduler
         self._number_training_updates = 0
         # fixed random seed
@@ -1101,10 +1106,19 @@ class TorchAgent(Agent):
     def update_params(self):
         """
         Perform step of optimization, clipping gradients and adjusting LR
-        schedule if needed.
+        schedule if needed. Gradient accumulation is also performed if agent
+        is called with --update-freq.
 
         It is recommended (but not forced) that you call this in train_step.
         """
+        update_freq = self.opt.get('update_freq', 1)
+        if update_freq > 1:
+            # we're doing gradient accumulation, so we don't only want to step
+            # every N updates instead
+            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+            if self._number_grad_accum != 0:
+                return
+
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
 
@@ -1132,6 +1146,11 @@ class TorchAgent(Agent):
         """
         Zero out optimizer.
 
-        It is recommended you call this in train_step.
+        It is recommended you call this in train_step. It automatically handles
+        gradient accumulation if agent is called with --update-freq.
         """
+        if self._number_grad_accum != 0:
+            # if we're accumulating gradients, don't actually zero things out yet.
+            return
+
         self.optimizer.zero_grad()
