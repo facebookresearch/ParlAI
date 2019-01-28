@@ -357,7 +357,7 @@ class TorchAgent(Agent):
                             if isinstance(v, torch.Tensor):
                                 state[k] = v.cuda()
 
-    def build_lr_scheduler(self):
+    def build_lr_scheduler(self, states=None):
         """
         Create the learning rate scheduler, and assign it to self.scheduler.
 
@@ -424,6 +424,17 @@ class TorchAgent(Agent):
                 "Don't know what to do with lr_scheduler '{}'"
                 .format(self.opt.get('lr_scheduler'))
             )
+
+        # load from states if possible
+        if states is None:
+            states = {}
+
+        if self.scheduler and 'lr_scheduler' in states:
+            self.scheduler.load_state_dict(states['lr_scheduler'])
+        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler'):
+            self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
+        if 'number_training_updates' in states:
+            self._number_training_updates = states['number_training_updates']
 
     def report(self):
         metrics = {}
@@ -1018,6 +1029,13 @@ class TorchAgent(Agent):
             if hasattr(self, 'optimizer'):  # save optimizer params
                 states['optimizer'] = self.optimizer.state_dict()
 
+            # lr scheduler
+            states['number_training_updates'] = self._number_training_updates
+            if getattr(self, 'scheduler'):
+                states['lr_scheduler'] = self.scheduler.state_dict()
+            if getattr(self, 'warmup_scheduler'):
+                states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
+
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
                     torch.save(states, write)
@@ -1027,6 +1045,8 @@ class TorchAgent(Agent):
                     if hasattr(self, 'model_version'):
                         self.opt['model_version'] = self.model_version()
                     json.dump(self.opt, handle)
+                    # for convenience of working with jq, make sure there's a newline
+                    handle.write('\n')
 
     def load(self, path):
         """Return opt and model states.

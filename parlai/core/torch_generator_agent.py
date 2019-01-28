@@ -324,14 +324,14 @@ class TorchGeneratorAgent(TorchAgent):
                 broadcast_buffers=False,
             )
 
-        if 'train' in opt.get('datatype', ''):
+        if shared is None and 'train' in opt.get('datatype', ''):
             # do this regardless of share state, but don't
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type')
             )
-            self.build_lr_scheduler()
+            self.build_lr_scheduler(states)
 
         self.reset()
 
