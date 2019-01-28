@@ -20,7 +20,7 @@ def read_file(filename):
 def convert_file(input_file_path, output_file_path):
     print("GZIP file will now be loaded")
     with gzip.open(input_file_path) as f:
-       records = json.read(f)
+       records = json.load(f)
     
     print("Output file opened")
     with open(output_file_path, 'w') as f:
