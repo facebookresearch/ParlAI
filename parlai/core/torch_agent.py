@@ -357,11 +357,17 @@ class TorchAgent(Agent):
                             if isinstance(v, torch.Tensor):
                                 state[k] = v.cuda()
 
-    def build_lr_scheduler(self, states=None):
+    def build_lr_scheduler(self, states=None, hard_reset=False):
         """
         Create the learning rate scheduler, and assign it to self.scheduler.
-
         This scheduler will be updated upon a call to receive_metrics.
+
+        May also create self.warmup_scheduler if set.
+
+        :param state_dict states: Possible state_dict provided by model
+            checkpoint, for restoring LR state
+        :param bool hard_reset: If true, the LR scheduler should ignore the
+            state dictionary.
         """
         if self.opt.get('warmup_updates', -1) > 0:
             def _warmup_lr(step):
@@ -425,8 +431,8 @@ class TorchAgent(Agent):
                 .format(self.opt.get('lr_scheduler'))
             )
 
-        # load from states if possible
-        if states is None:
+        # load from states if possible. don't use them if explicitly told not to
+        if states is None or hard_reset:
             states = {}
 
         if self.scheduler and 'lr_scheduler' in states:

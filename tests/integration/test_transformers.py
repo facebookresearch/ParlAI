@@ -181,10 +181,7 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_resuming(self):
-        outdir = tempfile.mkdtemp()
-        stdout1, valid1, testr1 = _mock_train(
-            outdir=outdir,
-            keepoutdir=True,
+        BASE_ARGS = dict(
             task='integration_tests:NocandidateTeacher',
             model='transformer/generator',
             optimizer='adamax',
@@ -200,22 +197,17 @@ class TestTransformerGenerator(unittest.TestCase):
             lr_scheduler='invsqrt',
             warmup_updates=1,
         )
+
+        outdir = tempfile.mkdtemp()
+        stdout1, valid1, testr1 = _mock_train(
+            outdir=outdir,
+            keepoutdir=True,
+            **BASE_ARGS,
+        )
         stdout2, valid2, test2 = _mock_train(
             outdir=outdir,
-            keepoutdir=False,
-            task='integration_tests:NocandidateTeacher',
-            model='transformer/generator',
-            optimizer='adamax',
-            learningrate=1e-3,
-            batchsize=32,
-            num_epochs=1,
-            no_cuda=True,
-            n_layers=1,
-            n_heads=1,
-            ffn_size=32,
-            embedding_size=32,
-            skip_generation=True,
-            lr_scheduler='invsqrt',
+            keepoutdir=True,
+            **BASE_ARGS,
         )
         # make sure the number of updates is being tracked correctly
         self.assertGreater(
@@ -228,6 +220,20 @@ class TestTransformerGenerator(unittest.TestCase):
             valid2['lr'],
             valid1['lr'],
             'Learning rate is not decreasing'
+        )
+        stdout3, valid3, test3 = _mock_train(
+            init_model=os.path.join(outdir, 'model'),
+            **BASE_ARGS,
+        )
+        self.assertEqual(
+            valid3['num_updates'],
+            valid1['num_updates'],
+            'Hard LR scheduler reset failed (num_updates).'
+        )
+        self.assertEqual(
+            valid3['lr'],
+            valid1['lr'],
+            'Hard LR scheduler reset failed.'
         )
 
 
