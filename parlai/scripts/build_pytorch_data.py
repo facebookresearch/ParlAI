@@ -28,7 +28,7 @@ from collections import deque
 def get_pyt_dict_file(opt):
     if opt.get('dict_file') and os.path.exists(opt.get('dict_file')):
         return opt['dict_file']
-    if opt.get('dict_file', None) is None and opt.get('model_file'):
+    if opt.get('dict_file') is None and opt.get('model_file'):
         return opt['model_file'] + '.dict'
     if not opt['pytorch_teacher_task']:
         opt['pytorch_teacher_task'] = opt['task']
