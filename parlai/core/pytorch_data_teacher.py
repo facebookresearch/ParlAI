@@ -445,7 +445,6 @@ class StreamDataset(Dataset):
         self.opt = opt
         self.datatype = opt.get('datatype')
         self.datapath = build_data(self.opt)
-        self.data_gen = self._data_generator()
         self.length_datafile = os.path.join(self.datapath, 'data_length')
         self.char_index_file = os.path.join(self.datapath, 'char_index')
         self.datafile = os.path.join(self.datapath, 'data')
@@ -456,6 +455,8 @@ class StreamDataset(Dataset):
 
     def __getitem__(self, index):
         if self.ordered or not self.training:
+            if not hasattr(self, 'data_gen'):
+                self.data_gen = self._read_episode()
             while True:
                 idx, ep = next(self.data_gen)
                 if idx == index:
@@ -531,7 +532,6 @@ class ParlAIDataset(Dataset):
             self.num_exs = lengths['num_exs']
 
     def _setup_data(self):
-        print('----------\n[ loading pytorch data ]\n----------')
         self.data = []
         with open(self.datafile) as f:
             for line in f:

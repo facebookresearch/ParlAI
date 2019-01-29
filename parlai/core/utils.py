@@ -1035,4 +1035,4 @@ def warn_once(msg, warningtype=None):
     global _seen_warnings
     if msg not in _seen_warnings:
         _seen_warnings.add(msg)
-        warnings.warn(msg, warningtype)
+        warnings.warn(msg, warningtype, stacklevel=2)
