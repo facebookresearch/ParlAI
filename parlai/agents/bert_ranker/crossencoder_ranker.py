@@ -24,12 +24,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
 
     def __init__(self, opt, shared=None):
         opt['rank_candidates'] = True
-        opt["bert_id"] = 'bert-base-uncased'
         super().__init__(opt, shared)
-        # NOTE: This is done AFTER init so that it's after load(), on purpose.
-        # the state dict of MyModule and DataParallel(MyModule) is not the same
-        if self.opt["multigpu"]:
-            self.model = torch.nn.DataParallel(self.model)
         self.clip = -1
         self.NULL_IDX = self.dict.pad_idx
         self.START_IDX = self.dict.start_idx
@@ -38,7 +33,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     def build_model(self):
         self.model = BertWrapper(
             BertModel.from_pretrained(
-                self.opt["bert_id"]),
+                self.opt["pretrained_bert_path"]),
             1,
             add_transformer_layer=self.opt["add_transformer_layer"],
             layer_pulled=self.opt["pull_from_layer"])
@@ -96,25 +91,6 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         """ Inibiting the scheduler.
         """
         pass
-
-    def save(self, path=None):
-        """ The state dict of DataParallel(MyModule) is not the same as
-            MyModule. In the case where we use multigpu, save it differently.
-        """
-        if not self.multigpu:
-            return super().save(self, path)
-        path = self.opt.get('model_file', None) if path is None else path
-        if path:
-            states = {}
-            states['model'] = self.model.module.state_dict()
-            states['optimizer'] = self.optimizer.state_dict()
-            with open(path, 'wb') as write:
-                torch.save(states, write)
-            # save opt file
-            with open(path + '.opt', 'w') as handle:
-                if hasattr(self, 'model_version'):
-                    self.opt['model_version'] = self.model_version()
-                json.dump(self.opt, handle)
 
 
 def pad_left(context_idx, null_idx):

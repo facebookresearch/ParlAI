@@ -19,7 +19,7 @@ class BertDictionaryAgent(DictionaryAgent):
 
     def __init__(self, opt):
         super().__init__(opt)
-        self.tokenizer = BertTokenizer.from_pretrained(opt["bert_id"])
+        self.tokenizer = BertTokenizer.from_pretrained(opt["bert_vocabulary_path"])
         self.start_token = "[CLS]"
         self.end_token = "[SEP]"
         self.null_token = "[PAD]"

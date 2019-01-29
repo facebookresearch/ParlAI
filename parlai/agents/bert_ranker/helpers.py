@@ -23,7 +23,16 @@ def add_common_args(parser):
     parser = parser.add_argument_group('Bert Ranker Arguments')
     parser.add_argument('--num-samples', type=int, default=131800,
                         help='Number of samples in the task (temporary)')
-    parser.add_argument('--bert-id', type=str, default='bert-base-uncased')
+    parser.add_argument('--pretrained-bert-path', type=str, default=None,
+                        required="true",
+                        help="path to the tgz of the pretrained model.\n"
+                             "See: https://github.com/huggingface/"
+                             "pytorch-pretrained-BERT")
+    parser.add_argument('--bert-vocabulary-path', type=str, default=None,
+                        required="true",
+                        help="path to the vocabulary file\n"
+                             "See: https://github.com/huggingface/"
+                             "pytorch-pretrained-BERT")
     parser.add_argument(
         '--add-transformer-layer',
         type="bool",

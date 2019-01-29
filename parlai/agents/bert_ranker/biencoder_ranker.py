@@ -26,16 +26,11 @@ class BiEncoderRankerAgent(TorchRankerAgent):
 
     def __init__(self, opt, shared=None):
         opt['rank_candidates'] = True
-        opt["bert_id"] = 'bert-base-uncased'
         opt['candidates'] = "batch"
         if opt.get('eval_candidates', None) is None:
             opt['eval_candidates'] = "inline"
         self.clip = -1
         super().__init__(opt, shared)
-        # NOTE: This is done AFTER init so that it's after load on purpose.
-        # the state dict of MyModule and DataParallel(MyModule) is not the same
-        if self.opt["multigpu"]:
-            self.model = torch.nn.DataParallel(self.model)
         self.NULL_IDX = self.dict.pad_idx
         self.START_IDX = self.dict.start_idx
         self.END_IDX = self.dict.end_idx
@@ -141,13 +136,13 @@ class BiEncoderModule(torch.nn.Module):
         super(BiEncoderModule, self).__init__()
         self.context_encoder = BertWrapper(
             BertModel.from_pretrained(
-                opt["bert_id"]),
+                opt["pretrained_bert_path"]),
             opt["out_dim"],
             add_transformer_layer=opt["add_transformer_layer"],
             layer_pulled=opt["pull_from_layer"])
         self.cand_encoder = BertWrapper(
             BertModel.from_pretrained(
-                opt["bert_id"]),
+                opt["pretrained_bert_path"]),
             opt["out_dim"],
             add_transformer_layer=opt["add_transformer_layer"],
             layer_pulled=opt["pull_from_layer"])
@@ -163,25 +158,6 @@ class BiEncoderModule(torch.nn.Module):
             embedding_cands = self.cand_encoder(
                 token_idx_cands, segment_idx_cands, mask_cands)
         return embedding_ctxt, embedding_cands
-
-    def save(self, path=None):
-        """ The state dict of DataParallel(MyModule) is not the same as
-            MyModule. In the case where we use multigpu, save it differently.
-        """
-        if not self.multigpu:
-            return super().save(self, path)
-        path = self.opt.get('model_file', None) if path is None else path
-        if path:
-            states = {}
-            states['model'] = self.model.module.state_dict()
-            states['optimizer'] = self.optimizer.state_dict()
-            with open(path, 'wb') as write:
-                torch.save(states, write)
-            # save opt file
-            with open(path + '.opt', 'w') as handle:
-                if hasattr(self, 'model_version'):
-                    self.opt['model_version'] = self.model_version()
-                json.dump(self.opt, handle)
 
 
 def to_bert_input(token_idx, null_idx):
