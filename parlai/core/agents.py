@@ -405,8 +405,8 @@ def get_agent_module(dir_name):
                                ''.format(dir_name))
         folder_name = s[1]
         model_name = s[2]
-        module_name = 'projects.{v}.{m}.{m}'.format(
-            m=model_name, v=folder_name)
+        module_name = 'projects.{p}.{m}.{m}'.format(
+            m=model_name, p=folder_name)
         class_name = name_to_agent_class(model_name)
     elif ':' in dir_name:
         # e.g. -m "parlai.agents.seq2seq.seq2seq:Seq2seqAgent"
