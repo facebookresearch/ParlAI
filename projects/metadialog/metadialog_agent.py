@@ -20,7 +20,7 @@ from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.utils import round_sigfigs, warn_once, padded_tensor
 
-from parlai.agents.transformer.transformer import TransformerAgent
+from parlai.agents.transformer.transformer import TransformerRankerAgent
 from parlai.agents.transformer.modules import TransformerEncoder
 
 from .feedback_classifier.feedback_classifier import (
@@ -46,7 +46,7 @@ EXP_REQUEST = "Oops! I think I messed up. Whether I messed up or not, what could
 THANKS = "Thanks! I'll try to remember that."
 NEWTOPIC = "Can you pick a new topic for us to talk about now?"
 
-class MetadialogAgent(TransformerAgent):
+class MetadialogAgent(TransformerRankerAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
@@ -701,12 +701,12 @@ class MetadialogAgent(TransformerAgent):
             action['text'] = f'Great, thanks! {CONTINUE} ("{self.history[-1]}"): {reply}'
         return action, reply
 
-    def init_optim(self, optim_params):
-        # Optionally freeze base for the sentiment classifier
-        if self.opt['freeze_base']:
-            warn_once("Freezing all but the sentiment linear layer.")
-            optim_params = [p for p in self.model.x_sen_head.parameters()]
-        super().init_optim(optim_params)
+    # def init_optim(self, optim_params):
+    #     # Optionally freeze base for the sentiment classifier
+    #     if self.opt['freeze_base']:
+    #         warn_once("Freezing all but the sentiment linear layer.")
+    #         optim_params = [p for p in self.model.x_sen_head.parameters()]
+    #     super().init_optim(optim_params)
 
     def set_subtasks(self, opt):
         # Find assigned subtasks

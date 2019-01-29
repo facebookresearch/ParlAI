@@ -5,26 +5,28 @@ import re
 
 import numpy as np
 
+from .build import build
+
 from parlai.core.agents import MultiTaskTeacher
 from parlai.core.metrics import aggregate_metrics
 from parlai.core.teachers import FbDialogTeacher, ParlAIDialogTeacher
 from projects.metadialog.utils import add_person_tokens
 
-def _path(dataroot, subtask, filename, prefix='', suffix=''):
-    # if filename lacks extension, default to .txt
-    fullname = f'{prefix}{filename}{suffix}'
-    path = f"{dataroot}/{subtask}/{fullname}"
-    filename, ext = os.path.splitext(path)
-    if not ext:
-        if subtask == 'dialog':
-            path += '.txt'
-        elif subtask == 'explanation':
-            path += '.identity'
-        elif subtask == 'sentiment':
-            path += '.polarized'
-        else:
-            raise ValueError
-    return path
+def _path(opt, filename_override=None):
+    build(opt)
+    dataroot = opt['dataroot']
+    subtask = opt['subtask']
+    st = None
+    if subtask == 'dialog':
+        st = 'hh'
+    elif subtask == 'sentiment':
+        st = 'st'
+    elif subtask == 'feedback':
+        st = 'fb_a'
+    dp = os.path.join(opt['datapath'], 'dialogue_sf', 'dialogue_sf')
+    dt = filename_override or opt.get('datatype', 'train').split(':')[0]
+    filename = f'{dt}_{st}.txt'
+    return os.path.join(dp, filename)
 
 class MetadialogTeacher(ParlAIDialogTeacher):
     """Teacher for the MetadialogAgent
@@ -41,13 +43,6 @@ class MetadialogTeacher(ParlAIDialogTeacher):
     """
     def __init__(self, opt, shared):
         opt = copy.deepcopy(opt)
-        # TEMP
-        if 'dataroot' not in opt:
-            opt['dataroot'] = os.environ['PARLAIHOME'] + '/data/convai2meta'
-        # TEMP
-
-        # if not opt.get('dict_file'):
-            # raise ValueError("All metadialog tasks require a --dict-file path")
 
         if 'train' in opt['datatype']: # Use 'in' to also capture 'train:ordered:stream'
             # Use the filename explicitly given with the flag if available
@@ -57,7 +52,7 @@ class MetadialogTeacher(ParlAIDialogTeacher):
                 filename = opt[train_file_flag]
             else:
                 filename = opt['task'].split(':')[-1]
-            path = _path(opt['dataroot'], opt['subtask'], filename)
+            path = _path(opt, filename)
         else:
             # Use the filename explicitly given with the flag if available
             # Otherwise, use the datatype (valid.txt or test.txt)
@@ -66,7 +61,7 @@ class MetadialogTeacher(ParlAIDialogTeacher):
                 filename = opt[eval_file_flag]
             else:
                 filename = opt['datatype'].split(':')[0]
-            path = _path(opt['dataroot'], opt['subtask'], filename)
+            path = _path(opt, filename)
 
         if not os.path.exists(path):
             raise ValueError("Unrecognized filepath: {}".format(path))

@@ -96,8 +96,8 @@ class MetadialogModel(nn.Module):
         raise NotImplementedError
 
     def score_dialog(self, x_vecs, y_vecs):
-        x_mask = (x_vecs != self.pad_idx)
-        x_enc = self.x_dia_head(self.x_dia_encoder(x_vecs, x_mask))
+        # x_mask = (x_vecs != self.pad_idx)
+        x_enc = self.x_dia_head(self.x_dia_encoder(x_vecs))
 
         if y_vecs.dtype == torch.float32:
             # Assume candidates have already been encoded (e.g., in interactive mode)
@@ -117,13 +117,13 @@ class MetadialogModel(nn.Module):
             candidates
         """
         if y_vecs.dim() == 2:
-            y_mask = (y_vecs != self.pad_idx)
-            y_enc = self.y_dia_head(self.y_dia_encoder(y_vecs, y_mask))
+            # y_mask = (y_vecs != self.pad_idx)
+            y_enc = self.y_dia_head(self.y_dia_encoder(y_vecs))
         elif y_vecs.dim() == 3:
             oldshape = y_vecs.shape
             y_vecs = y_vecs.reshape(oldshape[0] * oldshape[1], oldshape[2])
-            y_mask = (y_vecs != self.pad_idx)
-            y_enc = self.y_dia_head(self.y_dia_encoder(y_vecs, y_mask))
+            # y_mask = (y_vecs != self.pad_idx)
+            y_enc = self.y_dia_head(self.y_dia_encoder(y_vecs))
             y_enc = y_enc.reshape(oldshape[0], oldshape[1], -1)
         return y_enc
 
