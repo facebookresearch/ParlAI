@@ -16,9 +16,9 @@ from parlai.core.distributed_utils import is_distributed
 
 
 class TorchRankerAgent(TorchAgent):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        TorchAgent.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        super(TorchRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
             '-cands', '--candidates', type=str, default='inline',
@@ -92,13 +92,16 @@ class TorchRankerAgent(TorchAgent):
             self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
             self.vocab_candidates = shared['vocab_candidates']
             self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
+            states = None
         else:
             self.warnings = {}
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0}
             self.build_model()
             if model_file:
                 print('Loading existing model parameters from ' + model_file)
-                self.load(model_file)
+                states = self.load(model_file)
+            else:
+                states = {}
             # Vectorize and save fixed/vocab candidates once upfront if applicable
             self.set_fixed_candidates(shared)
             self.set_vocab_candidates(shared)
@@ -130,8 +133,11 @@ class TorchRankerAgent(TorchAgent):
                 self.optimizer = shared['optimizer']
         else:
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
-            self.init_optim(optim_params)
-            self.build_lr_scheduler()
+            self.init_optim(
+                optim_params,
+                states.get('optimizer'), states.get('optimizer_type')
+            )
+            self.build_lr_scheduler(states)
 
         if shared is None and is_distributed():
             self.model = torch.nn.parallel.DistributedDataParallel(

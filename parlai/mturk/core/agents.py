@@ -643,7 +643,7 @@ class MTurkAgent(Agent):
             messages = self.flush_msg_queue()
             for m in messages:
                 if m['text'] == '[PEER_REVIEW]':
-                    self.feedback = m['data']
+                    self.feedback = m['task_data']
             return did_complete
 
     def update_agent_id(self, agent_id):

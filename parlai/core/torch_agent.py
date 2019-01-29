@@ -221,7 +221,10 @@ class TorchAgent(Agent):
                  'this value. Linearly adjusted up to 1.0 across --warmup-updates '
                  'steps.'
         )
-
+        agent.add_argument(
+            '--update-freq', type=int, default=-1, hidden=True,
+            help='Accumulate gradients N times before performing an optimizer.step().'
+        )
         # preprocessing arguments
         agent.add_argument(
             '-rc', '--rank-candidates', type='bool', default=False,
@@ -303,6 +306,8 @@ class TorchAgent(Agent):
         self.START_IDX = self.dict[self.dict.start_token]
         self.END_IDX = self.dict[self.dict.end_token]
 
+        # for gradient acumulation
+        self._number_grad_accum = 0
         # for the LR scheduler
         self._number_training_updates = 0
         # fixed random seed
@@ -360,11 +365,17 @@ class TorchAgent(Agent):
                             if isinstance(v, torch.Tensor):
                                 state[k] = v.cuda()
 
-    def build_lr_scheduler(self):
+    def build_lr_scheduler(self, states=None, hard_reset=False):
         """
         Create the learning rate scheduler, and assign it to self.scheduler.
-
         This scheduler will be updated upon a call to receive_metrics.
+
+        May also create self.warmup_scheduler, if appropriate.
+
+        :param state_dict states: Possible state_dict provided by model
+            checkpoint, for restoring LR state
+        :param bool hard_reset: If true, the LR scheduler should ignore the
+            state dictionary.
         """
         if self.opt.get('warmup_updates', -1) > 0:
             def _warmup_lr(step):
@@ -413,10 +424,10 @@ class TorchAgent(Agent):
                     '--lr-scheduler invsqrt requires setting --warmup-updates'
                 )
             warmup_updates = self.opt['warmup_updates']
-            decay_factor = np.sqrt(warmup_updates)
+            decay_factor = np.sqrt(max(1, warmup_updates))
 
             def _invsqrt_lr(step):
-                return decay_factor / np.sqrt(step)
+                return decay_factor / np.sqrt(max(1, step))
 
             self.scheduler = optim.lr_scheduler.LambdaLR(
                 self.optimizer,
@@ -427,6 +438,28 @@ class TorchAgent(Agent):
                 "Don't know what to do with lr_scheduler '{}'"
                 .format(self.opt.get('lr_scheduler'))
             )
+
+        # time to load LR state from the checkpoint, if possible.
+        if states is None:
+            # first make sure there are no null pointers
+            states = {}
+
+        if states and states.get('lr_scheduler_type') != self.opt['lr_scheduler']:
+            # the LR scheduler changed, start things fresh
+            warn_once("LR scheduler is different from saved. Starting fresh!")
+            hard_reset = True
+
+        if hard_reset:
+            # We're not going to use the LR schedule, let's just exit
+            return
+
+        # do the actual loading (if possible)
+        if 'number_training_updates' in states:
+            self._number_training_updates = states['number_training_updates']
+        if self.scheduler and 'lr_scheduler' in states:
+            self.scheduler.load_state_dict(states['lr_scheduler'])
+        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler'):
+            self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
 
     def report(self):
         metrics = {}
@@ -470,13 +503,13 @@ class TorchAgent(Agent):
         elif self.opt['lr_scheduler'] == 'invsqrt':
             # this is a training step lr scheduler, nothing to adjust in validation
             pass
-        elif self.opt['lr_schedule'] == 'none':
+        elif self.opt['lr_scheduler'] == 'none':
             # no adjustments, do nothing
             pass
         else:
             raise ValueError(
                 "Don't know how to work with lr scheduler '{}'"
-                .format(self.opt['lr_schedulre'])
+                .format(self.opt['lr_scheduler'])
             )
 
     def _get_embtype(self, emb_type):
@@ -628,12 +661,14 @@ class TorchAgent(Agent):
         tensor = torch.LongTensor(vec)
         return tensor
 
-    def _check_truncate(self, vec, truncate):
+    def _check_truncate(self, vec, truncate, truncate_left=False):
         """Check that vector is truncated correctly."""
         if truncate is None:
             return vec
         if len(vec) <= truncate:
             return vec
+        if truncate_left:
+            return vec[-truncate:]
         else:
             return vec[:truncate]
 
@@ -644,9 +679,9 @@ class TorchAgent(Agent):
 
         if 'text_vec' in obs:
             # check truncation of pre-computed vectors
-            obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate)
+            obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate, True)
             if split_lines and 'memory_vecs' in obs:
-                obs['memory_vecs'] = [self._check_truncate(m, truncate)
+                obs['memory_vecs'] = [self._check_truncate(m, truncate, True)
                                       for m in obs['memory_vecs']]
         elif 'text' in obs:
             # convert 'text' into tensor of dictionary indices
@@ -1019,8 +1054,18 @@ class TorchAgent(Agent):
                     states['model'] = self.model.module.state_dict()
                 else:
                     states['model'] = self.model.state_dict()
+
             if hasattr(self, 'optimizer'):  # save optimizer params
                 states['optimizer'] = self.optimizer.state_dict()
+                states['optimizer_type'] = self.opt['optimizer']
+
+            # lr scheduler
+            states['number_training_updates'] = self._number_training_updates
+            if getattr(self, 'scheduler'):
+                states['lr_scheduler'] = self.scheduler.state_dict()
+                states['lr_scheduler_type'] = self.opt['lr_scheduler']
+            if getattr(self, 'warmup_scheduler'):
+                states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
 
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
@@ -1031,6 +1076,8 @@ class TorchAgent(Agent):
                     if hasattr(self, 'model_version'):
                         self.opt['model_version'] = self.model_version()
                     json.dump(self.opt, handle)
+                    # for convenience of working with jq, make sure there's a newline
+                    handle.write('\n')
 
     def load(self, path):
         """Return opt and model states.
@@ -1107,10 +1154,19 @@ class TorchAgent(Agent):
     def update_params(self):
         """
         Perform step of optimization, clipping gradients and adjusting LR
-        schedule if needed.
+        schedule if needed. Gradient accumulation is also performed if agent
+        is called with --update-freq.
 
         It is recommended (but not forced) that you call this in train_step.
         """
+        update_freq = self.opt.get('update_freq', 1)
+        if update_freq > 1:
+            # we're doing gradient accumulation, so we don't only want to step
+            # every N updates instead
+            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+            if self._number_grad_accum != 0:
+                return
+
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
 
@@ -1138,6 +1194,11 @@ class TorchAgent(Agent):
         """
         Zero out optimizer.
 
-        It is recommended you call this in train_step.
+        It is recommended you call this in train_step. It automatically handles
+        gradient accumulation if agent is called with --update-freq.
         """
+        if self._number_grad_accum != 0:
+            # if we're accumulating gradients, don't actually zero things out yet.
+            return
+
         self.optimizer.zero_grad()
