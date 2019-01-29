@@ -1638,6 +1638,8 @@ class ReviewPanel extends React.Component {
 
       assignments_remaining += 1;
       if (!!assign.received_feedback && assign.received_feedback.rating < 3) {
+        // Feedback below 3 was rated as "below average", 
+        // so we want to prioritize it as important to see
         assignments_by_worker[assign.worker_id].bad_feedback = true;
         assignments_by_worker[assign.worker_id].assigns.unshift(assign);
       } else {
