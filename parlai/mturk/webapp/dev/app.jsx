@@ -1770,19 +1770,60 @@ class ReviewPanel extends React.Component {
     return current_worker;
   }
 
+  approveAssignment(assign_id) {
+    postData('/approve/' + assign_id)
+      .then(res => res.json())
+      .then(
+        (result) => {console.log(assign_id + ' approved')},
+        (error) => {
+          this.setState({
+            submitting: false,
+          });
+          console.log(error);
+          window.alert('Submitting review failed. Error logged to console');
+        }
+      )
+  }
+
+  approveAllForWorker() {
+    let current_worker = this.state.current_worker;
+    let assignments = this.state.assignments_by_worker[current_worker].assigns;
+    let current_assignment = this.state.current_assignment;
+    this.approveAssignment(current_assignment);
+    let total_assigns = 1 + assignments.length;
+    while (assignments.length > 0) {
+        current_assignment = assignments.shift();
+        this.approveAssignment(current_assignment.assignment_id);
+    }
+    this.setState({
+      assignments_by_worker: this.state.assignments_by_worker,
+      assignments_remaining: this.state.assignments_remaining - total_assigns,
+    });
+    this.state.current_worker_stats.remain = 0;
+    this.nextAssignment();
+  }
+
   getReviewOverview() {
     let worker_stats = this.state.current_worker_stats;
     let current_worker = this.state.current_worker;
     let workers_remaining = this.state.workers_remaining;
     let assignments_remaining = this.state.assignments_remaining;
 
-    let start_button = null;
+    let action_button = null;
     if (this.state.current_assignment == null) {
-      start_button = <Button
+      action_button = <Button
         bsStyle="primary"
         onClick={() => this.nextAssignment()}>
         Get Started!
       </Button>
+    } else if (worker_stats.approved > 0){
+      action_button = <div>
+        <Button
+          bsStyle="primary"
+          onClick={() => this.approveAllForWorker()}>
+          Approve Rest For Worker
+        </Button>
+      </div>
     }
 
     return (
@@ -1810,7 +1851,7 @@ class ReviewPanel extends React.Component {
           <p>
             Total Assignments remaining: {assignments_remaining}
           </p>
-          {start_button}
+          {action_button}
         </Panel.Body>
       </Panel>
     );
