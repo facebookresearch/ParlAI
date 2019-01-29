@@ -415,10 +415,10 @@ class TorchAgent(Agent):
                     '--lr-scheduler invsqrt requires setting --warmup-updates'
                 )
             warmup_updates = self.opt['warmup_updates']
-            decay_factor = np.sqrt(warmup_updates)
+            decay_factor = np.sqrt(max(1, warmup_updates))
 
             def _invsqrt_lr(step):
-                return decay_factor / np.sqrt(step)
+                return decay_factor / np.sqrt(max(1, step))
 
             self.scheduler = optim.lr_scheduler.LambdaLR(
                 self.optimizer,
