@@ -55,12 +55,15 @@ class TorchRankerAgent(TorchAgent):
         if shared:
             self.model = shared['model']
             self.metrics = shared['metrics']
+            states = None
         else:
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0}
             self.build_model()
             if model_file:
                 print('Loading existing model parameters from ' + model_file)
-                self.load(model_file)
+                states = self.load(model_file)
+            else:
+                states = {}
 
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
 
@@ -78,8 +81,11 @@ class TorchRankerAgent(TorchAgent):
                 self.optimizer = shared['optimizer']
         else:
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
-            self.init_optim(optim_params)
-            self.build_lr_scheduler()
+            self.init_optim(
+                optim_params,
+                states.get('optimizer'), states.get('optimizer_type')
+            )
+            self.build_lr_scheduler(states)
 
         if shared is None and is_distributed():
             self.model = torch.nn.parallel.DistributedDataParallel(

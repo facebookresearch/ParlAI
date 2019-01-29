@@ -362,11 +362,17 @@ class TorchAgent(Agent):
                             if isinstance(v, torch.Tensor):
                                 state[k] = v.cuda()
 
-    def build_lr_scheduler(self):
+    def build_lr_scheduler(self, states=None, hard_reset=False):
         """
         Create the learning rate scheduler, and assign it to self.scheduler.
-
         This scheduler will be updated upon a call to receive_metrics.
+
+        May also create self.warmup_scheduler, if appropriate.
+
+        :param state_dict states: Possible state_dict provided by model
+            checkpoint, for restoring LR state
+        :param bool hard_reset: If true, the LR scheduler should ignore the
+            state dictionary.
         """
         if self.opt.get('warmup_updates', -1) > 0:
             def _warmup_lr(step):
@@ -429,6 +435,28 @@ class TorchAgent(Agent):
                 "Don't know what to do with lr_scheduler '{}'"
                 .format(self.opt.get('lr_scheduler'))
             )
+
+        # time to load LR state from the checkpoint, if possible.
+        if states is None:
+            # first make sure there are no null pointers
+            states = {}
+
+        if states and states.get('lr_scheduler_type') != self.opt['lr_scheduler']:
+            # the LR scheduler changed, start things fresh
+            warn_once("LR scheduler is different from saved. Starting fresh!")
+            hard_reset = True
+
+        if hard_reset:
+            # We're not going to use the LR schedule, let's just exit
+            return
+
+        # do the actual loading (if possible)
+        if 'number_training_updates' in states:
+            self._number_training_updates = states['number_training_updates']
+        if self.scheduler and 'lr_scheduler' in states:
+            self.scheduler.load_state_dict(states['lr_scheduler'])
+        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler'):
+            self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
 
     def report(self):
         metrics = {}
@@ -1022,8 +1050,18 @@ class TorchAgent(Agent):
                     states['model'] = self.model.module.state_dict()
                 else:
                     states['model'] = self.model.state_dict()
+
             if hasattr(self, 'optimizer'):  # save optimizer params
                 states['optimizer'] = self.optimizer.state_dict()
+                states['optimizer_type'] = self.opt['optimizer']
+
+            # lr scheduler
+            states['number_training_updates'] = self._number_training_updates
+            if getattr(self, 'scheduler'):
+                states['lr_scheduler'] = self.scheduler.state_dict()
+                states['lr_scheduler_type'] = self.opt['lr_scheduler']
+            if getattr(self, 'warmup_scheduler'):
+                states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
 
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
@@ -1034,6 +1072,8 @@ class TorchAgent(Agent):
                     if hasattr(self, 'model_version'):
                         self.opt['model_version'] = self.model_version()
                     json.dump(self.opt, handle)
+                    # for convenience of working with jq, make sure there's a newline
+                    handle.write('\n')
 
     def load(self, path):
         """Return opt and model states.

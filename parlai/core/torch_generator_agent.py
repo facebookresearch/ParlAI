@@ -261,19 +261,21 @@ class TorchGeneratorAgent(TorchAgent):
 
     def __init__(self, opt, shared=None):
         init_model = None
+        is_finetune = False
         if not shared:  # only do this on first setup
             # first check load path in case we need to override paths
             if opt.get('init_model') and os.path.isfile(opt['init_model']):
                 # check first for 'init_model' for loading model from file
                 init_model = opt['init_model']
+                is_finetune = True
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # next check for 'model_file', this would override init_model
                 init_model = opt['model_file']
+                is_finetune = False
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
-                if (os.path.isfile(init_model + '.dict') or
-                        opt['dict_file'] is None):
+                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
                     opt['dict_file'] = init_model + '.dict'
         super().__init__(opt, shared)
 
@@ -333,7 +335,7 @@ class TorchGeneratorAgent(TorchAgent):
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type')
             )
-            self.build_lr_scheduler()
+            self.build_lr_scheduler(states, hard_reset=is_finetune)
 
         self.reset()
 
