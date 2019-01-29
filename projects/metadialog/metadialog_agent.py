@@ -337,13 +337,6 @@ class MetadialogAgent(TransformerRankerAgent):
             cands, cand_vecs, label_inds = self._build_candidates(
                 batch, source=self.opt['eval_candidates'], mode='eval')
 
-        # TEMP: For manually checking if batches are sorted or not
-        # print(self.dict.vec2txt(batch.text_vec[0]))
-        # print(self.dict.vec2txt(batch.text_vec[1]))
-        # print(self.dict.vec2txt(batch.text_vec[2]))
-        # import pdb; pdb.set_trace()
-        # TEMP
-
         scores = self.model.score_dialog(batch.text_vec, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
 
@@ -612,57 +605,6 @@ class MetadialogAgent(TransformerRankerAgent):
         self.update_sen_metrics(loss, preds, labels, batchsize)
         return preds
 
-        # TEMP: Use only for P-R curve and comment out block above
-        # import numpy as np
-        # prs = []
-        # res = []
-        # f1s = []
-        # thresholds = np.linspace(0, 1.0, 101)
-
-        # for threshold in thresholds:
-        # preds = []
-        # confs = []
-        # for example in confidences:
-        #     ranked_confidences = sorted(list(example), reverse=True)
-        #     if self.opt['uncertainty_style'] == 'mag':
-        #         # If the most confident choice isn't confident enough, predict that
-        #         # the response the bot gives will be bad (pred=0)
-        #         mag = ranked_confidences[0]
-        #         confs.append(mag)
-        #         # preds.append(mag >= threshold)
-        #     elif self.opt['uncertainty_style'] == 'gap':
-        #         # If the gap between the first and second most confident choices isn't
-        #         # large enough, predict that the response the bot gives will be bad (pred=0)
-        #         gap = ranked_confidences[0] - ranked_confidences[1]
-        #         confs.append(gap)
-        #         # preds.append(gap >= threshold)
-
-        # preds = torch.LongTensor(preds)
-        # labels = torch.LongTensor([int(l) == 1 for l in batch.labels])
-
-        # from sklearn.metrics import precision_recall_curve
-        # precision, recall, thresholds = precision_recall_curve(labels, confs, pos_label=0)
-        # for t, re, pr in zip(thresholds, recall, precision):
-        #     f1 = 2 * pr * re / (pr + re + EPS)
-        #     print(f"{t:.2f}\t{re:.3f}\t{pr:.3f}\t{f1:.3f}")
-
-        #     tp = ((preds == labels) * (labels == 0)).sum().item()
-        #     fp = ((preds != labels) * (labels == 1)).sum().item()
-        #     tn = ((preds == labels) * (labels == 1)).sum().item()
-        #     fn = ((preds != labels) * (labels == 0)).sum().item()
-        #     pr = tp / (tp + fp + EPS)
-        #     re = tp / (tp + fn + EPS)
-        #     f1 = (2 * pr * re) / (pr + re) if (pr and re) else 0.0
-
-        #     prs.append(pr)
-        #     res.append(re)
-        #     f1s.append(f1)
-
-        # for t, re, pr, f1 in zip(thresholds, res, prs, f1s):
-        #     print(f"{t:.2f}\t{re:.3f}\t{pr:.3f}\t{f1:.3f}")
-
-        return preds
-
     def check_prev_response(self, preds, cand_ranked):
         # Compare current prediction to previous (replacing if necessary)
         if self.prev_response and (preds[0] == self.prev_response):
@@ -700,13 +642,6 @@ class MetadialogAgent(TransformerRankerAgent):
         elif rating == 1:
             action['text'] = f'Great, thanks! {CONTINUE} ("{self.history[-1]}"): {reply}'
         return action, reply
-
-    # def init_optim(self, optim_params):
-    #     # Optionally freeze base for the sentiment classifier
-    #     if self.opt['freeze_base']:
-    #         warn_once("Freezing all but the sentiment linear layer.")
-    #         optim_params = [p for p in self.model.x_sen_head.parameters()]
-    #     super().init_optim(optim_params)
 
     def set_subtasks(self, opt):
         # Find assigned subtasks

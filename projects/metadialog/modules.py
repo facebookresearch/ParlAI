@@ -96,7 +96,6 @@ class MetadialogModel(nn.Module):
         raise NotImplementedError
 
     def score_dialog(self, x_vecs, y_vecs):
-        # x_mask = (x_vecs != self.pad_idx)
         x_enc = self.x_dia_head(self.x_dia_encoder(x_vecs))
 
         if y_vecs.dtype == torch.float32:
@@ -117,27 +116,21 @@ class MetadialogModel(nn.Module):
             candidates
         """
         if y_vecs.dim() == 2:
-            # y_mask = (y_vecs != self.pad_idx)
             y_enc = self.y_dia_head(self.y_dia_encoder(y_vecs))
         elif y_vecs.dim() == 3:
             oldshape = y_vecs.shape
             y_vecs = y_vecs.reshape(oldshape[0] * oldshape[1], oldshape[2])
-            # y_mask = (y_vecs != self.pad_idx)
             y_enc = self.y_dia_head(self.y_dia_encoder(y_vecs))
             y_enc = y_enc.reshape(oldshape[0], oldshape[1], -1)
         return y_enc
 
     def score_explanation(self, x_vecs, y_vecs):
-        x_mask = (x_vecs != self.pad_idx)
-        x_enc = self.x_exp_head(self.x_exp_encoder(x_vecs, x_mask, task='exp'))
-
-        y_mask = (y_vecs != self.pad_idx)
-        y_enc = self.y_exp_head(self.y_exp_encoder(y_vecs, y_mask, task='exp'))
+        x_enc = self.x_exp_head(self.x_exp_encoder(x_vecs))
+        y_enc = self.y_exp_head(self.y_exp_encoder(y_vecs))
         return self.score_similarity(x_enc, y_enc)
 
     def score_sentiment(self, x_vecs):
-        x_mask = (x_vecs != self.pad_idx)
-        return torch.sigmoid(self.x_sen_head(self.x_sen_encoder(x_vecs, x_mask))).squeeze(1)
+        return torch.sigmoid(self.x_sen_head(self.x_sen_encoder(x_vecs))).squeeze(1)
 
     def score_similarity(self, context_h, cand_h):
         """Returns the dot product of encoded contexts and encoded candidates"""
@@ -199,101 +192,8 @@ class MetadialogModel(nn.Module):
             modules.append(nn.Linear(dim, dim))
             modules.append(nn.ReLU())
         modules.append(nn.Linear(dim, outdim))
-        # TEMP
-        # print("WARNING: Hardcoded setting linear head to identity")
-        # modules[0].weight.data.copy_(torch.eye(dim))
-        # TEMP
         return nn.Sequential(*modules)
-
-    # TEMP
-    # def build_transf_layer(self, opt):
-    #     return TransformerLayer(
-    #         n_heads=opt['n_heads'],
-    #         n_layers=opt['n_layers'],
-    #         embedding_size=opt['embedding_size'],
-    #         ffn_size=opt['ffn_size'],
-    #         vocabulary_size=self.vocab_size,
-    #         embedding=None,
-    #         attention_dropout=opt['attention_dropout'],
-    #         relu_dropout=opt['relu_dropout'],
-    #         padding_idx=self.pad_idx,
-    #         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
-    #         embeddings_scale=opt['embeddings_scale'],
-    #     )
-
 
 class Identity(nn.Module):
     def forward(self, x):
         return x
-
-
-
-### TEMP ###
-# class TransformerLayer(nn.Module):
-#     """Transformer model"""
-#     def __init__(self,
-#                  n_heads,
-#                  n_layers,
-#                  embedding_size,
-#                  ffn_size,
-#                  vocabulary_size,
-#                  embedding=None,
-#                  attention_dropout=0.0,
-#                  relu_dropout=0.0,
-#                  padding_idx=None,
-#                  learn_positional_embeddings=False,
-#                  embeddings_scale=False,
-#                  ):
-#         super(TransformerLayer, self).__init__()
-
-#         self.embedding_size = embedding_size
-#         self.ffn_size = ffn_size
-#         self.n_layers = n_layers
-#         self.n_heads = n_heads
-#         self.dim = embedding_size
-#         self.embeddings_scale = embeddings_scale
-
-#         self.out_dim = embedding_size
-#         assert embedding_size % n_heads == 0, \
-#             'Transformer embedding size must be a multiple of n_heads'
-#         n_positions = 1024  # TODO: use truncate or sth
-
-#         assert(embedding is None)
-
-#         # build the model
-#         self.attentions = nn.ModuleList()
-#         self.layer_norm1 = nn.ModuleList()
-#         self.ffns = nn.ModuleList()
-#         self.layer_norm2 = nn.ModuleList()
-
-#         for _ in range(self.n_layers):
-#             self.attentions.append(
-#                 MultiHeadAttention(n_heads, embedding_size, dropout=attention_dropout)
-#             )
-#             self.layer_norm1.append(nn.LayerNorm([embedding_size]))
-#             self.ffns.append(
-#                 TransformerFFN(embedding_size, ffn_size, dropout=relu_dropout)
-#             )
-#             self.layer_norm2.append(nn.LayerNorm([embedding_size]))
-
-#     def forward(self, input, mask):
-#         """A derivative of TransformerEncoder, stripping away embeddings-related stuff"""
-#         tensor = input
-#         tensor *= mask.unsqueeze(-1).float()
-#         for i in range(self.n_layers):
-#             tensor = tensor + self.attentions[i](tensor, mask=mask)
-#             tensor = self.normalize(tensor, self.layer_norm1[i])
-#             tensor = tensor + self.ffns[i](tensor, mask)
-#             tensor = self.normalize(tensor, self.layer_norm2[i])
-
-#             tensor *= mask.unsqueeze(-1).float()
-
-#         # divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1e-20)
-#         # output = tensor.sum(dim=1) / divisor
-#         output = tensor.sum(dim=1)
-
-#         return output
-
-#     def normalize(self, tensor, norm_layer):
-#         size = tensor.size()
-#         return norm_layer(tensor.view(-1, self.dim)).view(size)

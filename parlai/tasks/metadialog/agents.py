@@ -21,9 +21,11 @@ def _path(opt, filename_override=None):
         st = 'hh'
     elif subtask == 'sentiment':
         st = 'st'
-    elif subtask == 'feedback':
+    elif subtask == 'feedback' or 'explanation':
         st = 'fb_a'
-    dp = os.path.join(opt['datapath'], 'dialogue_sf', 'dialogue_sf')
+    else:
+        print(f'######## Not found! {subtask}')
+    dp = os.path.join(opt['datapath'], 'dialogue_sf', 'dialogue_sf_v01')
     dt = filename_override or opt.get('datatype', 'train').split(':')[0]
     filename = f'{dt}_{st}.txt'
     return os.path.join(dp, filename)
