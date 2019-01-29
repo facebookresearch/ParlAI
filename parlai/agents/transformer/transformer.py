@@ -65,7 +65,7 @@ class TransformerRankerAgent(TorchRankerAgent):
                                 'when using transformer to encode memories')
         # model specific arguments
         agent.add_argument('--normalize-sent-emb', type='bool', default=False)
-        agent.add_argument('--share-encoders', type='bool', default=False)
+        agent.add_argument('--share-encoders', type='bool', default=True)
         agent.add_argument('--has-memories', type='bool', default=False,
                            help='If true, text contains newline separated memories '
                                 'before the actual text')
@@ -75,13 +75,12 @@ class TransformerRankerAgent(TorchRankerAgent):
                            default='dot', hidden=True)
         agent.add_argument('-tr', '--truncate', default=1024, type=int,
                            help='Truncate input lengths')
-        agent.add_argument('-opt', '--optimizer', default='adamax',
-                           choices=cls.OPTIM_OPTS,
-                           help='Choose between pytorch optimizers. '
-                                'Any member of torch.optim should be valid.')
-        agent.add_argument('-lr', '--learningrate', type=float, default=0.0001,
-                           help='learning rate')
-
+        agent.add_argument('--learn-embeddings', type='bool', default=True,
+                           help='learn embeddings')
+        argparser.set_defaults(
+            learningrate=0.0001,
+            optimizer='adamax',
+        )
         cls.dictionary_class().add_cmdline_args(argparser)
 
         return agent

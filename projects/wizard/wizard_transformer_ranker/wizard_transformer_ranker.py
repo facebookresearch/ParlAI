@@ -65,27 +65,31 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             return observation
 
         checked = observation.get('checked_sentence', '')
+        if observation.get('knowledge'):
+            knowledge = observation['knowledge'].split('\n')[:-1]
+        else:
+            knowledge = []
 
         to_vectorize = []
-
         if checked and self.chosen_sentence:
+            # if `self.chosen_sentence` is True, only keep golden knowledge
             to_vectorize = [checked]
         elif (self.knowledge_dropout == 0 or
-                observation.get('eval_labels') is not None):
-            if 'knowledge' in observation:
-                to_vectorize = observation['knowledge'].split('\n')[:-1]
-        else:
-            to_vectorize = []
-            if checked:
-                to_vectorize.append(checked)
-            if observation.get('knowledge'):
-                for line in observation['knowledge'].split('\n')[:-1]:
+                observation.get('eval_labels') is not None) and knowledge:
+            # during evaluation we use all of the knowledge
+            to_vectorize = knowledge
+        elif knowledge:
+            for line in knowledge:
+                if checked and checked in line:
+                    # make sure we keep the chosen sentence
                     keep = 1
-                    if not observation.get('eval_labels'):
-                        keep = np.random.binomial(1, 1 - self.knowledge_dropout)
-                    if keep:
-                        to_vectorize.append(line)
+                else:
+                    # dropout knowledge
+                    keep = np.random.binomial(1, 1 - self.knowledge_dropout)
+                if keep:
+                    to_vectorize.append(line)
 
+        # vectorize knowledge
         observation['memory_vecs'] = [
             self._vectorize_text(line, truncate=self.truncate) for line in
             to_vectorize

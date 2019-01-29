@@ -73,6 +73,8 @@ class TransformerMemNetModel(nn.Module):
         self.embeddings = _create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
+        if not opt.get('learn_embeddings'):
+            self.embeddings.weight.requires_grad = False
 
         self.context_encoder = _build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx
