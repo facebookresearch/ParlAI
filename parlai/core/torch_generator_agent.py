@@ -613,7 +613,7 @@ class TorchGeneratorAgent(TorchAgent):
         """
         bsz = len(batch.text_lengths)
         if num_iterations > 1:
-            if bsz == 1:
+            if bsz != 1:
                 raise ValueError('num_iterations > 1 requires bsz == 1')
             encoder_states = model.encoder(batch.text_vec.expand([num_iterations, -1]))
             bsz = num_iterations
