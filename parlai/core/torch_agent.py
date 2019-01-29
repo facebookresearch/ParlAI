@@ -1056,12 +1056,18 @@ class TorchAgent(Agent):
                 states['optimizer_type'] = self.opt['optimizer']
 
             # lr scheduler
-            states['number_training_updates'] = self._number_training_updates
-            if getattr(self, 'scheduler'):
-                states['lr_scheduler'] = self.scheduler.state_dict()
-                states['lr_scheduler_type'] = self.opt['lr_scheduler']
-            if getattr(self, 'warmup_scheduler'):
-                states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
+            if torch.__version__.startswith('0.'):
+                warn_once(
+                    "Must upgrade to Pytorch 1.0 to save the state of your "
+                    "LR scheduler."
+                )
+            else:
+                states['number_training_updates'] = self._number_training_updates
+                if getattr(self, 'scheduler'):
+                    states['lr_scheduler'] = self.scheduler.state_dict()
+                    states['lr_scheduler_type'] = self.opt['lr_scheduler']
+                if getattr(self, 'warmup_scheduler'):
+                    states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
 
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
