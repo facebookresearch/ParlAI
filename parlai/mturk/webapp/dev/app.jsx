@@ -1863,13 +1863,19 @@ class ReviewPanel extends React.Component {
       </div>
     }
 
+    let header_text = null;
+    if (this.props.run_id) {
+      header_text = "Reviews toolbar for run " + this.props.run_id;
+    } else {
+      header_text = "Reviews toolbar for task " + this.props.task_id;
+    }
     return (
       <Panel
         id="review_overview_panel"
         bsStyle="primary">
         <Panel.Heading>
           <Panel.Title componentClass="h3">
-            Reviews toolbar for run {this.props.run_id}
+            {header_text}
           </Panel.Title>
         </Panel.Heading>
         <Panel.Body>
