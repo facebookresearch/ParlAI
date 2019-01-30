@@ -8,7 +8,7 @@
 # It's much more strict than our check for lint across the entire code base.
 
 set -e
-flake8 --version | grep '^3\.6\.' >/dev/null || \
+flake8 --version | grep '^3\.[6-9]\.' >/dev/null || \
     ( echo "Please install flake8 >=3.6.0." && false )
 
 CHANGED_FILES="$(git diff --name-only master... | grep '\.py$' | tr '\n' ' ')"
