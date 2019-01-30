@@ -16,7 +16,6 @@ except ImportError:
                        "pip install pytorch-pretrained-bert"))
 from parlai.core.utils import _ellipse
 
-
 def add_common_args(parser):
     """Add command line arguments for this agent."""
     TorchRankerAgent.add_cmdline_args(parser)
@@ -69,8 +68,8 @@ class BertWrapper(torch.nn.Module):
         super(BertWrapper, self).__init__()
         self.layer_pulled = layer_pulled
         self.add_transformer_layer = add_transformer_layer
-        # deduce bert output dim from the size of the pooler in bert
-        bert_output_dim = bert_model.pooler.dense.weight.size()[0]
+        # deduce bert output dim from the size of embeddings
+        bert_output_dim = bert_model.embeddings.word_embeddings.weight.size(1)
 
         if add_transformer_layer:
             config_for_one_layer = BertConfig(
@@ -81,7 +80,7 @@ class BertWrapper(torch.nn.Module):
         self.bert_model = bert_model
 
     def forward(self, token_ids, segment_ids, attention_mask):
-        output_bert, _ = self.bert_model(token_ids, segment_ids, attention_mask)
+        output_bert, output_pooler = self.bert_model(token_ids, segment_ids, attention_mask)
         # output_bert is a list of 12 (for bert base) layers.
         layer_of_interest = output_bert[self.layer_pulled]
         if self.add_transformer_layer:
@@ -94,7 +93,12 @@ class BertWrapper(torch.nn.Module):
                 layer_of_interest, extended_attention_mask)[:, 0, :]
         else:
             embeddings = layer_of_interest[:, 0, :]
-        return self.additional_linear_layer(embeddings)
+        result = self.additional_linear_layer(embeddings)
+        # # Sort of hack to make it work with distributed: this way the pooler layer
+        # # is used for grad computation, even though it does not change anything...
+        # # in practice, it just adds a very (768*768) x (768*batchsize) matmul
+        # result += 0 * torch.sum(output_pooler)
+        return result
 
 
 def surround(idx_vector, start_idx, end_idx):
