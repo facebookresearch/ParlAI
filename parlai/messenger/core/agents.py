@@ -149,7 +149,8 @@ class MessengerAgent(Agent):
                                'Please try with a text-only message.',
                        'episode_done': True}
                 self.observe(act)
-            elif not msg.get('text'):
+            elif (not msg.get('text')
+                  and not (msg.get('image_url') or msg.get('attachment_url'))):
                 # Do not allow agent to send empty strings
                 msg = None
 
