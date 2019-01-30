@@ -138,6 +138,18 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
     def observe(self, observation):
         return self.tasks[self.task_idx].observe(observation)
 
+    def batch_act(self, batch_observation):
+        # We use only one task for each batch
+        task_idx = self.get_task_index()
+        actions = []
+        for _ in range(self.tasks[task_idx].bsz):
+            action = self.tasks[task_idx].act()
+            # Pass the name of the task currently being worked on
+            action['subtask'] = self.tasks[task_idx].opt['subtask']
+            actions.append(action)
+        return actions
+
+
     def act(self):
         self.task_idx = self.get_task_index()
         if self.task_idx < 0:
@@ -148,16 +160,16 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
         return action
 
     def get_task_index(self):
-        if self.task_idx_assignment >= 0:
-            # Use the assignment from the BatchWorld
-            return self.task_idx_assignment
+        if self.opt['datatype'] == 'train':
+            return np.random.choice(
+                range(len(self.tasks)), p=self.sampling_prob)
         else:
-            # Just go through the tasks in order
-            for i in range(len(self.tasks)):
-                if not self.tasks[i].epoch_done():
+            task_idx = -1
+            for i, subtask in enumerate(self.tasks):
+                if not subtask.epoch_done():
                     return i
-            # If this is reached, all tasks are done, so return sentinel
-            return -1
+        # If this is reached, all tasks are done, so return sentinel
+        return -1
 
     # We get most metrics from the agents, not the teachers
     def report(self):

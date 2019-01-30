@@ -637,31 +637,6 @@ class BatchWorld(World):
             for w in self.worlds:
                 w.parley_init()
 
-        # TEMPORARY: Metadialog Only
-        # BatchWorld makes task assignment to all children worlds and their agents
-        # This ensures that each batch is performed on the same task
-        # During training, sample proportionally based on % of batches in the problem
-        # During evaluation, complete one task at a time
-        warn_once("Using modified BatchWorld to support MultitaskBatchWorld")
-        teacher, learner = self.worlds[0].get_agents()
-        if learner.multitask:
-            # Select subtask
-            if self.opt['datatype'] == 'train':
-                task_idx = np.random.choice(
-                    range(len(teacher.tasks)), p=teacher.sampling_prob)
-            else:
-                task_idx = -1
-                for i, subtask in enumerate(teacher.tasks):
-                    if not subtask.epoch_done():
-                        task_idx = i
-                        # print(f"{subtask.episode_idx} + {subtask.opt.get('batchsize', 1)} < {subtask.num_episodes()}")
-                        break
-            # Now assign task to all teachers
-            for world in self.worlds:
-                for agent in world.get_agents():
-                    agent.task_idx_assignment = task_idx
-        # TEMPORARY: Metadialog Only
-
         for agent_idx in range(num_agents):
             # The agent acts.
             batch_act = self.batch_act(agent_idx, batch_observations[agent_idx])
