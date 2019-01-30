@@ -49,6 +49,7 @@ def str2bool(value):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+
 def str2floats(s):
     """Look for single float or comma-separated floats."""
     return tuple(float(f) for f in s.split(','))
