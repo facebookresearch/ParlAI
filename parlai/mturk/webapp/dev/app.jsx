@@ -1701,26 +1701,6 @@ class ReviewPanel extends React.Component {
     })
   }
 
-  fetchRunData() {
-    fetch('/runs/' + this.props.run_id)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.parseRawRuns([result]);
-          this.setState({
-            assignments_loading: false,
-            run_data: result
-          });
-        },
-        (error) => {
-          this.setState({
-            assignments_loading: false,
-            error: error
-          });
-        }
-      )
-  }
-
   fetchDataForRuns(run_ids) {
     Promise.all(run_ids.map(run_id =>
       fetch('/runs/' + run_id).then(resp => resp.json())
@@ -1730,6 +1710,11 @@ class ReviewPanel extends React.Component {
           assignments_loading: false,
           run_data: task_datas
         });
+    }, (error) => {
+      this.setState({
+        assignments_loading: false,
+        error: error
+      });
     });
   }
 
@@ -1755,7 +1740,7 @@ class ReviewPanel extends React.Component {
   componentDidMount() {
     this.setState({assignments_loading: true});
     if (this.props.run_id) {
-      this.fetchRunData();
+      this.fetchDataForRuns([this.props.run_id]);
     } else {
       this.fetchAllRunData();
     }
