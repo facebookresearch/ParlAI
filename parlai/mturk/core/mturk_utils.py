@@ -144,7 +144,7 @@ def create_hit_config(opt, task_description, unique_worker, is_sandbox):
         'frame_height': opt.get('frame_height', 650),
         'allow_reviews': opt.get('allow_reviews', False),
         'block_mobile': opt.get('block_mobile', True),
-        # Populate the chat pane title from chat_title, defaulting to the 
+        # Populate the chat pane title from chat_title, defaulting to the
         # hit_title if the task provides no chat_title
         'chat_title': opt.get('chat_title', opt.get('hit_title', 'Live Chat')),
     }
