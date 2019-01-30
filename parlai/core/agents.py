@@ -370,6 +370,10 @@ def get_agent_module(dir_name):
     To use legacy agent versions, you can prepend "legacy:" to model arguments,
     e.g. "legacy:seq2seq:0" will translate to ``legacy_agents/seq2seq/seq2seq_v0``.
 
+    To use agents in projects, you can prepend "projects:" and the name of the
+    project folder to model arguments, e.g. "projects:personachat:kvmemnn"
+    will translate to ``projects/personachat/kvmemnn``.
+
     :param dir_name: path to model class in one of the above formats.
     """
     repo = 'parlai'
@@ -391,6 +395,18 @@ def get_agent_module(dir_name):
         model_name = s[1]  # seq2seq
         module_name = 'parlai.agents.legacy_agents.{m}.{m}_v{v}'.format(
             m=model_name, v=s[2])
+        class_name = name_to_agent_class(model_name)
+    elif dir_name.startswith('projects:'):
+        # e.g. -m projects:personachat:kvmemnn
+        s = dir_name.split(':')
+        if len(s) != 3:
+            raise RuntimeError('projects paths should follow pattern '
+                               'projects:folder:model; you used {}'
+                               ''.format(dir_name))
+        folder_name = s[1]
+        model_name = s[2]
+        module_name = 'projects.{p}.{m}.{m}'.format(
+            m=model_name, p=folder_name)
         class_name = name_to_agent_class(model_name)
     elif ':' in dir_name:
         # e.g. -m "parlai.agents.seq2seq.seq2seq:Seq2seqAgent"
@@ -549,6 +565,7 @@ def get_task_module(taskname):
     teacher_class = getattr(my_module, teacher)
     return teacher_class
 
+
 def add_task_flags_to_agent_opt(agent, opt, flags):
     """Allows to insert task flags in the task name itself, they are
     put inside the opt before the task is created.
@@ -562,8 +579,8 @@ def add_task_flags_to_agent_opt(agent, opt, flags):
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
-            
-            
+
+
 def create_task_agent_from_taskname(opt):
     """Create task agent(s) assuming the input ``task_dir:teacher_class``.
 
