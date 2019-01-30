@@ -576,9 +576,9 @@ class MTurkManager():
             agent.alived = True
             if agent.conversation_id is not None and \
                     conversation_id is not None:
-                # agent.conversation_id is None is used in testing
-                # conversation_id is None one a fresh reconnect event, where
-                # we need to restore state somehow
+                # agent.conversation_id is None is used in testing.
+                # conversation_id is None on a fresh reconnect event, where
+                # we need to restore state somehow and shouldn't just inherit
                 conversation_id = agent.conversation_id
             if agent.get_status() == AssignState.STATUS_NONE:
                 # See if assigned an onboarding world, update state if so
