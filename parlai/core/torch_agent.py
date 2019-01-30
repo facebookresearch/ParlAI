@@ -33,18 +33,6 @@ try:
 except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 
-# use this section to import any additional optimizers
-# they'll be added to TorchAgent.OPTIM_OPTS below
-extra_optims = {}
-try:
-    # https://openreview.net/pdf?id=S1fUpoR5FQ
-    from qhoptim.pyt import QHM, QHAdam
-    extra_optims['qhm'] = QHM
-    extra_optims['qhadam'] = QHAdam
-except ImportError:
-    # no QHM installed
-    pass
-
 
 Batch = namedtuple('Batch', [
     'text_vec', 'text_lengths', 'label_vec', 'label_lengths', 'labels',
@@ -155,12 +143,33 @@ class TorchAgent(Agent):
     For example:
     'adagrad': optim.Adagrad, 'adam': optim.Adad, 'sgd': optim.SGD
     """
-    OPTIM_OPTS = {**{k.lower(): v for k, v in optim.__dict__.items()
-                  if not k.startswith('__') and k[0].isupper()},
-                  **extra_optims}
 
     P1_TOKEN = '__p1__'
     P2_TOKEN = '__p2__'
+
+    @classmethod
+    def optim_opts(self):
+        """Fetch optimizer selection.
+
+        By default, collects everything in torch.optim, as well as importing:
+        - qhm / qhmadam if installed from github.com/facebookresearch/qhoptim
+
+        Override this (and probably call super()) to add your own optimizers.
+        """
+        # first pull torch.optim in
+        optims = {k.lower(): v for k, v in optim.__dict__.items()
+                      if not k.startswith('__') and k[0].isupper()}
+
+        try:
+            # https://openreview.net/pdf?id=S1fUpoR5FQ
+            from qhoptim.pyt import QHM, QHAdam
+            optims['qhm'] = QHM
+            optims['qhadam'] = QHAdam
+        except ImportError:
+            # no QHM installed
+            pass
+
+        return optims
 
     @staticmethod
     def dictionary_class():
@@ -192,7 +201,7 @@ class TorchAgent(Agent):
                  'ignored unless you append "-force" to your choice.')
         # optimizer arguments
         agent.add_argument(
-            '-opt', '--optimizer', default='sgd', choices=cls.OPTIM_OPTS,
+            '-opt', '--optimizer', default='sgd', choices=cls.optim_opts(),
             help='Choose between pytorch optimizers. Any member of torch.optim'
                  ' should be valid.')
         agent.add_argument(
@@ -208,11 +217,11 @@ class TorchAgent(Agent):
             '--nesterov', default=True, type='bool',
             help='if applicable, whether to use nesterov momentum.')
         agent.add_argument(
-            '-nu', '--nus', default='0.7', type=str,
+            '-nu', '--nus', default='0.7', type='floats',
             help='if applicable, nu value(s) for optimizer. can use a single '
                  'value like 0.7 or a comma-separated tuple like 0.7,1.0')
         agent.add_argument(
-            '-beta', '--betas', default='0.9,0.999', type=str,
+            '-beta', '--betas', default='0.9,0.999', type='floats',
             help='if applicable, beta value(s) for optimizer. can use a single '
                  'value like 0.9 or a comma-separated tuple like 0.9,0.999')
         # lr scheduler
@@ -362,22 +371,19 @@ class TorchAgent(Agent):
                 kwargs['nesterov'] = opt.get('nesterov', True)
             elif opt['optimizer'] == 'qhm':
                 # qhm needs a nu
-                nu = float(opt.get('nus', '0.7'))
-                kwargs['nu'] = nu
+                kwargs['nu'] = opt.get('nus', (0.7,))[0]
         elif opt['optimizer'] == 'adam':
             # turn on amsgrad for adam
             # amsgrad paper: https://openreview.net/forum?id=ryQu7f-RZ
             kwargs['amsgrad'] = True
         elif opt['optimizer'] == 'qhadam':
             # set nus for qhadam
-            nus = tuple(float(nu) for nu in opt.get('nus', '0.7,1.0').split(','))
-            kwargs['nus'] = nus
+            kwargs['nus'] = opt.get('nus', (0.7, 1.0))
         if opt['optimizer'] in ['adam', 'sparseadam', 'adamax', 'qhadam']:
             # set betas for optims that use it
-            betas = tuple(float(b) for b in opt.get('betas', '0.9,0.999').split(','))
-            kwargs['betas'] = betas
+            kwargs['betas'] = opt.get('betas', (0.9, 0.999))
 
-        optim_class = self.OPTIM_OPTS[opt['optimizer']]
+        optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if optim_states:
             if saved_optim_type != opt['optimizer']:

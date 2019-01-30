@@ -49,6 +49,10 @@ def str2bool(value):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+def str2floats(s):
+    """Look for single float or comma-separated floats."""
+    return tuple(float(f) for f in s.split(','))
+
 
 def str2class(value):
     """From import path string, returns the class specified. For example, the
@@ -111,6 +115,7 @@ class ParlaiParser(argparse.ArgumentParser):
         super().__init__(description=description, allow_abbrev=False,
                          conflict_handler='resolve')
         self.register('type', 'bool', str2bool)
+        self.register('type', 'floats', str2floats)
         self.register('type', 'class', str2class)
         self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
                             os.path.realpath(__file__)))))
