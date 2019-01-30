@@ -13,6 +13,7 @@ from parlai.core.utils import padded_3d
 import torch
 import json
 import tqdm
+import pdb
 
 
 class BiEncoderRankerAgent(TorchRankerAgent):
@@ -82,7 +83,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
             obs,
             add_start=True,
             add_end=True,
-            truncate=self.opt["truncate"])
+            truncate=self.truncate)
 
     def _set_text_vec(self, obs, truncate, split_lines):
         super()._set_text_vec(obs, truncate, split_lines)
@@ -158,26 +159,6 @@ class BiEncoderModule(torch.nn.Module):
         if token_idx_cands is not None:
             embedding_cands = self.cand_encoder(
                 token_idx_cands, segment_idx_cands, mask_cands)
-
-        # # Right now torch.distributed.DistributedDataParallel can not handle
-        # # parts of the models that are not used at all. This is a hacky solution
-        # # wo do as if we were using it.
-        # if self.use_hack_distributed:
-        #     if embedding_cands is None and embedding_ctxt is not None:
-        #         fake_idx = token_idx_ctxt.new_zeros(3,3)
-        #         fake_segments = token_idx_ctxt.new_zeros(3,3)
-        #         fake_mask = token_idx_ctxt.new_ones(3,3)
-        #         fake_embedding_cands = self.cand_encoder(fake_idx, fake_segments,
-        #             fake_mask)
-        #         embedding_ctxt += 0 * torch.sum(fake_embedding_cands)
-        #
-        #     if embedding_ctxt is None and embedding_cands is not None:
-        #         fake_idx = token_idx_cands.new_zeros(3,3)
-        #         fake_segments = token_idx_cands.new_zeros(3,3)
-        #         fake_mask = token_idx_cands.new_ones(3,3)
-        #         fake_embedding_ctxt = self.context_encoder(fake_idx, fake_segments,
-        #             fake_mask)
-        #         embedding_cands += 0 * torch.sum(fake_embedding_ctxt)
         return embedding_ctxt, embedding_cands
 
 

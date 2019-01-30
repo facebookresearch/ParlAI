@@ -78,7 +78,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             obs,
             add_start=True,
             add_end=True,
-            truncate=self.opt["truncate"])
+            truncate=self.truncate)
 
     def _set_text_vec(self, obs, truncate, split_lines):
         super()._set_text_vec(obs, truncate, split_lines)

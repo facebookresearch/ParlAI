@@ -94,10 +94,10 @@ class BertWrapper(torch.nn.Module):
         else:
             embeddings = layer_of_interest[:, 0, :]
         result = self.additional_linear_layer(embeddings)
-        # # Sort of hack to make it work with distributed: this way the pooler layer
-        # # is used for grad computation, even though it does not change anything...
-        # # in practice, it just adds a very (768*768) x (768*batchsize) matmul
-        # result += 0 * torch.sum(output_pooler)
+        # Sort of hack to make it work with distributed: this way the pooler layer
+        # is used for grad computation, even though it does not change anything...
+        # in practice, it just adds a very (768*768) x (768*batchsize) matmul
+        result += 0 * torch.sum(output_pooler)
         return result
 
 
