@@ -93,6 +93,9 @@ class MessengerAgent(Agent):
                 'sticker_sender': message.get('sticker_sender', None),
                 'img_attempt': img_attempt,
             }
+            if img_attempt and self.data.get('allow_images', False):
+                action['image_url'] = message['message'].get('image_url')
+                action['attachment_url'] = message['message'].get('attachment_url')
             self.msg_queue.put(action)
 
     def set_stored_data(self):
@@ -137,7 +140,7 @@ class MessengerAgent(Agent):
         # Get a new message, if it's not None reset the timeout
         msg = self.get_new_act_message()
         if msg is not None:
-            if msg.get('img_attempt'):
+            if msg.get('img_attempt') and not self.data.get('allow_images', False):
                 # Let agent know that they cannot send images if they
                 # attempted to send one
                 msg = None
