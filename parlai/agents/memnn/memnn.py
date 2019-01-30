@@ -104,6 +104,11 @@ class MemnnAgent(TorchRankerAgent):
         kwargs['split_lines'] = True
         return super().vectorize(*args, **kwargs)
 
+    def _set_context_vec(self, *args, **kwargs):
+        args = args[0], args[1]
+        kwargs['split_lines'] = True
+        return super()._set_context_vec(*args, **kwargs)
+
     def _build_mems(self, mems):
         """Build memory tensors.
 

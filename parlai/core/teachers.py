@@ -589,55 +589,58 @@ class DialogData(object):
                 episode = []
                 last_cands = None
 
-            # intern all strings so we don't store them more than once
-            new_entry = []
-            if len(entry) > 0:
-                # process text if available
-                if entry[0] is not None:
-                    new_entry.append(sys.intern(entry[0]))
-                else:
-                    new_entry.append(None)
-                if len(entry) > 1:
-                    # process labels if available
-                    if entry[1] is None:
-                        new_entry.append(None)
-                    elif hasattr(entry[1], '__iter__') and type(entry[1]) is not str:
-                        # make sure iterable over labels, not single string
-                        new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+            if isinstance(entry, dict):
+                episode.append(entry)
+            else:
+                # intern all strings so we don't store them more than once
+                new_entry = []
+                if len(entry) > 0:
+                    # process text if available
+                    if entry[0] is not None:
+                        new_entry.append(sys.intern(entry[0]))
                     else:
-                        raise TypeError(
-                            'Must provide iterable over labels, not a single string.'
-                        )
-                    if len(entry) > 2:
-                        # process reward if available
-                        if entry[2] is not None:
-                            new_entry.append(entry[2])
-                        else:
+                        new_entry.append(None)
+                    if len(entry) > 1:
+                        # process labels if available
+                        if entry[1] is None:
                             new_entry.append(None)
-                        if len(entry) > 3:
-                            # process label candidates if available
-                            if entry[3] is None:
-                                new_entry.append(None)
-                            elif last_cands and entry[3] is last_cands:
-                                # if cands are shared, say "same" so we
-                                # don't store them again
-                                new_entry.append(
-                                    sys.intern('same as last time'))
-                            elif (hasattr(entry[3], '__iter__') and
-                                    type(entry[3]) is not str):
-                                # make sure iterable over candidates, not single string
-                                last_cands = entry[3]
-                                new_entry.append(tuple(
-                                    sys.intern(e) for e in entry[3]))
+                        elif hasattr(entry[1], '__iter__') and type(entry[1]) is not str:
+                            # make sure iterable over labels, not single string
+                            new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+                        else:
+                            raise TypeError(
+                                'Must provide iterable over labels, not a single string.'
+                            )
+                        if len(entry) > 2:
+                            # process reward if available
+                            if entry[2] is not None:
+                                new_entry.append(entry[2])
                             else:
-                                raise TypeError(
-                                    'Must provide iterable over label candidates, '
-                                    'not a single string.'
-                                )
-                            if len(entry) > 4 and entry[4] is not None:
-                                new_entry.append(sys.intern(entry[4]))
+                                new_entry.append(None)
+                            if len(entry) > 3:
+                                # process label candidates if available
+                                if entry[3] is None:
+                                    new_entry.append(None)
+                                elif last_cands and entry[3] is last_cands:
+                                    # if cands are shared, say "same" so we
+                                    # don't store them again
+                                    new_entry.append(
+                                        sys.intern('same as last time'))
+                                elif (hasattr(entry[3], '__iter__') and
+                                        type(entry[3]) is not str):
+                                    # make sure iterable over candidates, not single string
+                                    last_cands = entry[3]
+                                    new_entry.append(tuple(
+                                        sys.intern(e) for e in entry[3]))
+                                else:
+                                    raise TypeError(
+                                        'Must provide iterable over label candidates, '
+                                        'not a single string.'
+                                    )
+                                if len(entry) > 4 and entry[4] is not None:
+                                    new_entry.append(sys.intern(entry[4]))
 
-            episode.append(tuple(new_entry))
+                episode.append(tuple(new_entry))
 
         if len(episode) > 0:
             yield tuple(episode)
@@ -691,22 +694,25 @@ class DialogData(object):
 
         :param entry: a tuple in the form described in the class docstring.
         """
-        table = {}
-        if entry[0] is not None:
-            table['text'] = entry[0]
-        if len(entry) > 1:
-            if entry[1] is not None:
-                table['labels'] = entry[1]
-            if len(entry) > 2:
-                if entry[2] is not None:
-                    table['reward'] = entry[2]
-                if len(entry) > 3:
-                    if entry[3] is not None:
-                        table['label_candidates'] = entry[3]
-                    if len(entry) > 4 and entry[4] is not None:
-                        img = self.image_loader.load(entry[4])
-                        if img is not None:
-                            table['image'] = img
+        if isinstance(entry, dict):
+            table = entry
+        else:
+            table = {}
+            if entry[0] is not None:
+                table['text'] = entry[0]
+            if len(entry) > 1:
+                if entry[1] is not None:
+                    table['labels'] = entry[1]
+                if len(entry) > 2:
+                    if entry[2] is not None:
+                        table['reward'] = entry[2]
+                    if len(entry) > 3:
+                        if entry[3] is not None:
+                            table['label_candidates'] = entry[3]
+                        if len(entry) > 4 and entry[4] is not None:
+                            img = self.image_loader.load(entry[4])
+                            if img is not None:
+                                table['image'] = img
 
         if (table.get('labels', None) is not None and
                 self.cands is not None):

@@ -64,12 +64,24 @@ class Task10kTeacher(FbDialogTeacher):
         self.task_num = task.split(':')[2]
         opt['datafile'] = _path('-10k', self.task_num, opt)
         opt['cands_datafile'] = _path('-10k', task.split(':')[2], opt, 'train')
+        # TODO: change to real check
+        self.use_context = opt.get('context', True)
         super().__init__(opt, shared)
 
     def setup_data(self, path):
         for entry, new in super().setup_data(path):
-            entry[1] = mod_labels(entry[1], self.task_num)
-            yield entry, new
+            msg = {
+                'text': entry[0],
+                'labels': mod_labels(entry[1], self.task_num),
+                'reward': entry[2]
+            }
+            if len(entry) > 3:
+                msg['label_candidates'] = entry[3]
+            if self.use_context:
+                split = msg['text'].split('\n')
+                msg['text'] = split[-1]
+                msg['context'] = '\n'.join(split[:-1])
+            yield msg, new
 
     def load_cands(self, path):
         return mod_labels(super().load_cands(path), self.task_num)
