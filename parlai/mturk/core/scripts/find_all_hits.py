@@ -117,16 +117,6 @@ def main():
             try:
                 for hit_id, status in group_to_hit[task_group_id].items():
                     hit_ids.append(hit_id)
-                    # response = client.list_assignments_for_hit(HITId=hit_id)
-                    # if response['NumResults'] == 0:
-                    #     print(f'No results for hit {hit_id} with status {status}\n')
-                    # else:
-                    #     import pdb; pdb.set_trace()
-                    #     for assignment in response['Assignments']:
-                    #         assignment_id = assignment['AssignmentId']
-                    #         client.approve_assignment(AssignmentId=assignment_id)
-                    #         group_assign_approved += 1
-                    #         total_assign_approved += 1
             except BaseException as e:
                 print(e)
                 print(f"Failed to collect hit_ids for group {task_group_id}.")
@@ -139,22 +129,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-    # Get list of hit_groups somewhere
-    # For HIT in hit_group:
-    # For assignment in HIT:
-    # Approve assignment
-
-    # while True:
-    #     hit_id = input("Enter HIT id: ")
-    #     if len(hit_id) == 0:
-    #         break
-    #     # MTurkManager.get_assignments_for_hist()
-    #     assignments_info = client.list_assignments_for_hit(HITId=hit_id)
-    #     assignments = assignments_info.get('Assignments', [])
-    #     # MTurkManager.approve_assignments_for_hit()
-    #     for assignment in assignments:
-    #         assignment_id = assignment['AssignmentId']
-    #         resp = client.approve_assignment(AssignmentId=assignment_id,
-    #                                          OverrideRejection=False)
-    #         print(resp)

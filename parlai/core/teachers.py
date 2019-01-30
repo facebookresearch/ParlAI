@@ -184,6 +184,9 @@ class FixedDialogTeacher(Teacher):
                 ordered_opt['hide_labels'] = False
                 ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
 
+                clen = opt.get('context_length', -1)
+                incl = opt.get('include_labels', True)
+
                 if ordered_teacher.num_examples() > 1000000:  # one million
                     print('WARNING: this dataset is large, and batch sorting '
                           'may use too much RAM or take too long to set up. '
@@ -192,11 +195,8 @@ class FixedDialogTeacher(Teacher):
                           'has episodes of multiple examples), or streaming '
                           'the data using a streamed data mode if supported.')
 
-                clen = opt.get('context_length', -1)
-                incl = opt.get('include_labels', True)
                 flatdata = flatten(ordered_teacher,
                                    context_length=clen, include_labels=incl)
-
                 self.sorted_data = sort_data(flatdata)
                 self.batches = make_batches(self.sorted_data, self.bsz)
                 # one fixed-seed shuffle keeps determinism but makes sure that
