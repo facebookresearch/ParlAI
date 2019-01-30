@@ -187,14 +187,6 @@ class TorchAgent(Agent):
             '-lr', '--learningrate', type=float, default=1,
             help='learning rate')
         agent.add_argument(
-            '-lrfac', '--lr-factor', type=float, default=0.5,
-            help='factor for scheduler to reduce learning rate by'
-        )
-        agent.add_argument(
-            '-lrpat', '--lr-patience', type=int, default=3,
-            help='patience for scheduler decreasing learning rate'
-        )
-        agent.add_argument(
             '-clip', '--gradient-clip', type=float, default=0.1,
             help='gradient clipping using l2 norm')
         agent.add_argument(
