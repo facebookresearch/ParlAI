@@ -24,9 +24,15 @@ def convert_file(input_file_path, output_file_path):
     
     print("Output file opened")
     with open(output_file_path, 'w') as f:
-        for row in records:
-            f.write(json.dumps(row))
-            f.write('\n')
+        for i in range (0, len(records["answers"].keys())):
+            newline_dict = {}
+            newline_dict["answer"] = records["answers"][i]
+            newline_dict["passage"] = records["passages"][i]
+            newline_dict["query"] = records["query"][i]
+            newline_dict["query_id"] = records["query_id"][i]
+            newline_dict["query_type"] = records["query_type"][i]
+            newline_dict["wellFormedAnswers"] = records["wellFormedAnswers"][i]
+            f.write(json.dumps(newline_dict))
     print("File finished iterating")
 
 
