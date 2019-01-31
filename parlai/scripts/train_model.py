@@ -44,7 +44,7 @@ def setup_args(parser=None):
     train.add_argument('-et', '--evaltask',
                        help=('task to use for valid/test (defaults to the '
                              'one used for training if not set)'))
-    train.add_argument('-ebs', '--eval-batchsize', type=int,
+    train.add_argument('--eval-batchsize', type=int,
                        hidden=True,
                        help='Eval time batch size (defaults to same as -bs)')
     train.add_argument('--display-examples', type='bool', default=False)
@@ -471,7 +471,6 @@ class TrainLoop():
                         opt['model_file']
                     ))
                     self.agent.save(opt['model_file'] + '.checkpoint')
-                    self.log_time.reset()
                     self.save_time.reset()
 
         if not self.saved and is_primary_worker():
