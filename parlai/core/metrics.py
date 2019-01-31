@@ -139,7 +139,7 @@ class Metrics(object):
     def __init__(self, opt):
         self.metrics = {}
         self.metrics['cnt'] = 0
-        self.metrics_list = ['correct', 'f1', 'ppl']
+        self.metrics_list = ['mean_rank', 'loss', 'correct', 'f1', 'ppl']
         if nltkbleu is not None:
             # only compute bleu if we can
             self.metrics_list.append('bleu')

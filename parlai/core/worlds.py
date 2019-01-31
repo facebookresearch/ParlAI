@@ -55,7 +55,7 @@ except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.core.metrics import aggregate_metrics
-from parlai.core.utils import Timer, display_messages, warn_once
+from parlai.core.utils import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
 
