@@ -112,9 +112,8 @@ class TorchRankerAgent(TorchAgent):
 
 
     def get_train_preds(self, scores):
-        _, ranks = scores.sort(1, descending=True)
         if self.opt['candidates'] == 'batch':
-            batchsize = ranks.size(0)
+            batchsize = scores.size(0)
             # get accuracy
             targets = scores.new_empty(batchsize).long()
             targets = torch.arange(batchsize, out=targets)
@@ -126,6 +125,8 @@ class TorchRankerAgent(TorchAgent):
             self.metrics['rank'] += rank
             return Output()
 
+        # TODO: speed these calculations up
+        _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
@@ -160,6 +161,10 @@ class TorchRankerAgent(TorchAgent):
         # Get train predictions
         if self.opt.get('train_predict', True):
             return self.get_train_preds(scores)
+        warn_once(
+            "Some training metrics are ommitted for speed. Set the flag "
+            "`--train-predict` to calculate train metrics."
+        )
         return Output()
 
     def eval_step(self, batch):
@@ -351,7 +356,7 @@ class TorchRankerAgent(TorchAgent):
             m['loss'] = self.metrics['loss']
             m['mean_loss'] = self.metrics['loss'] / examples
             m['mean_rank'] = self.metrics['rank'] / examples
-            if self.metrics['train_accuracy'] > 0:
+            if self.opt['candidates'] == 'batch' and self.opt['train_predict']:
                 m['train_accuracy'] = self.metrics['train_accuracy'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
