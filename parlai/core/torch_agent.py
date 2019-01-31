@@ -1173,7 +1173,7 @@ class TorchAgent(Agent):
         self._number_training_updates += 1
 
         # compute warmup adjustment if needed
-        if self.opt.get('warmup_updates', -1) > 1:
+        if self.opt.get('warmup_updates', -1) > 0:
             if not hasattr(self, 'warmup_scheduler'):
                 raise RuntimeError(
                     'Looks like you forgot to call build_lr_scheduler'
