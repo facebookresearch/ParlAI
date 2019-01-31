@@ -270,6 +270,7 @@ class DistributionConcatenation2DFunction(torch.autograd.Function):
     def forward(ctx, x, rank, world_size):
         ctx.save_for_backward(rank, world_size)
         gather_list = [x.new_zeros(x.size(0), x.size(1)) for _ in range(world_size)]
+        print(x.size())
         dist.all_gather(gather_list, x)
         y = torch.cat(gather_list, 0).contiguous()
         return y

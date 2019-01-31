@@ -69,7 +69,9 @@ class TransformerRankerAgent(TorchRankerAgent):
                            help='If true, use the memories to help with predictions')
         agent.add_argument('--scores-norm', choices={'dot', 'sqrt', 'dim'},
                            default='dot', hidden=True)
-
+        agent.add_argument('--gather-from-other-nodes', type='bool', default=False,
+                           help='In distributed mode, collect candidates from'
+                                 'other nodes and concatenate them.')
         cls.dictionary_class().add_cmdline_args(argparser)
 
         super(TransformerRankerAgent, cls).add_cmdline_args(argparser)

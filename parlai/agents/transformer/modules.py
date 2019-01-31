@@ -10,6 +10,7 @@ import math
 import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
+from parlai.core.distributed_utils import DistributionConcatenation2D
 
 
 def _normalize(tensor, norm_layer):
@@ -87,6 +88,10 @@ class TransformerMemNetModel(nn.Module):
                 opt, dictionary, self.embeddings, self.pad_idx, reduction=True,
             )
 
+        # In distributed merge, collect candidates from other nodes
+        if self.opt["gather_from_other_nodes"]:
+            self.dist_concat = DistributionConcatenation2D(keep_self_first=True)
+
         # build memory encoder
         if opt.get('wrap_memory_encoder', False):
             self.memory_transformer = TransformerResponseWrapper(
@@ -149,6 +154,12 @@ class TransformerMemNetModel(nn.Module):
         if self.opt['normalize_sent_emb']:
             context_h = context_h / context_h.norm(2, dim=1, keepdim=True)
             cands_h = cands_h / cands_h.norm(2, dim=1, keepdim=True)
+
+        if self.opt["gather_from_other_nodes"]:
+            if cands_h.dim() == 3:
+                cands_h = self.dist_concat(cands_h.squeeze(0)).unsqueeze(0)
+            else:
+                cands_h = self.dist_concat(cands_h)
 
         scores = self._score(context_h, cands_h)
         if self.scores_norm == 'dot':
