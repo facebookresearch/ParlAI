@@ -43,9 +43,9 @@ class TorchRankerAgent(TorchAgent):
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
         agent.add_argument(
-            '--train-predict', type='bool', default=True,
+            '--train-predict', type='bool', default=False,
             help='Get predictions and calculate mean rank during the train '
-                 'step. Turning this off will speed up training.'
+                 'step. Turning this on may slow down training.'
         )
 
     def __init__(self, opt, shared=None):
@@ -111,20 +111,20 @@ class TorchRankerAgent(TorchAgent):
             'Abstract class: user must implement build_model()')
 
 
-    def get_train_preds(self, scores):
-        if self.opt['candidates'] == 'batch':
-            batchsize = scores.size(0)
-            # get accuracy
-            targets = scores.new_empty(batchsize).long()
-            targets = torch.arange(batchsize, out=targets)
-            nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
-            self.metrics['train_accuracy'] += nb_ok
-            # calculate mean rank
-            above_dot_prods = scores - scores.diag().view(-1, 1)
-            rank = (above_dot_prods > 0).float().sum().item()
-            self.metrics['rank'] += rank
-            return Output()
+    def get_batch_train_metrics(self, scores):
+        batchsize = scores.size(0)
+        # get accuracy
+        targets = scores.new_empty(batchsize).long()
+        targets = torch.arange(batchsize, out=targets)
+        nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
+        self.metrics['train_accuracy'] += nb_ok
+        # calculate mean rank
+        above_dot_prods = scores - scores.diag().view(-1, 1)
+        rank = (above_dot_prods > 0).float().sum().item()
+        self.metrics['rank'] += rank
 
+
+    def get_train_preds(self, scores):
         # TODO: speed these calculations up
         _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
@@ -159,13 +159,16 @@ class TorchRankerAgent(TorchAgent):
         self.update_params()
 
         # Get train predictions
-        if self.opt.get('train_predict', True):
-            return self.get_train_preds(scores)
-        warn_once(
-            "Some training metrics are ommitted for speed. Set the flag "
-            "`--train-predict` to calculate train metrics."
-        )
-        return Output()
+        if self.opt['candidates'] == 'batch':
+            self.get_batch_train_metrics(scores)
+            return Output()
+        if not self.opt.get('train_predict', False):
+            warn_once(
+                "Some training metrics are ommitted for speed. Set the flag "
+                "`--train-predict` to calculate train metrics."
+            )
+            return Output()
+        return self.get_train_preds(scores)
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
@@ -356,7 +359,7 @@ class TorchRankerAgent(TorchAgent):
             m['loss'] = self.metrics['loss']
             m['mean_loss'] = self.metrics['loss'] / examples
             m['mean_rank'] = self.metrics['rank'] / examples
-            if self.opt['candidates'] == 'batch' and self.opt['train_predict']:
+            if self.opt['candidates'] == 'batch':
                 m['train_accuracy'] = self.metrics['train_accuracy'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
