@@ -119,7 +119,6 @@ class TorchRankerAgent(TorchAgent):
             targets = scores.new_empty(batchsize).long()
             targets = torch.arange(batchsize, out=targets)
             nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
-            import pdb; pdb.set_trace()
             self.metrics['train_accuracy'] += nb_ok
             # calculate mean rank
             above_dot_prods = scores - scores.diag().view(-1, 1)
