@@ -9,7 +9,7 @@
 
 import torchtext.vocab as vocab
 
-url = 'https://s3-us-west-1.amazonaws.com/fasttext-vectors/crawl-300d-2M.vec.zip',
+url = 'https://s3-us-west-1.amazonaws.com/fasttext-vectors/crawl-300d-2M.vec.zip'
 
 
 def download(datapath):
