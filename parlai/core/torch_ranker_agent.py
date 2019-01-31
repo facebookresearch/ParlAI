@@ -110,7 +110,6 @@ class TorchRankerAgent(TorchAgent):
         raise NotImplementedError(
             'Abstract class: user must implement build_model()')
 
-
     def get_batch_train_metrics(self, scores):
         batchsize = scores.size(0)
         # get accuracy
@@ -123,9 +122,9 @@ class TorchRankerAgent(TorchAgent):
         rank = (above_dot_prods > 0).float().sum().item()
         self.metrics['rank'] += rank
 
-
-    def get_train_preds(self, scores):
+    def get_train_preds(self, scores, label_inds, cands, cand_vecs):
         # TODO: speed these calculations up
+        batchsize = scores.size(0)
         _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
@@ -137,7 +136,6 @@ class TorchRankerAgent(TorchAgent):
         elif cand_vecs.dim() == 3:
             preds = [cands[i][ordering[0]] for i, ordering in enumerate(ranks)]
         return Output(preds)
-
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
@@ -168,7 +166,7 @@ class TorchRankerAgent(TorchAgent):
                 "`--train-predict` to calculate train metrics."
             )
             return Output()
-        return self.get_train_preds(scores)
+        return self.get_train_preds(scores, label_inds, cands, cand_vecs)
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
