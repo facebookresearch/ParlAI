@@ -201,3 +201,94 @@ def sync_object(data, max_size=16384):
             )
 
     return data
+
+
+class DistributionConcatenation2D(torch.nn.Module):
+    """
+        If training is not distributed, alors it is equivalent to identity.
+
+        Otherwise:
+        Provides the result of the concatenation of 2D tensors of the same size,
+        but computed on several GPUs. REQUIRES THEM TO BE THE SAME SIZE.
+
+        forward time:
+            GPU1 produces x=[[a, b], [c, d]]
+            GPU2 produces x=[[e, f], [g, h]]
+
+            y = DistributionConcatenation2D(x)
+            On GPU1 y = [[a, b], [c, d], [e, f], [g, h]]
+            On GPU2 y = [[a, b], [c, d], [e, f], [g, h]]
+
+        backward_time:
+            GPU1 computed grad_y = [[s1, s2], [t1, t2], [u1, u2], [v1, v2]]
+            GPU1 computed grad_y = [[w1, w2], [x1, x2], [y1, y2], [z1, z2]]
+
+            On GPU1 grad_x = [[s1 + w1, s2 + w2], [t1 + x1, t2 + x2]]
+            On GPU2 grad_x = [[u1 + y1, u2 + y2], [v1 + z1, v2 + z2]]
+
+        If the keep_self_first option is true, then at forward time:
+            GPU1 produces x=[[a, b], [c, d]]
+            GPU2 produces x=[[e, f], [g, h]]
+
+            y = DistributionConcatenation2D(x)
+            On GPU1 y = [[a, b], [c, d], [e, f], [g, h]]
+            On GPU2 y = [[e, f], [g, h], [a, b], [c, d]]
+
+    """
+
+    def __init__(self, keep_self_first=False):
+        """ :param keep_self_first: if True, this module will
+                maintain its input (x) at the beginning of the output
+        """
+        self.keep_self_first = keep_self_first
+        self.rank = dist.get_rank()
+        self.world_size = num_workers()
+        super(DistributionConcatenation2D, self).__init__()
+
+    def forward(self, x):
+        if not is_distributed():
+            return x
+        y = DistributionConcatenation2DFunction.apply(x,
+            torch.tensor(self.rank),
+            torch.tensor(self.world_size))
+        bsz = x.size(0)
+        if self.keep_self_first:
+            y = torch.cat([
+                    y[self.rank * bsz: (self.rank + 1) * bsz],
+                    y[0 : self.rank * bsz],
+                    y[(self.rank + 1) * bsz :]
+                ], 0)
+            y = y .contiguous()
+        return y
+
+class DistributionConcatenation2DFunction(torch.autograd.Function):
+    """ Actual function behind DistributionConcatenation2D. See comments of the
+        module.
+    """
+
+    @staticmethod
+    def forward(ctx, x, rank, world_size):
+        ctx.save_for_backward(rank, world_size)
+        gather_list = [x.new_zeros(x.size(0), x.size(1)) for _ in range(world_size)]
+        dist.all_gather(gather_list, x)
+        y = torch.cat(gather_list, 0).contiguous()
+        return y
+
+    @staticmethod
+    def backward(ctx, grad_y):
+        rank = ctx.saved_tensors[0]
+        world_size = ctx.saved_tensors[1]
+
+        # gather all the gradients that have been computed everywhere
+        gather_list = [grad_y.new_zeros(grad_y.size(0), grad_y.size(1))
+                       for _ in range(world_size)]
+        dist.all_gather(gather_list, grad_y.contiguous())
+
+        # collect them as a tensor instead of a list
+        bsz = grad_y.size(0) / world_size
+        gather_tensor = torch.cat([g.unsqueeze(0) for g in gather_list], 0)
+
+        # restrict to x and returns gradient
+        gather_tensor_x = gather_tensor[:, rank * bsz:(rank + 1) * bsz, :]
+        grad_x = torch.sum(gather_tensor_x, 0)
+        return grad_x, None, None
