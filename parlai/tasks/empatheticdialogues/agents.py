@@ -41,7 +41,10 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
             self.opt.get('fasttextloc') is not None and
             self.opt.get('prepend', -1) > 0
         ):
-            import fastText
+            try:
+                import fastText
+            except ImportError:
+                raise ImportError("Please run 'pip install fasttext'.")
             ftpath = self.opt['fasttextloc']
             ftmodel = fastText.FastText.load_model(ftpath)
 
