@@ -27,13 +27,13 @@ def convert_file(input_file_path, output_file_path):
         for i in range (0, len(records["answers"].keys())):
             newline_dict = {}
             index = str(i)
-            newline_dict["answer"] = records["answers"][index]
-            newline_dict["passage"] = records["passages"][index]
+            newline_dict["answers"] = records["answers"][index]
+            newline_dict["passages"] = records["passages"][index]
             newline_dict["query"] = records["query"][index]
             newline_dict["query_id"] = records["query_id"][index]
             newline_dict["query_type"] = records["query_type"][index]
             newline_dict["wellFormedAnswers"] = records["wellFormedAnswers"][index]
-            f.write(json.dumps(newline_dict))
+            f.write(json.dumps(newline_dict) + "\n")
     print("File finished iterating")
 
 
@@ -71,7 +71,7 @@ def create_fb_format(outpath, dtype, inpath):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MS_MARCO')
-    version = None 
+    version = None
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
