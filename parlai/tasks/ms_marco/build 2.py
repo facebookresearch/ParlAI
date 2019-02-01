@@ -9,39 +9,22 @@
 import gzip
 import json
 import os
+
 import parlai.core.build_data as build_data
 
 
-def read_file(filename):
-    with open(filename) as f:
-        lines = [x for x in f.readlines()]
+def read_gz(filename, delete_gz=True):
+    f = gzip.open(filename, 'rb')
+    lines = [x.decode('utf-8') for x in f.readlines()]
+    if delete_gz:
+        os.remove(filename)
     return lines
-
-def convert_file(input_file_path, output_file_path):
-    print("GZIP file will now be loaded")
-    with gzip.open(input_file_path) as f:
-       records = json.load(f)
-    
-    print("Output file opened")
-    with open(output_file_path, 'w') as f:
-        for i in range (0, len(records["answers"].keys())):
-            newline_dict = {}
-            index = str(i)
-            newline_dict["answer"] = records["answers"][index]
-            newline_dict["passage"] = records["passages"][index]
-            newline_dict["query"] = records["query"][index]
-            newline_dict["query_id"] = records["query_id"][index]
-            newline_dict["query_type"] = records["query_type"][index]
-            newline_dict["wellFormedAnswers"] = records["wellFormedAnswers"][index]
-            f.write(json.dumps(newline_dict))
-    print("File finished iterating")
 
 
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
-    output = outpath.split(".")[0] + ".jsonl"
-    convert_file(inpath, output)
-    lines = read_file(output)
+
+    lines = read_gz(inpath)
 
     # save the raw json version for span selection task (default)
     fout1 = open(os.path.join(outpath, dtype + '.txt'), 'w')
@@ -54,13 +37,19 @@ def create_fb_format(outpath, dtype, inpath):
     for line in lines:
         dic = json.loads(line)
         lq = dic["query"]
-        if dtype != "test":		        
-           ans = "|".join([d["passage_text"] for d in dic["passages"] if d["is_selected"] == 1])
-           cands = "|".join([d["passage_text"] for d in dic["passages"] if d["is_selected"] == 0])
-           cands = ans + "|" + cands
-           
-           if ans == "":
-               continue  # if no true label, skip for now
+        if dtype != "test":
+            try:
+                ans = "|".join([
+                    d["passage_text"] for d in dic["passages"] if d["is_selected"] == 1
+                ])
+                cands = "|".join([
+                    d["passage_text"] for d in dic["passages"] if d["is_selected"] == 0]
+                )
+                cands = ans + "|" + cands
+            except: 
+                print(dic)
+            if ans == "":
+                continue  # if no true label, skip for now
         else:  # ground truth for test data is not available yet
             ans = ""
             cands = "|".join([d["passage_text"] for d in dic["passages"]])
@@ -71,7 +60,7 @@ def create_fb_format(outpath, dtype, inpath):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MS_MARCO')
-    version = None 
+    version = None
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
@@ -89,7 +78,7 @@ def build(opt):
         fname = "dev_v2.1.json.gz"
         build_data.download(url + fname, dpath, 'valid.gz')
 
-        fname = "eval_v2.1_public.json.gz"
+        fname = "test_public_v2.1.json.gz"
         build_data.download(url + fname, dpath, 'test.gz')
 
         create_fb_format(dpath, "train", os.path.join(dpath, 'train.gz'))
