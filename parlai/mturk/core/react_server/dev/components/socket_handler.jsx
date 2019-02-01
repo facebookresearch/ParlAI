@@ -42,13 +42,13 @@ const TYPE_ALIVE = 'alive';
 /* ================= Local Constants ================= */
 
 const SEND_THREAD_REFRESH = 100;
-const ACK_WAIT_TIME = 300; // Check for acknowledge every 0.3 seconds
+const ACK_WAIT_TIME = 2000; // Check for acknowledge every 2 seconds
 const STATUS_ACK = 'ack';
 const STATUS_INIT = 'init';
 const STATUS_SENT = 'sent';
-const CONNECTION_DEAD_MISSING_PONGS = 15;
-const REFRESH_SOCKET_MISSING_PONGS = 5;
-const HEARTBEAT_TIME = 2000;  // One heartbeat every 2 seconds
+const CONNECTION_DEAD_MISSING_PONGS = 25;
+const REFRESH_SOCKET_MISSING_PONGS = 10;
+const HEARTBEAT_TIME = 4000;  // One heartbeat every 4 seconds
 
 
 /* ============== Priority Queue Data Structure ============== */

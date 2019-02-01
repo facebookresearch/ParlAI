@@ -254,6 +254,11 @@ class TestTransformerGenerator(unittest.TestCase):
             valid1['num_updates'],
             'LR scheduler change reset failed (num_updates).\n' + stdout4
         )
+        self.assertEqual(
+            valid4['lr'],
+            1e-3,
+            'LR is not correct in final resume.\n' + stdout4
+        )
 
 
 if __name__ == '__main__':
