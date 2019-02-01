@@ -107,7 +107,7 @@ class MetadialogAgent(TransformerRankerAgent):
 
         # TEMP: These flags are general to the project, not necessarily this Agent
         project = argparser.add_argument_group('Metadialog Project')
-        DATAROOT = os.environ['PARLAIHOME'] + '/data/convai2meta'
+        DATAROOT = os.environ['PARLAI_HOME'] + '/data/convai2meta'
         project.add_argument('-dr', '--dataroot', type=str, default=DATAROOT,
                            help='path to the root data directory for teachers')
         project.add_argument('-st', '--subtasks', type=str,
