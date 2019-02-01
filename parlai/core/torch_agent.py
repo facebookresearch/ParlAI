@@ -144,11 +144,33 @@ class TorchAgent(Agent):
     For example:
     'adagrad': optim.Adagrad, 'adam': optim.Adad, 'sgd': optim.SGD
     """
-    OPTIM_OPTS = {k.lower(): v for k, v in optim.__dict__.items()
-                  if not k.startswith('__') and k[0].isupper()}
 
     P1_TOKEN = '__p1__'
     P2_TOKEN = '__p2__'
+
+    @classmethod
+    def optim_opts(self):
+        """Fetch optimizer selection.
+
+        By default, collects everything in torch.optim, as well as importing:
+        - qhm / qhmadam if installed from github.com/facebookresearch/qhoptim
+
+        Override this (and probably call super()) to add your own optimizers.
+        """
+        # first pull torch.optim in
+        optims = {k.lower(): v for k, v in optim.__dict__.items()
+                  if not k.startswith('__') and k[0].isupper()}
+
+        try:
+            # https://openreview.net/pdf?id=S1fUpoR5FQ
+            from qhoptim.pyt import QHM, QHAdam
+            optims['qhm'] = QHM
+            optims['qhadam'] = QHAdam
+        except ImportError:
+            # no QHM installed
+            pass
+
+        return optims
 
     @staticmethod
     def dictionary_class():
@@ -180,7 +202,7 @@ class TorchAgent(Agent):
                  'ignored unless you append "-force" to your choice.')
         # optimizer arguments
         agent.add_argument(
-            '-opt', '--optimizer', default='sgd', choices=cls.OPTIM_OPTS,
+            '-opt', '--optimizer', default='sgd', choices=cls.optim_opts(),
             help='Choose between pytorch optimizers. Any member of torch.optim'
                  ' should be valid.')
         agent.add_argument(
@@ -192,6 +214,17 @@ class TorchAgent(Agent):
         agent.add_argument(
             '-mom', '--momentum', default=0, type=float,
             help='if applicable, momentum value for optimizer.')
+        agent.add_argument(
+            '--nesterov', default=True, type='bool',
+            help='if applicable, whether to use nesterov momentum.')
+        agent.add_argument(
+            '-nu', '--nus', default='0.7', type='floats',
+            help='if applicable, nu value(s) for optimizer. can use a single '
+                 'value like 0.7 or a comma-separated tuple like 0.7,1.0')
+        agent.add_argument(
+            '-beta', '--betas', default='0.9,0.999', type='floats',
+            help='if applicable, beta value(s) for optimizer. can use a single '
+                 'value like 0.9 or a comma-separated tuple like 0.9,0.999')
         # lr scheduler
         agent.add_argument(
             '--lr-scheduler', type=str, default='reduceonplateau',
@@ -336,15 +369,27 @@ class TorchAgent(Agent):
         # set up optimizer args
         lr = opt['learningrate']
         kwargs = {'lr': lr}
-        if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop']:
+        if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop', 'qhm']:
+            # turn on momentum for optimizers that use it
             kwargs['momentum'] = opt['momentum']
-            if opt['optimizer'] == 'sgd':
-                kwargs['nesterov'] = True
-        if opt['optimizer'] == 'adam':
+            if opt['optimizer'] == 'sgd' and opt.get('nesterov', True):
+                # for sgd, maybe nesterov
+                kwargs['nesterov'] = opt.get('nesterov', True)
+            elif opt['optimizer'] == 'qhm':
+                # qhm needs a nu
+                kwargs['nu'] = opt.get('nus', (0.7,))[0]
+        elif opt['optimizer'] == 'adam':
+            # turn on amsgrad for adam
             # amsgrad paper: https://openreview.net/forum?id=ryQu7f-RZ
             kwargs['amsgrad'] = True
+        elif opt['optimizer'] == 'qhadam':
+            # set nus for qhadam
+            kwargs['nus'] = opt.get('nus', (0.7, 1.0))
+        if opt['optimizer'] in ['adam', 'sparseadam', 'adamax', 'qhadam']:
+            # set betas for optims that use it
+            kwargs['betas'] = opt.get('betas', (0.9, 0.999))
 
-        optim_class = self.OPTIM_OPTS[opt['optimizer']]
+        optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if optim_states:
             if saved_optim_type != opt['optimizer']:
@@ -531,8 +576,10 @@ class TorchAgent(Agent):
                                     'models:glove_vectors'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
-            embs = vocab.FastText(
-                language='en',
+            from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
+            embs = vocab.Vectors(
+                name='crawl-300d-2M.vec',
+                url=fasttext_cc_url,
                 cache=modelzoo_path(self.opt.get('datapath'),
                                     'models:fasttext_cc_vectors'))
         elif emb_type.startswith('fasttext'):
@@ -1171,7 +1218,7 @@ class TorchAgent(Agent):
         self._number_training_updates += 1
 
         # compute warmup adjustment if needed
-        if self.opt.get('warmup_updates', -1) > 1:
+        if self.opt.get('warmup_updates', -1) > 0:
             if not hasattr(self, 'warmup_scheduler'):
                 raise RuntimeError(
                     'Looks like you forgot to call build_lr_scheduler'

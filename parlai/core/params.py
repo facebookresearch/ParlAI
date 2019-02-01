@@ -50,6 +50,11 @@ def str2bool(value):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
+def str2floats(s):
+    """Look for single float or comma-separated floats."""
+    return tuple(float(f) for f in s.split(','))
+
+
 def str2class(value):
     """From import path string, returns the class specified. For example, the
     string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent' returns
@@ -112,6 +117,7 @@ class ParlaiParser(argparse.ArgumentParser):
                          conflict_handler='resolve',
                          formatter_class=argparse.ArgumentDefaultsHelpFormatter)
         self.register('type', 'bool', str2bool)
+        self.register('type', 'floats', str2floats)
         self.register('type', 'class', str2class)
         self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
                             os.path.realpath(__file__)))))
