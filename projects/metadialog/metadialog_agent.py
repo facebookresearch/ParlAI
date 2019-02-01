@@ -109,42 +109,6 @@ class MetadialogAgent(TransformerRankerAgent):
                            help="Whether the uncertainty threshold measures the "
                            "magnitude of the top confidence, or the gap between the "
                            "two most confident answers")
-
-        # TEMP: These flags are general to the project, not necessarily this Agent
-        project = argparser.add_argument_group('Metadialog Project')
-        DATAROOT = os.environ['PARLAI_HOME'] + '/data/convai2meta'
-        project.add_argument('-dr', '--dataroot', type=str, default=DATAROOT,
-                           help='path to the root data directory for teachers')
-        project.add_argument('-st', '--subtasks', type=str,
-                           help='comma-separated list of tasks to include for MTL teacher')
-        project.add_argument('-dia-train', '--dia-train', type=str, default='train',
-                           help='the filename to train on for the dialog task')
-        project.add_argument('-exp-train', '--exp-train', type=str, default='train',
-                           help='the filename to train on for the explanation task')
-        project.add_argument('-sen-train', '--sen-train', type=str, default='train',
-                           help='the filename to train on for the sentiment task')
-        project.add_argument('-dia-valid', '--dia-valid', type=str, default='valid',
-                           help='the filename to eval on for the dialog task')
-        project.add_argument('-exp-valid', '--exp-valid', type=str, default='valid',
-                           help='the filename to eval on for the explanation task')
-        project.add_argument('-sen-valid', '--sen-valid', type=str, default='valid',
-                           help='the filename to eval on for the sentiment task')
-        project.add_argument('-dia-test', '--dia-test', type=str, default='test',
-                           help='the filename to eval on for the dialog task')
-        project.add_argument('-exp-test', '--exp-test', type=str, default='test',
-                           help='the filename to eval on for the explanation task')
-        project.add_argument('-sen-test', '--sen-test', type=str, default='test',
-                           help='the filename to eval on for the sentiment task')
-        project.add_argument('-trial', '--trial', type=int, default=0,
-                           help='the index of a repeated trial (has no effect on the code)')
-        project.add_argument('-se', '--shuffle-examples', type='bool', default=True,
-                           help='if True, shuffle examples (in addition to shuffling '
-                                'the batches, which happens by default)')
-        project.add_argument('-mt', '--max-train', type=int, default=0,
-                           help='if non-zero, only the first max-train examples from the '
-                                'dataset will be used if it is read by an instance of '
-                                'ParlaiDialogTeacher')
-        argparser.set_defaults(history_size=2)
         return agent
 
     def __init__(self, opt, shared=None):
