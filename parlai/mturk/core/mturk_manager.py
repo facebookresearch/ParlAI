@@ -575,7 +575,12 @@ class MTurkManager():
             agent.log_reconnect()
             conversation_id = agent.conversation_id  # Hot fix suggested by Jack 11/20
             agent.alived = True
-            conversation_id = agent.conversation_id
+            if agent.conversation_id is not None and \
+                    conversation_id is not None:
+                # agent.conversation_id is None is used in testing.
+                # conversation_id is None on a fresh reconnect event, where
+                # we need to restore state somehow and shouldn't just inherit
+                conversation_id = agent.conversation_id
             if agent.get_status() == AssignState.STATUS_NONE:
                 # See if assigned an onboarding world, update state if so
                 if self.is_onboarding_world(conversation_id):
