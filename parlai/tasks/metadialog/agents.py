@@ -19,7 +19,6 @@ from projects.metadialog.utils import add_person_tokens
 
 def _path(opt, filename_override=None):
     build(opt)
-    dataroot = opt['dataroot']
     subtask = opt['subtask']
     st = None
     if subtask == 'dialog':
@@ -48,8 +47,11 @@ class MetadialogTeacher(ParlAIDialogTeacher):
         eval on data/convai2meta/dialog/valid.txt
         test on data/convai2meta/dialog/test.txt
     """
-    def __init__(self, opt, shared):
+    def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
+        if 'subtask' not in opt:
+            print('Warning: Metadialog teacher should be assigned subtask. Defaulting to dialog')
+            opt['subtask'] = 'dialog'
 
         if 'train' in opt['datatype']: # Use 'in' to also capture 'train:ordered:stream'
             # Use the filename explicitly given with the flag if available
@@ -76,6 +78,37 @@ class MetadialogTeacher(ParlAIDialogTeacher):
         opt['parlaidialogteacher_datafile'] = path
         opt['datafile'] = path
         super().__init__(opt, shared)
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        project = argparser.add_argument_group('Metadialog Tasks')
+        project.add_argument('-st', '--subtasks', type=str,
+                           help='comma-separated list of tasks to include for MTL teacher')
+        project.add_argument('-dia-train', '--dia-train', type=str, default='train',
+                           help='the filename to train on for the dialog task')
+        project.add_argument('-exp-train', '--exp-train', type=str, default='train',
+                           help='the filename to train on for the explanation task')
+        project.add_argument('-sen-train', '--sen-train', type=str, default='train',
+                           help='the filename to train on for the sentiment task')
+        project.add_argument('-dia-valid', '--dia-valid', type=str, default='valid',
+                           help='the filename to eval on for the dialog task')
+        project.add_argument('-exp-valid', '--exp-valid', type=str, default='valid',
+                           help='the filename to eval on for the explanation task')
+        project.add_argument('-sen-valid', '--sen-valid', type=str, default='valid',
+                           help='the filename to eval on for the sentiment task')
+        project.add_argument('-dia-test', '--dia-test', type=str, default='test',
+                           help='the filename to eval on for the dialog task')
+        project.add_argument('-exp-test', '--exp-test', type=str, default='test',
+                           help='the filename to eval on for the explanation task')
+        project.add_argument('-sen-test', '--sen-test', type=str, default='test',
+                           help='the filename to eval on for the sentiment task')
+        project.add_argument('-trial', '--trial', type=int, default=0,
+                           help='the index of a repeated trial (has no effect on the code)')
+        project.add_argument('-mt', '--max-train', type=int, default=0,
+                           help='if non-zero, only the first max-train examples from the '
+                                'dataset will be used if it is read by an instance of '
+                                'ParlaiDialogTeacher')
+        argparser.set_defaults(history_size=2)
 
     def _setup_data(self, path): # Make private method for ParlAIDialogTeacher
         """Reads data in the fbdialog format.
@@ -129,6 +162,10 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
     with batches (ensuring that all batches only have data from a single task at a time)
     """
     def __init__(self, opt, shared=None):
+        if opt['task'] == 'metadialog:MetadialogMTLTeacher':
+            # This does not happen except in tests such as test_new_tasks.py
+            opt = copy.deepcopy(opt)
+            opt['task'] = 'metadialog:MetadialogTeacher'
         super().__init__(opt, shared)
 
         # TODO: allow user to specify other strategies for creating sampling_prob
@@ -142,37 +179,7 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        project = argparser.add_argument_group('Metadialog Tasks')
-        DATAROOT = os.environ['PARLAI_HOME'] + '/data/convai2meta'
-        project.add_argument('-dr', '--dataroot', type=str, default=DATAROOT,
-                           help='path to the root data directory for teachers')
-        project.add_argument('-st', '--subtasks', type=str,
-                           help='comma-separated list of tasks to include for MTL teacher')
-        project.add_argument('-dia-train', '--dia-train', type=str, default='train',
-                           help='the filename to train on for the dialog task')
-        project.add_argument('-exp-train', '--exp-train', type=str, default='train',
-                           help='the filename to train on for the explanation task')
-        project.add_argument('-sen-train', '--sen-train', type=str, default='train',
-                           help='the filename to train on for the sentiment task')
-        project.add_argument('-dia-valid', '--dia-valid', type=str, default='valid',
-                           help='the filename to eval on for the dialog task')
-        project.add_argument('-exp-valid', '--exp-valid', type=str, default='valid',
-                           help='the filename to eval on for the explanation task')
-        project.add_argument('-sen-valid', '--sen-valid', type=str, default='valid',
-                           help='the filename to eval on for the sentiment task')
-        project.add_argument('-dia-test', '--dia-test', type=str, default='test',
-                           help='the filename to eval on for the dialog task')
-        project.add_argument('-exp-test', '--exp-test', type=str, default='test',
-                           help='the filename to eval on for the explanation task')
-        project.add_argument('-sen-test', '--sen-test', type=str, default='test',
-                           help='the filename to eval on for the sentiment task')
-        project.add_argument('-trial', '--trial', type=int, default=0,
-                           help='the index of a repeated trial (has no effect on the code)')
-        project.add_argument('-mt', '--max-train', type=int, default=0,
-                           help='if non-zero, only the first max-train examples from the '
-                                'dataset will be used if it is read by an instance of '
-                                'ParlaiDialogTeacher')
-        argparser.set_defaults(history_size=2)
+        MetadialogTeacher.add_cmdline_args(argparser)
 
     def observe(self, observation):
         return self.tasks[self.task_idx].observe(observation)
@@ -223,7 +230,7 @@ class DialogTeacher(MetadialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogMTLTeacher.add_cmdline_args(argparser)
+        MetadialogTeacher.add_cmdline_args(argparser)
 
 
 class ExplanationTeacher(MetadialogTeacher):
@@ -234,7 +241,7 @@ class ExplanationTeacher(MetadialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogMTLTeacher.add_cmdline_args(argparser)
+        MetadialogTeacher.add_cmdline_args(argparser)
 
 
 class SentimentTeacher(MetadialogTeacher):
@@ -245,7 +252,7 @@ class SentimentTeacher(MetadialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogMTLTeacher.add_cmdline_args(argparser)
+        MetadialogTeacher.add_cmdline_args(argparser)
 
 
 class DiaexpTeacher(MetadialogMTLTeacher):
@@ -253,17 +260,16 @@ class DiaexpTeacher(MetadialogMTLTeacher):
         opt = copy.deepcopy(opt)
         opt['subtasks'] = ['dialog', 'explanation']
         # Expand abbreviated task name ('both') into full task names
-        if opt['task'].split(':')[-2] == 'diaexp':
-            train_files = [opt['dia_train'], opt['exp_train']]
-            assert(len(opt['subtasks']) == len(train_files))
-            tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
-                in zip(opt['subtasks'], train_files)]
-            opt['task'] = ','.join(tasks)
+        train_files = [opt['dia_train'], opt['exp_train']]
+        assert(len(opt['subtasks']) == len(train_files))
+        tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
+            in zip(opt['subtasks'], train_files)]
+        opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogMTLTeacher.add_cmdline_args(argparser)
+        MetadialogTeacher.add_cmdline_args(argparser)
 
 
 class DiasenTeacher(MetadialogMTLTeacher):
@@ -271,17 +277,16 @@ class DiasenTeacher(MetadialogMTLTeacher):
         opt = copy.deepcopy(opt)
         opt['subtasks'] = ['dialog', 'sentiment']
         # Expand abbreviated task name ('both') into full task names
-        if opt['task'].split(':')[-2] == 'diasen':
-            train_files = [opt['dia_train'], opt['sen_train']]
-            assert(len(opt['subtasks']) == len(train_files))
-            tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
-                in zip(opt['subtasks'], train_files)]
-            opt['task'] = ','.join(tasks)
+        train_files = [opt['dia_train'], opt['sen_train']]
+        assert(len(opt['subtasks']) == len(train_files))
+        tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
+            in zip(opt['subtasks'], train_files)]
+        opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogMTLTeacher.add_cmdline_args(argparser)
+        MetadialogTeacher.add_cmdline_args(argparser)
 
 
 class AllTeacher(MetadialogMTLTeacher):
@@ -289,32 +294,13 @@ class AllTeacher(MetadialogMTLTeacher):
         opt = copy.deepcopy(opt)
         opt['subtasks'] = ['dialog', 'explanation', 'sentiment']
         # Expand abbreviated task name ('all') into full task names
-        if opt['task'].split(':')[-2] == 'all' or opt['task'] == 'metadialog:AllTeacher':
-            train_files = [opt['dia_train'], opt['exp_train'], opt['sen_train']]
-            assert(len(opt['subtasks']) == len(train_files))
-            tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
-                in zip(opt['subtasks'], train_files)]
-            opt['task'] = ','.join(tasks)
+        train_files = [opt['dia_train'], opt['exp_train'], opt['sen_train']]
+        assert(len(opt['subtasks']) == len(train_files))
+        tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
+            in zip(opt['subtasks'], train_files)]
+        opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogMTLTeacher.add_cmdline_args(argparser)
-
-
-class Convai2Teacher(DialogTeacher):
-    def __init__(self, opt, shared=None):
-        raise NotImplementedError
-
-    @staticmethod
-    def add_cmdline_args(argparser):
-        MetadialogMTLTeacher.add_cmdline_args(argparser)
-
-
-class DefaultTeacher(DialogTeacher):
-    def __init__(self, opt, shared=None):
-        raise NotImplementedError
-
-    @staticmethod
-    def add_cmdline_args(argparser):
-        MetadialogMTLTeacher.add_cmdline_args(argparser)
+        MetadialogTeacher.add_cmdline_args(argparser)

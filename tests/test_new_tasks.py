@@ -18,8 +18,6 @@ class TestNewTasks(unittest.TestCase):
     """Make sure any changes to tasks pass verify_data test."""
 
     def test_verify_data(self):
-        parser = setup_args()
-        opt = parser.parse_args(print_args=False)
         changed_files = git_changed_files()
         changed_task_files = []
         for file in changed_files:
@@ -37,11 +35,13 @@ class TestNewTasks(unittest.TestCase):
             task = file.split('/')[-2]
             module_name = "%s.tasks.%s.agents" % ('parlai', task)
             task_module = importlib.import_module(module_name)
-            base_teachers = dir(teach_module) + ['PytorchDataTeacher']
+            base_teachers = dir(teach_module) + ['PytorchDataTeacher', 'MultiTaskTeacher']
             subtasks = [':'.join([task, x]) for x in dir(task_module) if
                         ('teacher' in x.lower() and x not in base_teachers)]
 
             for subt in subtasks:
+                parser = setup_args()
+                opt = parser.parse_args(args=['--task', subt], print_args=False)
                 opt['task'] = subt
                 text, log = verify(opt, print_parser=False)
                 for key in KEYS:
