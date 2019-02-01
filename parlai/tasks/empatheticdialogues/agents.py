@@ -67,10 +67,17 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
                 label = sparts[5].replace("_comma_", ",")
                 prompt = sparts[2]
                 sit = sparts[3].replace("_comma_", ",")
-                inline_label_candidates = [
-                    cand.replace("_comma_", ",").replace("_pipe_", "|")
-                    for cand in sparts[8].split('|')
-                ]
+                if len(sparts) == 9:
+                    inline_label_candidates = [
+                        cand.replace("_comma_", ",").replace("_pipe_", "|")
+                        for cand in sparts[8].split('|')
+                    ]
+                elif len(sparts) == 8:
+                    inline_label_candidates = []
+                else:
+                    raise ValueError(
+                        f'Line {i:d} has the wrong number of fields!'
+                    )
 
                 context_emb, cand_emb = None, None
                 if self.opt.get('deepmoji') is not None:
