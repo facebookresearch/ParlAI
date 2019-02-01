@@ -63,7 +63,7 @@ class TorchRankerAgent(TorchAgent):
             states = None
         else:
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
-                            'train_accuracy': 0}
+                            'train_accuracy': 0.0}
             self.build_model()
             if model_file:
                 print('Loading existing model parameters from ' + model_file)
@@ -162,7 +162,7 @@ class TorchRankerAgent(TorchAgent):
             return Output()
         if not self.opt.get('train_predict', False):
             warn_once(
-                "Some training metrics are ommitted for speed. Set the flag "
+                "Some training metrics are omitted for speed. Set the flag "
                 "`--train-predict` to calculate train metrics."
             )
             return Output()
