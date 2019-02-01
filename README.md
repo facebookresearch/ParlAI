@@ -302,7 +302,7 @@ To add your own MTurk task:
 - implement __run.py__, with code for setting up and running the world where `MTurkAgent` lives in.
 - (Optional) implement __worlds.py__, with a world class that extends from `World`.
 
-Please see [the MTurk tutorial](http://parl.ai/static/docs/mturk.html) to learn more about the MTurk examples and how to create and run your own task.
+Please see [the MTurk tutorial](http://parl.ai/static/docs/tutorial_mturk.html) to learn more about the MTurk examples and how to create and run your own task.
 
 ### Messenger
 
