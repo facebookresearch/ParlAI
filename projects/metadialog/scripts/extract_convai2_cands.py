@@ -1,8 +1,13 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 from argparse import ArgumentParser
 
 def setup_args():
     argparser = ArgumentParser()
-    argparser.add_argument('-if', '--infile', type=str, 
+    argparser.add_argument('-if', '--infile', type=str,
         default='/private/home/bhancock/ParlAI/data/ConvAI2/train_self_original.txt')
     argparser.add_argument('-of', '--outfile', type=str,
         default='/private/home/bhancock/ParlAI/parlai_internal/projects/metadialog/convai2_cands.txt')

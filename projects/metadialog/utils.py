@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 import copy
 
 from parlai.core.teachers import ParlAIDialogTeacher, FbDialogTeacher
@@ -14,7 +19,7 @@ class Parley(object):
         candidates: (list) of strings
         memories: (list) of strings in order (if it matters)
     """
-    def __init__(self, context, response='', reward=0, candidates=[], memories=[], 
+    def __init__(self, context, response='', reward=0, candidates=[], memories=[],
         episode_done=False, **kwargs):
         self.context = context
         self.response = response if response is not None else ''
@@ -94,10 +99,10 @@ def add_person_tokens(responses, first_speaker=None, last_speaker=1):
     Output:
         text: the concatenated text
 
-    e.g., 
+    e.g.,
     respones = ["How are you?", "I'm doing fine!", "I'm glad to hear it!"]
     result = add_person_tokens(responses)
-    result: "__p1__ How are you? __p2__ I'm doing fine! __p1__ I'm glad to 
+    result: "__p1__ How are you? __p2__ I'm doing fine! __p1__ I'm glad to
         hear it!"
     """
     if first_speaker is None:
@@ -121,7 +126,7 @@ def extract_fb_episodes(datafile):
         if is_new_episode:
             if episode is not None:
                 yield episode
-            episode = []            
+            episode = []
         raw_parley = Parley(*fields)
         parley = sanitize_parley(raw_parley)
         episode.append(parley)
@@ -140,7 +145,7 @@ def extract_parlai_episodes(datafile):
 
 def episode_to_examples(episode, histsz):
     """Converts an episode (list of Parleys) into metadialog-compatible examples
-    
+
     WARNING: we no longer require a histz when making a metadialog file. Shortening of
     the history is typically done in the teacher file or in interactive mode.
     """
@@ -151,9 +156,9 @@ def episode_to_examples(episode, histsz):
         # Update memories and history
         # memories.extend(parley.memories)
         history.append(parley.context)
-        
+
         # Concatenate history and add speaker tokens as necessary
-        # if history_size == 1, the bot (p2) only sees the immediately 
+        # if history_size == 1, the bot (p2) only sees the immediately
         # preceding utterance (the prompt from the human, p1).
         if histsz < 0:
             utterances = history
@@ -174,5 +179,5 @@ def episode_to_examples(episode, histsz):
         examples.append(example)
 
         # Add current turn's response to the history
-        history.append(parley.response)    
+        history.append(parley.response)
     return examples
