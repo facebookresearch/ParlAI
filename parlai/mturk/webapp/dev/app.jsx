@@ -24,6 +24,7 @@ setCustomComponents({});
 
 var AppURLStates = Object.freeze({
   init:0, home:1, unsupported:2, runs:3, workers:4, assignments:5, tasks: 6,
+  review: 7,
 });
 
 function convert_time(timestamp){
@@ -161,9 +162,15 @@ class NavLink extends React.Component {
           {this.props.children}
         </a>
       );
-    } else if (this.props.type == 'review') {
+    } else if (this.props.type == 'run_review') {
       return (
-        <a href={'/app/runs/' + this.props.target + '/review'}>
+        <a href={'/app/review/run/' + this.props.target}>
+          {this.props.children}
+        </a>
+      );
+    } else if (this.props.type == 'task_review') {
+      return (
+        <a href={'/app/review/task/' + this.props.target}>
           {this.props.children}
         </a>
       );
@@ -719,6 +726,7 @@ class RunPanel extends React.Component {
   }
 
   renderRunInfo() {
+    let task_id = this.props.run_id.split("_").slice(0, -1).join("_");
     return (
       <div>
         <RunTable
@@ -731,8 +739,12 @@ class RunPanel extends React.Component {
           data={this.state.data.hits}
           title={'HITs from this run'}/>
         <div>
-          <NavLink type={'review'} target={this.props.run_id}>
+          <NavLink type={'run_review'} target={this.props.run_id}>
             Review work from this run
+          </NavLink>
+          <br />
+          <NavLink type={'task_review'} target={task_id}>
+            Review work from this task
           </NavLink>
         </div>
       </div>
@@ -1619,9 +1631,12 @@ class ReviewPanel extends React.Component {
     };
   }
 
-  parseRawRun(run_data) {
+  parseRawRuns(run_datas) {
     // Get reviewable assignments
-    let assignments = run_data.assignments;
+    let assignments = []
+    for (const idx in run_datas) {
+      assignments = assignments.concat(run_datas[idx].assignments);
+    }
     let assignments_remaining = 0;
     let reviewable_assigns = assignments.filter(
       assign => assign.status == 'Reviewable'
@@ -1638,7 +1653,7 @@ class ReviewPanel extends React.Component {
 
       assignments_remaining += 1;
       if (!!assign.received_feedback && assign.received_feedback.rating < 3) {
-        // Feedback below 3 was rated as "below average", 
+        // Feedback below 3 was rated as "below average",
         // so we want to prioritize it as important to see
         assignments_by_worker[assign.worker_id].bad_feedback = true;
         assignments_by_worker[assign.worker_id].assigns.unshift(assign);
@@ -1686,21 +1701,37 @@ class ReviewPanel extends React.Component {
     })
   }
 
-  fetchRunData() {
-    fetch('/runs/' + this.props.run_id)
+  fetchDataForRuns(run_ids) {
+    Promise.all(run_ids.map(run_id =>
+      fetch('/runs/' + run_id).then(resp => resp.json())
+    )).then(task_datas => {
+        this.parseRawRuns(task_datas);
+        this.setState({
+          assignments_loading: false,
+          run_data: task_datas
+        });
+    }, (error) => {
+      this.setState({
+        assignments_loading: false,
+        error: error
+      });
+    });
+  }
+
+  fetchAllRunData() {
+    fetch('/run_list')
       .then(res => res.json())
       .then(
         (result) => {
-          this.parseRawRun(result);
-          this.setState({
-            assignments_loading: false,
-            run_data: result
-          });
+          let task_id = this.props.task_id;
+          let run_ids = result.map((x) => x.run_id);
+          let task_runs = run_ids.filter((run_id) => run_id.startsWith(task_id));
+          this.fetchDataForRuns(task_runs);
         },
         (error) => {
           this.setState({
             assignments_loading: false,
-            error: true
+            error: error
           });
         }
       )
@@ -1708,7 +1739,11 @@ class ReviewPanel extends React.Component {
 
   componentDidMount() {
     this.setState({assignments_loading: true});
-    this.fetchRunData();
+    if (this.props.run_id) {
+      this.fetchDataForRuns([this.props.run_id]);
+    } else {
+      this.fetchAllRunData();
+    }
   }
 
   handleReview(review) {
@@ -1828,13 +1863,19 @@ class ReviewPanel extends React.Component {
       </div>
     }
 
+    let header_text = null;
+    if (this.props.run_id) {
+      header_text = "Reviews toolbar for run " + this.props.run_id;
+    } else {
+      header_text = "Reviews toolbar for task " + this.props.task_id;
+    }
     return (
       <Panel
         id="review_overview_panel"
         bsStyle="primary">
         <Panel.Heading>
           <Panel.Title componentClass="h3">
-            Reviews toolbar for run {this.props.run_id}
+            {header_text}
           </Panel.Title>
         </Panel.Heading>
         <Panel.Body>
@@ -2458,6 +2499,26 @@ class MainApp extends React.Component {
     );
   }
 
+  renderReviewPage() {
+    let review_type = this.state.args[0];
+    let target = this.state.args[1];
+    if (review_type == 'run') {
+      return (
+        <div>
+          <ReviewPanel run_id={target}/>
+        </div>
+      );
+    } else if (review_type == 'task') {
+      return (
+        <div>
+          <ReviewPanel task_id={target}/>
+        </div>
+      );
+    } else {
+      return this.renderUnsupportedPage();
+    }
+  }
+
   renderWorkerPage() {
     return (
       <div style={{width: '900px'}}>
@@ -2475,15 +2536,6 @@ class MainApp extends React.Component {
   }
 
   renderRunPage() {
-    if (this.state.args.length > 1) {
-      if (this.state.args[1] == 'review') {
-        return (
-          <div>
-            <ReviewPanel run_id={this.state.args[0]}/>
-          </div>
-        );
-      }
-    }
     return (
       <div style={{width: '900px'}}>
         <RunPanel run_id={this.state.args[0]}/>
@@ -2504,6 +2556,8 @@ class MainApp extends React.Component {
       return this.renderWorkerPage();
     } else if (this.state.url_state == AppURLStates.tasks) {
       return this.renderTaskPage();
+    } else if (this.state.url_state == AppURLStates.review) {
+      return this.renderReviewPage();
     } else {
       return this.renderUnsupportedPage();
     }
