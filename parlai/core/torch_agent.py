@@ -28,7 +28,6 @@ from parlai.core.utils import (
     set_namedtuple_defaults, argsort, padded_tensor, warn_once, round_sigfigs
 )
 from parlai.core.distributed_utils import is_primary_worker
-from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
 
 try:
     import torch
@@ -577,6 +576,7 @@ class TorchAgent(Agent):
                                     'models:glove_vectors'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
+            from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
             embs = vocab.Vectors(
                 name='crawl-300d-2M.vec',
                 url=fasttext_cc_url,
