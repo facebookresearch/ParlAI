@@ -29,11 +29,11 @@ def convert_file(input_file_path, output_file_path):
             index = str(i)
             if "test" not in input_file_path:
                 newline_dict["answers"] = records["answers"][index]
+                newline_dict["wellFormedAnswers"] = records["wellFormedAnswers"][index]
             newline_dict["passages"] = records["passages"][index]
             newline_dict["query"] = records["query"][index]
             newline_dict["query_id"] = records["query_id"][index]
             newline_dict["query_type"] = records["query_type"][index]
-            newline_dict["wellFormedAnswers"] = records["wellFormedAnswers"][index]
             f.write(json.dumps(newline_dict) + "\n")
     print("File finished iterating")
 
@@ -41,7 +41,6 @@ def convert_file(input_file_path, output_file_path):
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
     output = outpath.split(".")[0] + ".jsonl"
-    print(inpath)
     convert_file(inpath, output)
     lines = read_file(output)
 
