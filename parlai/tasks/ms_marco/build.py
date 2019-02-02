@@ -21,13 +21,14 @@ def convert_file(input_file_path, output_file_path):
     print("GZIP file will now be loaded")
     with gzip.open(input_file_path) as f:
        records = json.load(f)
-    
+
     print("Output file opened")
     with open(output_file_path, 'w') as f:
-        for i in range (0, len(records["answers"].keys())):
+        for i in range (0, len(records["passages"].keys())):
             newline_dict = {}
             index = str(i)
-            newline_dict["answers"] = records["answers"][index]
+            if "test" not in input_file_path:
+                newline_dict["answers"] = records["answers"][index]
             newline_dict["passages"] = records["passages"][index]
             newline_dict["query"] = records["query"][index]
             newline_dict["query_id"] = records["query_id"][index]
@@ -40,6 +41,7 @@ def convert_file(input_file_path, output_file_path):
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
     output = outpath.split(".")[0] + ".jsonl"
+    print(inpath)
     convert_file(inpath, output)
     lines = read_file(output)
 
@@ -88,7 +90,7 @@ def build(opt):
 
         fname = "dev_v2.1.json.gz"
         build_data.download(url + fname, dpath, 'valid.gz')
-
+    
         fname = "eval_v2.1_public.json.gz"
         build_data.download(url + fname, dpath, 'test.gz')
 
