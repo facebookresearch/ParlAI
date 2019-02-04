@@ -12,7 +12,7 @@ from parlai.scripts.verify_data import verify, setup_args
 from utils import git_changed_files
 
 KEYS = ['missing_text', 'missing_labels', 'empty_label_candidates']
-
+EXCLUDED_TEACHERS = ['PytorchDataTeacher', 'MultiTaskTeacher']
 
 class TestNewTasks(unittest.TestCase):
     """Make sure any changes to tasks pass verify_data test."""
@@ -35,7 +35,7 @@ class TestNewTasks(unittest.TestCase):
             task = file.split('/')[-2]
             module_name = "%s.tasks.%s.agents" % ('parlai', task)
             task_module = importlib.import_module(module_name)
-            base_teachers = dir(teach_module) + ['PytorchDataTeacher', 'MultiTaskTeacher']
+            base_teachers = dir(teach_module) + EXCLUDED_TEACHERS
             subtasks = [':'.join([task, x]) for x in dir(task_module) if
                         ('teacher' in x.lower() and x not in base_teachers)]
 
