@@ -8,12 +8,8 @@ import math
 import torch
 import torch.nn as nn
 
-from parlai.agents.seq2seq.modules import RNNEncoder
-from parlai.agents.transformer.modules import (
-    TransformerEncoder,
-    TransformerFFN,
-    MultiHeadAttention,
-)
+from parlai.agents.transformer.modules import TransformerEncoder
+
 
 class MetadialogModel(nn.Module):
     @classmethod
@@ -21,24 +17,24 @@ class MetadialogModel(nn.Module):
         model = argparser.add_argument_group('MetadialogModel')
 
         model.add_argument('-shl', '--sen-head-layers', type=int, default=1,
-            help="The number of linear layers to have in the sentiment task head")
+                           help="The number of linear layers to have in the sentiment task head")
 
         model.add_argument('-sexpemb', '--share-exp-embeddings', type='bool',
-            default=True,
-            help="If True, the explanation task will share the dialog embeddings")
+                           default=True,
+                           help="If True, the explanation task will share the dialog embeddings")
         model.add_argument('-sexpxenc', '--share-exp-x-encoder', type='bool',
-            default=True,
-            help="If True, the explanation task will share the dialog x encoder")
+                           default=True,
+                           help="If True, the explanation task will share the dialog x encoder")
         model.add_argument('-sexpyenc', '--share-exp-y-encoder', type='bool',
-            default=True,
-            help="If True, the explanation task will share the dialog y encoder")
+                           default=True,
+                           help="If True, the explanation task will share the dialog y encoder")
 
         model.add_argument('-ssenemb', '--share-sen-embeddings', type='bool',
-            default=False,
-            help="If True, the sentiment task will share the dialog embeddings")
+                           default=False,
+                           help="If True, the sentiment task will share the dialog embeddings")
         model.add_argument('-ssenenc', '--share-sen-encoder', type='bool',
-            default=False,
-            help="If True, the sentiment task will share the dialog encoder")
+                           default=False,
+                           help="If True, the sentiment task will share the dialog encoder")
 
     def __init__(self, opt, dictionary):
         super().__init__()
@@ -95,7 +91,7 @@ class MetadialogModel(nn.Module):
             else:
                 self.x_sen_encoder = self.build_encoder(opt, self.sen_embeddings)
             self.x_sen_head = self.build_head(opt, outdim=1,
-                num_layers=self.opt['sen_head_layers'])
+                                              num_layers=self.opt['sen_head_layers'])
 
     def forward(self):
         raise NotImplementedError
@@ -146,7 +142,11 @@ class MetadialogModel(nn.Module):
         if cand_h.dim() == 2:
             scores = torch.matmul(context_h, cand_h.t())
         elif cand_h.dim() == 3:
-            scores = torch.bmm(context_h.unsqueeze(1), cand_h.transpose(1, 2)).squeeze(1)
+            scores = torch.bmm(
+                context_h.unsqueeze(1),
+                cand_h.transpose(
+                    1,
+                    2)).squeeze(1)
         else:
             raise RuntimeError('Unexpected candidate dimensions {}'
                                ''.format(cand_h.dim()))
@@ -198,6 +198,7 @@ class MetadialogModel(nn.Module):
             modules.append(nn.ReLU())
         modules.append(nn.Linear(dim, outdim))
         return nn.Sequential(*modules)
+
 
 class Identity(nn.Module):
     def forward(self, x):

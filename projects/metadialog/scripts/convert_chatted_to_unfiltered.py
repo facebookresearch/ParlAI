@@ -4,20 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from argparse import ArgumentParser
-import copy
 import json
-import os
 
-from parlai.core.teachers import FbDialogTeacher
 from parlai.projects.metadialog.utils import (
     Parley,
     extract_parlai_episodes,
     add_person_tokens,
-)
-
-from parlai.mturk.tasks.metadialog.rating.worlds import (
-    NEW_TOPIC_REQUEST,
-    SUGGESTION_REQUEST,
 )
 
 # Initial prompts vary due to the random nouns, but all will start this way
@@ -33,13 +25,13 @@ def setup_args():
     argparser.add_argument('-if', '--infile', type=str)
     argparser.add_argument('-of', '--outfile', type=str)
     argparser.add_argument('-mode', '--mode', type=str, choices=['bot', 'human'],
-        help="Whether to use as target responses what the bot said, human said, or both")
+                           help="Whether to use as target responses what the bot said, human said, or both")
     argparser.add_argument('-fm', '--filter-mistake', type=int, default=0,
-        help="If true, toss bot examples where the bot made a mistake")
+                           help="If true, toss bot examples where the bot made a mistake")
     argparser.add_argument('-fa', '--filter-accusation', type=int, default=0,
-        help="If true, toss human examples where the human is expressing dissatisfaction")
+                           help="If true, toss human examples where the human is expressing dissatisfaction")
     argparser.add_argument('-histsz', '--history-size', type=int, default=-1,
-        help="The number of turns to concatenate and include in the prompt.")
+                           help="The number of turns to concatenate and include in the prompt.")
     opt = vars(argparser.parse_args())
 
     if opt['filter_accusation']:
@@ -51,6 +43,7 @@ def setup_args():
         raise Exception("Double check the logic for extracting bot comments first...")
 
     return opt
+
 
 def main(opt):
     """Extracts training data for the negative response classifier (NRC) from Mturk logs
@@ -71,7 +64,7 @@ def main(opt):
             num_parleys += 1
             # Update history (not including stock control flow responses)
             if (parley.context.startswith(INITIAL_PROMPT) or
-                parley.context.startswith(NEWTOPIC)):
+                    parley.context.startswith(NEWTOPIC)):
                 # a prompt, first utterance
                 # Begin history
                 history = [parley.response]
@@ -85,15 +78,15 @@ def main(opt):
                 if (opt['mode'] == 'human' and
                     opt['filter_accusation'] and
                     parley.context.startswith(EXP_REQUEST) and
-                    len(examples) > 0):
-                        examples.pop()
+                        len(examples) > 0):
+                    examples.pop()
                 # If 'filter_mistake' is on and the last example in the queue was a bot,
                 # toss it too, since that's when the bot messed up
                 if (opt['mode'] == 'bot' and
                     opt['filter_mistake'] and
                     parley.context.startswith(EXP_REQUEST) and
-                    len(examples) > 0):
-                        examples.pop()
+                        len(examples) > 0):
+                    examples.pop()
 
                 # Asked for y_exp or rating, got it
                 # Messed up, so blast history
@@ -112,21 +105,21 @@ def main(opt):
             if opt['mode'] in ['bot'] and len(history) >= 2:
                 if len(history) == 2:
                     example = Parley(
-                        context = '__null__',
-                        response = history[0],
+                        context='__null__',
+                        response=history[0],
                     )
                 else:
                     example = Parley(
-                            context=add_person_tokens(history[:-2], last_speaker=1),
-                            response=history[-2],  # What the bot said
+                        context=add_person_tokens(history[:-2], last_speaker=1),
+                        response=history[-2],  # What the bot said
                     )
                 examples.append(example)
 
             if opt['mode'] in ['human']:
                 if len(history) == 1:
                     example = Parley(
-                        context = '__null__',
-                        response = history[0],
+                        context='__null__',
+                        response=history[0],
                     )
                 else:
                     example = Parley(

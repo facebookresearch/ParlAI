@@ -4,11 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from argparse import ArgumentParser
-import copy
 import json
-import os
 
-from parlai.core.teachers import FbDialogTeacher
 from parlai.projects.metadialog.utils import (
     Parley,
     extract_parlai_episodes,
@@ -29,19 +26,21 @@ DATA_DIR = '/private/home/bhancock/metadialog/data'
 DEFAULT_IN = REPORT_DIR + '/20181105/pilot_1.txt'
 DEFAULT_OUT = DATA_DIR + '/feedback_classifier/temp.txt'
 
+
 def setup_args():
     argparser = ArgumentParser()
     argparser.add_argument('-if', '--infile', type=str, default=DEFAULT_IN)
     argparser.add_argument('-of', '--outfile', type=str, default=DEFAULT_OUT)
     argparser.add_argument('-histsz', '--history-size', type=int, default=-1,
-        help="The number of turns to concatenate and include in the prompt.")
+                           help="The number of turns to concatenate and include in the prompt.")
     argparser.add_argument('-pos', '--positives', type=str, default='3,4,5',
-        help="A comma-separated list of ratings to group under the positive label")
+                           help="A comma-separated list of ratings to group under the positive label")
     argparser.add_argument('-neg', '--negatives', type=str, default='1',
-        help="A comma-separated list of ratings to group under the negative label")
+                           help="A comma-separated list of ratings to group under the negative label")
     config = vars(argparser.parse_args())
 
     return config
+
 
 def main(config):
     """Extracts training data for the negative response classifier (NRC) from Mturk logs

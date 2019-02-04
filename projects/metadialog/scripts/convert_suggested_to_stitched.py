@@ -12,6 +12,7 @@ from parlai.projects.metadialog.utils import (
     add_person_tokens,
 )
 
+
 def setup_args():
     argparser = ArgumentParser()
     argparser.add_argument('-if', '--infile', type=str)
@@ -19,6 +20,7 @@ def setup_args():
     config = vars(argparser.parse_args())
 
     return config
+
 
 def main(config):
     """Creates .stitched files from .suggested files

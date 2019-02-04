@@ -47,7 +47,7 @@ def interactive(opt, print_parser=None):
     print("Warning: hardcoding history_size=2")
     opt['override'] = {
         'no_cuda': True,
-        'subtasks': ['dialog','sentiment'],
+        'subtasks': ['dialog', 'sentiment'],
         'interactive': True,
         'prev_response_filter': True,
         'person_tokens': True,

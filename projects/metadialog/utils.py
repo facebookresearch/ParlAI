@@ -7,6 +7,7 @@ import copy
 
 from parlai.core.teachers import ParlAIDialogTeacher, FbDialogTeacher
 
+
 class Parley(object):
     """A single example for training
     Args:
@@ -19,8 +20,9 @@ class Parley(object):
         candidates: (list) of strings
         memories: (list) of strings in order (if it matters)
     """
+
     def __init__(self, context, response='', reward=0, candidates=[], memories=[],
-        episode_done=False, **kwargs):
+                 episode_done=False, **kwargs):
         self.context = context
         self.response = response if response is not None else ''
         self.reward = reward
@@ -35,12 +37,12 @@ class Parley(object):
     def to_dict(self, include_empty=False):
         if include_empty:
             return {
-                'context'   : self.context,
-                'response'  : self.response,
-                'reward'    : self.reward,
+                'context': self.context,
+                'response': self.response,
+                'reward': self.reward,
                 'candidates': self.candidates,
-                'memories'  : self.memories,
-                'episode_done'  : self.episode_done,
+                'memories': self.memories,
+                'episode_done': self.episode_done,
             }
         else:
             pdict = {
@@ -76,6 +78,7 @@ class Parley(object):
         ]
         return '\t'.join(pieces).strip()
 
+
 def sanitize_parley(parley):
     """Separate memories from context, pull out response, split context/memories lists"""
     if '\n' in parley.context:
@@ -88,6 +91,7 @@ def sanitize_parley(parley):
     assert(isinstance(parley.candidates, list))
     assert(isinstance(parley.memories, list))
     return parley
+
 
 def add_person_tokens(responses, first_speaker=None, last_speaker=1):
     """Converts a list of responses into a single tag-separated string
@@ -115,6 +119,7 @@ def add_person_tokens(responses, first_speaker=None, last_speaker=1):
         speaker = 1 if speaker == 2 else 2
     return text.strip()
 
+
 def extract_fb_episodes(datafile):
     opt = {
         'datatype': 'train',
@@ -132,16 +137,18 @@ def extract_fb_episodes(datafile):
         episode.append(parley)
     yield episode
 
+
 def extract_parlai_episodes(datafile):
     opt = {
         'datatype': 'train',
-        'datafile': datafile, # is this necessary?
+        'datafile': datafile,  # is this necessary?
         'parlaidialogteacher_datafile': datafile,
     }
     episode = None
     for episode in ParlAIDialogTeacher(opt).episodes:
         episode = [Parley(**parley_dict) for parley_dict in episode]
         yield episode
+
 
 def episode_to_examples(episode, histsz):
     """Converts an episode (list of Parleys) into metadialog-compatible examples
@@ -150,7 +157,6 @@ def episode_to_examples(episode, histsz):
     the history is typically done in the teacher file or in interactive mode.
     """
     examples = []
-    memories = []
     history = []
     for parley in episode:
         # Update memories and history

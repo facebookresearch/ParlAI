@@ -7,7 +7,6 @@ import re
 
 import torch
 
-from parlai.core.torch_agent import TorchAgent, Output
 
 # Failure modes
 ISAID = 1
@@ -17,15 +16,16 @@ YOUWHAT = 4
 WHATYOU = 5
 WHATDO = 6
 
+
 class FeedbackClassifierRegex(object):
     def __init__(self):
         self.failure_regexes = {
-            ISAID:      r"i .*(?:said|asked|told).*",
-            NOTSENSE:   r"((not|nt|n't).*mak.*sense)|(mak.*no .*sense)",
-            UM:         r"u(m|h)+\W",
-            YOUWHAT:    r"you.*what\?",
-            WHATYOU:    r"what.*you (?:mean|refer|talk).*\?",
-            WHATDO:     r"what.*to do with.*\?"
+            ISAID: r"i .*(?:said|asked|told).*",
+            NOTSENSE: r"((not|nt|n't).*mak.*sense)|(mak.*no .*sense)",
+            UM: r"u(m|h)+\W",
+            YOUWHAT: r"you.*what\?",
+            WHATYOU: r"what.*you (?:mean|refer|talk).*\?",
+            WHATDO: r"what.*to do with.*\?"
         }
 
     def predict_proba(self, contexts):

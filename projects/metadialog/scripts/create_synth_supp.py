@@ -26,15 +26,12 @@ Examples
   --conversion-rate 0.9
   --conversion-acc 0.9
 """
-import argparse
 import json
 import os
 import random
 
 from parlai.core.agents import create_agent
-from parlai.core.logs import TensorboardLogger
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import TimeLogger
 from parlai.core.worlds import create_task
 
 from parlai.projects.metadialog.utils import Parley
@@ -42,12 +39,13 @@ from parlai.projects.metadialog.utils import Parley
 PARLAIHOME = os.environ['PARLAIHOME']
 NUM_INLINE_CANDS = 20
 
+
 def setup_args(parser=None):
     # Get command line arguments
     if parser is None:
         parser = ParlaiParser(True, True, 'Display data from a task')
     parser.add_argument('-mf', '--model-file', type=str,
-        default='/private/home/bhancock/metadialog/models/unknown.mdl')
+                        default='/private/home/bhancock/metadialog/models/unknown.mdl')
     parser.add_argument('-dfile', '--deploy-file', type=str, default='train_c')
     parser.add_argument('-sfile', '--supp-file', type=str, default='supp_c')
     parser.add_argument('-cr', '--conversion-rate', type=float, default=1.0,
@@ -114,7 +112,7 @@ def create_supp(opt):
                     reward,
                     candidates,
                     memories,
-                    )
+                )
                 examples.append(example)
         world.reset_metrics()
 
@@ -125,7 +123,7 @@ def create_supp(opt):
     print(f"Deploy size (# examples seen): {num_seen}")
     print(f"Supp size (# examples converted): {num_supp}")
 
-    acc = 1 - (num_misses/num_seen)
+    acc = 1 - (num_misses / num_seen)
     print(f"Accuracy (% of deploy): {acc * 100:.1f}% ({num_misses} misses)")
     print(f"Conversion rate (% of misses): {num_supp/num_misses * 100:.2f}% "
           f"({num_supp}/{num_misses})")

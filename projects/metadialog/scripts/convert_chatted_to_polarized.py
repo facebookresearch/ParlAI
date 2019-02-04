@@ -4,20 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from argparse import ArgumentParser
-import copy
 import json
-import os
 
-from parlai.core.teachers import FbDialogTeacher
 from parlai.projects.metadialog.utils import (
     Parley,
     extract_parlai_episodes,
     add_person_tokens,
-)
-
-from parlai.mturk.tasks.metadialog.rating.worlds import (
-    NEW_TOPIC_REQUEST,
-    SUGGESTION_REQUEST,
 )
 
 # Initial prompts vary due to the random nouns, but all will start this way
@@ -33,14 +25,15 @@ def setup_args():
     argparser.add_argument('-if', '--infile', type=str)
     argparser.add_argument('-of', '--outfile', type=str)
     argparser.add_argument('-histsz', '--history-size', type=int, default=-1,
-        help="The number of turns to concatenate and include in the prompt.")
+                           help="The number of turns to concatenate and include in the prompt.")
     argparser.add_argument('-pos', '--positives', type=str, default='positive',
-        help="A comma-separated list of ratings to group under the positive label")
+                           help="A comma-separated list of ratings to group under the positive label")
     argparser.add_argument('-neg', '--negatives', type=str, default='negative',
-        help="A comma-separated list of ratings to group under the negative label")
+                           help="A comma-separated list of ratings to group under the negative label")
     opt = vars(argparser.parse_args())
 
     return opt
+
 
 def main(opt):
     """Extracts training data for the negative response classifier (NRC) from Mturk logs
@@ -111,7 +104,6 @@ def main(opt):
             else:
                 history.append(parley.context)
                 history.append(parley.response)
-
 
     with open(opt['outfile'], 'w') as outfile:
         for ex in examples:

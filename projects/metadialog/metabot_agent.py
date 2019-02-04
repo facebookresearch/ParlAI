@@ -3,44 +3,40 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from collections import namedtuple
 import copy
 import random
 
-import spacy
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-# from torchtext import data
 
 from parlai.core.params import ParlaiParser
 from parlai.projects.metadialog.utils import Parley, extract_fb_episodes
+
 
 def setup_args():
     argparser = ParlaiParser(True, True)
     argparser.add_argument('-me', '--max_episodes', type=int, default=0)
     argparser.add_argument('-seed', '--seed', type=int, default=1234)
     argparser.add_argument('-rt', '--relevance_threshold', type=int, default=0.9,
-        help="Only include episodes that have parleys with a reward that has "
-             "at least this magnitude")
+                           help="Only include episodes that have parleys with a reward that has "
+                           "at least this magnitude")
     argparser.add_argument('-ff', '--feedback_first', type=bool, default=True,
-        help="If True, feedback is assumed to be before the first newline. "
-             "Otherwise, it is assumed to be after the last newline. "
-             "In either case, no feedback is expected in the first utterance.")
+                           help="If True, feedback is assumed to be before the first newline. "
+                           "Otherwise, it is assumed to be after the last newline. "
+                           "In either case, no feedback is expected in the first utterance.")
     argparser.add_argument('-mt', '--metatask', type=str, default='babi')
     argparser.add_argument('-tf', '--trainfile', type=str,
-        help="A dialog file where rewards correspond to the human response. "
-             "This is used to train the IFR classifier.")
+                           help="A dialog file where rewards correspond to the human response. "
+                           "This is used to train the IFR classifier.")
     argparser.add_argument('-ef', '--evalfile', type=str,
-        help="A dialog file where rewards correspond to the human response. "
-             "This is used to evaluate the IFR classifier.")
+                           help="A dialog file where rewards correspond to the human response. "
+                           "This is used to evaluate the IFR classifier.")
     argparser.add_argument('-df', '--datafile', type=str,
-        default=('data/DBLL/dbll/babi/'
-                 'babi1_p0.5_rl11_metadialog_deploy.txt'))
+                           default=('data/DBLL/dbll/babi/'
+                                    'babi1_p0.5_rl11_metadialog_deploy.txt'))
     argparser.add_argument('-sf', '--suppfile', type=str,
-        default=('data/DBLL/dbll/babi/'
-                 'babi1_p0.5_rl11_metadialog_supp.txt'))
+                           default=('data/DBLL/dbll/babi/'
+                                    'babi1_p0.5_rl11_metadialog_supp.txt'))
 
     fasttext = argparser.add_argument_group('FastTextClassifier arguments')
     fasttext.add_argument('vs', '--vocab_size', type=int, default=25000)
@@ -113,7 +109,7 @@ class Metabot(nn.Module):
                 # corresponding reward signal
                 ifr_score = self.classifier.predict(feedback)
                 if abs(ifr_score) > self.opt['relevance_threshold']:
-                    episode[j-1].reward = ifr_score
+                    episode[j - 1].reward = ifr_score
                     num_new_examples += 1
                     keep_episode = True
 
@@ -122,7 +118,7 @@ class Metabot(nn.Module):
 
         self._episodes_to_file(suppfile, supplement)
         print(f"Extracted {num_new_examples} new examples from "
-            f"{len(supplement)} episodes.")
+              f"{len(supplement)} episodes.")
         print(f"Wrote new examples to {suppfile}")
         return supplement
 

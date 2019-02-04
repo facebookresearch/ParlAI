@@ -12,21 +12,16 @@ A metadialog chatbot consists of three components:
     feedback score, this module asks for an explanation from the from the user.
 """
 
-import os
 import random
-import re
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from parlai.core.agents import Agent
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.utils import round_sigfigs, warn_once, padded_tensor
 
 from parlai.agents.transformer.transformer import TransformerRankerAgent
-from parlai.agents.transformer.modules import TransformerEncoder
 
 from .feedback_classifier.feedback_classifier import (
     FeedbackClassifierRegex,
@@ -45,11 +40,12 @@ RATING_ACCEPTED = 5
 
 # Hardcoded responses
 RAT_REQUEST = ("Just checking: I'm not sure how positive/negative the response you "
-    "just gave was. Could you help me out? (Write positive, negative, or neutral)")
+               "just gave was. Could you help me out? (Write positive, negative, or neutral)")
 CONTINUE = "And in response to what you were saying before"
 EXP_REQUEST = "Oops! I think I messed up. Whether I messed up or not, what could I have said (in response to <response>)?"
 THANKS = "Thanks! I'll try to remember that."
 NEWTOPIC = "Can you pick a new topic for us to talk about now?"
+
 
 class MetadialogAgent(TransformerRankerAgent):
     @classmethod
@@ -95,20 +91,20 @@ class MetadialogAgent(TransformerRankerAgent):
 
         variants = argparser.add_argument_group('Metadialog Variants')
         variants.add_argument('-rgx', '--regex', type='bool', default=False,
-                           help="If True, classify sentiment using regexes instead of "
-                           "model")
+                              help="If True, classify sentiment using regexes instead of "
+                              "model")
         variants.add_argument('-up', '--uncertainty-predictor', type='bool', default=False,
-                           help="If True, classify sentiment using uncertainty of "
-                           "dialog models predictions instead of classifer"
-                           "model")
+                              help="If True, classify sentiment using uncertainty of "
+                              "dialog models predictions instead of classifer"
+                              "model")
         variants.add_argument('-ut', '--uncertainty-threshold', type=float, default=0.5,
-                           help="If model confidence is smaller than this number and "
-                           "--uncertainty-predictor=True, predict a mistake has been made")
+                              help="If model confidence is smaller than this number and "
+                              "--uncertainty-predictor=True, predict a mistake has been made")
         variants.add_argument('-us', '--uncertainty-style', type=str, default='gap',
-                           choices=['gap', 'mag'],
-                           help="Whether the uncertainty threshold measures the "
-                           "magnitude of the top confidence, or the gap between the "
-                           "two most confident answers")
+                              choices=['gap', 'mag'],
+                              help="Whether the uncertainty threshold measures the "
+                              "magnitude of the top confidence, or the gap between the "
+                              "two most confident answers")
         return agent
 
     def __init__(self, opt, shared=None):
@@ -183,7 +179,8 @@ class MetadialogAgent(TransformerRankerAgent):
             elif self.status == RATING_REQUESTED:
                 rating = self.extract_rating()
                 if rating == -1:
-                    action = self.make_action(self.make_explanation_request(), reward=rating)
+                    action = self.make_action(
+                        self.make_explanation_request(), reward=rating)
                     self.status = EXPLANATION_REQUESTED
 
                 else:
@@ -233,7 +230,8 @@ class MetadialogAgent(TransformerRankerAgent):
             subtasks = [o.get('subtask', 'dialog') for o in observations]
             # Catch error here for debugging
             if len(set(subtasks)) > 1:
-                import pdb; pdb.set_trace()
+                import pdb
+                pdb.set_trace()
             self.subtask = subtasks[0]
         # print(f"[ context ]: {observations[0]['text']}")
         return batch
@@ -378,7 +376,7 @@ class MetadialogAgent(TransformerRankerAgent):
         # preds is a [batchsize] torch.LongTensor with values in {0, 1}
         preds = (probs > self.opt['rating_threshold']).long()
 
-        if batch.labels is None: # TODO: not sure if it's None, list of Nones, etc.
+        if batch.labels is None:  # TODO: not sure if it's None, list of Nones, etc.
             loss = None
         else:
             # labels will be a [batchsize] torch.LongTensor with values in {0, 1}
@@ -413,8 +411,8 @@ class MetadialogAgent(TransformerRankerAgent):
         self.metrics['sen_loss'] += loss.item()
         a = self.opt['target_class']
         b = not self.opt['target_class']
-        assert(a in [0,1])
-        assert(b in [0,1])
+        assert(a in [0, 1])
+        assert(b in [0, 1])
         self.metrics['sen_tp'] += ((preds == labels) * (labels == a)).sum().item()
         self.metrics['sen_fp'] += ((preds != labels) * (labels == b)).sum().item()
         self.metrics['sen_tn'] += ((preds == labels) * (labels == b)).sum().item()
@@ -448,7 +446,7 @@ class MetadialogAgent(TransformerRankerAgent):
 
     def report(self):
         """Report metrics from model's perspective."""
-        m = TorchAgent.report(self) # Skip TorchRankerAgent; totally redundant
+        m = TorchAgent.report(self)  # Skip TorchRankerAgent; totally redundant
         examples = self.metrics['examples']
         if examples > 0:
             m['examples'] = examples
@@ -526,7 +524,7 @@ class MetadialogAgent(TransformerRankerAgent):
         if self.opt['regex']:
             prob = self.rating_classifier.predict_proba(observation['text_vec'])
         else:
-            prob = self.model.score_sentiment(observation['text_vec'].reshape(1,-1))
+            prob = self.model.score_sentiment(observation['text_vec'].reshape(1, -1))
         return prob.item()
 
     def predict_sentiment_by_uncertainty(self, batch):
@@ -563,7 +561,8 @@ class MetadialogAgent(TransformerRankerAgent):
                 preds.append(mag > self.opt['uncertainty_threshold'])
             elif self.opt['uncertainty_style'] == 'gap':
                 # If the gap between the first and second most confident choices isn't
-                # large enough, predict that the response the bot gives will be bad (pred=0)
+                # large enough, predict that the response the bot gives will be bad
+                # (pred=0)
                 gap = ranked_confidences[0] - ranked_confidences[1]
                 preds.append(gap > self.opt['uncertainty_threshold'])
 
@@ -660,14 +659,15 @@ class MetadialogAgent(TransformerRankerAgent):
                     pretrained_state = states['model']
                     current_state = self.model.state_dict()
                     # 1. filter out unnecessary keys
-                    pretrained_dict = {k: v for k, v in pretrained_state.items() if k in current_state}
+                    pretrained_dict = {
+                        k: v for k, v in pretrained_state.items() if k in current_state}
                     # 2. overwrite entries in the existing state dict
                     current_state.update(pretrained_dict)
                     # 3. load the new state dict
                     self.model.load_state_dict(current_state)
                 else:
                     raise Exception(f"The designated model could not be loaded. "
-                        f"Consider using --partial-load=True.\n {e}")
+                                    f"Consider using --partial-load=True.\n {e}")
 
         if 'optimizer' in states and hasattr(self, 'optimizer'):
             self.optimizer.load_state_dict(states['optimizer'])

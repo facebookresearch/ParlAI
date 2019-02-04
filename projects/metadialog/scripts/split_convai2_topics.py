@@ -8,7 +8,6 @@ import json
 import os
 import random
 
-from parlai.core.teachers import FbDialogTeacher
 from parlai.projects.metadialog.utils import (
     Parley,
     extract_fb_episodes,
@@ -16,11 +15,11 @@ from parlai.projects.metadialog.utils import (
     episode_to_examples,
 )
 
-FAMILY = ["wife","husband","spouse","mom","momma","mommy","mum","mother","dad","dadda",
-    "daddy","father","parent","grandparent","grandma","grandmom","grandmum",
-    "grandmother","nana","grandpa","grandad","granddad","grandfather","pappy",
-    "brother","sister","sibling","cousin","aunt","auntie","uncle","child","children",
-    "kid","son","daughter","inlaw","in-law"]
+FAMILY = ["wife", "husband", "spouse", "mom", "momma", "mommy", "mum", "mother", "dad", "dadda",
+          "daddy", "father", "parent", "grandparent", "grandma", "grandmom", "grandmum",
+          "grandmother", "nana", "grandpa", "grandad", "granddad", "grandfather", "pappy",
+          "brother", "sister", "sibling", "cousin", "aunt", "auntie", "uncle", "child", "children",
+          "kid", "son", "daughter", "inlaw", "in-law"]
 variants = []
 for word in FAMILY:
     variants.append(f"{word}s")
@@ -33,26 +32,27 @@ SPORTS = ["ball", "sports"]
 # TOPIC = FAMILY # [FAMILY, SPORTS]
 # TOPIC_NAME = 'family' # ['family', 'sports']
 
-TOPIC = SPORTS # [FAMILY, SPORTS]
-TOPIC_NAME = 'sports' # ['family', 'sports']
+TOPIC = SPORTS  # [FAMILY, SPORTS]
+TOPIC_NAME = 'sports'  # ['family', 'sports']
 
 
 def setup_args():
     argparser = ArgumentParser()
     argparser.add_argument('-if', '--infile', type=str,
-        default=os.environ['PARLAIHOME'] + '/data/ConvAI2/valid_self_original.txt')
+                           default=os.environ['PARLAIHOME'] + '/data/ConvAI2/valid_self_original.txt')
     argparser.add_argument('-of', '--outfile', type=str,
-        default=os.environ['PARLAIHOME'] + '/data/convai2meta/dialog/valid.txt')
+                           default=os.environ['PARLAIHOME'] + '/data/convai2meta/dialog/valid.txt')
     argparser.add_argument('--min-unit', type=str, default='example',
-        choices=['episode', 'example'],
-        help="The minimal unit that most stay grouped together")
+                           choices=['episode', 'example'],
+                           help="The minimal unit that most stay grouped together")
     argparser.add_argument('-shuf', '--shuffle', type=int, default=True,
-        help="If True, shuffle the examples before writing them to file")
+                           help="If True, shuffle the examples before writing them to file")
     argparser.add_argument('-histsz', '--history-size', type=int, default=-1,
-        help="The number of turns to concatenate and include in the prompt."
-             "In general, include all turns and filter in the teacher.")
+                           help="The number of turns to concatenate and include in the prompt."
+                           "In general, include all turns and filter in the teacher.")
     opt = vars(argparser.parse_args())
     return opt
+
 
 def includes_topic(episode, topic):
     episode_words = (' '.join([parley.context for parley in episode]).split() +
@@ -108,6 +108,7 @@ def main(opt):
     with open(off_topic_filename, 'w') as outfile:
         for ex in off_topic_exs:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
+
 
 if __name__ == '__main__':
     print("WARNING: With inline candidates, family words are still being encoded; "

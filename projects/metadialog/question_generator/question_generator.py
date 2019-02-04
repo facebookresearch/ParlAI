@@ -52,12 +52,13 @@ new_topics = [
 class QuestionGenerator(object):
     pass
 
+
 class QuestionGeneratorTemplates(QuestionGenerator):
     def generate(self, observation):
         apo = random.choice(APOLOGIES)
-        ack = '' # random.choice(ACKNOWLEDMENTS)
+        ack = ''  # random.choice(ACKNOWLEDMENTS)
         # req = random.choice(REQUESTS)
         req = ("Can you write an example (inside quotation marks) of something I could "
-            "have said instead?")
+               "have said instead?")
         question = apo + ack + req
         return question

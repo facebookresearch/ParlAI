@@ -13,9 +13,9 @@ import numpy as np
 from .build import build
 
 from parlai.core.agents import MultiTaskTeacher
-from parlai.core.metrics import aggregate_metrics
-from parlai.core.teachers import FbDialogTeacher, ParlAIDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from projects.metadialog.utils import add_person_tokens
+
 
 def _path(opt, filename_override=None):
     build(opt)
@@ -34,6 +34,7 @@ def _path(opt, filename_override=None):
     filename = f'{dt}_{st}.txt'
     return os.path.join(dp, filename)
 
+
 class MetadialogTeacher(ParlAIDialogTeacher):
     """Teacher for the MetadialogAgent
 
@@ -47,13 +48,14 @@ class MetadialogTeacher(ParlAIDialogTeacher):
         eval on data/convai2meta/dialog/valid.txt
         test on data/convai2meta/dialog/test.txt
     """
+
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         if 'subtask' not in opt:
             print('Warning: Metadialog teacher should be assigned subtask. Defaulting to dialog')
             opt['subtask'] = 'dialog'
 
-        if 'train' in opt['datatype']: # Use 'in' to also capture 'train:ordered:stream'
+        if 'train' in opt['datatype']:  # Use 'in' to also capture 'train:ordered:stream'
             # Use the filename explicitly given with the flag if available
             # Otherwise, use the filename passed in the task flag
             train_file_flag = f"{opt['subtask'][:3]}_train"
@@ -83,34 +85,34 @@ class MetadialogTeacher(ParlAIDialogTeacher):
     def add_cmdline_args(argparser):
         project = argparser.add_argument_group('Metadialog Tasks')
         project.add_argument('-st', '--subtasks', type=str,
-                           help='comma-separated list of tasks to include for MTL teacher')
+                             help='comma-separated list of tasks to include for MTL teacher')
         project.add_argument('-dia-train', '--dia-train', type=str, default='train',
-                           help='the filename to train on for the dialog task')
+                             help='the filename to train on for the dialog task')
         project.add_argument('-exp-train', '--exp-train', type=str, default='train',
-                           help='the filename to train on for the explanation task')
+                             help='the filename to train on for the explanation task')
         project.add_argument('-sen-train', '--sen-train', type=str, default='train',
-                           help='the filename to train on for the sentiment task')
+                             help='the filename to train on for the sentiment task')
         project.add_argument('-dia-valid', '--dia-valid', type=str, default='valid',
-                           help='the filename to eval on for the dialog task')
+                             help='the filename to eval on for the dialog task')
         project.add_argument('-exp-valid', '--exp-valid', type=str, default='valid',
-                           help='the filename to eval on for the explanation task')
+                             help='the filename to eval on for the explanation task')
         project.add_argument('-sen-valid', '--sen-valid', type=str, default='valid',
-                           help='the filename to eval on for the sentiment task')
+                             help='the filename to eval on for the sentiment task')
         project.add_argument('-dia-test', '--dia-test', type=str, default='test',
-                           help='the filename to eval on for the dialog task')
+                             help='the filename to eval on for the dialog task')
         project.add_argument('-exp-test', '--exp-test', type=str, default='test',
-                           help='the filename to eval on for the explanation task')
+                             help='the filename to eval on for the explanation task')
         project.add_argument('-sen-test', '--sen-test', type=str, default='test',
-                           help='the filename to eval on for the sentiment task')
+                             help='the filename to eval on for the sentiment task')
         project.add_argument('-trial', '--trial', type=int, default=0,
-                           help='the index of a repeated trial (has no effect on the code)')
+                             help='the index of a repeated trial (has no effect on the code)')
         project.add_argument('-mt', '--max-train', type=int, default=0,
-                           help='if non-zero, only the first max-train examples from the '
-                                'dataset will be used if it is read by an instance of '
-                                'ParlaiDialogTeacher')
+                             help='if non-zero, only the first max-train examples from the '
+                             'dataset will be used if it is read by an instance of '
+                             'ParlaiDialogTeacher')
         argparser.set_defaults(history_size=2)
 
-    def _setup_data(self, path): # Make private method for ParlAIDialogTeacher
+    def _setup_data(self, path):  # Make private method for ParlAIDialogTeacher
         """Reads data in the fbdialog format.
 
         Returns ``((x,y,r,c), new_episode?)`` tuples.
@@ -125,7 +127,8 @@ class MetadialogTeacher(ParlAIDialogTeacher):
                     break
                 parley = json.loads(line)
 
-                # NOTE: History is trimmed here, not by TorchAgent (except in interactive mode)
+                # NOTE: History is trimmed here, not by TorchAgent (except in
+                # interactive mode)
                 if self.opt['history_size'] == 0:
                     parley['context'] = '__null__'
                 elif self.opt['history_size'] > 0:
@@ -161,6 +164,7 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
     More specifically, this child class of MultiTaskTeacher supports multitask learning
     with batches (ensuring that all batches only have data from a single task at a time)
     """
+
     def __init__(self, opt, shared=None):
         if opt['task'] == 'metadialog:MetadialogMTLTeacher':
             # This does not happen except in tests such as test_new_tasks.py
@@ -195,7 +199,6 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
             actions.append(action)
         return actions
 
-
     def act(self):
         self.task_idx = self.get_task_index()
         if self.task_idx < 0:
@@ -210,7 +213,6 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
             return np.random.choice(
                 range(len(self.tasks)), p=self.sampling_prob)
         else:
-            task_idx = -1
             for i, subtask in enumerate(self.tasks):
                 if not subtask.epoch_done():
                     return i
@@ -221,6 +223,7 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
     def report(self):
         m = {'exs': sum(t.report()['exs'] for t in self.tasks)}
         return m
+
 
 class DialogTeacher(MetadialogTeacher):
     def __init__(self, opt, shared=None):
@@ -263,7 +266,7 @@ class DiaexpTeacher(MetadialogMTLTeacher):
         train_files = [opt['dia_train'], opt['exp_train']]
         assert(len(opt['subtasks']) == len(train_files))
         tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
-            in zip(opt['subtasks'], train_files)]
+                 in zip(opt['subtasks'], train_files)]
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
@@ -280,7 +283,7 @@ class DiasenTeacher(MetadialogMTLTeacher):
         train_files = [opt['dia_train'], opt['sen_train']]
         assert(len(opt['subtasks']) == len(train_files))
         tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
-            in zip(opt['subtasks'], train_files)]
+                 in zip(opt['subtasks'], train_files)]
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
@@ -297,7 +300,7 @@ class AllTeacher(MetadialogMTLTeacher):
         train_files = [opt['dia_train'], opt['exp_train'], opt['sen_train']]
         assert(len(opt['subtasks']) == len(train_files))
         tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
-            in zip(opt['subtasks'], train_files)]
+                 in zip(opt['subtasks'], train_files)]
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 

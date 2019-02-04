@@ -12,6 +12,7 @@ from parlai.projects.metadialog.utils import (
     add_person_tokens,
 )
 
+
 def setup_args():
     argparser = ArgumentParser()
     argparser.add_argument('-if', '--infile', type=str)
@@ -19,6 +20,7 @@ def setup_args():
     config = vars(argparser.parse_args())
 
     return config
+
 
 def main(config):
     """Creates .identity files from .sliced files
@@ -59,6 +61,7 @@ def main(config):
 
     print(f"Extracted {len(examples)} metadialog episodes out of "
           f"{len(episodes)} parlai episodes and wrote them to {config['outfile']}.")
+
 
 if __name__ == '__main__':
     config = setup_args()

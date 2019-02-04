@@ -4,10 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from argparse import ArgumentParser
-import json
-import os
 
-from parlai.core.teachers import FbDialogTeacher
 from parlai.projects.metadialog.utils import (
     Parley,
     extract_parlai_episodes,
@@ -20,6 +17,7 @@ from parlai.mturk.tasks.metadialog.rating.worlds import (
 # Initial prompts vary due to the random nouns, but all will start this way
 INITIAL_PROMPT = "start a conversation"
 
+
 def setup_args():
     argparser = ArgumentParser()
     argparser.add_argument('-if', '--infile', type=str)
@@ -27,6 +25,7 @@ def setup_args():
     config = vars(argparser.parse_args())
 
     return config
+
 
 def main(config):
     """Creates input files for y_exp mturk task from conversation/rating mturk task
@@ -41,8 +40,8 @@ def main(config):
     for episode in old_episodes:
         for parley in episode:
             if any(parley.context.startswith(x) for x in (
-                NEW_TOPIC_REQUEST.lower(),
-                INITIAL_PROMPT.lower())):
+                    NEW_TOPIC_REQUEST.lower(),
+                    INITIAL_PROMPT.lower())):
                 new_episode = []
             new_episode.append(parley)
             if parley.context.startswith(SUGGESTION_REQUEST.lower()):
@@ -53,7 +52,7 @@ def main(config):
         for episode in new_episodes:
             num_parleys = len(episode)
             for i, parley in enumerate(episode):
-                if i == num_parleys -1:
+                if i == num_parleys - 1:
                     parley.episode_done = True
                 f.write(f"{i}\t{parley.to_parlai()}\n")
     print(f"Extracted {len(new_episodes)} episodes out of {len(old_episodes)} "
