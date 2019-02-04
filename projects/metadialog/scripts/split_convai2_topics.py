@@ -9,9 +9,7 @@ import os
 import random
 
 from parlai.projects.metadialog.utils import (
-    Parley,
     extract_fb_episodes,
-    add_person_tokens,
     episode_to_examples,
 )
 

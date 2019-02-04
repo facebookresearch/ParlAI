@@ -73,7 +73,6 @@ class TorchRankerAgent(TorchAgent):
                  'step. Turning this on may slow down training.'
         )
 
-
     def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary
         # (e.g., a .dict file)
@@ -453,7 +452,8 @@ class TorchRankerAgent(TorchAgent):
                 # check first for 'init_model' for loading model from file
                 model_file = opt['init_model']
             else:
-                raise Exception(f"Specified --init-model={opt['init_model']} could not be found.")
+                raise Exception(
+                    f"Specified --init-model={opt['init_model']} could not be found.")
 
         if opt.get('model_file') and os.path.isfile(opt['model_file']):
             # next check for existing 'model_file'; this would override init_model
@@ -571,7 +571,7 @@ class TorchRankerAgent(TorchAgent):
         override this method with its own.
         """
         return [self._vectorize_text(cand, truncate=self.truncate,
-                truncate_left=False) for cand in cands_batch]
+                                     truncate_left=False) for cand in cands_batch]
 
     def save_candidate_vecs(self, vecs, path):
         print("[ Saving fixed candidate set vectors to {} ]".format(path))
@@ -619,7 +619,7 @@ class TorchRankerAgent(TorchAgent):
             p1s = (text_vec == p1).nonzero()
             p2s = (text_vec == p2).nonzero()
             if len(p1s) and len(p2s):
-                response_vec = text_vec[p2s[-1] + 1 : p1s[-1]]
+                response_vec = text_vec[p2s[-1] + 1:p1s[-1]]
             else:
                 response_vec = [self.NULL_IDX]  # TODO: pull in actual N
             response = self.dict.vec2txt(response_vec)

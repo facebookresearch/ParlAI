@@ -52,7 +52,8 @@ class MetadialogTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         if 'subtask' not in opt:
-            print('Warning: Metadialog teacher should be assigned subtask. Defaulting to dialog')
+            print('Warning: Metadialog teacher should be assigned subtask. "
+                  "Defaulting to dialog')
             opt['subtask'] = 'dialog'
 
         if 'train' in opt['datatype']:  # Use 'in' to also capture 'train:ordered:stream'
@@ -85,7 +86,7 @@ class MetadialogTeacher(ParlAIDialogTeacher):
     def add_cmdline_args(argparser):
         project = argparser.add_argument_group('Metadialog Tasks')
         project.add_argument('-st', '--subtasks', type=str,
-                             help='comma-separated list of tasks to include for MTL teacher')
+                             help='comma-separated list of tasks used by MTL teacher')
         project.add_argument('-dia-train', '--dia-train', type=str, default='train',
                              help='the filename to train on for the dialog task')
         project.add_argument('-exp-train', '--exp-train', type=str, default='train',
@@ -105,10 +106,10 @@ class MetadialogTeacher(ParlAIDialogTeacher):
         project.add_argument('-sen-test', '--sen-test', type=str, default='test',
                              help='the filename to eval on for the sentiment task')
         project.add_argument('-trial', '--trial', type=int, default=0,
-                             help='the index of a repeated trial (has no effect on the code)')
+                             help='the index of a repeated trial (no effect on the code)')
         project.add_argument('-mt', '--max-train', type=int, default=0,
-                             help='if non-zero, only the first max-train examples from the '
-                             'dataset will be used if it is read by an instance of '
+                             help='if non-zero, only the first max-train examples will '
+                             'be used if it is read by an instance of '
                              'ParlaiDialogTeacher')
         argparser.set_defaults(history_size=2)
 
@@ -140,7 +141,6 @@ class MetadialogTeacher(ParlAIDialogTeacher):
                 parley['memories'] = []
 
                 episode = {
-                    # 'text': '\n'.join(parley.get('memories', [])) + '\n' + parley['context'],
                     'text': parley['context'],
                     'labels': [parley['response']],
                     'label_candidates': parley.get('candidates', []),
@@ -213,6 +213,7 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
             return np.random.choice(
                 range(len(self.tasks)), p=self.sampling_prob)
         else:
+            task_idx = -1
             for i, subtask in enumerate(self.tasks):
                 if not subtask.epoch_done():
                     return i
