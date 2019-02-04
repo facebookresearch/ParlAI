@@ -264,6 +264,16 @@ class TorchAgent(Agent):
             '-tr', '--truncate', default=-1, type=int,
             help='Truncate input lengths to increase speed / use less memory.')
         agent.add_argument(
+            '--left-truncate', type=int,
+            help='LHS truncation length: if not specified, this will default '
+                 'to `truncate`'
+        )
+        agent.add_argument(
+            '--right-truncate', type=int,
+            help='RHS truncation length: if not specified, this will default '
+                 'to `truncate`'
+        )
+        agent.add_argument(
             '-histsz', '--history-size', default=-1, type=int,
             help='Number of past dialog utterances to remember.')
         agent.add_argument(
@@ -351,6 +361,11 @@ class TorchAgent(Agent):
         self.history = deque(maxlen=self.histsz)
         # truncate == 0 might give funny behavior
         self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
+        self.left_truncate = (self.truncate if not opt.get('left_truncate')
+                              else opt['left_truncate'])
+        self.right_truncate = (self.truncate if not opt.get('right_truncate')
+                               else opt['right_truncate'])
+
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
@@ -778,7 +793,12 @@ class TorchAgent(Agent):
         """Sets the 'label_candidates_vec' field in the observation.
 
         Useful to override to change vectorization behavior"""
-
+        cands_key = ('candidates' if 'labels' in obs else
+                     'eval_candidates' if 'eval_labels' in obs else None)
+        if cands_key is None or self.opt[cands_key] != 'inline':
+            # vectorize label candidates if and only if we are using inline
+            # candidates
+            return obs
         if 'label_candidates_vecs' in obs:
             if truncate is not None:
                 # check truncation of pre-computed vectors
@@ -792,8 +812,7 @@ class TorchAgent(Agent):
                 for c in obs['label_candidates']]
         return obs
 
-    def vectorize(self, obs, add_start=True, add_end=True, truncate=None,
-                  split_lines=False):
+    def vectorize(self, obs, add_start=True, add_end=True, split_lines=False):
         """Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
@@ -818,9 +837,9 @@ class TorchAgent(Agent):
         :return: the input observation, with 'text_vec', 'label_vec', and
             'cands_vec' fields added.
         """
-        self._set_text_vec(obs, truncate, split_lines)
-        self._set_label_vec(obs, add_start, add_end, truncate)
-        self._set_label_cands_vec(obs, add_start, add_end, truncate)
+        self._set_text_vec(obs, self.left_truncate, split_lines)
+        self._set_label_vec(obs, add_start, add_end, self.right_truncate)
+        self._set_label_cands_vec(obs, add_start, add_end, self.right_truncate)
         return obs
 
     def batchify(self, obs_batch, sort=False,
@@ -1080,7 +1099,7 @@ class TorchAgent(Agent):
         self.observation = self.get_dialog_history(
             observation, reply=reply, add_person_tokens=self.add_person_tokens,
             add_p1_after_newln=self.opt.get('add_p1_after_newln', False))
-        return self.vectorize(self.observation, truncate=self.truncate)
+        return self.vectorize(self.observation)
 
     def save(self, path=None):
         """Save model parameters to path (or default to model_file arg).
