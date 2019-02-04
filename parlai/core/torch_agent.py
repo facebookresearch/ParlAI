@@ -1044,7 +1044,7 @@ class TorchAgent(Agent):
 
         :return: observation with text replaced with full dialog
         """
-        # TODO: add start and end tokens 
+        # TODO: add start and end tokens
 
         obs = observation
         split_history_vecs = split_lines and join_history_tok == '\n'
@@ -1053,9 +1053,9 @@ class TorchAgent(Agent):
             if add_person_tokens:
                 # add person2 token to reply
                 reply = self._add_person_tokens(reply, self.P2_TOKEN)
-                reply = join_history_tok + reply
             # add reply to history
             if not split_history_vecs:
+                reply = join_history_tok + reply
                 self.history.extend(self.dict.txt2vec(reply))
             else:
                 self.history_mems.append(self.dict.txt2vec(reply))
@@ -1086,6 +1086,7 @@ class TorchAgent(Agent):
         if obs.get('episode_done', True):
             # end of this episode, clear the history
             self.history.clear()
+            self.history_mems.clear()
         return obs
 
     def last_reply(self, use_label=True):
