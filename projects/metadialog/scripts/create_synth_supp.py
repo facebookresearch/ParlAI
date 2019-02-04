@@ -130,13 +130,6 @@ def create_supp(opt):
     print(f"Conversion acc (% of converted): {num_supp_correct/num_supp * 100:.2f}% "
           f"({num_supp_correct}/{num_supp})")
 
-    # print(f"Total examples missed: {num_misses} (acc = {1 - num_misses/num_seen:.2f})")
-    # print(f"Total examples converted (supp size): {num_supp} "
-    #       f"({num_supp/num_seen:.2f} of total, {num_supp/num_misses * 100:.1f} of misses)")
-    # print(f"Total examples converted correctly: {num_supp_correct}/{num_supp}"
-    #       f"({num_supp_correct/num_supp * 100:.1f}")
-    # print(f"Wrote {num_supp} new examples to {opt['outfile']}.")
-
     with open(opt['outfile'], 'w') as outfile:
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')

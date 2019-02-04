@@ -5,10 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 from argparse import ArgumentParser
 
-from parlai.projects.metadialog.utils import (
-    Parley,
-    extract_parlai_episodes,
-)
+from parlai.projects.metadialog.utils import extract_parlai_episodes
 from parlai.mturk.tasks.metadialog.rating.worlds import (
     NEW_TOPIC_REQUEST,
     SUGGESTION_REQUEST,

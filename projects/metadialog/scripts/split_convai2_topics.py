@@ -13,11 +13,12 @@ from parlai.projects.metadialog.utils import (
     episode_to_examples,
 )
 
-FAMILY = ["wife", "husband", "spouse", "mom", "momma", "mommy", "mum", "mother", "dad", "dadda",
-          "daddy", "father", "parent", "grandparent", "grandma", "grandmom", "grandmum",
-          "grandmother", "nana", "grandpa", "grandad", "granddad", "grandfather", "pappy",
-          "brother", "sister", "sibling", "cousin", "aunt", "auntie", "uncle", "child", "children",
-          "kid", "son", "daughter", "inlaw", "in-law"]
+FAMILY = ["wife", "husband", "spouse", "mom", "momma", "mommy", "mum", "mother", "dad",
+          "dadda", "daddy", "father", "parent", "grandparent", "grandma", "grandmom",
+          "grandmum", "grandmother", "nana", "grandpa", "grandad", "granddad",
+          "grandfather", "pappy", "brother", "sister", "sibling", "cousin", "aunt",
+          "auntie", "uncle", "child", "children", "kid", "son", "daughter", "inlaw",
+          "in-law"]
 variants = []
 for word in FAMILY:
     variants.append(f"{word}s")
@@ -35,20 +36,20 @@ TOPIC_NAME = 'sports'  # ['family', 'sports']
 
 
 def setup_args():
-    argparser = ArgumentParser()
-    argparser.add_argument('-if', '--infile', type=str,
-                           default=os.environ['PARLAIHOME'] + '/data/ConvAI2/valid_self_original.txt')
-    argparser.add_argument('-of', '--outfile', type=str,
-                           default=os.environ['PARLAIHOME'] + '/data/convai2meta/dialog/valid.txt')
-    argparser.add_argument('--min-unit', type=str, default='example',
-                           choices=['episode', 'example'],
-                           help="The minimal unit that most stay grouped together")
-    argparser.add_argument('-shuf', '--shuffle', type=int, default=True,
-                           help="If True, shuffle the examples before writing them to file")
-    argparser.add_argument('-histsz', '--history-size', type=int, default=-1,
-                           help="The number of turns to concatenate and include in the prompt."
-                           "In general, include all turns and filter in the teacher.")
-    opt = vars(argparser.parse_args())
+    parser = ArgumentParser()
+    parser.add_argument('-if', '--infile', type=str,
+                        default='data/ConvAI2/valid_self_original.txt')
+    parser.add_argument('-of', '--outfile', type=str,
+                        default='data/convai2meta/dialog/valid.txt')
+    parser.add_argument('--min-unit', type=str, default='example',
+                        choices=['episode', 'example'],
+                        help="The minimal unit that must stay grouped together")
+    parser.add_argument('-shuf', '--shuffle', type=int, default=True,
+                        help="If True, shuffle the examples before writing them")
+    parser.add_argument('-histsz', '--history-size', type=int, default=-1,
+                        help="The number of turns to concatenate and include in the "
+                        "prompt. Default: include all turns and filter in the teacher.")
+    opt = vars(parser.parse_args())
     return opt
 
 

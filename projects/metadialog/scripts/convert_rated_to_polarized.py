@@ -28,16 +28,16 @@ DEFAULT_OUT = DATA_DIR + '/feedback_classifier/temp.txt'
 
 
 def setup_args():
-    argparser = ArgumentParser()
-    argparser.add_argument('-if', '--infile', type=str, default=DEFAULT_IN)
-    argparser.add_argument('-of', '--outfile', type=str, default=DEFAULT_OUT)
-    argparser.add_argument('-histsz', '--history-size', type=int, default=-1,
-                           help="The number of turns to concatenate and include in the prompt.")
-    argparser.add_argument('-pos', '--positives', type=str, default='3,4,5',
-                           help="A comma-separated list of ratings to group under the positive label")
-    argparser.add_argument('-neg', '--negatives', type=str, default='1',
-                           help="A comma-separated list of ratings to group under the negative label")
-    config = vars(argparser.parse_args())
+    parser = ArgumentParser()
+    parser.add_argument('-if', '--infile', type=str, default=DEFAULT_IN)
+    parser.add_argument('-of', '--outfile', type=str, default=DEFAULT_OUT)
+    parser.add_argument('-histsz', '--history-size', type=int, default=-1,
+                        help="The number of turns to include in the prompt.")
+    parser.add_argument('-pos', '--positives', type=str, default='3,4,5',
+                        help="A comma-separated list of ratings with positive label")
+    parser.add_argument('-neg', '--negatives', type=str, default='1',
+                        help="A comma-separated list of ratings with negative label")
+    config = vars(parser.parse_args())
 
     return config
 

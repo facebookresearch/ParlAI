@@ -40,9 +40,11 @@ RATING_ACCEPTED = 5
 
 # Hardcoded responses
 RAT_REQUEST = ("Just checking: I'm not sure how positive/negative the response you "
-               "just gave was. Could you help me out? (Write positive, negative, or neutral)")
+               "just gave was. Could you help me out? (Write positive, negative, or "
+               "neutral)")
 CONTINUE = "And in response to what you were saying before"
-EXP_REQUEST = "Oops! I think I messed up. Whether I messed up or not, what could I have said (in response to <response>)?"
+EXP_REQUEST = ("Oops! I think I messed up. Whether I messed up or not, what could I "
+               "have said (in response to <response>)?")
 THANKS = "Thanks! I'll try to remember that."
 NEWTOPIC = "Can you pick a new topic for us to talk about now?"
 
@@ -83,23 +85,24 @@ class MetadialogAgent(TransformerRankerAgent):
                            help="A comma-separated list of active subtasks")
 
         agent.add_argument('--dia-weight', type=float, default=1.0,
-                           help="The loss for the dialog task is multiplied by this")
+                           help="The dialog task loss is multiplied by this")
         agent.add_argument('--exp-weight', type=float, default=1.0,
-                           help="The loss for the explanation task is multiplied by this")
+                           help="The explanation task loss is multiplied by this")
         agent.add_argument('--sen-weight', type=float, default=1.0,
-                           help="The loss for the sentiment task is multiplied by this")
+                           help="The sentiment task loss is multiplied by this")
 
         variants = argparser.add_argument_group('Metadialog Variants')
         variants.add_argument('-rgx', '--regex', type='bool', default=False,
-                              help="If True, classify sentiment using regexes instead of "
-                              "model")
-        variants.add_argument('-up', '--uncertainty-predictor', type='bool', default=False,
+                              help="If True, classify sentiment using regexes instead "
+                              "of model")
+        variants.add_argument('-up', '--uncertainty-predictor', type='bool',
+                              default=False,
                               help="If True, classify sentiment using uncertainty of "
                               "dialog models predictions instead of classifer"
                               "model")
         variants.add_argument('-ut', '--uncertainty-threshold', type=float, default=0.5,
-                              help="If model confidence is smaller than this number and "
-                              "--uncertainty-predictor=True, predict a mistake has been made")
+                              help="If model confidence is smaller than this number and"
+                              " --uncertainty-predictor=True, classify as bot mistake")
         variants.add_argument('-us', '--uncertainty-style', type=str, default='gap',
                               choices=['gap', 'mag'],
                               help="Whether the uncertainty threshold measures the "
@@ -592,7 +595,8 @@ class MetadialogAgent(TransformerRankerAgent):
 
     def make_explanation_request(self):
         orig_prompt = self.history[-3]
-        return (f'Oops! I think I messed up. Whether I messed up or not, what could I have said '
+        return (f'Oops! I think I messed up. '
+                f'Whether I messed up or not, what could I have said '
                 f'(in response to "{orig_prompt}")?')
 
     def make_rating_request(self):
@@ -605,10 +609,11 @@ class MetadialogAgent(TransformerRankerAgent):
         action = super().act()
         reply = str(action['text'])
         action['reward'] = rating
+        last_message = self.history[-1]
         if rating == 0:
-            action['text'] = f'Okay, thanks! {CONTINUE} ("{self.history[-1]}"): {reply}'
+            action['text'] = f'Okay, thanks! {CONTINUE} ("{last_message}"): {reply}'
         elif rating == 1:
-            action['text'] = f'Great, thanks! {CONTINUE} ("{self.history[-1]}"): {reply}'
+            action['text'] = f'Great, thanks! {CONTINUE} ("{last_message}"): {reply}'
         return action, reply
 
     def set_subtasks(self, opt):
@@ -655,7 +660,8 @@ class MetadialogAgent(TransformerRankerAgent):
                 self.model.load_state_dict(states['model'])
             except RuntimeError as e:
                 if self.opt['partial_load']:
-                    print("WARNING: could not load entire --init-model; loading partially instead.")
+                    print("WARNING: could not load entire --init-model; "
+                          "loading partially instead.")
                     pretrained_state = states['model']
                     current_state = self.model.state_dict()
                     # 1. filter out unnecessary keys

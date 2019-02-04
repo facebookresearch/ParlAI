@@ -16,25 +16,24 @@ class MetadialogModel(nn.Module):
     def add_cmdline_args(cls, argparser):
         model = argparser.add_argument_group('MetadialogModel')
 
-        model.add_argument('-shl', '--sen-head-layers', type=int, default=1,
-                           help="The number of linear layers to have in the sentiment task head")
-
+        model.add_argument('-shl', '--sen-head-layers', type=int,
+                           default=1, help="The number of linear layers in the "
+                           "sentiment task head")
         model.add_argument('-sexpemb', '--share-exp-embeddings', type='bool',
-                           default=True,
-                           help="If True, the explanation task will share the dialog embeddings")
+                           default=True, help="If True, the explanation task shares "
+                           "the dialog embeddings")
         model.add_argument('-sexpxenc', '--share-exp-x-encoder', type='bool',
-                           default=True,
-                           help="If True, the explanation task will share the dialog x encoder")
+                           default=True, help="If True, the explanation task shares "
+                           "the dialog x encoder")
         model.add_argument('-sexpyenc', '--share-exp-y-encoder', type='bool',
-                           default=True,
-                           help="If True, the explanation task will share the dialog y encoder")
-
+                           default=True, help="If True, the explanation task shares "
+                           "the dialog y encoder")
         model.add_argument('-ssenemb', '--share-sen-embeddings', type='bool',
-                           default=False,
-                           help="If True, the sentiment task will share the dialog embeddings")
+                           default=False, help="If True, the sentiment task shares the "
+                           "dialog embeddings")
         model.add_argument('-ssenenc', '--share-sen-encoder', type='bool',
                            default=False,
-                           help="If True, the sentiment task will share the dialog encoder")
+                           help="If True, the sentiment task shares the dialog encoder")
 
     def __init__(self, opt, dictionary):
         super().__init__()
@@ -45,15 +44,10 @@ class MetadialogModel(nn.Module):
         # Build dialog
         self.dia_embeddings = self.init_embeddings()
         self.x_dia_encoder = self.build_encoder(opt, self.dia_embeddings)
-        # print("WARNING: Using linear heads for x and y!")
-        # self.x_dia_head = self.build_head(opt, outdim=opt['embedding_size'], num_layers=1)
         self.x_dia_head = nn.Dropout(p=0)
 
         self.y_dia_encoder = self.build_encoder(opt, self.dia_embeddings)
-        # print("WARNING: Using linear heads for x and y!")
-        # self.y_dia_head = self.build_head(opt, outdim=opt['embedding_size'], num_layers=1)
         self.y_dia_head = nn.Dropout(p=0)
-        # self.y_dia_head = self.x_dia_head
 
         # Only build the parts of the network you will be using
         # This saves space (nbd) and prevents conflicts when loading
@@ -67,17 +61,12 @@ class MetadialogModel(nn.Module):
                 self.x_exp_encoder = self.x_dia_encoder
             else:
                 self.x_exp_encoder = self.build_encoder(opt, self.exp_embeddings)
-            # print("WARNING: Using linear heads for x and y!")
-            # self.x_exp_head = self.build_head(opt, outdim=opt['embedding_size'], num_layers=1)
             self.x_exp_head = nn.Dropout(p=0)
 
             if self.opt['share_exp_y_encoder']:
                 self.y_exp_encoder = self.y_dia_encoder
             else:
                 self.y_exp_encoder = self.build_encoder(opt, self.exp_embeddings)
-            # print("WARNING: Using linear heads for x and y!")
-            # self.y_exp_head = self.build_head(opt, outdim=opt['embedding_size'], num_layers=1)
-            # self.y_exp_head = self.x_exp_head
             self.y_exp_head = nn.Dropout(p=0)
 
         # Build sentiment

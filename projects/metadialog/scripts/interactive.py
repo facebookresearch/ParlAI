@@ -53,7 +53,7 @@ def interactive(opt, print_parser=None):
         'person_tokens': True,
         'history_size': 2,
         'eval_candidates': 'fixed',
-        'fixed_candidates_path': '/private/home/bhancock/metadialog/data/convai2_cands.txt',
+        'fixed_candidates_path': 'data/convai2_cands.txt',
         'fixed_candidate_vecs': opt['fixed_candidate_vecs'],
         # Pull these from current opt dictionary
         'rating_frequency': opt['rating_frequency'],

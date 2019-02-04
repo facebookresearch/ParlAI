@@ -80,7 +80,8 @@ class Parley(object):
 
 
 def sanitize_parley(parley):
-    """Separate memories from context, pull out response, split context/memories lists"""
+    """Separate memories from context, pull out response, split context/memories lists
+    """
     if '\n' in parley.context:
         snippets = parley.context.split('\n')
         text = snippets[-1]
@@ -104,7 +105,7 @@ def add_person_tokens(responses, first_speaker=None, last_speaker=1):
         text: the concatenated text
 
     e.g.,
-    respones = ["How are you?", "I'm doing fine!", "I'm glad to hear it!"]
+    responses = ["How are you?", "I'm doing fine!", "I'm glad to hear it!"]
     result = add_person_tokens(responses)
     result: "__p1__ How are you? __p2__ I'm doing fine! __p1__ I'm glad to
         hear it!"

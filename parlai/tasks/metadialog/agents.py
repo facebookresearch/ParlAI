@@ -52,11 +52,12 @@ class MetadialogTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         if 'subtask' not in opt:
-            print('Warning: Metadialog teacher should be assigned subtask. "
-                  "Defaulting to dialog')
+            print('Warning: Metadialog teacher should be assigned subtask. '
+                  'Defaulting to dialog')
             opt['subtask'] = 'dialog'
 
-        if 'train' in opt['datatype']:  # Use 'in' to also capture 'train:ordered:stream'
+        # Use 'in' to also capture 'train:ordered:stream'
+        if 'train' in opt['datatype']:
             # Use the filename explicitly given with the flag if available
             # Otherwise, use the filename passed in the task flag
             train_file_flag = f"{opt['subtask'][:3]}_train"
@@ -106,7 +107,7 @@ class MetadialogTeacher(ParlAIDialogTeacher):
         project.add_argument('-sen-test', '--sen-test', type=str, default='test',
                              help='the filename to eval on for the sentiment task')
         project.add_argument('-trial', '--trial', type=int, default=0,
-                             help='the index of a repeated trial (no effect on the code)')
+                             help='the index of a repeated trial (not used in code)')
         project.add_argument('-mt', '--max-train', type=int, default=0,
                              help='if non-zero, only the first max-train examples will '
                              'be used if it is read by an instance of '
@@ -213,7 +214,6 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
             return np.random.choice(
                 range(len(self.tasks)), p=self.sampling_prob)
         else:
-            task_idx = -1
             for i, subtask in enumerate(self.tasks):
                 if not subtask.epoch_done():
                     return i

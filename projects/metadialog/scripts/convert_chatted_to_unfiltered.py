@@ -21,18 +21,20 @@ CONTINUE = "and in response to what you were saying before"  # Not the first wor
 
 
 def setup_args():
-    argparser = ArgumentParser()
-    argparser.add_argument('-if', '--infile', type=str)
-    argparser.add_argument('-of', '--outfile', type=str)
-    argparser.add_argument('-mode', '--mode', type=str, choices=['bot', 'human'],
-                           help="Whether to use as target responses what the bot said, human said, or both")
-    argparser.add_argument('-fm', '--filter-mistake', type=int, default=0,
-                           help="If true, toss bot examples where the bot made a mistake")
-    argparser.add_argument('-fa', '--filter-accusation', type=int, default=0,
-                           help="If true, toss human examples where the human is expressing dissatisfaction")
-    argparser.add_argument('-histsz', '--history-size', type=int, default=-1,
-                           help="The number of turns to concatenate and include in the prompt.")
-    opt = vars(argparser.parse_args())
+    parser = ArgumentParser()
+    parser.add_argument('-if', '--infile', type=str)
+    parser.add_argument('-of', '--outfile', type=str)
+    parser.add_argument('-mode', '--mode', type=str, choices=['bot', 'human'],
+                        help="Whether to use as target responses what the bot said, "
+                        "human said, or both")
+    parser.add_argument('-fm', '--filter-mistake', type=int, default=0,
+                        help="If true, toss bot examples where the bot made a mistake")
+    parser.add_argument('-fa', '--filter-accusation', type=int, default=0,
+                        help="If true, toss human examples where the human is "
+                        "expressing dissatisfaction")
+    parser.add_argument('-histsz', '--history-size', type=int, default=-1,
+                        help="The number of turns to include in the prompt.")
+    opt = vars(parser.parse_args())
 
     if opt['filter_accusation']:
         assert(not opt['outfile'].endswith('unfiltered'))
@@ -123,7 +125,8 @@ def main(opt):
                     )
                 else:
                     example = Parley(
-                        # this is not technically true: last speaker was the bot (__p2__),
+                        # this is not technically true:
+                        # the last speaker was the bot (__p2__),
                         # not the human (__p1__), but in all our data, __p1__ is always
                         # the speaking partner of the learner
                         context=add_person_tokens(history[:-1], last_speaker=1),
