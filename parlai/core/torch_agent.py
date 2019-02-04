@@ -792,13 +792,8 @@ class TorchAgent(Agent):
     def _set_label_cands_vec(self, obs, add_start, add_end, truncate):
         """Sets the 'label_candidates_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
-        cands_key = ('candidates' if 'labels' in obs else
-                     'eval_candidates' if 'eval_labels' in obs else None)
-        if cands_key is None or self.opt.get(cands_key, 'inline') != 'inline':
-            # vectorize label candidates if and only if we are using inline
-            # candidates
-            return obs
+        Useful to override to change vectorization behavior
+        """
         if 'label_candidates_vecs' in obs:
             if truncate is not None:
                 # check truncation of pre-computed vectors
