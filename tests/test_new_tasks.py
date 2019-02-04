@@ -14,6 +14,7 @@ from utils import git_changed_files
 KEYS = ['missing_text', 'missing_labels', 'empty_label_candidates']
 EXCLUDED_TEACHERS = ['PytorchDataTeacher', 'MultiTaskTeacher']
 
+
 class TestNewTasks(unittest.TestCase):
     """Make sure any changes to tasks pass verify_data test."""
 
