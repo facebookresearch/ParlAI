@@ -36,7 +36,7 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
         self.turns = 0
         if self.opt.get('deepmoji') is not None:
             self.embed = np.load(self.opt['deepmoji'] + fold + ".npy")
-        
+
         if (
             self.opt.get('fasttextloc') is not None and
             self.opt.get('prepend', -1) > 0
