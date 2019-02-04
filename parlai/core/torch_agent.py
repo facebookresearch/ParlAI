@@ -795,7 +795,7 @@ class TorchAgent(Agent):
         Useful to override to change vectorization behavior"""
         cands_key = ('candidates' if 'labels' in obs else
                      'eval_candidates' if 'eval_labels' in obs else None)
-        if cands_key is None or self.opt[cands_key] != 'inline':
+        if cands_key is None or self.opt.get(cands_key, 'inline') != 'inline':
             # vectorize label candidates if and only if we are using inline
             # candidates
             return obs
