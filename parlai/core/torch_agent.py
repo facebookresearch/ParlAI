@@ -544,6 +544,9 @@ class TorchAgent(Agent):
         this to work.
         Override this to override the behavior.
         """
+        if self.scheduler is None:
+            return
+            
         if self._is_lr_warming_up():
             # we're not done warming up, so don't start using validation
             # metrics to adjust schedule
