@@ -1184,8 +1184,10 @@ class TorchAgent(Agent):
                 add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
                 join_history_tok=self.opt.get('join_history_tok', '\n'),
                 split_lines=self.opt.get('split_lines', False))
-        return self.vectorize(self.observation, truncate=self.truncate,
-                              split_lines=self.opt.get('split_lines', False))
+        return self.vectorize(self.observation,
+                              split_lines=self.opt.get('split_lines', False),
+                              text_truncate=self.text_truncate,
+                              label_truncate=self.label_truncate)
 
     def save(self, path=None):
         """Save model parameters to path (or default to model_file arg).
