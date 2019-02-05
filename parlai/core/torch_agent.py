@@ -124,6 +124,110 @@ though agents can choose to return None if they do not want to answer.
 """
 
 
+class History(object):
+    def __init__(opt, field='text', vec_type='deque', maxlen=None,
+                 p1_token='__p1__', p2_token='__p2__', dict=None,
+                 split_on_newln=False):
+        self.field = field
+        self.dict = dict
+        self.delimiter = opt.get('delimiter', '\n')
+        self.delimiter_tok = self.parse(self.delimiter)
+        self.split_on_newln = split_on_newln
+
+        # set up history objects
+        if vec_type != 'deque' and vec_type != 'list':
+            raise RuntimeError(
+                'The type {} is not currently supported for history'.format(
+                vec_type)
+            )
+        self.vec_type = vec_type
+        self.max_len = maxlen
+
+        self.history_strings = []
+        self.history_vecs = []
+
+        # person token args
+        self.add_person_tokens = opt.get('person_tokens', False)
+        self.add_p1_after_newln = opt.get('add_p1_after_newln', False)
+        self.p1_token = p1_token
+        self.p2_token = p2_token
+
+        # tracking when to clear history
+        self.clear_on_next_update = False
+
+    def parse(self, text):
+        return self.dict.vec2txt(text)
+
+    def clear(self):
+        self.history_strings = []
+        self.history_vecs = []
+
+    def update_history(self, obs, add_next=None):
+        if self.clear_on_next_update:
+            self.clear()
+            self.clear_on_next_update = False
+
+        if add_next is not None:
+            if self.add_person_tokens:
+                add_next = self._add_person_tokens(add_next, self.p2_token)
+            # update history string
+            self.history_strings.append(add_next)
+            # update history vecs
+            self.history_vecs.append(self.parse(add_next))
+
+        if self.field in obs:
+            if self.split_on_newln:
+                next_texts = obs[self.field].split('\n')
+            else:
+                next_texts = [obs[self.field]]
+            for text in next_texts:
+                if self.add_person_tokens:
+                    next_text = self._add_person_tokens(obs[self.field],
+                                                        self.p1_token)
+                # update history string
+                self.history_strings.append(next_text)
+                # update history vecs
+                self.history_vecs.append(self.parse(next_text))
+
+        if obs.get('episode_done', True):
+            # end of this episode, clear the history
+            self.clear_on_next_update = True
+
+    def get_history_str(self):
+        if len(self.history_strings) > 0:
+            return self.delimiter.join(self.history_strings)
+        return ''
+
+    def get_history_vec(self):
+        # TODO: add start and end tokens option
+        if self.vec_type == 'deque':
+            history = deque(maxlen=self.max_len)
+            for vec in self.history_vecs[:-1]:
+                history.extend(vec)
+                history.extend(self.delimiter_tok)
+            history.extend(self.history_vecs[-1])
+        else:
+            # vec type is a list
+            history = []
+            for vec in self.history_vecs[:-1]:
+                history += vec
+                history += self.delimiter_tok
+            history += self.history_vecs[-1]
+
+        return history
+
+    def get_history_vec_list(self):
+        return self.history_vecs
+
+    def _add_person_tokens(self, text, token, add_after_newln=False):
+        if add_after_newln:
+            split = text.split('\n')
+            split[-1] = token + ' ' + split[-1]
+            return '\n'.join(split)
+        else:
+            return token + ' ' + text
+
+
 class TorchAgent(Agent):
     """A provided base agent for any model that wants to use Torch.
 
@@ -293,6 +397,10 @@ class TorchAgent(Agent):
                  'vectors'
         )
         agent.add_argument(
+            '--use-memories', type='bool', default=False,
+            help='use memory vecs'
+        )
+        agent.add_argument(
             '--use-reply', default='label', hidden=True,
             choices=['label', 'model'],
             help='Which previous replies to use as history. If label, use '
@@ -371,8 +479,14 @@ class TorchAgent(Agent):
         # can remember as few as zero utterances if desired
         self.histsz = opt['history_size'] if opt['history_size'] >= 0 else None
         # stores up to hist_utt past observations within current dialog
-        self.history = deque(maxlen=self.histsz)
-        self.history_mems = []
+        self.history = History(
+            opt,
+            max_len=self.histsz,
+            p1_token=self.P1_TOKEN,
+            p2_token=self.P2_TOKEN,
+            dict=self.dict,
+            split_on_newln=opt.get('split_lines', False)
+        )
         # truncate == 0 might give funny behavior
         self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
         text_truncate = opt.get('text_truncate') or opt['truncate']
@@ -979,126 +1093,6 @@ class TorchAgent(Agent):
                 batch_reply[i]['text_candidates'] = cands
         return batch_reply
 
-    def _add_person_tokens(self, text, token, add_after_newln=False):
-        if add_after_newln:
-            split = text.split('\n')
-            split[-1] = token + ' ' + split[-1]
-            return '\n'.join(split)
-        else:
-            return token + ' ' + text
-
-    def get_dialog_history(self, observation, reply=None,
-                           add_person_tokens=False, add_p1_after_newln=False,
-                           join_history_tok='\n'):
-        """Retrieve dialog history and add current observations to it.
-        :param observation:        current observation
-        :param reply:              past utterance from the model to add to the
-                                   history, such as the past label or response
-                                   generated by the model.
-        :param add_person_tokens:  add tokens identifying each speaking before
-                                   utterances in the text & history.
-        :param add_p1_after_newln: add the other speaker token before the last
-                                   newline in the input instead of at the
-                                   beginning of the input. this is useful for
-                                   tasks that include some kind of context
-                                   before the actual utterance (e.g. squad,
-                                   babi, personachat).
-        :param join_history_tok:   join strings in self.history list with this
-                                   token
-        :return: observation with text replaced with full dialog
-        """
-        obs = observation
-
-        if reply is not None:
-            if add_person_tokens:
-                # add person2 token to reply
-                reply = self._add_person_tokens(reply, self.P2_TOKEN)
-            # add reply to history
-            self.history.append(reply)
-
-        if 'text' in obs:
-            if add_person_tokens:
-                # add person1 token to text
-                obs['text'] = self._add_person_tokens(obs['text'],
-                                                      self.P1_TOKEN,
-                                                      add_p1_after_newln)
-            # add text to history
-            self.history.append(obs['text'])
-
-        if len(self.history) > 0:
-            obs['text'] = join_history_tok.join(self.history)
-        if obs.get('episode_done', True):
-            # end of this episode, clear the history
-            self.history.clear()
-        return obs
-
-    def get_dialog_history_vec(self, observation, reply=None,
-                               add_person_tokens=False, add_p1_after_newln=False,
-                               join_history_tok='\n', split_lines=False):
-        """Retrieve dialog history and add current observations to it.
-
-        :param observation:        current observation
-        :param reply:              past utterance from the model to add to the
-                                   history, such as the past label or response
-                                   generated by the model.
-        :param add_person_tokens:  add tokens identifying each speaking before
-                                   utterances in the text & history.
-        :param add_p1_after_newln: add the other speaker token before the last
-                                   newline in the input instead of at the
-                                   beginning of the input. this is useful for
-                                   tasks that include some kind of context
-                                   before the actual utterance (e.g. squad,
-                                   babi, personachat).
-        :param join_history_tok:   join strings in self.history list with this
-                                   token
-
-        :return: observation with text replaced with full dialog
-        """
-        # TODO: add start and end tokens
-
-        obs = observation
-        split_history_vecs = split_lines and join_history_tok == '\n'
-
-        if reply is not None:
-            if add_person_tokens:
-                # add person2 token to reply
-                reply = self._add_person_tokens(reply, self.P2_TOKEN)
-            # add reply to history
-            if not split_history_vecs:
-                reply = join_history_tok + reply
-                self.history.extend(self.dict.txt2vec(reply))
-            else:
-                self.history_mems.append(self.dict.txt2vec(reply))
-
-        if 'text' in obs:
-            if add_person_tokens:
-                # add person1 token to text
-                obs['text'] = self._add_person_tokens(obs['text'],
-                                                      self.P1_TOKEN,
-                                                      add_p1_after_newln)
-                if len(self.history) > 0 and not split_history_vecs:
-                    obs['text'] = join_history_tok + obs['text']
-            # add text to history
-            if not split_history_vecs:
-                self.history.extend(self.dict.txt2vec(obs['text']))
-            else:
-                self.history_mems.append(self.dict.txt2vec(obs['text']))
-
-
-        if split_history_vecs and len(self.history_mems) > 0:
-            obs['memory_vecs'] = []
-            for i in range(len(self.history) - 1):
-                obs['memory_vecs'].append(torch.LongTensor(self.history[i]))
-            obs['text_vec'] = torch.LongTensor(self.history[-1])
-        elif len(self.history) > 0:
-            obs['text_vec'] = torch.LongTensor(self.history)
-
-        if obs.get('episode_done', True):
-            # end of this episode, clear the history
-            self.history.clear()
-            self.history_mems.clear()
-        return obs
-
     def last_reply(self, use_label=True):
         """Retrieve the last reply from the model.
 
@@ -1173,17 +1167,10 @@ class TorchAgent(Agent):
         """
         reply = self.last_reply(
             use_label=(self.opt.get('use_reply', 'label') == 'label'))
-        if not self.opt.get('save_history_vec', False):
-            self.observation = self.get_dialog_history(
-                observation, reply=reply, add_person_tokens=self.add_person_tokens,
-                add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
-                join_history_tok=self.opt.get('join_history_tok', '\n'))
-        else:
-            self.observation = self.get_dialog_history_vec(
-                observation, reply=reply, add_person_tokens=self.add_person_tokens,
-                add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
-                join_history_tok=self.opt.get('join_history_tok', '\n'),
-                split_lines=self.opt.get('split_lines', False))
+        # update the history appropriately
+        self.history.update_history(observation, add_next=reply)
+        observation['text'] = self.history.get_history_str()
+        # TODO: add text vec and possibly memory vec fields here (?)
         return self.vectorize(self.observation,
                               split_lines=self.opt.get('split_lines', False),
                               text_truncate=self.text_truncate,
@@ -1251,7 +1238,6 @@ class TorchAgent(Agent):
         """Clear internal states."""
         self.observation = {}
         self.history.clear()
-        self.history_mems.clear()
         self.replies.clear()
         self.reset_metrics()
 
