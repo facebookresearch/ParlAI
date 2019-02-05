@@ -293,6 +293,10 @@ class TorchAgent(Agent):
                  'input instead of at the beginning of the input. this is '
                  'useful for tasks that include some kind of context before '
                  'the actual utterance (e.g. squad, babi, personachat).')
+        agent.add_argument(
+            '--join-history-tok', type=str, default='\n',
+            help='Join history lines with this token, defaults to newline'
+        )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
         # user tries to present multiple of them
@@ -739,7 +743,7 @@ class TorchAgent(Agent):
         if 'text_vec' in obs:
             # check truncation of pre-computed vectors
             obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate, True)
-            if split_lines and 'memory_vecs' in obs:
+            if 'memory_vecs' in obs:
                 obs['memory_vecs'] = [self._check_truncate(m, truncate, True)
                                       for m in obs['memory_vecs']]
         elif 'text' in obs:
@@ -975,9 +979,9 @@ class TorchAgent(Agent):
             return token + ' ' + text
 
     def get_dialog_history(self, observation, reply=None,
-                           add_person_tokens=False, add_p1_after_newln=False):
+                           add_person_tokens=False, add_p1_after_newln=False,
+                           join_history_tok='\n'):
         """Retrieve dialog history and add current observations to it.
-
         :param observation:        current observation
         :param reply:              past utterance from the model to add to the
                                    history, such as the past label or response
@@ -990,7 +994,8 @@ class TorchAgent(Agent):
                                    tasks that include some kind of context
                                    before the actual utterance (e.g. squad,
                                    babi, personachat).
-
+        :param join_history_tok:   join strings in self.history list with this
+                                   token
         :return: observation with text replaced with full dialog
         """
         obs = observation
@@ -1012,7 +1017,7 @@ class TorchAgent(Agent):
             self.history.append(obs['text'])
 
         if len(self.history) > 0:
-            obs['text'] = '\n'.join(self.history)
+            obs['text'] = join_history_tok.join(self.history)
         if obs.get('episode_done', True):
             # end of this episode, clear the history
             self.history.clear()
@@ -1094,7 +1099,8 @@ class TorchAgent(Agent):
             use_label=(self.opt.get('use_reply', 'label') == 'label'))
         self.observation = self.get_dialog_history(
             observation, reply=reply, add_person_tokens=self.add_person_tokens,
-            add_p1_after_newln=self.opt.get('add_p1_after_newln', False))
+            add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
+            join_history_tok=self.opt.get('join_history_tok', '\n'))
         return self.vectorize(self.observation,
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
