@@ -262,7 +262,7 @@ class TrainLoop():
         ):
             # looks like we were preempted. make sure we load up our total
             # training stats, etc
-            with open(opt['model_file'] + '.trainstats') as ts:
+            with open(opt['model_file'] + trainstats_suffix) as ts:
                 obj = json.load(ts)
                 self._preempted_epochs = obj.get('total_epochs', 0)
                 self.train_time.total = obj.get('train_time', 0)
