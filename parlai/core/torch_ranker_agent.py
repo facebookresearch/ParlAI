@@ -200,6 +200,19 @@ class TorchRankerAgent(TorchAgent):
         preds = [cand_preds[i][0] for i in range(batchsize)]
         return Output(preds, cand_preds)
 
+    def _set_label_cands_vec(self, *args, **kwargs):
+        """Sets the 'label_candidates_vec' field in the observation.
+
+        Useful to override to change vectorization behavior"""
+        obs = args[0]
+        cands_key = ('candidates' if 'labels' in obs else
+                     'eval_candidates' if 'eval_labels' in obs else None)
+        if cands_key is None or self.opt[cands_key] != 'inline':
+            # vectorize label candidates if and only if we are using inline
+            # candidates
+            return obs
+        return super()._set_label_cands_vec(*args, **kwargs)
+
     def _build_candidates(self, batch, source, mode):
         """Build a candidate set for this batch
 
