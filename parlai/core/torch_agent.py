@@ -368,7 +368,6 @@ class TorchAgent(Agent):
 
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
-        self.total_steps = -1
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """Initialize optimizer with model parameters.
@@ -1192,7 +1191,6 @@ class TorchAgent(Agent):
 
         # take a step
         if is_training:
-            self.total_steps += 1
             output = self.train_step(batch)
         else:
             output = self.eval_step(batch)

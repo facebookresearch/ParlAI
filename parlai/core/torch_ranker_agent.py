@@ -65,8 +65,9 @@ class TorchRankerAgent(TorchAgent):
         # TODO: Move this functionality (init, loading, etc.) up to TorchAgent since
         # it has nothing to do with ranking models in particular
         agent.add_argument(
-            '-im', '--init-model', type=str,
-            help="The path to a saved model of the appropriate type to initialize with")
+            '--init-model', type=str,
+            help="The path to a saved model of the appropriate type to initialize with"
+        )
         agent.add_argument(
             '--train-predict', type='bool', default=False,
             help='Get predictions and calculate mean rank during the train '
@@ -90,7 +91,6 @@ class TorchRankerAgent(TorchAgent):
         super().__init__(opt, shared)
 
         if shared:
-            self.warnings = shared['warnings']
             self.model = shared['model']
             self.metrics = shared['metrics']
             self.fixed_candidates = shared['fixed_candidates']
@@ -99,7 +99,6 @@ class TorchRankerAgent(TorchAgent):
             self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
             states = None
         else:
-            self.warnings = {}
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
                             'train_accuracy': 0.0}
             self.build_model()
@@ -423,7 +422,6 @@ class TorchRankerAgent(TorchAgent):
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
         shared['metrics'] = self.metrics
-        shared['warnings'] = self.warnings
         shared['fixed_candidates'] = self.fixed_candidates
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['vocab_candidates'] = self.vocab_candidates
@@ -465,8 +463,10 @@ class TorchRankerAgent(TorchAgent):
                 # check first for 'init_model' for loading model from file
                 model_file = opt['init_model']
             else:
-                raise Exception(
-                    f"Specified --init-model={opt['init_model']} could not be found.")
+                raise RuntimeError(
+                    "Specified --init-model={} could not be found."
+                    .format(opt['init_model'])
+                )
 
         if opt.get('model_file') and os.path.isfile(opt['model_file']):
             # next check for existing 'model_file'; this would override init_model
