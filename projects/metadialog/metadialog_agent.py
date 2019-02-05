@@ -675,16 +675,6 @@ class MetadialogAgent(TransformerRankerAgent):
         self.subtasks = subtasks
         opt['subtasks'] = subtasks  # Add to opt so that model module can see the list
 
-    def encode_fixed_candidates(self, y_vec_list):
-        """Convert vectorized candidates into encoded candidates
-
-        See TorchRankerAgent.encode_fixed_candidates() for details.
-        """
-        # Ensures that candidates aren't encoded again during each forward pass
-        y_vecs, _ = padded_tensor(y_vec_list)
-        y_enc = self.model.encode_dia_y(y_vecs)
-        return [y for y in y_enc]
-
     def load(self, path):
         """Return opt and model states.
 

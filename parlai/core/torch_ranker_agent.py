@@ -42,10 +42,6 @@ class TorchRankerAgent(TorchAgent):
                  "<cands_name> is the name of the file (not the full path) passed by "
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
-        agent.add_argument(
-            '--encode-fixed-candidates', type='bool', default=False,
-            help="If True, encode fixed candidates in addition to vectorizing them.")
-
         # TODO: Move this functionality (init, loading, etc.) up to TorchAgent since
         # it has nothing to do with ranking models in particular
         agent.add_argument(
@@ -476,7 +472,7 @@ class TorchRankerAgent(TorchAgent):
                 # Load candidates
                 print("[ Loading fixed candidate set from {} ]".format(cand_path))
                 with open(cand_path, 'r') as f:
-                    cands = list(set(line.strip() for line in f.readlines()))
+                    cands = [line.strip() for line in f.readlines()]
 
                 # Load or create candidate vectors
                 if os.path.isfile(opt['fixed_candidate_vecs']):
