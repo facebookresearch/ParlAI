@@ -807,7 +807,8 @@ class TorchAgent(Agent):
                 for c in obs['label_candidates']]
         return obs
 
-    def vectorize(self, obs, add_start=True, add_end=True, split_lines=False):
+    def vectorize(self, obs, add_start=True, add_end=True, split_lines=False,
+                  text_truncate=None, label_truncate=None):
         """Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
@@ -832,9 +833,9 @@ class TorchAgent(Agent):
         :return: the input observation, with 'text_vec', 'label_vec', and
             'cands_vec' fields added.
         """
-        self._set_text_vec(obs, self.text_truncate, split_lines)
-        self._set_label_vec(obs, add_start, add_end, self.label_truncate)
-        self._set_label_cands_vec(obs, add_start, add_end, self.label_truncate)
+        self._set_text_vec(obs, text_truncate, split_lines)
+        self._set_label_vec(obs, add_start, add_end, label_truncate)
+        self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs
 
     def batchify(self, obs_batch, sort=False,
@@ -1094,7 +1095,9 @@ class TorchAgent(Agent):
         self.observation = self.get_dialog_history(
             observation, reply=reply, add_person_tokens=self.add_person_tokens,
             add_p1_after_newln=self.opt.get('add_p1_after_newln', False))
-        return self.vectorize(self.observation)
+        return self.vectorize(self.observation,
+                              text_truncate=self.text_truncate,
+                              label_truncate=self.label_truncate)
 
     def save(self, path=None):
         """Save model parameters to path (or default to model_file arg).
