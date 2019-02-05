@@ -293,10 +293,6 @@ class TorchAgent(Agent):
                  'input instead of at the beginning of the input. this is '
                  'useful for tasks that include some kind of context before '
                  'the actual utterance (e.g. squad, babi, personachat).')
-        agent.add_argument(
-            '--join-history-tok', type=str, default='\n',
-            help='Join history lines with this token, defaults to newline'
-        )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
         # user tries to present multiple of them
@@ -314,6 +310,7 @@ class TorchAgent(Agent):
         """Initialize agent."""
         super().__init__(opt, shared)
         opt = self.opt
+
         if not shared:
             # intitialize any important structures from scratch
             self.replies = {}  # past replies
@@ -374,6 +371,7 @@ class TorchAgent(Agent):
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """Initialize optimizer with model parameters.
+
         :param params:       parameters from the model, for example:
                              [p for p in model.parameters() if p.requires_grad]
         :param optim_states: optional argument providing states of optimizer
@@ -546,6 +544,9 @@ class TorchAgent(Agent):
         this to work.
         Override this to override the behavior.
         """
+        if self.scheduler is None:
+            return
+
         if self._is_lr_warming_up():
             # we're not done warming up, so don't start using validation
             # metrics to adjust schedule
@@ -561,9 +562,6 @@ class TorchAgent(Agent):
             self.scheduler.step()
         elif self.opt['lr_scheduler'] == 'invsqrt':
             # this is a training step lr scheduler, nothing to adjust in validation
-            pass
-        elif self.opt['lr_scheduler'] == 'none':
-            # no adjustments, do nothing
             pass
         else:
             raise ValueError(
@@ -741,7 +739,7 @@ class TorchAgent(Agent):
         if 'text_vec' in obs:
             # check truncation of pre-computed vectors
             obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate, True)
-            if 'memory_vecs' in obs:
+            if split_lines and 'memory_vecs' in obs:
                 obs['memory_vecs'] = [self._check_truncate(m, truncate, True)
                                       for m in obs['memory_vecs']]
         elif 'text' in obs:
@@ -977,8 +975,7 @@ class TorchAgent(Agent):
             return token + ' ' + text
 
     def get_dialog_history(self, observation, reply=None,
-                           add_person_tokens=False, add_p1_after_newln=False,
-                           join_history_tok='\n'):
+                           add_person_tokens=False, add_p1_after_newln=False):
         """Retrieve dialog history and add current observations to it.
 
         :param observation:        current observation
@@ -993,8 +990,6 @@ class TorchAgent(Agent):
                                    tasks that include some kind of context
                                    before the actual utterance (e.g. squad,
                                    babi, personachat).
-        :param join_history_tok:   join strings in self.history list with this
-                                   token
 
         :return: observation with text replaced with full dialog
         """
@@ -1017,7 +1012,7 @@ class TorchAgent(Agent):
             self.history.append(obs['text'])
 
         if len(self.history) > 0:
-            obs['text'] = join_history_tok.join(self.history)
+            obs['text'] = '\n'.join(self.history)
         if obs.get('episode_done', True):
             # end of this episode, clear the history
             self.history.clear()
@@ -1099,8 +1094,7 @@ class TorchAgent(Agent):
             use_label=(self.opt.get('use_reply', 'label') == 'label'))
         self.observation = self.get_dialog_history(
             observation, reply=reply, add_person_tokens=self.add_person_tokens,
-            add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
-            join_history_tok=self.opt.get('join_history_tok', '\n'))
+            add_p1_after_newln=self.opt.get('add_p1_after_newln', False))
         return self.vectorize(self.observation,
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
