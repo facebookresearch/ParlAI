@@ -40,7 +40,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         )
         argparser.set_defaults(
             learningrate=0.0008,
-            eval_candidates='inline',
+            #eval_candidates='inline',
             lr_factor=1,
         )
         return agent
@@ -60,9 +60,10 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             self.model = torch.nn.DataParallel(self.model)
 
     def vectorize_knowledge(self, observation):
-        observation['memory_vecs'] = []
         if not self.use_knowledge:
             return observation
+
+        observation['memory_vecs'] = []
 
         checked = observation.get('checked_sentence', '')
         if observation.get('knowledge'):
@@ -97,10 +98,10 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
 
         return observation
 
-    def vectorize(self, obs, add_start=True, add_end=True, truncate=None,
-                  split_lines=False):
-        return TorchAgent.vectorize(self, obs, add_start, add_end, truncate,
-                                    split_lines)
+    def vectorize(self, obs, add_start=True, add_end=True, split_lines=False,
+                  text_truncate=None, label_truncate=None):
+        return TorchAgent.vectorize(self, obs, add_start, add_end, split_lines,
+                                    text_truncate, label_truncate)
 
     def get_dialog_history(self, observation, reply=None,
                            add_person_tokens=False, add_p1_after_newln=False,
@@ -122,4 +123,6 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
             join_history_tok=self.opt.get('join_history_tok', ' '))
         self.observation = self.vectorize_knowledge(self.observation)
-        return self.vectorize(self.observation, truncate=self.truncate)
+        return self.vectorize(self.observation,
+                              text_truncate=self.text_truncate,
+                              label_truncate=self.label_truncate)
