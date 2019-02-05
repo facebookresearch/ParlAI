@@ -65,7 +65,6 @@ class TorchRankerAgent(TorchAgent):
         opt['rank_candidates'] = True
         if opt['eval_candidates'] is None:
             opt['eval_candidates'] = opt['candidates']
-
         super().__init__(opt, shared)
 
         if shared:
@@ -161,7 +160,6 @@ class TorchRankerAgent(TorchAgent):
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
-
         scores = self.score_candidates(batch, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
 

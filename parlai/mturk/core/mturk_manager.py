@@ -573,7 +573,6 @@ class MTurkManager():
             # Reconnecting worker
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             agent.log_reconnect()
-            conversation_id = agent.conversation_id  # Hot fix suggested by Jack 11/20
             agent.alived = True
             if agent.conversation_id is not None and \
                     conversation_id is not None:
