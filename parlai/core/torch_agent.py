@@ -546,7 +546,7 @@ class TorchAgent(Agent):
         """
         if self.scheduler is None:
             return
-            
+
         if self._is_lr_warming_up():
             # we're not done warming up, so don't start using validation
             # metrics to adjust schedule
@@ -562,9 +562,6 @@ class TorchAgent(Agent):
             self.scheduler.step()
         elif self.opt['lr_scheduler'] == 'invsqrt':
             # this is a training step lr scheduler, nothing to adjust in validation
-            pass
-        elif self.opt['lr_scheduler'] == 'none':
-            # no adjustments, do nothing
             pass
         else:
             raise ValueError(
