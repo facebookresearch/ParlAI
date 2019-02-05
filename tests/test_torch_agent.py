@@ -269,7 +269,7 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # next: should truncate cached result
             prev_vec = out['text_vec']
-            out_again = agent.vectorize(out, truncate=1)
+            out_again = agent.vectorize(out, text_truncate=1)
             self.assertIsNot(prev_vec, out_again['text_vec'])
             self.assertEqual(out['text_vec'].tolist(), [3])
 
@@ -292,7 +292,7 @@ class TestTorchAgent(unittest.TestCase):
         # next: should truncate cached result
         prev_vec = out['text_vec']
         prev_mem = out['memory_vecs']
-        out_again = agent.vectorize(out, truncate=1, split_lines=True)
+        out_again = agent.vectorize(out, text_truncate=1, split_lines=True)
         self.assertIsNot(prev_vec, out_again['text_vec'])
         self.assertEqual(out['text_vec'].tolist(), [3])
         self.assertIsNot(prev_mem, out_again['memory_vecs'])

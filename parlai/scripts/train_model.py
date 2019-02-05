@@ -23,6 +23,11 @@ Examples
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 
+import numpy as np
+import os
+import signal
+import json
+
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
@@ -32,9 +37,7 @@ from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.core.distributed_utils import (
     sync_object, is_primary_worker, all_gather_list, is_distributed, num_workers
 )
-import numpy as np
 from parlai.scripts.build_pytorch_data import get_pyt_dict_file
-import os
 
 
 def setup_args(parser=None):
@@ -191,13 +194,20 @@ def save_best_valid(model_file, best_valid):
 
 class TrainLoop():
     def __init__(self, opt):
+        # if python is called from a non-interactive shell, like a bash script,
+        # it will by-default ignore SIGINTs, and KeyboardInterrupt exceptions are
+        # not produced. This line brings them back
+        signal.signal(signal.SIGINT, signal.default_int_handler)
+
         if isinstance(opt, ParlaiParser):
             print('[ Deprecated Warning: TrainLoop should be passed opt not Parser ]')
             opt = opt.parse_args()
         # Possibly load from checkpoint
+        trainstats_suffix = '.trainstats'  # we might load training statistics from here
         if opt['load_from_checkpoint'] and opt.get('model_file') and os.path.isfile(
                 opt['model_file'] + '.checkpoint'):
             opt['init_model'] = opt['model_file'] + '.checkpoint'
+            trainstats_suffix = '.checkpoint.trainstats'
         # Possibly build a dictionary (not all models do this).
         if opt['dict_build_first'] and 'dict_file' in opt:
             # If data built via pytorch data teacher, we need to load prebuilt dict
@@ -210,6 +220,7 @@ class TrainLoop():
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
         self.world = create_task(opt, self.agent)
+        # set up timers
         self.train_time = Timer()
         self.validate_time = Timer()
         self.log_time = Timer()
@@ -242,8 +253,58 @@ class TrainLoop():
         self.saved = False
         self.valid_world = None
         self.opt = opt
+
+        # we may have been preempted, make sure we note that amount
+        self._preempted_epochs = 0.0
+        if (
+            opt.get('model_file') and
+            os.path.isfile(opt['model_file'] + trainstats_suffix)
+        ):
+            # looks like we were preempted. make sure we load up our total
+            # training stats, etc
+            with open(opt['model_file'] + trainstats_suffix) as ts:
+                obj = json.load(ts)
+                self._preempted_epochs = obj.get('total_epochs', 0)
+                self.train_time.total = obj.get('train_time', 0)
+                self.impatience = obj.get('impatience', 0)
+
         if opt['tensorboard_log'] is True:
             self.writer = TensorboardLogger(opt)
+
+    def save_model(self, suffix=None):
+        if not is_primary_worker():
+            # never do IO as a non-primary worker
+            return
+        if not self.opt.get('model_file'):
+            # nothing to save to, just exit
+            return
+
+        fn = self.opt['model_file']
+        if suffix:
+            fn += suffix
+        while True:
+            # don't ever let a ctrl-c interrupt saving
+            try:
+                self.agent.save(fn)
+                self._save_train_stats(suffix)
+                break
+            except KeyboardInterrupt:
+                pass
+
+    def _save_train_stats(self, suffix=None):
+        fn = self.opt['model_file']
+        if suffix:
+            fn += suffix
+        fn += '.trainstats'
+        with open(fn, 'w') as f:
+            json.dump({
+                'train_time': self.train_time.time(),
+                'total_epochs': (
+                    self._preempted_epochs +
+                    num_workers() * self.world.get_total_epochs()
+                ),
+                'impatience': self.impatience,
+            }, f)
 
     def validate(self):
         opt = self.opt
@@ -268,7 +329,7 @@ class TrainLoop():
         ):
             print("[ saving model checkpoint: " +
                   opt['model_file'] + ".checkpoint ]")
-            self.agent.save(opt['model_file'] + '.checkpoint')
+            self.save_model('.checkpoint')
 
         # send valid metrics to agent if the agent wants them
         if hasattr(self.agent, 'receive_metrics'):
@@ -296,7 +357,7 @@ class TrainLoop():
             self.impatience = 0
             if opt.get('model_file') and is_primary_worker():
                 print("[ saving best valid model: " + opt['model_file'] + " ]")
-                self.agent.save(opt['model_file'])
+                self.save_model()
                 print("[ saving best valid metric: " +
                       opt['model_file'] + ".best_valid ]")
                 save_best_valid(opt['model_file'], self.best_valid)
@@ -431,7 +492,10 @@ class TrainLoop():
                 self.parleys += 1
 
                 # get the total training examples done, compute epochs
-                self._total_epochs = num_workers() * self.world.get_total_epochs()
+                self._total_epochs = (
+                    self._preempted_epochs +
+                    num_workers() * self.world.get_total_epochs()
+                )
                 exs_per_epoch = self.world.num_examples()
                 self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))
 
@@ -470,12 +534,12 @@ class TrainLoop():
                     print("[ saving model checkpoint: {}.checkpoint".format(
                         opt['model_file']
                     ))
-                    self.agent.save(opt['model_file'] + '.checkpoint')
+                    self.save_model('.checkpoint')
                     self.save_time.reset()
 
         if not self.saved and is_primary_worker():
             # save agent
-            self.agent.save(opt['model_file'])
+            self.save_model()
         elif opt.get('model_file'):
             # reload best validation model
             self.agent = create_agent(opt)

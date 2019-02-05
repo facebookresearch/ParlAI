@@ -246,4 +246,4 @@ if __name__ == '__main__':
     parser = setup_args()
     # try with --numthreads N to go fast
     opt = parser.parse_args()
-    eval_ppl(opt)
+    eval_ppl(opt, dict_file=opt.get('dict_file'))
