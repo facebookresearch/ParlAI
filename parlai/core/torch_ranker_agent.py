@@ -11,7 +11,7 @@ from torch import nn
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, padded_3d, padded_tensor, warn_once
+from parlai.core.utils import round_sigfigs, padded_3d, warn_once
 from parlai.core.distributed_utils import is_distributed
 
 
@@ -43,22 +43,6 @@ class TorchRankerAgent(TorchAgent):
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
         agent.add_argument(
-            '--prev-response-negatives', type='bool', default=False,
-            help="If True, during training add the previous agent response as a "
-                 "negative candidate for the current response (as a way to "
-                 "organically teach the model to not repeat itself). This option is "
-                 "ignored when candidate set is 'fixed' or 'vocab', as these already "
-                 "include all candidates")
-        agent.add_argument(
-            '--prev-response-filter', type='bool', default=False,
-            help="If True and --interactive=True, do not allow the model to output its "
-                 "previous response. This is a hackier solution than using "
-                 "--prev-response-negatives, but MUCH faster/simpler")
-        agent.add_argument(
-            '--interactive', type='bool', default=False,
-            help="Mark as true if you are in a setting where you are only doing "
-                 "evaluation, and always with the same fixed candidate set.")
-        agent.add_argument(
             '--encode-fixed-candidates', type='bool', default=False,
             help="If True, encode fixed candidates in addition to vectorizing them.")
 
@@ -82,12 +66,6 @@ class TorchRankerAgent(TorchAgent):
         if opt['eval_candidates'] is None:
             opt['eval_candidates'] = opt['candidates']
 
-        # METADIALOG SPECIFIC
-        if opt['interactive']:
-            print("[ Setting interactive mode defaults... ]")
-            opt['prev_response_filter'] = True
-            opt['person_tokens'] = True
-
         super().__init__(opt, shared)
 
         if shared:
@@ -110,21 +88,6 @@ class TorchRankerAgent(TorchAgent):
             # Vectorize and save fixed/vocab candidates once upfront if applicable
             self.set_fixed_candidates(shared)
             self.set_vocab_candidates(shared)
-
-        if opt['prev_response_negatives']:
-            if opt['candidates'] in ['fixed', 'vocab']:
-                msg = ("[ Option --prev-response-negatives=True is incompatible with "
-                       "--candidates=['fixed','vocab']. Overriding it to False. ]")
-                warn_once(msg)
-                self.opt['prev_response_negatives'] = False
-            self.prev_responses = None
-        if opt['prev_response_filter']:
-            if not opt['interactive']:
-                msg = ("[ Option --prev-response-filter=True can only be used when "
-                       "--interactive=True. Overriding it to False. ]")
-                warn_once(msg)
-                self.opt['prev_response_filter'] = False
-            self.prev_response = None
 
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
 
@@ -257,19 +220,7 @@ class TorchRankerAgent(TorchAgent):
                 cand_list = cands[i]
             cand_preds.append([cand_list[rank] for rank in ordering])
         preds = [cand_preds[i][0] for i in range(batchsize)]
-
-        if self.opt['prev_response_filter']:
-            assert(self.opt['interactive'])
-            # Compare current prediction to previous (replacing if necessary)
-            if self.prev_response and (preds[0] == self.prev_response):
-                preds[0] = cand_preds[0][1]
-            # Save current prediction for next turn
-            self.prev_response = preds[0]
-
-        if self.opt['interactive']:
-            return Output(preds)
-        else:
-            return Output(preds, cand_preds)
+        return Output(preds, cand_preds)
 
     def _set_label_cands_vec(self, *args, **kwargs):
         """Sets the 'label_candidates_vec' field in the observation.
@@ -296,11 +247,9 @@ class TorchRankerAgent(TorchAgent):
             label_inds: A [bsz] LongTensor of the indices of the labels for each
                 example from its respective candidate set
             cands: A [num_cands] list of (text) candidates
-                OR a [batchsize] list of such lists if source=='inline' or
-                --prev-response-negatives==True
+                OR a [batchsize] list of such lists if source=='inline'
             cand_vecs: A padded [num_cands, seqlen] LongTensor of vectorized candidates
-                OR a [batchsize, num_cands, seqlen] LongTensor if source=='inline' or
-                --prev-response-negatives==True
+                OR a [batchsize, num_cands, seqlen] LongTensor if source=='inline'
 
         Possible sources of candidates:
             * batch: the set of all labels in this batch
@@ -402,10 +351,6 @@ class TorchRankerAgent(TorchAgent):
                 for i, label_vec in enumerate(label_vecs):
                     label_inds[i] = self._find_match(cand_vecs, label_vec)
 
-        if self.opt['prev_response_negatives'] and mode == 'train':
-            cands, cand_vecs = self._add_prev_responses(
-                batch, cands, cand_vecs, label_inds, source)
-
         return (cands, cand_vecs, label_inds)
 
     @staticmethod
@@ -469,7 +414,7 @@ class TorchRankerAgent(TorchAgent):
                 )
 
         if opt.get('model_file') and os.path.isfile(opt['model_file']):
-            # next check for existing 'model_file'; this would override init_model
+            # next check for 'model_file', this would override init_model
             model_file = opt['model_file']
 
         if model_file is not None:
@@ -511,9 +456,6 @@ class TorchRankerAgent(TorchAgent):
 
         self.fixed_candidates will contain a [num_cands] list of strings
         self.fixed_candidate_vecs will contain a [num_cands, seq_len] LongTensor
-            (or optionally a FloatTensor if a child class overrides
-            vectorize_fixed_candidates() to produce encoded vectors instead of just
-            vectorized ones)
 
         See the note on the --fixed-candidate-vecs flag for an explanation of the
         'reuse', 'replace', or path options.
@@ -564,6 +506,10 @@ class TorchRankerAgent(TorchAgent):
                 self.fixed_candidates = None
                 self.fixed_candidate_vecs = None
 
+    def load_candidate_vecs(self, path):
+        print("[ Loading fixed candidate set vectors from {} ]".format(path))
+        return torch.load(path)
+
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
         print("[ Vectorizing fixed candidate set ({} batch(es) of up to 512) ]"
@@ -573,6 +519,11 @@ class TorchRankerAgent(TorchAgent):
             cand_vecs.extend(self.vectorize_fixed_candidates(batch))
         return padded_3d([cand_vecs], dtype=cand_vecs[0].dtype).squeeze(0)
 
+    def save_candidate_vecs(self, vecs, path):
+        print("[ Saving fixed candidate set vectors to {} ]".format(path))
+        with open(path, 'wb') as f:
+            torch.save(vecs, f)
+
     def vectorize_fixed_candidates(self, cands_batch):
         """Convert a batch of candidates from text to vectors
 
@@ -580,60 +531,8 @@ class TorchRankerAgent(TorchAgent):
         :returns: a [num_cands] list of candidate vectors
 
         By default, candidates are simply vectorized (tokens replaced by token ids).
-        To also encode candidates with a trained encoder, a child class may provide
-        override this method with its own.
+        A child class may choose to overwrite this method to perform vectorization as
+        well as encoding if so desired.
         """
-        return [self._vectorize_text(cand, truncate=self.truncate,
-                                     truncate_left=False) for cand in cands_batch]
-
-    def save_candidate_vecs(self, vecs, path):
-        print("[ Saving fixed candidate set vectors to {} ]".format(path))
-        with open(path, 'wb') as f:
-            torch.save(vecs, f)
-
-    def load_candidate_vecs(self, path):
-        print("[ Loading fixed candidate set vectors from {} ]".format(path))
-        return torch.load(path)
-
-    def _add_prev_responses(self, batch, cands, cand_vecs, label_inds, source):
-        assert(source not in ['fixed', 'vocab'])
-        self._extract_prev_responses(batch)
-
-        # Add prev_responses as negatives
-        prev_cands = self.prev_responses
-        prev_cand_vecs = [torch.Tensor(self.dict.txt2vec(cand)) for cand in prev_cands]
-        if source == 'batch':
-            # Option 1: Change from one set of shared candidates to separate per example
-            # cands = [cands + [prev_cand] for prev_cand in prev_cands]
-            # list_of_lists_of_cand_vecs = [[vec for vec in cand_vecs] + [prev_cand_vec]
-            #                            for prev_cand_vec in prev_cand_vecs]
-            # cand_vecs = padded_3d(list_of_lists_of_cand_vecs, use_cuda=self.use_cuda,
-            #                       dtype=cand_vecs[0].dtype)
-
-            # Option 2: Just add all prev responses for the whole batch (doubles bs)
-            cands += prev_cands
-            cand_vecs, _ = padded_tensor([vec for vec in cand_vecs] + prev_cand_vecs,
-                                         use_cuda=self.use_cuda)
-        elif source == 'inline':
-            raise NotImplementedError
-
-        return cands, cand_vecs
-
-    def _extract_prev_responses(self, batch):
-        # Extract prev_responses for metadialog-formatted examples
-        warn_once("WARNING: This code is specific to metadialog-formatted examples")
-
-        # TODO: Pull out p1/p2 once elsewhere, not every time
-        p1 = self.dict.txt2vec('__p1__')[0]
-        p2 = self.dict.txt2vec('__p2__')[0]
-        self.prev_responses = []
-        # Do naively for now with a for loop
-        for text_vec in batch.text_vec:
-            p1s = (text_vec == p1).nonzero()
-            p2s = (text_vec == p2).nonzero()
-            if len(p1s) and len(p2s):
-                response_vec = text_vec[p2s[-1] + 1:p1s[-1]]
-            else:
-                response_vec = [self.NULL_IDX]  # TODO: pull in actual N
-            response = self.dict.vec2txt(response_vec)
-            self.prev_responses.append(response)
+        return [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
+                for cand in cands_batch]

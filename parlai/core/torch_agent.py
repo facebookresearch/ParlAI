@@ -1189,7 +1189,6 @@ class TorchAgent(Agent):
         # create a batch from the vectors
         batch = self.batchify(observations)
 
-        # take a step
         if is_training:
             output = self.train_step(batch)
         else:

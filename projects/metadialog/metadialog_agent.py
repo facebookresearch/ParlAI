@@ -90,6 +90,22 @@ class MetadialogAgent(TransformerRankerAgent):
                            help="The explanation task loss is multiplied by this")
         agent.add_argument('--sen-weight', type=float, default=1.0,
                            help="The sentiment task loss is multiplied by this")
+        agent.add_argument(
+            '--prev-response-negatives', type='bool', default=False,
+            help="If True, during training add the previous agent response as a "
+                 "negative candidate for the current response (as a way to "
+                 "organically teach the model to not repeat itself). This option is "
+                 "ignored when candidate set is 'fixed' or 'vocab', as these already "
+                 "include all candidates")
+        agent.add_argument(
+            '--prev-response-filter', type='bool', default=False,
+            help="If True and --interactive=True, do not allow the model to output its "
+                 "previous response. This is a hackier solution than using "
+                 "--prev-response-negatives, but MUCH faster/simpler")
+        agent.add_argument(
+            '--interactive', type='bool', default=False,
+            help="Mark as true if you are in a setting where you are only doing "
+                 "evaluation, and always with the same fixed candidate set.")
 
         variants = argparser.add_argument_group('Metadialog Variants')
         variants.add_argument('-rgx', '--regex', type='bool', default=False,
@@ -111,11 +127,31 @@ class MetadialogAgent(TransformerRankerAgent):
         return agent
 
     def __init__(self, opt, shared=None):
+        if opt['interactive']:
+            print("[ Setting interactive mode defaults... ]")
+            opt['prev_response_filter'] = True
+            opt['person_tokens'] = True
+
         # Set subtasks first so that opt['subtasks'] is set before build_model()
         self.set_subtasks(opt)
         self.multitask = len(self.subtasks) > 1
         if not self.multitask:
             self.subtask = self.subtasks[0]
+
+        if opt['prev_response_negatives']:
+            if opt['candidates'] in ['fixed', 'vocab']:
+                msg = ("[ Option --prev-response-negatives=True is incompatible with "
+                       "--candidates=['fixed','vocab']. Overriding it to False. ]")
+                warn_once(msg)
+                self.opt['prev_response_negatives'] = False
+            self.prev_responses = None
+        if opt['prev_response_filter']:
+            if not opt['interactive']:
+                msg = ("[ Option --prev-response-filter=True can only be used when "
+                       "--interactive=True. Overriding it to False. ]")
+                warn_once(msg)
+                self.opt['prev_response_filter'] = False
+            self.prev_response = None
 
         super().__init__(opt, shared)
 
@@ -678,3 +714,53 @@ class MetadialogAgent(TransformerRankerAgent):
         if 'optimizer' in states and hasattr(self, 'optimizer'):
             self.optimizer.load_state_dict(states['optimizer'])
         return states
+
+    def _add_prev_responses(self, batch, cands, cand_vecs, label_inds, source):
+        assert(source not in ['fixed', 'vocab'])
+        self._extract_prev_responses(batch)
+
+        # Add prev_responses as negatives
+        prev_cands = self.prev_responses
+        prev_cand_vecs = [torch.Tensor(self.dict.txt2vec(cand)) for cand in prev_cands]
+        if source == 'batch':
+            # Option 1: Change from one set of shared candidates to separate per example
+            # cands = [cands + [prev_cand] for prev_cand in prev_cands]
+            # list_of_lists_of_cand_vecs = [[vec for vec in cand_vecs] + [prev_cand_vec]
+            #                            for prev_cand_vec in prev_cand_vecs]
+            # cand_vecs = padded_3d(list_of_lists_of_cand_vecs, use_cuda=self.use_cuda,
+            #                       dtype=cand_vecs[0].dtype)
+
+            # Option 2: Just add all prev responses for the whole batch (doubles bs)
+            cands += prev_cands
+            cand_vecs, _ = padded_tensor([vec for vec in cand_vecs] + prev_cand_vecs,
+                                         use_cuda=self.use_cuda)
+        elif source == 'inline':
+            raise NotImplementedError
+
+        return cands, cand_vecs
+
+    def _extract_prev_responses(self, batch):
+        # Extract prev_responses for metadialog-formatted examples
+        warn_once("WARNING: This code is specific to metadialog-formatted examples")
+
+        # TODO: Pull out p1/p2 once elsewhere, not every time
+        p1 = self.dict.txt2vec('__p1__')[0]
+        p2 = self.dict.txt2vec('__p2__')[0]
+        self.prev_responses = []
+        # Do naively for now with a for loop
+        for text_vec in batch.text_vec:
+            p1s = (text_vec == p1).nonzero()
+            p2s = (text_vec == p2).nonzero()
+            if len(p1s) and len(p2s):
+                response_vec = text_vec[p2s[-1] + 1:p1s[-1]]
+            else:
+                response_vec = [self.NULL_IDX]  # TODO: pull in actual N
+            response = self.dict.vec2txt(response_vec)
+            self.prev_responses.append(response)
+
+    def _build_candidates(self, batch, source, mode):
+        cands, cand_vecs, label_inds = super()._build_candidates(batch, source, mode)
+        if self.opt['prev_response_negatives'] and mode == 'train':
+            cands, cand_vecs = self._add_prev_responses(
+                batch, cands, cand_vecs, label_inds, source)
+        return cands, cand_vecs, label_inds
