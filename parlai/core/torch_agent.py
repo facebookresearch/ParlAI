@@ -881,8 +881,12 @@ class TorchAgent(Agent):
             obs['text'] = history.get_history_str()
             if self.opt.get('use_memories', False):
                 history_vecs = history.get_history_vec_list()
-                obs['memory_vecs'] = history_vecs[:-1]
-                obs['text_vec'] = history_vecs[-1]
+                if len(history_vecs) > 0:
+                    obs['memory_vecs'] = history_vecs[:-1]
+                    obs['text_vec'] = history_vecs[-1]
+                else:
+                    obs['memory_vecs'] = []
+                    obs['text_vec'] = []
             else:
                 obs['text_vec'] = history.get_history_vec()
         else:
