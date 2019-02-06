@@ -10,9 +10,11 @@ import contextlib
 import tempfile
 import os
 import shutil
+import torch
 
 from parlai.scripts.train_model import TrainLoop, setup_args
 
+SKIP_HOGWILD = torch.cuda.device_count() > 0
 BATCH_SIZE = 16
 NUM_EPOCHS = 10
 LR = 1
@@ -127,6 +129,8 @@ class TestSeq2Seq(unittest.TestCase):
 
 
 class TestHogwildSeq2seq(unittest.TestCase):
+
+    @unittest.skipIf(SKIP_HOGWILD, "No hogwild tests if GPUs are available.")
     def test_generation_multi(self):
         """This test uses a multi-turn task and multithreading."""
         stdout, valid, test = _mock_train(

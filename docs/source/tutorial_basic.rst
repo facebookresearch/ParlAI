@@ -299,7 +299,7 @@ the labels aren't available:
             reply['text'] = ', '.join(self.observation['labels'])
         elif 'label_candidates' in self.observation:
             cands = self.observation['label_candidates']
-            reply['text'] = random.choice(cands)
+            reply['text'] = random.choice(list(cands))
         else:
             reply['text'] = "I don't know."
         return reply

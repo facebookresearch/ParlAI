@@ -11,6 +11,8 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from .modules import TransformerMemNetModel
 from .modules import TransformerGeneratorModel
 
+import torch
+
 
 warn_once(
     "Public release transformer models are currently in beta. The name of "
@@ -49,6 +51,7 @@ class TransformerRankerAgent(TorchRankerAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
+        super(TransformerRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
         # memory and knowledge arguments
@@ -61,19 +64,46 @@ class TransformerRankerAgent(TorchRankerAgent):
                                 'when using transformer to encode memories')
         # model specific arguments
         agent.add_argument('--normalize-sent-emb', type='bool', default=False)
-        agent.add_argument('--share-encoders', type='bool', default=False)
+        agent.add_argument('--share-encoders', type='bool', default=True)
         agent.add_argument('--has-memories', type='bool', default=False,
                            help='If true, text contains newline separated memories '
                                 'before the actual text')
         agent.add_argument('--use-memories', type='bool', default=False,
                            help='If true, use the memories to help with predictions')
-        agent.add_argument('--scores-norm', choices={'dot', 'sqrt', 'dim'},
-                           default='dot', hidden=True)
-
+        agent.add_argument('--learn-embeddings', type='bool', default=True,
+                           help='learn embeddings')
+        agent.add_argument('--data-parallel', type='bool', default=False,
+                           help='use model in data parallel, requires '
+                                'multiple gpus')
+        argparser.set_defaults(
+            learningrate=0.0001,
+            optimizer='adamax',
+            truncate=1024,
+        )
         cls.dictionary_class().add_cmdline_args(argparser)
 
-        super(cls, TransformerRankerAgent).add_cmdline_args(argparser)
         return agent
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.data_parallel = opt.get('data_parallel') and self.use_cuda
+        if self.data_parallel:
+            from parlai.core.distributed_utils import is_distributed
+            if is_distributed():
+                raise ValueError(
+                    'Cannot combine --data-parallel and distributed mode'
+                )
+            self.model = torch.nn.DataParallel(self.model)
+
+    def _score(self, output, cands):
+        if cands.dim() == 2:
+            return torch.matmul(output, cands.t())
+        elif cands.dim() == 3:
+            return torch.bmm(output.unsqueeze(1),
+                             cands.transpose(1, 2)).squeeze(1)
+        else:
+            raise RuntimeError('Unexpected candidate dimensions {}'
+                               ''.format(cands.dim()))
 
     def build_model(self, states=None):
         self.model = TransformerMemNetModel(self.opt, self.dict)
@@ -103,11 +133,15 @@ class TransformerRankerAgent(TorchRankerAgent):
         else:
             mems = None
 
-        return self.model(
+        context_h, cands_h = self.model(
             xs=batch.text_vec,
             mems=mems,
             cands=cand_vecs,
         )
+
+        scores = self._score(context_h, cands_h)
+
+        return scores
 
 
 class TransformerGeneratorAgent(TorchGeneratorAgent):
@@ -118,7 +152,7 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         add_common_cmdline_args(agent)
         cls.dictionary_class().add_cmdline_args(argparser)
 
-        super(cls, TransformerGeneratorAgent).add_cmdline_args(argparser)
+        super(TransformerGeneratorAgent, cls).add_cmdline_args(argparser)
         return agent
 
     def build_model(self, states=None):

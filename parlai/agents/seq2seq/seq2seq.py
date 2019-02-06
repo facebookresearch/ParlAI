@@ -36,8 +36,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('Seq2Seq Arguments')
-        agent.add_argument('--init-model', type=str, default=None,
-                           help='load dict/model/opts from this path')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
@@ -88,8 +86,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
         agent.add_argument('-idr', '--input-dropout', type=float, default=0.0,
                            help='Probability of replacing tokens with UNK in training.')
 
-        super(cls, Seq2seqAgent).add_cmdline_args(argparser)
-        Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
+        super(Seq2seqAgent, cls).add_cmdline_args(argparser)
         return agent
 
     @staticmethod
