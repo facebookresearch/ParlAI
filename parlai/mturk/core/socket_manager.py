@@ -322,8 +322,11 @@ class SocketManager():
         if packet.requires_ack:
             if packet.blocking:
                 # Put the packet right back into its place to prevent sending
-                # other packets
+                # other packets, then block
                 self._safe_put(connection_id, (send_time, packet))
+                t = time.time() + self.ACK_TIME[packet.type]
+                while time.time() < t and packet.status != Packet.STATUS_ACK:
+                    time.sleep(0.2)
             else:
                 # non-blocking ack: add ack-check to queue
                 t = time.time() + self.ACK_TIME[packet.type]
