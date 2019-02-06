@@ -12,7 +12,6 @@ from .modules import TransformerMemNetModel
 from .modules import TransformerGeneratorModel
 
 import torch
-import math
 
 
 warn_once(
