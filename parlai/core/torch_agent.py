@@ -130,13 +130,12 @@ class History(object):
     of the functions.
     """
     def __init__(self, opt, field='text', vec_type='deque', maxlen=None,
-                 p1_token='__p1__', p2_token='__p2__', dict_agent=None,
-                 split_on_newln=False):
+                 p1_token='__p1__', p2_token='__p2__', dict_agent=None):
         self.field = field
         self.dict = dict_agent
         self.delimiter = opt.get('delimiter', '\n')
         self.delimiter_tok = self.parse(self.delimiter)
-        self.split_on_newln = split_on_newln
+        self.split_on_newln = opt.get('split_lines', False)
 
         # set up history objects
         if vec_type != 'deque' and vec_type != 'list':
@@ -489,7 +488,6 @@ class TorchAgent(Agent):
             p1_token=self.P1_TOKEN,
             p2_token=self.P2_TOKEN,
             dict_agent=self.dict,
-            split_on_newln=opt.get('split_lines', False)
         )
         # truncate == 0 might give funny behavior
         self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
