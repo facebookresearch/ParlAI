@@ -71,8 +71,6 @@ class TransformerRankerAgent(TorchRankerAgent):
                                 'before the actual text')
         agent.add_argument('--use-memories', type='bool', default=False,
                            help='If true, use the memories to help with predictions')
-        agent.add_argument('--scores-norm', choices={'dot', 'sqrt', 'dim'},
-                           default='dot', hidden=True)
         agent.add_argument('--learn-embeddings', type='bool', default=True,
                            help='learn embeddings')
         agent.add_argument('--data-parallel', type='bool', default=False,
@@ -91,6 +89,11 @@ class TransformerRankerAgent(TorchRankerAgent):
         super().__init__(opt, shared)
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
+            from parlai.core.distributed_utils import is_distributed
+            if is_distributed():
+                raise ValueError(
+                    'Cannot combine --data-parallel and distributed mode'
+                )
             self.model = torch.nn.DataParallel(self.model)
 
     def _score(self, output, cands):
@@ -138,15 +141,6 @@ class TransformerRankerAgent(TorchRankerAgent):
         )
 
         scores = self._score(context_h, cands_h)
-
-        if self.opt['scores_norm'] == 'dot':
-            pass
-        elif self.opt['scores_norm'] == 'sqrt':
-            scores /= math.sqrt(self.opt['embedding_size'])
-        elif self.opt['scores_norm'] == 'dim':
-            scores /= self.opt['embedding_size']
-        else:
-            raise ValueError('Invalid --scores-norm')
 
         return scores
 
