@@ -392,7 +392,8 @@ class TorchRankerAgent(TorchAgent):
             # next check for 'model_file', this would override init_model
             model_file = opt['model_file']
 
-        if model_file is not None and opt.get('dict_file') is None:
+        if model_file is not None and (opt.get('dict_file') is None or
+                not os.path.isfile(opt['dict_file'])):
             # if we are loading a model, should load its dict too
             if (os.path.isfile(model_file + '.dict') or
                     opt['dict_file'] is None):
