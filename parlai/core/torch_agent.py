@@ -125,11 +125,15 @@ though agents can choose to return None if they do not want to answer.
 
 
 class History(object):
-    def __init__(opt, field='text', vec_type='deque', maxlen=None,
-                 p1_token='__p1__', p2_token='__p2__', dict=None,
+    """
+    TODO: add description of history object, as well as docstrings for each
+    of the functions.
+    """
+    def __init__(self, opt, field='text', vec_type='deque', maxlen=None,
+                 p1_token='__p1__', p2_token='__p2__', dict_agent=None,
                  split_on_newln=False):
         self.field = field
-        self.dict = dict
+        self.dict = dict_agent
         self.delimiter = opt.get('delimiter', '\n')
         self.delimiter_tok = self.parse(self.delimiter)
         self.split_on_newln = split_on_newln
@@ -137,8 +141,7 @@ class History(object):
         # set up history objects
         if vec_type != 'deque' and vec_type != 'list':
             raise RuntimeError(
-                'The type {} is not currently supported for history'.format(
-                vec_type)
+                'Type {} is not supported for history'.format(vec_type)
             )
         self.vec_type = vec_type
         self.max_len = maxlen
@@ -156,7 +159,7 @@ class History(object):
         self.clear_on_next_update = False
 
     def parse(self, text):
-        return self.dict.vec2txt(text)
+        return self.dict.txt2vec(text)
 
     def clear(self):
         self.history_strings = []
@@ -182,12 +185,12 @@ class History(object):
                 next_texts = [obs[self.field]]
             for text in next_texts:
                 if self.add_person_tokens:
-                    next_text = self._add_person_tokens(obs[self.field],
-                                                        self.p1_token)
+                    text = self._add_person_tokens(obs[self.field],
+                                                   self.p1_token)
                 # update history string
-                self.history_strings.append(next_text)
+                self.history_strings.append(text)
                 # update history vecs
-                self.history_vecs.append(self.parse(next_text))
+                self.history_vecs.append(self.parse(text))
 
         if obs.get('episode_done', True):
             # end of this episode, clear the history
@@ -199,20 +202,21 @@ class History(object):
         return ''
 
     def get_history_vec(self):
-        # TODO: add start and end tokens option
         if self.vec_type == 'deque':
             history = deque(maxlen=self.max_len)
-            for vec in self.history_vecs[:-1]:
-                history.extend(vec)
-                history.extend(self.delimiter_tok)
-            history.extend(self.history_vecs[-1])
+            if len(self.history_vecs) > 0:
+                for vec in self.history_vecs[:-1]:
+                    history.extend(vec)
+                    history.extend(self.delimiter_tok)
+                history.extend(self.history_vecs[-1])
         else:
             # vec type is a list
             history = []
-            for vec in self.history_vecs[:-1]:
-                history += vec
-                history += self.delimiter_tok
-            history += self.history_vecs[-1]
+            if len(self.history_vecs) > 0:
+                for vec in self.history_vecs[:-1]:
+                    history += vec
+                    history += self.delimiter_tok
+                history += self.history_vecs[-1]
 
         return history
 
@@ -412,7 +416,7 @@ class TorchAgent(Agent):
                  'useful for tasks that include some kind of context before '
                  'the actual utterance (e.g. squad, babi, personachat).')
         agent.add_argument(
-            '--join-history-tok', type=str, default='\n',
+            '--delimiter', type=str, default='\n',
             help='Join history lines with this token, defaults to newline'
         )
         # GPU arguments
@@ -481,10 +485,10 @@ class TorchAgent(Agent):
         # stores up to hist_utt past observations within current dialog
         self.history = History(
             opt,
-            max_len=self.histsz,
+            maxlen=self.histsz,
             p1_token=self.P1_TOKEN,
             p2_token=self.P2_TOKEN,
-            dict=self.dict,
+            dict_agent=self.dict,
             split_on_newln=opt.get('split_lines', False)
         )
         # truncate == 0 might give funny behavior
@@ -801,6 +805,30 @@ class TorchAgent(Agent):
         shared['replies'] = self.replies
         return shared
 
+    def _add_start_end_tokens(self, vec, add_start=False,
+                              add_end=False, truncate=None, truncate_left=True):
+        if truncate is None or len(vec) + add_start + add_end < truncate:
+            # simple: no truncation
+            if add_start:
+                vec.insert(0, self.START_IDX)
+            if add_end:
+                vec.append(self.END_IDX)
+        elif truncate_left:
+            # don't check add_start, we know are truncating it
+            if add_end:
+                # add the end token first
+                vec.append(self.END_IDX)
+            vec = vec[len(vec) - truncate:]
+        else:
+            # truncate from the right side
+            # don't check add_end, we know we are truncating it
+            vec = vec[:truncate - add_start]
+            if add_start:
+                # always keep the start token if it's there
+                vec.insert(0, self.START_IDX)
+
+        return vec
+
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
         new_vec = []
@@ -825,33 +853,13 @@ class TorchAgent(Agent):
                               False for targets.
         """
         vec = self.dict.txt2vec(text)
-        if truncate is None or len(vec) + add_start + add_end < truncate:
-            # simple: no truncation
-            if add_start:
-                vec.insert(0, self.START_IDX)
-            if add_end:
-                vec.append(self.END_IDX)
-        elif truncate_left:
-            # don't check add_start, we know are truncating it
-            if add_end:
-                # add the end token first
-                vec.append(self.END_IDX)
-            vec = vec[len(vec) - truncate:]
-        else:
-            # truncate from the right side
-            # don't check add_end, we know we are truncating it
-            vec = vec[:truncate - add_start]
-            if add_start:
-                # always keep the start token if it's there
-                vec.insert(0, self.START_IDX)
-        tensor = torch.LongTensor(vec)
+        self._add_start_end_tokens(vec, add_start, add_end, truncate,
+                                   truncate_left)
+        tensor = self._make_long_tensor(vec)
         return tensor
 
-    def _check_truncate(self, vec, truncate, truncate_left=False,
-                        long_tensor=True):
+    def _check_truncate(self, vec, truncate, truncate_left=False):
         """Check that vector is truncated correctly."""
-        if wrap_tensor and 'torch' not in str(type(vec)):
-            vec = torch.LongTensor(vec)
         if truncate is None:
             return vec
         if len(vec) <= truncate:
@@ -861,7 +869,12 @@ class TorchAgent(Agent):
         else:
             return vec[:truncate]
 
-    def _set_text_vec(self, obs, history, truncate, split_lines):
+    def _make_long_tensor(self, vec):
+        if 'torch' not in str(type(vec)):
+            vec = torch.LongTensor(vec)
+        return vec
+
+    def _set_text_vec(self, obs, history, add_start, add_end, truncate):
         """Sets the 'text_vec' field in the observation.
 
         Useful to override to change vectorization behavior"""
@@ -874,12 +887,21 @@ class TorchAgent(Agent):
                 obs['text_vec'] = history_vecs[-1]
             else:
                 obs['text_vec'] = history.get_history_vec()
+        else:
+            # precomputed, so we don't add start and end tokens
+            add_start = False
+            add_end = False
 
         # check truncation
-        obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate, True)
+        obs['text_vec'] = self._make_long_tensor(self._add_start_end_tokens(
+            obs['text_vec'], add_start, add_end, truncate, True))
         if 'memory_vecs' in obs:
-            obs['memory_vecs'] = [self._check_truncate(m, truncate, True)
-                                  for m in obs['memory_vecs']]
+            obs['memory_vecs'] = [
+                self._make_long_tensor(
+                    self._add_start_end_tokens(m, add_start, add_end, truncate,
+                                               True)
+                ) for m in obs['memory_vecs']
+            ]
 
         return obs
 
@@ -933,7 +955,7 @@ class TorchAgent(Agent):
         return obs
 
     def vectorize(self, obs, history, add_start=True, add_end=True,
-                  split_lines=False, text_truncate=None, label_truncate=None):
+                  text_truncate=None, label_truncate=None):
         """Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
@@ -958,7 +980,7 @@ class TorchAgent(Agent):
         :return: the input observation, with 'text_vec', 'label_vec', and
             'cands_vec' fields added.
         """
-        self._set_text_vec(obs, history, text_truncate, split_lines)
+        self._set_text_vec(obs, history, add_start, add_end, text_truncate)
         self._set_label_vec(obs, add_start, add_end, label_truncate)
         self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs
@@ -1165,10 +1187,10 @@ class TorchAgent(Agent):
         """
         reply = self.last_reply(
             use_label=(self.opt.get('use_reply', 'label') == 'label'))
-        # update the history appropriately
+        # update the history using the observation
         self.history.update_history(observation, add_next=reply)
+        self.observation = observation
         return self.vectorize(self.observation, self.history,
-                              split_lines=self.opt.get('split_lines', False),
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
 

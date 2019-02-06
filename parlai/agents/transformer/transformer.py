@@ -65,11 +65,6 @@ class TransformerRankerAgent(TorchRankerAgent):
         # model specific arguments
         agent.add_argument('--normalize-sent-emb', type='bool', default=False)
         agent.add_argument('--share-encoders', type='bool', default=True)
-        agent.add_argument('--has-memories', type='bool', default=False,
-                           help='If true, text contains newline separated memories '
-                                'before the actual text')
-        agent.add_argument('--use-memories', type='bool', default=False,
-                           help='If true, use the memories to help with predictions')
         agent.add_argument('--learn-embeddings', type='bool', default=True,
                            help='learn embeddings')
         agent.add_argument('--data-parallel', type='bool', default=False,
@@ -117,7 +112,6 @@ class TransformerRankerAgent(TorchRankerAgent):
         """Override options in vectorize from parent."""
         kwargs['add_start'] = False
         kwargs['add_end'] = False
-        kwargs['split_lines'] = self.opt['has_memories']
         return super().vectorize(*args, **kwargs)
 
     def get_dialog_history(self, *args, **kwargs):

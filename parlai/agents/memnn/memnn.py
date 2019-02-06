@@ -45,6 +45,11 @@ class MemnnAgent(TorchRankerAgent):
         arg_group.add_argument(
             '-pe', '--position-encoding', type='bool', default=False,
             help='use position encoding instead of bag of words embedding')
+        argparser.set_defaults(
+            split_lines=True,
+            use_memories=True,
+            add_p1_after_newln=True,
+        )
         TorchRankerAgent.add_cmdline_args(argparser)
         MemnnAgent.dictionary_class().add_cmdline_args(argparser)
         return arg_group
@@ -101,7 +106,6 @@ class MemnnAgent(TorchRankerAgent):
         """Override options in vectorize from parent."""
         kwargs['add_start'] = False
         kwargs['add_end'] = False
-        kwargs['split_lines'] = True
         return super().vectorize(*args, **kwargs)
 
     def _build_mems(self, mems):
