@@ -10,6 +10,11 @@ from parlai.scripts.eval_model import eval_model
 import unittest
 import sys
 
+import torch
+
+
+SKIP_HOGWILD = torch.cuda.device_count() > 0
+
 
 class display_output(object):
     def __init__(self):
@@ -28,6 +33,7 @@ class display_output(object):
 class TestHogwild(unittest.TestCase):
     """Check that hogwild is doing the right number of examples."""
 
+    @unittest.skipIf(SKIP_HOGWILD, "No hogwild tests if GPUs are available.")
     def test_hogwild_train(self):
         """Test the trainer eval with numthreads > 1 and batchsize in [1,2,3]."""
         parser = setup_args()
@@ -68,6 +74,7 @@ class TestHogwild(unittest.TestCase):
             # restore sys.stdout
             sys.stdout = old_out
 
+    @unittest.skipIf(SKIP_HOGWILD, "No hogwild tests if GPUs are available.")
     def test_hogwild_eval(self):
         """Test eval with numthreads > 1 and batchsize in [1,2,3]."""
         parser = setup_args()
