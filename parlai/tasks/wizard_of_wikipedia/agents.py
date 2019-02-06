@@ -215,6 +215,10 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
                            default=False,
                            help='include special __knowledge__ token between '
                            'title and passage')
+        agent.add_argument('--num-negatives-responses-generated-train', type=int,
+                           default=0,
+                           help='Number of negatives to include in the train set'
+                            'label_type=="response"')
 
     def len_episode(self, ep):
         d = self.data[ep]
@@ -222,6 +226,12 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         if wizard_first:
             return (len(d['dialog']) - 1) // 2
         return len(d['dialog']) // 2
+
+    def gen_random_answer(self):
+        idx = random.randint(0, len(self.data) - 1)
+        dialog = self.data[idx]["dialog"]
+        idx = random.randint(0, len(dialog) - 1)
+        return dialog[idx]["text"]
 
     def num_examples(self):
         return self.num_exs
@@ -293,6 +303,11 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         if self.label_type == 'response':
             if 'train' in self.datatype:
                 label_cands = []
+                num_to_gen = self.opt["num_negatives_responses_generated_train"]
+                if num_to_gen > 0:
+                    while len(label_cands) < num_to_gen:
+                        label_cands.append(self.gen_random_answer())
+                    label_cands += labels
             else:
                 label_cands = wizard_entry.get('candidate_responses', [])
 
