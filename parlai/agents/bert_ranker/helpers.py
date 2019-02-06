@@ -174,3 +174,39 @@ def get_bert_optimizer(models, type_optimization, number_iterations, proportion_
                          warmup=proportion_warmup,
                          t_total=number_iterations)
     return optimizer
+
+def get_bert_optimizer_adam(models, type_optimization, learning_rate):
+    """ Optimizes the network with regular Adam
+    """
+    if type_optimization not in patterns_optimizer:
+        print("Error. Type optimizer must be one of %s" %
+              (str(patterns_optimizer.keys())))
+    parameters_with_decay = []
+    parameters_with_decay_names = []
+    parameters_without_decay = []
+    parameters_without_decay_names = []
+    no_decay = ['bias', 'gamma', 'beta']
+    patterns = patterns_optimizer[type_optimization]
+
+    for model in models:
+        for n, p in model.named_parameters():
+            if any(t in n for t in patterns):
+                if any(t in n for t in no_decay):
+                    parameters_without_decay.append(p)
+                    parameters_without_decay_names.append(n)
+                else:
+                    parameters_with_decay.append(p)
+                    parameters_with_decay_names.append(n)
+
+    print("The following parameters will be optimized WITH decay:")
+    print(_ellipse(parameters_with_decay_names, 5, " , "))
+    print("The following parameters will be optimized WITHOUT decay:")
+    print(_ellipse(parameters_without_decay_names, 5, " , "))
+
+    optimizer_grouped_parameters = [
+        {'params': parameters_with_decay, 'weight_decay': 0.01},
+        {'params': parameters_without_decay, 'weight_decay': 0.0}
+    ]
+    optimizer = torch.optim.Adam(optimizer_grouped_parameters,
+                                 lr=learning_rate)
+    return optimizer

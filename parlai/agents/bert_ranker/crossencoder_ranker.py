@@ -7,8 +7,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .bert_dictionary import BertDictionaryAgent
-from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
-                      add_common_args, surround)
+from .helpers import (get_bert_optimizer_adam, BertWrapper, BertModel,
+                      get_bert_optimizer, add_common_args, surround)
 from parlai.core.distributed_utils import is_distributed
 import torch
 
@@ -21,10 +21,13 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     @staticmethod
     def add_cmdline_args(parser):
         add_common_args(parser)
+        parser.add_argument('--bert-adam', type='bool', default=True)
+        parser.add_argument('--bert-pad-left', type='bool', default=True)
 
     def __init__(self, opt, shared=None):
         opt['rank_candidates'] = True
-        opt['lr_scheduler'] = "none"
+        if opt["bert_adam"]:
+            opt['lr_scheduler'] = "none"
         super().__init__(opt, shared)
         # it's easier for now to use DataParallel when
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
@@ -49,18 +52,26 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         if all(f in self.opt for f in ["num_samples", "num_epochs", "batchsize"]):
             total_iterations = self.opt["num_samples"] * \
                 self.opt["num_epochs"] / self.opt["batchsize"]
-            self.optimizer = get_bert_optimizer([self.model],
-                                                self.opt["type_optimization"],
-                                                total_iterations,
-                                                0.05,  # 5% scheduled warmup.
-                                                self.opt["learningrate"])
+            if self.opt["bert_adam"]:
+                self.optimizer = get_bert_optimizer([self.model],
+                                                    self.opt["type_optimization"],
+                                                    total_iterations,
+                                                    0.05,  # 5% scheduled warmup.
+                                                    self.opt["learningrate"])
+            else:
+                self.optimizer = get_bert_optimizer_adam([self.model],
+                                                    self.opt["type_optimization"],
+                                                    self.opt["learningrate"])
 
     def score_candidates(self, batch, cand_vecs):
         # concatenate text and candidates (not so easy)
         # unpad and break
         nb_cands = cand_vecs.size()[1]
         size_batch = cand_vecs.size()[0]
-        text_vec = pad_left(batch.text_vec, self.NULL_IDX)
+        if self.opt["bert_pad_left"]:
+            text_vec = pad_left(batch.text_vec, self.NULL_IDX)
+        else:
+            text_vec = batch.text_vec
         tokens_context = text_vec.unsqueeze(
             1).expand(-1, nb_cands, -1).contiguous().view(nb_cands * size_batch, -1)
         segments_context = tokens_context * 0
@@ -93,11 +104,6 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         if obs is not None and "text_vec" in obs:
             obs["text_vec"] = surround(obs["text_vec"], self.START_IDX, self.END_IDX)
         return obs
-
-    def receive_metrics(self, metrics_dict):
-        """ Inibiting the scheduler.
-        """
-        pass
 
 
 def pad_left(context_idx, null_idx):
