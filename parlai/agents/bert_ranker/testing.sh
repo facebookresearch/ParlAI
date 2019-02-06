@@ -24,7 +24,8 @@ python -u parlai/scripts/train_model.py -pyt convai2 \
   --pretrained-bert-path $MODELFILE --bert-vocabulary-path $VOCABFILE \
   --eval-batchsize 8 --learningrate 5e-5  --log_every_n_secs 10 \
   --shuffle true --type-optimization all_encoder_layers --lr-scheduler none \
-  --data-parallel true --history-size 5 --truncate 300 --num-epochs 0.1
+  --data-parallel true --history-size 5 --truncate 300 --num-epochs 0.1 \
+  --num-samples 131800
 # Should yield
 # test:{'exs': 7801, 'accuracy': 0.25, 'f1': 0.3272, 'hits@1': 0.25,
 #       'hits@5': 0.634, 'hits@10': 0.845, 'hits@100': 1.0, 'bleu': 0.2502,
@@ -41,7 +42,8 @@ python -u parlai/scripts/train_model.py -pyt convai2 \
   --pretrained-bert-path $MODELFILE --bert-vocabulary-path $VOCABFILE \
   --eval-batchsize 2 --learningrate 5e-5  --log_every_n_secs 10 \
   --shuffle true --type-optimization all_encoder_layers --lr-scheduler none \
-  --data-parallel true --history-size 5 --truncate 300 --num-epochs 0.01
+  --data-parallel true --history-size 5 --truncate 300 --num-epochs 0.01 \
+  --num-samples 131800
 # Should yield
 # {'exs': 7801, 'accuracy': 0.653, 'f1': 0.6886, 'hits@1': 0.653,
 # 'hits@5': 0.904, 'hits@10': 0.97, 'hits@100': 1.0, 'bleu': 0.653,
@@ -58,7 +60,8 @@ python -u parlai/scripts/eval_model.py -pyt convai2 \
   --shuffle true --log_every_n_secs 10 --lr_scheduler none\
   --data-parallel true --history-size 5 --truncate 300 \
   --biencoder-model-file ./my_biencoder \
-  --crossencoder-model-file ./my_crossencoder
+  --crossencoder-model-file ./my_crossencoder \
+  --num-samples 131800
 # Should yield
 # {'exs': 7801, 'accuracy': 0.6208, 'f1': 0.6597, 'hits@1': 0.621,
 # 'hits@5': 0.819, 'hits@10': 0.845, 'hits@100': 0.845, 'bleu': 0.6209,
