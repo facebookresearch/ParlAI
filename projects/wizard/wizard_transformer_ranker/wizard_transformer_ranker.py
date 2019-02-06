@@ -34,10 +34,6 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             '--join-history-tok', type=str, default=' ',
             help='Join history lines with this token, defaults to newline'
         )
-        agent.add_argument(
-            '--data-parallel', type='bool', default=False,
-            help='use model in data parallel, requires multiple gpus'
-        )
         argparser.set_defaults(
             learningrate=0.0008,
             #eval_candidates='inline',
