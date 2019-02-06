@@ -847,8 +847,11 @@ class TorchAgent(Agent):
         tensor = torch.LongTensor(vec)
         return tensor
 
-    def _check_truncate(self, vec, truncate, truncate_left=False):
+    def _check_truncate(self, vec, truncate, truncate_left=False,
+                        long_tensor=True):
         """Check that vector is truncated correctly."""
+        if wrap_tensor and 'torch' not in str(type(vec)):
+            vec = torch.LongTensor(vec)
         if truncate is None:
             return vec
         if len(vec) <= truncate:
@@ -858,31 +861,26 @@ class TorchAgent(Agent):
         else:
             return vec[:truncate]
 
-    def _set_text_vec(self, obs, truncate, split_lines):
+    def _set_text_vec(self, obs, history, truncate, split_lines):
         """Sets the 'text_vec' field in the observation.
 
         Useful to override to change vectorization behavior"""
-
-        if 'text_vec' in obs:
-            # check truncation of pre-computed vectors
-            obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate, True)
-            if 'memory_vecs' in obs:
-                obs['memory_vecs'] = [self._check_truncate(m, truncate, True)
-                                      for m in obs['memory_vecs']]
-        elif 'text' in obs:
-            # convert 'text' into tensor of dictionary indices
-            # we don't add start and end to the input
-            if split_lines:
-                # if split_lines set, we put most lines into memory field
-                obs['memory_vecs'] = []
-                for line in obs['text'].split('\n'):
-                    obs['memory_vecs'].append(
-                        self._vectorize_text(line, truncate=truncate))
-                # the last line is treated as the normal input
-                obs['text_vec'] = obs['memory_vecs'].pop()
+        if 'text_vec' not in obs:
+            # text vec is not precomputed, so we set it using the history
+            obs['text'] = history.get_history_str()
+            if self.opt.get('use_memories', False):
+                history_vecs = history.get_history_vec_list()
+                obs['memory_vecs'] = history_vecs[:-1]
+                obs['text_vec'] = history_vecs[-1]
             else:
-                obs['text_vec'] = self._vectorize_text(obs['text'],
-                                                       truncate=truncate)
+                obs['text_vec'] = history.get_history_vec()
+
+        # check truncation
+        obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate, True)
+        if 'memory_vecs' in obs:
+            obs['memory_vecs'] = [self._check_truncate(m, truncate, True)
+                                  for m in obs['memory_vecs']]
+
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
@@ -934,8 +932,8 @@ class TorchAgent(Agent):
                 for c in obs['label_candidates']]
         return obs
 
-    def vectorize(self, obs, add_start=True, add_end=True, split_lines=False,
-                  text_truncate=None, label_truncate=None):
+    def vectorize(self, obs, history, add_start=True, add_end=True,
+                  split_lines=False, text_truncate=None, label_truncate=None):
         """Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
@@ -960,7 +958,7 @@ class TorchAgent(Agent):
         :return: the input observation, with 'text_vec', 'label_vec', and
             'cands_vec' fields added.
         """
-        self._set_text_vec(obs, text_truncate, split_lines)
+        self._set_text_vec(obs, history, text_truncate, split_lines)
         self._set_label_vec(obs, add_start, add_end, label_truncate)
         self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs
@@ -1169,9 +1167,7 @@ class TorchAgent(Agent):
             use_label=(self.opt.get('use_reply', 'label') == 'label'))
         # update the history appropriately
         self.history.update_history(observation, add_next=reply)
-        observation['text'] = self.history.get_history_str()
-        # TODO: add text vec and possibly memory vec fields here (?)
-        return self.vectorize(self.observation,
+        return self.vectorize(self.observation, self.history,
                               split_lines=self.opt.get('split_lines', False),
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
