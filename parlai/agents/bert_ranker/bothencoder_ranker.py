@@ -12,6 +12,7 @@ from parlai.core.torch_agent import Output, Batch
 from .biencoder_ranker import BiEncoderRankerAgent
 from .crossencoder_ranker import CrossEncoderRankerAgent
 
+
 class BothEncoderRankerAgent(TorchAgent):
     """ A Bi Encoder followed by a Cross Encoder.
         Although it's trainable by itself, I'd recommend training the crossencoder
@@ -113,7 +114,7 @@ class BothEncoderRankerAgent(TorchAgent):
             [surround(batch.text_vec.new_tensor(self.dict.txt2vec(c)),
                       self.START_IDX, self.END_IDX)
              for c in cands[0:self.top_n_bi]]
-             for cands in output_biencoder.text_candidates
+            for cands in output_biencoder.text_candidates
         ]
         new_candidates = [[c for c in cands[0:self.top_n_bi]]
                           for cands in output_biencoder.text_candidates

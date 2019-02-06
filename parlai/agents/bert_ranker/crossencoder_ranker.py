@@ -11,7 +11,6 @@ from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
                       add_common_args, surround)
 from parlai.core.distributed_utils import is_distributed
 import torch
-import json
 
 
 class CrossEncoderRankerAgent(TorchRankerAgent):

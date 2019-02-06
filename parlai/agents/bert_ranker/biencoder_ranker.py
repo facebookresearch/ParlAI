@@ -12,9 +12,7 @@ from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
 from parlai.core.utils import padded_3d
 from parlai.core.distributed_utils import is_distributed
 import torch
-import json
 import tqdm
-import pdb
 
 
 class BiEncoderRankerAgent(TorchRankerAgent):

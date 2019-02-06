@@ -16,6 +16,7 @@ except ImportError:
                        "pip install pytorch-pretrained-bert"))
 from parlai.core.utils import _ellipse
 
+
 def add_common_args(parser):
     """Add command line arguments for this agent."""
     TorchRankerAgent.add_cmdline_args(parser)
@@ -44,9 +45,9 @@ def add_common_args(parser):
     parser.add_argument('--topn', type=int, default=10,
                         help="For the biencoder: select how many elements to return")
     parser.add_argument('--data-parallel', type='bool', default=False,
-                           help='use model in data parallel, requires '
-                                'multiple gpus. NOTE This is incompatible'
-                                ' with distributed training')
+                        help='use model in data parallel, requires '
+                        'multiple gpus. NOTE This is incompatible'
+                        ' with distributed training')
     parser.add_argument(
         '--type-optimization',
         type=str,
@@ -82,7 +83,8 @@ class BertWrapper(torch.nn.Module):
         self.bert_model = bert_model
 
     def forward(self, token_ids, segment_ids, attention_mask):
-        output_bert, output_pooler = self.bert_model(token_ids, segment_ids, attention_mask)
+        output_bert, output_pooler = self.bert_model(
+            token_ids, segment_ids, attention_mask)
         # output_bert is a list of 12 (for bert base) layers.
         layer_of_interest = output_bert[self.layer_pulled]
         if self.add_transformer_layer:
