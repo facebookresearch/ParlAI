@@ -12,7 +12,6 @@ from parlai.core.torch_agent import Output, Batch
 from .biencoder_ranker import BiEncoderRankerAgent
 from .crossencoder_ranker import CrossEncoderRankerAgent
 
-
 class BothEncoderRankerAgent(TorchAgent):
     """ A Bi Encoder followed by a Cross Encoder.
         Although it's trainable by itself, I'd recommend training the crossencoder
@@ -44,7 +43,7 @@ class BothEncoderRankerAgent(TorchAgent):
 
     def __init__(self, opt, shared=None):
         opt['rank_candidates'] = True
-        opt["bert_id"] = 'bert-base-uncased'
+        opt['lr_scheduler'] = "none"
         self.path_biencoder = opt.get("biencoder_model_file", None)
         if self.path_biencoder is None:
             self.path_biencoder = opt["model_file"] + "_bi"
@@ -108,14 +107,17 @@ class BothEncoderRankerAgent(TorchAgent):
         """ We pass the batch first in the biencoder, then filter with crossencoder
         """
         output_biencoder = self.biencoder.eval_step(batch)
+        if output_biencoder is None:
+            return None
         new_candidate_vecs = [
-            [surround(self.dict.txt2tensor(c, self.use_cuda),
+            [surround(batch.text_vec.new_tensor(self.dict.txt2vec(c)),
                       self.START_IDX, self.END_IDX)
              for c in cands[0:self.top_n_bi]]
-            for cands in output_biencoder.text_candidates
+             for cands in output_biencoder.text_candidates
         ]
         new_candidates = [[c for c in cands[0:self.top_n_bi]]
-                          for cands in output_biencoder.text_candidates]
+                          for cands in output_biencoder.text_candidates
+                          if cands is not None]
         copy_batch = Batch(text_vec=batch.text_vec,
                            candidate_vecs=new_candidate_vecs,
                            candidates=new_candidates)

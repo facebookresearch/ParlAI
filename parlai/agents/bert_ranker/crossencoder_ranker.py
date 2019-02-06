@@ -9,6 +9,7 @@ from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .bert_dictionary import BertDictionaryAgent
 from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
                       add_common_args, surround)
+from parlai.core.distributed_utils import is_distributed
 import torch
 import json
 
@@ -24,7 +25,14 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
 
     def __init__(self, opt, shared=None):
         opt['rank_candidates'] = True
+        opt['lr_scheduler'] = "none"
         super().__init__(opt, shared)
+        # it's easier for now to use DataParallel when
+        self.data_parallel = opt.get('data_parallel') and self.use_cuda
+        if self.data_parallel:
+            self.model = torch.nn.DataParallel(self.model)
+        if is_distributed():
+            raise ValueError('Cannot combine --data-parallel and distributed mode')
         self.clip = -1
         self.NULL_IDX = self.dict.pad_idx
         self.START_IDX = self.dict.start_idx

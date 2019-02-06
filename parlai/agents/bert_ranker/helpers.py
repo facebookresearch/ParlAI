@@ -39,12 +39,14 @@ def add_common_args(parser):
         help="Also add a transformer layer on top of Bert")
     parser.add_argument('--pull-from-layer', type=int, default=-1,
                         help="Which layer of Bert do we use? Default=-1=last one.")
-    parser.add_argument('--predefined-candidates-path', type=str, default=None,
-                        help="Path to a list of candidates")
     parser.add_argument('--out-dim', type=int, default=768,
                         help="For biencoder, output dimension")
     parser.add_argument('--topn', type=int, default=10,
                         help="For the biencoder: select how many elements to return")
+    parser.add_argument('--data-parallel', type='bool', default=False,
+                           help='use model in data parallel, requires '
+                                'multiple gpus. NOTE This is incompatible'
+                                ' with distributed training')
     parser.add_argument(
         '--type-optimization',
         type=str,

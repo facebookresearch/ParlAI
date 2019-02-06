@@ -10,6 +10,7 @@ from .bert_dictionary import BertDictionaryAgent
 from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
                       add_common_args, surround)
 from parlai.core.utils import padded_3d
+from parlai.core.distributed_utils import is_distributed
 import torch
 import json
 import tqdm
@@ -32,6 +33,12 @@ class BiEncoderRankerAgent(TorchRankerAgent):
             opt['eval_candidates'] = "inline"
         self.clip = -1
         super().__init__(opt, shared)
+        # it's easier for now to use DataParallel when
+        self.data_parallel = opt.get('data_parallel') and self.use_cuda
+        if self.data_parallel:
+            self.model = torch.nn.DataParallel(self.model)
+        if is_distributed():
+            raise ValueError('Cannot combine --data-parallel and distributed mode')
         self.NULL_IDX = self.dict.pad_idx
         self.START_IDX = self.dict.start_idx
         self.END_IDX = self.dict.end_idx
@@ -96,13 +103,15 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         # Encode contexts first
         token_idx_ctxt, segment_idx_ctxt, mask_ctxt = to_bert_input(
             batch.text_vec, self.NULL_IDX)
-
+        embedding_ctxt, _ = self.model(
+            token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
+            None, None, None)
         if len(cand_vecs.size()) == 2 and cand_vecs.dtype == torch.long:
             # train time. We compare with all elements of the batch
             token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
                 cand_vecs, self.NULL_IDX)
-            embedding_ctxt, embedding_cands = self.model(
-                token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
+            _, embedding_cands = self.model(
+                None, None, None,
                 token_idx_cands, segment_idx_cands, mask_cands)
             return embedding_ctxt.mm(embedding_cands.t())
 
@@ -112,8 +121,8 @@ class BiEncoderRankerAgent(TorchRankerAgent):
             cands_idx_reshaped = cand_vecs.view(csize[0] * csize[1], csize[2])
             token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
                 cands_idx_reshaped, self.NULL_IDX)
-            embedding_ctxt, embedding_cands = self.model(
-                token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
+            _, embedding_cands = self.model(
+                None, None, None,
                 token_idx_cands, segment_idx_cands, mask_cands)
             embedding_cands = embedding_cands.view(
                 csize[0], csize[1], -1)  # batchsize x ncands x embed_size
@@ -133,7 +142,7 @@ class BiEncoderModule(torch.nn.Module):
     """ Groups context_encoder and cand_encoder together.
     """
 
-    def __init__(self, opt, use_hack_distributed=True):
+    def __init__(self, opt):
         super(BiEncoderModule, self).__init__()
         self.context_encoder = BertWrapper(
             BertModel.from_pretrained(
@@ -147,7 +156,6 @@ class BiEncoderModule(torch.nn.Module):
             opt["out_dim"],
             add_transformer_layer=opt["add_transformer_layer"],
             layer_pulled=opt["pull_from_layer"])
-        self.use_hack_distributed = use_hack_distributed
 
     def forward(self, token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
                 token_idx_cands, segment_idx_cands, mask_cands):
