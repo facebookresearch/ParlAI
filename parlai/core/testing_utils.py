@@ -24,6 +24,14 @@ except ImportError:
     TORCH_AVAILABLE = False
     GPU_AVAILABLE = False
 
+try:
+    import git
+    git_ = git.Git()
+    GIT_AVAILABLE = True
+except ImportError:
+    git_ = None
+    GIT_AVAILABLE = False
+
 
 DEBUG = False  # change this to true to print to stdout anyway
 
@@ -50,6 +58,28 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
 def skipIfTravis(testfn, reason='Test disabled in Travis'):
     """Decorator for skipping a test if running on Travis."""
     return unittest.skipIf(bool(os.environ('TRAVIS')), reason)
+
+
+def git_ls_files(root=None, skip_nonexisting=True):
+    filenames = git_.ls_files(root).split('\n')
+    if skip_nonexisting:
+        filenames = [fn for fn in filenames if os.path.exists(fn)]
+    return filenames
+
+
+def git_ls_dirs(root=None):
+    dirs = set()
+    for fn in git_ls_files(root):
+        dirs.add(os.path.dirname(fn))
+    return list(dirs)
+
+
+def git_changed_files(skip_nonexisting=True):
+    fork_point = git_.merge_base('--fork-point', 'origin/master').strip()
+    filenames = git_.diff('--name-only', fork_point).split('\n')
+    if skip_nonexisting:
+        filenames = [fn for fn in filenames if os.path.exists(fn)]
+    return filenames
 
 
 @contextlib.contextmanager

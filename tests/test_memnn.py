@@ -18,7 +18,7 @@ class TestMemnn(unittest.TestCase):
     def test_labelcands_nomemnn(self):
         """This test uses a single-turn task, so doesn't test memories."""
 
-        stdout, _, valid, test = testing_utils.train_model(dict(
+        stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:CandidateTeacher',
             model='memnn',
             lr=LR,
@@ -47,7 +47,7 @@ class TestMemnn(unittest.TestCase):
     @testing_utils.skipIfGPU
     def test_labelcands_multi(self):
         """This test uses a multi-turn task and multithreading."""
-        stdout, _, valid, test = testing_utils.train_model(dict(
+        stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:MultiturnCandidateTeacher',
             model='memnn',
             lr=LR,
