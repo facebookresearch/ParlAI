@@ -126,8 +126,20 @@ though agents can choose to return None if they do not want to answer.
 
 class History(object):
     """
-    TODO: add description of history object, as well as docstrings for each
-    of the functions.
+    History object that tracks the history for a given field over the course
+    of an episode.
+
+    :param field:        field in the observation to track over the course of
+                         the episode (defaults to 'text')
+    :param vec_type:     specify a 'list' or 'deque' to save the history in
+                         this object
+    :param maxlen:       if `vec_type` is 'deque', this sets the maximum
+                         length of that object
+    :param p1_token:     token indicating 'person 1'; opt must have
+                         'person_tokens' set to True for this to be added
+    :param p1_token:     token indicating 'person 2'; opt must have
+                         'person_tokens' set to True for this to be added
+    :param dict_agent    DictionaryAgent object for tokenizing the history
     """
     def __init__(self, opt, field='text', vec_type='deque', maxlen=None,
                  p1_token='__p1__', p2_token='__p2__', dict_agent=None):
@@ -158,13 +170,20 @@ class History(object):
         self.clear_on_next_update = False
 
     def parse(self, text):
+        """Tokenize text with the given dictionary."""
         return self.dict.txt2vec(text)
 
     def clear(self):
+        """Clear the history."""
         self.history_strings = []
         self.history_vecs = []
 
     def update_history(self, obs, add_next=None):
+        """Update the history with the given observation.
+
+        :param add_next:   string to append to history prior to updating it
+                           with the observation
+        """
         if self.clear_on_next_update:
             self.clear()
             self.clear_on_next_update = False
@@ -196,11 +215,13 @@ class History(object):
             self.clear_on_next_update = True
 
     def get_history_str(self):
+        """Returns the string version of the history."""
         if len(self.history_strings) > 0:
             return self.delimiter.join(self.history_strings)
         return ''
 
     def get_history_vec(self):
+        """Returns a vectorized version of the history."""
         if self.vec_type == 'deque':
             history = deque(maxlen=self.max_len)
             if len(self.history_vecs) > 0:
@@ -220,6 +241,7 @@ class History(object):
         return history
 
     def get_history_vec_list(self):
+        """Returns a list of history vecs."""
         return self.history_vecs
 
     def _add_person_tokens(self, text, token, add_after_newln=False):
