@@ -326,7 +326,7 @@ class SocketManager():
                 self._safe_put(connection_id, (send_time, packet))
                 t = time.time() + self.ACK_TIME[packet.type]
                 while time.time() < t and packet.status != Packet.STATUS_ACK:
-                    time.sleep(0.2)
+                    time.sleep(shared_utils.THREAD_SHORT_SLEEP)
             else:
                 # non-blocking ack: add ack-check to queue
                 t = time.time() + self.ACK_TIME[packet.type]
