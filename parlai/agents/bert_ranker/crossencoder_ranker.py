@@ -21,8 +21,6 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     @staticmethod
     def add_cmdline_args(parser):
         add_common_args(parser)
-        parser.add_argument('--bert-adam', type='bool', default=True)
-        parser.add_argument('--bert-pad-left', type='bool', default=True)
 
     def __init__(self, opt, shared=None):
         opt['rank_candidates'] = True
