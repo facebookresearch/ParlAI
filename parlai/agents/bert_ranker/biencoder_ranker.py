@@ -49,10 +49,9 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         return BertDictionaryAgent
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
-        def init_optim(self, params, optim_states=None, saved_optim_type=None):
-            self.optimizer = get_bert_optimizer([self.model],
-                                                self.opt["type_optimization"],
-                                                self.opt["learningrate"])
+        self.optimizer = get_bert_optimizer([self.model],
+                                            self.opt["type_optimization"],
+                                            self.opt["learningrate"])
 
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 200] for i in range(0, len(cands), 200)]

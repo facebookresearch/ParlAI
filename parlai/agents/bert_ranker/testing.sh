@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 # download pretrained bert model if needed.
 echo "Downloading required models if needed"
 MODELFILE="./bert-base-uncased.tar.gz"
