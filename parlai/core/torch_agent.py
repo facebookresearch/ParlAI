@@ -19,7 +19,6 @@ See below for documentation on each specific tool.
 from torch import optim
 from collections import deque, namedtuple
 import json
-import pdb
 import random
 import numpy as np
 from parlai.core.agents import Agent
@@ -328,7 +327,6 @@ class TorchAgent(Agent):
                              skip loading optimizer states
         """
         opt = self.opt
-
 
         # set up optimizer args
         lr = opt['learningrate']

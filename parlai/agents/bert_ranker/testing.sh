@@ -26,7 +26,7 @@ python -u parlai/scripts/train_model.py -pyt convai2 \
   --shuffle true --type-optimization all_encoder_layers \
   --data-parallel true --history-size 5 --truncate 300 --num-epochs 0.1 \
   --lr-scheduler fixed --lr-scheduler-patience 1 --lr-scheduler-decay 0.35 \
-  --veps 1.0 -vme 2000  --warmup_updates 200
+  -veps 1.0 -vme 2000  --warmup_updates 200
 # Should yield
 # test:{'exs': 7801, 'accuracy': 0.25, 'f1': 0.3272, 'hits@1': 0.25,
 #       'hits@5': 0.634, 'hits@10': 0.845, 'hits@100': 1.0, 'bleu': 0.2502,
@@ -46,7 +46,7 @@ python -u parlai/scripts/train_model.py -pyt convai2 \
   --lr-scheduler-patience 1 --lr-scheduler-decay 0.35 \
   --data-parallel true --history-size 5 --truncate 300 --num-epochs 0.01 \
   --lr-scheduler fixed --lr-scheduler-patience 1 --lr-scheduler-decay 0.35 \
-  --veps 1.0 -vme 2000  --warmup_updates 100
+  -veps 1.0 -vme 2000  --warmup_updates 100
 # Should yield
 # {'exs': 7801, 'accuracy': 0.653, 'f1': 0.6886, 'hits@1': 0.653,
 # 'hits@5': 0.904, 'hits@10': 0.97, 'hits@100': 1.0, 'bleu': 0.653,
