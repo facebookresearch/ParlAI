@@ -301,6 +301,21 @@ class RunHandler(BaseHandler):
         pairings = self.data_handler.get_pairings_for_run(task_target)
         processed_assignments = merge_assignments_with_pairings(
             assignments, pairings, 'task {}'.format(task_target))
+
+        # get feedback data and put into assignments if present
+        for assignment in processed_assignments:
+            assignment['received_feedback'] = None
+            run_id = assignment['run_id']
+            conversation_id = assignment['conversation_id']
+            worker_id = assignment['worker_id']
+            if conversation_id is not None:
+                task_data = MTurkDataHandler.get_conversation_data(
+                    run_id, conversation_id, worker_id,
+                    self.state['is_sandbox'])
+                if task_data['data'] is not None:
+                    assignment['received_feedback'] = \
+                        task_data['data'].get('received_feedback')
+
         run_details = row_to_dict(self.data_handler.get_run_data(task_target))
         # TODO implement run status determination
         run_details['run_status'] = 'unimplemented'
@@ -678,6 +693,10 @@ def rebuild_source():
         if was_built:
             shutil.copy2(os.path.join(output_dir, 'dist', 'custom.jsx'),
                          os.path.join(output_dir, 'components', 'custom.jsx'))
+        # Need to give a copy of core_components to have same dir
+        shutil.copy2(os.path.join(parlai_path, 'mturk', 'core', 'react_server',
+                                  'dev', 'components', 'core_components.jsx'),
+                     os.path.join(output_dir, 'components'))
 
     # Grab up to date version of core components
     shutil.copy2(os.path.join(parlai_path, 'mturk', 'core', 'react_server',

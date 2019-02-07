@@ -28,7 +28,8 @@ def _create_embeddings(dictionary, embedding_size, padding_idx):
     return e
 
 
-def _build_encoder(opt, dictionary, embedding=None, padding_idx=None, reduction=True):
+def _build_encoder(opt, dictionary, embedding=None, padding_idx=None, reduction=True,
+                   truncate=1024):
     return TransformerEncoder(
         n_heads=opt['n_heads'],
         n_layers=opt['n_layers'],
@@ -42,10 +43,12 @@ def _build_encoder(opt, dictionary, embedding=None, padding_idx=None, reduction=
         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
         embeddings_scale=opt['embeddings_scale'],
         reduction=reduction,
+        n_positions=truncate,
     )
 
 
-def _build_decoder(opt, dictionary, embedding=None, padding_idx=None):
+def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
+                   truncate=1024):
     return TransformerDecoder(
         n_heads=opt['n_heads'],
         n_layers=opt['n_layers'],
@@ -58,6 +61,7 @@ def _build_decoder(opt, dictionary, embedding=None, padding_idx=None):
         padding_idx=padding_idx,
         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
         embeddings_scale=opt['embeddings_scale'],
+        n_positions=truncate,
     )
 
 
@@ -67,24 +71,32 @@ class TransformerMemNetModel(nn.Module):
         super().__init__()
         self.opt = opt
         self.pad_idx = dictionary[dictionary.null_token]
-        self.scores_norm = opt['scores_norm']
 
         # set up embeddings
         self.embeddings = _create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
 
+        if not opt.get('learn_embeddings'):
+            self.embeddings.weight.requires_grad = False
+
+        truncate = max(opt.get('truncate') or 0, opt.get('text_truncate') or 0,
+                       opt.get('label_truncate') or 0)
+        if truncate <= 0:
+            truncate = 1024
+
         self.context_encoder = _build_encoder(
-            opt, dictionary, self.embeddings, self.pad_idx
+            opt, dictionary, self.embeddings, self.pad_idx, truncate=truncate
         )
 
         if opt.get('share_encoders'):
             self.cand_encoder = TransformerResponseWrapper(
-                self.context_encoder, self.context_encoder.out_dim, reduction=True,
+                self.context_encoder, self.context_encoder.out_dim,
             )
         else:
             self.cand_encoder = _build_encoder(
                 opt, dictionary, self.embeddings, self.pad_idx, reduction=True,
+                truncate=truncate
             )
 
         # build memory encoder
@@ -132,16 +144,6 @@ class TransformerMemNetModel(nn.Module):
 
         return weights, context_h
 
-    def _score(self, output, cands):
-        if cands.dim() == 2:
-            return torch.matmul(output, cands.t())
-        elif cands.dim() == 3:
-            return torch.bmm(output.unsqueeze(1),
-                             cands.transpose(1, 2)).squeeze(1)
-        else:
-            raise RuntimeError('Unexpected candidate dimensions {}'
-                               ''.format(cands.dim()))
-
     def forward(self, xs, mems, cands):
         weights, context_h = self.encode_context_memory(xs, mems)
         cands_h = self.encode_cand(cands)
@@ -150,17 +152,7 @@ class TransformerMemNetModel(nn.Module):
             context_h = context_h / context_h.norm(2, dim=1, keepdim=True)
             cands_h = cands_h / cands_h.norm(2, dim=1, keepdim=True)
 
-        scores = self._score(context_h, cands_h)
-        if self.scores_norm == 'dot':
-            pass
-        elif self.scores_norm == 'sqrt':
-            scores /= math.sqrt(self.opt['embedding_size'])
-        elif self.scores_norm == 'dim':
-            scores /= self.opt['embedding_size']
-        else:
-            raise ValueError('Invalid --scores-norm')
-
-        return scores
+        return context_h, cands_h
 
 
 def create_position_codes(n_pos, dim, out):
@@ -207,6 +199,7 @@ class TransformerEncoder(nn.Module):
         learn_positional_embeddings=False,
         embeddings_scale=False,
         reduction=True,
+        n_positions=1024
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -222,7 +215,6 @@ class TransformerEncoder(nn.Module):
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
             'Transformer embedding size must be a multiple of n_heads'
-        n_positions = 1024  # TODO: use truncate or sth
 
         # check input formats:
         if embedding is not None:
@@ -326,6 +318,7 @@ class TransformerDecoder(nn.Module):
         embeddings_scale=True,
         learn_positional_embeddings=False,
         padding_idx=None,
+        n_positions=1024,
     ):
         super().__init__()
         self.embedding_size = embedding_size
@@ -338,7 +331,6 @@ class TransformerDecoder(nn.Module):
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
             'Transformer embedding size must be a multiple of n_heads'
-        n_positions = 1024  # TODO: use truncate or sth
 
         self.embeddings = embedding
 
@@ -448,10 +440,19 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         self.embeddings = _create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
+
+        truncate = max(opt.get('truncate') or 0, opt.get('text_truncate') or 0,
+                       opt.get('label_truncate') or 0)
+        if truncate <= 0:
+            truncate = 1024
+
         self.encoder = _build_encoder(
-            opt, dictionary, self.embeddings, self.pad_idx, reduction=False
+            opt, dictionary, self.embeddings, self.pad_idx, reduction=False,
+            truncate=truncate
         )
-        self.decoder = _build_decoder(opt, dictionary, self.embeddings, self.pad_idx)
+        self.decoder = _build_decoder(
+            opt, dictionary, self.embeddings, self.pad_idx, truncate=truncate
+        )
 
     def reorder_encoder_states(self, encoder_states, indices):
         enc, mask = encoder_states

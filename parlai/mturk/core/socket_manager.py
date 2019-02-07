@@ -161,13 +161,13 @@ class SocketManager():
     """
 
     # Time to acknowledge different message types
-    ACK_TIME = {Packet.TYPE_ALIVE: 2,
-                Packet.TYPE_MESSAGE: 0.5}
+    ACK_TIME = {Packet.TYPE_ALIVE: 4,
+                Packet.TYPE_MESSAGE: 4}
 
     # Default pongs without heartbeat before socket considered dead
-    DEF_MISSED_PONGS = 10
-    HEARTBEAT_RATE = 2
-    DEF_DEAD_TIME = 20
+    DEF_MISSED_PONGS = 20
+    HEARTBEAT_RATE = 4
+    DEF_DEAD_TIME = 30
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, task_group_id,

@@ -289,8 +289,8 @@ The mturk library contains the following directories:
   - **_multi\_agent\_dialog_**: round-robin chat between two local human agents and two Turkers.
 
 To run an MTurk task:
-- Go into the directory for the task you want to run.
-- Run `python run.py -nh <num_hits> -na <num_assignments> -r <reward> [--sandbox]/[--live]`, with `<num_hits>`, `<num_assignments>` and `<reward>` set appropriately. Use `--sandbox` to run the task in MTurk sandbox mode before pushing it live.
+- First ensure that the task directory is in parlai/mturk/tasks/. 
+- Then, run its run.py file with proper flags: `python run.py -nc <num_conversations> -r <reward> [--sandbox]/[--live]`. Use `--sandbox` to run the task in MTurk sandbox mode before pushing it live.
 
 To add your own MTurk task:
 - create a new folder within the mturk/tasks directory for your new task
@@ -302,7 +302,7 @@ To add your own MTurk task:
 - implement __run.py__, with code for setting up and running the world where `MTurkAgent` lives in.
 - (Optional) implement __worlds.py__, with a world class that extends from `World`.
 
-Please see [the MTurk tutorial](http://parl.ai/static/docs/mturk.html) to learn more about the MTurk examples and how to create and run your own task.
+Please see [the MTurk tutorial](http://parl.ai/static/docs/tutorial_mturk.html) to learn more about the MTurk examples and how to create and run your own task.
 
 ### Messenger
 
