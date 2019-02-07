@@ -66,7 +66,7 @@ class StarspaceAgent(TorchRankerAgent):
             help='size of negative sample cache to draw from')
         StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
         argparser.set_defaults(
-            candidates='custom',
+            candidates='batch',
             eval_candidates='inline',
             learningrate=0.1,
             truncate=10000,
@@ -103,6 +103,25 @@ class StarspaceAgent(TorchRankerAgent):
 
     def receive_metrics(self, metrics_dict):
         pass
+
+    def _set_up_optimizer(self, shared, states):
+        """Override torch ranker agent behavior so that if numthreads > 1
+        we do not share the optimizer.
+        """
+        if shared and self.opt.get('num_threads', 1) == 1:
+            # We don't use get here because hasattr is used on optimizer later.
+            if 'optimizer' in shared:
+                self.optimizer = shared['optimizer']
+
+        if states is None:
+            states = {}
+
+        optim_params = [p for p in self.model.parameters() if p.requires_grad]
+        self.init_optim(
+            optim_params,
+            states.get('optimizer'), states.get('optimizer_type')
+        )
+        self.build_lr_scheduler(states)
 
     def build_model(self):
         print("[ creating StarspaceAgent ]")
@@ -144,12 +163,13 @@ class StarspaceAgent(TorchRankerAgent):
         self.model.train()
         self.optimizer.zero_grad()
 
-        if not batch.candidates:
+        if not batch.candidate_vecs:
             print('No negatives yet!')
             return Output()
 
-        cands, cand_vecs, _ = self._build_candidates(
-            batch, source=self.opt['candidates'], mode='train')
+        # get a list of candidate vecs
+        cand_vecs = padded_3d(batch.candidate_vecs, self.NULL_IDX,
+                              use_cuda=self.use_cuda)
 
         if self.opt.get('input_dropout', 0) > 0:
             batch_text, batch_label, batch_cand_vecs = self.input_dropout(
@@ -228,51 +248,46 @@ class StarspaceAgent(TorchRankerAgent):
         preds = [cand_preds[i][0] for i in range(batchsize)]
         return Output(preds, cand_preds)
 
-    def observe(self, observation):
-        # During observe, we add each of the labels to the ys_cache as a set
-        # of possible negative candidates to use for the future
-        labels = observation.get('labels')
-        if not labels:
-            labels = observation.get('eval_labels')
-        if labels:
-            for label in labels:
-                self.add_to_ys_cache(label)
-        return super(StarspaceAgent, self).observe(observation)
+    def _same(self, y1, y2):
+        if len(y1) != len(y2):
+            return False
+        if abs((y1 - y2).sum().data.sum()) > 0.00001:
+            return False
+        return True
 
-    def vectorize(self, obs, add_start=False, add_end=False, truncate=None,
-                  split_lines=False):
+    def _vectorize_custom_candidates(self, obs):
+        # return if we don't have enough candidates in the cache
+        cache_size = len(self.ys_cache)
+        if cache_size < 2:
+            return obs
+
+        cands = []
+        label = obs['labels_vec']
+        k = self.opt['neg_samples']
+        for i in range(1, k * 3):
+            index = random.randint(0, cache_size - 1)
+            cand = self.ys_cache[index]
+            if not self._same(label, cand):
+                cands.append(cand)
+                if len(cands) >= k:
+                    break
+        if self.opt.get('parrot_neg'):
+            query = obs['text_vec']
+            cands.append(query)
+
+        obs['label_candidates_vecs'] = cands
+
+        return obs
+
+    def vectorize(self, *args, **kwargs):
         """Overrride method from Torch Agent so that by default we do not add
         start and end indices."""
-        return super(StarspaceAgent, self).vectorize(
-            obs,
-            add_start=add_start,
-            add_end=add_end,
-            truncate=truncate,
-            split_lines=split_lines,
-        )
+        obs = super().vectorize(*args, **kwargs)
+        if 'labels' in obs and obs.get('labels_vec') is not None:
+            obs = self._vectorize_custom_candidates(obs)
+            self.add_to_ys_cache(obs['labels_vec'])
 
-    def _get_custom_candidates(self, obs):
-        """Sets custom candidates for the observation."""
-        if not obs.get('eval_labels'):
-            # only use custom candidates during training
-            cands = []
-            cache_sz = len(self.ys_cache) - 1
-            if cache_sz < 1:
-                return cands
-            k = self.opt['neg_samples']
-            for i in range(1, k * 3):
-                index = random.randint(0, cache_sz)
-                cand = self.ys_cache[index]
-                if not self.same(obs.get('labels'), cand):
-                    cands.append(cand)
-                    if len(cands) >= k:
-                        break
-            if self.opt['parrot_neg']:
-                if obs.get('text') is not None:
-                    cands.append(obs['text'])
-            return cands
-        # if we aren't training, return label candidates if available
-        return obs.get('label_candidates')
+        return obs
 
     def same(self, labels, cand):
         if labels:
@@ -309,7 +324,7 @@ class StarspaceAgent(TorchRankerAgent):
         return xs2, ys2, negs2
 
     def add_to_ys_cache(self, ys):
-        if not ys:
+        if ys is None:
             return
         if len(self.ys_cache) < self.ys_cache_sz:
             self.ys_cache.append(ys)
@@ -317,20 +332,12 @@ class StarspaceAgent(TorchRankerAgent):
             ind = random.randint(0, self.ys_cache_sz - 1)
             self.ys_cache[ind] = ys
 
-    def optimizer_reset(self):
-        lr = self.opt['learningrate']
-        optim_class = StarspaceAgent.OPTIM_OPTS[self.opt['optimizer']]
-        kwargs = {'lr': lr}
-        self.optimizer = optim_class(self.model.parameters(), **kwargs)
-
     def reset(self):
         """Reset observation and episode_done."""
         self.observation = {}
         self.history.clear()
         self.replies.clear()
         self.reset_metrics()
-        # reset optimizer
-        self.optimizer_reset()
 
     def share(self):
         """Share model parameters. Override from TorchRankerAgent to avoid
