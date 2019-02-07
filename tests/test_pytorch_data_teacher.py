@@ -91,7 +91,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
             parser.set_defaults(**defaults)
             opt = parser.parse_args()
             build_dict(opt)
-            teacher = create_task_agent_from_taskname(opt)[0]
+            with testing_utils.capture_output() as _:
+                teacher = create_task_agent_from_taskname(opt)[0]
             agent = create_agent(opt)
             act = teacher.act()
             if teacher_processed:
@@ -165,11 +166,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
                     if type(val1) is torch.Tensor:
                         self.assertTrue(bool(torch.all(torch.eq(val1, val2))))
                     else:
-                        self.assertTrue(val1 == val2,
-                                        '{}\n\n --not equal to-- \n\n{}'.format(
-                                            val1,
-                                            val2)
-                                        )
+                        self.assertEqual(val1, val2)
         # First, check that batchsort itself works
         defaults = parser_defaults.copy()
         defaults['datatype'] = 'train:stream:ordered'
