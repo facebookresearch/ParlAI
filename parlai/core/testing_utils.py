@@ -57,7 +57,7 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
 
 def skipIfTravis(testfn, reason='Test disabled in Travis'):
     """Decorator for skipping a test if running on Travis."""
-    return unittest.skipIf(bool(os.environ('TRAVIS')), reason)
+    return unittest.skipIf(os.environ.get('TRAVIS'), reason)(testfn)
 
 
 def git_ls_files(root=None, skip_nonexisting=True):
