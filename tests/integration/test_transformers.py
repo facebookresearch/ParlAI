@@ -242,11 +242,10 @@ class TestTransformerGenerator(unittest.TestCase):
         )
         # and make sure we're not loading the scheduler if it changes
         stdout4, valid4, test4 = _mock_train(
+            init_model=os.path.join(outdir, 'model'),
             outdir=outdir,
             keepoutdir=True,
-            override={
-                'lr_scheduler': 'reduceonplateau',
-            },
+            lr_scheduler='reduceonplateau',
             **BASE_ARGS,
         )
         self.assertEqual(
