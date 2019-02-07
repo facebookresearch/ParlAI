@@ -71,13 +71,14 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     def dictionary_class():
         return BertDictionaryAgent
 
-    def vectorize(self, obs, add_start=True, add_end=True, truncate=None,
-                  split_lines=False):
+    def vectorize(self, obs, add_start=True, add_end=True, split_lines=False,
+                  text_truncate=None, label_truncate=None):
         return super().vectorize(
             obs,
             add_start=True,
             add_end=True,
-            truncate=self.truncate)
+            text_truncate=self.text_truncate,
+            label_truncate=self.label_truncate)
 
     def _set_text_vec(self, obs, truncate, split_lines):
         super()._set_text_vec(obs, truncate, split_lines)

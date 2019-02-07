@@ -28,7 +28,8 @@ python -u parlai/scripts/train_model.py -pyt convai2 \
   --pretrained-bert-path $MODELFILE --bert-vocabulary-path $VOCABFILE \
   --eval-batchsize 8 --learningrate 5e-5  --log_every_n_secs 10 \
   --shuffle true --type-optimization all_encoder_layers \
-  --data-parallel true --history-size 5 --truncate 300 --num-epochs 0.1 \
+  --data-parallel true --history-size 5 --label-truncate 300 \
+  --text-truncate 300 --num-epochs 0.1 \
   --lr-scheduler fixed --lr-scheduler-patience 1 --lr-scheduler-decay 0.35 \
   -veps 1.0 -vme 2000  --warmup_updates 200
 # Should yield
@@ -48,7 +49,8 @@ python -u parlai/scripts/train_model.py -pyt convai2 \
   --eval-batchsize 2 --learningrate 5e-5  --log_every_n_secs 10 \
   --shuffle true --type-optimization all_encoder_layers --lr-scheduler fixed \
   --lr-scheduler-patience 1 --lr-scheduler-decay 0.35 \
-  --data-parallel true --history-size 5 --truncate 300 --num-epochs 0.01 \
+  --data-parallel true --history-size 5 --label-truncate 300 \
+  --text-truncate 300 --num-epochs 0.01 \
   --lr-scheduler fixed --lr-scheduler-patience 1 --lr-scheduler-decay 0.35 \
   -veps 1.0 -vme 2000  --warmup_updates 100
 # Should yield
@@ -65,7 +67,8 @@ python -u parlai/scripts/eval_model.py -pyt convai2 \
   --batchsize 2 --dict-file ./dictionary \
   --pretrained-bert-path $MODELFILE --bert-vocabulary-path $VOCABFILE \
   --shuffle true --log_every_n_secs 10 --lr_scheduler none\
-  --data-parallel true --history-size 5 --truncate 300 \
+  --data-parallel true --history-size 5 --label-truncate 300 \
+  --text-truncate 300 \
   --biencoder-model-file ./my_biencoder \
   --crossencoder-model-file ./my_crossencoder
 # Should yield

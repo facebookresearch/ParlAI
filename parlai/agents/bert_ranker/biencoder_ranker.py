@@ -60,7 +60,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         cand_vecs = []
         for batch in tqdm.tqdm(cand_batches):
             token_idx = [self._vectorize_text(cand, add_start=True, add_end=True,
-                                              truncate=self.opt["truncate"])
+                                              truncate=self.opt["label_truncate"])
                          for cand in batch]
             padded_input = padded_3d([token_idx]).squeeze(0)
             token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
@@ -70,13 +70,14 @@ class BiEncoderRankerAgent(TorchRankerAgent):
             cand_vecs.append(embedding_cands.cpu().detach())
         return torch.cat(cand_vecs, 0)
 
-    def vectorize(self, obs, add_start=True, add_end=True, truncate=None,
-                  split_lines=False):
+    def vectorize(self, obs, add_start=True, add_end=True, split_lines=False,
+                  text_truncate=None, label_truncate=None):
         return super().vectorize(
             obs,
             add_start=True,
             add_end=True,
-            truncate=self.truncate)
+            text_truncate=self.text_truncate,
+            label_truncate=self.label_truncate)
 
     def _set_text_vec(self, obs, truncate, split_lines):
         super()._set_text_vec(obs, truncate, split_lines)
