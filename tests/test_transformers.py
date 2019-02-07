@@ -13,7 +13,7 @@ class TestTransformerRanker(unittest.TestCase):
     """Checks that transformer_ranker can learn some very basic tasks."""
 
     def test_repeater(self):
-        stdout, _, valid, test = testing_utils.train_model(dict(
+        stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:candidate',
             model='transformer/ranker',
             optimizer='adamax',
@@ -42,10 +42,10 @@ class TestTransformerRanker(unittest.TestCase):
         )
 
     def test_resuming(self):
-        with testing_utils.TempDir() as tmpdir:
+        with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
 
-            stdout1, _, valid1, test1 = testing_utils.train_model(dict(
+            stdout1, valid1, test1 = testing_utils.train_model(dict(
                 model_file=model_file,
                 task='integration_tests:candidate',
                 model='transformer/ranker',
@@ -61,7 +61,7 @@ class TestTransformerRanker(unittest.TestCase):
                 lr_scheduler='invsqrt',
             ))
 
-            stdout2, _, valid2, test2 = testing_utils.train_model(dict(
+            stdout2, valid2, test2 = testing_utils.train_model(dict(
                 model_file=model_file,
                 task='integration_tests:candidate',
                 model='transformer/ranker',
@@ -86,7 +86,7 @@ class TestTransformerRanker(unittest.TestCase):
         """
         testing_utils.download_unittest_models()
 
-        stdout, stderr, valid, test = testing_utils.eval_model(dict(
+        stdout, valid, test = testing_utils.eval_model(dict(
             task='integration_tests:multipass',
             model='transformer/ranker',
             model_file='models:unittest/transformer_ranker/model',
@@ -123,7 +123,7 @@ class TestTransformerRanker(unittest.TestCase):
 class TestTransformerGenerator(unittest.TestCase):
     """Checks that the generative transformer can learn basic tasks."""
     def test_greedysearch(self):
-        stdout, _, valid, test = testing_utils.train_model(dict(
+        stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:NocandidateTeacher',
             model='transformer/generator',
             optimizer='adamax',
@@ -159,7 +159,7 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_beamsearch(self):
-        stdout, _, valid, test = testing_utils.train_model(dict(
+        stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:NocandidateTeacher',
             model='transformer/generator',
             optimizer='adamax',
@@ -200,7 +200,7 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         testing_utils.download_unittest_models()
 
-        stdout, stderr, valid, test = testing_utils.eval_model(dict(
+        stdout, valid, test = testing_utils.eval_model(dict(
             task='integration_tests:multipass',
             model='transformer/generator',
             model_file='models:unittest/transformer_generator/model',
@@ -260,15 +260,15 @@ class TestLearningRateScheduler(unittest.TestCase):
             warmup_updates=1,
         )
 
-        with testing_utils.TempDir() as tmpdir:
+        with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
 
-            stdout1, _, valid1, test1 = testing_utils.train_model(dict(
+            stdout1, valid1, test1 = testing_utils.train_model(dict(
                 model_file=model_file,
                 lr_scheduler='invsqrt',
                 **BASE_ARGS,
             ))
-            stdout2, _, valid2, test2 = testing_utils.train_model(dict(
+            stdout2, valid2, test2 = testing_utils.train_model(dict(
                 model_file=model_file,
                 lr_scheduler='invsqrt',
                 **BASE_ARGS,
@@ -286,7 +286,7 @@ class TestLearningRateScheduler(unittest.TestCase):
                 'Learning rate is not decreasing'
             )
             # but make sure we're not loading the scheduler if we're fine tuning
-            stdout3, _, valid3, test3 = testing_utils.train_model(dict(
+            stdout3, valid3, test3 = testing_utils.train_model(dict(
                 init_model=os.path.join(tmpdir, 'model'),
                 model_file=os.path.join(tmpdir, 'newmodel'),
                 lr_scheduler='invsqrt',
@@ -303,7 +303,7 @@ class TestLearningRateScheduler(unittest.TestCase):
                 'Finetuning LR scheduler reset failed (lr).'
             )
             # and make sure we're not loading the scheduler if it changes
-            stdout4, _, valid4, test4 = testing_utils.train_model(dict(
+            stdout4, valid4, test4 = testing_utils.train_model(dict(
                 init_model=os.path.join(tmpdir, 'model'),
                 model_file=os.path.join(tmpdir, 'newmodel2'),
                 lr_scheduler='reduceonplateau',

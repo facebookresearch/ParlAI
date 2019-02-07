@@ -16,7 +16,7 @@ class TestSeq2Seq(unittest.TestCase):
     """Checks that seq2seq can learn some very basic tasks."""
 
     def test_ranking(self):
-        stdout, _, valid, test = testing_utils.train_model(dict(
+        stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:candidate',
             model='seq2seq',
             lr=LR,
@@ -40,7 +40,7 @@ class TestSeq2Seq(unittest.TestCase):
 
     def test_generation(self):
         """This test uses a single-turn sequence repitition task."""
-        stdout, _, valid, test = testing_utils.train_model(dict(
+        stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:nocandidate',
             model='seq2seq',
             lr=LR,
@@ -68,7 +68,7 @@ class TestSeq2Seq(unittest.TestCase):
 
     def test_beamsearch(self):
         """Ensures beam search can generate the correct response"""
-        stdout, _, valid, test = testing_utils.train_model(dict(
+        stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:nocandidate',
             model='seq2seq',
             lr=LR,
@@ -108,7 +108,7 @@ class TestHogwildSeq2seq(unittest.TestCase):
     @testing_utils.skipIfGPU
     def test_generation_multi(self):
         """This test uses a multi-turn task and multithreading."""
-        stdout, _, valid, test = testing_utils.train_model(dict(
+        stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:multiturn_nocandidate',
             model='seq2seq',
             lr=LR,
@@ -142,7 +142,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
     def test_backwards_compatibility(self):
         testing_utils.download_unittest_models()
 
-        stdout, stderr, valid, test = testing_utils.eval_model(dict(
+        stdout, valid, test = testing_utils.eval_model(dict(
             task='integration_tests:multipass',
             model='seq2seq',
             model_file='models:unittest/seq2seq/model',

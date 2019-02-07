@@ -25,6 +25,9 @@ except ImportError:
     GPU_AVAILABLE = False
 
 
+DEBUG = False  # change this to true to print to stdout anyway
+
+
 def skipUnlessTorch(testfn, reason='pytorch is not installed'):
     """Decorator for skipping a test if torch is not installed."""
     return unittest.skipUnless(TORCH_AVAILABLE, reason)(testfn)
@@ -49,22 +52,21 @@ def skipIfTravis(testfn, reason='Test disabled in Travis'):
     return unittest.skipIf(bool(os.environ('TRAVIS')), reason)
 
 
-class TempDir(object):
-    """
-    Syntactic sugar allowing for "with TempDir() as dir:"
-    """
-    def __enter__(self):
-        self.dir = tempfile.mkdtemp()
-        return self.dir
+@contextlib.contextmanager
+def capture_output():
+    if DEBUG:
+        yield
+    else:
+        sio = io.StringIO()
+        with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
+            yield sio
 
-    def __exit__(self, exception_type, exception_value, traceback):
-        shutil.rmtree(self.dir)
 
-    def __str__(self):
-        return self.dir
-
-    def __repr__(self):
-        return self.dir
+@contextlib.contextmanager
+def tempdir():
+    d = tempfile.mkdtemp()
+    yield d
+    shutil.rmtree(d)
 
 
 def train_model(opt):
@@ -79,10 +81,8 @@ def train_model(opt):
     """
     import parlai.scripts.train_model as tms
 
-    stdout = io.StringIO()
-    stderr = io.StringIO()
-    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-        with TempDir() as tmpdir:
+    with capture_output() as output:
+        with tempdir() as tmpdir:
             if 'model_file' not in opt:
                 opt['model_file'] = os.path.join(tmpdir, 'model')
             if 'dict_file' not in opt:
@@ -94,8 +94,7 @@ def train_model(opt):
             valid, test = tl.train()
 
     return (
-        stdout.getvalue(),
-        stderr.getvalue(),
+        output.getvalue(),
         valid,
         test,
     )
@@ -121,17 +120,14 @@ def eval_model(opt):
     if popt.get('model_file') and not popt.get('dict_file'):
         popt['dict_file'] = popt['model_file'] + '.dict'
 
-    stdout = io.StringIO()
-    stderr = io.StringIO()
-    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+    with capture_output() as output:
         popt['datatype'] = 'valid'
         valid = ems.eval_model(popt)
         popt['datatype'] = 'test'
         test = ems.eval_model(popt)
 
     return (
-        stdout.getvalue(),
-        stderr.getvalue(),
+        output.getvalue(),
         valid,
         test,
     )
@@ -146,7 +142,5 @@ def download_unittest_models():
         'transformer_ranker.tar.gz',
         'transformer_generator.tar.gz'
     ]
-    stdout = io.StringIO()
-    stderr = io.StringIO()
-    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+    with capture_output() as _:
         download_models(opt, model_filenames, 'unittest')
