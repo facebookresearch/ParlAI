@@ -429,9 +429,8 @@ class TorchAgent(Agent):
         metrics = {}
         # heads up, if you have multiple optimizers, or different parameter
         # groups, this could be misleading
-        if hasattr(self, 'optimizer'):
-            current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
-            metrics['lr'] = round_sigfigs(current_lr, 4)
+        current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
+        metrics['lr'] = round_sigfigs(current_lr, 4)
         metrics['num_updates'] = self._number_training_updates
         return metrics
 
