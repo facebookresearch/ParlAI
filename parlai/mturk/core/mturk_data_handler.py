@@ -729,7 +729,7 @@ class MTurkDataHandler():
 
     @staticmethod
     def get_conversation_data(task_group_id, conv_id, worker_id, is_sandbox):
-        '''A poorly named function that gets conversation data for a worker'''
+        """A poorly named function that gets conversation data for a worker"""
         result = {
             'had_data_dir': False,
             'had_run_dir': False,
@@ -766,7 +766,7 @@ class MTurkDataHandler():
 
     @staticmethod
     def get_full_conversation_data(task_group_id, conv_id, is_sandbox):
-        '''Gets all conversation data saved for a world'''
+        """Gets all conversation data saved for a world"""
         target = 'sandbox' if is_sandbox else 'live'
         return_data = {
             'custom_data': {},
