@@ -55,10 +55,11 @@ class BiEncoderRankerAgent(TorchRankerAgent):
 
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 200] for i in range(0, len(cands), 200)]
-        print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 200) ]"
-              "".format(len(cand_batches)))
         cand_vecs = []
-        for batch in tqdm.tqdm(cand_batches):
+        for batch in tqdm.tqdm(cand_batches,
+                               desc="[ Vectorizing fixed candidates set from "
+                                    "({} batch(es) of up to 200) ]"
+                                    "".format(len(cand_batches))):
             token_idx = [self._vectorize_text(cand, add_start=True, add_end=True,
                                               truncate=self.opt["label_truncate"])
                          for cand in batch]
