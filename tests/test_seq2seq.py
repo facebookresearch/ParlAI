@@ -5,43 +5,19 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-import io
-import contextlib
-import tempfile
-import os
-import shutil
-import torch
+import parlai.core.testing_utils as testing_utils
 
-from parlai.scripts.train_model import TrainLoop, setup_args
-
-SKIP_HOGWILD = torch.cuda.device_count() > 0
 BATCH_SIZE = 16
 NUM_EPOCHS = 10
 LR = 1
-
-
-def _mock_train(**args):
-    outdir = tempfile.mkdtemp()
-    parser = setup_args()
-    parser.set_defaults(
-        model_file=os.path.join(outdir, "model"),
-        **args,
-    )
-    stdout = io.StringIO()
-    with contextlib.redirect_stdout(stdout):
-        tl = TrainLoop(parser.parse_args(print_args=False))
-        valid, test = tl.train()
-
-    shutil.rmtree(outdir)
-    return stdout.getvalue(), valid, test
 
 
 class TestSeq2Seq(unittest.TestCase):
     """Checks that seq2seq can learn some very basic tasks."""
 
     def test_ranking(self):
-        stdout, valid, test = _mock_train(
-            task='integration_tests:CandidateTeacher',
+        stdout, _, valid, test = testing_utils.train_model(dict(
+            task='integration_tests:candidate',
             model='seq2seq',
             lr=LR,
             batchsize=BATCH_SIZE,
@@ -56,7 +32,7 @@ class TestSeq2Seq(unittest.TestCase):
             dropout=0.0,
             lookuptable='all',
             rank_candidates=True,
-        )
+        ))
         self.assertTrue(
             valid['hits@1'] >= 0.95,
             "hits@1 = {}\nLOG:\n{}".format(valid['ppl'], stdout)
@@ -64,8 +40,8 @@ class TestSeq2Seq(unittest.TestCase):
 
     def test_generation(self):
         """This test uses a single-turn sequence repitition task."""
-        stdout, valid, test = _mock_train(
-            task='integration_tests:NocandidateTeacher',
+        stdout, _, valid, test = testing_utils.train_model(dict(
+            task='integration_tests:nocandidate',
             model='seq2seq',
             lr=LR,
             batchsize=BATCH_SIZE,
@@ -79,7 +55,7 @@ class TestSeq2Seq(unittest.TestCase):
             gradient_clip=1.0,
             dropout=0.0,
             lookuptable='all',
-        )
+        ))
 
         self.assertTrue(
             valid['ppl'] < 1.2,
@@ -92,8 +68,8 @@ class TestSeq2Seq(unittest.TestCase):
 
     def test_beamsearch(self):
         """Ensures beam search can generate the correct response"""
-        stdout, valid, test = _mock_train(
-            task='integration_tests:NocandidateTeacher',
+        stdout, _, valid, test = testing_utils.train_model(dict(
+            task='integration_tests:nocandidate',
             model='seq2seq',
             lr=LR,
             batchsize=BATCH_SIZE,
@@ -108,7 +84,7 @@ class TestSeq2Seq(unittest.TestCase):
             dropout=0.0,
             lookuptable='all',
             beam_size=4,
-        )
+        ))
 
         self.assertTrue(
             valid['bleu'] > 0.95,
@@ -129,12 +105,11 @@ class TestSeq2Seq(unittest.TestCase):
 
 
 class TestHogwildSeq2seq(unittest.TestCase):
-
-    @unittest.skipIf(SKIP_HOGWILD, "No hogwild tests if GPUs are available.")
+    @testing_utils.skipIfGPU
     def test_generation_multi(self):
         """This test uses a multi-turn task and multithreading."""
-        stdout, valid, test = _mock_train(
-            task='integration_tests:MultiturnNocandidateTeacher',
+        stdout, _, valid, test = testing_utils.train_model(dict(
+            task='integration_tests:multiturn_nocandidate',
             model='seq2seq',
             lr=LR,
             batchsize=BATCH_SIZE,
@@ -148,7 +123,7 @@ class TestHogwildSeq2seq(unittest.TestCase):
             gradient_clip=1.0,
             dropout=0.0,
             lookuptable='all',
-        )
+        ))
 
         self.assertTrue(
             valid['ppl'] < 1.2,
@@ -157,6 +132,47 @@ class TestHogwildSeq2seq(unittest.TestCase):
         self.assertTrue(
             test['ppl'] < 1.2,
             "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+        )
+
+
+class TestBackwardsCompatibility(unittest.TestCase):
+    """
+    Tests that a binary file continues to work over time.
+    """
+    def test_backwards_compatibility(self):
+        testing_utils.download_unittest_models()
+
+        stdout, stderr, valid, test = testing_utils.eval_model(dict(
+            task='integration_tests:multipass',
+            model='seq2seq',
+            model_file='models:unittest/seq2seq/model',
+            dict_file='models:unittest/seq2seq/model.dict',
+            no_cuda=True,
+        ))
+
+        self.assertLessEqual(
+            valid['ppl'], 1.01,
+            'valid ppl = {}\nLOG:\n{}'.format(valid['ppl'], stdout),
+        )
+        self.assertGreaterEqual(
+            valid['accuracy'], .999,
+            'valid accuracy = {}\nLOG:\n{}'.format(valid['accuracy'], stdout),
+        )
+        self.assertGreaterEqual(
+            valid['f1'], .999,
+            'valid f1 = {}\nLOG:\n{}'.format(valid['f1'], stdout)
+        )
+        self.assertLessEqual(
+            test['ppl'], 1.01,
+            'test ppl = {}\nLOG:\n{}'.format(test['ppl'], stdout),
+        )
+        self.assertGreaterEqual(
+            test['accuracy'], .999,
+            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
+        )
+        self.assertGreaterEqual(
+            test['f1'], .999,
+            'test f1 = {}\nLOG:\n{}'.format(test['f1'], stdout)
         )
 
 
