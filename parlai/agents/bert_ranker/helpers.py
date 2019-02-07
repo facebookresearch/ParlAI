@@ -9,7 +9,6 @@ from parlai.core.torch_ranker_agent import TorchRankerAgent
 import torch
 try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig
-    from pytorch_pretrained_bert import BertAdam
     from pytorch_pretrained_bert import BertModel  # NOQA
 except ImportError:
     raise ImportError(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
@@ -18,6 +17,7 @@ from parlai.core.utils import _ellipse
 from torch.optim import Optimizer
 from torch.optim.optimizer import required
 from torch.nn.utils import clip_grad_norm_
+
 
 def add_common_args(parser):
     """Add command line arguments for this agent."""
@@ -133,6 +133,7 @@ patterns_optimizer = {
         "bert_model.embeddings"],
 }
 
+
 def get_bert_optimizer(models, type_optimization, learning_rate):
     """ Optimizes the network with AdamWithDecay
     """
@@ -166,9 +167,8 @@ def get_bert_optimizer(models, type_optimization, learning_rate):
         {'params': parameters_without_decay, 'weight_decay': 0.0}
     ]
     optimizer = AdamWithDecay(optimizer_grouped_parameters,
-                                 lr=learning_rate)
+                              lr=learning_rate)
     return optimizer
-
 
 
 class AdamWithDecay(Optimizer):
@@ -182,24 +182,27 @@ class AdamWithDecay(Optimizer):
         b2: Adams b2. Default: 0.999
         e: Adams epsilon. Default: 1e-6
         weight_decay: Weight decay. Default: 0.01
-        max_grad_norm: Maximum norm for the gradients (-1 means no clipping). Default: 1.0
+        max_grad_norm: Maximum norm for the gradients (-1 means no clipping).
+                       Default: 1.0
     """
+
     def __init__(self, params, lr=required,
                  b1=0.9, b2=0.999, e=1e-6, weight_decay=0.01,
                  max_grad_norm=1.0):
         if lr is not required and lr < 0.0:
             raise ValueError("Invalid learning rate: {} - should be >= 0.0".format(lr))
         if not 0.0 <= b1 < 1.0:
-            raise ValueError("Invalid b1 parameter: {} - should be in [0.0, 1.0[".format(b1))
+            raise ValueError(
+                "Invalid b1 parameter: {} - should be in [0.0, 1.0[".format(b1))
         if not 0.0 <= b2 < 1.0:
-            raise ValueError("Invalid b2 parameter: {} - should be in [0.0, 1.0[".format(b2))
+            raise ValueError(
+                "Invalid b2 parameter: {} - should be in [0.0, 1.0[".format(b2))
         if not e >= 0.0:
             raise ValueError("Invalid epsilon value: {} - should be >= 0.0".format(e))
         defaults = dict(lr=lr,
                         b1=b1, b2=b2, e=e, weight_decay=weight_decay,
                         max_grad_norm=max_grad_norm)
         super(AdamWithDecay, self).__init__(params, defaults)
-
 
     def step(self, closure=None):
         """Performs a single optimization step.
@@ -217,7 +220,9 @@ class AdamWithDecay(Optimizer):
                     continue
                 grad = p.grad.data
                 if grad.is_sparse:
-                    raise RuntimeError('Adam does not support sparse gradients, please consider SparseAdam instead')
+                    raise RuntimeError(
+                        'Adam does not support sparse gradients, please '
+                        'consider SparseAdam instead')
 
                 state = self.state[p]
 
