@@ -32,7 +32,7 @@ class TestHogwild(unittest.TestCase):
                 opt['num_threads'] = nt
                 opt['batchsize'] = bs
 
-                stdout, _, valid, test = testing_utils.train_model(opt)
+                stdout, valid, test = testing_utils.train_model(opt)
                 self.assertEqual(
                     valid['exs'],
                     NUM_EXS,
@@ -55,7 +55,7 @@ class TestHogwild(unittest.TestCase):
                 opt['num_threads'] = nt
                 opt['batchsize'] = bs
 
-                stdout, _, valid, test = testing_utils.eval_model(opt)
+                stdout, valid, test = testing_utils.eval_model(opt)
                 self.assertEqual(
                     valid['exs'],
                     NUM_EXS,
