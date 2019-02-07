@@ -51,13 +51,9 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         return BertDictionaryAgent
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
-        if all(f in self.opt for f in ["num_samples", "num_epochs", "batchsize"]):
-            total_iterations = self.opt["num_samples"] * self.opt["num_epochs"] \
-                / self.opt["batchsize"]
+        def init_optim(self, params, optim_states=None, saved_optim_type=None):
             self.optimizer = get_bert_optimizer([self.model],
                                                 self.opt["type_optimization"],
-                                                total_iterations,
-                                                0.05,  # 5% scheduled warmup.
                                                 self.opt["learningrate"])
 
     def receive_metrics(self, metrics_dict):
