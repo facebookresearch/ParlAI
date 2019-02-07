@@ -54,11 +54,6 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                                                 self.opt["type_optimization"],
                                                 self.opt["learningrate"])
 
-    def receive_metrics(self, metrics_dict):
-        """ Inibiting the scheduler.
-        """
-        pass
-
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 200] for i in range(0, len(cands), 200)]
         print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 200) ]"
