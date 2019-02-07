@@ -118,15 +118,15 @@ def eval_model(opt):
     parser.set_params(**opt)
     popt = parser.parse_args(print_args=False)
 
-    if 'dict_file' not in popt and 'model_file' in popt:
+    if popt.get('model_file') and not popt.get('dict_file'):
         popt['dict_file'] = popt['model_file'] + '.dict'
 
     stdout = io.StringIO()
     stderr = io.StringIO()
     with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-        opt['datatype'] = 'valid'
+        popt['datatype'] = 'valid'
         valid = ems.eval_model(popt)
-        opt['datatype'] = 'test'
+        popt['datatype'] = 'test'
         test = ems.eval_model(popt)
 
     return (
