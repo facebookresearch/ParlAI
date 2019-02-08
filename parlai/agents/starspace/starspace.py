@@ -281,6 +281,8 @@ class StarspaceAgent(TorchRankerAgent):
     def vectorize(self, *args, **kwargs):
         """Overrride method from Torch Agent so that by default we do not add
         start and end indices."""
+        kwargs['add_start'] = False
+        kwargs['add_end'] = False
         obs = super().vectorize(*args, **kwargs)
         if 'labels' in obs and obs.get('labels_vec') is not None:
             obs = self._vectorize_custom_candidates(obs)
