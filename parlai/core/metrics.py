@@ -182,9 +182,9 @@ class Metrics(object):
             cnts = {k: 0 for k in self.eval_pr}
             cnt = 0
             for c in text_cands:
-                if c is None:
-                    c = "__(Metric computation received None)__"
                 cnt += 1
+                if c is None:
+                    continue
                 if normalize_answer(c) in label_set:
                     for k in self.eval_pr:
                         if cnt <= k:
