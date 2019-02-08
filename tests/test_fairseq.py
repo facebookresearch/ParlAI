@@ -26,7 +26,7 @@ class TestFairseq(unittest.TestCase):
     @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")
     def test_labelcands(self):
         stdout, valid, test = testing_utils.train_model(dict(
-            task='integration_tests:CandidateTeacher',
+            task='integration_tests:candidate',
             model='fairseq',
             arch='lstm_wiseman_iwslt_de_en',
             lr=LR,
@@ -49,7 +49,7 @@ class TestFairseq(unittest.TestCase):
     @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")
     def test_generation(self):
         stdout, valid, test = testing_utils.train_model(dict(
-            task='integration_tests:NocandidateTeacher',
+            task='integration_tests:nocandidate',
             model='fairseq',
             arch='lstm_wiseman_iwslt_de_en',
             lr=LR,

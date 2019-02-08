@@ -126,7 +126,7 @@ class TestTransformerGenerator(unittest.TestCase):
     @testing_utils.retry(ntries=3)
     def test_greedysearch(self):
         stdout, valid, test = testing_utils.train_model(dict(
-            task='integration_tests:NocandidateTeacher',
+            task='integration_tests:nocandidate',
             model='transformer/generator',
             optimizer='adamax',
             learningrate=7e-3,
@@ -163,7 +163,7 @@ class TestTransformerGenerator(unittest.TestCase):
     @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
         stdout, valid, test = testing_utils.train_model(dict(
-            task='integration_tests:NocandidateTeacher',
+            task='integration_tests:nocandidate',
             model='transformer/generator',
             optimizer='adamax',
             learningrate=7e-3,
@@ -249,7 +249,7 @@ class TestTransformerGenerator(unittest.TestCase):
 class TestLearningRateScheduler(unittest.TestCase):
     def test_resuming(self):
         BASE_ARGS = dict(
-            task='integration_tests:NocandidateTeacher',
+            task='integration_tests:nocandidate',
             model='transformer/generator',
             optimizer='adamax',
             learningrate=1e-3,
