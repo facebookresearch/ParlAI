@@ -520,10 +520,10 @@ class TorchAgent(Agent):
 
     def report(self):
         metrics = {}
-        # heads up, if you have multiple optimizers, or different parameter
-        # groups, this could be misleading
-        current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
-        metrics['lr'] = round_sigfigs(current_lr, 4)
+        # only report LR if we have a scheduler
+        if hasattr(self, 'scheduler') and self.scheduler is not None:
+            current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
+            metrics['lr'] = round_sigfigs(current_lr, 4)
         metrics['num_updates'] = self._number_training_updates
         return metrics
 
@@ -544,7 +544,7 @@ class TorchAgent(Agent):
         this to work.
         Override this to override the behavior.
         """
-        if self.scheduler is None:
+        if not hasattr(self, 'scheduler') or self.scheduler is None:
             return
 
         if self._is_lr_warming_up():
@@ -552,7 +552,10 @@ class TorchAgent(Agent):
             # metrics to adjust schedule
             return
 
-        if self.opt['lr_scheduler'] == 'reduceonplateau':
+        if self.opt['lr_scheduler'] == 'none':
+            # no scheduler, nothing to adjust here
+            pass
+        elif self.opt['lr_scheduler'] == 'reduceonplateau':
             if 'loss' not in metrics_dict:
                 # nothing to step on, just skip
                 warn_once("LR scheduler expected to see loss metric, but didn't.")
