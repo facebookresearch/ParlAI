@@ -188,7 +188,6 @@ class StarspaceAgent(TorchRankerAgent):
                 ys=batch.label_vec,
                 cands=cand_vecs
             )
-        xe = torch.cat([xe for _ in range(ye.size(1))], dim=1)
 
         y = -torch.ones(xe.size(0), xe.size(1)).to(xe.device)
         y_0 = torch.ones(xe.size(0)).to(xe.device)
@@ -199,6 +198,7 @@ class StarspaceAgent(TorchRankerAgent):
             ye.view(-1, xe.size(-1)),
             y.view(-1)
         )
+
         loss.backward()
         self.optimizer.step()
         scores = nn.CosineSimilarity(dim=-1).forward(xe, ye)
@@ -228,7 +228,6 @@ class StarspaceAgent(TorchRankerAgent):
             ys=None,
             cands=cand_vecs
         )
-        xe = torch.cat([xe for _ in range(ye.size(1))], dim=1)
 
         scores = nn.CosineSimilarity(dim=-1).forward(xe, ye)
         _, ranks = scores.sort(1, descending=True)
