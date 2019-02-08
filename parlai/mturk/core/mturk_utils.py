@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import boto3
 import os
@@ -146,6 +144,9 @@ def create_hit_config(opt, task_description, unique_worker, is_sandbox):
         'frame_height': opt.get('frame_height', 650),
         'allow_reviews': opt.get('allow_reviews', False),
         'block_mobile': opt.get('block_mobile', True),
+        # Populate the chat pane title from chat_title, defaulting to the
+        # hit_title if the task provides no chat_title
+        'chat_title': opt.get('chat_title', opt.get('hit_title', 'Live Chat')),
     }
     hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
     if os.path.exists(hit_config_file_path):

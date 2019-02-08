@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import unittest
 from parlai.core.agents import Agent
@@ -271,9 +269,9 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # next: should truncate cached result
             prev_vec = out['text_vec']
-            out_again = agent.vectorize(out, truncate=1)
+            out_again = agent.vectorize(out, text_truncate=1)
             self.assertIsNot(prev_vec, out_again['text_vec'])
-            self.assertEqual(out['text_vec'].tolist(), [1])
+            self.assertEqual(out['text_vec'].tolist(), [3])
 
         # test split_lines
         obs = {
@@ -294,9 +292,9 @@ class TestTorchAgent(unittest.TestCase):
         # next: should truncate cached result
         prev_vec = out['text_vec']
         prev_mem = out['memory_vecs']
-        out_again = agent.vectorize(out, truncate=1, split_lines=True)
+        out_again = agent.vectorize(out, text_truncate=1, split_lines=True)
         self.assertIsNot(prev_vec, out_again['text_vec'])
-        self.assertEqual(out['text_vec'].tolist(), [1])
+        self.assertEqual(out['text_vec'].tolist(), [3])
         self.assertIsNot(prev_mem, out_again['memory_vecs'])
         for i in range(len(prev_mem)):
             if len(prev_mem[i]) > 1:
@@ -306,7 +304,7 @@ class TestTorchAgent(unittest.TestCase):
                 # otherwise should still be the same one
                 self.assertIs(prev_mem[i], out_again['memory_vecs'][i])
         self.assertEqual([m.tolist() for m in out['memory_vecs']],
-                         [[1], [1], [1]])
+                         [[1], [5], [4]])
 
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batchify(self):

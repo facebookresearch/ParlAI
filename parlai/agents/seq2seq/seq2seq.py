@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from .modules import Seq2seq, opt_to_kwargs
@@ -38,8 +36,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('Seq2Seq Arguments')
-        agent.add_argument('--init-model', type=str, default=None,
-                           help='load dict/model/opts from this path')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')
         agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
@@ -90,8 +86,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
         agent.add_argument('-idr', '--input-dropout', type=float, default=0.0,
                            help='Probability of replacing tokens with UNK in training.')
 
-        super(cls, Seq2seqAgent).add_cmdline_args(argparser)
-        Seq2seqAgent.dictionary_class().add_cmdline_args(argparser)
+        super(Seq2seqAgent, cls).add_cmdline_args(argparser)
         return agent
 
     @staticmethod
@@ -154,15 +149,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
         if self.use_cuda:
             self.model.cuda()
-            if self.multigpu:
-                self.model = torch.nn.DataParallel(self.model)
-                self.model.encoder = self.model.module.encoder
-                self.model.decoder = self.model.module.decoder
-                self.model.longest_label = self.model.module.longest_label
-                self.model.output = self.model.module.output
-                self.model.reorder_encoder_states = (
-                    self.model.module.reorder_encoder_states
-                )
 
         return self.model
 
@@ -195,11 +181,12 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
         if path and hasattr(self, 'model'):
             model = {}
-            if self.multigpu:
+            if hasattr(self.model, 'module'):
                 model['model'] = self.model.module.state_dict()
+                model['longest_label'] = self.model.module.longest_label
             else:
                 model['model'] = self.model.state_dict()
-            model['longest_label'] = self.model.longest_label
+                model['longest_label'] = self.model.longest_label
             model['optimizer'] = self.optimizer.state_dict()
             model['optimizer_type'] = self.opt['optimizer']
 
@@ -216,10 +203,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
         """Return opt and model states."""
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         # set loaded states if applicable
-        if self.multigpu:
-            self.model.module.load_state_dict(states['model'])
-        else:
-            self.model.load_state_dict(states['model'])
+        self.model.load_state_dict(states['model'])
         if 'longest_label' in states:
             self.model.longest_label = states['longest_label']
         return states

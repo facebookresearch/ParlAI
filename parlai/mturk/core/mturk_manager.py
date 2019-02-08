@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import logging
 import math
@@ -576,7 +574,12 @@ class MTurkManager():
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             agent.log_reconnect()
             agent.alived = True
-            conversation_id = agent.conversation_id
+            if agent.conversation_id is not None and \
+                    conversation_id is not None:
+                # agent.conversation_id is None is used in testing.
+                # conversation_id is None on a fresh reconnect event, where
+                # we need to restore state somehow and shouldn't just inherit
+                conversation_id = agent.conversation_id
             if agent.get_status() == AssignState.STATUS_NONE:
                 # See if assigned an onboarding world, update state if so
                 if self.is_onboarding_world(conversation_id):

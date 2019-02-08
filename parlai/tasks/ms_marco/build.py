@@ -3,6 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+=======
+
 import gzip
 import json
 import os
@@ -65,7 +67,7 @@ def create_fb_format(outpath, dtype, inpath):
         fout2.write(s + '\n')
     fout2.close()
 
-
+# Download and build the data if it does not exist.
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MS_MARCO')
     version = None

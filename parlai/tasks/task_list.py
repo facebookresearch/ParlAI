@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """This file contains a list of all the tasks, their id and task name, description
 and the tags associated with them.
 """
@@ -733,6 +731,16 @@ task_list = [
         ),
     },
     {
+        "id": "TalkTheWalk",
+        "display_name": "Talk the Walk",
+        "task": "talkthewalk",
+        "tags": ["All", "Visual"],
+        "description": (
+            "Talk the walk dataset."
+            "See https://arxiv.org/abs/1807.03367 for more information."
+        ),
+    },
+    {
         "id": "Wizard_of_Wikipedia",
         "display_name": "Wizard_of_Wikipedia",
         "task": "wizard_of_wikipedia",
@@ -765,5 +773,16 @@ task_list = [
             "from the original authors. See https://arxiv.org/abs/1710.03957 "
             "for more information."
         )
+    },
+    {
+        "id": "EmpatheticDialogues",
+        "display_name": "Empathetic Dialogues",
+        "task": "empathetic_dialogues",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "A dataset of 25k conversations grounded in emotional situations "
+            "to facilitate training and evaluating dialogue systems. See "
+            "https://arxiv.org/abs/1811.00207 for more information."
+        ),
     },
 ]

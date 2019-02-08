@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import errno
 import logging
@@ -163,13 +161,13 @@ class SocketManager():
     """
 
     # Time to acknowledge different message types
-    ACK_TIME = {Packet.TYPE_ALIVE: 2,
-                Packet.TYPE_MESSAGE: 0.5}
+    ACK_TIME = {Packet.TYPE_ALIVE: 4,
+                Packet.TYPE_MESSAGE: 4}
 
     # Default pongs without heartbeat before socket considered dead
-    DEF_MISSED_PONGS = 10
-    HEARTBEAT_RATE = 2
-    DEF_DEAD_TIME = 20
+    DEF_MISSED_PONGS = 20
+    HEARTBEAT_RATE = 4
+    DEF_DEAD_TIME = 30
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, task_group_id,
@@ -324,8 +322,11 @@ class SocketManager():
         if packet.requires_ack:
             if packet.blocking:
                 # Put the packet right back into its place to prevent sending
-                # other packets
+                # other packets, then block
                 self._safe_put(connection_id, (send_time, packet))
+                t = time.time() + self.ACK_TIME[packet.type]
+                while time.time() < t and packet.status != Packet.STATUS_ACK:
+                    time.sleep(shared_utils.THREAD_SHORT_SLEEP)
             else:
                 # non-blocking ack: add ack-check to queue
                 t = time.time() + self.ACK_TIME[packet.type]
