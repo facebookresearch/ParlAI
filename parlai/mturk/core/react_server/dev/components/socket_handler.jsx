@@ -389,7 +389,7 @@ class SocketHandler extends React.Component {
       message.text = '';
     }
     var agent_id = message.id;
-    var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    var message_text = message.text;
     if (this.state.displayed_messages.indexOf(new_message_id) !== -1) {
       // This message has already been seen and put up into the chat
       log(new_message_id + ' was a repeat message', 1);
