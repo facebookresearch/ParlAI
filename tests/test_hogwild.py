@@ -9,7 +9,7 @@ import unittest
 import parlai.core.testing_utils as testing_utils
 
 NUM_EXS = 100
-# ideally we wants something that's nice modulo with NUM_EXS and not
+# ideally we want one choice which is a nice modulo with NUM_EXS, and one that isn't
 NUM_THREADS_CHOICES = [2, 8]
 BATCHSIZE_CHOICES = [1, 8]
 

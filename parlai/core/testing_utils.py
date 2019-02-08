@@ -52,7 +52,7 @@ def skipIfGPU(testfn, reason='Test is CPU-only'):
 
 def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     """Decorator for skipping a test if no GPU is available."""
-    return unittest.skipIf(not GPU_AVAILABLE, reason)(testfn)
+    return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
 def skipIfTravis(testfn, reason='Test disabled in Travis'):
@@ -159,7 +159,7 @@ def train_model(opt):
     Runs through a TrainLoop.
 
     If model_file is not in opt, then this helper will create a temporary
-    to store the model, dict, etc.
+    directory to store the model, dict, etc.
 
     :return: (stdout, stderr, valid_results, test_results)
     :rtype: (str, str, dict, dict)

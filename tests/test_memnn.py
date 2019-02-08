@@ -19,7 +19,7 @@ class TestMemnn(unittest.TestCase):
         """This test uses a single-turn task, so doesn't test memories."""
 
         stdout, valid, test = testing_utils.train_model(dict(
-            task='integration_tests:CandidateTeacher',
+            task='integration_tests:candidate',
             model='memnn',
             lr=LR,
             batchsize=BATCH_SIZE,
@@ -48,7 +48,7 @@ class TestMemnn(unittest.TestCase):
     def test_labelcands_multi(self):
         """This test uses a multi-turn task and multithreading."""
         stdout, valid, test = testing_utils.train_model(dict(
-            task='integration_tests:MultiturnCandidateTeacher',
+            task='integration_tests:multiturn_candidate',
             model='memnn',
             lr=LR,
             batchsize=BATCH_SIZE,
