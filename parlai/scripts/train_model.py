@@ -86,7 +86,7 @@ def setup_args(parser=None):
     train.add_argument('-vmt', '--validation-metric', default='accuracy',
                        help='key into report table for selecting best '
                             'validation')
-    train.add_argument('-vmm', '--validation-metric-mode', default='max',
+    train.add_argument('-vmm', '--validation-metric-mode',
                        type=str, choices=['max', 'min'],
                        help='how to optimize validation metric (max or min)')
     train.add_argument('-vcut', '--validation-cutoff',
@@ -241,6 +241,15 @@ class TrainLoop():
         self.val_every_n_epochs = \
             opt['validation_every_n_epochs'] if opt['validation_every_n_epochs'] > 0 \
             else float('inf')
+
+        # smart defaults for --validation-metric-mode
+        if opt['validation_metric'] in {'loss', 'ppl', 'mean_rank'}:
+            opt['validation_metric_mode'] = 'min'
+        elif opt['validation_metric'] in {'accuracy', 'hits@1', 'hits@5', 'f1', 'bleu'}:
+            opt['validation_metric_mode'] = 'max'
+        if opt.get('validation_metric_mode') is None:
+            opt['validation_metric_mode'] = 'max'
+
         self.last_valid_epoch = 0
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.best_valid = None
