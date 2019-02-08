@@ -92,11 +92,11 @@ def build(opt):
         build_data.download(url + fname, dpath, 'test.gz')
 
         create_fb_format(dpath, "train", os.path.join(dpath, 'train.gz'))
-        os.remove(os.path.join(dpath, 'train.gz'))
+        # os.remove(os.path.join(dpath, 'train.gz'))
         create_fb_format(dpath, "valid", os.path.join(dpath, 'valid.gz'))
-        os.remove(os.path.join(dpath, 'valid.gz'))
+        # os.remove(os.path.join(dpath, 'valid.gz'))
         create_fb_format(dpath, "test", os.path.join(dpath, 'test.gz'))
-        os.remove(os.path.join(dpath, 'test.gz'))
+        # os.remove(os.path.join(dpath, 'test.gz'))
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
