@@ -8,6 +8,7 @@
 import gzip
 import json
 import os
+import tqdm
 import parlai.core.build_data as build_data
 
 
@@ -17,59 +18,54 @@ def read_file(filename):
     return lines
 
 
-def convert_file(input_file_path, output_file_path):
-    print("GZIP file will now be loaded")
+def convert_file(input_file_path):
+    print("Reading gzip file {}.".format(input_file_path))
     with gzip.open(input_file_path) as f:
         records = json.load(f)
-    print("Output file opened")
-    with open(output_file_path, 'w') as f:
-        for i in range(0, len(records["passages"].keys())):
-            newline_dict = {}
-            index = str(i)
-            if "test" not in input_file_path:
-                newline_dict["answers"] = records["answers"][index]
-                newline_dict["wellFormedAnswers"] = records["wellFormedAnswers"][index]
-            newline_dict["passages"] = records["passages"][index]
-            newline_dict["query"] = records["query"][index]
-            newline_dict["query_id"] = records["query_id"][index]
-            newline_dict["query_type"] = records["query_type"][index]
-            f.write(json.dumps(newline_dict) + "\n")
-    print("File finished iterating")
+    n = len(records["passages"].keys())
+    for i in tqdm.tqdm(range(n), "Converting"):
+        newline_dict = {}
+        index = str(i)
+        if "test" not in input_file_path:
+            newline_dict["answers"] = records["answers"][index]
+            newline_dict["wellFormedAnswers"] = records["wellFormedAnswers"][index]
+        newline_dict["passages"] = records["passages"][index]
+        newline_dict["query"] = records["query"][index]
+        newline_dict["query_id"] = records["query_id"][index]
+        newline_dict["query_type"] = records["query_type"][index]
+        yield newline_dict
 
 
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
-    output = outpath.split(".")[0] + ".jsonl"
-    convert_file(inpath, output)
-    lines = read_file(output)
+    episodes = list(convert_file(inpath))
 
     # save the raw json version for span selection task (default)
-    fout1 = open(os.path.join(outpath, dtype + '.txt'), 'w')
-    for line in lines:
-        fout1.write(line.rstrip("\n") + "\n")
-    fout1.close()
+    with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout1:
+        for ep in episodes:
+            fout1.write(json.dumps(ep) + "\n")
 
     # save the file for passage selection task
-    fout2 = open(os.path.join(outpath, dtype + '.passage.txt'), 'w')
-    for line in lines:
-        dic = json.loads(line)
-        lq = dic["query"]
-        if dtype != "test":
-            ans = "|".join([
-                d["passage_text"] for d in dic["passages"] if d["is_selected"] == 1
-            ])
-            cands = "|".join([
-                d["passage_text"] for d in dic["passages"] if d["is_selected"] == 0
-            ])
-            cands = ans + "|" + cands
-            if ans == "":
-                continue  # if no true label, skip for now
-        else:  # ground truth for test data is not available yet
-            ans = ""
-            cands = "|".join([d["passage_text"] for d in dic["passages"]])
-        s = '1 ' + lq + '\t' + ans.lstrip("|") + '\t\t' + cands
-        fout2.write(s + '\n')
-    fout2.close()
+    with open(os.path.join(outpath, dtype + '.passage.txt'), 'w') as fout2:
+        for dic in episodes:
+            lq = dic["query"]
+            if dtype != "test":
+                ans = "|".join([
+                    d["passage_text"] for d in dic["passages"] if d["is_selected"] == 1
+                ])
+                cands = "|".join([
+                    d["passage_text"] for d in dic["passages"] if d["is_selected"] == 0
+                ])
+                cands = ans + "|" + cands
+                if ans == "":
+                    # if no true label, skip for now
+                    continue
+            else:
+                # ground truth for test data is not available yet
+                ans = ""
+                cands = "|".join([d["passage_text"] for d in dic["passages"]])
+            s = '1 ' + lq + '\t' + ans.lstrip("|") + '\t\t' + cands
+            fout2.write(s + '\n')
 
 # Download and build the data if it does not exist.
 def build(opt):
@@ -96,8 +92,11 @@ def build(opt):
         build_data.download(url + fname, dpath, 'test.gz')
 
         create_fb_format(dpath, "train", os.path.join(dpath, 'train.gz'))
+        os.remove(os.path.join(dpath, 'train.gz'))
         create_fb_format(dpath, "valid", os.path.join(dpath, 'valid.gz'))
+        os.remove(os.path.join(dpath, 'valid.gz'))
         create_fb_format(dpath, "test", os.path.join(dpath, 'test.gz'))
+        os.remove(os.path.join(dpath, 'test.gz'))
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
