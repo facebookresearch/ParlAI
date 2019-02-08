@@ -5,48 +5,24 @@
 # LICENSE file in the root directory of this source tree.
 from examples.display_data import display_data
 from parlai.core.params import ParlaiParser
-
-import sys
 import unittest
+import parlai.core.testing_utils as testing_utils
 
 
 class TestDisplayData(unittest.TestCase):
     """Basic tests on the display_data.py example."""
-
-    args = [
-        '--task', 'babi:task1k:1',
-    ]
-    parser = ParlaiParser()
-    opt = parser.parse_args(args, print_args=False)
-    opt['num_examples'] = 1
-
     def test_output(self):
         """Does display_data reach the end of the loop?"""
+        with testing_utils.capture_output() as stdout:
+            parser = ParlaiParser()
+            opt = parser.parse_args(['--task', 'babi:task1k:1'], print_args=False)
+            opt['num_examples'] = 1
+            display_data(opt)
 
-        class display_output(object):
-            def __init__(self):
-                self.data = []
-
-            def write(self, s):
-                self.data.append(s)
-
-            def __str__(self):
-                return "".join(self.data)
-
-        old_out = sys.stdout
-        output = display_output()
-        try:
-            sys.stdout = output
-            display_data(self.opt)
-        finally:
-            # restore sys.stdout
-            sys.stdout = old_out
-
-        str_output = str(output)
-        self.assertTrue(len(str_output) > 0, "Output is empty")
-        self.assertTrue("[babi:task1k:1]:" in str_output,
-                        "Babi task did not print")
-        self.assertTrue("~~" in str_output, "Example output did not complete")
+        str_output = stdout.getvalue()
+        self.assertGreater(len(str_output), 0, "Output is empty")
+        self.assertIn("[babi:task1k:1]:", str_output, "Babi task did not print")
+        self.assertIn("~~", str_output, "Example output did not complete")
 
 
 if __name__ == '__main__':

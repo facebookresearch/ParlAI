@@ -57,14 +57,14 @@ class CandidateTeacher(DialogTeacher):
 
         super().__init__(opt, shared)
 
-    def num_examples(self):
+    def num_episodes(self):
         if self.datafile == 'train':
             return self.num_train
         else:
             return self.num_test
 
-    def num_episodes(self):
-        return self.num_examples()
+    def num_examples(self):
+        return self.num_episodes()
 
     def setup_data(self, fold):
         # N words appearing in a random order
@@ -104,6 +104,30 @@ class CandidateTeacher(DialogTeacher):
                 offset = (i + j) % len(self.corpus)
                 cands.append(self.corpus[offset])
             yield (text, [text], 0, cands), True
+
+
+class MultipassTeacher(CandidateTeacher):
+    """
+    Multiturn teacher, where each episode goes:
+
+    call      response
+    1         1
+    2         1 2
+    3         1 2 3
+    4         1 2 3 4
+    """
+    def num_examples(self):
+        return super().num_examples() * self.example_size
+
+    def setup_data(self, fold):
+        raw = super().setup_data(fold)
+        for (t, a, _, cs), _ in raw:
+            split_t = t.split(' ')
+            ans = a[0]
+            for i, bit in enumerate(split_t):
+                label = ans[:2 * i + 1]
+                cands = [c[:2 * i + 1] for c in cs]
+                yield (bit, [label], 0, cands), i == 0
 
 
 class MultiturnCandidateTeacher(CandidateTeacher):
