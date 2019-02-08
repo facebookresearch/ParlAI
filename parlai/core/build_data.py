@@ -190,11 +190,13 @@ def download_from_google_drive(gd_id, destination):
 
 def download_models(opt, fnames, model_folder, version='v1.0', path='aws',
                     use_model_type=False):
-    """Download models into the ParlAI model zoo from a url.
-       fnames -- list of filenames to download
-       model_folder -- models will be downloaded into models/model_folder/model_type
-       path -- url for downloading models; defaults to downloading from AWS
-       use_model_type -- whether models are categorized by type in AWS
+    """
+    Download models into the ParlAI model zoo from a url.
+
+    :param fnames: list of filenames to download
+    :param model_folder: models will be downloaded into models/model_folder/model_type
+    :param path: url for downloading models; defaults to downloading from AWS
+    :param use_model_type: whether models are categorized by type in AWS
     """
 
     model_type = opt.get('model_type', None)
