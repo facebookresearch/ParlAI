@@ -12,6 +12,7 @@ import parlai.core.testing_utils as testing_utils
 class TestTransformerRanker(unittest.TestCase):
     """Checks that transformer_ranker can learn some very basic tasks."""
 
+    @testing_utils.retry(ntries=3)
     def test_repeater(self):
         stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:candidate',
@@ -122,6 +123,7 @@ class TestTransformerRanker(unittest.TestCase):
 
 class TestTransformerGenerator(unittest.TestCase):
     """Checks that the generative transformer can learn basic tasks."""
+    @testing_utils.retry(ntries=3)
     def test_greedysearch(self):
         stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:NocandidateTeacher',
@@ -158,6 +160,7 @@ class TestTransformerGenerator(unittest.TestCase):
             "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
         )
 
+    @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
         stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:NocandidateTeacher',

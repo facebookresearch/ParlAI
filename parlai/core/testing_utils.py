@@ -60,7 +60,38 @@ def skipIfTravis(testfn, reason='Test disabled in Travis'):
     return unittest.skipIf(os.environ.get('TRAVIS'), reason)(testfn)
 
 
+class retry(object):
+    """
+    Decorator for flaky tests. Test is run up to ntries times, retrying on failure.
+
+    On the last time, the test will simply fail.
+
+    >>> @retry(ntries=10)
+    ... def test_flaky(self):
+    ...     import random
+    ...     self.assertLess(0.5, random.random())
+    """
+    def __init__(self, ntries=3):
+        self.ntries = ntries
+
+    def __call__(self, testfn):
+        from functools import wraps
+        @wraps(testfn)
+        def _wrapper(testself, *args, **kwargs):
+            for i in range(self.ntries - 1):
+                try:
+                    return testfn(testself, *args, **kwargs)
+                except testself.failureException:
+                    pass
+            # last time, actually throw any errors there may be
+            return testfn(testself, *args, **kwargs)
+        return _wrapper
+
+
 def git_ls_files(root=None, skip_nonexisting=True):
+    """
+    List all files tracked by git.
+    """
     filenames = git_.ls_files(root).split('\n')
     if skip_nonexisting:
         filenames = [fn for fn in filenames if os.path.exists(fn)]
@@ -68,6 +99,9 @@ def git_ls_files(root=None, skip_nonexisting=True):
 
 
 def git_ls_dirs(root=None):
+    """
+    Lists all folders tracked by git.
+    """
     dirs = set()
     for fn in git_ls_files(root):
         dirs.add(os.path.dirname(fn))
@@ -75,6 +109,9 @@ def git_ls_dirs(root=None):
 
 
 def git_changed_files(skip_nonexisting=True):
+    """
+    Lists all the changed files in the git repository.
+    """
     fork_point = git_.merge_base('--fork-point', 'origin/master').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
@@ -84,6 +121,18 @@ def git_changed_files(skip_nonexisting=True):
 
 @contextlib.contextmanager
 def capture_output():
+    """
+    Context manager which suppresses all stdout and stderr, and combines them
+    into a single io.StringIO.
+
+    :returns: the output
+    :rtype: io.StringIO
+
+    >>> with capture_output() as output:
+    ...     print('hello')
+    >>> output.getvalue()
+    'hello'
+    """
     if DEBUG:
         yield
     else:
@@ -94,6 +143,12 @@ def capture_output():
 
 @contextlib.contextmanager
 def tempdir():
+    """
+    Simple wrapper for creating a temporary directory.
+
+    >>> with tempdir() as tmpdir:
+    ...    print(tmpdir)  # prints a folder like /tmp/randomname
+    """
     d = tempfile.mkdtemp()
     yield d
     shutil.rmtree(d)
@@ -103,11 +158,11 @@ def train_model(opt):
     """
     Runs through a TrainLoop.
 
-    :return: (stdout, stderr, valid_results, test_results)
-    :rtype: (str, str, dict, dict)
-
     If model_file is not in opt, then this helper will create a temporary
     to store the model, dict, etc.
+
+    :return: (stdout, stderr, valid_results, test_results)
+    :rtype: (str, str, dict, dict)
     """
     import parlai.scripts.train_model as tms
 
