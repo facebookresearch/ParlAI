@@ -22,6 +22,7 @@ LR = 1e-2
 class TestFairseq(unittest.TestCase):
     """Checks that fairseq can learn some very basic tasks."""
 
+    @testing_utils.skipUnlessGPU
     @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")
     def test_labelcands(self):
         stdout, valid, test = testing_utils.train_model(dict(
@@ -44,6 +45,7 @@ class TestFairseq(unittest.TestCase):
             "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
         )
 
+    @testing_utils.skipUnlessGPU
     @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")
     def test_generation(self):
         stdout, valid, test = testing_utils.train_model(dict(
