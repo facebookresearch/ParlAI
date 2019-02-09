@@ -1,6 +1,8 @@
 <h2>News</h2>
-2019-01-16: ParlAI has been relicensed under the MIT open source license.
 
+2019-02-08: BERT support has been added to ParlAI.
+
+2019-01-16: ParlAI has been relicensed under the MIT open source license.
 
 2018-12-13: Added [Daily Dialog](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/dailydialog/agents.py), an open-domain daily dialogue dataset.
 
