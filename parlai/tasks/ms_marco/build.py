@@ -35,6 +35,10 @@ def convert_file(input_file_path):
         yield newline_dict
 
 
+def cleanup(txt):
+    return txt.strip().replace("|", "__PIPE__").replace("\\n", "__NEWLINE__")
+
+
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
     episodes = list(convert_file(inpath))
@@ -49,27 +53,29 @@ def create_fb_format(outpath, dtype, inpath):
         for dic in episodes:
             lq = dic["query"]
             if dtype != "test":
-                ans = "|".join([
-                    d["passage_text"] for d in dic["passages"] if d["is_selected"] == 1
-                ])
-                cands = "|".join([
-                    d["passage_text"] for d in dic["passages"] if d["is_selected"] == 0
-                ])
-                cands = ans + "|" + cands
-                if ans == "":
-                    # if no true label, skip for now
+                ans = [
+                    cleanup(d["passage_text"])
+                    for d in dic["passages"]
+                    if d["is_selected"] == 1
+                ]
+                if not ans:
                     continue
             else:
                 # ground truth for test data is not available yet
-                ans = ""
-                cands = "|".join([d["passage_text"] for d in dic["passages"]])
-            s = '1 ' + lq + '\t' + ans.lstrip("|") + '\t\t' + cands
-            fout2.write(s + '\n')
+                ans = []
+
+            cands = [cleanup(d["passage_text"]) for d in dic["passages"]]
+            if cands and not ans:
+                cands.append("")
+            if not cands:
+                continue
+            fout2.write('1 {}\t{}\t\t{}\n'.format(lq, '|'.join(ans), '|'.join(cands)))
+
 
 # Download and build the data if it does not exist.
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MS_MARCO')
-    version = None
+    version = "2.1"
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
