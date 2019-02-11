@@ -116,7 +116,7 @@ class MainApp extends React.Component {
   }
 
   onMessageSend(text, data, callback, is_system) {
-    if (text == '') {
+    if (text === '') {
       return;
     }
     this.socket_handler.handleQueueMessage(text, data, callback, is_system);

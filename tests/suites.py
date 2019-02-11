@@ -5,12 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-
-# gross hack b/c we're not marking tests/ as a package
-try:
-    from tests import utils
-except ImportError:
-    from . import utils
+import parlai.core.testing_utils as testing_utils
 
 
 def _clear_cmdline_args(fn):
@@ -52,7 +47,7 @@ def travis():
     """Tests needed to pass Travis."""
     test_suite = unittest.TestSuite()
     test_suite.addTests(short())
-    changed_files = utils.git_changed_files(skip_nonexisting=False)
+    changed_files = testing_utils.git_changed_files(skip_nonexisting=False)
     if any('parlai/mturk' in fn for fn in changed_files):
         # if any mturk stuff changed, run those tests too
         test_suite.addTests(mturk())

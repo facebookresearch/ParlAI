@@ -54,7 +54,7 @@ class ChatMessage extends React.Component {
         <div
           className={"alert " + alert_class} role="alert"
           style={{'float': float_loc, 'display': 'table'}}>
-          <span style={{'fontSize': '16px'}}>
+          <span style={{'fontSize': '16px', 'whiteSpace': 'pre-wrap'}}>
             <b>{this.props.agent_id}</b>: {this.props.message}
           </span>
           {duration}

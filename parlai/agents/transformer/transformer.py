@@ -30,9 +30,13 @@ def add_common_cmdline_args(argparser):
                            help='Hidden size of the FFN layers')
     argparser.add_argument('--attention-dropout', type=float, default=0.0)
     argparser.add_argument('--relu-dropout', type=float, default=0.0)
-    argparser.add_argument('--n-heads', type=int, default=2)
+    argparser.add_argument('--n-heads', type=int, default=2,
+                           help='Number of multihead attention heads')
     argparser.add_argument('--learn-positional-embeddings', type='bool', default=False)
     argparser.add_argument('--embeddings-scale', type='bool', default=True)
+    argparser.add_argument('--n-positions', type=int, default=None, hidden=True,
+                           help='Number of positional embeddings to learn. Defaults '
+                                'to truncate or 1024 if not provided.')
 
 
 class Transformer(Agent):

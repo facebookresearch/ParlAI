@@ -39,7 +39,6 @@ class DefaultTeacher(DialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        print('loading: ' + path)
         with open(path) as data_file:
             for jline in data_file:
                 d_example = json.loads(jline)

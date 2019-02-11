@@ -11,12 +11,10 @@ from parlai.core.worlds import create_task
 from parlai.core.pytorch_data_teacher import ep_length
 
 import unittest
-import tempfile
-import io
+import parlai.core.testing_utils as testing_utils
 import os
 import torch
 from torch.utils.data.sampler import RandomSampler, SequentialSampler as Sequential
-from contextlib import redirect_stdout
 
 parser_defaults = {
     'model': 'seq2seq',
@@ -27,11 +25,6 @@ parser_defaults = {
     'validation_every_n_secs': 30,
     'batch_length_range': 5,
 }
-
-
-def set_model_file(defaults):
-    defaults['model_file'] = os.path.join(tempfile.mkdtemp(), 'model')
-    defaults['dict_file'] = defaults['model_file'] + '.dict'
 
 
 def solved_task(str_output):
@@ -64,26 +57,25 @@ class TestPytorchDataTeacher(unittest.TestCase):
                         'datatype': datatype,
                         'shuffle': shuffle
                     }
-                    print('Testing test_shuffle with args {}'.format(opt_defaults))
-                    f = io.StringIO()
-                    with redirect_stdout(f):
+                    with testing_utils.capture_output() as _:
                         parser = display_setup_args()
                         parser.set_defaults(**opt_defaults)
                         opt = parser.parse_args()
                         teacher = create_task_agent_from_taskname(opt)[0]
-                    if ('ordered' in datatype or
+                        if (
+                            'ordered' in datatype or
                             ('stream' in datatype and not opt.get('shuffle')) or
-                            'train' not in datatype):
-                        self.assertTrue(
-                            type(teacher.pytorch_dataloader.sampler) is Sequential,
-                            'PytorchDataTeacher failed with args: {}'.format(opt)
-                        )
-                    else:
-                        self.assertTrue(
-                            type(teacher.pytorch_dataloader.sampler) is RandomSampler,
-                            'PytorchDataTeacher failed with args: {}'.format(opt)
-                        )
-        print('\n------Passed `test_shuffle`------\n')
+                            'train' not in datatype
+                        ):
+                            self.assertIsInstance(
+                                teacher.pytorch_dataloader.sampler, Sequential,
+                                'PytorchDataTeacher failed with args: {}'.format(opt)
+                            )
+                        else:
+                            self.assertIsInstance(
+                                teacher.pytorch_dataloader.sampler, RandomSampler,
+                                'PytorchDataTeacher failed with args: {}'.format(opt)
+                            )
 
     def test_pyt_preprocess(self):
         """
@@ -95,51 +87,44 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
         """
         def get_teacher_act(defaults, teacher_processed=False, agent_to=None):
-
             parser = train_setup_args()
             parser.set_defaults(**defaults)
             opt = parser.parse_args()
             build_dict(opt)
-            teacher = create_task_agent_from_taskname(opt)[0]
+            with testing_utils.capture_output() as _:
+                teacher = create_task_agent_from_taskname(opt)[0]
             agent = create_agent(opt)
             act = teacher.act()
             if teacher_processed:
                 return act, agent
             return agent.observe(act), agent
 
-        print('Testing test_pyt_preprocess action equivalent to observation')
-        ff = io.StringIO()
-        with redirect_stdout(ff):
+        with testing_utils.capture_output() as _, testing_utils.tempdir() as tmpdir:
             defaults = parser_defaults.copy()
             defaults['batch_size'] = 1
             defaults['datatype'] = 'train:stream:ordered'
 
             # Get processed act from agent
-            set_model_file(defaults)
+            defaults['model_file'] = os.path.join(tmpdir, 'model')
+            defaults['dict_file'] = os.path.join(tmpdir, 'model.dict')
             agent_processed_observation, agent1 = get_teacher_act(defaults)
 
             # Get preprocessed act from teacher
-            set_model_file(defaults)
+            defaults['model_file'] = os.path.join(tmpdir, 'model')
+            defaults['dict_file'] = os.path.join(tmpdir, 'model.dict')
             defaults['pytorch_preprocess'] = True
-            teacher_processed_act, agent2 = get_teacher_act(defaults,
-                                                            teacher_processed=True)
+            teacher_processed_act, agent2 = get_teacher_act(defaults, teacher_processed=True)  # noqa: E501
 
         for key in agent_processed_observation:
             val1 = agent_processed_observation[key]
             val2 = teacher_processed_act[key]
-            if type(val1) is torch.Tensor:
-                self.assertTrue(bool(torch.all(torch.eq(val1, val2))),
-                                '{}\n\n --not equal to-- \n\n{}'.format(
-                                    val1,
-                                    val2)
-                                )
+            if isinstance(val1, torch.Tensor):
+                self.assertTrue(
+                    bool(torch.all(torch.eq(val1, val2))),
+                    '{} is not equal to {}'.format(val1, val2)
+                )
             else:
-                self.assertTrue(val1 == val2,
-                                '{}\n\n --not equal to-- \n\n{}'.format(
-                                    val1,
-                                    val2)
-                                )
-        print('\n------Passed `test_pyt_preprocess`------\n')
+                self.assertEqual(val1, val2)
 
     def test_valid_pyt_batchsort(self):
         """
@@ -181,33 +166,28 @@ class TestPytorchDataTeacher(unittest.TestCase):
                     if type(val1) is torch.Tensor:
                         self.assertTrue(bool(torch.all(torch.eq(val1, val2))))
                     else:
-                        self.assertTrue(val1 == val2,
-                                        '{}\n\n --not equal to-- \n\n{}'.format(
-                                            val1,
-                                            val2)
-                                        )
+                        self.assertEqual(val1, val2)
         # First, check that batchsort itself works
         defaults = parser_defaults.copy()
         defaults['datatype'] = 'train:stream:ordered'
         defaults['pytorch_teacher_batch_sort'] = True
 
-        f = io.StringIO()
-
-        with redirect_stdout(f):
+        with testing_utils.capture_output() as _, testing_utils.tempdir() as tmpdir:
             # Get processed act from agent
             defaults['pytorch_teacher_task'] = 'babi:task1k:1'
             defaults['batch_sort_cache_type'] = 'index'
             defaults['batchsize'] = 50
-            set_model_file(defaults)
+            defaults['model_file'] = os.path.join(tmpdir, 'model')
+            defaults['dict_file'] = os.path.join(tmpdir, 'model.dict')
             bsrt_acts_ep1, bsrt_acts_ep2 = get_acts_epochs_1_and_2(defaults)
 
             defaults['pytorch_teacher_batch_sort'] = False
-            set_model_file(defaults)
+            defaults['model_file'] = os.path.join(tmpdir, 'model')
+            defaults['dict_file'] = os.path.join(tmpdir, 'model.dict')
             no_bsrt_acts_ep1, no_bsrt_acts_ep2 = get_acts_epochs_1_and_2(defaults)
 
         check_equal_act_lists(bsrt_acts_ep1, no_bsrt_acts_ep1)
         check_equal_act_lists(bsrt_acts_ep2, no_bsrt_acts_ep2)
-        print('\n------Passed `test_pyt_batchsort`------\n')
 
     def test_pyt_batchsort_field(self):
         """
@@ -227,12 +207,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
         max_range = defaults['batch_length_range']
 
         def verify_batch_lengths(defaults):
-            f = io.StringIO()
-
-            with redirect_stdout(f):
+            with testing_utils.capture_output() as _, testing_utils.tempdir() as tmpdir:
                 # Get processed act from agent
                 parser = train_setup_args()
-                set_model_file(defaults)
+                defaults['model_file'] = os.path.join(tmpdir, 'model')
+                defaults['dict_file'] = os.path.join(tmpdir, 'model.dict')
                 parser.set_defaults(**defaults)
                 opt = parser.parse_args()
                 build_dict(opt)
@@ -264,7 +243,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults['batch_sort_field'] = 'text_vec'
         defaults['pytorch_preprocess'] = True
         verify_batch_lengths(defaults)
-        print('\n------Passed `test_pyt_batchsort_field`------\n')
 
 
 if __name__ == '__main__':
