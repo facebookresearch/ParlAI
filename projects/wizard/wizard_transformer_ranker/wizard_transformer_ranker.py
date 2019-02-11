@@ -51,10 +51,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         self.chosen_sentence = (opt.get('chosen_sentence', False) and
                                 self.use_knowledge)
         self.knowledge_dropout = opt.get('knowledge_dropout', 0)
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel:
-            self.model = torch.nn.DataParallel(self.model)
-
+        
     def vectorize_knowledge(self, observation):
         if not self.use_knowledge:
             return observation
