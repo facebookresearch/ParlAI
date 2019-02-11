@@ -441,8 +441,8 @@ class MultiWorld(World):
         self.parleys = -1
         self.random = opt.get('datatype', None) == 'train'
         # Make multi-task task probabilities.
-        # These come from the 'taskweight' param (if it exists) in the teacher from each world,
-        # (assumed to be agent 0).
+        # These come from the 'taskweight' param (if it exists)
+        #  in the teacher from each world (assumed to be agent 0).
         self.cum_task_weights = [1] * len(self.worlds)
         self.task_choices = range(len(self.worlds))
         sum = 0
