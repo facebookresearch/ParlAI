@@ -447,10 +447,8 @@ class MultiWorld(World):
         self.task_choices = range(len(self.worlds))
         sum = 0
         for i, w in enumerate(self.worlds):
-            agents = w.get_agents()
-            weight = 1
-            if len(agents) > 0:
-                weight = float(agents[0].opt.get('taskweight', 1))
+            weight = float(w.opt.get('taskweight', 1))
+            print(weight)
             self.cum_task_weights[i] = weight + sum
             sum += weight
 
