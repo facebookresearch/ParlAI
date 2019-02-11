@@ -440,8 +440,9 @@ class MultiWorld(World):
         self.new_world = True
         self.parleys = -1
         self.random = opt.get('datatype', None) == 'train'
-        # Make multi-task task probabilities
-        # from first agents 'taskweight' param (if it exists).
+        # Make multi-task task probabilities.
+        # These come from the 'taskweight' param (if it exists) in the teacher from each world,
+        # (assumed to be agent 0).
         self.cum_task_weights = [1] * len(self.worlds)
         self.task_choices = range(len(self.worlds))
         sum = 0
@@ -499,7 +500,8 @@ class MultiWorld(World):
             self.parleys = 0
             if self.random:
                 # select random world
-                self.world_idx = random.choices(self.task_choices, cum_weights=self.cum_task_weights)[0]
+                self.world_idx = random.choices(
+                    self.task_choices, cum_weights=self.cum_task_weights)[0]
             else:
                 # do at most one full loop looking for unfinished world
                 for _ in range(len(self.worlds)):
