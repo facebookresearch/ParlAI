@@ -6,6 +6,8 @@
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
+from functools import reduce
+import operator
 import math
 import os
 import random
@@ -596,6 +598,19 @@ class PaddingUtils(object):
         return
 
 
+class ProbabilityDistribution(dict):
+    def __init__(self, dict_agent, N=None, missingfn=None):
+        self = dict_agent.freqs
+        self.N = float(N or sum(self.itervalues()))
+        self.missingfn = lambda k, N: 1./N
+
+    def __call__(self, key):
+        if key in self:
+            return self[key]/self.N
+        else:
+            return self.missingfn(key, self.N)
+
+
 class OffensiveLanguageDetector(object):
     """Tries to detect offensive language in text.
 
@@ -663,6 +678,17 @@ class OffensiveLanguageDetector(object):
                     if mod_p not in self.white_list:
                         self.add_phrase(mod_p)
 
+    def memo(f):
+        # Memoize function f
+        table = {}
+
+        def fmemo(*args):
+            if args not in table:
+                table[args] = f(*args)
+            return table[args]
+        fmemo.memo = table
+        return fmemo
+
     def add_phrase(self, phrase):
         """Add a single phrase to the filter."""
         toks = self.tokenize(phrase)
@@ -712,6 +738,45 @@ class OffensiveLanguageDetector(object):
     def __contains__(self, key):
         """Determine if text contains any offensive words in the filter."""
         return self.contains_offensive_language(key)
+
+    def str_segment(self, text, dict_agent):
+
+        @self.memo
+        def segment(text):
+            # Return a list of words that is the best segmentation of text.
+            if not text:
+                return []
+            candidates = ([first]+segment(rem) for first, rem in splits(text))
+            return max(candidates, key=prob_words)
+
+        def splits(text, L=20):
+            # Returns a list of all possible first and remainder tuples where
+            # first +" "+ rem = tex
+            candidates = []
+            for i in range(min(len(text), L)):
+                candidates.append((text[:i+1], text[i+1:]))
+            return candidates
+
+        def prob_words(words):
+            # Returns Naive Bayes probability for a sequence of words
+            return product(prob_dist(w) for w in words)
+
+        def product(nums):
+            # Return the product of a sequence of numbers
+            return reduce(operator.mul, nums, 1)
+
+        def avoid_long_words(word, N):
+            return 10./(N * 10**len(word))
+
+        N = dict_agent.maxtokens
+
+        prob_dist = ProbabilityDistribution(
+            dict_agent,
+            N,
+            avoid_long_words
+        )
+
+        return segment(text)
 
 
 def clip_text(text, max_len):
@@ -1036,3 +1101,4 @@ def warn_once(msg, warningtype=None):
     if msg not in _seen_warnings:
         _seen_warnings.add(msg)
         warnings.warn(msg, warningtype, stacklevel=2)
+
