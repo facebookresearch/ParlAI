@@ -129,7 +129,7 @@ class MTurkManager():
         self.is_shutdown = False
         self.use_db = use_db  # TODO enable always DB integration is complete
         self.db_logger = None
-        self.logging_permitted = False # Enables logging to parl.ai
+        self.logging_permitted = False  # Enables logging to parl.ai
         self.task_state = self.STATE_CREATED
         self._init_logging_config()
         self._assert_opts()

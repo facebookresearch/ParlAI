@@ -39,6 +39,7 @@ def set_is_debug(is_debug):
     global debug
     debug = is_debug
 
+
 def disable_logging():
     global logging_enabled
     logging_enabled = False
