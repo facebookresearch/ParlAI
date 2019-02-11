@@ -205,8 +205,11 @@ class MTurkManager():
 
     def _init_logging_config(self):
         """Initialize logging settings from the opt"""
-        shared_utils.set_is_debug(self.opt['is_debug'])
-        shared_utils.set_log_level(self.opt['log_level'])
+        if self.use_db:
+            shared_utils.disable_logging()
+        else:
+            shared_utils.set_is_debug(self.opt['is_debug'])
+            shared_utils.set_log_level(self.opt['log_level'])
 
     def _logging_permission_check(self):
         if self.is_test:

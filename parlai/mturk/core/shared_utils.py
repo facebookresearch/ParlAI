@@ -39,6 +39,10 @@ def set_is_debug(is_debug):
     global debug
     debug = is_debug
 
+def disable_logging():
+    global logging_enabled
+    logging_enabled = False
+
 
 def print_and_log(level, message, should_print=False):
     if (logging_enabled and level >= log_level) or debug:
