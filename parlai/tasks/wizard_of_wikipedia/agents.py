@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """
     A dataset with conversations directly grounded with knowledge
     retrieved from Wikipedia. Contains 201k utterances from 22k
@@ -194,10 +192,8 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         self.label_type = opt.get('label_type', 'response')
         self.include_knowledge = opt.get('include_knowledge', True)
         self.include_checked_sentence = opt.get('include_checked_sentence', False)
+        self.knowledge_separator = opt.get('include_knowledge_separator', False)
         self.num_exs = sum(self.len_episode(i) for i in range(len(self.data)))
-        # don't include the special __knowledge__ token between title and passage.
-        # this is not presented as an opt, but could be overriden in a subclass
-        self.knowledge_separator = False
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -215,6 +211,10 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
                            default=True,
                            help='Whether to include the Wizard\'s'
                            'checked sentence')
+        agent.add_argument('--include-knowledge-separator', type='bool',
+                           default=False,
+                           help='include special __knowledge__ token between '
+                           'title and passage')
 
     def len_episode(self, ep):
         d = self.data[ep]
@@ -383,12 +383,15 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
         opt['include_checked_sentence'] = True
         opt['task'] = 'foobar:' + opt['task']  # make sure the topic_split logic works
         super().__init__(opt, shared)
-        self.knowledge_separator = True
+        self.knowledge_separator = opt.get('include_knowledge_separator', True)
         self.only_checked_knowledge = opt.get('only_checked_knowledge', False)
         self.dropout = opt.get('ignorant_dropout', 0.0)
 
     @staticmethod
     def add_cmdline_args(argparser):
+        argparser.set_defaults(
+            include_knowledge_separator=True,
+        )
         WizardDialogKnowledgeTeacher.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('GeneratorTeacher Arguments')
         agent.add_argument('--only-checked-knowledge', type='bool',

@@ -42,13 +42,13 @@ const TYPE_ALIVE = 'alive';
 /* ================= Local Constants ================= */
 
 const SEND_THREAD_REFRESH = 100;
-const ACK_WAIT_TIME = 300; // Check for acknowledge every 0.3 seconds
+const ACK_WAIT_TIME = 2000; // Check for acknowledge every 2 seconds
 const STATUS_ACK = 'ack';
 const STATUS_INIT = 'init';
 const STATUS_SENT = 'sent';
-const CONNECTION_DEAD_MISSING_PONGS = 15;
-const REFRESH_SOCKET_MISSING_PONGS = 5;
-const HEARTBEAT_TIME = 2000;  // One heartbeat every 2 seconds
+const CONNECTION_DEAD_MISSING_PONGS = 25;
+const REFRESH_SOCKET_MISSING_PONGS = 10;
+const HEARTBEAT_TIME = 4000;  // One heartbeat every 4 seconds
 
 
 /* ============== Priority Queue Data Structure ============== */
@@ -268,7 +268,7 @@ class SocketHandler extends React.Component {
 
   // Required function - The BaseApp class will call this function to enqueue
   // packet sends that are requested by the frontend user (worker)
-  handleQueueMessage(text, data, callback, is_system=false) {
+  handleQueueMessage(text, task_data, callback, is_system=false) {
     let new_message_id = uuidv4();
     let duration = null;
     if (!is_system && this.state.message_request_time != null) {
@@ -280,7 +280,7 @@ class SocketHandler extends React.Component {
       TYPE_MESSAGE,
       {
         text: text,
-        data: data,
+        task_data: task_data,
         id: this.props.agent_id,
         message_id: new_message_id,
         episode_done: false,
@@ -389,7 +389,7 @@ class SocketHandler extends React.Component {
       message.text = '';
     }
     var agent_id = message.id;
-    var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    var message_text = message.text;
     if (this.state.displayed_messages.indexOf(new_message_id) !== -1) {
       // This message has already been seen and put up into the chat
       log(new_message_id + ' was a repeat message', 1);
@@ -398,9 +398,12 @@ class SocketHandler extends React.Component {
 
     log('New message, ' + new_message_id + ' from agent ' + agent_id, 1);
     this.state.displayed_messages.push(new_message_id);
-    this.props.messages.push(message);
-    this.setState({displayed_messages: this.state.displayed_messages})
-    this.props.onMessageUpdate();
+    this.props.onNewMessage(message);
+    if (message.task_data !== undefined) {
+      message.task_data.last_update = (new Date()).getTime();
+      this.props.onNewTaskData(message.task_data);
+    }
+    this.setState({displayed_messages: this.state.displayed_messages});
   }
 
   // Handle incoming command messages

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """
 Utilities for downloading and building data.
 These can be replaced if your particular file system does not support them.
@@ -16,8 +14,7 @@ import datetime
 import os
 import requests
 import shutil
-
-from parlai.core.utils import ProgressLogger
+import tqdm
 
 
 def built(path, version_string=None):
@@ -56,7 +53,7 @@ def download(url, path, fname, redownload=False):
     retry = 5
     exp_backoff = [2 ** r for r in reversed(range(retry))]
 
-    logger = ProgressLogger()
+    pbar = tqdm.tqdm(unit='B', unit_scale=True, desc='Downloading {}'.format(fname))
 
     while download and retry >= 0:
         resume_file = outfile + '.part'
@@ -84,6 +81,7 @@ def download(url, path, fname, redownload=False):
                 total_size = int(response.headers.get('Content-Length', -1))
                 # server returns remaining size if resuming, so adjust total
                 total_size += resume_pos
+                pbar.total = total_size
                 done = resume_pos
 
                 with open(resume_file, mode) as f:
@@ -95,12 +93,12 @@ def download(url, path, fname, redownload=False):
                             if total_size < done:
                                 # don't freak out if content-length was too small
                                 total_size = done
-                            logger.log(done, total_size)
+                                pbar.total = total_size
+                            pbar.update(len(chunk))
                     break
             except requests.exceptions.ConnectionError:
                 retry -= 1
-                # TODO Better way to clean progress bar?
-                print(''.join([' '] * 60), end='\r')
+                pbar.clear()
                 if retry >= 0:
                     print('Connection error, retrying. (%d retries left)' % retry)
                     time.sleep(exp_backoff[retry])
@@ -113,13 +111,14 @@ def download(url, path, fname, redownload=False):
         raise RuntimeWarning('Connection broken too many times. Stopped retrying.')
 
     if download and retry > 0:
-        logger.log(done, total_size, force=True)
-        print()
+        pbar.update(done - pbar.n)
         if done < total_size:
             raise RuntimeWarning('Received less data than specified in ' +
                                  'Content-Length header for ' + url + '.' +
                                  ' There may be a download problem.')
         move(resume_file, outfile)
+
+    pbar.close()
 
 
 def make_dir(path):
@@ -191,11 +190,13 @@ def download_from_google_drive(gd_id, destination):
 
 def download_models(opt, fnames, model_folder, version='v1.0', path='aws',
                     use_model_type=False):
-    """Download models into the ParlAI model zoo from a url.
-       fnames -- list of filenames to download
-       model_folder -- models will be downloaded into models/model_folder/model_type
-       path -- url for downloading models; defaults to downloading from AWS
-       use_model_type -- whether models are categorized by type in AWS
+    """
+    Download models into the ParlAI model zoo from a url.
+
+    :param fnames: list of filenames to download
+    :param model_folder: models will be downloaded into models/model_folder/model_type
+    :param path: url for downloading models; defaults to downloading from AWS
+    :param use_model_type: whether models are categorized by type in AWS
     """
 
     model_type = opt.get('model_type', None)
