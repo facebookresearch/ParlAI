@@ -448,7 +448,6 @@ class MultiWorld(World):
         sum = 0
         for i, w in enumerate(self.worlds):
             weight = float(w.opt.get('taskweight', 1))
-            print(weight)
             self.cum_task_weights[i] = weight + sum
             sum += weight
 
