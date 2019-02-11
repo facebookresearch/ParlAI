@@ -445,9 +445,13 @@ class MultiWorld(World):
         #  in the teacher from each world (assumed to be agent 0).
         self.cum_task_weights = [1] * len(self.worlds)
         self.task_choices = range(len(self.worlds))
+        weights = self.opt.get('multitask_weights', [1])
         sum = 0
         for i, w in enumerate(self.worlds):
-            weight = float(w.opt.get('taskweight', 1))
+            if len(weights) > i:
+                weight = weights[i]
+            else:
+                weight = 1
             self.cum_task_weights[i] = weight + sum
             sum += weight
 
