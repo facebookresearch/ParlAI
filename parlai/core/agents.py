@@ -214,6 +214,7 @@ class MultiTaskTeacher(Teacher):
         return self.tasks[self.task_idx].observe(observation)
 
     def act(self):
+        import pdb; pdb.set_trace()
         if self.new_task:
             self.new_task = False
             if self.random:
