@@ -898,10 +898,10 @@ class TorchAgent(Agent):
             'cands_vec' fields added.
         """
         # set context first: if split_lines, context memories will be above text
-        self._set_context_vec(obs, truncate, split_lines)
-        self._set_text_vec(obs, truncate, split_lines)
-        self._set_label_vec(obs, add_start, add_end, truncate)
-        self._set_label_cands_vec(obs, add_start, add_end, truncate)
+        self._set_context_vec(obs, text_truncate, split_lines)
+        self._set_text_vec(obs, text_truncate, split_lines)
+        self._set_label_vec(obs, add_start, add_end, label_truncate)
+        self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs
 
     def batchify(self, obs_batch, sort=False,
