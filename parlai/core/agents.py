@@ -189,6 +189,18 @@ class MultiTaskTeacher(Teacher):
         self.task_idx = -1
         self.new_task = True
         self.random = opt.get('datatype') == 'train'
+        # Make multi-task task probabilities.
+        self.cum_task_weights = [1] * len(self.tasks)
+        self.task_choices = range(len(self.tasks))
+        weights = self.opt.get('multitask_weights', [1])
+        sum = 0
+        for i in self.task_choices:
+            if len(weights) > i:
+                weight = weights[i]
+            else:
+                weight = 1
+            self.cum_task_weights[i] = weight + sum
+            sum += weight
 
     def num_examples(self):
         if not hasattr(self, 'num_exs'):
@@ -218,7 +230,8 @@ class MultiTaskTeacher(Teacher):
             self.new_task = False
             if self.random:
                 # select random teacher
-                self.task_idx = random.randrange(len(self.tasks))
+                self.task_idx = random.choices(
+                    self.task_choices, cum_weights=self.cum_task_weights)[0]
             else:
                 # do at most one full loop looking for unfinished task
                 for _ in range(len(self.tasks)):

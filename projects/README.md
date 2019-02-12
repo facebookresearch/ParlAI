@@ -30,7 +30,7 @@ _Competition on dialogue chitchat based on the PersonaChat task._
   
 ## Knowledge Grounded
 
-- **Wizard of Wikipedia** [[paper]](https://openreview.net/forum?id=r1l73iRqKm). 
+- **Wizard of Wikipedia** [[website]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://openreview.net/forum?id=r1l73iRqKm). 
   _Knowledge-grounded open domain chitchat task & models._
 
 ## Visually Grounded
