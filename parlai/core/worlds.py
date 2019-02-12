@@ -445,7 +445,7 @@ class MultiWorld(World):
         self.task_choices = range(len(self.worlds))
         weights = self.opt.get('multitask_weights', [1])
         sum = 0
-        for i, w in enumerate(self.worlds):
+        for i in self.task_choices:
             if len(weights) > i:
                 weight = weights[i]
             else:

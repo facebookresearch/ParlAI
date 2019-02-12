@@ -194,7 +194,7 @@ class MultiTaskTeacher(Teacher):
         self.task_choices = range(len(self.tasks))
         weights = self.opt.get('multitask_weights', [1])
         sum = 0
-        for i, w in enumerate(self.tasks):
+        for i in self.task_choices:
             if len(weights) > i:
                 weight = weights[i]
             else:
