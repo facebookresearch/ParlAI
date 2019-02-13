@@ -142,11 +142,13 @@ class History(object):
     :param dict_agent    DictionaryAgent object for tokenizing the history
     """
     def __init__(self, opt, field='text', vec_type='deque', maxlen=None,
-                 p1_token='__p1__', p2_token='__p2__', dict_agent=None):
+                 size=-1, p1_token='__p1__', p2_token='__p2__',
+                 dict_agent=None):
         self.field = field
         self.dict = dict_agent
         self.delimiter = opt.get('delimiter', '\n')
         self.delimiter_tok = self.parse(self.delimiter)
+        self.size = size
         self.split_on_newln = opt.get('split_lines', False)
 
         # set up history objects
@@ -178,6 +180,18 @@ class History(object):
         self.history_strings = []
         self.history_vecs = []
 
+    def _update_strings(self, text):
+        if self.size > 0:
+            while len(self.history_strings) >= self.size:
+                self.history_strings.pop(0)
+        self.history_strings.append(text)
+
+    def _update_vecs(self, text):
+        if self.size > 0:
+            while len(self.history_vecs) >= self.size:
+                self.history_vecs.pop(0)
+        self.history_vecs.append(self.parse(text))
+
     def update_history(self, obs, add_next=None):
         """Update the history with the given observation.
 
@@ -192,9 +206,9 @@ class History(object):
             if self.add_person_tokens:
                 add_next = self._add_person_tokens(add_next, self.p2_token)
             # update history string
-            self.history_strings.append(add_next)
+            self._update_strings(add_next)
             # update history vecs
-            self.history_vecs.append(self.parse(add_next))
+            self._update_vecs(add_next)
 
         if self.field in obs:
             if self.split_on_newln:
@@ -204,11 +218,12 @@ class History(object):
             for text in next_texts:
                 if self.add_person_tokens:
                     text = self._add_person_tokens(obs[self.field],
-                                                   self.p1_token)
+                                                   self.p1_token,
+                                                   self.add_p1_after_newln)
                 # update history string
-                self.history_strings.append(text)
+                self._update_strings(text)
                 # update history vecs
-                self.history_vecs.append(self.parse(text))
+                self._update_vecs(text)
 
         if obs.get('episode_done', True):
             # end of this episode, clear the history
@@ -497,21 +512,22 @@ class TorchAgent(Agent):
         # which row in the batch this instance is
         self.batch_idx = shared and shared.get('batchindex') or 0
         # can remember as few as zero utterances if desired
-        self.histsz = opt['history_size'] if opt['history_size'] >= 0 else None
-        # stores up to hist_utt past observations within current dialog
-        self.history = History(
-            opt,
-            maxlen=self.histsz,
-            p1_token=self.P1_TOKEN,
-            p2_token=self.P2_TOKEN,
-            dict_agent=self.dict,
-        )
+        self.histsz = opt['history_size']
         # truncate == 0 might give funny behavior
         self.truncate = opt['truncate'] if opt['truncate'] >= 0 else None
         text_truncate = opt.get('text_truncate') or opt['truncate']
         self.text_truncate = text_truncate if text_truncate >= 0 else None
         label_truncate = opt.get('label_truncate') or opt['truncate']
         self.label_truncate = label_truncate if label_truncate >= 0 else None
+        # stores up to hist_utt past observations within current dialog
+        self.history = History(
+            opt,
+            maxlen=self.text_truncate,
+            size=self.histsz,
+            p1_token=self.P1_TOKEN,
+            p2_token=self.P2_TOKEN,
+            dict_agent=self.dict,
+        )
 
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)

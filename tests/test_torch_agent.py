@@ -9,7 +9,7 @@ from parlai.core.agents import Agent
 
 SKIP_TESTS = False
 try:
-    from parlai.core.torch_agent import TorchAgent, Output
+    from parlai.core.torch_agent import TorchAgent, Output, History
     import torch
 except ImportError:
     SKIP_TESTS = True
@@ -541,7 +541,7 @@ class TestTorchAgent(unittest.TestCase):
         idx = text.rfind('\n') + 1
         self.assertEqual(out, text[:idx] + prefix + ' ' + text[idx:])
 
-    def test_get_dialog_history(self):
+    def test_dialog_history(self):
         """Test different dialog history settings."""
         # try with unlimited history
         agent = get_agent(history_size=-1)
@@ -549,112 +549,112 @@ class TestTorchAgent(unittest.TestCase):
                'episode_done': False}
 
         # first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # second exchange, no reply
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.\nI am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.\nI am Groot.')
 
         # include reply and set episode_done to clear history after this one
         end_obs = obs.copy()
         end_obs['episode_done'] = True
-        out = agent.get_dialog_history(end_obs, reply='I am Groot?')
-        self.assertEqual(out['text'],
+        agent.history.update_history(end_obs, add_next='I am Groot?')
+        text = agent.history.get_history_str()
+        self.assertEqual(text,
                          'I am Groot.\nI am Groot.\nI am Groot?\nI am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
 
         # because of episode_done, should be same as first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # now try with history size = 1
         agent = get_agent(history_size=1)
 
         # first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # second exchange should change nothing
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # third exchange with reply should change nothing
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # now try with history size = 2
         agent = get_agent(history_size=2)
 
         # first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # second exchange with reply should contain reply
-        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
         self.assertEqual(out['text'], 'I am Groot?\nI am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
 
         # third exchange without reply should have two inputs
-        out = agent.get_dialog_history(obs.copy())
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
         self.assertEqual(out['text'], 'I am Groot.\nI am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
 
         # now try with history size = 3
         agent = get_agent(history_size=3)
 
         # first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # second exchange with reply should contain reply and input
-        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?')
+        agent.history.update_history(obs, add_next='I am Groot?')
+        text = agent.history.get_history_str()
         self.assertEqual(out['text'], 'I am Groot.\nI am Groot?\nI am Groot.')
         self.assertEqual(out['labels'][0], 'I am Groot?')
 
         # now test add_person_tokens
-        agent.reset()  # clear out old history
-        out = agent.get_dialog_history(obs.copy(), add_person_tokens=True)
-        self.assertEqual(out['text'], f'{agent.P1_TOKEN} I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')  # no change
+        agent = get_agent(history_size=3, person_tokens=True)
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, f'{agent.P1_TOKEN} I am Groot.')
 
         # second exchange, history should still contain the tokens
-        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?',
-                                       add_person_tokens=True)
-        self.assertEqual(out['text'],
+        agent.history.update_history(obs, add_next='I am Groot?')
+        text = agent.history.get_history_str()
+        self.assertEqual(text,
                          f'{agent.P1_TOKEN} I am Groot.\n'
                          f'{agent.P2_TOKEN} I am Groot?\n'
                          f'{agent.P1_TOKEN} I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
 
         # now add add_p1_after_newln
-        agent.reset()  # clear out old history
+        agent = get_agent(history_size=3, person_tokens=True,
+                          add_p1_after_newln=True)
         ctx_obs = obs.copy()  # context then utterance in this text field
         ctx_obs['text'] = 'Groot is Groot.\nI am Groot.'
-        out = agent.get_dialog_history(ctx_obs.copy(), add_person_tokens=True,
-                                       add_p1_after_newln=True)
-        self.assertEqual(out['text'],
+        agent.history.update_history(ctx_obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text,
                          f'Groot is Groot.\n{agent.P1_TOKEN} I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')  # no change
 
         # second exchange, history should still contain context text
-        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?',
-                                       add_person_tokens=True,
-                                       add_p1_after_newln=True)
-        self.assertEqual(out['text'],
+        agent.history.update_history(obs, add_next='I am Groot?')
+        text = agent.history.get_history_str()
+        self.assertEqual(text,
                          'Groot is Groot.\n'
                          f'{agent.P1_TOKEN} I am Groot.\n'
                          f'{agent.P2_TOKEN} I am Groot?\n'
                          f'{agent.P1_TOKEN} I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+
 
     def test_last_reply(self):
         """Make sure last reply returns expected values."""
