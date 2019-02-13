@@ -237,25 +237,26 @@ class History(object):
         """Returns the string version of the history."""
         if len(self.history_strings) > 0:
             return self.delimiter.join(self.history_strings)
-        return ''
+        return None
 
     def get_history_vec(self):
         """Returns a vectorized version of the history."""
+        if len(self.history_vecs) == 0:
+            return None
+
         if self.vec_type == 'deque':
             history = deque(maxlen=self.max_len)
-            if len(self.history_vecs) > 0:
-                for vec in self.history_vecs[:-1]:
-                    history.extend(vec)
-                    history.extend(self.delimiter_tok)
-                history.extend(self.history_vecs[-1])
+            for vec in self.history_vecs[:-1]:
+                history.extend(vec)
+                history.extend(self.delimiter_tok)
+            history.extend(self.history_vecs[-1])
         else:
             # vec type is a list
             history = []
-            if len(self.history_vecs) > 0:
-                for vec in self.history_vecs[:-1]:
-                    history += vec
-                    history += self.delimiter_tok
-                history += self.history_vecs[-1]
+            for vec in self.history_vecs[:-1]:
+                history += vec
+                history += self.delimiter_tok
+            history += self.history_vecs[-1]
 
         return history
 
@@ -480,8 +481,10 @@ class TorchAgent(Agent):
             self.replies = {}  # past replies
             self.dict = self.dictionary_class()(opt)
             if opt.get('person_tokens'):
-                self.dict[self.P1_TOKEN] = 999999999
-                self.dict[self.P2_TOKEN] = 999999998
+                if not self.dict.get(self.P1_TOKEN):
+                    self.dict[self.P1_TOKEN] = 999999999
+                if not self.dict.get(self.P2_TOKEN):
+                    self.dict[self.P2_TOKEN] = 999999998
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
@@ -847,28 +850,11 @@ class TorchAgent(Agent):
         shared['replies'] = self.replies
         return shared
 
-    def _add_start_end_tokens(self, vec, add_start=False,
-                              add_end=False, truncate=None, truncate_left=True):
-        if truncate is None or len(vec) + add_start + add_end < truncate:
-            # simple: no truncation
-            if add_start:
-                vec.insert(0, self.START_IDX)
-            if add_end:
-                vec.append(self.END_IDX)
-        elif truncate_left:
-            # don't check add_start, we know are truncating it
-            if add_end:
-                # add the end token first
-                vec.append(self.END_IDX)
-            vec = vec[len(vec) - truncate:]
-        else:
-            # truncate from the right side
-            # don't check add_end, we know we are truncating it
-            vec = vec[:truncate - add_start]
-            if add_start:
-                # always keep the start token if it's there
-                vec.insert(0, self.START_IDX)
-
+    def _add_start_end_tokens(self, vec, add_start=False, add_end=False):
+        if add_start:
+            vec.insert(0, self.START_IDX)
+        if add_end:
+            vec.append(self.END_IDX)
         return vec
 
     def _v2t(self, vec):
@@ -895,8 +881,8 @@ class TorchAgent(Agent):
                               False for targets.
         """
         vec = self.dict.txt2vec(text)
-        self._add_start_end_tokens(vec, add_start, add_end, truncate,
-                                   truncate_left)
+        vec = self._add_start_end_tokens(vec, add_start, add_end)
+        vec = self._check_truncate(vec, truncate, truncate_left)
         tensor = self._make_long_tensor(vec)
         return tensor
 
@@ -916,22 +902,21 @@ class TorchAgent(Agent):
             vec = torch.LongTensor(vec)
         return vec
 
-    def _set_text_vec(self, obs, history, add_start, add_end, truncate):
+    def _set_text_vec(self, obs, history, truncate):
         """Sets the 'text_vec' field in the observation.
 
         Useful to override to change vectorization behavior"""
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
             obs['text'] = history.get_history_str()
-            obs['text_vec'] = history.get_history_vec()
-        else:
-            # precomputed, so we don't add start and end tokens
-            add_start = False
-            add_end = False
+            if obs['text'] is not None:
+                obs['text_vec'] = history.get_history_vec()
 
         # check truncation
-        obs['text_vec'] = self._make_long_tensor(self._add_start_end_tokens(
-            obs['text_vec'], add_start, add_end, truncate, True))
+        if 'text_vec' in obs:
+            obs['text_vec'] = self._make_long_tensor(
+                self._check_truncate(obs['text_vec'], truncate, True)
+            )
 
         return obs
 
@@ -996,21 +981,18 @@ class TorchAgent(Agent):
         this function, call super().vectorize(...) to process the text and
         labels, and then process the other fields in your subclass.
 
-        :param obs:         Single observation from observe function.
-        :param add_start:   default True, adds the start token to each label.
-        :param add_end:     default True, adds the end token to each label.
-        :param truncate:    default None, if set truncates all vectors to the
-                            specified length. Note that this truncates to the
-                            rightmost for inputs and the leftmost for labels
-                            and, when applicable, candidates.
-        :param split_lines: If set, returns list of vectors instead of a single
-                            vector for input text, one for each substring after
-                            splitting on newlines.
+        :param obs:            Single observation from observe function.
+        :param add_start:      default True, adds the start token to each label.
+        :param add_end:        default True, adds the end token to each label.
+        :param text_truncate:  default None, if set truncates text vectors to
+                               the specified length.
+        :param label_truncate: default None, if set truncates label vectors to
+                               the specified length.
 
         :return: the input observation, with 'text_vec', 'label_vec', and
             'cands_vec' fields added.
         """
-        self._set_text_vec(obs, history, add_start, add_end, text_truncate)
+        self._set_text_vec(obs, history, text_truncate)
         self._set_label_vec(obs, add_start, add_end, label_truncate)
         self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs
