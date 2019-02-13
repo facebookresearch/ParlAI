@@ -119,7 +119,7 @@ class MemnnAgent(TorchRankerAgent):
         batch.memory_vecs = mems
         return batch
 
-    def _set_text_vec(self, obs, history, add_start, add_end, truncate):
+    def _set_text_vec(self, obs, history, truncate):
         """Override from Torch Agent so that we can use memories."""
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
@@ -131,19 +131,17 @@ class MemnnAgent(TorchRankerAgent):
             else:
                 obs['memory_vecs'] = []
                 obs['text_vec'] = []
-        else:
-            # precomputed, so we don't add start and end tokens
-            add_start = False
-            add_end = False
 
         # check truncation
-        obs['text_vec'] = self._make_long_tensor(self._add_start_end_tokens(
-            obs['text_vec'], add_start, add_end, truncate, True))
+        if 'text_vec' in obs:
+            obs['text_vec'] = self._make_long_tensor(
+                self._check_truncate(obs['text_vec'], truncate, True)
+            )
+
         if 'memory_vecs' in obs:
             obs['memory_vecs'] = [
                 self._make_long_tensor(
-                    self._add_start_end_tokens(m, add_start, add_end, truncate,
-                                               True)
+                    self._check_truncate(m, truncate, True)
                 ) for m in obs['memory_vecs']
             ]
 

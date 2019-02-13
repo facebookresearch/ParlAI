@@ -214,7 +214,7 @@ class History(object):
             # update history vecs
             self._update_vecs(add_next)
 
-        if self.field in obs:
+        if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
                 next_texts = obs[self.field].split('\n')
             else:
@@ -992,7 +992,8 @@ class TorchAgent(Agent):
         :return: the input observation, with 'text_vec', 'label_vec', and
             'cands_vec' fields added.
         """
-        self._set_text_vec(obs, history, text_truncate)
+        if 'text' in obs:
+            self._set_text_vec(obs, history, text_truncate)
         self._set_label_vec(obs, add_start, add_end, label_truncate)
         self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs

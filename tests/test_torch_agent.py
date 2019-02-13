@@ -748,7 +748,6 @@ class TestTorchAgent(unittest.TestCase):
             agent.history.update_history(o)
             obs_elabs_vecs.append(agent.vectorize(o, agent.history))
         reply = agent.batch_act(obs_elabs_vecs)
-        import pdb; pdb.set_trace()
         for i in range(len(obs_elabs_vecs)):
             self.assertEqual(reply[i]['text'], f'Evaluating {i}!')
 
