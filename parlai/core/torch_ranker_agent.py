@@ -13,6 +13,7 @@ from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once
 from parlai.core.distributed_utils import is_distributed
+from parlai.core.agents import load_opt
 
 
 class TorchRankerAgent(TorchAgent):
@@ -47,10 +48,17 @@ class TorchRankerAgent(TorchAgent):
             help='Get predictions and calculate mean rank during the train '
                  'step. Turning this on may slow down training.'
         )
+        agent.add_argument(
+            '--init-model', type=str, default=None,
+            help='if defined, we will build and load the model from this file'
+                 ' iff model-path does not point to a valid file'
+                 ' expects to be accompanied by a *.opt file.'
+        )
 
     def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary
         # (e.g., a .dict file)
+
         model_file, opt = self._get_model_file(opt)
         opt['rank_candidates'] = True
         if opt['eval_candidates'] is None:
@@ -380,16 +388,38 @@ class TorchRankerAgent(TorchAgent):
     def _get_model_file(self, opt):
         model_file = None
 
-        # first check load path in case we need to override paths
-        if opt.get('init_model') and os.path.isfile(opt['init_model']):
-            # check first for 'init_model' for loading model from file
+        if  opt.get('model_file') and os.path.isfile(opt['model_file'] + ".opt"):
+            # first case: there an existing model_file.opt. In which case we
+            # will completely ignore init_model.
+            # Nothing to do here, since agents.py load_agent_module() takes care
+            # of that.
+            model_file = opt.get('model_file')
+            if opt.get('init_model'):
+                print("[ warning: Ignoring --init-model since {}.opt exists. ]"
+                      "".format(opt.get('init_model')))
+        elif opt.get('init_model') and os.path.isfile(opt['init_model'] + ".opt"):
+            # second case. There is no valid model available, and there
+            # seems to be a valid init file.
+            # In this case though, we need to load the options of the init_model
+            # as well.
             model_file = opt['init_model']
+            init_opt = load_opt(opt['init_model'] + ".opt")
+            # then init_opt become the default ones (this way for instance,
+            # the architecture of the model will be the good one when calling
+            # build_model() ). Except if option was an override.
+            overrides = opt.get("override", {})
+            for k, v in init_opt.items():
+                if k == "override":
+                    continue
+                if k not in overrides and if str(v) != str(opt.get(k, None)):
+                    print("[ warning: following init model opts, overriding "
+                          "opt['{}'] to {} (previously: {} )]"
+                          "".format(k, v, opt.get(k, None)))
+                    opt[k] = v
 
-        if opt.get('model_file') and os.path.isfile(opt['model_file']):
-            # next check for 'model_file', this would override init_model
-            model_file = opt['model_file']
-
-        if model_file is not None:
+        # in some cases, the dict is model_file + ".dict"
+        if model_file is not None and (opt.get('dict_file') is None or
+                not os.path.isfile(opt['dict_file'])):
             # if we are loading a model, should load its dict too
             if (os.path.isfile(model_file + '.dict') or
                     opt['dict_file'] is None):

@@ -300,6 +300,18 @@ def name_to_agent_class(name):
     class_name += 'Agent'
     return class_name
 
+def optfile(opt_path):
+    """ Load an option file from disk. Opt is either json or pickle.
+    """
+    try:
+        # try json first
+        with open(opt_path, 'r') as handle:
+            new_opt = json.load(handle)
+    except UnicodeDecodeError:
+        # oops it's pickled
+        with open(opt_path, 'rb') as handle:
+            new_opt = pickle.load(handle)
+    return new_opt
 
 def load_agent_module(opt):
     """Load agent options and module from file if opt file exists.
@@ -314,14 +326,7 @@ def load_agent_module(opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
-        try:
-            # try json first
-            with open(optfile, 'r') as handle:
-                new_opt = json.load(handle)
-        except UnicodeDecodeError:
-            # oops it's pickled
-            with open(optfile, 'rb') as handle:
-                new_opt = pickle.load(handle)
+        new_opt = load_opt(optfile)
         if 'batchindex' in new_opt:
             # This saved variable can cause trouble if we switch to BS=1 at test time
             del new_opt['batchindex']
