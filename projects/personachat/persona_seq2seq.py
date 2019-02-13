@@ -22,7 +22,7 @@ import time
 import math
 
 from parlai.core.agents import Agent
-from parlai.core.dict import DictionaryAgent
+from parlai.agents.legacy_agents.seq2seq.dict_v0 import DictionaryAgent
 from parlai.core.metrics import _f1_score
 from parlai.core.utils import round_sigfigs
 from torch.autograd import Variable
@@ -144,6 +144,9 @@ class Seq2seqAgent(Agent):
         agent.add_argument('--interactive-mode', type=bool, default=False,
             help='helps print nicer text during interactive mode')
 
+    @staticmethod
+    def dictionary_class():
+        return DictionaryAgent
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -173,7 +176,7 @@ class Seq2seqAgent(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            self.dict = DictionaryAgent(opt)
+            self.dict = self.dictionary_class()(opt)
 
             states = None
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
@@ -197,12 +200,12 @@ class Seq2seqAgent(Agent):
             self.NULL_IDX = self.dict.txt2vec(self.dict.null_token)[0]
 
             # reorder dictionary tokens
-            self.dict.ind2tok[1] = '__END__'
-            self.dict.tok2ind['__END__'] = 1
-            self.dict.ind2tok[2] = '__UNK__'
-            self.dict.tok2ind['__UNK__'] = 2
-            self.dict.ind2tok[3] = '__START__'
-            self.dict.tok2ind['__START__'] = 3
+            # self.dict.ind2tok[1] = '__END__'
+            # self.dict.tok2ind['__END__'] = 1
+            # self.dict.ind2tok[2] = '__UNK__'
+            # self.dict.tok2ind['__UNK__'] = 2
+            # self.dict.ind2tok[3] = '__START__'
+            # self.dict.tok2ind['__START__'] = 3
 
             # store important params directly
             hsz = opt['hiddensize']
@@ -1122,6 +1125,10 @@ class PersonachatSeqseqAgentSplit(Agent):
             choices=['self', 'none', 'other', 'both'],
             help='if task does not specify persona, specify here')
 
+    @staticmethod
+    def dictionary_class():
+        return DictionaryAgent
+
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
@@ -1170,7 +1177,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 print('[ Using CUDA ]')
                 torch.cuda.set_device(opt['gpu'])
 
-            self.dict = DictionaryAgent(opt)
+            self.dict = self.dictionary_class()(opt)
 
             states = None
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
@@ -2312,7 +2319,7 @@ class PersonachatSeqseqAgentSplit(Agent):
                 curr = batch_reply[batch_idx]
                 curr['text_candidates'] = [curr_cands[idx] for idx in order
                                            if idx < len(curr_cands)]
-                
+
         return batch_reply
 
     def act(self):

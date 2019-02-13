@@ -18,7 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     PersonachatSeqseqAgentBasic.add_cmdline_args(parser)
     parser.set_defaults(
-        dict_file='models:personachat/profile_memory/fulldict.dict',
+        dict_file='models:personachat/seq2seq_personachat/fulldict.dict',
         interactive_mode=True,
         task='parlai.agents.local_human.local_human:LocalHumanAgent',
         model='projects.personachat.persona_seq2seq:PersonachatSeqseqAgentBasic',
