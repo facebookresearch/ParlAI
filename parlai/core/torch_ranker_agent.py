@@ -395,8 +395,8 @@ class TorchRankerAgent(TorchAgent):
             # of that.
             model_file = opt.get('model_file')
             if opt.get('init_model'):
-                print("[ warning: Ignoring --init-model since {}.opt exists. ]"
-                      "".format(opt.get('init_model')))
+                warn_once("[ warning: Ignoring --init-model since {}.opt"
+                      " exists. ]".format(opt.get('init_model')))
         elif opt.get('init_model') and os.path.isfile(opt['init_model'] + ".opt"):
             # second case. There is no valid model available, and there
             # seems to be a valid init file.
@@ -409,9 +409,12 @@ class TorchRankerAgent(TorchAgent):
             # build_model() ). Except if option was an override.
             overrides = opt.get("override", {})
             for k, v in init_opt.items():
-                if k == "override":
+                if (k == "override" or k == "task" or k == "pytorch_teacher_task"
+                    or k == "model_file" or k == "init_model"
+                    or k == "batchindex"):
+                    # TODO how can we make sure this list will not increase?
                     continue
-                if k not in overrides and if str(v) != str(opt.get(k, None)):
+                if k not in overrides and str(v) != str(opt.get(k, None)):
                     print("[ warning: following init model opts, overriding "
                           "opt['{}'] to {} (previously: {} )]"
                           "".format(k, v, opt.get(k, None)))

@@ -300,7 +300,7 @@ def name_to_agent_class(name):
     class_name += 'Agent'
     return class_name
 
-def optfile(opt_path):
+def load_opt(opt_path):
     """ Load an option file from disk. Opt is either json or pickle.
     """
     try:
