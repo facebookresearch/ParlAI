@@ -898,7 +898,7 @@ class TorchAgent(Agent):
             return vec[:truncate]
 
     def _make_long_tensor(self, vec):
-        if 'torch' not in str(type(vec)):
+        if not isinstance(vec, torch.LongTensor):
             vec = torch.LongTensor(vec)
         return vec
 
