@@ -59,6 +59,9 @@ class TransformerRankerAgent(TorchRankerAgent):
         agent = argparser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
         # memory and knowledge arguments
+        agent.add_argument('--use-memories', type='bool', default=False,
+                           help='use memories: must implement the function '
+                                '`_vectorize_memories` to use this')
         agent.add_argument('--wrap-memory-encoder', type='bool',
                            default=False,
                            help='wrap memory encoder with MLP')
@@ -112,16 +115,31 @@ class TransformerRankerAgent(TorchRankerAgent):
             )
         return self.model
 
+    def batchify(self, obs_batch, sort=False,
+                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
+        """Override so that we can add memories to the Batch object."""
+        batch = super().batchify(obs_batch, sort, is_valid)
+        if self.opt['use_memories']:
+            valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
+            valid_inds, exs = zip(*valid_obs)
+            mems = None
+            if any('memory_vecs' in ex for ex in exs):
+                mems = [ex.get('memory_vecs', None) for ex in exs]
+            batch.memory_vecs = mems
+        return batch
+
+    def _vectorize_memories(self, obs):
+        raise NotImplementedError(
+            'Abstract class: user must implement this function to use memories'
+        )
+
     def vectorize(self, *args, **kwargs):
-        """Override options in vectorize from parent."""
         kwargs['add_start'] = False
         kwargs['add_end'] = False
-        return super().vectorize(*args, **kwargs)
-
-    def get_dialog_history(self, *args, **kwargs):
-        """Override options in get_dialog_history from parent."""
-        kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
-        return super().get_dialog_history(*args, **kwargs)
+        obs = super().vectorize(*args, **kwargs)
+        if self.opt['use_memories']:
+            obs = self._vectorize_memories(obs)
+        return obs
 
     def score_candidates(self, batch, cand_vecs):
         # convoluted check that not all memories are empty

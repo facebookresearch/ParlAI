@@ -906,6 +906,9 @@ class TorchAgent(Agent):
         """Sets the 'text_vec' field in the observation.
 
         Useful to override to change vectorization behavior"""
+        if 'text' not in obs:
+            return obs
+
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
             obs['text'] = history.get_history_str()
@@ -992,8 +995,7 @@ class TorchAgent(Agent):
         :return: the input observation, with 'text_vec', 'label_vec', and
             'cands_vec' fields added.
         """
-        if 'text' in obs:
-            self._set_text_vec(obs, history, text_truncate)
+        self._set_text_vec(obs, history, text_truncate)
         self._set_label_vec(obs, add_start, add_end, label_truncate)
         self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs
