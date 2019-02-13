@@ -300,6 +300,7 @@ def name_to_agent_class(name):
     class_name += 'Agent'
     return class_name
 
+
 def load_opt(opt_path):
     """ Load an option file from disk. Opt is either json or pickle.
     """
@@ -312,6 +313,7 @@ def load_opt(opt_path):
         with open(opt_path, 'rb') as handle:
             new_opt = pickle.load(handle)
     return new_opt
+
 
 def load_agent_module(opt):
     """Load agent options and module from file if opt file exists.

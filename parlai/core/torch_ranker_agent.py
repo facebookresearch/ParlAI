@@ -388,7 +388,7 @@ class TorchRankerAgent(TorchAgent):
     def _get_model_file(self, opt):
         model_file = None
 
-        if  opt.get('model_file') and os.path.isfile(opt['model_file'] + ".opt"):
+        if opt.get('model_file') and os.path.isfile(opt['model_file'] + ".opt"):
             # first case: there an existing model_file.opt. In which case we
             # will completely ignore init_model.
             # Nothing to do here, since agents.py load_agent_module() takes care
@@ -396,7 +396,7 @@ class TorchRankerAgent(TorchAgent):
             model_file = opt.get('model_file')
             if opt.get('init_model'):
                 warn_once("[ warning: Ignoring --init-model since {}.opt"
-                      " exists. ]".format(opt.get('init_model')))
+                          " exists. ]".format(opt.get('init_model')))
         elif opt.get('init_model') and os.path.isfile(opt['init_model'] + ".opt"):
             # second case. There is no valid model available, and there
             # seems to be a valid init file.
@@ -410,8 +410,8 @@ class TorchRankerAgent(TorchAgent):
             overrides = opt.get("override", {})
             for k, v in init_opt.items():
                 if (k == "override" or k == "task" or k == "pytorch_teacher_task"
-                    or k == "model_file" or k == "init_model"
-                    or k == "batchindex"):
+                        or k == "model_file" or k == "init_model"
+                        or k == "batchindex"):
                     # TODO how can we make sure this list will not increase?
                     continue
                 if k not in overrides and str(v) != str(opt.get(k, None)):
@@ -421,8 +421,9 @@ class TorchRankerAgent(TorchAgent):
                     opt[k] = v
 
         # in some cases, the dict is model_file + ".dict"
-        if model_file is not None and (opt.get('dict_file') is None or
-                not os.path.isfile(opt['dict_file'])):
+        if (model_file is not None
+                and (opt.get('dict_file') is None
+                     or not os.path.isfile(opt['dict_file']))):
             # if we are loading a model, should load its dict too
             if (os.path.isfile(model_file + '.dict') or
                     opt['dict_file'] is None):
