@@ -715,51 +715,53 @@ class OffensiveLanguageDetector(object):
         """Determine if text contains any offensive words in the filter."""
         return self.contains_offensive_language(key)
 
-    def str_segment(self, text, dict_agent):
+    def str_segment(self, text, dict_agent, max_length):
+        '''
+        Function that segments a word without spaces into the most
+        probable phrase with spaces
+
+        :param string text: string to segment
+        :param DictionaryAgent dict_agent: Dictionary we use
+            to look at word frequencies
+        :param int max_length: max_length of string to segment
+
+        '''
         freqs = dict_agent.freqs()
 
-        # Total number of word tokens
+        # Total number of word tokensd
         N = sum(freqs.values())
 
         # Number of distinct words in the Vocab
         V = len(freqs)
 
-        @lru_cache(maxsize=None)
+        logNV = math.log(N + V)
+
+        @lru_cache(maxsize = None)
         def segment(text):
             # Return a list of words that is the best segmentation of text.
             if not text:
                 return []
-            candidates = ([first]+segment(rem) for first, rem in splits(text))
-            return max(candidates, key=prob_words)
+            candidates = ([first] + segment(rem) for first, rem in splits(text, max_length))
+            return max(candidates, key = prob_words)
 
-        def splits(text, L=20):
+        def splits(text, max_length):
             # Returns a list of all possible first and remainder tuples where
             candidates = []
-            for i in range(min(len(text), L)):
-                candidates.append((text[:i+1], text[i+1:]))
+            for i in range(min(len(text), max_length)):
+                candidates.append((text[: i + 1], text[i + 1 :]))
             return candidates
 
         def prob_words(words):
             # Returns probability for a sequence of words
-            return add(prob(w) for w in words)
+            return sum(logprob(w) for w in words) / len(words)
 
-        def add(nums):
-            # Return the product of a sequence of numbers
-            return reduce(operator.add, nums, 1)
+        def logprob(word):
+            # Utilizes laplace smoothing to get a probability of
+            # unknown word
+            count_w = freqs.get(word, 0)
+            return math.log(count_w + 1) - logNV
 
-        def avoid_long_words(word, N):
-            return 10./(N * 10**len(word))
-
-        # def laplace_smoothing(word, N, V):
-        #     return math.log((dict_agent.freq[word] + 1)/(N + V))
-
-        def prob(word):
-            if word in freqs:
-                return math.log(freqs[word]/N)
-            else:
-                return math.log(avoid_long_words(word, N))
-
-        return " ".join(segment(text))
+        return ' '.join(segment(text))
 
 
 def clip_text(text, max_len):
