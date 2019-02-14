@@ -205,7 +205,6 @@ class MTurkManager():
 
     def _init_logging_config(self):
         """Initialize logging settings from the opt"""
-        # TODO remove the false flag
         if self.use_db and not self.opt['is_debug']:
             shared_utils.disable_logging()
         else:
