@@ -741,9 +741,9 @@ class OffensiveLanguageDetector(object):
 
         def prob_words(words):
             # Returns probability for a sequence of words
-            return product(prob(w) for w in words)
+            return add(prob(w) for w in words)
 
-        def product(nums):
+        def add(nums):
             # Return the product of a sequence of numbers
             return reduce(operator.add, nums, 1)
 
