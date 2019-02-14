@@ -39,12 +39,6 @@ class HalfTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        def rebuild(entries):
-            return [
-                (entries[i][1][0], [entries[i + 1][0]])
-                for i in range(len(entries) - 1)
-            ]
-
         for entry, new in super().setup_data(path):
             # check that the label is present, else skip this example
             if entry[1]:
@@ -87,7 +81,7 @@ class FullTeacher(FbDialogTeacher):
             if entry[1]:
                 yield entry, new
 
-        # flip the last episode 
+        # flip the last episode
         if alternate:
             for i, e in enumerate(rebuild(alternate)):
                 if e[1]:
