@@ -716,12 +716,13 @@ class OffensiveLanguageDetector(object):
         return self.contains_offensive_language(key)
 
     def str_segment(self, text, dict_agent):
+        freqs = dict_agent.freqs()
 
         # Total number of word tokens
-        N = sum(dict_agent.freq.values())
+        N = sum(freqs.values())
 
         # Number of distinct words in the Vocab
-        V = len(dict_agent.freq)
+        V = len(freqs)
 
         @lru_cache(maxsize=None)
         def segment(text):
@@ -740,27 +741,25 @@ class OffensiveLanguageDetector(object):
 
         def prob_words(words):
             # Returns probability for a sequence of words
-            return add(prob(w) for w in words)
+            return product(prob(w) for w in words)
 
-        def add(nums):
+        def product(nums):
             # Return the product of a sequence of numbers
             return reduce(operator.add, nums, 1)
 
         def avoid_long_words(word, N):
             return 10./(N * 10**len(word))
 
-        def laplace_smoothing(word, N, V):
-            return math.log((dict_agent.freq[word] + 1)/(N + V))
+        # def laplace_smoothing(word, N, V):
+        #     return math.log((dict_agent.freq[word] + 1)/(N + V))
 
-        def prob(word, missingfn = laplace_smoothing):
-            if word in dict_agent.freq:
-                return math.log(dict_agent.freq[word]/N)
+        def prob(word):
+            if word in freqs:
+                return math.log(freqs[word]/N)
             else:
-                return missingfn(word, N, V)
+                return math.log(avoid_long_words(word, N))
 
-
-
-        return segment(text)
+        return " ".join(segment(text))
 
 
 def clip_text(text, max_len):
