@@ -87,6 +87,13 @@ class FullTeacher(FbDialogTeacher):
             if entry[1]:
                 yield entry, new
 
+        # flip the last episode 
+        if alternate:
+            for i, e in enumerate(rebuild(alternate)):
+                if e[1]:
+                    yield e, i == 0
+            alternate.clear()
+
 
 class Task100kTeacher(HalfTeacher):
     """This version of opensubtitles only includes 100,000 dialogs."""
