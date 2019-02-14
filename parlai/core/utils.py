@@ -746,10 +746,8 @@ class OffensiveLanguageDetector(object):
 
         def splits(text, max_length):
             # Returns a list of all possible first and remainder tuples where
-            candidates = []
-            for i in range(min(len(text), max_length)):
-                candidates.append((text[: i + 1], text[i + 1 :]))
-            return candidates
+            return [(text[:i+1], text[i+1:])
+                for i in range(min(len(text), max_length))]
 
         def prob_words(words):
             # Returns probability for a sequence of words
