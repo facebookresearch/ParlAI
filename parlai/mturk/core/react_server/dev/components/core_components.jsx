@@ -11,6 +11,7 @@ import ReactDOM from 'react-dom';
 import {
   FormControl, Button, ButtonGroup, InputGroup, FormGroup,
   MenuItem, DropdownButton, Badge, Popover, Overlay,
+  Nav, NavItem,
 } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import $ from 'jquery';
@@ -310,7 +311,7 @@ class ChatNavbar extends React.Component {
     // TODO: replace hardcoded initial chat state with some API integration
     chat: [
       {msg: "hey", owner: 3},
-      {msg: "anyone else there?", owner: 3},      
+      {msg: "anyone else there?", owner: 3},
     ]
   }
 
