@@ -518,8 +518,7 @@ class SocketManager():
         t, packet = packet_item
         if time.time() > t:
             return False  # Exceeded blocking time
-        if packet.status in [Packet.STATUS_ACK, Packet.STATUS_FAIL,
-                             Packet.STATUS_DONE]:
+        if packet.status in [Packet.STATUS_ACK, Packet.STATUS_FAIL]:
             return False  # No longer in blocking status
         return True
 
