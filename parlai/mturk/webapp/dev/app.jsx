@@ -1634,8 +1634,11 @@ class ReviewPanel extends React.Component {
   parseRawRuns(run_datas) {
     // Get reviewable assignments
     let assignments = []
+    let worker_information = {}
     for (const idx in run_datas) {
       assignments = assignments.concat(run_datas[idx].assignments);
+      worker_information = Object.assign(
+        worker_information, run_datas[idx].worker_details);
     }
     let assignments_remaining = 0;
     let reviewable_assigns = assignments.filter(
@@ -1648,6 +1651,7 @@ class ReviewPanel extends React.Component {
       if (assignments_by_worker[assign.worker_id] == undefined) {
         assignments_by_worker[assign.worker_id] = {
           assigns: [], bad_feedback: false, worker_id: assign.worker_id,
+          worker_data: worker_information[assign.worker_id],
         };
       }
 
@@ -1688,8 +1692,8 @@ class ReviewPanel extends React.Component {
     let workers_remaining = workers_left_order.map((w) => w.worker_id);
     let current_worker = workers_remaining.shift();
     let current_worker_stats = {
-      'approved': 0,
-      'rejected': 0,
+      'approved': assignments_by_worker[current_worker].worker_data.approved,
+      'rejected': assignments_by_worker[current_worker].worker_data.rejected,
       'remain': assignments_by_worker[current_worker].assigns.length
     }
     this.setState({
@@ -1793,10 +1797,11 @@ class ReviewPanel extends React.Component {
   nextWorker() {
     // Move to the next worker in the remaining workers list
     let current_worker = this.state.workers_remaining.shift();
+    let current_worker_state = this.state.assignments_by_worker[current_worker];
     let current_worker_stats = {
-      'approved': 0,
-      'rejected': 0,
-      'remain': this.state.assignments_by_worker[current_worker].assigns.length
+      'approved': current_worker_state.worker_data.approved,
+      'rejected': current_worker_state.worker_data.rejected,
+      'remain': current_worker_state.assigns.length
     }
     this.setState({
       current_worker: current_worker,
