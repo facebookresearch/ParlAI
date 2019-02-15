@@ -6,14 +6,12 @@
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
-from functools import reduce, lru_cache
-import operator
+from functools import lru_cache
 import math
 import os
 import random
 import time
 import warnings
-
 # some of the utility methods are helpful for Torch
 try:
     import torch
@@ -716,7 +714,7 @@ class OffensiveLanguageDetector(object):
         return self.contains_offensive_language(key)
 
     def str_segment(self, text, dict_agent, max_length):
-        '''
+        """
         Function that segments a word without spaces into the most
         probable phrase with spaces
 
@@ -724,8 +722,20 @@ class OffensiveLanguageDetector(object):
         :param DictionaryAgent dict_agent: Dictionary we use
             to look at word frequencies
         :param int max_length: max_length of string to segment
+        :returns: the segmented string
+        :rtype: str
 
-        '''
+        Example Usage:
+            dict_agent = DictionaryAgent using Wiki Toxic Comments data
+            old = OffensiveLanguageDector()
+
+            split_str = old.str_segment('fucku2', dict_agent, 20)
+            split_str is 'fuck u 2'
+
+            We can then run old.contains_offensive_language(split_str)
+            which yields the offensive word 'fuck'
+
+        """
         freqs = dict_agent.freqs()
 
         # Total number of word tokensd
@@ -736,20 +746,25 @@ class OffensiveLanguageDetector(object):
 
         logNV = math.log(N + V)
 
-        @lru_cache(maxsize = None)
+        @lru_cache(maxsize=None)
         def segment(text):
             # Return a list of words that is the best segmentation of text.
             if not text:
                 return []
-            candidates = ([first] + segment(rem) for first, rem in splits(text, max_length))
-            return max(candidates, key = prob_words)
+            candidates = (
+                [first] + segment(rem)
+                for first, rem in splits(text, max_length)
+            )
+            return max(candidates, key=score)
 
         def splits(text, max_length):
             # Returns a list of all possible first and remainder tuples where
-            return [(text[:i+1], text[i+1:])
-                for i in range(min(len(text), max_length))]
+            return [
+                (text[:i+1], text[i+1:])
+                for i in range(min(len(text), max_length))
+            ]
 
-        def prob_words(words):
+        def score(words):
             # Returns probability for a sequence of words
             return sum(logprob(w) for w in words) / len(words)
 
