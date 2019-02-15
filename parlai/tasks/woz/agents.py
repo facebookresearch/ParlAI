@@ -17,6 +17,7 @@ import copy
 FILE_START = 'woz_'
 FILE_END = '_en.json'
 
+
 def _path(opt):
     build(opt)
 
@@ -47,7 +48,6 @@ class WoZTeacher(DialogTeacher):
 
         # store datatype
         self.dt = opt['datatype'].split(':')[0]
-
 
         # store identifier for the teacher in the dialog
         self.id = 'woz'

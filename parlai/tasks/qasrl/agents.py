@@ -16,6 +16,7 @@ import copy
 FILE_START = 'wiki1.'
 FILE_END = '.qa'
 
+
 def _path(opt):
     build(opt)
 
@@ -33,6 +34,7 @@ def _path(opt):
 
     data_path = os.path.join(opt['datapath'], 'QA-SRL', FILE_START + suffix + FILE_END)
     return data_path
+
 
 class QASRLTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
@@ -90,5 +92,3 @@ class QASRLTeacher(DialogTeacher):
 
 class DefaultTeacher(QASRLTeacher):
     pass
-
-

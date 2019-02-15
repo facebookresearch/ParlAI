@@ -13,6 +13,7 @@ from .build import build
 import os
 import json
 
+
 def _datatype(opt):
     build(opt)
 
@@ -29,6 +30,7 @@ def _datatype(opt):
         raise RuntimeError('Not valid datatype.')
 
     return suffix
+
 
 class WikiSQLTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
