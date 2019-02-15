@@ -337,6 +337,12 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden=True,
             help='default (False) moves labels in valid and test sets to the '
                  'eval_labels field. If True, they are hidden completely.')
+        parlai.add_argument(
+            '-mtw', '--multitask-weights', type='floats', default=[1],
+            help='list of floats, one for each task, specifying '
+            'the probability of drawing the task in multitask case',
+            hidden=True
+        )
         batch = self.add_argument_group('Batching Arguments')
         batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,

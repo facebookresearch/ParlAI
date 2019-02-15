@@ -29,7 +29,7 @@ def _create_embeddings(dictionary, embedding_size, padding_idx):
 
 
 def _build_encoder(opt, dictionary, embedding=None, padding_idx=None, reduction=True,
-                   truncate=1024):
+                   n_positions=1024):
     return TransformerEncoder(
         n_heads=opt['n_heads'],
         n_layers=opt['n_layers'],
@@ -43,12 +43,12 @@ def _build_encoder(opt, dictionary, embedding=None, padding_idx=None, reduction=
         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
         embeddings_scale=opt['embeddings_scale'],
         reduction=reduction,
-        n_positions=truncate,
+        n_positions=n_positions,
     )
 
 
 def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
-                   truncate=1024):
+                   n_positions=1024):
     return TransformerDecoder(
         n_heads=opt['n_heads'],
         n_layers=opt['n_layers'],
@@ -61,7 +61,7 @@ def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
         padding_idx=padding_idx,
         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
         embeddings_scale=opt['embeddings_scale'],
-        n_positions=truncate,
+        n_positions=n_positions,
     )
 
 
@@ -80,13 +80,26 @@ class TransformerMemNetModel(nn.Module):
         if not opt.get('learn_embeddings'):
             self.embeddings.weight.requires_grad = False
 
-        truncate = max(opt.get('truncate') or 0, opt.get('text_truncate') or 0,
-                       opt.get('label_truncate') or 0)
-        if truncate <= 0:
-            truncate = 1024
+        if opt.get('n_positions'):
+            # if the number of positions is explicitly provided, use that
+            n_positions = opt['n_positions']
+        else:
+            # else, use the worst case from truncate
+            n_positions = max(
+                opt.get('truncate') or 0,
+                opt.get('text_truncate') or 0,
+                opt.get('label_truncate') or 0
+            )
+            if n_positions == 0:
+                # default to 1024
+                n_positions = 1024
+
+        if n_positions < 0:
+            raise ValueError('n_positions must be positive')
 
         self.context_encoder = _build_encoder(
-            opt, dictionary, self.embeddings, self.pad_idx, truncate=truncate
+            opt, dictionary, self.embeddings, self.pad_idx,
+            n_positions=n_positions,
         )
 
         if opt.get('share_encoders'):
@@ -96,7 +109,7 @@ class TransformerMemNetModel(nn.Module):
         else:
             self.cand_encoder = _build_encoder(
                 opt, dictionary, self.embeddings, self.pad_idx, reduction=True,
-                truncate=truncate
+                n_positions=n_positions,
             )
 
         # build memory encoder
@@ -441,17 +454,30 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             dictionary, opt['embedding_size'], self.pad_idx
         )
 
-        truncate = max(opt.get('truncate') or 0, opt.get('text_truncate') or 0,
-                       opt.get('label_truncate') or 0)
-        if truncate <= 0:
-            truncate = 1024
+        if opt.get('n_positions'):
+            # if the number of positions is explicitly provided, use that
+            n_positions = opt['n_positions']
+        else:
+            # else, use the worst case from truncate
+            n_positions = max(
+                opt.get('truncate') or 0,
+                opt.get('text_truncate') or 0,
+                opt.get('label_truncate') or 0
+            )
+            if n_positions == 0:
+                # default to 1024
+                n_positions = 1024
+
+        if n_positions < 0:
+            raise ValueError('n_positions must be positive')
 
         self.encoder = _build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx, reduction=False,
-            truncate=truncate
+            n_positions=n_positions,
         )
         self.decoder = _build_decoder(
-            opt, dictionary, self.embeddings, self.pad_idx, truncate=truncate
+            opt, dictionary, self.embeddings, self.pad_idx,
+            n_positions=n_positions,
         )
 
     def reorder_encoder_states(self, encoder_states, indices):
