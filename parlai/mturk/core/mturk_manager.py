@@ -131,7 +131,7 @@ class MTurkManager():
         # Determine the correct number of hits to be launching
         base_required_hits = self.num_conversations * len(self.mturk_agent_ids)
         for hit_amount, hit_mult in HIT_MULT_SCALE:
-            if base_required_hits > hit_amount:
+            if base_required_hits >= hit_amount:
                 self.hit_mult = hit_mult
                 break
 
