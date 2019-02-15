@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 import logging
 import time
@@ -16,7 +18,7 @@ THREAD_MTURK_POLLING_SLEEP = 10
 
 logger = None
 logging_enabled = True
-debug = False
+debug = True
 log_level = logging.ERROR
 
 if logging_enabled:
@@ -38,11 +40,6 @@ def set_log_level(new_level):
 def set_is_debug(is_debug):
     global debug
     debug = is_debug
-
-
-def disable_logging():
-    global logging_enabled
-    logging_enabled = False
 
 
 def print_and_log(level, message, should_print=False):

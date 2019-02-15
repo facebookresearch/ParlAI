@@ -1,7 +1,9 @@
 ..
-  Copyright (c) Facebook, Inc. and its affiliates.
-  This source code is licensed under the MIT license found in the
-  LICENSE file in the root directory of this source tree.
+  Copyright (c) 2017-present, Facebook, Inc.
+  All rights reserved.
+  This source code is licensed under the BSD-style license found in the
+  LICENSE file in the root directory of this source tree. An additional grant
+  of patent rights can be found in the PATENTS file in the same directory.
 
 What is ParlAI?
 ===============
@@ -299,7 +301,7 @@ the labels aren't available:
             reply['text'] = ', '.join(self.observation['labels'])
         elif 'label_candidates' in self.observation:
             cands = self.observation['label_candidates']
-            reply['text'] = random.choice(list(cands))
+            reply['text'] = random.choice(cands)
         else:
             reply['text'] = "I don't know."
         return reply

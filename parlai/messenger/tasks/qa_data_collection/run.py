@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 from parlai.core.params import ParlaiParser
 from parlai.messenger.tasks.qa_data_collection.worlds import \
     QADataCollectionWorld
@@ -25,7 +27,7 @@ def main():
     class_name = 'DefaultTeacher'
     my_module = importlib.import_module(module_name)
     task_class = getattr(my_module, class_name)
-    task_opt = opt.copy()
+    task_opt = {}
     task_opt['datatype'] = 'train'
     task_opt['datapath'] = opt['datapath']
 

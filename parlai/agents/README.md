@@ -27,9 +27,8 @@ This directory contains a variety of different agents which use ParlAI's interfa
 - **ibm_seq2seq**: IBM's RNN-based sequence to sequence model
 - **seq2seq**: our RNN-based sequence to sequence model
 - **starspace**: embedding model
-- **transformer**: both generative and retrieval-based transformer models
 
-## Visual (+text) neural networks
+## Visual neural networks
 
 - **mlb_vqa**: visual question answering model
 - **vsepp_caption**: image captioning model

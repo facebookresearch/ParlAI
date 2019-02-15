@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 import logging
 import time
@@ -643,7 +645,7 @@ class MTurkAgent(Agent):
             messages = self.flush_msg_queue()
             for m in messages:
                 if m['text'] == '[PEER_REVIEW]':
-                    self.feedback = m['task_data']
+                    self.feedback = m['data']
             return did_complete
 
     def update_agent_id(self, agent_id):

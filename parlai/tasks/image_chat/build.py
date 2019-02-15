@@ -1,6 +1,8 @@
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 import parlai.core.build_data as build_data
 import os
 from parlai.tasks.personality_captions.download_images import download_images
@@ -23,4 +25,4 @@ def build(opt):
         build_data.mark_done(dpath, version)
 
     if not build_data.built(image_path, version) and not opt.get('yfcc_path'):
-        download_images(opt, task='image_chat')
+        download_images(opt)

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 import time
 from queue import Queue
@@ -83,19 +85,13 @@ class MessengerAgent(Agent):
                 'seq': seq,
                 'text': text,
             }
-            # the fields 'report_sender' and 'sticker_sender' below are
-            # internal features
             action = {
                 'episode_done': False,
                 'text': text,
                 'id': self.disp_id,
-                'report_sender': message['message'].get('report_sender', None),
                 'sticker_sender': message.get('sticker_sender', None),
                 'img_attempt': img_attempt,
             }
-            if img_attempt and self.data.get('allow_images', False):
-                action['image_url'] = message['message'].get('image_url')
-                action['attachment_url'] = message['message'].get('attachment_url')
             self.msg_queue.put(action)
 
     def set_stored_data(self):
@@ -140,7 +136,7 @@ class MessengerAgent(Agent):
         # Get a new message, if it's not None reset the timeout
         msg = self.get_new_act_message()
         if msg is not None:
-            if msg.get('img_attempt') and not self.data.get('allow_images', False):
+            if msg.get('img_attempt'):
                 # Let agent know that they cannot send images if they
                 # attempted to send one
                 msg = None
@@ -149,8 +145,7 @@ class MessengerAgent(Agent):
                                'Please try with a text-only message.',
                        'episode_done': True}
                 self.observe(act)
-            elif (not msg.get('text')
-                  and not (msg.get('image_url') or msg.get('attachment_url'))):
+            elif not msg.get('text'):
                 # Do not allow agent to send empty strings
                 msg = None
 

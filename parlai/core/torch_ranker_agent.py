@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 import os
 
@@ -12,13 +14,12 @@ from torch import nn
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once
-from parlai.core.distributed_utils import is_distributed
 
 
 class TorchRankerAgent(TorchAgent):
-    @classmethod
-    def add_cmdline_args(cls, argparser):
-        super(TorchRankerAgent, cls).add_cmdline_args(argparser)
+    @staticmethod
+    def add_cmdline_args(argparser):
+        TorchAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
             '-cands', '--candidates', type=str, default='inline',
@@ -42,11 +43,6 @@ class TorchRankerAgent(TorchAgent):
                  "<cands_name> is the name of the file (not the full path) passed by "
                  "the flag --fixed-candidates-path. By default, this file is created "
                  "once and reused. To replace it, use the 'replace' option.")
-        agent.add_argument(
-            '--train-predict', type='bool', default=False,
-            help='Get predictions and calculate mean rank during the train '
-                 'step. Turning this on may slow down training.'
-        )
 
     def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary
@@ -60,16 +56,12 @@ class TorchRankerAgent(TorchAgent):
         if shared:
             self.model = shared['model']
             self.metrics = shared['metrics']
-            states = None
         else:
-            self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
-                            'train_accuracy': 0.0}
+            self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0}
             self.build_model()
             if model_file:
                 print('Loading existing model parameters from ' + model_file)
-                states = self.load(model_file)
-            else:
-                states = {}
+                self.load(model_file)
 
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
 
@@ -81,24 +73,8 @@ class TorchRankerAgent(TorchAgent):
             self.model.cuda()
             self.rank_loss.cuda()
 
-        if shared:
-            # We don't use get here because hasattr is used on optimizer later.
-            if 'optimizer' in shared:
-                self.optimizer = shared['optimizer']
-        else:
-            optim_params = [p for p in self.model.parameters() if p.requires_grad]
-            self.init_optim(
-                optim_params,
-                states.get('optimizer'), states.get('optimizer_type')
-            )
-            self.build_lr_scheduler(states)
-
-        if shared is None and is_distributed():
-            self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model,
-                device_ids=[self.opt['gpu']],
-                broadcast_buffers=False,
-            )
+        optim_params = [p for p in self.model.parameters() if p.requires_grad]
+        self.init_optim(optim_params)
 
     def score_candidates(self, batch, cand_vecs):
         """Given a batch and candidate set, return scores (for ranking)"""
@@ -110,25 +86,29 @@ class TorchRankerAgent(TorchAgent):
         raise NotImplementedError(
             'Abstract class: user must implement build_model()')
 
-    def get_batch_train_metrics(self, scores):
-        batchsize = scores.size(0)
-        # get accuracy
-        targets = scores.new_empty(batchsize).long()
-        targets = torch.arange(batchsize, out=targets)
-        nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
-        self.metrics['train_accuracy'] += nb_ok
-        # calculate mean rank
-        above_dot_prods = scores - scores.diag().view(-1, 1)
-        rank = (above_dot_prods > 0).float().sum().item()
-        self.metrics['rank'] += rank
+    def train_step(self, batch):
+        """Train on a single batch of examples."""
+        if batch.text_vec is None:
+            return
+        batchsize = batch.text_vec.size(0)
+        self.model.train()
+        self.optimizer.zero_grad()
 
-    def get_train_preds(self, scores, label_inds, cands, cand_vecs):
-        # TODO: speed these calculations up
-        batchsize = scores.size(0)
+        cands, cand_vecs, label_inds = self._build_candidates(
+            batch, source=self.opt['candidates'], mode='train')
+        scores = self.score_candidates(batch, cand_vecs)
+        loss = self.rank_loss(scores, label_inds)
+
+        # Update metrics
+        self.metrics['loss'] += loss.item()
+        self.metrics['examples'] += batchsize
         _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
+
+        loss.backward()
+        self.update_params()
 
         # Get predictions but not full rankings for the sake of speed
         if cand_vecs.dim() == 2:
@@ -136,37 +116,6 @@ class TorchRankerAgent(TorchAgent):
         elif cand_vecs.dim() == 3:
             preds = [cands[i][ordering[0]] for i, ordering in enumerate(ranks)]
         return Output(preds)
-
-    def train_step(self, batch):
-        """Train on a single batch of examples."""
-        if batch.text_vec is None:
-            return
-        batchsize = batch.text_vec.size(0)
-        self.model.train()
-        self.zero_grad()
-
-        cands, cand_vecs, label_inds = self._build_candidates(
-            batch, source=self.opt['candidates'], mode='train')
-        scores = self.score_candidates(batch, cand_vecs)
-        loss = self.rank_loss(scores, label_inds)
-
-        # Update loss
-        self.metrics['loss'] += loss.item()
-        self.metrics['examples'] += batchsize
-        loss.backward()
-        self.update_params()
-
-        # Get train predictions
-        if self.opt['candidates'] == 'batch':
-            self.get_batch_train_metrics(scores)
-            return Output()
-        if not self.opt.get('train_predict', False):
-            warn_once(
-                "Some training metrics are omitted for speed. Set the flag "
-                "`--train-predict` to calculate train metrics."
-            )
-            return Output()
-        return self.get_train_preds(scores, label_inds, cands, cand_vecs)
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
@@ -199,19 +148,6 @@ class TorchRankerAgent(TorchAgent):
             cand_preds.append([cand_list[rank] for rank in ordering])
         preds = [cand_preds[i][0] for i in range(batchsize)]
         return Output(preds, cand_preds)
-
-    def _set_label_cands_vec(self, *args, **kwargs):
-        """Sets the 'label_candidates_vec' field in the observation.
-
-        Useful to override to change vectorization behavior"""
-        obs = args[0]
-        cands_key = ('candidates' if 'labels' in obs else
-                     'eval_candidates' if 'eval_labels' in obs else None)
-        if cands_key is None or self.opt[cands_key] != 'inline':
-            # vectorize label candidates if and only if we are using inline
-            # candidates
-            return obs
-        return super()._set_label_cands_vec(*args, **kwargs)
 
     def _build_candidates(self, batch, source, mode):
         """Build a candidate set for this batch
@@ -288,15 +224,11 @@ class TorchRankerAgent(TorchAgent):
                     "".format(m='candidates' if mode == 'train' else 'eval-candidates'))
 
             cands = batch.candidates
-            cand_vecs = padded_3d(batch.candidate_vecs, self.NULL_IDX,
-                                  use_cuda=self.use_cuda)
+            cand_vecs = padded_3d(batch.candidate_vecs, use_cuda=self.use_cuda)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = (label_vec.new_zeros(cand_vecs[i].size(1))
-                                     .fill_(self.NULL_IDX))
-                    if cand_vecs[i].size(1) < len(label_vec):
-                        label_vec = label_vec[0:cand_vecs[i].size(1)]
+                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1))
                     label_vec_pad[0:label_vec.size(0)] = label_vec
                     label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
 
@@ -349,8 +281,13 @@ class TorchRankerAgent(TorchAgent):
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
-        shared['optimizer'] = self.optimizer
         return shared
+
+    def update_params(self):
+        """Do optim step and clip gradients if needed."""
+        if self.clip > 0:
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
+        self.optimizer.step()
 
     def reset_metrics(self):
         """Reset metrics."""
@@ -358,11 +295,9 @@ class TorchRankerAgent(TorchAgent):
         self.metrics['examples'] = 0
         self.metrics['loss'] = 0.0
         self.metrics['rank'] = 0
-        self.metrics['train_accuracy'] = 0.0
 
     def report(self):
         """Report loss and mean_rank from model's perspective."""
-        base = super().report()
         m = {}
         examples = self.metrics['examples']
         if examples > 0:
@@ -370,12 +305,10 @@ class TorchRankerAgent(TorchAgent):
             m['loss'] = self.metrics['loss']
             m['mean_loss'] = self.metrics['loss'] / examples
             m['mean_rank'] = self.metrics['rank'] / examples
-            if self.opt['candidates'] == 'batch':
-                m['train_accuracy'] = self.metrics['train_accuracy'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
-            base[k] = round_sigfigs(v, 4)
-        return base
+            m[k] = round_sigfigs(v, 4)
+        return m
 
     def _get_model_file(self, opt):
         model_file = None

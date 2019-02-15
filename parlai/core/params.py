@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 """Provides an argument parser and a set of default command line options for
 using the ParlAI package.
 """
@@ -17,6 +19,7 @@ import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
+from parlai.core.pytorch_data_teacher import get_dataset_classes
 
 
 def get_model_name(opt):
@@ -48,11 +51,6 @@ def str2bool(value):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
-
-
-def str2floats(s):
-    """Look for single float or comma-separated floats."""
-    return tuple(float(f) for f in s.split(','))
 
 
 def str2class(value):
@@ -114,10 +112,8 @@ class ParlaiParser(argparse.ArgumentParser):
         loading models, including initializing arguments from that model.
         """
         super().__init__(description=description, allow_abbrev=False,
-                         conflict_handler='resolve',
-                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+                         conflict_handler='resolve')
         self.register('type', 'bool', str2bool)
-        self.register('type', 'floats', str2floats)
         self.register('type', 'class', str2class)
         self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
                             os.path.realpath(__file__)))))
@@ -337,12 +333,6 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden=True,
             help='default (False) moves labels in valid and test sets to the '
                  'eval_labels field. If True, they are hidden completely.')
-        parlai.add_argument(
-            '-mtw', '--multitask-weights', type='floats', default=[1],
-            help='list of floats, one for each task, specifying '
-            'the probability of drawing the task in multitask case',
-            hidden=True
-        )
         batch = self.add_argument_group('Batching Arguments')
         batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,
@@ -377,19 +367,6 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_parlai_data_path(parlai)
 
         self.add_pytorch_datateacher_args()
-
-    def add_distributed_training_args(self):
-        grp = self.add_argument_group('Distributed Training')
-        grp.add_argument(
-            '--distributed-world-size', type=int,
-            help='Number of workers.'
-        )
-        grp.add_argument(
-            '--verbose', type='bool', default=False,
-            help='All workers print output.',
-            hidden=True,
-        )
-        return grp
 
     def add_pytorch_datateacher_args(self):
         pytorch = self.add_argument_group('PytorchData Arguments')
@@ -491,7 +468,6 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def add_pyt_dataset_args(self, opt):
         """Add arguments specific to specified pytorch dataset"""
-        from parlai.core.pytorch_data_teacher import get_dataset_classes
         dataset_classes = get_dataset_classes(opt)
         for dataset, _, _ in dataset_classes:
             try:

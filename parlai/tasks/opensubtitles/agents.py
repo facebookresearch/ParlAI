@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 from parlai.core.teachers import FbDialogTeacher
 from .build_2009 import build as build_2009
@@ -10,8 +12,6 @@ from .build_2018 import build as build_2018
 
 import copy
 import os
-
-SILENCE_TOKEN = '__SILENCE__'
 
 
 def _path(opt, version, use_history):
@@ -38,55 +38,29 @@ class HalfTeacher(FbDialogTeacher):
             opt['cands_datafile'] = opt['datafile']
         super().__init__(opt, shared)
 
-    def setup_data(self, path):
-        for entry, new in super().setup_data(path):
-            # check that the label is present, else skip this example
-            if entry[1]:
-                yield entry, new
 
-
-class FullTeacher(FbDialogTeacher):
+class FullTeacher(HalfTeacher):
     """This version of opensubtitles creates all possible dialog examples."""
-    def __init__(self, opt, shared=None, version='2018', use_history=True):
-        opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, version, use_history)
-        if not opt['datatype'].startswith('train'):
-            opt['cands_datafile'] = opt['datafile']
-        super().__init__(opt, shared)
-
     def setup_data(self, path):
         def rebuild(entries):
-            if len(entries) == 0:
-                return []
-            # flip the first example
-            flipped = [(SILENCE_TOKEN, [entries[0][0]], 0)]
-            # flip the rest
-            flipped += [
-                (entries[i][1][0], [entries[i + 1][0]], 0)
+            return [
+                (entries[i][1][0], [entries[i + 1][0]])
                 for i in range(len(entries) - 1)
             ]
-            return flipped
 
         # this shows conversations in both directions
-        # we skip examples for which no label is present
         alternate = []
         for entry, new in super().setup_data(path):
             if new:
                 for i, e in enumerate(rebuild(alternate)):
-                    if e[1]:
-                        yield e, i == 0
+                    yield e, i == 0
                 alternate.clear()
             else:
                 alternate.append(entry)
-            if entry[1]:
-                yield entry, new
-
-        # flip the last episode
+            yield entry, new
         if alternate:
             for i, e in enumerate(rebuild(alternate)):
-                if e[1]:
-                    yield e, i == 0
-            alternate.clear()
+                yield e, i == 0
 
 
 class Task100kTeacher(HalfTeacher):

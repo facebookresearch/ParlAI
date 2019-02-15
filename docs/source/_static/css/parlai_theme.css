@@ -1,7 +1,9 @@
 /*
-Copyright (c) Facebook, Inc. and its affiliates.
-This source code is licensed under the MIT license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2017-present, Facebook, Inc.
+All rights reserved.
+This source code is licensed under the BSD-style license found in the
+LICENSE file in the root directory of this source tree. An additional grant
+of patent rights can be found in the PATENTS file in the same directory.
 */
 
 @import url("theme.css");
@@ -13,10 +15,6 @@ body {
 /* Default header fonts are ugly */
 h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.caption {
     font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
-}
-
-nav p.caption {
-    color: #fcfcfc;
 }
 
 /* Use white for docs background */

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 import unittest
 import os
@@ -19,7 +21,6 @@ from parlai.core.params import ParlaiParser
 from websocket_server import WebsocketServer
 
 
-import parlai.core.testing_utils as testing_utils
 import parlai.mturk.core.mturk_manager as MTurkManagerFile
 import parlai.mturk.core.data_model as data_model
 
@@ -269,7 +270,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager.force_expire_hit.assert_called_once_with(
             self.agent_3.worker_id, self.agent_3.assignment_id)
 
-    @testing_utils.skipIfTravis
+    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_socket_setup(self):
         '''Basic socket setup should fail when not in correct state,
         but succeed otherwise
@@ -283,7 +284,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         self.mturk_manager._setup_socket()
         self.assertIsInstance(self.mturk_manager.socket_manager, SocketManager)
 
-    @testing_utils.skipIfTravis
+    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_worker_alive(self):
         # Setup for test
         manager = self.mturk_manager
@@ -555,7 +556,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
             manager.force_expire_hit.assert_not_called()
             manager.send_command.assert_called_once()
 
-    @testing_utils.skipIfTravis
+    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
     def test_mturk_messages(self):
         '''Ensure incoming messages work as expected'''
         # Setup for test

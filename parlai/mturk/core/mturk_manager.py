@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 import logging
 import math
@@ -126,12 +128,12 @@ class MTurkManager():
         self.is_test = is_test
         self.is_unique = False
         self.max_hits_per_worker = opt.get('max_hits_per_worker', 0)
+        self._init_logging_config()
         self.is_shutdown = False
         self.use_db = use_db  # TODO enable always DB integration is complete
         self.db_logger = None
-        self.logging_permitted = False  # Enables logging to parl.ai
+        self.logging_permitted = False
         self.task_state = self.STATE_CREATED
-        self._init_logging_config()
         self._assert_opts()
 
     @staticmethod
@@ -147,7 +149,7 @@ class MTurkManager():
             'is_debug': False,
             'log_level': 30,
         }
-        manager = MTurkManager(opt, [], use_db=True)
+        manager = MTurkManager(opt, [])
         manager.is_shutdown = True
         mturk_utils.setup_aws_credentials()
         return manager
@@ -205,11 +207,8 @@ class MTurkManager():
 
     def _init_logging_config(self):
         """Initialize logging settings from the opt"""
-        if self.use_db and not self.opt['is_debug']:
-            shared_utils.disable_logging()
-        else:
-            shared_utils.set_is_debug(self.opt['is_debug'])
-            shared_utils.set_log_level(self.opt['log_level'])
+        shared_utils.set_is_debug(self.opt['is_debug'])
+        shared_utils.set_log_level(self.opt['log_level'])
 
     def _logging_permission_check(self):
         if self.is_test:
@@ -577,12 +576,7 @@ class MTurkManager():
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             agent.log_reconnect()
             agent.alived = True
-            if agent.conversation_id is not None and \
-                    conversation_id is not None:
-                # agent.conversation_id is None is used in testing.
-                # conversation_id is None on a fresh reconnect event, where
-                # we need to restore state somehow and shouldn't just inherit
-                conversation_id = agent.conversation_id
+            conversation_id = agent.conversation_id
             if agent.get_status() == AssignState.STATUS_NONE:
                 # See if assigned an onboarding world, update state if so
                 if self.is_onboarding_world(conversation_id):

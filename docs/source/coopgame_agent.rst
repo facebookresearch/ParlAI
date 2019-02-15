@@ -1,7 +1,9 @@
 ..
-  Copyright (c) Facebook, Inc. and its affiliates.
-  This source code is licensed under the MIT license found in the
-  LICENSE file in the root directory of this source tree.
+  Copyright (c) 2017-present, Facebook, Inc.
+  All rights reserved.
+  This source code is licensed under the BSD-style license found in the
+  LICENSE file in the root directory of this source tree. An additional grant
+  of patent rights can be found in the PATENTS file in the same directory.
 
 agents.coopgame_agent
 ==========================================================
@@ -26,7 +28,7 @@ games are:
 
 Specifically for Task n' Talk (taken from Kottur et al. 2017):
 
-.. image:: taskntalk.png
+.. image:: _static/img/taskntalk.png
    :width: 90%
    :align: center
 
@@ -34,8 +36,8 @@ Specifically for Task n' Talk (taken from Kottur et al. 2017):
 Questioner cannot see the image, and has a task of finding two attributes of
 the image.
 
-Please refer to the source code for the agent for more information and
-documentation.
+.. automodule:: parlai.agents.coopgame_agent.coopgame_agent
+  :members:
 
 
 Building-block Modules
@@ -46,4 +48,5 @@ conversational games. These agents use following modules, each module can be
 subclassed and replaced in agent according to need. All modules are extended
 from ``torch.nn.Module``.
 
-Please refer to the modules code for more information and documentation.
+.. automodule:: parlai.agents.coopgame_agent.modules
+  :members:

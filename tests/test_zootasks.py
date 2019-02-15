@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+# Copyright (c) 2017-present, Facebook, Inc.
+# All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
 
 import os
 import unittest
-import parlai.core.testing_utils as testing_utils
+import utils
 
 
 class TestZooAndTasks(unittest.TestCase):
@@ -35,7 +37,7 @@ class TestZooAndTasks(unittest.TestCase):
         )
 
     def _check_directory(self, listname, thing_list, thing_dir, thing_key, ignore=[]):
-        dirs = testing_utils.git_ls_dirs()
+        dirs = utils.git_ls_dirs()
         # get only directories directly in the thing directory
         dirs = [d for d in dirs if os.path.dirname(d) == thing_dir]
         # just the folder names
