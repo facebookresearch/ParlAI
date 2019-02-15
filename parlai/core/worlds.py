@@ -440,6 +440,18 @@ class MultiWorld(World):
         self.new_world = True
         self.parleys = -1
         self.random = opt.get('datatype', None) == 'train'
+        # Make multi-task task probabilities.
+        self.cum_task_weights = [1] * len(self.worlds)
+        self.task_choices = range(len(self.worlds))
+        weights = self.opt.get('multitask_weights', [1])
+        sum = 0
+        for i in self.task_choices:
+            if len(weights) > i:
+                weight = weights[i]
+            else:
+                weight = 1
+            self.cum_task_weights[i] = weight + sum
+            sum += weight
 
     def num_examples(self):
         if not hasattr(self, 'num_exs'):
@@ -487,7 +499,8 @@ class MultiWorld(World):
             self.parleys = 0
             if self.random:
                 # select random world
-                self.world_idx = random.randrange(len(self.worlds))
+                self.world_idx = random.choices(
+                    self.task_choices, cum_weights=self.cum_task_weights)[0]
             else:
                 # do at most one full loop looking for unfinished world
                 for _ in range(len(self.worlds)):

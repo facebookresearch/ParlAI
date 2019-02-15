@@ -9,8 +9,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  FormControl, Button, ButtonGroup, InputGroup, MenuItem, DropdownButton,
-  Nav, NavItem
+  FormControl, Button, ButtonGroup, InputGroup, FormGroup,
+  MenuItem, DropdownButton, Badge, Popover, Overlay,
+  Nav, NavItem,
 } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import $ from 'jquery';
@@ -184,8 +185,139 @@ class VolumeControl extends React.Component {
   }
 }
 
+class ChatBox extends React.Component {
+  state = {
+    hidden: true,
+    msg: ''
+  }
+
+  smoothlyAnimateToBottom() {
+    if (this.bottomAnchorRef) {
+      this.bottomAnchorRef.scrollIntoView({ block: "end", behavior: 'smooth' });
+    }
+  }
+
+  instantlyJumpToBottom() {
+    if (this.chatContainerRef) {
+      this.chatContainerRef.scrollTop = this.chatContainerRef.scrollHeight;
+    }
+  }
+
+  componentDidMount() {
+    this.instantlyJumpToBottom();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // Use requestAnimationFrame to defer UI-based updates
+    // until the next browser paint
+    if (prevState.hidden === true && this.state.hidden === false) {
+      requestAnimationFrame(() => {
+        this.instantlyJumpToBottom();
+      });
+    } else if (prevProps.off_chat_messages !== this.props.off_chat_messages) {
+      requestAnimationFrame(() => {
+        this.smoothlyAnimateToBottom();
+      });
+    }
+  }
+
+  // TODO: Replace with enhanced logic to determine if the
+  // chat message belongs to the current user.
+  isOwnMessage = message => message.owner === 0;
+
+  render() {
+    const unreadCount = this.props.has_new_message;
+    const messages = this.props.off_chat_messages || [];
+
+    return <div style={{float: "right", marginRight: 7}}>
+      <Button
+        onClick={() => this.setState({hidden: !this.state.hidden})}
+        ref={el => {this.buttonRef = el}}
+      >
+        Chat Messages&nbsp;
+        {!!unreadCount &&
+          (<Badge style={{backgroundColor: "#d9534f", marginLeft: 3}}>
+            {unreadCount}
+          </Badge>)
+        }
+      </Button>
+
+    <Overlay
+      rootClose
+      show={!this.state.hidden}
+      onHide={() => this.setState({hidden: true})}
+      placement="bottom"
+      target={this.buttonRef}
+    >
+      <Popover id="chat_messages" title={"Chat Messages"}>
+        <div className="chat-list"
+          ref={el => { this.chatContainerRef = el }}
+          style={{minHeight: 300, maxHeight: 300, overflowY: "scroll"}}
+        >
+        {messages.map((message, idx) => (
+          <div
+            key={idx}
+            style={{textAlign: this.isOwnMessage(message) ? "right" : "left"}}>
+            <div
+              style={{borderRadius: 4,
+                marginBottom: 10,
+                padding: "5px 10px",
+                display: "inline-block",
+                ...(this.isOwnMessage(message)? {
+                  marginLeft: 20,
+                  textAlign: "right",
+                  backgroundColor: "#dff1d7"
+                } : {
+                  marginRight: 20,
+                  backgroundColor: "#eee"
+                })
+              }}
+              >
+                {message.msg}
+              </div>
+            </div>))}
+          <div className="bottom-anchor" ref={el => {this.bottomAnchorRef = el}}></div>
+        </div>
+        <form style={{paddingTop: 10}} onSubmit={(e) => {
+          e.preventDefault();
+          if (this.state.msg === '') return;
+          this.props.onMessageSend(this.state.msg);
+          this.setState({msg: ''});
+        }}>
+          <FormGroup>
+            <InputGroup>
+              <FormControl type="text"
+                value={this.state.msg}
+                onChange={(e) => this.setState({msg: e.target.value})}
+              />
+              <InputGroup.Button>
+                <Button className="btn-primary" disabled={this.state.msg === ''}
+                  type="submit"
+                >Send</Button>
+              </InputGroup.Button>
+            </InputGroup>
+          </FormGroup>
+        </form>
+      </Popover>
+    </Overlay>
+  </div>;
+
+  }
+}
+
 class ChatNavbar extends React.Component {
+
+  state = {
+    // TODO: replace hardcoded initial chat state with some API integration
+    chat: [
+      {msg: "hey", owner: 3},
+      {msg: "anyone else there?", owner: 3},
+    ]
+  }
+
   render () {
+    // const displayChatBox = true;
+    const displayChatBox = this.props.displayChatBox || false;
     let nav_style = {
       position: 'absolute', backgroundColor: '#EEEEEE', borderColor: '#e7e7e7',
       height: 46, top: 0, borderWidth: '0 0 1px', borderRadius: 0, right: 0,
@@ -195,6 +327,10 @@ class ChatNavbar extends React.Component {
       <div style={nav_style}>
         <ConnectionIndicator {...this.props} />
         <VolumeControl {...this.props} />
+        {displayChatBox && <ChatBox
+          off_chat_messages={this.state.chat}
+          onMessageSend={(msg) => this.setState({chat: [...this.state.chat, {msg, owner: 0}]})}
+          has_new_message={2}/> }
       </div>
     );
   }
