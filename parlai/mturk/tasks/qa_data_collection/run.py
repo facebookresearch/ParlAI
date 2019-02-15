@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.qa_data_collection.worlds import \
     QADataCollectionOnboardWorld, QADataCollectionWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
-from task_config import task_config
+from parlai.mturk.tasks.qa_data_collection.task_config import task_config
 import os
 import importlib
 

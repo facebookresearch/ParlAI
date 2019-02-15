@@ -1,19 +1,17 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 """
 Unit tests for general checks of code quality.
 """
 
 import unittest
-import utils
 import os
 import re
+import parlai.core.testing_utils as testing_utils
 
 FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js|css)$'
 WHITELIST_PHRASES = [
@@ -21,11 +19,9 @@ WHITELIST_PHRASES = [
     'https://github.com/fartashf/vsepp'
 ]
 COPYRIGHT = [
-    "Copyright (c) 2017-present, Facebook, Inc.",
-    "All rights reserved.",
-    "This source code is licensed under the BSD-style license found in the",
-    "LICENSE file in the root directory of this source tree. An additional grant",
-    "of patent rights can be found in the PATENTS file in the same directory.",
+    "Copyright (c) Facebook, Inc. and its affiliates.",
+    "This source code is licensed under the MIT license found in the",
+    "LICENSE file in the root directory of this source tree.",
 ]
 
 
@@ -33,7 +29,7 @@ class TestCopyright(unittest.TestCase):
     """Make sure all files have the right copyright."""
 
     def test_copyright(self):
-        for fn in utils.git_ls_files():
+        for fn in testing_utils.git_ls_files():
             # only check source files
             if not re.match(FILENAME_EXTENSIONS, fn):
                 continue
@@ -63,7 +59,7 @@ class TestCopyright(unittest.TestCase):
 class TestInit(unittest.TestCase):
     """Make sure all python packages have init files."""
     def test_init_everywhere(self):
-        for folder in utils.git_ls_dirs('parlai'):
+        for folder in testing_utils.git_ls_dirs('parlai'):
             if 'mturk' in folder:
                 continue
             self.assertIn(

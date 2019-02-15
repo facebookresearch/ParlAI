@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import unittest
 import time
@@ -639,7 +637,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
-        # Simulate reconnect
+        # Simulate reconnect to task
         stored_conv_id = agent_2.conversation_id
         stored_agent_id = agent_2.id
         agent_2.conversation_id = None
@@ -649,7 +647,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         assert_equal_by(lambda: len(
             [p for p in agent_2.message_packet
              if p.data['text'] == data_model.COMMAND_RESTORE_STATE]
-        ), 1, 2)
+        ), 1, 4)
         self.assertEqual(agent_2.id, stored_agent_id)
         self.assertEqual(agent_2.conversation_id, stored_conv_id)
 

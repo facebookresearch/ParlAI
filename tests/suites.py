@@ -1,18 +1,11 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import unittest
-
-# gross hack b/c we're not marking tests/ as a package
-try:
-    from tests import utils
-except ImportError:
-    from . import utils
+import parlai.core.testing_utils as testing_utils
 
 
 def _clear_cmdline_args(fn):
@@ -54,7 +47,7 @@ def travis():
     """Tests needed to pass Travis."""
     test_suite = unittest.TestSuite()
     test_suite.addTests(short())
-    changed_files = utils.git_changed_files(skip_nonexisting=False)
+    changed_files = testing_utils.git_changed_files(skip_nonexisting=False)
     if any('parlai/mturk' in fn for fn in changed_files):
         # if any mturk stuff changed, run those tests too
         test_suite.addTests(mturk())

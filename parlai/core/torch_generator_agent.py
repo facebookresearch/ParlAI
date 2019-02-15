@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 
 """
@@ -34,6 +32,7 @@ import torch.nn.functional as F
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs, warn_once
 from parlai.core.thread_utils import SharedTable
+from parlai.core.distributed_utils import is_distributed
 
 
 class TorchGeneratorModel(nn.Module):
@@ -239,6 +238,8 @@ class TorchGeneratorAgent(TorchAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         agent = argparser.add_argument_group('Torch Generator Agent')
+        agent.add_argument('--init-model', type=str, default=None,
+                           help='load dict/model/opts from this path')
         agent.add_argument('--beam-size', type=int, default=1,
                            help='Beam size, if 1 then greedy search')
         agent.add_argument('--beam-dot-log', type='bool', default=False, hidden=True,
@@ -260,19 +261,21 @@ class TorchGeneratorAgent(TorchAgent):
 
     def __init__(self, opt, shared=None):
         init_model = None
+        is_finetune = False
         if not shared:  # only do this on first setup
             # first check load path in case we need to override paths
             if opt.get('init_model') and os.path.isfile(opt['init_model']):
                 # check first for 'init_model' for loading model from file
                 init_model = opt['init_model']
+                is_finetune = True
             if opt.get('model_file') and os.path.isfile(opt['model_file']):
                 # next check for 'model_file', this would override init_model
                 init_model = opt['model_file']
+                is_finetune = False
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
-                if (os.path.isfile(init_model + '.dict') or
-                        opt['dict_file'] is None):
+                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
                     opt['dict_file'] = init_model + '.dict'
         super().__init__(opt, shared)
 
@@ -318,12 +321,21 @@ class TorchGeneratorAgent(TorchAgent):
             else:
                 states = {}
 
+        if shared is None and is_distributed():
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model,
+                device_ids=[self.opt['gpu']],
+                broadcast_buffers=False,
+            )
+
         if 'train' in opt.get('datatype', ''):
             # do this regardless of share state, but don't
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
-                saved_optim_type=states.get('optimizer_type'))
+                saved_optim_type=states.get('optimizer_type')
+            )
+            self.build_lr_scheduler(states, hard_reset=is_finetune)
 
         self.reset()
 
@@ -359,15 +371,16 @@ class TorchGeneratorAgent(TorchAgent):
         if self.use_cuda:
             self.criterion.cuda()
 
-    def _init_cuda_buffer(self, model, criterion, batchsize, maxlen):
+    def _init_cuda_buffer(self, batchsize, maxlen, force=False):
         """Pre-initialize CUDA buffer by doing fake forward pass."""
-        if self.use_cuda and not hasattr(self, 'buffer_initialized'):
+        if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
-                print('preinitializing pytorch cuda buffer')
                 dummy_xs = torch.ones(batchsize, maxlen).long().cuda()
                 dummy_ys = torch.ones(batchsize, 2).long().cuda()
-                scores, _, _ = model(dummy_xs, dummy_ys)
-                loss = criterion(scores.view(-1, scores.size(-1)), dummy_ys.view(-1))
+                scores, _, _ = self.model(dummy_xs, dummy_ys)
+                loss = self.criterion(
+                    scores.view(-1, scores.size(-1)), dummy_ys.view(-1)
+                )
                 loss.backward()
                 self.buffer_initialized = True
             except RuntimeError as e:
@@ -378,16 +391,6 @@ class TorchGeneratorAgent(TorchAgent):
                     raise RuntimeError(m)
                 else:
                     raise e
-
-    def zero_grad(self):
-        """Zero out optimizer."""
-        self.optimizer.zero_grad()
-
-    def update_params(self):
-        """Do one optimization step."""
-        if self.clip > 0:
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
-        self.optimizer.step()
 
     def reset_metrics(self):
         """Reset metrics for reporting loss and perplexity."""
@@ -421,6 +424,7 @@ class TorchGeneratorAgent(TorchAgent):
         Note that this includes predicting __END__ and __UNK__ tokens and may
         differ from a truly independent measurement.
         """
+        base = super().report()
         m = {}
         num_tok = self.metrics['num_tokens']
         if num_tok > 0:
@@ -435,15 +439,14 @@ class TorchGeneratorAgent(TorchAgent):
             m['total_skipped_batches'] = self.metrics['total_skipped_batches']
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
-            m[k] = round_sigfigs(v, 4)
-        return m
+            base[k] = round_sigfigs(v, 4)
+        return base
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
         batchsize = batch.text_vec.size(0)
         # helps with memory usage
-        self._init_cuda_buffer(self.model, self.criterion, batchsize,
-                               self.truncate or 180)
+        self._init_cuda_buffer(batchsize, self.truncate or 256)
         self.model.train()
         self.zero_grad()
 
@@ -468,15 +471,11 @@ class TorchGeneratorAgent(TorchAgent):
                       'if this happens frequently, decrease batchsize or '
                       'truncate the inputs to the model.')
                 self.metrics['total_skipped_batches'] += 1
+                # gradients are synced on backward, now this model is going to be
+                # out of sync! catch up with the other workers
+                self._init_cuda_buffer(8, 8, True)
             else:
                 raise e
-
-    def _pick_cands(self, cand_preds, cand_inds, cands):
-        cand_replies = [None] * len(cands)
-        for idx, order in enumerate(cand_preds):
-            batch_idx = cand_inds[idx]
-            cand_replies[batch_idx] = [cands[batch_idx][i] for i in order]
-        return cand_replies
 
     def _write_beam_dots(self, text_vecs, beams):
         """Write the beam dot files to disk."""
@@ -617,7 +616,7 @@ class TorchGeneratorAgent(TorchAgent):
 
             score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
             # only need the final hidden state to make the word prediction
-            score = score[:, -1, :]
+            score = score[:, -1:, :]
             score = model.output(score)
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)

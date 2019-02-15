@@ -9,7 +9,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  FormControl, Button, ButtonGroup, InputGroup, MenuItem, DropdownButton
+  FormControl, Button, ButtonGroup, InputGroup, FormGroup,
+  MenuItem, DropdownButton, Badge, Popover, Overlay,
+  Nav, NavItem,
 } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import $ from 'jquery';
@@ -53,7 +55,7 @@ class ChatMessage extends React.Component {
         <div
           className={"alert " + alert_class} role="alert"
           style={{'float': float_loc, 'display': 'table'}}>
-          <span style={{'fontSize': '16px'}}>
+          <span style={{'fontSize': '16px', 'whiteSpace': 'pre-wrap'}}>
             <b>{this.props.agent_id}</b>: {this.props.message}
           </span>
           {duration}
@@ -71,15 +73,21 @@ class MessageList extends React.Component {
     // on the thread - agent_ids for the sender of a message exist in
     // the m.id field.
     let XChatMessage = getCorrectComponent('XChatMessage', this.props.v_id);
+    let onClickMessage = this.props.onClickMessage;
+    if (typeof onClickMessage !== 'function') {
+      onClickMessage = (idx) => {};
+    }
     return messages.map(
-      m => <XChatMessage
-        key={m.message_id}
-        is_self={m.id == agent_id}
-        agent_id={m.id}
-        message={m.text}
-        context={m.context}
-        message_id={m.message_id}
-        duration={this.props.is_review ? m.duration : undefined}/>
+      (m, idx) =>
+        <div key={m.message_id} onClick={() => onClickMessage(idx)}>
+          <XChatMessage
+            is_self={m.id == agent_id}
+            agent_id={m.id}
+            message={m.text}
+            task_data={m.task_data}
+            message_id={m.message_id}
+            duration={this.props.is_review ? m.duration : undefined}/>
+        </div>
     );
   }
 
@@ -177,8 +185,139 @@ class VolumeControl extends React.Component {
   }
 }
 
+class ChatBox extends React.Component {
+  state = {
+    hidden: true,
+    msg: ''
+  }
+
+  smoothlyAnimateToBottom() {
+    if (this.bottomAnchorRef) {
+      this.bottomAnchorRef.scrollIntoView({ block: "end", behavior: 'smooth' });
+    }
+  }
+
+  instantlyJumpToBottom() {
+    if (this.chatContainerRef) {
+      this.chatContainerRef.scrollTop = this.chatContainerRef.scrollHeight;
+    }
+  }
+
+  componentDidMount() {
+    this.instantlyJumpToBottom();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // Use requestAnimationFrame to defer UI-based updates
+    // until the next browser paint
+    if (prevState.hidden === true && this.state.hidden === false) {
+      requestAnimationFrame(() => {
+        this.instantlyJumpToBottom();
+      });
+    } else if (prevProps.off_chat_messages !== this.props.off_chat_messages) {
+      requestAnimationFrame(() => {
+        this.smoothlyAnimateToBottom();
+      });
+    }
+  }
+
+  // TODO: Replace with enhanced logic to determine if the
+  // chat message belongs to the current user.
+  isOwnMessage = message => message.owner === 0;
+
+  render() {
+    const unreadCount = this.props.has_new_message;
+    const messages = this.props.off_chat_messages || [];
+
+    return <div style={{float: "right", marginRight: 7}}>
+      <Button
+        onClick={() => this.setState({hidden: !this.state.hidden})}
+        ref={el => {this.buttonRef = el}}
+      >
+        Chat Messages&nbsp;
+        {!!unreadCount &&
+          (<Badge style={{backgroundColor: "#d9534f", marginLeft: 3}}>
+            {unreadCount}
+          </Badge>)
+        }
+      </Button>
+
+    <Overlay
+      rootClose
+      show={!this.state.hidden}
+      onHide={() => this.setState({hidden: true})}
+      placement="bottom"
+      target={this.buttonRef}
+    >
+      <Popover id="chat_messages" title={"Chat Messages"}>
+        <div className="chat-list"
+          ref={el => { this.chatContainerRef = el }}
+          style={{minHeight: 300, maxHeight: 300, overflowY: "scroll"}}
+        >
+        {messages.map((message, idx) => (
+          <div
+            key={idx}
+            style={{textAlign: this.isOwnMessage(message) ? "right" : "left"}}>
+            <div
+              style={{borderRadius: 4,
+                marginBottom: 10,
+                padding: "5px 10px",
+                display: "inline-block",
+                ...(this.isOwnMessage(message)? {
+                  marginLeft: 20,
+                  textAlign: "right",
+                  backgroundColor: "#dff1d7"
+                } : {
+                  marginRight: 20,
+                  backgroundColor: "#eee"
+                })
+              }}
+              >
+                {message.msg}
+              </div>
+            </div>))}
+          <div className="bottom-anchor" ref={el => {this.bottomAnchorRef = el}}></div>
+        </div>
+        <form style={{paddingTop: 10}} onSubmit={(e) => {
+          e.preventDefault();
+          if (this.state.msg === '') return;
+          this.props.onMessageSend(this.state.msg);
+          this.setState({msg: ''});
+        }}>
+          <FormGroup>
+            <InputGroup>
+              <FormControl type="text"
+                value={this.state.msg}
+                onChange={(e) => this.setState({msg: e.target.value})}
+              />
+              <InputGroup.Button>
+                <Button className="btn-primary" disabled={this.state.msg === ''}
+                  type="submit"
+                >Send</Button>
+              </InputGroup.Button>
+            </InputGroup>
+          </FormGroup>
+        </form>
+      </Popover>
+    </Overlay>
+  </div>;
+
+  }
+}
+
 class ChatNavbar extends React.Component {
+
+  state = {
+    // TODO: replace hardcoded initial chat state with some API integration
+    chat: [
+      {msg: "hey", owner: 3},
+      {msg: "anyone else there?", owner: 3},
+    ]
+  }
+
   render () {
+    // const displayChatBox = true;
+    const displayChatBox = this.props.displayChatBox || false;
     let nav_style = {
       position: 'absolute', backgroundColor: '#EEEEEE', borderColor: '#e7e7e7',
       height: 46, top: 0, borderWidth: '0 0 1px', borderRadius: 0, right: 0,
@@ -188,6 +327,10 @@ class ChatNavbar extends React.Component {
       <div style={nav_style}>
         <ConnectionIndicator {...this.props} />
         <VolumeControl {...this.props} />
+        {displayChatBox && <ChatBox
+          off_chat_messages={this.state.chat}
+          onMessageSend={(msg) => this.setState({chat: [...this.state.chat, {msg, owner: 0}]})}
+          has_new_message={2}/> }
       </div>
     );
   }
@@ -593,7 +736,7 @@ class DoneResponse extends React.Component {
 class TextResponse extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {'textval': ''};
+    this.state = {'textval': '', 'sending': false};
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -607,9 +750,11 @@ class TextResponse extends React.Component {
   }
 
   tryMessageSend() {
-    if (this.state.textval != '' && this.props.active) {
+    if (this.state.textval != '' && this.props.active && !this.state.sending) {
+      this.setState({sending: true});
       this.props.onMessageSend(
-        this.state.textval, {}, () => this.setState({textval: ''}));
+        this.state.textval, {},
+        () => this.setState({textval: '', 'sending': false}));
     }
   }
 
@@ -648,7 +793,7 @@ class TextResponse extends React.Component {
         placeholder="Please enter here..."
         onKeyPress={(e) => this.handleKeyPress(e)}
         onChange={(e) => this.setState({textval: e.target.value})}
-        disabled={!this.props.active}/>
+        disabled={!this.props.active || this.state.sending}/>
     );
 
     let submit_button = (
@@ -656,7 +801,8 @@ class TextResponse extends React.Component {
         className="btn btn-primary"
         style={submit_style}
         id="id_send_msg_button"
-        disabled={this.state.textval == '' || !this.props.active}
+        disabled={
+          this.state.textval == '' || !this.props.active || this.state.sending}
         onClick={() => this.tryMessageSend()}>
           Send
       </Button>
@@ -765,7 +911,46 @@ class TaskDescription extends React.Component {
   }
 }
 
+class ContextView extends React.Component {
+  render () {
+    // TODO pull context title from templating variable
+    let header_text = 'Context';
+    let context = (
+      'To render context here, write or select a ContextView ' +
+      'that can render your task_data, or write the desired ' +
+      'content into the task_data.html field of your act');
+    if (this.props.task_data !== undefined &&
+        this.props.task_data.html !== undefined) {
+      context = this.props.task_data.html;
+    }
+    return (
+      <div>
+          <h1>{header_text}</h1>
+          <hr style={{'borderTop': '1px solid #555'}} />
+          <span
+            id="context" style={{'fontSize': '16px'}}
+            dangerouslySetInnerHTML={{__html: context}}
+          />
+      </div>
+    );
+  }
+}
+
 class LeftPane extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {current_pane: 'instruction', last_update: 0};
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState){
+    if (nextProps.task_data.last_update !== undefined &&
+        nextProps.task_data.last_update > prevState.last_update) {
+      return {current_pane: 'context',
+              last_update: nextProps.task_data.last_update};
+    }
+    else return null;
+  }
+
   render () {
     let v_id = this.props.v_id;
     let frame_height = this.props.frame_height;
@@ -773,20 +958,88 @@ class LeftPane extends React.Component {
       height: frame_height + 'px',
       'backgroundColor': '#dff0d8',
       padding: '30px',
-      overflow: 'auto'
+      overflow: 'auto',
     };
     let XTaskDescription = getCorrectComponent('XTaskDescription', v_id);
     let pane_size = this.props.is_cover_page ? 'col-xs-12' : 'col-xs-4';
-    return (
-      <div id="left-pane" className={pane_size} style={frame_style}>
+    let has_context = this.props.task_data.last_update !== undefined;
+    if (this.props.is_cover_page || !has_context) {
+      return (
+        <div id="left-pane" className={pane_size} style={frame_style}>
+            <XTaskDescription {...this.props} />
+        </div>
+      );
+    } else {
+      let XContextView = getCorrectComponent('XContextView', v_id);
+      // In a 2 panel layout, we need to tabulate the left pane to be able
+      // to display both context and instructions
+      let nav_items = [
+        <NavItem
+          eventKey={'instruction'}
+          key={'instruction-selector'}
+          title={'Task Instructions'}>
+          {'Task Instructions'}
+        </NavItem>,
+        <NavItem
+          eventKey={'context'}
+          key={'context-selector'}
+          title={'Context'}>
+          {'Context'}
+        </NavItem>
+      ];
+      let display_instruction = {
+        'backgroundColor': '#dff0d8',
+        padding: '10px 20px 20px 20px',
+        flex: '1 1 auto',
+      };
+      let display_context = {
+        'backgroundColor': '#dff0d8',
+        padding: '10px 20px 20px 20px',
+        flex: '1 1 auto',
+      };
+      if (this.state.current_pane == 'context') {
+        display_instruction.display = 'none';
+      } else {
+        display_context.display = 'none';
+      }
+      let nav_panels = [
+        <div style={display_instruction} key={'instructions-display'}>
           <XTaskDescription {...this.props} />
-      </div>
-    );
+        </div>,
+        <div style={display_context} key={'context-display'}>
+          <XContextView {...this.props} />
+        </div>
+      ]
+
+      let frame_style = {
+        height: frame_height + 'px',
+        'backgroundColor': '#eee',
+        'padding': '10px 0px 0px 0px',
+        overflow: 'auto',
+        display: 'flex',
+        flexFlow: 'column',
+      };
+
+      return (
+        <div id="left-pane" className={pane_size} style={frame_style}>
+          <Nav
+            bsStyle="tabs"
+            activeKey={this.state.current_pane}
+            onSelect={key => this.setState({current_pane: key})}
+          >
+            {nav_items}
+          </Nav>
+          {nav_panels}
+        </div>
+      )
+    }
+
   }
 }
 
 class ContentLayout extends React.Component {
   render () {
+    let layout_style = '2-PANEL'; // Currently the only layout style is 2 panel
     let v_id = this.props.v_id;
     let XLeftPane = getCorrectComponent('XLeftPane', v_id);
     let XRightPane = getCorrectComponent('XRightPane', v_id);
@@ -794,8 +1047,9 @@ class ContentLayout extends React.Component {
       <div className="row" id="ui-content">
         <XLeftPane
           {...this.props}
+          layout_style={layout_style}
         />
-        <XRightPane {...this.props} />
+        <XRightPane {...this.props} layout_style={layout_style} />
       </div>
     );
   }
@@ -860,6 +1114,7 @@ component_list = {
   'XChatMessage': ['ChatMessage', ChatMessage],
   'XTaskDescription': ['XTaskDescription', TaskDescription],
   'XReviewButtons': ['XReviewButtons', ReviewButtons],
+  'XContextView': ['XContextView', ContextView],
 };
 
 export {

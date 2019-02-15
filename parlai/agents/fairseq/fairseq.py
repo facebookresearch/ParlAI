@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 """
 ParlAI has limited support for using models from
@@ -229,10 +227,7 @@ class FairseqAgent(TorchAgent):
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         # first we need to add the general torch agent operations
-        TorchAgent.add_cmdline_args(argparser)
-        # Dictionary construction stuff. Using the subclass in case we end up
-        # needing any fairseq specific things
-        cls.dictionary_class().add_cmdline_args(argparser)
+        super(FairseqAgent, cls).add_cmdline_args(argparser)
 
         # let's store any defaults that were overridden
         old_defaults = argparser._defaults

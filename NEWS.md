@@ -1,5 +1,10 @@
 <h2>News</h2>
-2018-11-05: Added [Wizard of Wikipedia](https://arxiv.org/abs/1811.01241), a dataset for knowledge-powered conversation.
+2019-01-16: ParlAI has been relicensed under the MIT open source license.
+
+
+2018-12-13: Added [Daily Dialog](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/dailydialog/agents.py), an open-domain daily dialogue dataset.
+
+2018-11-05: Added [Wizard of Wikipedia](http://parl.ai/projects/wizard_of_wikipedia/), a dataset for knowledge-powered conversation.
 
 2018-11-02: Added [Image-Chat](https://klshuster.github.io/image_chat/), a dataset for engaging personality-conditioned dialogue grounded in images.
 

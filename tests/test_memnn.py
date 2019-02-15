@@ -1,39 +1,15 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import unittest
-import io
-import contextlib
-import tempfile
-import os
-import shutil
-
-from parlai.scripts.train_model import TrainLoop, setup_args
+import parlai.core.testing_utils as testing_utils
 
 BATCH_SIZE = 1
 NUM_EPOCHS = 3
 LR = 1
-
-
-def _mock_train(**args):
-    outdir = tempfile.mkdtemp()
-    parser = setup_args()
-    parser.set_defaults(
-        model_file=os.path.join(outdir, "model"),
-        **args,
-    )
-    stdout = io.StringIO()
-    with contextlib.redirect_stdout(stdout):
-        tl = TrainLoop(parser.parse_args(print_args=False))
-        valid, test = tl.train()
-
-    shutil.rmtree(outdir)
-    return stdout.getvalue(), valid, test
 
 
 class TestMemnn(unittest.TestCase):
@@ -42,8 +18,8 @@ class TestMemnn(unittest.TestCase):
     def test_labelcands_nomemnn(self):
         """This test uses a single-turn task, so doesn't test memories."""
 
-        stdout, valid, test = _mock_train(
-            task='integration_tests:CandidateTeacher',
+        stdout, valid, test = testing_utils.train_model(dict(
+            task='integration_tests:candidate',
             model='memnn',
             lr=LR,
             batchsize=BATCH_SIZE,
@@ -57,7 +33,7 @@ class TestMemnn(unittest.TestCase):
             use_time_features=False,
             memsize=0,
             rank_candidates=True,
-        )
+        ))
 
         self.assertTrue(
             valid['hits@1'] > 0.95,
@@ -68,10 +44,11 @@ class TestMemnn(unittest.TestCase):
             "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
         )
 
+    @testing_utils.skipIfGPU
     def test_labelcands_multi(self):
         """This test uses a multi-turn task and multithreading."""
-        stdout, valid, test = _mock_train(
-            task='integration_tests:MultiturnCandidateTeacher',
+        stdout, valid, test = testing_utils.train_model(dict(
+            task='integration_tests:multiturn_candidate',
             model='memnn',
             lr=LR,
             batchsize=BATCH_SIZE,
@@ -85,7 +62,7 @@ class TestMemnn(unittest.TestCase):
             use_time_features=True,
             memsize=5,
             rank_candidates=True,
-        )
+        ))
 
         self.assertTrue(
             valid['hits@1'] > 0.95,

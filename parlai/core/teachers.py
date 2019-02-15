@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """This module provides a set of teachers that deal with dialog:
 
     ``FixedDialogTeacher(Teacher)``
@@ -34,7 +32,14 @@ structures for accessing textual dialog data and utilized by ``DialogTeacher``
 
 from .agents import Teacher, create_task_agent_from_taskname
 from .image_featurizers import ImageLoader
-from .utils import AttrDict, flatten, sort_data, make_batches, no_lock, str_to_msg
+from .utils import (
+    AttrDict,
+    flatten,
+    sort_data,
+    make_batches,
+    no_lock,
+    str_to_msg,
+)
 
 from functools import lru_cache
 
@@ -47,7 +52,6 @@ import random
 import sys
 import time
 import os
-import warnings
 
 
 class DataLoader(Thread):
@@ -371,10 +375,9 @@ class FixedDialogTeacher(Teacher):
         return observation
 
     def batch_act(self, observations):
-        """Returns an entire batch of examples instead of just one."""
-        warnings.warn('batch_act is deprecated. Please use PytorchDataTeacher '
-                      'for your batch sorting needs.',
-                      DeprecationWarning)
+        """Returns an entire batch of examples instead of just one.
+           Note: Currently used by PytorchDataTeacher.
+        """
         # we ignore observations
         if not hasattr(self, 'epochDone'):
             # reset if haven't yet
