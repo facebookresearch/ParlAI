@@ -204,6 +204,7 @@ class SocketManager():
         self.listen_thread = None
         self.send_thread = None
         self.queues = {}
+        self.blocking_packets = {}  # connection_id to blocking packet map
         self.threads = {}
         self.run = {}
         self.last_sent_heartbeat_time = {}  # time of last heartbeat sent
@@ -322,11 +323,10 @@ class SocketManager():
         if packet.requires_ack:
             if packet.blocking:
                 # Put the packet right back into its place to prevent sending
-                # other packets, then block
+                # other packets, then block that connection
                 self._safe_put(connection_id, (send_time, packet))
                 t = time.time() + self.ACK_TIME[packet.type]
-                while time.time() < t and packet.status != Packet.STATUS_ACK:
-                    time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+                self.blocking_packets[connection_id] = (t, packet)
             else:
                 # non-blocking ack: add ack-check to queue
                 t = time.time() + self.ACK_TIME[packet.type]
@@ -513,6 +513,15 @@ class SocketManager():
         self.send_thread.daemon = True
         self.send_thread.start()
 
+    def packet_should_block(self, packet_item):
+        """Helper function to determine if a packet is still blocking"""
+        t, packet = packet_item
+        if time.time() > t:
+            return False  # Exceeded blocking time
+        if packet.status in [Packet.STATUS_ACK, Packet.STATUS_FAIL]:
+            return False  # No longer in blocking status
+        return True
+
     def channel_thread(self):
         """Handler thread for monitoring all channels"""
         # while the thread is still alive
@@ -540,6 +549,12 @@ class SocketManager():
                     if connection_id not in self.queues:
                         self.run[connection_id] = False
                         break
+                    if self.blocking_packets.get(connection_id) is not None:
+                        packet_item = self.blocking_packets[connection_id]
+                        if not self.packet_should_block(packet_item):
+                            self.blocking_packets[connection_id] = None
+                        else:
+                            continue
                     try:
                         # Get first item in the queue, check if can send it yet
                         item = self.queues[connection_id].get(block=False)
