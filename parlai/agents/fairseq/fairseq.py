@@ -455,7 +455,7 @@ class FairseqAgent(TorchAgent):
     def load(self, path):
         """Load using fairseq's checkpointing."""
         if self.trainer:
-            old_options = self.trainer.load_checkpoint(path)
+            old_options = self.trainer.load_checkpoint(path, self.args.reset_optimizer)
             self._check_opts_unchanged(old_options, self.opt)
         else:
             load_model_state(path, self.model)
