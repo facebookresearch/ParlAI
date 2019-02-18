@@ -354,6 +354,8 @@ class TorchGeneratorAgent(TorchAgent):
 
             self.build_criterion()
             self.build_model()
+            if self.fp16:
+                self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
@@ -433,7 +435,10 @@ class TorchGeneratorAgent(TorchAgent):
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
-                loss.backward()
+                if self.fp16:
+                    self.optimizer.backward(loss)
+                else:
+                    loss.backward()
                 self.buffer_initialized = True
             except RuntimeError as e:
                 if 'out of memory' in str(e):
@@ -528,7 +533,8 @@ class TorchGeneratorAgent(TorchAgent):
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
         score_view = scores.view(-1, scores.size(-1))
-        loss = self.criterion(score_view, batch.label_vec.view(-1))
+        label_flat = batch.label_vec.view(-1)
+        loss = self.criterion(score_view.float(), label_flat)
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)
         target_tokens = notnull.long().sum().item()
@@ -553,7 +559,10 @@ class TorchGeneratorAgent(TorchAgent):
         try:
             loss = self.compute_loss(batch)
             self.metrics['loss'] += loss.item()
-            loss.backward()
+            if self.fp16:
+                self.optimizer.backward(loss)
+            else:
+                loss.backward()
             self.update_params()
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)
@@ -588,7 +597,8 @@ class TorchGeneratorAgent(TorchAgent):
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
-            loss = self.compute_loss(batch)  # noqa: F841  we need the side effects
+            with torch.no_grad():
+                loss = self.compute_loss(batch)  # noqa: F841  we need the side effects
             self.metrics['loss'] += loss.item()
 
         preds = None
@@ -599,19 +609,21 @@ class TorchGeneratorAgent(TorchAgent):
             )
         elif self.beam_size == 1:
             # greedy decode
-            _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz)
+            with torch.no_grad():
+                _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz)
         elif self.beam_size > 1:
-            out = self.beam_search(
-                self.model,
-                batch,
-                self.beam_size,
-                start=self.START_IDX,
-                end=self.END_IDX,
-                pad=self.NULL_IDX,
-                min_length=self.beam_min_length,
-                min_n_best=self.beam_min_n_best,
-                block_ngram=self.beam_block_ngram
-            )
+            with torch.no_grad():
+                out = self.beam_search(
+                    self.model,
+                    batch,
+                    self.beam_size,
+                    start=self.START_IDX,
+                    end=self.END_IDX,
+                    pad=self.NULL_IDX,
+                    min_length=self.beam_min_length,
+                    min_n_best=self.beam_min_n_best,
+                    block_ngram=self.beam_block_ngram
+                )
             beam_preds_scores, _, beams = out
             preds, scores = zip(*beam_preds_scores)
 

@@ -917,6 +917,9 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     # if input tensors are empty, we should expand to nulls
     t = max(t, 1)
 
+    if t % 8 != 0:
+        t += 8 - (t % 8)
+
     if isinstance(items[0], torch.Tensor):
         # keep type of input tensors, they may already be cuda ones
         output = items[0].new(n, t)

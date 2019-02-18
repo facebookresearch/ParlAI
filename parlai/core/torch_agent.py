@@ -362,6 +362,8 @@ class TorchAgent(Agent):
         )
         # optimizer arguments
         agent.add_argument(
+            '--fp16', type='bool', default=False, help='Use fp16 computations.')
+        agent.add_argument(
             '-opt', '--optimizer', default='sgd', choices=cls.optim_opts(),
             help='Choose between pytorch optimizers. Any member of torch.optim'
                  ' should be valid.'
@@ -521,6 +523,8 @@ class TorchAgent(Agent):
                 print('[ Using CUDA ]')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
+        # indicate whether using fp16
+        self.fp16 = self.opt.get('fp16', False)
 
         # now set up any fields that all instances may need
         self.id = 'TorchAgent'  # child can override
@@ -629,6 +633,18 @@ class TorchAgent(Agent):
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
+        if self.fp16:
+            try:
+                import apex.fp16_utils
+            except ImportError:
+                raise ImportError(
+                    'No fp16 support without apex. Please install it from '
+                    'https://github.com/NVIDIA/apex'
+                )
+            self.optimizer = apex.fp16_utils.FP16_Optimizer(
+                self.optimizer, dynamic_loss_scale=True, verbose=False,
+            )
+
         if optim_states:
             if saved_optim_type != opt['optimizer']:
                 print('WARNING: not loading optim state since optim class '
@@ -658,6 +674,11 @@ class TorchAgent(Agent):
         :param bool hard_reset: If true, the LR scheduler should ignore the
             state dictionary.
         """
+        optimizer = self.optimizer
+        if self.fp16:
+            # lr schedulers don't work with apex, they expect the "real" optimizer
+            optimizer = optimizer.optimizer
+
         if self.opt.get('warmup_updates', -1) > 0:
             def _warmup_lr(step):
                 start = self.opt['warmup_rate']
@@ -667,7 +688,7 @@ class TorchAgent(Agent):
                 return lr_mult
 
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
-                self.optimizer,
+                optimizer,
                 _warmup_lr,
             )
         else:
@@ -687,7 +708,7 @@ class TorchAgent(Agent):
             self.scheduler = None
         elif self.opt.get('lr_scheduler') == 'reduceonplateau':
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer,
+                optimizer,
                 'min',
                 factor=decay,
                 patience=patience,
@@ -695,7 +716,7 @@ class TorchAgent(Agent):
             )
         elif self.opt.get('lr_scheduler') == 'fixed':
             self.scheduler = optim.lr_scheduler.StepLR(
-                self.optimizer,
+                optimizer,
                 patience,
                 gamma=decay,
             )
@@ -711,7 +732,7 @@ class TorchAgent(Agent):
                 return decay_factor / np.sqrt(max(1, step))
 
             self.scheduler = optim.lr_scheduler.LambdaLR(
-                self.optimizer,
+                optimizer,
                 _invsqrt_lr,
             )
         else:
@@ -1458,9 +1479,12 @@ class TorchAgent(Agent):
             self.scheduler.step(self._number_training_updates)
 
         if self.opt.get('gradient_clip', -1) > 0:
-            torch.nn.utils.clip_grad_norm_(
-                self.model.parameters(), self.opt['gradient_clip']
-            )
+            if self.fp16:
+                self.optimizer.clip_master_grads(self.opt['gradient_clip'])
+            else:
+                torch.nn.utils.clip_grad_norm_(
+                    self.model.parameters(), self.opt['gradient_clip']
+                )
 
         self.optimizer.step()
 
