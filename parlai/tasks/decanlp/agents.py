@@ -66,6 +66,7 @@ class MwscTeacher(mwsc.DefaultTeacher):
     pass
 
 
+
 class DecaNLPTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         decanlp_tasks = ['squad', 'iwslt14', 'cnn_dm', 'multinli', 'sst',
