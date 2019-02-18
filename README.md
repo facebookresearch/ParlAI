@@ -26,22 +26,26 @@ See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.
 ## Goals
 
 Unified framework for evaluation of dialogue models
+
 - downloads tasks/datasets on demand and provides the same simple interface to them
 - unifies dataset input and evaluation frameworks/metrics
 - `agents/` directory encourages researchers to submit their training code to the repository to share with others
 - aids reproducibility
 
 End goal is general dialogue, which includes many different skills
+
 - seamlessly combines simulated and real language tasks
 - encourages multi-task model development & evaluation
 - helps to reduce overfitting of models to specific datasets         
 
 End goal is real dialogue with people
+
 - train and evaluate on live dialogue with humans via Mechanical Turk or Messenger
 - easy setup for connecting turkers with your dialogue agent
 - allow to compare different research groups turk experiments
 
 Set of datasets to bootstrap a working dialogue model for human interaction
+
 - motivates building new datasets that will go in the repository
 
 ## Properties
