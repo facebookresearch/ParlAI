@@ -5,6 +5,7 @@
 ParlAI (pronounced “par-lay”) is a framework for dialogue AI research, implemented in Python.
 
 Its goal is to provide researchers:
+
 - a unified framework for sharing, training and testing dialogue models
 - many popular datasets available all in one place -- from open-domain chitchat to visual question answering.
 - a wide set of reference models -- from retrieval baselines to Transformers.
@@ -25,22 +26,26 @@ See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.
 ## Goals
 
 Unified framework for evaluation of dialogue models
+
 - downloads tasks/datasets on demand and provides the same simple interface to them
 - unifies dataset input and evaluation frameworks/metrics
 - `agents/` directory encourages researchers to submit their training code to the repository to share with others
 - aids reproducibility
 
 End goal is general dialogue, which includes many different skills
+
 - seamlessly combines simulated and real language tasks
 - encourages multi-task model development & evaluation
 - helps to reduce overfitting of models to specific datasets         
 
 End goal is real dialogue with people
+
 - train and evaluate on live dialogue with humans via Mechanical Turk or Messenger
 - easy setup for connecting turkers with your dialogue agent
 - allow to compare different research groups turk experiments
 
 Set of datasets to bootstrap a working dialogue model for human interaction
+
 - motivates building new datasets that will go in the repository
 
 ## Properties
@@ -124,6 +129,7 @@ All needed data will be downloaded to ~/ParlAI/data, and any non-data files (suc
 ## Worlds, agents and teachers
 
 The main concepts (classes) in ParlAI:
+
 - world - defines the environment (can be very simple, just two agents talking to each other).
 - agent – an agent in the world, e.g. the learner. (There can be multiple learners.)
 - teacher – a type of agent that talks to the learner, implements one of the
@@ -263,6 +269,7 @@ Choosing a task in ParlAI is as easy as specifying it on the command line, as sh
 
 
 Each task folder contains:
+
 - **build.py** file for setting up data for the task (downloading data, etc, only done the first time requested, and not downloaded if the task is not used).
 - **agents.py** file which contains default or special teacher classes used by core.create_task to instantiate these classes from command-line arguments (if desired).
 - **worlds.py** file can optionally be added for tasks that need to define new/complex environments.
@@ -289,10 +296,12 @@ The mturk library contains the following directories:
   - **_multi\_agent\_dialog_**: round-robin chat between two local human agents and two Turkers.
 
 To run an MTurk task:
+
 - First ensure that the task directory is in parlai/mturk/tasks/. 
 - Then, run its run.py file with proper flags: `python run.py -nc <num_conversations> -r <reward> [--sandbox]/[--live]`. Use `--sandbox` to run the task in MTurk sandbox mode before pushing it live.
 
 To add your own MTurk task:
+
 - create a new folder within the mturk/tasks directory for your new task
 - implement __task\_config.py__, with at least the following fields in the `task_config` dictionary:
   - `hit_title`: a short and descriptive title about the kind of task the HIT contains. On the Amazon Mechanical Turk web site, the HIT title appears in search results, and everywhere the HIT is mentioned.
