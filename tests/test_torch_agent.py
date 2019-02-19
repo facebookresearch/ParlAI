@@ -9,7 +9,7 @@ from parlai.core.agents import Agent
 
 SKIP_TESTS = False
 try:
-    from parlai.core.torch_agent import TorchAgent, Output, History
+    from parlai.core.torch_agent import TorchAgent, Output
     import torch
 except ImportError:
     SKIP_TESTS = True
@@ -652,7 +652,6 @@ class TestTorchAgent(unittest.TestCase):
                          f'{agent.P1_TOKEN} I am Groot.\n'
                          f'{agent.P2_TOKEN} I am Groot?\n'
                          f'{agent.P1_TOKEN} I am Groot.')
-
 
     def test_last_reply(self):
         """Make sure last reply returns expected values."""
