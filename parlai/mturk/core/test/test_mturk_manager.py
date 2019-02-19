@@ -19,6 +19,7 @@ from parlai.core.params import ParlaiParser
 from websocket_server import WebsocketServer
 
 
+import parlai.core.testing_utils as testing_utils
 import parlai.mturk.core.mturk_manager as MTurkManagerFile
 import parlai.mturk.core.data_model as data_model
 
@@ -268,7 +269,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager.force_expire_hit.assert_called_once_with(
             self.agent_3.worker_id, self.agent_3.assignment_id)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfTravis
     def test_socket_setup(self):
         '''Basic socket setup should fail when not in correct state,
         but succeed otherwise
@@ -282,7 +283,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         self.mturk_manager._setup_socket()
         self.assertIsInstance(self.mturk_manager.socket_manager, SocketManager)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfTravis
     def test_worker_alive(self):
         # Setup for test
         manager = self.mturk_manager
@@ -554,7 +555,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
             manager.force_expire_hit.assert_not_called()
             manager.send_command.assert_called_once()
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfTravis
     def test_mturk_messages(self):
         '''Ensure incoming messages work as expected'''
         # Setup for test

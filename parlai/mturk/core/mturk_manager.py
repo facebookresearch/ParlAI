@@ -126,12 +126,12 @@ class MTurkManager():
         self.is_test = is_test
         self.is_unique = False
         self.max_hits_per_worker = opt.get('max_hits_per_worker', 0)
-        self._init_logging_config()
         self.is_shutdown = False
         self.use_db = use_db  # TODO enable always DB integration is complete
         self.db_logger = None
-        self.logging_permitted = False
+        self.logging_permitted = False  # Enables logging to parl.ai
         self.task_state = self.STATE_CREATED
+        self._init_logging_config()
         self._assert_opts()
 
     @staticmethod
@@ -147,7 +147,7 @@ class MTurkManager():
             'is_debug': False,
             'log_level': 30,
         }
-        manager = MTurkManager(opt, [])
+        manager = MTurkManager(opt, [], use_db=True)
         manager.is_shutdown = True
         mturk_utils.setup_aws_credentials()
         return manager
@@ -205,8 +205,11 @@ class MTurkManager():
 
     def _init_logging_config(self):
         """Initialize logging settings from the opt"""
-        shared_utils.set_is_debug(self.opt['is_debug'])
-        shared_utils.set_log_level(self.opt['log_level'])
+        if self.use_db and not self.opt['is_debug']:
+            shared_utils.disable_logging()
+        else:
+            shared_utils.set_is_debug(self.opt['is_debug'])
+            shared_utils.set_log_level(self.opt['log_level'])
 
     def _logging_permission_check(self):
         if self.is_test:

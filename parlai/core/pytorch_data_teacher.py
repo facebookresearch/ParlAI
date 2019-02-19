@@ -29,6 +29,13 @@ import ctypes
 from threading import Thread, Condition, RLock
 
 
+if torch.version.__version__.startswith('0.'):
+    raise ImportError(
+        "Please upgrade to PyTorch >=1.0; "
+        "visit https://pytorch.org for instructions."
+    )
+
+
 class BatchSortCache(object):
     """
         Object that encapsulates the functionality of the batch sort cache.

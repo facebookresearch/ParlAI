@@ -9,17 +9,19 @@ import unittest
 
 import parlai.core.teachers as teach_module
 from parlai.scripts.verify_data import verify, setup_args
-from utils import git_changed_files
+import parlai.core.testing_utils as testing_utils
 
 KEYS = ['missing_text', 'missing_labels', 'empty_label_candidates']
-EXCLUDED_TEACHERS = ['PytorchDataTeacher', 'MultiTaskTeacher']
+BASE_TEACHERS = dir(teach_module) + ['PytorchDataTeacher', 'MultiTaskTeacher']
 
 
 class TestNewTasks(unittest.TestCase):
     """Make sure any changes to tasks pass verify_data test."""
 
     def test_verify_data(self):
-        changed_files = git_changed_files()
+        parser = setup_args()
+        opt = parser.parse_args(print_args=False)
+        changed_files = testing_utils.git_changed_files()
         changed_task_files = []
         for file in changed_files:
             if (
@@ -36,15 +38,18 @@ class TestNewTasks(unittest.TestCase):
             task = file.split('/')[-2]
             module_name = "%s.tasks.%s.agents" % ('parlai', task)
             task_module = importlib.import_module(module_name)
-            base_teachers = dir(teach_module) + EXCLUDED_TEACHERS
-            subtasks = [':'.join([task, x]) for x in dir(task_module) if
-                        ('teacher' in x.lower() and x not in base_teachers)]
+            subtasks = [
+                ':'.join([task, x])
+                for x in dir(task_module)
+                if ('teacher' in x.lower() and x not in BASE_TEACHERS)
+            ]
 
             for subt in subtasks:
                 parser = setup_args()
                 opt = parser.parse_args(args=['--task', subt], print_args=False)
                 opt['task'] = subt
-                text, log = verify(opt, print_parser=False)
+                with testing_utils.capture_output():
+                    text, log = verify(opt, print_parser=False)
                 for key in KEYS:
                     self.assertEqual(
                         log[key],

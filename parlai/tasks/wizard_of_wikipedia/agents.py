@@ -381,7 +381,6 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
     def __init__(self, opt, shared=None):
         opt['label_type'] = 'response'
         opt['include_checked_sentence'] = True
-        opt['task'] = 'foobar:' + opt['task']  # make sure the topic_split logic works
         super().__init__(opt, shared)
         self.knowledge_separator = opt.get('include_knowledge_separator', True)
         self.only_checked_knowledge = opt.get('only_checked_knowledge', False)

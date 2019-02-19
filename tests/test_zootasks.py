@@ -6,7 +6,7 @@
 
 import os
 import unittest
-import utils
+import parlai.core.testing_utils as testing_utils
 
 
 class TestZooAndTasks(unittest.TestCase):
@@ -35,7 +35,7 @@ class TestZooAndTasks(unittest.TestCase):
         )
 
     def _check_directory(self, listname, thing_list, thing_dir, thing_key, ignore=[]):
-        dirs = utils.git_ls_dirs()
+        dirs = testing_utils.git_ls_dirs()
         # get only directories directly in the thing directory
         dirs = [d for d in dirs if os.path.dirname(d) == thing_dir]
         # just the folder names
