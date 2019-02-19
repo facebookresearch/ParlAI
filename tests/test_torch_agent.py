@@ -49,9 +49,6 @@ class MockDict(Agent):
             self.idx += 1
             return self.idx
 
-    def get(self, key):
-        return self.__getitem__(key)
-
     def add_cmdline_args(self, *args, **kwargs):
         pass
 

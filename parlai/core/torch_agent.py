@@ -173,13 +173,13 @@ class History(object):
         self.p2_token = p2_token
 
         # tracking when to clear history
-        self.clear_on_next_update = False
+        self.reset_on_next_update = False
 
     def parse(self, text):
         """Tokenize text with the given dictionary."""
         return self.dict.txt2vec(text)
 
-    def clear(self):
+    def reset(self):
         """Clear the history."""
         self.history_strings = []
         self.history_vecs = []
@@ -202,9 +202,9 @@ class History(object):
         :param add_next:   string to append to history prior to updating it
                            with the observation
         """
-        if self.clear_on_next_update:
-            self.clear()
-            self.clear_on_next_update = False
+        if self.reset_on_next_update:
+            self.reset()
+            self.reset_on_next_update = False
 
         if add_next is not None:
             if self.add_person_tokens:
@@ -231,7 +231,7 @@ class History(object):
 
         if obs.get('episode_done', True):
             # end of this episode, clear the history
-            self.clear_on_next_update = True
+            self.reset_on_next_update = True
 
     def get_history_str(self):
         """Returns the string version of the history."""
@@ -329,8 +329,8 @@ class TorchAgent(Agent):
         """
         return DictionaryAgent
 
-    @staticmethod
-    def history_class():
+    @classmethod
+    def history_class(cls):
         """Return the history class that this agent expects to use.
 
         Can be overriden if a more complex history is required.
@@ -552,6 +552,7 @@ class TorchAgent(Agent):
         :saved_optim_type:   type of optimizer being loaded, if changed will
                              skip loading optimizer states
         """
+
         opt = self.opt
 
         # set up optimizer args
@@ -883,7 +884,7 @@ class TorchAgent(Agent):
         vec = self.dict.txt2vec(text)
         vec = self._add_start_end_tokens(vec, add_start, add_end)
         vec = self._check_truncate(vec, truncate, truncate_left)
-        tensor = self._make_long_tensor(vec)
+        tensor = torch.LongTensor(vec)
         return tensor
 
     def _check_truncate(self, vec, truncate, truncate_left=False):
@@ -896,11 +897,6 @@ class TorchAgent(Agent):
             return vec[-truncate:]
         else:
             return vec[:truncate]
-
-    def _make_long_tensor(self, vec):
-        if not isinstance(vec, torch.LongTensor):
-            vec = torch.LongTensor(vec)
-        return vec
 
     def _set_text_vec(self, obs, history, truncate):
         """Sets the 'text_vec' field in the observation.
@@ -917,7 +913,7 @@ class TorchAgent(Agent):
 
         # check truncation
         if 'text_vec' in obs:
-            obs['text_vec'] = self._make_long_tensor(
+            obs['text_vec'] = torch.LongTensor(
                 self._check_truncate(obs['text_vec'], truncate, True)
             )
 
@@ -1265,7 +1261,7 @@ class TorchAgent(Agent):
     def reset(self):
         """Clear internal states."""
         self.observation = {}
-        self.history.clear()
+        self.history.reset()
         self.replies.clear()
         self.reset_metrics()
 
