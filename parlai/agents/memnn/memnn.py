@@ -134,13 +134,13 @@ class MemnnAgent(TorchRankerAgent):
 
         # check truncation
         if 'text_vec' in obs:
-            obs['text_vec'] = self._make_long_tensor(
+            obs['text_vec'] = torch.LongTensor(
                 self._check_truncate(obs['text_vec'], truncate, True)
             )
 
         if 'memory_vecs' in obs:
             obs['memory_vecs'] = [
-                self._make_long_tensor(
+                torch.LongTensor(
                     self._check_truncate(m, truncate, True)
                 ) for m in obs['memory_vecs']
             ]

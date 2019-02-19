@@ -49,6 +49,9 @@ class MockDict(Agent):
             self.idx += 1
             return self.idx
 
+    def __setitem__(self, key, value):
+        pass
+
     def add_cmdline_args(self, *args, **kwargs):
         pass
 
@@ -227,7 +230,7 @@ class TestTorchAgent(unittest.TestCase):
 
             inp = obs.copy()
             # test add_start=True, add_end=True
-            agent.history.clear()
+            agent.history.reset()
             agent.history.update_history(inp)
             out = agent.vectorize(inp, agent.history, add_start=True,
                                   add_end=True)
@@ -334,7 +337,7 @@ class TestTorchAgent(unittest.TestCase):
 
             obs_vecs = []
             for o in obs_batch:
-                agent.history.clear()
+                agent.history.reset()
                 agent.history.update_history(o)
                 obs_vecs.append(agent.vectorize(o, agent.history,
                                                 add_start=False, add_end=False))
@@ -424,7 +427,7 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(batch.labels, obs_batch[2][lab_key])
             self.assertEqual(list(batch.valid_indices), [2])
 
-        agent.history.clear()
+        agent.history.reset()
         obs_cands = [
             agent.vectorize({'label_candidates': ['A', 'B', 'C']},
                             agent.history),
@@ -723,7 +726,7 @@ class TestTorchAgent(unittest.TestCase):
         ]
         obs_labs_vecs = []
         for o in obs_labs:
-            agent.history.clear()
+            agent.history.reset()
             agent.history.update_history(o)
             obs_labs_vecs.append(agent.vectorize(o, agent.history))
         reply = agent.batch_act(obs_labs_vecs)
@@ -740,7 +743,7 @@ class TestTorchAgent(unittest.TestCase):
         ]
         obs_elabs_vecs = []
         for o in obs_elabs:
-            agent.history.clear()
+            agent.history.reset()
             agent.history.update_history(o)
             obs_elabs_vecs.append(agent.vectorize(o, agent.history))
         reply = agent.batch_act(obs_elabs_vecs)

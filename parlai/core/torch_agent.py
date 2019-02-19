@@ -481,10 +481,8 @@ class TorchAgent(Agent):
             self.replies = {}  # past replies
             self.dict = self.dictionary_class()(opt)
             if opt.get('person_tokens'):
-                if not self.dict.get(self.P1_TOKEN):
-                    self.dict[self.P1_TOKEN] = 999999999
-                if not self.dict.get(self.P2_TOKEN):
-                    self.dict[self.P2_TOKEN] = 999999998
+                self.dict[self.P1_TOKEN] = 999999999
+                self.dict[self.P2_TOKEN] = 999999998
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
