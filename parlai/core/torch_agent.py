@@ -1205,7 +1205,10 @@ class TorchAgent(Agent):
         if is_training:
             output = self.train_step(batch)
         else:
-            output = self.eval_step(batch)
+            with torch.no_grad():
+                # save memory and compute by disabling autograd.
+                # use `with torch.enable_grad()` to gain back graidients.
+                output = self.eval_step(batch)
 
         if output is None:
             self.replies['batch_reply'] = None
