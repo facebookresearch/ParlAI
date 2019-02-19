@@ -22,7 +22,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             help='use knowledge field instead of personas'
         )
         agent.add_argument(
-            '--knowledge-dropout', type=float, default=0.7,
+            '--knowledge-dropout', type=float, default=0.9,
             help='dropout some knowledge during training'
         )
         agent.add_argument(
@@ -36,14 +36,14 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         )
         argparser.set_defaults(
             learningrate=0.0008,
-            #eval_candidates='inline',
+            eval_candidates='inline',
+            candidates='batch',
             lr_factor=1,
         )
         return agent
 
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
-        opt['candidates'] = 'batch'  # this needs to be made the default
         super().__init__(opt, shared)
         self.use_knowledge = opt.get('use_knowledge', False)
         if self.use_knowledge:
@@ -51,7 +51,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         self.chosen_sentence = (opt.get('chosen_sentence', False) and
                                 self.use_knowledge)
         self.knowledge_dropout = opt.get('knowledge_dropout', 0)
-        
+
     def vectorize_knowledge(self, observation):
         if not self.use_knowledge:
             return observation
