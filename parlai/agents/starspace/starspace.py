@@ -213,7 +213,11 @@ class StarspaceAgent(Agent):
 
     def parse(self, text):
         """Convert string to token indices."""
-        return self.dict.txt2vec(text)
+        vec = self.dict.txt2vec(text)
+        if vec == []:
+            vec = [self.dict["_NULL"]]
+        return vec
+        
 
     def t2v(self, text):
         p = self.dict.txt2vec(text)
