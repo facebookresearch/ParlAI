@@ -96,11 +96,6 @@ class MemnnAgent(TorchRankerAgent):
         """Return time feature token at specified index."""
         return '__tf{}__'.format(i)
 
-    def get_dialog_history(self, *args, **kwargs):
-        """Override options in get_dialog_history from parent."""
-        kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
-        return super().get_dialog_history(*args, **kwargs)
-
     def vectorize(self, *args, **kwargs):
         """Override options in vectorize from parent."""
         kwargs['add_start'] = False
@@ -111,8 +106,16 @@ class MemnnAgent(TorchRankerAgent):
                  is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
         """Override so that we can add memories to the Batch object."""
         batch = super().batchify(obs_batch, sort, is_valid)
+
+        # get valid observations
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
+
+        if len(valid_obs) == 0:
+            return batch
+
         valid_inds, exs = zip(*valid_obs)
+
+        # get memories for the valid observations
         mems = None
         if any('memory_vecs' in ex for ex in exs):
             mems = [ex.get('memory_vecs', None) for ex in exs]
@@ -121,6 +124,9 @@ class MemnnAgent(TorchRankerAgent):
 
     def _set_text_vec(self, obs, history, truncate):
         """Override from Torch Agent so that we can use memories."""
+        if 'text' not in obs:
+            return obs
+
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
             obs['text'] = history.get_history_str()
