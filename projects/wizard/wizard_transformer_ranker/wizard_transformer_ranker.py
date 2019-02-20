@@ -22,7 +22,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             help='use knowledge field instead of personas'
         )
         agent.add_argument(
-            '--knowledge-dropout', type=float, default=0.9,
+            '--knowledge-dropout', type=float, default=0.7,
             help='dropout some knowledge during training'
         )
         agent.add_argument(
@@ -33,6 +33,10 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         agent.add_argument(
             '--join-history-tok', type=str, default=' ',
             help='Join history lines with this token, defaults to newline'
+        )
+        agent.add_argument(
+            '--knowledge-truncate', type=int, default=50,
+            help='truncate knowledge to this length'
         )
         argparser.set_defaults(
             learningrate=0.0008,
@@ -51,6 +55,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         self.chosen_sentence = (opt.get('chosen_sentence', False) and
                                 self.use_knowledge)
         self.knowledge_dropout = opt.get('knowledge_dropout', 0)
+        self.knowledge_truncate = opt.get('knowledge_truncate', 50)
 
     def vectorize_knowledge(self, observation):
         if not self.use_knowledge:
@@ -85,10 +90,9 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
 
         # vectorize knowledge
         observation['memory_vecs'] = [
-            self._vectorize_text(line, truncate=self.truncate) for line in
-            to_vectorize
+            self._vectorize_text(line, truncate=self.knowledge_truncate) for
+            line in to_vectorize
         ]
-
         return observation
 
     def vectorize(self, obs, add_start=True, add_end=True, split_lines=False,
