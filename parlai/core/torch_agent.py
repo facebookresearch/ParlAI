@@ -540,8 +540,6 @@ class TorchAgent(Agent):
             current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
             metrics['lr'] = round_sigfigs(current_lr, 4)
         metrics['num_updates'] = self._number_training_updates
-        import psutil
-        print(psutil.virtual_memory())
         return metrics
 
     def _is_lr_warming_up(self):
