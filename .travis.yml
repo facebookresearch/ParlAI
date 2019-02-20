@@ -15,7 +15,7 @@ install:
     - pip install boto3 botocore joblib websocket sh websocket_server
 script:
     - ./tests/lint_changed.sh
-    - python setup.py test -s tests.suites.travis -q
+    - python setup.py test -s tests.suites.travis -v
 notifications:
     on_success: change
     on_failure: always

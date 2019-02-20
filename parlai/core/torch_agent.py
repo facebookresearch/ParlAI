@@ -203,6 +203,8 @@ class History(object):
                            with the observation
         """
         if self.reset_on_next_update:
+            # this is the first example in a new episode, clear the previous
+            # history
             self.reset()
             self.reset_on_next_update = False
 
@@ -230,7 +232,7 @@ class History(object):
                 self._update_vecs(text)
 
         if obs.get('episode_done', True):
-            # end of this episode, clear the history
+            # end of this episode, clear the history when we see a new example
             self.reset_on_next_update = True
 
     def get_history_str(self):
