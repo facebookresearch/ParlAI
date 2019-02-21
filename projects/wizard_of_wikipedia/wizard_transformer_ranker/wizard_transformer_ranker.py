@@ -31,10 +31,6 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
                  'label, i.e. the chosen sentence'
         )
         agent.add_argument(
-            '--join-history-tok', type=str, default=' ',
-            help='Join history lines with this token, defaults to newline'
-        )
-        agent.add_argument(
             '--knowledge-truncate', type=int, default=50,
             help='truncate knowledge to this length'
         )
@@ -43,11 +39,14 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             eval_candidates='inline',
             candidates='batch',
             lr_factor=1,
+            delimiter=' ',
+            add_p1_after_newln=False,
         )
         return agent
 
     def __init__(self, opt, shared=None):
-        """Set up model if shared params not set, otherwise no work to do."""
+        """Set up model."""
+
         super().__init__(opt, shared)
         self.use_knowledge = opt.get('use_knowledge', False)
         if self.use_knowledge:
@@ -57,7 +56,10 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         self.knowledge_dropout = opt.get('knowledge_dropout', 0)
         self.knowledge_truncate = opt.get('knowledge_truncate', 50)
 
-    def vectorize_knowledge(self, observation):
+    def _vectorize_memories(self, observation):
+        """Override abstract method from TransformerRankerAgent to use
+        knowledge field as memories."""
+
         if not self.use_knowledge:
             return observation
 
@@ -94,32 +96,3 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             line in to_vectorize
         ]
         return observation
-
-    def vectorize(self, obs, add_start=True, add_end=True, split_lines=False,
-                  text_truncate=None, label_truncate=None):
-        return TorchAgent.vectorize(self, obs, add_start, add_end, split_lines,
-                                    text_truncate, label_truncate)
-
-    def get_dialog_history(self, observation, reply=None,
-                           add_person_tokens=False, add_p1_after_newln=False,
-                           join_history_tok='\n'):
-        return TorchAgent.get_dialog_history(self, observation, reply,
-                                             add_person_tokens,
-                                             add_p1_after_newln,
-                                             join_history_tok)
-
-    def observe(self, observation):
-        """Process incoming message in preparation for producing a response.
-
-        This includes remembering the past history of the conversation.
-        """
-        reply = self.last_reply(
-            use_label=(self.opt.get('use_reply', 'label') == 'label'))
-        self.observation = self.get_dialog_history(
-            observation, reply=reply, add_person_tokens=self.add_person_tokens,
-            add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
-            join_history_tok=self.opt.get('join_history_tok', ' '))
-        self.observation = self.vectorize_knowledge(self.observation)
-        return self.vectorize(self.observation,
-                              text_truncate=self.text_truncate,
-                              label_truncate=self.label_truncate)
