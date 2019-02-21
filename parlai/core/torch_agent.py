@@ -1193,7 +1193,6 @@ class TorchAgent(Agent):
         """
         reply = self.last_reply(
             use_label=(self.opt.get('use_reply', 'label') == 'label'))
-
         # update the history using the observation
         self.history.update_history(observation, add_next=reply)
         self.observation = observation

@@ -142,16 +142,6 @@ class TransformerRankerAgent(TorchRankerAgent):
             obs = self._vectorize_memories(obs)
         return obs
 
-    def _score(self, output, cands):
-        if cands.dim() == 2:
-            return torch.matmul(output, cands.t())
-        elif cands.dim() == 3:
-            return torch.bmm(output.unsqueeze(1),
-                             cands.transpose(1, 2)).squeeze(1)
-        else:
-            raise RuntimeError('Unexpected candidate dimensions {}'
-                               ''.format(cands.dim()))
-
     def score_candidates(self, batch, cand_vecs):
         # convoluted check that not all memories are empty
         if (self.opt['use_memories'] and batch.memory_vecs is not None and
@@ -169,29 +159,6 @@ class TransformerRankerAgent(TorchRankerAgent):
         scores = self._score(context_h, cands_h)
 
         return scores
-
-    def load(self, path):
-        """Return opt and model states.
-
-        Override this method for more specific loading.
-        """
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
-
-        if 'model' in states:
-            new_state_dict = states['model']
-            # load params
-            current_state = self.model.state_dict()
-            # filter out unnecessary params
-            pre_trained_state = {k: v for k, v in
-                                 new_state_dict.items() if k in
-                                 current_state}
-            # upload pretrained state
-            current_state.update(pre_trained_state)
-            self.model.load_state_dict(current_state)
-
-        if 'optimizer' in states and hasattr(self, 'optimizer'):
-            self.optimizer.load_state_dict(states['optimizer'])
-        return states
 
 
 class TransformerGeneratorAgent(TorchGeneratorAgent):

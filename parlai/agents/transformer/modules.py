@@ -76,8 +76,6 @@ class TransformerMemNetModel(nn.Module):
         self.embeddings = _create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
-        if not opt.get('learn_embeddings'):
-            self.embeddings.weight.requires_grad = False
 
         if not opt.get('learn_embeddings'):
             self.embeddings.weight.requires_grad = False
