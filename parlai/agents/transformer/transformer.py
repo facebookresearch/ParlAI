@@ -129,6 +129,7 @@ class TransformerRankerAgent(TorchRankerAgent):
         return batch
 
     def _vectorize_memories(self, obs):
+        # TODO: move this to Torch Ranker Agent
         raise NotImplementedError(
             'Abstract class: user must implement this function to use memories'
         )

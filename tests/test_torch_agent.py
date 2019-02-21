@@ -7,6 +7,8 @@
 import unittest
 from parlai.core.agents import Agent
 
+from collections import deque
+
 SKIP_TESTS = False
 try:
     from parlai.core.torch_agent import TorchAgent, Output
@@ -541,7 +543,7 @@ class TestTorchAgent(unittest.TestCase):
         idx = text.rfind('\n') + 1
         self.assertEqual(out, text[:idx] + prefix + ' ' + text[idx:])
 
-    def test_dialog_history(self):
+    def test_history(self):
         """Test different dialog history settings."""
         # try with unlimited history
         agent = get_agent(history_size=-1)
@@ -652,6 +654,46 @@ class TestTorchAgent(unittest.TestCase):
                          f'{agent.P1_TOKEN} I am Groot.\n'
                          f'{agent.P2_TOKEN} I am Groot?\n'
                          f'{agent.P1_TOKEN} I am Groot.')
+
+        # test history vecs
+        agent.history.reset()
+        agent.history.update_history(obs)
+        vec = agent.history.get_history_vec()
+        self.assertEqual(
+            vec,
+            deque([2001, 1, 2, 3])
+        )
+
+        # test history vec list
+        agent.history.update_history(obs)
+        vecs = agent.history.get_history_vec_list()
+        self.assertEqual(
+            vecs,
+            [[2001, 1, 2, 3], [2001, 1, 2, 3]]
+        )
+
+        # test clearing history
+        agent.history.reset()
+        text = agent.history.get_history_str()
+        self.assertIsNone(text)
+        vecs = agent.history.get_history_vec_list()
+        self.assertEqual(
+            vecs,
+            []
+        )
+
+        # test delimiter
+        agent = get_agent(
+            history_size=-1,
+            delimiter=' Groot! ',
+        )
+        agent.history.update_history(obs)
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(
+            text,
+            'I am Groot. Groot! I am Groot.'
+        )
 
     def test_last_reply(self):
         """Make sure last reply returns expected values."""
