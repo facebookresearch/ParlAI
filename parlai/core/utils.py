@@ -12,6 +12,8 @@ import os
 import random
 import time
 import warnings
+import heapq
+
 # some of the utility methods are helpful for Torch
 try:
     import torch
@@ -713,7 +715,7 @@ class OffensiveLanguageDetector(object):
         """Determine if text contains any offensive words in the filter."""
         return self.contains_offensive_language(key)
 
-    def str_segment(self, text, dict_agent, max_length):
+    def str_segment(self, text, dict_agent, k=1, max_length=None):
         """
         Function that segments a word without spaces into the most
         probable phrase with spaces
@@ -721,15 +723,18 @@ class OffensiveLanguageDetector(object):
         :param string text: string to segment
         :param DictionaryAgent dict_agent: Dictionary we use
             to look at word frequencies
-        :param int max_length: max_length of string to segment
-        :returns: the segmented string
-        :rtype: str
+        :param int k: top k segmentations of string
+        :param int max_length: max length of a substring
+            (word) in the string. default (None) uses the
+            length of the string.
+        :returns: list of top k segmentations of the given string
+        :rtype: list
 
         Example Usage:
             dict_agent = DictionaryAgent using Wiki Toxic Comments data
             old = OffensiveLanguageDector()
 
-            split_str = old.str_segment('fucku2', dict_agent, 20)
+            split_str = old.str_segment('fucku2', dict_agent)
             split_str is 'fuck u 2'
 
             We can then run old.contains_offensive_language(split_str)
@@ -745,17 +750,31 @@ class OffensiveLanguageDetector(object):
         V = len(freqs)
 
         logNV = math.log(N + V)
+        max_heap = []
 
-        @lru_cache(maxsize=None)
+        if not max_length:
+            max_length = len(text)
+
+        @lru_cache(maxsize=16)
         def segment(text):
             # Return a list of words that is the best segmentation of text.
             if not text:
                 return []
-            candidates = (
+            candidates = [
                 [first] + segment(rem)
                 for first, rem in splits(text, max_length)
-            )
-            return max(candidates, key=score)
+            ]
+
+            nonlocal max_heap
+            max_heap = []
+
+            for c in candidates:
+                cand_score = (score(c), c)  # tuple of (score, candidate)
+                max_heap.append(cand_score)
+
+            heapq._heapify_max(max_heap)
+
+            return max_heap[0][1]
 
         def splits(text, max_length):
             # Returns a list of all possible first and remainder tuples where
@@ -774,7 +793,11 @@ class OffensiveLanguageDetector(object):
             count_w = freqs.get(word, 0)
             return math.log(count_w + 1) - logNV
 
-        return ' '.join(segment(text))
+        segment(text)
+        res = []
+        for i in range(0, k):
+            res.append(heapq._heappop_max(max_heap)[1])
+        return res
 
 
 def clip_text(text, max_len):
