@@ -278,7 +278,7 @@ class TrainLoop():
                 self.train_time.total = obj.get('train_time', 0)
                 self.impatience = obj.get('impatience', 0)
                 self.valid_reports = obj.get('valid_reports', [])
-                
+
         if opt['tensorboard_log'] is True:
             self.writer = TensorboardLogger(opt)
 
@@ -330,9 +330,8 @@ class TrainLoop():
             self.valid_world, opt, 'valid', opt['validation_max_exs'],
         ))
         v = valid_report.copy()
-        v['train_time'] = self.train_time.time() 
+        v['train_time'] = self.train_time.time()
         self.valid_reports.append(v)
-        
         # logging
         if opt['tensorboard_log'] is True and is_primary_worker():
             self.writer.add_metrics('valid', int(self.train_time.time()), valid_report)
