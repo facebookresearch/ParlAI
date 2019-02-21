@@ -276,7 +276,7 @@ class TrainLoop():
                 self._preempted_epochs = obj.get('total_epochs', 0)
                 self.train_time.total = obj.get('train_time', 0)
                 self.impatience = obj.get('impatience', 0)
-                
+
         if opt['tensorboard_log'] is True:
             self.writer = TensorboardLogger(opt)
 
@@ -312,7 +312,7 @@ class TrainLoop():
                     self._preempted_epochs +
                     num_workers() * self.world.get_total_epochs()
                 ),
-                'impatience': self.impatience
+                'impatience': self.impatience,
             }, f)
 
     def validate(self):
