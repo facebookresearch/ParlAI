@@ -793,7 +793,7 @@ class OffensiveLanguageDetector(object):
             count_w = freqs.get(word, 0)
             return math.log(count_w + 1) - logNV
 
-        segmented = segment(text)
+        segment(text)
         res = []
         for i in range(0, k):
             res.append(heapq._heappop_max(max_heap)[1])
