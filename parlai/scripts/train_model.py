@@ -326,8 +326,6 @@ class TrainLoop():
         valid_report = sync_object(run_eval(
             self.valid_world, opt, 'valid', opt['validation_max_exs'],
         ))
-        v = valid_report.copy()
-        v['train_time'] = self.train_time.time() 
         
         # logging
         if opt['tensorboard_log'] is True and is_primary_worker():
