@@ -169,7 +169,6 @@ class World(object):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        return False
         """After ``with`` statement, call shutdown."""
         silent_exit = isinstance(exc_value, KeyboardInterrupt)
         self.shutdown()
