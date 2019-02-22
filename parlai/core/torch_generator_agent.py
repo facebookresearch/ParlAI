@@ -469,7 +469,7 @@ class TorchGeneratorAgent(TorchAgent):
         Computes and returns the loss for the given batch. Easily overridable for
         customized loss functions.
 
-        If return_everything is True, the full output from the call to self.model()
+        If return_output is True, the full output from the call to self.model()
         is also returned, via a (loss, model_output) pair.
         """
         if batch.label_vec is None:
