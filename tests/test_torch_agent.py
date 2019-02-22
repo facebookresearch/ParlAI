@@ -7,6 +7,8 @@
 import unittest
 from parlai.core.agents import Agent
 
+from collections import deque
+
 SKIP_TESTS = False
 try:
     from parlai.core.torch_agent import TorchAgent, Output
@@ -48,6 +50,9 @@ class MockDict(Agent):
         else:
             self.idx += 1
             return self.idx
+
+    def __setitem__(self, key, value):
+        pass
 
     def add_cmdline_args(self, *args, **kwargs):
         pass
@@ -227,7 +232,10 @@ class TestTorchAgent(unittest.TestCase):
 
             inp = obs.copy()
             # test add_start=True, add_end=True
-            out = agent.vectorize(inp, add_start=True, add_end=True)
+            agent.history.reset()
+            agent.history.update_history(inp)
+            out = agent.vectorize(inp, agent.history, add_start=True,
+                                  add_end=True)
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # note that label could be either label above
             self.assertEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
@@ -237,7 +245,8 @@ class TestTorchAgent(unittest.TestCase):
 
             # test add_start=True, add_end=False
             inp = obs.copy()
-            out = agent.vectorize(inp, add_start=True, add_end=False)
+            out = agent.vectorize(inp, agent.history, add_start=True,
+                                  add_end=False)
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # note that label could be either label above
             self.assertEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
@@ -246,7 +255,8 @@ class TestTorchAgent(unittest.TestCase):
 
             # test add_start=False, add_end=True
             inp = obs.copy()
-            out = agent.vectorize(inp, add_start=False, add_end=True)
+            out = agent.vectorize(inp, agent.history, add_start=False,
+                                  add_end=True)
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # note that label could be either label above
             self.assertNotEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
@@ -255,7 +265,8 @@ class TestTorchAgent(unittest.TestCase):
 
             # test add_start=False, add_end=False
             inp = obs.copy()
-            out = agent.vectorize(inp, add_start=False, add_end=False)
+            out = agent.vectorize(inp, agent.history, add_start=False,
+                                  add_end=False)
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # note that label could be either label above
             self.assertNotEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
@@ -263,48 +274,33 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(out[lab_chc][:2], 'Do')
 
             # test caching of tensors
-            out_again = agent.vectorize(out)
+            out_again = agent.vectorize(out, agent.history)
             # should have cached result from before
             self.assertIs(out['text_vec'], out_again['text_vec'])
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # next: should truncate cached result
             prev_vec = out['text_vec']
-            out_again = agent.vectorize(out, text_truncate=1)
+            out_again = agent.vectorize(out, agent.history,
+                                        text_truncate=1)
             self.assertIsNot(prev_vec, out_again['text_vec'])
             self.assertEqual(out['text_vec'].tolist(), [3])
 
         # test split_lines
+        agent = get_agent(split_lines=True)
         obs = {
             'text': 'Hello.\nMy name is Inogo Montoya.\n'
                     'You killed my father.\nPrepare to die.',
         }
-        out = agent.vectorize(obs, split_lines=True)
-        self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])  # last line
-        self.assertEqual([m.tolist() for m in out['memory_vecs']],
-                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4]])
+        agent.history.update_history(obs)
+        vecs = agent.history.get_history_vec_list()
+        self.assertEqual(vecs,
+                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
+
         # check cache
-        out_again = agent.vectorize(obs, split_lines=True)
-        self.assertIs(out['text_vec'], out_again['text_vec'])
-        self.assertIs(out['memory_vecs'], out_again['memory_vecs'])
-        self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
-        self.assertEqual([m.tolist() for m in out['memory_vecs']],
-                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4]])
-        # next: should truncate cached result
-        prev_vec = out['text_vec']
-        prev_mem = out['memory_vecs']
-        out_again = agent.vectorize(out, text_truncate=1, split_lines=True)
-        self.assertIsNot(prev_vec, out_again['text_vec'])
-        self.assertEqual(out['text_vec'].tolist(), [3])
-        self.assertIsNot(prev_mem, out_again['memory_vecs'])
-        for i in range(len(prev_mem)):
-            if len(prev_mem[i]) > 1:
-                # if truncated, different tensor
-                self.assertIsNot(prev_mem[i], out_again['memory_vecs'][i])
-            else:
-                # otherwise should still be the same one
-                self.assertIs(prev_mem[i], out_again['memory_vecs'][i])
-        self.assertEqual([m.tolist() for m in out['memory_vecs']],
-                         [[1], [5], [4]])
+        out_again = agent.vectorize(obs, agent.history)
+        vecs = agent.history.get_history_vec_list()
+        self.assertEqual(vecs,
+                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
 
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batchify(self):
@@ -340,10 +336,13 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
-            self.assertIsNone(batch.memory_vecs)
 
-            obs_vecs = [agent.vectorize(o, add_start=False, add_end=False)
-                        for o in obs_batch]
+            obs_vecs = []
+            for o in obs_batch:
+                agent.history.reset()
+                agent.history.update_history(o)
+                obs_vecs.append(agent.vectorize(o, agent.history,
+                                                add_start=False, add_end=False))
 
             # is_valid should map to nothing
             batch = agent.batchify(obs_batch, is_valid=lambda x: False)
@@ -356,7 +355,6 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
-            self.assertIsNone(batch.memory_vecs)
 
             batch = agent.batchify(obs_vecs)
             # which fields were filled vs should be empty?
@@ -369,7 +367,6 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
-            self.assertIsNone(batch.memory_vecs)
 
             # contents of certain fields:
             self.assertEqual(batch.text_vec.tolist(),
@@ -432,11 +429,16 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(batch.labels, obs_batch[2][lab_key])
             self.assertEqual(list(batch.valid_indices), [2])
 
+        agent.history.reset()
         obs_cands = [
-            agent.vectorize({'label_candidates': ['A', 'B', 'C']}),
-            agent.vectorize({'label_candidates': ['1', '2', '5', '3', 'Sir']}),
-            agent.vectorize({'label_candidates': ['Do', 'Re', 'Mi']}),
-            agent.vectorize({'label_candidates': ['Fa', 'So', 'La', 'Ti']}),
+            agent.vectorize({'label_candidates': ['A', 'B', 'C']},
+                            agent.history),
+            agent.vectorize({'label_candidates': ['1', '2', '5', '3', 'Sir']},
+                            agent.history),
+            agent.vectorize({'label_candidates': ['Do', 'Re', 'Mi']},
+                            agent.history),
+            agent.vectorize({'label_candidates': ['Fa', 'So', 'La', 'Ti']},
+                            agent.history),
         ]
         batch = agent.batchify(
             obs_cands, is_valid=lambda obs: 'label_candidates_vecs' in obs)
@@ -535,13 +537,13 @@ class TestTorchAgent(unittest.TestCase):
             "I watched C-beams glitter in the dark near the Tannhauser gate.\n"
             "All those moments will be lost in time, like tears in rain.")
         prefix = 'PRE'
-        out = agent._add_person_tokens(text, prefix, add_after_newln=False)
+        out = agent.history._add_person_tokens(text, prefix, add_after_newln=False)
         self.assertEqual(out, prefix + ' ' + text)
-        out = agent._add_person_tokens(text, prefix, add_after_newln=True)
+        out = agent.history._add_person_tokens(text, prefix, add_after_newln=True)
         idx = text.rfind('\n') + 1
         self.assertEqual(out, text[:idx] + prefix + ' ' + text[idx:])
 
-    def test_get_dialog_history(self):
+    def test_history(self):
         """Test different dialog history settings."""
         # try with unlimited history
         agent = get_agent(history_size=-1)
@@ -549,112 +551,149 @@ class TestTorchAgent(unittest.TestCase):
                'episode_done': False}
 
         # first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # second exchange, no reply
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.\nI am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.\nI am Groot.')
 
         # include reply and set episode_done to clear history after this one
         end_obs = obs.copy()
         end_obs['episode_done'] = True
-        out = agent.get_dialog_history(end_obs, reply='I am Groot?')
-        self.assertEqual(out['text'],
+        agent.history.update_history(end_obs, add_next='I am Groot?')
+        text = agent.history.get_history_str()
+        self.assertEqual(text,
                          'I am Groot.\nI am Groot.\nI am Groot?\nI am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
 
         # because of episode_done, should be same as first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # now try with history size = 1
         agent = get_agent(history_size=1)
 
         # first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # second exchange should change nothing
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # third exchange with reply should change nothing
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # now try with history size = 2
         agent = get_agent(history_size=2)
 
         # first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # second exchange with reply should contain reply
-        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?')
-        self.assertEqual(out['text'], 'I am Groot?\nI am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs, add_next='I am Groot?')
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot?\nI am Groot.')
 
         # third exchange without reply should have two inputs
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.\nI am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.\nI am Groot.')
 
         # now try with history size = 3
         agent = get_agent(history_size=3)
 
         # first exchange
-        out = agent.get_dialog_history(obs.copy())
-        self.assertEqual(out['text'], 'I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
         # second exchange with reply should contain reply and input
-        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?')
-        self.assertEqual(out['text'], 'I am Groot.\nI am Groot?\nI am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+        agent.history.update_history(obs, add_next='I am Groot?')
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.\nI am Groot?\nI am Groot.')
 
         # now test add_person_tokens
-        agent.reset()  # clear out old history
-        out = agent.get_dialog_history(obs.copy(), add_person_tokens=True)
-        self.assertEqual(out['text'], f'{agent.P1_TOKEN} I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')  # no change
+        agent = get_agent(history_size=3, person_tokens=True)
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, f'{agent.P1_TOKEN} I am Groot.')
 
         # second exchange, history should still contain the tokens
-        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?',
-                                       add_person_tokens=True)
-        self.assertEqual(out['text'],
+        agent.history.update_history(obs, add_next='I am Groot?')
+        text = agent.history.get_history_str()
+        self.assertEqual(text,
                          f'{agent.P1_TOKEN} I am Groot.\n'
                          f'{agent.P2_TOKEN} I am Groot?\n'
                          f'{agent.P1_TOKEN} I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
 
         # now add add_p1_after_newln
-        agent.reset()  # clear out old history
+        agent = get_agent(history_size=3, person_tokens=True,
+                          add_p1_after_newln=True)
         ctx_obs = obs.copy()  # context then utterance in this text field
         ctx_obs['text'] = 'Groot is Groot.\nI am Groot.'
-        out = agent.get_dialog_history(ctx_obs.copy(), add_person_tokens=True,
-                                       add_p1_after_newln=True)
-        self.assertEqual(out['text'],
+        agent.history.update_history(ctx_obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(text,
                          f'Groot is Groot.\n{agent.P1_TOKEN} I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')  # no change
 
         # second exchange, history should still contain context text
-        out = agent.get_dialog_history(obs.copy(), reply='I am Groot?',
-                                       add_person_tokens=True,
-                                       add_p1_after_newln=True)
-        self.assertEqual(out['text'],
+        agent.history.update_history(obs, add_next='I am Groot?')
+        text = agent.history.get_history_str()
+        self.assertEqual(text,
                          'Groot is Groot.\n'
                          f'{agent.P1_TOKEN} I am Groot.\n'
                          f'{agent.P2_TOKEN} I am Groot?\n'
                          f'{agent.P1_TOKEN} I am Groot.')
-        self.assertEqual(out['labels'][0], 'I am Groot?')
+
+        # test history vecs
+        agent.history.reset()
+        agent.history.update_history(obs)
+        vec = agent.history.get_history_vec()
+        self.assertEqual(
+            vec,
+            deque([2001, 1, 2, 3])
+        )
+
+        # test history vec list
+        agent.history.update_history(obs)
+        vecs = agent.history.get_history_vec_list()
+        self.assertEqual(
+            vecs,
+            [[2001, 1, 2, 3], [2001, 1, 2, 3]]
+        )
+
+        # test clearing history
+        agent.history.reset()
+        text = agent.history.get_history_str()
+        self.assertIsNone(text)
+        vecs = agent.history.get_history_vec_list()
+        self.assertEqual(
+            vecs,
+            []
+        )
+
+        # test delimiter
+        agent = get_agent(
+            history_size=-1,
+            delimiter=' Groot! ',
+        )
+        agent.history.update_history(obs)
+        agent.history.update_history(obs)
+        text = agent.history.get_history_str()
+        self.assertEqual(
+            text,
+            'I am Groot. Groot! I am Groot.'
+        )
 
     def test_last_reply(self):
         """Make sure last reply returns expected values."""
@@ -727,9 +766,13 @@ class TestTorchAgent(unittest.TestCase):
             {'text': 'Hello there.',
              'labels': ['General Kenobi.']},
         ]
-        obs_labs = [agent.vectorize(o) for o in obs_labs]
-        reply = agent.batch_act(obs_labs)
-        for i in range(len(obs_labs)):
+        obs_labs_vecs = []
+        for o in obs_labs:
+            agent.history.reset()
+            agent.history.update_history(o)
+            obs_labs_vecs.append(agent.vectorize(o, agent.history))
+        reply = agent.batch_act(obs_labs_vecs)
+        for i in range(len(obs_labs_vecs)):
             self.assertEqual(reply[i]['text'], f'Training {i}!')
 
         obs_elabs = [
@@ -740,9 +783,13 @@ class TestTorchAgent(unittest.TestCase):
             {'text': 'Hello there.',
              'eval_labels': ['General Kenobi.']},
         ]
-        obs_elabs = [agent.vectorize(o) for o in obs_elabs]
-        reply = agent.batch_act(obs_elabs)
-        for i in range(len(obs_elabs)):
+        obs_elabs_vecs = []
+        for o in obs_elabs:
+            agent.history.reset()
+            agent.history.update_history(o)
+            obs_elabs_vecs.append(agent.vectorize(o, agent.history))
+        reply = agent.batch_act(obs_elabs_vecs)
+        for i in range(len(obs_elabs_vecs)):
             self.assertEqual(reply[i]['text'], f'Evaluating {i}!')
 
 

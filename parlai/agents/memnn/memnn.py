@@ -45,6 +45,10 @@ class MemnnAgent(TorchRankerAgent):
         arg_group.add_argument(
             '-pe', '--position-encoding', type='bool', default=False,
             help='use position encoding instead of bag of words embedding')
+        argparser.set_defaults(
+            split_lines=True,
+            add_p1_after_newln=True,
+        )
         TorchRankerAgent.add_cmdline_args(argparser)
         MemnnAgent.dictionary_class().add_cmdline_args(argparser)
         return arg_group
@@ -92,17 +96,62 @@ class MemnnAgent(TorchRankerAgent):
         """Return time feature token at specified index."""
         return '__tf{}__'.format(i)
 
-    def get_dialog_history(self, *args, **kwargs):
-        """Override options in get_dialog_history from parent."""
-        kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
-        return super().get_dialog_history(*args, **kwargs)
-
     def vectorize(self, *args, **kwargs):
         """Override options in vectorize from parent."""
         kwargs['add_start'] = False
         kwargs['add_end'] = False
-        kwargs['split_lines'] = True
         return super().vectorize(*args, **kwargs)
+
+    def batchify(self, obs_batch, sort=False,
+                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
+        """Override so that we can add memories to the Batch object."""
+        batch = super().batchify(obs_batch, sort, is_valid)
+
+        # get valid observations
+        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
+
+        if len(valid_obs) == 0:
+            return batch
+
+        valid_inds, exs = zip(*valid_obs)
+
+        # get memories for the valid observations
+        mems = None
+        if any('memory_vecs' in ex for ex in exs):
+            mems = [ex.get('memory_vecs', None) for ex in exs]
+        batch.memory_vecs = mems
+        return batch
+
+    def _set_text_vec(self, obs, history, truncate):
+        """Override from Torch Agent so that we can use memories."""
+        if 'text' not in obs:
+            return obs
+
+        if 'text_vec' not in obs:
+            # text vec is not precomputed, so we set it using the history
+            obs['text'] = history.get_history_str()
+            history_vecs = history.get_history_vec_list()
+            if len(history_vecs) > 0:
+                obs['memory_vecs'] = history_vecs[:-1]
+                obs['text_vec'] = history_vecs[-1]
+            else:
+                obs['memory_vecs'] = []
+                obs['text_vec'] = []
+
+        # check truncation
+        if 'text_vec' in obs:
+            obs['text_vec'] = torch.LongTensor(
+                self._check_truncate(obs['text_vec'], truncate, True)
+            )
+
+        if 'memory_vecs' in obs:
+            obs['memory_vecs'] = [
+                torch.LongTensor(
+                    self._check_truncate(m, truncate, True)
+                ) for m in obs['memory_vecs']
+            ]
+
+        return obs
 
     def _build_mems(self, mems):
         """Build memory tensors.
