@@ -448,8 +448,10 @@ class TransformerDecoderLayer(nn.Module):
 
 class TransformerGeneratorModel(TorchGeneratorModel):
     def __init__(self, opt, dictionary):
-        super().__init__()
         self.pad_idx = dictionary[dictionary.null_token]
+        self.start_idx = dictionary[dictionary.start_token]
+        self.end_idx = dictionary[dictionary.end_token]
+        super().__init__(self.pad_idx, self.start_idx, self.end_idx)
         self.embeddings = _create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )

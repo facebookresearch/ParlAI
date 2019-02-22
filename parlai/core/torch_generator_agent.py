@@ -29,7 +29,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from parlai.core.torch_agent import TorchAgent, Output
+from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs, warn_once
 from parlai.core.thread_utils import SharedTable
 from parlai.core.distributed_utils import is_distributed
@@ -180,7 +180,8 @@ class TorchGeneratorModel(nn.Module):
             "reorder_decoder_incremental_state must be implemented by model"
         )
 
-    def forward(self, xs, ys=None, cand_params=None, prev_enc=None, maxlen=None):
+    def forward(self, *xs, ys=None, cand_params=None, prev_enc=None, maxlen=None,
+                bsz=None):
         """Get output predictions from the model.
 
         :param xs: input to the encoder
@@ -194,6 +195,8 @@ class TorchGeneratorModel(nn.Module):
         :param maxlen: max number of tokens to decode. if not set, will use the
             length of the longest label this model has seen. ignored when ys is not
             None.
+        :param bsz: if ys is not provided, then you must specify the bsz for
+            greedy decoding.
 
         :return: (scores, candidate_scores, encoder_states) tuple
 
@@ -211,13 +214,12 @@ class TorchGeneratorModel(nn.Module):
             self.longest_label = max(self.longest_label, ys.size(1))
 
         # use cached encoding if available
-        encoder_states = prev_enc if prev_enc is not None else self.encoder(xs)
+        encoder_states = prev_enc if prev_enc is not None else self.encoder(*xs)
 
         if ys is not None:
             # use teacher forcing
             scores, preds = self.decode_forced(encoder_states, ys)
         else:
-            bsz = xs.size(0)
             scores, preds = self.decode_greedy(
                 encoder_states,
                 bsz,
@@ -294,6 +296,7 @@ class TorchGeneratorAgent(TorchAgent):
             states = shared.get('states', {})
         else:
             self.metrics = {
+                'nll_loss': 0.0,
                 'loss': 0.0,
                 'num_tokens': 0,
                 'correct_tokens': 0,
@@ -371,16 +374,21 @@ class TorchGeneratorAgent(TorchAgent):
         if self.use_cuda:
             self.criterion.cuda()
 
+    def _dummy_batch(self, batchsize, maxlen):
+        """
+        Creates a dummy batch. This is used to preinitialize the cuda buffer,
+        or otherwise force a null backward pass after an OOM.
+        """
+        return Batch(
+            text_vec=torch.zeros(batchsize, maxlen).long().cuda(),
+            label_vec=torch.zeros(batchsize, 2).long().cuda(),
+        )
+
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
         """Pre-initialize CUDA buffer by doing fake forward pass."""
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
-                dummy_xs = torch.ones(batchsize, maxlen).long().cuda()
-                dummy_ys = torch.ones(batchsize, 2).long().cuda()
-                scores, _, _ = self.model(dummy_xs, dummy_ys)
-                loss = self.criterion(
-                    scores.view(-1, scores.size(-1)), dummy_ys.view(-1)
-                )
+                loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
                 loss.backward()
                 self.buffer_initialized = True
             except RuntimeError as e:
@@ -396,6 +404,7 @@ class TorchGeneratorAgent(TorchAgent):
         """Reset metrics for reporting loss and perplexity."""
         super().reset_metrics()
         self.metrics['loss'] = 0.0
+        self.metrics['nll_loss'] = 0.0
         self.metrics['num_tokens'] = 0
         self.metrics['correct_tokens'] = 0
 
@@ -428,11 +437,12 @@ class TorchGeneratorAgent(TorchAgent):
         m = {}
         num_tok = self.metrics['num_tokens']
         if num_tok > 0:
+            m['loss'] = self.metrics['loss']
             if self.metrics['correct_tokens'] > 0:
                 m['token_acc'] = self.metrics['correct_tokens'] / num_tok
-            m['loss'] = self.metrics['loss'] / num_tok
+            m['nll_loss'] = self.metrics['nll_loss'] / num_tok
             try:
-                m['ppl'] = math.exp(m['loss'])
+                m['ppl'] = math.exp(m['nll_loss'])
             except OverflowError:
                 m['ppl'] = float('inf')
         if self.metrics['total_skipped_batches'] > 0:
@@ -441,6 +451,45 @@ class TorchGeneratorAgent(TorchAgent):
             # clean up: rounds to sigfigs and converts tensors to floats
             base[k] = round_sigfigs(v, 4)
         return base
+
+    def _model_input(self, batch):
+        """
+        Creates the input (x) value for the model. Must return a tuple.
+        This will be passed directly into the model via *args, i.e.,
+
+        >>> model(*_model_input(batch))
+
+        This is intentionally overridable so that richer models can pass the
+        additional inputs.
+        """
+        return (batch.text_vec, )
+
+    def compute_loss(self, batch, return_output=False):
+        """
+        Computes and returns the loss for the given batch. Easily overridable for
+        customized loss functions.
+
+        If return_output is True, the full output from the call to self.model()
+        is also returned, via a (loss, model_output) pair.
+        """
+        if batch.label_vec is None:
+            raise ValueError('Cannot compute loss without a label.')
+        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
+        scores, preds, *_ = model_output
+        score_view = scores.view(-1, scores.size(-1))
+        loss = self.criterion(score_view, batch.label_vec.view(-1))
+        # save loss to metrics
+        notnull = batch.label_vec.ne(self.NULL_IDX)
+        target_tokens = notnull.long().sum().item()
+        correct = ((batch.label_vec == preds) * notnull).sum().item()
+        self.metrics['correct_tokens'] += correct
+        self.metrics['nll_loss'] += loss.item()
+        self.metrics['num_tokens'] += target_tokens
+        loss /= target_tokens  # average loss per token
+        if return_output:
+            return (loss, model_output)
+        else:
+            return loss
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
@@ -451,17 +500,8 @@ class TorchGeneratorAgent(TorchAgent):
         self.zero_grad()
 
         try:
-            scores, preds, _ = self.model(batch.text_vec, batch.label_vec)
-            score_view = scores.view(-1, scores.size(-1))
-            loss = self.criterion(score_view, batch.label_vec.view(-1))
-            # save loss to metrics
-            notnull = batch.label_vec.ne(self.NULL_IDX)
-            target_tokens = notnull.long().sum().item()
-            correct = ((batch.label_vec == preds) * notnull).sum().item()
-            self.metrics['correct_tokens'] += correct
+            loss = self.compute_loss(batch)
             self.metrics['loss'] += loss.item()
-            self.metrics['num_tokens'] += target_tokens
-            loss /= target_tokens  # average loss per token
             loss.backward()
             self.update_params()
         except RuntimeError as e:
@@ -495,15 +535,20 @@ class TorchGeneratorAgent(TorchAgent):
         self.model.eval()
         cand_scores = None
 
+        if batch.label_vec is not None:
+            # calculate loss on targets with teacher forcing
+            loss = self.compute_loss(batch)  # noqa: F841  we need the side effects
+            self.metrics['loss'] += loss.item()
+
+        preds = None
         if self.skip_generation:
             warn_once(
                 "--skip-generation does not produce accurate metrics beyond ppl",
                 RuntimeWarning
             )
-            logits, preds, _ = self.model(batch.text_vec, batch.label_vec)
         elif self.beam_size == 1:
             # greedy decode
-            logits, preds, _ = self.model(batch.text_vec)
+            _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz)
         elif self.beam_size > 1:
             out = self.beam_search(
                 self.model,
@@ -522,25 +567,12 @@ class TorchGeneratorAgent(TorchAgent):
             if self.beam_dot_log is True:
                 self._write_beam_dots(batch.text_vec, beams)
 
-        if batch.label_vec is not None:
-            # calculate loss on targets with teacher forcing
-            f_scores, f_preds, _ = self.model(batch.text_vec, batch.label_vec)
-            score_view = f_scores.view(-1, f_scores.size(-1))
-            loss = self.criterion(score_view, batch.label_vec.view(-1))
-            # save loss to metrics
-            notnull = batch.label_vec.ne(self.NULL_IDX)
-            target_tokens = notnull.long().sum().item()
-            correct = ((batch.label_vec == f_preds) * notnull).sum().item()
-            self.metrics['correct_tokens'] += correct
-            self.metrics['loss'] += loss.item()
-            self.metrics['num_tokens'] += target_tokens
-
         cand_choices = None
         # TODO: abstract out the scoring here
         if self.rank_candidates:
             # compute roughly ppl to rank candidates
             cand_choices = []
-            encoder_states = self.model.encoder(batch.text_vec)
+            encoder_states = self.model.encoder(*self._model_input(batch))
             for i in range(bsz):
                 num_cands = len(batch.candidate_vecs[i])
                 enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
@@ -560,7 +592,7 @@ class TorchGeneratorAgent(TorchAgent):
                 _, ordering = cand_scores.sort()
                 cand_choices.append([batch.candidates[i][o] for o in ordering])
 
-        text = [self._v2t(p) for p in preds]
+        text = [self._v2t(p) for p in preds] if preds is not None else None
         return Output(text, cand_choices)
 
     def beam_search(self, model, batch, beam_size, start=1, end=2,
@@ -591,7 +623,7 @@ class TorchGeneratorAgent(TorchAgent):
             - beams :list of Beam instances defined in Beam class, can be used for any
               following postprocessing, e.g. dot logging.
         """
-        encoder_states = model.encoder(batch.text_vec)
+        encoder_states = model.encoder(*self._model_input(batch))
         dev = batch.text_vec.device
 
         bsz = len(batch.text_lengths)
