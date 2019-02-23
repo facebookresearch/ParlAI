@@ -513,7 +513,7 @@ class MultiWorld(World):
         self.parley_init()
         self.worlds[self.world_idx].parley()
         self.update_counters()
-    
+
     def display(self):
         if self.world_idx != -1:
             s = ''
