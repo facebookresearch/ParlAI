@@ -514,6 +514,10 @@ class MultiWorld(World):
         self.worlds[self.world_idx].parley()
         self.update_counters()
 
+    def get_acts(self):
+        """Return the last act of each agent."""
+        return self.worlds[self.world_idx].acts
+    
     def display(self):
         if self.world_idx != -1:
             s = ''

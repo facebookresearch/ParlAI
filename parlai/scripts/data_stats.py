@@ -108,7 +108,7 @@ def verify(opt, printargs=None, print_parser=None):
     # Show some example dialogs.
     while not world.epoch_done():
         world.parley()
-        act = world.acts[opt.get('agent')]
+        act = world.get_acts()[opt.get('agent')]
         for itype in {'input', 'labels'}:
             if itype == 'input':
                 if opt.get('new_line_new_utt'):
