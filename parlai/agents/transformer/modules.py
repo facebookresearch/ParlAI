@@ -39,6 +39,7 @@ def _build_encoder(opt, dictionary, embedding=None, padding_idx=None, reduction=
         embedding=embedding,
         attention_dropout=opt['attention_dropout'],
         relu_dropout=opt['relu_dropout'],
+        dropout=opt['dropout'],
         padding_idx=padding_idx,
         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
         embeddings_scale=opt['embeddings_scale'],
@@ -58,6 +59,7 @@ def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
         embedding=embedding,
         attention_dropout=opt['attention_dropout'],
         relu_dropout=opt['relu_dropout'],
+        dropout=opt['dropout'],
         padding_idx=padding_idx,
         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
         embeddings_scale=opt['embeddings_scale'],
@@ -208,6 +210,7 @@ class TransformerEncoder(nn.Module):
         embedding=None,
         attention_dropout=0.0,
         relu_dropout=0.0,
+        dropout=0.0,
         padding_idx=0,
         learn_positional_embeddings=False,
         embeddings_scale=False,
@@ -224,6 +227,7 @@ class TransformerEncoder(nn.Module):
         self.embeddings_scale = embeddings_scale
         self.reduction = reduction
         self.padding_idx = padding_idx
+        self.dropout = dropout
 
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
@@ -258,7 +262,10 @@ class TransformerEncoder(nn.Module):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(TransformerEncoderLayer(
-                n_heads, embedding_size, ffn_size, attention_dropout, relu_dropout
+                n_heads, embedding_size, ffn_size,
+                attention_dropout=attention_dropout,
+                relu_dropout=relu_dropout,
+                dropout=dropout,
             ))
 
     def forward(self, input):
@@ -275,6 +282,7 @@ class TransformerEncoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+        tensor = F.dropout(tensor, p=self.dropout, training=self.training)
 
         tensor *= mask.unsqueeze(-1).float()
         for i in range(self.n_layers):
@@ -297,6 +305,7 @@ class TransformerEncoderLayer(nn.Module):
         ffn_size,
         attention_dropout=0.0,
         relu_dropout=0.0,
+        dropout=0.0,
     ):
         super().__init__()
         self.dim = embedding_size
@@ -307,11 +316,12 @@ class TransformerEncoderLayer(nn.Module):
         self.norm1 = nn.LayerNorm(embedding_size)
         self.ffn = TransformerFFN(embedding_size, ffn_size, dropout=relu_dropout)
         self.norm2 = nn.LayerNorm(embedding_size)
+        self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
-        tensor = tensor + self.attention(tensor, mask=mask)
+        tensor = tensor + self.dropout(self.attention(tensor, mask=mask))
         tensor = _normalize(tensor, self.norm1)
-        tensor = tensor + self.ffn(tensor)
+        tensor = tensor + self.dropout(self.ffn(tensor))
         tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).float()
         return tensor
@@ -328,6 +338,7 @@ class TransformerDecoder(nn.Module):
         embedding=None,
         attention_dropout=0.0,
         relu_dropout=0.0,
+        dropout=0.0,
         embeddings_scale=True,
         learn_positional_embeddings=False,
         padding_idx=None,
@@ -340,6 +351,7 @@ class TransformerDecoder(nn.Module):
         self.n_heads = n_heads
         self.dim = embedding_size
         self.embeddings_scale = embeddings_scale
+        self.dropout = dropout
 
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
@@ -360,7 +372,8 @@ class TransformerDecoder(nn.Module):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(TransformerDecoderLayer(
-                n_heads, embedding_size, ffn_size, attention_dropout, relu_dropout
+                n_heads, embedding_size, ffn_size, attention_dropout, relu_dropout,
+                dropout,
             ))
 
     def forward(self, input, encoder_state, incr_state=None):
@@ -373,6 +386,7 @@ class TransformerDecoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+        tensor = F.dropout(tensor, p=self.dropout, training=self.training)
 
         for layer in self.layers:
             tensor = layer(tensor, encoder_output, encoder_mask)
@@ -388,10 +402,12 @@ class TransformerDecoderLayer(nn.Module):
         ffn_size,
         attention_dropout=0.0,
         relu_dropout=0.0,
+        dropout=0.0,
     ):
         super().__init__()
         self.dim = embedding_size
         self.ffn_dim = ffn_size
+        self.dropout = nn.Dropout(p=dropout)
 
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
@@ -412,7 +428,7 @@ class TransformerDecoderLayer(nn.Module):
         residual = x
         # don't peak into the future!
         x = self.self_attention(query=x, mask=decoder_mask)
-        # x = dropout(x)
+        x = self.dropout(x)
         x = x + residual
         x = _normalize(x, self.norm1)
 
@@ -423,13 +439,14 @@ class TransformerDecoderLayer(nn.Module):
             value=encoder_output,
             mask=encoder_mask
         )
-        # x = dropout(x)
+        x = self.dropout(x)
         x = residual + x
         x = _normalize(x, self.norm2)
 
         # finally the ffn
         residual = x
         x = self.ffn(x)
+        x = self.dropout(x)
         x = residual + x
         x = _normalize(x, self.norm3)
 
@@ -618,7 +635,7 @@ class TransformerFFN(nn.Module):
 
     def forward(self, x):
         x = F.relu(self.lin1(x))
+        # this is just relu dropout, not the other dropout
         x = self.dropout(x)
         x = self.lin2(x)
-        x = self.dropout(x)
         return x
