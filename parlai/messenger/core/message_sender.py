@@ -315,10 +315,11 @@ class MessageSender():
                     }
                 }
             }
+            f = open(payload['filename'], 'rb')
             filedata = {
                 "filedata": (
                     payload['filename'],
-                    open(payload['filename'], 'rb'),
+                    f,
                     payload['type'] + '/' + payload['format']
                 )
             }
@@ -328,6 +329,7 @@ class MessageSender():
                 data={"message": json.dumps(message)},
                 files=filedata
             )
+            f.close()
         result = response.json()
         shared_utils.print_and_log(
             logging.INFO,
