@@ -10,7 +10,7 @@ Examples
 
 .. code-block:: shell
 
-  python convert_data_to_parlai_format.py -t babi:task1k:1 --outfile /tmp/dump
+  python convert_data_to_fasttext_format.py -t babi:task1k:1 --outfile /tmp/dump
 """
 
 from parlai.core.params import ParlaiParser
@@ -49,7 +49,7 @@ def dump_data(opt):
         )
 
         samp = world.acts[0]
-        text += samp["text"].replace("\n", " ")
+        text += samp["text"].replace("\n", " ") + " "
         fw.write("__label__%s %s\n" % (samp["labels"][0].replace(' ', '_'), text))
         if world.acts[0].get('episode_done', False):
             text = ''
