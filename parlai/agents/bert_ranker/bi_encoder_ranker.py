@@ -17,8 +17,6 @@ import tqdm
 import os
 
 
-
-
 class BiEncoderRankerAgent(TorchRankerAgent):
     """ TorchRankerAgent implementation of the biencoder.
         It is a standalone Agent. It might be called by the Both Encoder.
@@ -30,6 +28,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
 
     def __init__(self, opt, shared=None):
         # download pretrained models
+        download(opt['datapath'])
         self.pretrained_path = os.path.join(opt['datapath'], 'models',
                                             'bert_models', MODEL_PATH)
         opt['pretrained_path'] = self.pretrained_path

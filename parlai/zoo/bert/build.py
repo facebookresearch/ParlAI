@@ -14,13 +14,6 @@ implementation provided by Hugging Face
 import parlai.core.build_data as build_data
 import os
 
-try:
-    import pytorch_pretrained_bert
-except ImportError:
-    raise ImportError('This model requires that pytorch-pretrained-bert is '
-                      'installed. Install with:\n '
-                      '`pip install pytorchr-pretrained-bert`.')
-
 
 def download(datapath, version='v1.0'):
     dpath = os.path.join(datapath, 'models', 'bert_models')

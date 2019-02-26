@@ -6,7 +6,7 @@
 from .bert_dictionary import BertDictionaryAgent
 from .bi_encoder_ranker import BiEncoderRankerAgent
 from .cross_encoder_ranker import CrossEncoderRankerAgent
-from .helpers import add_common_args, surround, MODEL_PATH
+from .helpers import add_common_args, surround
 
 from parlai.core.torch_agent import TorchAgent, Output, Batch
 

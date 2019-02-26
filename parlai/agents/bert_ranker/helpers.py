@@ -10,10 +10,11 @@ try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig
     from pytorch_pretrained_bert import BertModel  # NOQA
 except ImportError:
-    raise ImportError('BERT rankers needs pytorch-pretrained-BERT installed. \n '
-                      'pip install pytorch-pretrained-bert')
+    raise ImportError('This model requires that pytorch-pretrained-bert is '
+                      'installed. Install with:\n '
+                      '`pip install pytorchr-pretrained-bert`.')
 
-import os
+
 import torch
 from torch.optim import Optimizer
 from torch.optim.optimizer import required

@@ -16,10 +16,10 @@ In order to use those agents you need to install pytorch-pretrained-bert (https:
 
 Train a BiEncoder BERT model on ConvAI2:
 ```bash
-python examples/train_model.py -t convai2 -m bert_ranker/bi_encoder_ranker --batchsize 32 --type-optimization all_encoder_layers -vtim 30 --model-file /tmp/bert_biencoder_test --data-parallel True
+python examples/train_model.py -t convai2 -m bert_ranker/bi_encoder_ranker --batchsize 20 --type-optimization all_encoder_layers -vtim 30 --model-file /tmp/bert_biencoder_test --data-parallel True
 ```
 
 Train a CrossEncoder BERT model on ConvAI2:
 ```bash
-python examples/train_model.py -t convai2 -m bert_ranker/cross_encoder_ranker --batchsize 32 --type-optimization all_encoder_layers -vtim 30 --model-file /tmp/bert_biencoder_test --data-parallel True
+python examples/train_model.py -t convai2 -m bert_ranker/cross_encoder_ranker --batchsize 2 --type-optimization all_encoder_layers -vtim 30 --model-file /tmp/bert_crossencoder_test --data-parallel True
 ```
