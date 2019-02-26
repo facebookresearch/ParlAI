@@ -30,7 +30,6 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         self.pretrained_path = os.path.join(opt['datapath'], 'models',
                                             'bert_models', MODEL_PATH)
 
-        opt['rank_candidates'] = True
         super().__init__(opt, shared)
         # it's easier for now to use DataParallel when
         self.data_parallel = opt.get('data_parallel') and self.use_cuda

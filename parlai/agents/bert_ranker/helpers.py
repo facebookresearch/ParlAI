@@ -54,6 +54,8 @@ def add_common_args(parser):
         label_truncate=300,
         text_truncate=300,
         learningrate=0.00005,
+        eval_candidates='inline',
+        candidates='batch',
     )
 
 

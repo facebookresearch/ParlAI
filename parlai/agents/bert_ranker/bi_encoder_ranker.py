@@ -34,10 +34,6 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                                             'bert_models', MODEL_PATH)
         opt['pretrained_path'] = self.pretrained_path
 
-        opt['rank_candidates'] = True
-        opt['candidates'] = "batch"
-        if opt.get('eval_candidates', None) is None:
-            opt['eval_candidates'] = "inline"
         self.clip = -1
 
         super().__init__(opt, shared)

@@ -41,7 +41,6 @@ class BothEncoderRankerAgent(TorchAgent):
             help='crossencoder will be fed those many elements at train or eval time.')
 
     def __init__(self, opt, shared=None):
-        opt['rank_candidates'] = True
         opt['lr_scheduler'] = 'none'
         self.path_biencoder = opt.get('biencoder_model_file', None)
         if self.path_biencoder is None:
