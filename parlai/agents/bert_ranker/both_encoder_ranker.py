@@ -3,12 +3,12 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.core.torch_agent import TorchAgent
 from .bert_dictionary import BertDictionaryAgent
+from .bi_encoder_ranker import BiEncoderRankerAgent
+from .cross_encoder_ranker import CrossEncoderRankerAgent
 from .helpers import add_common_args, surround
-from parlai.core.torch_agent import Output, Batch
-from .biencoder_ranker import BiEncoderRankerAgent
-from .crossencoder_ranker import CrossEncoderRankerAgent
+
+from parlai.core.torch_agent import TorchAgent, Output, Batch
 
 
 class BothEncoderRankerAgent(TorchAgent):
@@ -41,15 +41,14 @@ class BothEncoderRankerAgent(TorchAgent):
             help='crossencoder will be fed those many elements at train or eval time.')
 
     def __init__(self, opt, shared=None):
-        opt['rank_candidates'] = True
-        opt['lr_scheduler'] = "none"
-        self.path_biencoder = opt.get("biencoder_model_file", None)
+        opt['lr_scheduler'] = 'none'
+        self.path_biencoder = opt.get('biencoder_model_file', None)
         if self.path_biencoder is None:
-            self.path_biencoder = opt["model_file"] + "_bi"
-        self.path_crossencoder = opt.get("crossencoder_model_file", None)
+            self.path_biencoder = opt['model_file'] + '_bi'
+        self.path_crossencoder = opt.get('crossencoder_model_file', None)
         if self.path_crossencoder is None:
-            self.path_crossencoder = opt["model_file"] + "_cross"
-        self.top_n_bi = opt["biencoder_top_n"]
+            self.path_crossencoder = opt['model_file'] + '_cross'
+        self.top_n_bi = opt['biencoder_top_n']
 
         super().__init__(opt, shared)
         self.NULL_IDX = self.dict.pad_idx
@@ -57,15 +56,15 @@ class BothEncoderRankerAgent(TorchAgent):
         self.END_IDX = self.dict.end_idx
         if shared is None:
             opt_biencoder = dict(opt)
-            opt_biencoder["model_file"] = self.path_biencoder
+            opt_biencoder['model_file'] = self.path_biencoder
             self.biencoder = BiEncoderRankerAgent(opt_biencoder)
             opt_crossencoder = dict(opt)
-            opt_crossencoder["model_file"] = self.path_crossencoder
-            opt_crossencoder["batchsize"] = opt["batchsize"]
-            opt_crossencoder["eval_candidates"] = "inline"
-            if opt["crossencoder_batchsize"] != -1:
-                opt_crossencoder["batchsize"] = opt["crossencoder_batchsize"]
-            self.crossencoder_batchsize = opt_crossencoder["batchsize"]
+            opt_crossencoder['model_file'] = self.path_crossencoder
+            opt_crossencoder['batchsize'] = opt['batchsize']
+            opt_crossencoder['eval_candidates'] = 'inline'
+            if opt['crossencoder_batchsize'] != -1:
+                opt_crossencoder['batchsize'] = opt['crossencoder_batchsize']
+            self.crossencoder_batchsize = opt_crossencoder['batchsize']
             self.crossencoder = CrossEncoderRankerAgent(opt_crossencoder)
 
     @staticmethod
@@ -75,8 +74,8 @@ class BothEncoderRankerAgent(TorchAgent):
     def _set_text_vec(self, *args, **kwargs):
         obs = super()._set_text_vec(*args, **kwargs)
         # concatenate the [CLS] and [SEP] tokens
-        if obs is not None and "text_vec" in obs:
-            obs["text_vec"] = surround(obs["text_vec"], self.START_IDX,
+        if obs is not None and 'text_vec' in obs:
+            obs['text_vec'] = surround(obs['text_vec'], self.START_IDX,
                                        self.END_IDX)
         return obs
 

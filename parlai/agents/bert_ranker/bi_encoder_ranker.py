@@ -3,14 +3,18 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.core.torch_ranker_agent import TorchRankerAgent
-from .bert_dictionary import BertDictionaryAgent
-from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
-                      add_common_args, surround)
 from parlai.core.utils import padded_3d
 from parlai.core.distributed_utils import is_distributed
+from parlai.zoo.bert.build import download
+from parlai.core.torch_ranker_agent import TorchRankerAgent
+
+from .bert_dictionary import BertDictionaryAgent
+from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
+                      add_common_args, surround, MODEL_PATH)
+
 import torch
 import tqdm
+import os
 
 
 class BiEncoderRankerAgent(TorchRankerAgent):
@@ -23,11 +27,14 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         add_common_args(parser)
 
     def __init__(self, opt, shared=None):
-        opt['rank_candidates'] = True
-        opt['candidates'] = "batch"
-        if opt.get('eval_candidates', None) is None:
-            opt['eval_candidates'] = "inline"
+        # download pretrained models
+        download(opt['datapath'])
+        self.pretrained_path = os.path.join(opt['datapath'], 'models',
+                                            'bert_models', MODEL_PATH)
+        opt['pretrained_path'] = self.pretrained_path
+
         self.clip = -1
+
         super().__init__(opt, shared)
         # it's easier for now to use DataParallel when
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
@@ -74,8 +81,8 @@ class BiEncoderRankerAgent(TorchRankerAgent):
     def _set_text_vec(self, *args, **kwargs):
         obs = super()._set_text_vec(*args, **kwargs)
         # concatenate the [CLS] and [SEP] tokens
-        if obs is not None and "text_vec" in obs:
-            obs["text_vec"] = surround(obs["text_vec"], self.START_IDX,
+        if obs is not None and 'text_vec' in obs:
+            obs['text_vec'] = surround(obs['text_vec'], self.START_IDX,
                                        self.END_IDX)
         return obs
 
@@ -125,17 +132,17 @@ class BiEncoderModule(torch.nn.Module):
     def __init__(self, opt):
         super(BiEncoderModule, self).__init__()
         self.context_encoder = BertWrapper(
-            BertModel.from_pretrained(
-                opt["pretrained_bert_path"]),
-            opt["out_dim"],
-            add_transformer_layer=opt["add_transformer_layer"],
-            layer_pulled=opt["pull_from_layer"])
+            BertModel.from_pretrained(opt['pretrained_path']),
+            opt['out_dim'],
+            add_transformer_layer=opt['add_transformer_layer'],
+            layer_pulled=opt['pull_from_layer']
+        )
         self.cand_encoder = BertWrapper(
-            BertModel.from_pretrained(
-                opt["pretrained_bert_path"]),
-            opt["out_dim"],
-            add_transformer_layer=opt["add_transformer_layer"],
-            layer_pulled=opt["pull_from_layer"])
+            BertModel.from_pretrained(opt['pretrained_path']),
+            opt['out_dim'],
+            add_transformer_layer=opt['add_transformer_layer'],
+            layer_pulled=opt['pull_from_layer']
+        )
 
     def forward(self, token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
                 token_idx_cands, segment_idx_cands, mask_cands):
