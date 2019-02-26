@@ -3,11 +3,15 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from parlai.core.distributed_utils import is_distributed
 from parlai.core.torch_ranker_agent import TorchRankerAgent
+from parlai.zoo.bert.build import download
+
 from .bert_dictionary import BertDictionaryAgent
 from .helpers import (BertWrapper, BertModel, get_bert_optimizer,
-                      add_common_args, surround)
-from parlai.core.distributed_utils import is_distributed
+                      add_common_args, surround, MODEL_PATH)
+
+import os
 import torch
 
 
@@ -21,6 +25,11 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         add_common_args(parser)
 
     def __init__(self, opt, shared=None):
+        # download pretrained models
+        download(opt['datapath'])
+        self.pretrained_path = os.path.join(opt['datapath'], 'models',
+                                            'bert_models', MODEL_PATH)
+
         opt['rank_candidates'] = True
         super().__init__(opt, shared)
         # it's easier for now to use DataParallel when
@@ -36,16 +45,16 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
 
     def build_model(self):
         self.model = BertWrapper(
-            BertModel.from_pretrained(
-                self.opt["pretrained_bert_path"]),
+            BertModel.from_pretrained(self.pretrained_path),
             1,
-            add_transformer_layer=self.opt["add_transformer_layer"],
-            layer_pulled=self.opt["pull_from_layer"])
+            add_transformer_layer=self.opt['add_transformer_layer'],
+            layer_pulled=self.opt['pull_from_layer']
+        )
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         self.optimizer = get_bert_optimizer([self.model],
-                                            self.opt["type_optimization"],
-                                            self.opt["learningrate"])
+                                            self.opt['type_optimization'],
+                                            self.opt['learningrate'])
 
     def score_candidates(self, batch, cand_vecs):
         # concatenate text and candidates (not so easy)
@@ -74,7 +83,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     def _set_text_vec(self, *args, **kwargs):
         obs = super()._set_text_vec(*args, **kwargs)
         # concatenate the [CLS] and [SEP] tokens
-        if obs is not None and "text_vec" in obs:
-            obs["text_vec"] = surround(obs["text_vec"], self.START_IDX,
+        if obs is not None and 'text_vec' in obs:
+            obs['text_vec'] = surround(obs['text_vec'], self.START_IDX,
                                        self.END_IDX)
         return obs

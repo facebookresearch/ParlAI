@@ -7,8 +7,12 @@ from parlai.core.dict import DictionaryAgent
 try:
     from pytorch_pretrained_bert import BertTokenizer
 except ImportError:
-    raise ImportError(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
-                       "pip install pytorch-pretrained-bert"))
+    raise ImportError('BERT rankers needs pytorch-pretrained-BERT installed. \n '
+                      'pip install pytorch-pretrained-bert')
+
+from .helpers import VOCAB_PATH
+
+import os
 
 
 class BertDictionaryAgent(DictionaryAgent):
@@ -17,15 +21,19 @@ class BertDictionaryAgent(DictionaryAgent):
 
     def __init__(self, opt):
         super().__init__(opt)
-        self.tokenizer = BertTokenizer.from_pretrained(opt["bert_vocabulary_path"])
-        self.start_token = "[CLS]"
-        self.end_token = "[SEP]"
-        self.null_token = "[PAD]"
-        self.start_idx = self.tokenizer.convert_tokens_to_ids(["[CLS]"])[
+        # initialize from voab path
+        vocab_path = os.path.join(opt['datapath'], 'models', 'bert_models',
+                                  VOCAB_PATH)
+        self.tokenizer = BertTokenizer.from_pretrained(vocab_path)
+
+        self.start_token = '[CLS]'
+        self.end_token = '[SEP]'
+        self.null_token = '[PAD]'
+        self.start_idx = self.tokenizer.convert_tokens_to_ids(['[CLS]'])[
             0]  # should be 101
-        self.end_idx = self.tokenizer.convert_tokens_to_ids(["[SEP]"])[
+        self.end_idx = self.tokenizer.convert_tokens_to_ids(['[SEP]'])[
             0]  # should be 102
-        self.pad_idx = self.tokenizer.convert_tokens_to_ids(["[PAD]"])[0]  # should be 0
+        self.pad_idx = self.tokenizer.convert_tokens_to_ids(['[PAD]'])[0]  # should be 0
         self[self.start_token] = self.start_idx
         self[self.end_token] = self.end_idx
         self[self.null_token] = self.pad_idx
@@ -38,4 +46,4 @@ class BertDictionaryAgent(DictionaryAgent):
     def vec2txt(self, tensor):
         idxs = [idx.item() for idx in tensor.cpu()]
         toks = self.tokenizer.convert_ids_to_tokens(idxs)
-        return " ".join(toks)
+        return ' '.join(toks)
