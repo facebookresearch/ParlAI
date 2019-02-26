@@ -197,6 +197,7 @@ class TorchRankerAgent(TorchAgent):
             elif cand_vecs.dim() == 3:
                 cand_list = cands[i]
             if len(ordering) != len(cand_list):
+                # ignore padding
                 true_ordering = [x for x in ordering if x < len(cand_list)]
                 ordering = true_ordering
             cand_preds.append([cand_list[rank] for rank in ordering])
