@@ -1247,6 +1247,14 @@ class TorchAgent(Agent):
                     # for convenience of working with jq, make sure there's a newline
                     handle.write('\n')
 
+    def load_state_dict(self, state_dict):
+        """
+        Load the state dict into model.
+
+        This is easily overridable to facilitate transfer of state dicts.
+        """
+        self.model.load_state_dict(state_dict)
+
     def load(self, path):
         """Return opt and model states.
 
@@ -1254,7 +1262,7 @@ class TorchAgent(Agent):
         """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         if 'model' in states:
-            self.model.load_state_dict(states['model'])
+            self.load_state_dict(states['model'])
         if 'optimizer' in states and hasattr(self, 'optimizer'):
             self.optimizer.load_state_dict(states['optimizer'])
         return states
