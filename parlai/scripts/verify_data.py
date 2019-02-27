@@ -36,10 +36,13 @@ def report(world, counts, log_time):
         'missing_labels': counts['missing_labels'],
         'missing_label_candidates': counts['missing_label_candidates'],
         'empty_label_candidates': counts['empty_label_candidates'],
-        'label_candidates_with_missing_label': counts['label_candidates_with_missing_label'],
+        'label_candidates_with_missing_label': counts[
+            'label_candidates_with_missing_label'
+        ],
     }
     text, log = log_time.log(report['exs'], world.num_examples(), log)
     return text, log
+
 
 def warn(txt, act, opt):
     if opt.get('display_examples'):
@@ -47,7 +50,11 @@ def warn(txt, act, opt):
     else:
         warn_once(txt)
 
+
 def verify(opt, printargs=None, print_parser=None):
+    if opt['datatype'] == 'train':
+        print("[ note: changing datatype from train to train:ordered ]")
+        opt['datatype'] = 'train:ordered'
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
@@ -74,7 +81,7 @@ def verify(opt, printargs=None, print_parser=None):
             counts['missing_text'] += 1
 
         if 'labels' not in act and 'eval_labels' not in act:
-            warn("warning: missing labels/eval_labels field:\n", act, opt) 
+            warn("warning: missing labels/eval_labels field:\n", act, opt)
             counts['missing_labels'] += 1
         else:
             if 'label_candidates' not in act:
@@ -90,13 +97,17 @@ def verify(opt, printargs=None, print_parser=None):
                         counts['empty_label_candidates'] += 1
                     if c in is_label_cand:
                         if is_label_cand[c] == True:
-                            warn("warning: label mentioned twice in candidate_labels:\n", act, opt)
+                            warn(
+                                "warning: label mentioned twice in candidate_labels:\n",
+                                act,
+                                opt,
+                            )
                         is_label_cand[c] = True
-                for l,has in is_label_cand.items():
+                for l, has in is_label_cand.items():
                     if has == False:
                         warn("warning: label missing in candidate_labels:\n", act, opt)
                         counts['label_candidates_with_missing_label'] += 1
-                        
+
         if log_time.time() > log_every_n_secs:
             text, log = report(world, counts, log_time)
             if print_parser:
@@ -104,9 +115,11 @@ def verify(opt, printargs=None, print_parser=None):
 
     try:
         # print dataset size if available
-        print('[ loaded {} episodes with a total of {} examples ]'.format(
-            world.num_episodes(), world.num_examples()
-        ))
+        print(
+            '[ loaded {} episodes with a total of {} examples ]'.format(
+                world.num_episodes(), world.num_examples()
+            )
+        )
     except Exception:
         pass
     return report(world, counts, log_time)
