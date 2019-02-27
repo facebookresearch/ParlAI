@@ -360,7 +360,6 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
 
-
             # is_valid should check for text_vec
             def is_valid(obs):
                 return 'text_vec' in obs
