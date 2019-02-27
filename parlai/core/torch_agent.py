@@ -996,8 +996,10 @@ class TorchAgent(Agent):
         self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs
 
-    def batchify(self, obs_batch, sort=False,
-                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
+    def is_valid(self, obs):
+        return 'text_vec' in obs or 'image' in obs
+
+    def batchify(self, obs_batch, sort=False):
         """Create a batch of valid observations from an unchecked batch.
 
         A valid observation is one that passes the lambda provided to the
@@ -1021,13 +1023,12 @@ class TorchAgent(Agent):
                           torch.nn.utils.rnn.pack_padded_sequence.
                           Uses the text vectors if available, otherwise uses
                           the label vectors if available.
-        :param is_valid:  Function that checks if 'text_vec' is in the
-                          observation, determines if an observation is valid
         """
         if len(obs_batch) == 0:
             return Batch()
 
-        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
+        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if
+                     self.is_valid(ex)]
 
         if len(valid_obs) == 0:
             return Batch()
