@@ -29,7 +29,7 @@ class TorchRankerAgent(TorchAgent):
         agent.add_argument(
             '-ecands', '--eval-candidates', type=str, default='inline',
             choices=['batch', 'inline', 'fixed', 'vocab'],
-            help='The source of candidates during evaluation (defaults
+            help='The source of candidates during evaluation (defaults to '
                  'inline candidates).')
         agent.add_argument(
             '-fcp', '--fixed-candidates-path', type=str,
