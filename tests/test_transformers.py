@@ -206,8 +206,8 @@ class TestTransformerGenerator(unittest.TestCase):
         stdout, valid, test = testing_utils.eval_model(dict(
             task='integration_tests:multipass',
             model='transformer/generator',
-            model_file='models:unittest/transformer_generator/model',
-            dict_file='models:unittest/transformer_generator/model.dict',
+            model_file='models:unittest/transformer_generator2/model',
+            dict_file='models:unittest/transformer_generator2/model.dict',
             rank_candidates=True,
             batch_size=64,
         ))

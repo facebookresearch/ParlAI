@@ -230,7 +230,7 @@ def download_unittest_models():
     model_filenames = [
         'seq2seq.tar.gz',
         'transformer_ranker.tar.gz',
-        'transformer_generator.tar.gz'
+        'transformer_generator2.tar.gz'
     ]
     with capture_output() as _:
-        download_models(opt, model_filenames, 'unittest')
+        download_models(opt, model_filenames, 'unittest', version='v2.0')
