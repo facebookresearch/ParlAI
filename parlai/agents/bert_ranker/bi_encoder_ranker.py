@@ -92,8 +92,8 @@ class BiEncoderRankerAgent(TorchRankerAgent):
             None, None, None)
 
         # evaluating a fixed set of candidates
-        if (hasattr(self, 'fixed_candidate_encs') and self.fixed_candidate_encs
-                is not None):
+        if (hasattr(self, 'fixed_candidate_encs') and
+                self.fixed_candidate_encs is not None):
             return embedding_ctxt.mm(self.fixed_candidate_encs.t())
 
         if len(cand_vecs.size()) == 2 and cand_vecs.dtype == torch.long:

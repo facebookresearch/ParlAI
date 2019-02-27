@@ -588,5 +588,6 @@ class TorchRankerAgent(TorchAgent):
         A child class may choose to overwrite this method to perform vectorization as
         well as encoding if so desired.
         """
-        return [self._vectorize_text(cand, truncate=self.label_truncate,
-                truncate_left=False) for cand in cands_batch]
+        return [self._vectorize_text(
+                    cand, truncate=self.label_truncate, truncate_left=False)
+                for cand in cands_batch]
