@@ -27,7 +27,7 @@ class TorchRankerAgent(TorchAgent):
             help='The source of candidates during training '
                  '(see TorchRankerAgent._build_candidates() for details).')
         agent.add_argument(
-            '-ecands', '--eval-candidates', type=str, default='inline'
+            '-ecands', '--eval-candidates', type=str, default='inline',
             choices=['batch', 'inline', 'fixed', 'vocab'],
             help='The source of candidates during evaluation (defaults
                  'inline candidates).')
