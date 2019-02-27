@@ -1165,49 +1165,7 @@ class TorchAgent(Agent):
 
         This is easily overridable to facilitate transfer of state dicts.
         """
-        try:
-            self.model.load_state_dict(state_dict)
-        except RuntimeError as loaderr:
-            msg = []
-            msg.append("There was an error loading the state dict")
-            msg.append(str(loaderr))
-            sdkeys = set(state_dict.keys())
-            mkeys = set(self.model.state_dict().keys())
-            if sdkeys - mkeys:
-                msg.append("")
-                msg.append("These keys appeared in state_dict but not the model:")
-            for k in sorted(list(sdkeys - mkeys)):
-                p = state_dict[k]
-                shape = " x ".join(map(str, p.shape))
-                typ = p.type()[6:]
-                msg.append("  {} [{} {}]".format(k, shape, typ))
-
-            if mkeys - sdkeys:
-                msg.append("")
-                msg.append("These keys appeared in the model, but not state_dict:")
-            for k in sorted(list(mkeys - sdkeys)):
-                p = self.model.state_dict()[k]
-                shape = " x ".join(map(str, p.shape))
-                typ = p.type()[6:]
-                msg.append("  {} [{} {}]".format(k, shape, typ))
-
-            if mkeys & sdkeys:
-                msg.append("")
-                msg.append("These keys appear in both, but mismatch size:")
-            for k in sorted(list(mkeys & sdkeys)):
-                psd = state_dict[k]
-                sdshape = " x ".join(map(str, p.shape))
-                sdtyp = psd.type()[6:]
-                pm = self.model.state_dict()[k]
-                mshape = " x ".join(map(str, p.shape))
-                mtyp = pm.type()[6:]
-                if mshape == sdshape:
-                    continue
-                msg.append(
-                    "  {} [SD {} {}] -> [M {} {}]"
-                    .format(k, sdshape, sdtyp, mshape, mtyp)
-                )
-            raise RuntimeError("\n".join(msg))
+        self.model.load_state_dict(state_dict)
 
     def load(self, path):
         """Return opt and model states.
