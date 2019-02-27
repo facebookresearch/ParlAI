@@ -300,7 +300,6 @@ class TransformerEncoder(nn.Module):
             inside the sequence and 0 outside.
         """
         mask = input != self.padding_idx
-        seq_len = input.size(1)
         positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
         tensor = self.embeddings(input)
         if self.embeddings_scale:
