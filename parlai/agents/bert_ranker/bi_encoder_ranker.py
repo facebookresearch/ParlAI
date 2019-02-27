@@ -78,6 +78,12 @@ class BiEncoderRankerAgent(TorchRankerAgent):
             cand_vecs.append(embedding_cands.cpu().detach())
         return torch.cat(cand_vecs, 0)
 
+    def make_candidate_encs(self, vecs, reuse, path):
+        if reuse == 'reuse' and os.path.isfile(path):
+            embs = self.load_candidate_encs(path)
+            return embs
+        pass
+
     def _set_text_vec(self, *args, **kwargs):
         obs = super()._set_text_vec(*args, **kwargs)
         # concatenate the [CLS] and [SEP] tokens

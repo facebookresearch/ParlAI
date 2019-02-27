@@ -36,17 +36,22 @@ class TorchRankerAgent(TorchAgent):
                  'candidate per line')
         agent.add_argument(
             '--fixed-candidate-vecs', type=str, default='reuse',
-            help="One of 'reuse', 'replace', or a path to a file with vectors "
-                 "corresponding to the candidates at --fixed-candidates-path. "
-                 "The default path is a /path/to/model-file.<cands_name>, where "
-                 "<cands_name> is the name of the file (not the full path) passed by "
-                 "the flag --fixed-candidates-path. By default, this file is created "
-                 "once and reused. To replace it, use the 'replace' option.")
+            help='One of \'reuse\', \'replace\', or a path to a file with vectors '
+                 'corresponding to the candidates at --fixed-candidates-path. '
+                 'The default path is a /path/to/model-file.<cands_name>, where '
+                 '<cands_name> is the name of the file (not the full path) passed by '
+                 'the flag --fixed-candidates-path. By default, this file is created '
+                 'once and reused. To replace it, use the \'replace\' option.')
+        agent.add_argument(
+            '--encode-candidate-vecs', type='bool', default=False,
+            help='Cache and save the encoding of the candidate vecs. This '
+                 'might be used when interacting with the model in real time '
+                 'or evaluating on fixed candidate set when the encoding of '
+                 'the candidates is independent of the input.')
         agent.add_argument(
             '--train-predict', type='bool', default=False,
             help='Get predictions and calculate mean rank during the train '
-                 'step. Turning this on may slow down training.'
-        )
+                 'step. Turning this on may slow down training.')
 
     def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary
@@ -317,6 +322,7 @@ class TorchRankerAgent(TorchAgent):
 
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
+
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
@@ -467,7 +473,7 @@ class TorchRankerAgent(TorchAgent):
                     model_name = os.path.splitext(model_file)[0]
                     cands_name = os.path.splitext(os.path.basename(cand_path))[0]
                     vecs_path = os.path.join(
-                        model_dir, '.'.join([model_name, cands_name]))
+                        '/tmp/', '.'.join([model_name, cands_name, 'vecs']))
                     if setting == 'reuse' and os.path.isfile(vecs_path):
                         vecs = self.load_candidate_vecs(vecs_path)
                     else:  # setting == 'replace' OR generating for the first time
@@ -476,9 +482,20 @@ class TorchRankerAgent(TorchAgent):
 
                 self.fixed_candidates = cands
                 self.fixed_candidate_vecs = vecs
-
                 if self.use_cuda:
                     self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
+
+                if self.opt.get('encode_candidate_vecs', False):
+                    enc_path = os.path.join(
+                        model_dir, '.'.join([model_name, cands_name, 'encs']))
+                    encs = self.make_candidate_encs(vecs, reuse=setting,
+                                                    path=enc_path)
+                    self.fixed_candidate_encs = encs
+                    if self.use_cuda:
+                        self.fixed_candidate_encs = self.fixed_candidate_encs.cuda()
+                else:
+                    self.fixed_candidate_encs = None
+
             else:
                 self.fixed_candidates = None
                 self.fixed_candidate_vecs = None
@@ -486,6 +503,20 @@ class TorchRankerAgent(TorchAgent):
     def load_candidate_vecs(self, path):
         print("[ Loading fixed candidate set vectors from {} ]".format(path))
         return torch.load(path)
+
+    def load_candidate_encs(self, path):
+        pass
+        #TODO: fill out this function
+
+    def make_candidate_encs(self, vecs, reuse, path):
+        if reuse == 'reuse' and os.path.isfile(path):
+            embs = self.load_candidate_encs(path)
+            return embs
+        vecs_batches = [vecs[i:i + 512] for i in range(0, len(vecs), 512)]
+
+
+        print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 512) ]"
+              "".format(len(vecs_batches)))
 
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
