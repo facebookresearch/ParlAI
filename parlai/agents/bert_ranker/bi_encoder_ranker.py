@@ -25,6 +25,9 @@ class BiEncoderRankerAgent(TorchRankerAgent):
     @staticmethod
     def add_cmdline_args(parser):
         add_common_args(parser)
+        parser.set_defaults(
+            encode_candidate_vecs=True
+        )
 
     def __init__(self, opt, shared=None):
         # download pretrained models
@@ -60,29 +63,37 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                                             self.opt["type_optimization"],
                                             self.opt["learningrate"])
 
-    def make_candidate_vecs(self, cands):
-        cand_batches = [cands[i:i + 200] for i in range(0, len(cands), 200)]
-        cand_vecs = []
-        for batch in tqdm.tqdm(cand_batches,
-                               desc="[ Vectorizing fixed candidates set from "
-                                    "({} batch(es) of up to 200) ]"
-                                    "".format(len(cand_batches))):
-            token_idx = [self._vectorize_text(cand, add_start=True, add_end=True,
-                                              truncate=self.opt["label_truncate"])
-                         for cand in batch]
-            padded_input = padded_3d([token_idx]).squeeze(0)
-            token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
-                padded_input, self.NULL_IDX)
-            _, embedding_cands = self.model(
-                None, None, None, token_idx_cands, segment_idx_cands, mask_cands)
-            cand_vecs.append(embedding_cands.cpu().detach())
-        return torch.cat(cand_vecs, 0)
+    # def make_candidate_vecs(self, cands):
+    #     cand_batches = [cands[i:i + 200] for i in range(0, len(cands), 200)]
+    #     cand_vecs = []
+    #     for batch in tqdm.tqdm(cand_batches,
+    #                            desc="[ Vectorizing fixed candidates set from "
+    #                                 "({} batch(es) of up to 200) ]"
+    #                                 "".format(len(cand_batches))):
+    #         token_idx = [self._vectorize_text(cand, add_start=True, add_end=True,
+    #                                           truncate=self.opt["label_truncate"])
+    #                      for cand in batch]
+    #         padded_input = padded_3d([token_idx]).squeeze(0)
+    #         token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
+    #             padded_input, self.NULL_IDX)
+    #         _, embedding_cands = self.model(
+    #             None, None, None, token_idx_cands, segment_idx_cands, mask_cands)
+    #         cand_vecs.append(embedding_cands.cpu().detach())
+    #     return torch.cat(cand_vecs, 0)
 
-    def make_candidate_encs(self, vecs, reuse, path):
-        if reuse == 'reuse' and os.path.isfile(path):
-            embs = self.load_candidate_encs(path)
-            return embs
-        pass
+    def vectorize_fixed_candidates(self, cands_batch):
+        """Override from TorchRankerAgent.
+        """
+        return [self._vectorize_text(cand, add_start=True, add_end=True,
+                truncate=self.label_truncate) for cand in cands_batch]
+
+    def encode_candidates(self, padded_cands):
+        token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
+            padded_cands, self.NULL_IDX)
+        _, embedding_cands = self.model(
+            None, None, None, token_idx_cands, segment_idx_cands, mask_cands)
+
+        return embedding_cands.cpu().detach()
 
     def _set_text_vec(self, *args, **kwargs):
         obs = super()._set_text_vec(*args, **kwargs)
@@ -99,6 +110,12 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         embedding_ctxt, _ = self.model(
             token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
             None, None, None)
+
+        # evaluating a fixed set of candidates
+        if (hasattr(self, 'fixed_candidate_encs') and self.fixed_candidate_encs
+                is not None):
+            return embedding_ctxt.mm(self.fixed_candidate_encs.t())
+
         if len(cand_vecs.size()) == 2 and cand_vecs.dtype == torch.long:
             # train time. We compare with all elements of the batch
             token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(

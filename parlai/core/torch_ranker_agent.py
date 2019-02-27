@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+from tqdm import tqdm
 
 import torch
 from torch import nn
@@ -354,7 +355,12 @@ class TorchRankerAgent(TorchAgent):
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
-                    label_inds[i] = self._find_match(cand_vecs, label_vec)
+                    label_vec_pad = (label_vec.new_zeros(cand_vecs[i].size(0))
+                                     .fill_(self.NULL_IDX))
+                    if cand_vecs[i].size(0) < len(label_vec):
+                        label_vec = label_vec[0:cand_vecs[i].size(1)]
+                    label_vec_pad[0:label_vec.size(0)] = label_vec
+                    label_inds[i] = self._find_match(cand_vecs, label_vec_pad)
 
         elif source == 'vocab':
             warn_once(
@@ -501,16 +507,16 @@ class TorchRankerAgent(TorchAgent):
                 # Load or create candidate vectors
                 if os.path.isfile(opt['fixed_candidate_vecs']):
                     vecs_path = opt['fixed_candidate_vecs']
-                    vecs = self.load_candidate_vecs(vecs_path)
+                    vecs = self.load_candidates(vecs_path)
                 else:
                     setting = opt['fixed_candidate_vecs']
                     model_dir, model_file = os.path.split(self.opt['model_file'])
                     model_name = os.path.splitext(model_file)[0]
                     cands_name = os.path.splitext(os.path.basename(cand_path))[0]
                     vecs_path = os.path.join(
-                        '/tmp/', '.'.join([model_name, cands_name, 'vecs']))
+                        model_dir, '.'.join([model_name, cands_name, 'vecs']))
                     if setting == 'reuse' and os.path.isfile(vecs_path):
-                        vecs = self.load_candidate_vecs(vecs_path)
+                        vecs = self.load_candidates(vecs_path)
                     else:  # setting == 'replace' OR generating for the first time
                         vecs = self.make_candidate_vecs(cands)
                         self.save_candidate_vecs(vecs, vecs_path)
@@ -523,8 +529,13 @@ class TorchRankerAgent(TorchAgent):
                 if self.opt.get('encode_candidate_vecs', False):
                     enc_path = os.path.join(
                         model_dir, '.'.join([model_name, cands_name, 'encs']))
-                    encs = self.make_candidate_encs(vecs, reuse=setting,
-                                                    path=enc_path)
+                    if setting == 'reuse' and os.path.isfile(enc_path):
+                        encs = self.load_candidates(
+                            enc_path, cand_type='encodings')
+                    else:
+                        encs = self.make_candidate_encs(vecs, path=enc_path)
+                        self.save_candidate_vecs(encs, path=enc_path,
+                                                 cand_type='encodings')
                     self.fixed_candidate_encs = encs
                     if self.use_cuda:
                         self.fixed_candidate_encs = self.fixed_candidate_encs.cuda()
@@ -534,38 +545,40 @@ class TorchRankerAgent(TorchAgent):
             else:
                 self.fixed_candidates = None
                 self.fixed_candidate_vecs = None
+                self.fixed_candidate_encs = None
 
-    def load_candidate_vecs(self, path):
-        print("[ Loading fixed candidate set vectors from {} ]".format(path))
+    def load_candidates(self, path, cand_type='vectors'):
+        print("[ Loading fixed candidate set {} from {} ]".format(cand_type,
+                                                                  path))
         return torch.load(path)
-
-    def load_candidate_encs(self, path):
-        pass
-        #TODO: fill out this function
-
-    def make_candidate_encs(self, vecs, reuse, path):
-        if reuse == 'reuse' and os.path.isfile(path):
-            embs = self.load_candidate_encs(path)
-            return embs
-        vecs_batches = [vecs[i:i + 512] for i in range(0, len(vecs), 512)]
-
-
-        print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 512) ]"
-              "".format(len(vecs_batches)))
 
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
         print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 512) ]"
               "".format(len(cand_batches)))
         cand_vecs = []
-        for batch in cand_batches:
+        for batch in tqdm(cand_batches):
             cand_vecs.extend(self.vectorize_fixed_candidates(batch))
         return padded_3d([cand_vecs]).squeeze(0)
 
-    def save_candidate_vecs(self, vecs, path):
-        print("[ Saving fixed candidate set vectors to {} ]".format(path))
+    def save_candidates(self, vecs, path, cand_type='vectors'):
+        print("[ Saving fixed candidate set {} to {} ]".format(cand_type,
+                                                               path))
         with open(path, 'wb') as f:
             torch.save(vecs, f)
+
+    def encode_candidates(self, padded_cands):
+        raise NotImplementedError(
+            'Abstract class: user must implement encode_candidates()')
+
+    def make_candidate_encs(self, vecs, path):
+        cand_encs = []
+        vec_batches = [vecs[i:i + 512] for i in range(0, len(vecs), 512)]
+        print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 512) ]"
+              "".format(len(vec_batches)))
+        for vec_batch in tqdm(vec_batches):
+            cand_encs.append(self.encode_candidates(vec_batch))
+        return torch.cat(cand_encs, 0)
 
     def vectorize_fixed_candidates(self, cands_batch):
         """Convert a batch of candidates from text to vectors
@@ -577,5 +590,5 @@ class TorchRankerAgent(TorchAgent):
         A child class may choose to overwrite this method to perform vectorization as
         well as encoding if so desired.
         """
-        return [self._vectorize_text(cand, truncate=self.truncate, truncate_left=False)
-                for cand in cands_batch]
+        return [self._vectorize_text(cand, truncate=self.label_truncate,
+                truncate_left=False) for cand in cands_batch]
