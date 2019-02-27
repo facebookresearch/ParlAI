@@ -147,7 +147,8 @@ class TorchRankerAgent(TorchAgent):
         if not self.opt.get('ignore_bad_candidates', False):
             return super().is_valid(obs)
 
-        good_ex = 'text_vec' in obs or 'image' in obs
+        if 'text_vec' not in obs and 'image' not in obs:
+            return False
 
         # skip examples for which the set of label candidates do not
         # contain the label
@@ -160,9 +161,9 @@ class TorchRankerAgent(TorchAgent):
                     'At least one example has a set of label candidates that '
                     'does not contain the label.'
                 )
-                good_ex = False
+                return False
 
-        return good_ex
+        return True
 
     def train_step(self, batch):
         """Train on a single batch of examples."""

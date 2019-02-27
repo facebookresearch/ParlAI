@@ -468,7 +468,7 @@ class FairseqAgent(TorchAgent):
         self.reset_metrics()
 
     def is_valid(self, obs):
-        """Override from TorchAgentselfself.
+        """Override from TorchAgent.
         Check if an observation has no tokens in it."""
         return len(obs.get('text_vec', [])) > 0
 
