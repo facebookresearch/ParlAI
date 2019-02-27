@@ -345,7 +345,11 @@ class TestTorchAgent(unittest.TestCase):
                                                 add_start=False, add_end=False))
 
             # is_valid should map to nothing
-            batch = agent.batchify(obs_batch, is_valid=lambda x: False)
+            def is_valid(obs):
+                return False
+            agent.is_valid = is_valid
+
+            batch = agent.batchify(obs_batch)
             self.assertIsNone(batch.text_vec)
             self.assertIsNone(batch.text_lengths)
             self.assertIsNone(batch.label_vec)
@@ -355,6 +359,11 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
+
+            # is_valid should check for text_vec
+            def is_valid(obs):
+                return 'text_vec' in obs
+            agent.is_valid = is_valid
 
             batch = agent.batchify(obs_vecs)
             # which fields were filled vs should be empty?
@@ -403,9 +412,12 @@ class TestTorchAgent(unittest.TestCase):
             for vec in new_vecs:
                 vec.pop('text')
                 vec.pop('text_vec')
-            batch = agent.batchify(new_vecs, sort=True,
-                                   is_valid=(lambda obs: 'labels_vec' in obs or
-                                             'eval_labels_vec' in obs))
+
+            def is_valid(obs):
+                return 'labels_vec' in obs or 'eval_labels_vec' in obs
+            agent.is_valid = is_valid
+
+            batch = agent.batchify(new_vecs, sort=True)
             self.assertIsNone(batch.text_vec)
             self.assertIsNone(batch.text_lengths)
             self.assertIsNotNone(batch.label_vec)
@@ -419,9 +431,12 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(batch.labels, [labs[i] for i in [1, 2, 0]])
             self.assertEqual(list(batch.valid_indices), [1, 2, 0])
 
-            # test lambda
-            batch = agent.batchify(obs_vecs, is_valid=(
-                lambda obs: 'text_vec' in obs and len(obs['text_vec']) < 3))
+            # test is_valid
+            def is_valid(obs):
+                return 'text_vec' in obs and len(obs['text_vec']) < 3
+            agent.is_valid = is_valid
+
+            batch = agent.batchify(obs_vecs)
             self.assertEqual(batch.text_vec.tolist(), [[1, 2]])
             self.assertEqual(batch.text_lengths, [2])
             self.assertEqual(batch.label_vec.tolist(), [[1, 2]])
@@ -440,8 +455,13 @@ class TestTorchAgent(unittest.TestCase):
             agent.vectorize({'label_candidates': ['Fa', 'So', 'La', 'Ti']},
                             agent.history),
         ]
-        batch = agent.batchify(
-            obs_cands, is_valid=lambda obs: 'label_candidates_vecs' in obs)
+
+        # is_valid should check for label candidates vecs
+        def is_valid(obs):
+            return 'label_candidates_vecs' in obs
+        agent.is_valid = is_valid
+
+        batch = agent.batchify(obs_cands)
         self.assertTrue(agent.rank_candidates, 'Agent not set up to rank.')
         self.assertIsNone(batch.text_vec)
         self.assertIsNone(batch.text_lengths)

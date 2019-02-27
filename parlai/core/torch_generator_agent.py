@@ -452,6 +452,12 @@ class TorchGeneratorAgent(TorchAgent):
             base[k] = round_sigfigs(v, 4)
         return base
 
+    def vectorize(self, *args, **kwargs):
+        """Override vectorize for generative models."""
+        kwargs['add_start'] = False  # model does this in module code
+        kwargs['add_end'] = True  # we do want this
+        return super().vectorize(*args, **kwargs)
+
     def _model_input(self, batch):
         """
         Creates the input (x) value for the model. Must return a tuple.
