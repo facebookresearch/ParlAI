@@ -63,24 +63,6 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                                             self.opt["type_optimization"],
                                             self.opt["learningrate"])
 
-    # def make_candidate_vecs(self, cands):
-    #     cand_batches = [cands[i:i + 200] for i in range(0, len(cands), 200)]
-    #     cand_vecs = []
-    #     for batch in tqdm.tqdm(cand_batches,
-    #                            desc="[ Vectorizing fixed candidates set from "
-    #                                 "({} batch(es) of up to 200) ]"
-    #                                 "".format(len(cand_batches))):
-    #         token_idx = [self._vectorize_text(cand, add_start=True, add_end=True,
-    #                                           truncate=self.opt["label_truncate"])
-    #                      for cand in batch]
-    #         padded_input = padded_3d([token_idx]).squeeze(0)
-    #         token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
-    #             padded_input, self.NULL_IDX)
-    #         _, embedding_cands = self.model(
-    #             None, None, None, token_idx_cands, segment_idx_cands, mask_cands)
-    #         cand_vecs.append(embedding_cands.cpu().detach())
-    #     return torch.cat(cand_vecs, 0)
-
     def vectorize_fixed_candidates(self, cands_batch):
         """Override from TorchRankerAgent.
         """
