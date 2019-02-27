@@ -47,6 +47,11 @@ class TorchRankerAgent(TorchAgent):
             help='Get predictions and calculate mean rank during the train '
                  'step. Turning this on may slow down training.'
         )
+        agent.add_argument(
+            '--ignore-bad-candidates', type='bool', default=False,
+            help='Ignore examples for which the label is not present in the '
+                 'label candidates. Default behavior results in RuntimeError. '
+        )
 
     def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary
@@ -136,6 +141,29 @@ class TorchRankerAgent(TorchAgent):
         elif cand_vecs.dim() == 3:
             preds = [cands[i][ordering[0]] for i, ordering in enumerate(ranks)]
         return Output(preds)
+
+    def is_valid(self, obs):
+        """Override from TorchAgent."""
+        if not self.opt.get('ignore_bad_candidates', False):
+            return super().is_valid(obs)
+
+        if 'text_vec' not in obs and 'image' not in obs:
+            return False
+
+        # skip examples for which the set of label candidates do not
+        # contain the label
+        if 'labels_vec' in obs and 'label_candidates_vecs' in obs:
+            cand_vecs = obs['label_candidates_vecs']
+            label_vec = obs['labels_vec']
+            matches = [x for x in cand_vecs if torch.equal(x, label_vec)]
+            if len(matches) == 0:
+                warn_once(
+                    'At least one example has a set of label candidates that '
+                    'does not contain the label.'
+                )
+                return False
+
+        return True
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
@@ -303,7 +331,8 @@ class TorchRankerAgent(TorchAgent):
                     if cand_vecs[i].size(1) < len(label_vec):
                         label_vec = label_vec[0:cand_vecs[i].size(1)]
                     label_vec_pad[0:label_vec.size(0)] = label_vec
-                    label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
+                    label_inds[i] = self._find_match(
+                        cand_vecs[i], label_vec_pad)
 
         elif source == 'fixed':
             warn_once(
@@ -338,7 +367,14 @@ class TorchRankerAgent(TorchAgent):
 
     @staticmethod
     def _find_match(cand_vecs, label_vec):
-        return ((cand_vecs == label_vec).sum(1) == cand_vecs.size(1)).nonzero()[0]
+        matches = ((cand_vecs == label_vec).sum(1) == cand_vecs.size(1)).nonzero()
+        if len(matches) > 0:
+            return matches[0]
+        raise RuntimeError(
+            'At least one of your examples has a set of label candidates '
+            'that does not contain the label. To ignore this error '
+            'set `--ignore-bad-candidates True`.'
+        )
 
     def share(self):
         """Share model parameters."""

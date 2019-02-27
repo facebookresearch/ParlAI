@@ -102,13 +102,13 @@ class MemnnAgent(TorchRankerAgent):
         kwargs['add_end'] = False
         return super().vectorize(*args, **kwargs)
 
-    def batchify(self, obs_batch, sort=False,
-                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
+    def batchify(self, obs_batch, sort=False):
         """Override so that we can add memories to the Batch object."""
-        batch = super().batchify(obs_batch, sort, is_valid)
+        batch = super().batchify(obs_batch, sort)
 
         # get valid observations
-        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
+        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if
+                     self.is_valid(ex)]
 
         if len(valid_obs) == 0:
             return batch
