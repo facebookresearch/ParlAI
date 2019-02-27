@@ -37,12 +37,12 @@ class TorchRankerAgent(TorchAgent):
                  'candidate per line')
         agent.add_argument(
             '--fixed-candidate-vecs', type=str, default='reuse',
-            help='One of \'reuse\', \'replace\', or a path to a file with vectors '
+            help='One of "reuse", "replace", or a path to a file with vectors '
                  'corresponding to the candidates at --fixed-candidates-path. '
                  'The default path is a /path/to/model-file.<cands_name>, where '
                  '<cands_name> is the name of the file (not the full path) passed by '
                  'the flag --fixed-candidates-path. By default, this file is created '
-                 'once and reused. To replace it, use the \'replace\' option.')
+                 'once and reused. To replace it, use the "replace" option.')
         agent.add_argument(
             '--encode-candidate-vecs', type='bool', default=False,
             help='Cache and save the encoding of the candidate vecs. This '
