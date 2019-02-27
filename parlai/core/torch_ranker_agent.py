@@ -27,10 +27,10 @@ class TorchRankerAgent(TorchAgent):
             help='The source of candidates during training '
                  '(see TorchRankerAgent._build_candidates() for details).')
         agent.add_argument(
-            '-ecands', '--eval-candidates', type=str,
-            choices=['batch', 'inline', 'fixed', 'vocab'],
-            help='The source of candidates during evaluation (defaults to the same'
-                 'value as --candidates if no flag is given)')
+            '-ecands', '--eval-candidates', type=str, default='inline'
+            choices=['batch', 'inline', 'fixed', 'vocab', 'same_as_train'],
+            help='The source of candidates during evaluation (defaults
+                 'inline candidates).')
         agent.add_argument(
             '-fcp', '--fixed-candidates-path', type=str,
             help='A text file of fixed candidates to use for all examples, one '
@@ -63,7 +63,7 @@ class TorchRankerAgent(TorchAgent):
         # (e.g., a .dict file)
         model_file, opt = self._get_model_file(opt)
         opt['rank_candidates'] = True
-        if opt['eval_candidates'] is None:
+        if opt['eval_candidates'] is 'same_as_train':
             opt['eval_candidates'] = opt['candidates']
         super().__init__(opt, shared)
 
