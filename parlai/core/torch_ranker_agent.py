@@ -517,7 +517,7 @@ class TorchRankerAgent(TorchAgent):
                         vecs = self.load_candidates(vecs_path)
                     else:  # setting == 'replace' OR generating for the first time
                         vecs = self.make_candidate_vecs(cands)
-                        self.save_candidate_vecs(vecs, vecs_path)
+                        self.save_candidates(vecs, vecs_path)
 
                 self.fixed_candidates = cands
                 self.fixed_candidate_vecs = vecs
@@ -532,7 +532,7 @@ class TorchRankerAgent(TorchAgent):
                             enc_path, cand_type='encodings')
                     else:
                         encs = self.make_candidate_encs(vecs, path=enc_path)
-                        self.save_candidate_vecs(encs, path=enc_path,
+                        self.save_candidates(encs, path=enc_path,
                                                  cand_type='encodings')
                     self.fixed_candidate_encs = encs
                     if self.use_cuda:
