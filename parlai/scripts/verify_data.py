@@ -96,7 +96,7 @@ def verify(opt, printargs=None, print_parser=None):
                         warn("warning: empty string label_candidate:\n", act, opt)
                         counts['empty_label_candidates'] += 1
                     if c in is_label_cand:
-                        if is_label_cand[c] == True:
+                        if is_label_cand[c] is True:
                             warn(
                                 "warning: label mentioned twice in candidate_labels:\n",
                                 act,
@@ -104,7 +104,7 @@ def verify(opt, printargs=None, print_parser=None):
                             )
                         is_label_cand[c] = True
                 for l, has in is_label_cand.items():
-                    if has == False:
+                    if has is False:
                         warn("warning: label missing in candidate_labels:\n", act, opt)
                         counts['label_candidates_with_missing_label'] += 1
 
