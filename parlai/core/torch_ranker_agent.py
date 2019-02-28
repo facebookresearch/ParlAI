@@ -533,7 +533,7 @@ class TorchRankerAgent(TorchAgent):
                     else:
                         encs = self.make_candidate_encs(vecs, path=enc_path)
                         self.save_candidates(encs, path=enc_path,
-                                                 cand_type='encodings')
+                                             cand_type='encodings')
                     self.fixed_candidate_encs = encs
                     if self.use_cuda:
                         self.fixed_candidate_encs = self.fixed_candidate_encs.cuda()
