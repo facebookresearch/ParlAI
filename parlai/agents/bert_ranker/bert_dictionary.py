@@ -34,9 +34,9 @@ class BertDictionaryAgent(DictionaryAgent):
         self.end_idx = self.tokenizer.convert_tokens_to_ids(['[SEP]'])[
             0]  # should be 102
         self.pad_idx = self.tokenizer.convert_tokens_to_ids(['[PAD]'])[0]  # should be 0
-        self[self.start_token] = self.start_idx
-        self[self.end_token] = self.end_idx
-        self[self.null_token] = self.pad_idx
+        self.tok2ind[self.start_token] = self.start_idx
+        self.tok2ind[self.end_token] = self.end_idx
+        self.tok2ind[self.null_token] = self.pad_idx
 
     def txt2vec(self, text, vec_type=list):
         tokens = self.tokenizer.tokenize(text)
