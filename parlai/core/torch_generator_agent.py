@@ -372,7 +372,7 @@ class TorchGeneratorAgent(TorchAgent):
                 broadcast_buffers=False,
             )
 
-        if 'train' in opt.get('datatype', ''):
+        if 'train' in opt.get('datatype', '') and shared is None:
             # do this regardless of share state, but don't
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
