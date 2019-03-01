@@ -17,6 +17,8 @@ import torch.nn as nn
 # import math
 # import json
 import copy
+from nltk.tokenize import sent_tokenize
+
 
 
 
@@ -87,7 +89,8 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         super().__init__(opt, shared)
         # self.episode_history = [self.END_IDX,] # OAD
         self.episode_history = [] # OAD
-        self.episode_history_text = '' # OAD
+        self.episode_history_text = 'endofmessage endofsegment' # OAD
+#         self.episode_history_text = 'endofmessage' # OAD
         
         self.id = 'LanguageModelRetriever'
         
@@ -97,11 +100,13 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         self.observation = None
         # self.episode_history = [self.END_IDX,] # OAD
         self.episode_history = [] # OAD
-        self.episode_history_text = '' # OAD
+        self.episode_history_text = 'endofmessage endofsegment' # OAD
+#         self.episode_history_text = 'endofmessage' # OAD
         self.reset_metrics()
         
     
     def observe(self, observation):
+        
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
         """
@@ -116,26 +121,31 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
             is_training = False
         
         
+        
         if is_training:
-
-            if 'labels' in obs:
             
+            if 'labels' in obs:
+                
+                obs['labels'][0] = obs['labels'][0]
+                
                 vec = self.parse(obs['labels'][0])
                 vec.append(self.END_IDX)
-                self.next_observe += vec
+#                 self.next_observe += vec
             
             # OAD: stop accumulating at the end of an episode.
             if obs['episode_done']:
                 # self.episode_history = [self.END_IDX,]
                 self.episode_history = []
-                self.episode_history_text = '__end__'
-                
+                self.episode_history_text = 'endofmessage endofsegment'
+#                 self.episode_history_text = 'endofmessage'
                 
             else:
                 # accumulate episode history.
                 self.episode_history += vec
+#                 self.episode_history_text = ' '.join([self.episode_history_text, 
+#                                                     obs['labels'][0]]) 
                 self.episode_history_text = ' '.join([self.episode_history_text, 
-                                                    obs['labels'][0] + ' __end__'])                
+                                                    obs['labels'][0] + ' endofsegment'])                
                 
                 
             if len(self.episode_history) < (seq_len + 1):
@@ -165,18 +175,27 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         else:
         
             if 'text' in obs:
+                obs['eval_labels'][0] = obs['eval_labels'][0]
                 
-                # truncate to multiple of seq_len history
-                obs['text'] = self.episode_history_text[-5*seq_len:]
+                # truncate to approximate multiple of seq_len history
+                obs['text'] = ' '.join(self.episode_history_text.split(' ')[-4*seq_len:])
                     
             # OAD: stop accumulating at the end of an episode.
             if obs['episode_done']:
-                self.episode_history_text = '__end__'
+                self.episode_history_text = 'endofmessage endofsegment'
+#                 self.episode_history_text = 'endofmessage'
             else:
+                # add __end__ between message moves
+                response_formated = ' endofsegment '.join(sent_tokenize(obs['eval_labels'][0]))
+                response_formated += ' endofsegment endofmessage endofsegment'
+#                 response_formated = ' '.join(sent_tokenize(obs['eval_labels'][0]))
+#                 response_formated += ' endofmessage'
+                
                 # accumulate episode history
                 self.episode_history_text = ' '.join([self.episode_history_text, 
-                                                    obs['eval_labels'][0] + ' __end__'])
+                                                    response_formated])
                                                     
             self.observation = obs
+#             print('##### self.observation after parsing: ', obs)
             
             return obs

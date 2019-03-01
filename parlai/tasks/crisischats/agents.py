@@ -8,7 +8,9 @@ import numpy as np
 
 
 class CrisisChatsTeacher(FixedDialogTeacher):
-
+    data_folder_name = 'crisischats'
+    
+    
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
@@ -30,10 +32,10 @@ class CrisisChatsTeacher(FixedDialogTeacher):
         return self.num_exs
 
     def _setup_data(self, fold):
-        self.turns = 0
+#         self.turns = 0
         
         fpath = os.path.join(
-            self.opt['datapath'], 'crisischats', 'crisischats',
+            self.opt['datapath'], self.data_folder_name, self.data_folder_name,
             fold + '.tsv',
         )
         df = open(fpath).readlines()

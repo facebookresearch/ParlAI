@@ -9,9 +9,8 @@ import numpy as np
 
 
 # class LMCrisisChatsTeacher(FixedDialogTeacher):
-class LMCrisisChatsTeacher(CrisisChatsTeacher):
-    
-    data_folder_name = 'lmcrisischats'
+class CrisisChatsMessagesTeacher(CrisisChatsTeacher):
+    data_folder_name = 'crisischatsmessages'
     
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -76,5 +75,5 @@ class LMCrisisChatsTeacher(CrisisChatsTeacher):
 #         return shared
 
 
-class DefaultTeacher(LMCrisisChatsTeacher):
+class DefaultTeacher(CrisisChatsMessagesTeacher):
     pass
