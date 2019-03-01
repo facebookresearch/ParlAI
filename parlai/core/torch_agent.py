@@ -352,7 +352,7 @@ class TorchAgent(Agent):
             help='Choose between different strategies for initializing word '
                  'embeddings. Default is random, but can also preinitialize '
                  'from Glove or Fasttext. Preinitialized embeddings can also '
-             'be fixed so they are not updated during training.'
+                 'be fixed so they are not updated during training.'
         )
         agent.add_argument(
             '-embp', '--embedding-projection', default='random',
@@ -1136,7 +1136,7 @@ class TorchAgent(Agent):
                 batch_reply[i]['text_candidates'] = cands
         return batch_reply
 
-    def last_reply(self, use_label=True):
+    def last_reply(self, use_reply='label'):
         """Retrieve the last reply from the model.
 
         If available, we use the true label instead of the model's prediction.
@@ -1149,10 +1149,11 @@ class TorchAgent(Agent):
         """
         # if the last observation was the end of an episode,
         # then we shouldn't use it as history
-        if not self.observation or self.observation.get('episode_done', True):
+        if (use_reply == 'none' or not self.observation or
+                self.observation.get('episode_done', True)):
             return None
 
-        if use_label:
+        if use_reply == 'label':
             # first look for the true label, if we aren't on a new episode
             label_key = ('labels' if 'labels' in self.observation else
                          'eval_labels' if 'eval_labels' in self.observation
@@ -1162,6 +1163,7 @@ class TorchAgent(Agent):
                 last_reply = (lbls[0] if len(lbls) == 1
                               else self.random.choice(lbls))
                 return last_reply
+
         # otherwise, we use the last reply the model generated
         batch_reply = self.replies.get('batch_reply')
         if batch_reply is not None:
@@ -1208,11 +1210,7 @@ class TorchAgent(Agent):
 
         This includes remembering the past history of the conversation.
         """
-        if self.opt.get('use_reply') == 'none':
-            reply = None
-        else:
-            reply = self.last_reply(
-                use_label=(self.opt.get('use_reply', 'label') == 'label'))
+        reply = self.last_reply(use_reply=self.opt.get('use_reply', 'label'))
         # update the history using the observation
         self.history.update_history(observation, add_next=reply)
         self.observation = observation
