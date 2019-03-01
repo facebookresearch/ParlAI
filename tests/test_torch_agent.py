@@ -740,9 +740,11 @@ class TestTorchAgent(unittest.TestCase):
         # now agent should remember true label
         self.assertEqual(agent.last_reply(),
                          'I\'m a leaf on the wind. Watch how I soar.')
-        # but not if we tell it not to
-        self.assertEqual(agent.last_reply(use_label=False),
+        # but not if we tell to use the model reply
+        self.assertEqual(agent.last_reply(use_reply='model'),
                          'It\'s okay! I\'m a leaf on the wind.')
+        # if we don't want to use the last reply at all, it should be None
+        self.assertIsNone(agent.last_reply(use_reply='none'))
 
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_observe(self):
