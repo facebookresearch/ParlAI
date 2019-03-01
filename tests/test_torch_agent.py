@@ -746,7 +746,6 @@ class TestTorchAgent(unittest.TestCase):
         # if we don't want to use the last reply at all, it should be None
         self.assertIsNone(agent.last_reply(use_reply='none'))
 
-
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_observe(self):
         """Make sure agent stores and returns observation."""
