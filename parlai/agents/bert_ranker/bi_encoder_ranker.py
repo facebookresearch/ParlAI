@@ -87,7 +87,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                 self.vocab_candidate_vecs = padded_3d([vecs]).squeeze(0)
                 print("[ Loaded fixed candidate set (n = {}) from vocabulary ]"
                       "".format(len(self.vocab_candidates)))
-                enc_path = '/checkpoint/edinan/LIGHT_models/model' + '.vocab.encs'
+                enc_path = opt.get('model_file') + '.vocab.encs'
                 if os.path.isfile(enc_path):
                     self.vocab_candidate_encs = self.load_candidates(
                         enc_path, cand_type='vocab encodings')
