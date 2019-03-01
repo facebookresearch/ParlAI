@@ -23,7 +23,7 @@ class TorchRankerAgent(TorchAgent):
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
             '-cands', '--candidates', type=str, default='inline',
-            choices=['batch', 'inline', 'fixed', 'vocab'],
+            choices=['batch', 'inline', 'fixed'],
             help='The source of candidates during training '
                  '(see TorchRankerAgent._build_candidates() for details).')
         agent.add_argument(
@@ -367,10 +367,8 @@ class TorchRankerAgent(TorchAgent):
             )
             cands = self.vocab_candidates
             cand_vecs = self.vocab_candidate_vecs
-            if label_vecs is not None:
-                label_inds = label_vecs.new_empty((batchsize))
-                for i, label_vec in enumerate(label_vecs):
-                    label_inds[i] = self._find_match(cand_vecs, label_vec)
+            # NOTE: label_inds is None here, as we will not find the label in
+            # the set of vocab candidates
 
         return (cands, cand_vecs, label_inds)
 
