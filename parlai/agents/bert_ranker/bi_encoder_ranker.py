@@ -4,15 +4,17 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.distributed_utils import is_distributed
-from parlai.zoo.bert.build import download
 from parlai.core.torch_ranker_agent import TorchRankerAgent
+from parlai.core.utils import padded_3d
+from parlai.zoo.bert.build import download
 
 from .bert_dictionary import BertDictionaryAgent
 from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
                       add_common_args, surround, MODEL_PATH)
 
-import torch
 import os
+import torch
+from tqdm import tqdm
 
 
 class BiEncoderRankerAgent(TorchRankerAgent):
@@ -61,6 +63,56 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                                             self.opt["type_optimization"],
                                             self.opt["learningrate"])
 
+    def set_vocab_candidates(self, shared):
+        """Load the tokens from the vocab as candidates
+
+        self.vocab_candidates will contain a [num_cands] list of strings
+        self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
+        """
+        if shared:
+            self.vocab_candidates = shared['vocab_candidates']
+            self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
+        else:
+            if 'vocab' in (self.opt['candidates'], self.opt['eval_candidates']):
+                cands = []
+                vecs = []
+                for ind in range(1, len(self.dict)):
+                    txt = self.dict[ind]
+                    cands.append(txt)
+                    vecs.append(
+                        self._vectorize_text(txt, add_start=True, add_end=True,
+                                             truncate=self.label_truncate)
+                    )
+                self.vocab_candidates = cands
+                self.vocab_candidate_vecs = padded_3d([vecs]).squeeze(0)
+                print("[ Loaded fixed candidate set (n = {}) from vocabulary ]"
+                      "".format(len(self.vocab_candidates)))
+                enc_path = self.opt.get('model_file') + '.vocab.encs'
+                if os.path.isfile(enc_path):
+                    self.vocab_candidate_encs = self.load_candidates(
+                        enc_path, cand_type='vocab encodings')
+                else:
+                    cand_encs = []
+                    vec_batches = [
+                        self.vocab_candidate_vecs[i:i + 512] for i in
+                        range(0, len(self.vocab_candidate_vecs), 512)
+                    ]
+                    print("[ Vectorizing vocab candidates ({} batch(es) of up "
+                          "to 512) ]".format(len(vec_batches)))
+                    for vec_batch in tqdm(vec_batches):
+                        cand_encs.append(self.encode_candidates(vec_batch))
+                    self.vocab_candidate_encs = torch.cat(cand_encs, 0)
+                    self.save_candidates(
+                        self.vocab_candidate_encs, enc_path,
+                        cand_type='vocab encodings')
+                if self.use_cuda:
+                    self.vocab_candidate_vecs = self.vocab_candidate_vecs.cuda()
+                    self.vocab_candidate_encs = self.vocab_candidate_encs.cuda()
+            else:
+                self.vocab_candidates = None
+                self.vocab_candidate_vecs = None
+                self.vocab_candidate_encs = None
+
     def vectorize_fixed_candidates(self, cands_batch):
         """Override from TorchRankerAgent.
         """
@@ -95,6 +147,11 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         if (hasattr(self, 'fixed_candidate_encs') and
                 self.fixed_candidate_encs is not None):
             return embedding_ctxt.mm(self.fixed_candidate_encs.t())
+
+        # evaluating vocab candidates:
+        if (hasattr(self, 'vocab_candidate_encs') and
+                self.vocab_candidate_encs is not None):
+            return embedding_ctxt.mm(self.vocab_candidate_encs.t())
 
         if len(cand_vecs.size()) == 2 and cand_vecs.dtype == torch.long:
             # train time. We compare with all elements of the batch
