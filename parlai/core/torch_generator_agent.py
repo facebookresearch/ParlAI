@@ -534,7 +534,7 @@ class TorchGeneratorAgent(TorchAgent):
         scores, preds, *_ = model_output
         score_view = scores.view(-1, scores.size(-1))
         label_flat = batch.label_vec.view(-1)
-        loss = self.criterion(score_view.float(), label_flat)
+        loss = self.criterion(score_view, label_flat)
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)
         target_tokens = notnull.long().sum().item()

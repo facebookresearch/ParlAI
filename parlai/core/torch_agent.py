@@ -309,6 +309,11 @@ class TorchAgent(Agent):
         # first pull torch.optim in
         optims = {k.lower(): v for k, v in optim.__dict__.items()
                   if not k.startswith('__') and k[0].isupper()}
+        try:
+            import apex.optimizers.fused_adam as fused_adam
+            optims['fused_adam'] = fused_adam.FusedAdam
+        except ImportError:
+            pass
 
         try:
             # https://openreview.net/pdf?id=S1fUpoR5FQ

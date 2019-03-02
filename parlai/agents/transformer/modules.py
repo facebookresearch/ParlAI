@@ -11,6 +11,8 @@ import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 
+from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
+#from torch.nn import LayerNorm
 
 def _normalize(tensor, norm_layer):
     """
@@ -347,9 +349,9 @@ class TransformerEncoderLayer(nn.Module):
             n_heads, embedding_size,
             dropout=attention_dropout,  # --attention-dropout
         )
-        self.norm1 = nn.LayerNorm(embedding_size)
+        self.norm1 = LayerNorm(embedding_size)
         self.ffn = TransformerFFN(embedding_size, ffn_size, relu_dropout=relu_dropout)
-        self.norm2 = nn.LayerNorm(embedding_size)
+        self.norm2 = LayerNorm(embedding_size)
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
@@ -472,15 +474,15 @@ class TransformerDecoderLayer(nn.Module):
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm1 = nn.LayerNorm(embedding_size)
+        self.norm1 = LayerNorm(embedding_size)
 
         self.encoder_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm2 = nn.LayerNorm(embedding_size)
+        self.norm2 = LayerNorm(embedding_size)
 
         self.ffn = TransformerFFN(embedding_size, ffn_size, relu_dropout=relu_dropout)
-        self.norm3 = nn.LayerNorm(embedding_size)
+        self.norm3 = LayerNorm(embedding_size)
 
     def forward(self, x, encoder_output, encoder_mask):
         decoder_mask = self._create_selfattn_mask(x)
@@ -657,7 +659,7 @@ class MultiHeadAttention(nn.Module):
         k = prepare_head(self.k_lin(key))
         v = prepare_head(self.v_lin(value))
 
-        dot_prod = q.div_(scale).bmm(k.transpose(1, 2)).float()
+        dot_prod = q.div_(scale).bmm(k.transpose(1, 2))  #.float()
         # [B * n_heads, query_len, key_len]
         attn_mask = (
             (mask == 0)
@@ -667,7 +669,7 @@ class MultiHeadAttention(nn.Module):
             .view(batch_size * n_heads, query_len, key_len)
         )
         assert attn_mask.shape == dot_prod.shape
-        dot_prod.masked_fill_(attn_mask, -1e20)
+        dot_prod.masked_fill_(attn_mask, -65504)
 
         attn_weights = F.softmax(dot_prod, dim=-1).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout

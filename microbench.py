@@ -3,6 +3,7 @@
 import timeit
 import torch
 import apex.fp16_utils.fp16_optimizer as fp16_optimizer
+import apex.optimizers.fused_adam as fused_adam
 import argparse
 import torch.nn.functional as F
 import torch.utils.data
@@ -117,9 +118,11 @@ def run_loop(dl, args, use_fp16, use_apex):
             if d % 8 != 0:
                 print("Warning: parameter isn't mod 8: ", p.shape)
 
-    opt = torch.optim.Adam(model.parameters(), lr=1e-5)
     if use_apex:
+        opt = fused_adam.FusedAdam(model.parameters(), lr=1e-5)
         opt = fp16_optimizer.FP16_Optimizer(opt) #, dynamic_loss_scale=True)
+    else:
+        opt = torch.optim.Adam(model.parameters(), lr=1e-5)
 
     start = timeit.default_timer()
     for x in dl:
