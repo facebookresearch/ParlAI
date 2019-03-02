@@ -319,7 +319,6 @@ class StarspaceAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
-        #import pdb; pdb.set_trace() 
         is_training = ys is not None
         if is_training:
             negs = self.get_negs(xs, ys)
