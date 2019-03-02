@@ -23,6 +23,8 @@ depending on whether you train on the train set first, or not.
 import math
 from collections.abc import Sequence
 import heapq
+import json
+import torch
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -227,12 +229,18 @@ class IrBaselineAgent(Agent):
             reply['text'] = "I don't know."
         return reply
 
-    def save(self, fname=None):
+    def save(self, path=None):
         """Save dictionary tokenizer if available."""
-        fname = self.opt.get('model_file', None) if fname is None else fname
-        if fname:
-            self.dictionary.save(fname + '.dict')
-
+        path = self.opt.get('model_file', None) if path is None else path
+        if path:
+            self.dictionary.save(path + '.dict')
+            data = {}
+            data['opt'] = self.opt
+            with open(path, 'wb') as handle:
+                torch.save(data, handle)                
+            with open(path + '.opt', 'w') as handle:
+                json.dump(self.opt, handle)
+            
     def load(self, fname):
         """Load internal dictionary."""
         self.dictionary.load(fname + '.dict')

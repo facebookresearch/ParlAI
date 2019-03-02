@@ -276,7 +276,7 @@ class StarspaceAgent(Agent):
             W = self.model.encoder2.lt.weight
         score = torch.Tensor(W.size(0))
         for i in range(W.size(0)):
-            score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0).data[0]
+            score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0).item()
         val, ind = score.sort(descending=True)
         for i in range(20):
             print(
@@ -319,6 +319,7 @@ class StarspaceAgent(Agent):
         Update the model using the targets if available, otherwise rank
         candidates as well if they are available and param is set.
         """
+        #import pdb; pdb.set_trace() 
         is_training = ys is not None
         if is_training:
             negs = self.get_negs(xs, ys)
