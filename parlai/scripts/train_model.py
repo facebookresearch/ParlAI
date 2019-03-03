@@ -483,7 +483,30 @@ class TrainLoop():
         self.log_time.reset()
 
         if opt['tensorboard_log'] is True and is_primary_worker():
+            
             self.writer.add_metrics('train', self._total_exs, train_report)
+            
+            if opt['model'] == 'seq2seq': 
+            
+                self.writer.writer.add_scalars('s2s_embed_weights', {'embed_weight_%s' % iii: 
+                                            self.agent.model.encoder.weight[iii+5,3].data 
+                                            for iii in range(10)}, self._total_exs)
+                                        
+                self.writer.writer.add_scalars('s2s_hidden_weights', {'hidden_weight_%s' % iii: 
+                                            self.agent.model.encoder.lt.weight_hh_l0[iii,0].data 
+                                            for iii in range(10)}, self._total_exs)
+                                            
+            else: 
+                
+                self.writer.writer.add_scalars('embedding_weights', {'embedding_%s' % iii: 
+                                            self.agent.model.encoder.weight[iii+5,3].data 
+                                            for iii in range(10)}, self._total_exs)
+                                        
+                self.writer.writer.add_scalars('hidden_states', {'hidden_state_%s' % iii: 
+                                            self.agent.model.rnn.weight_hh_l0[iii,0].data 
+                                            for iii in range(10)}, self._total_exs)
+            
+            
 
     def train(self):
         if is_distributed():
