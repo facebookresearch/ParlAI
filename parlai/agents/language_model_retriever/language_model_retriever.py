@@ -19,6 +19,9 @@ import torch.nn as nn
 import copy
 from nltk.tokenize import sent_tokenize
 
+# to accomodate functions imported from torch_agent.py
+from parlai.core.distributed_utils import is_primary_worker
+from parlai.core.build_data import modelzoo_path
 
 
 
@@ -81,6 +84,21 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         agent.add_argument('-sm', '--sampling-mode', type='bool', default=False,
                            help='sample when generating tokens instead of taking \
                            the max and do not produce UNK token (when bs=1)')
+                           
+                           
+        # my arguments
+        # from torch_agent.py
+        agent.add_argument(
+            '-emb', '--embedding-type', default='random',
+            choices=['random', 'glove', 'glove-fixed', 'glove-twitter-fixed',
+                     'fasttext', 'fasttext-fixed', 'fasttext_cc',
+                     'fasttext_cc-fixed'],
+            help='Choose between different strategies for initializing word '
+                 'embeddings. Default is random, but can also preinitialize '
+                 'from Glove or Fasttext. Preinitialized embeddings can also '
+                 'be fixed so they are not updated during training.')
+                 
+                 
         LanguageModelAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -89,8 +107,14 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         super().__init__(opt, shared)
         # self.episode_history = [self.END_IDX,] # OAD
         self.episode_history = [] # OAD
-        self.episode_history_text = 'endofmessage endofsegment' # OAD
-#         self.episode_history_text = 'endofmessage' # OAD
+#         self.episode_history_text = 'endofmessage endofsegment' # OAD
+        self.episode_history_text = 'endofsegment' # OAD
+        
+        
+        if not self.states and opt['embedding_type'] != 'random':
+            # `not states`: only set up embeddings if not loading model
+            self._copy_embeddings(self.model.encoder.weight, opt['embedding_type'])
+                                  
         
         self.id = 'LanguageModelRetriever'
         
@@ -100,8 +124,8 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         self.observation = None
         # self.episode_history = [self.END_IDX,] # OAD
         self.episode_history = [] # OAD
-        self.episode_history_text = 'endofmessage endofsegment' # OAD
-#         self.episode_history_text = 'endofmessage' # OAD
+#         self.episode_history_text = 'endofmessage endofsegment' # OAD
+        self.episode_history_text = 'endofsegment' # OAD
         self.reset_metrics()
         
     
@@ -134,10 +158,10 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
             
             # OAD: stop accumulating at the end of an episode.
             if obs['episode_done']:
-                # self.episode_history = [self.END_IDX,]
-                self.episode_history = []
-                self.episode_history_text = 'endofmessage endofsegment'
-#                 self.episode_history_text = 'endofmessage'
+                self.episode_history = [self.END_IDX,]
+#                 self.episode_history = []
+#                 self.episode_history_text = 'endofmessage endofsegment'
+                self.episode_history_text = 'endofsegment'
                 
             else:
                 # accumulate episode history.
@@ -175,17 +199,16 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         else:
         
             if 'text' in obs:
-                obs['eval_labels'][0] = obs['eval_labels'][0]
                 
                 # truncate to approximate multiple of seq_len history
                 obs['text'] = ' '.join(self.episode_history_text.split(' ')[-4*seq_len:])
                     
             # OAD: stop accumulating at the end of an episode.
             if obs['episode_done']:
-                self.episode_history_text = 'endofmessage endofsegment'
-#                 self.episode_history_text = 'endofmessage'
+#                 self.episode_history_text = 'endofmessage endofsegment'
+                self.episode_history_text = 'endofsegment'
             else:
-                # add __end__ between message moves
+                # add end tokens between message moves #TODO: replace sent_tokenize with spacy
                 response_formated = ' endofsegment '.join(sent_tokenize(obs['eval_labels'][0]))
                 response_formated += ' endofsegment endofmessage endofsegment'
 #                 response_formated = ' '.join(sent_tokenize(obs['eval_labels'][0]))
@@ -196,6 +219,109 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
                                                     response_formated])
                                                     
             self.observation = obs
-#             print('##### self.observation after parsing: ', obs)
             
             return obs
+            
+            
+            
+            
+    def _get_embtype(self, emb_type):
+    
+        ''' copied from torch_agent.py '''
+        
+        # set up preinitialized embeddings
+        try:
+            import torchtext.vocab as vocab
+        except ImportError as ex:
+            print('Please install torch text with `pip install torchtext`')
+            raise ex
+        pretrained_dim = 300
+        if emb_type.startswith('glove'):
+            if 'twitter' in emb_type:
+                init = 'glove-twitter'
+                name = 'twitter.27B'
+                pretrained_dim = 200
+            else:
+                init = 'glove'
+                name = '840B'
+            embs = vocab.GloVe(
+                name=name, dim=pretrained_dim,
+                cache=modelzoo_path(self.opt.get('datapath'),
+                                    'models:glove_vectors'))
+        elif emb_type.startswith('fasttext_cc'):
+            init = 'fasttext_cc'
+            from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
+            embs = vocab.Vectors(
+                name='crawl-300d-2M.vec',
+                url=fasttext_cc_url,
+                cache=modelzoo_path(self.opt.get('datapath'),
+                                    'models:fasttext_cc_vectors'))
+        elif emb_type.startswith('fasttext'):
+            init = 'fasttext'
+            embs = vocab.FastText(
+                language='en',
+                cache=modelzoo_path(self.opt.get('datapath'),
+                                    'models:fasttext_vectors'))
+        else:
+            raise RuntimeError('embedding type {} not implemented. check arg, '
+                               'submit PR to this function, or override it.'
+                               ''.format(emb_type))
+        return embs, init
+        
+        
+    def _project_vec(self, vec, target_dim, method='random'):
+    
+        ''' copied from torch_agent.py '''
+        
+        """If needed, project vector to target dimensionality.
+        Projection methods implemented are the following:
+        random - random gaussian matrix multiplication of input vector
+        :param vec:        one-dimensional vector
+        :param target_dim: dimension of returned vector
+        :param method:     projection method. will be used even if the dim is
+                           not changing if method ends in "-force".
+        """
+        pre_dim = vec.size(0)
+        if pre_dim != target_dim or method.endswith('force'):
+            if method.startswith('random'):
+                # random projection
+                if not hasattr(self, 'proj_rp'):
+                    self.proj_rp = torch.Tensor(pre_dim, target_dim).normal_()
+                    # rescale so we're not destroying norms too much
+                    # http://scikit-learn.org/stable/modules/random_projection.html#gaussian-random-projection
+                    self.proj_rp /= target_dim
+                return torch.mm(vec.unsqueeze(0), self.proj_rp)
+            else:
+                # TODO: PCA
+                # TODO: PCA + RP
+                # TODO: copy
+                raise RuntimeError('Projection method not implemented: {}'
+                                   ''.format(method))
+        else:
+            return vec
+            
+                    
+    def _copy_embeddings(self, weight, emb_type, log=True):
+        
+        ''' copied from torch_agent.py '''
+        
+        """Copy embeddings from the pretrained embeddings to the lookuptable.
+        :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
+        :param emb_type: pretrained embedding type
+        """
+        if not is_primary_worker():
+            # we're in distributed mode, copying embeddings in the workers
+            # slows things down considerably
+            return
+        embs, name = self._get_embtype(emb_type)
+        cnt = 0
+        for w, i in self.dict.tok2ind.items():
+            if w in embs.stoi:
+                vec = self._project_vec(embs.vectors[embs.stoi[w]],
+                                        weight.size(1))
+                weight.data[i] = vec
+                cnt += 1
+
+        if log:
+            print('Initialized embeddings for {} tokens ({}%) from {}.'
+                  ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
