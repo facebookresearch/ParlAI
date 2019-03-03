@@ -10,6 +10,7 @@ import numpy as np
 
 # class LMCrisisChatsTeacher(FixedDialogTeacher):
 class CrisisChatsMessagesTeacher(CrisisChatsTeacher):
+    
     data_folder_name = 'crisischatsmessages'
     
     def __init__(self, opt, shared=None):

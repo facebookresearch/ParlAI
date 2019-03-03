@@ -8,8 +8,8 @@ import numpy as np
 
 
 class CrisisChatsTeacher(FixedDialogTeacher):
-    data_folder_name = 'crisischats'
     
+    data_folder_name = 'crisischats'
     
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
