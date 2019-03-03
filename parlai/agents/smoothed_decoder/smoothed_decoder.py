@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import numpy as np
 import os, copy, json
 from torch import optim
 
@@ -317,6 +318,9 @@ class SmoothedDecoderAgent(Agent):
                                    
                            
         # my arguments
+        agent.add_argument('-pfile', '--num-segment-probs-file', type=str, default=None, 
+            help="File that has the probabilities of number of segments to return for a "
+            "given response turn")
         agent.add_argument('-lf', '--fit-lambda-file', type=str, default=None,
             help='file where fit lambda is stored')
         agent.add_argument('-lamb', '--lambda-weight', type=float, default=None,
@@ -457,7 +461,9 @@ class SmoothedDecoderAgent(Agent):
         print('### CAND PATH ####', opt['fixed_candidates_path'], self.fixed_candidate_vecs.size())
         print('loaded fixed candidates!')
         
-
+        if opt['num_segment_probs_file']:
+            self.num_seg_probs = np.loadtxt(opt['num_segment_probs_file'])
+            
 
             
     def observe(self, observation):
@@ -539,7 +545,7 @@ class SmoothedDecoderAgent(Agent):
             print('This class should only be used for evaluation')
             print('Resetting is_training variable.')
             self.is_training = False
-#         else:
+
         output = self.eval_step(batch, data_list)
         
         
@@ -638,10 +644,8 @@ class SmoothedDecoderAgent(Agent):
 #             self.metrics['correct_tokens'] += correct
 #             self.metrics['loss'] += loss.item()
 #             self.metrics['num_tokens'] += target_tokens
-            
-#         print(batch.text_vec)
-#         import sys; sys.exit()
-        
+
+
         cand_choices = None
         if self.opt['rank_candidates']:
             
@@ -653,81 +657,22 @@ class SmoothedDecoderAgent(Agent):
             
             # initialize LM hidden
             lm_hidden = self.lm_agent.model.init_hidden(bsz)
+            
+            
             for i in range(bsz):
                 
-                mask = (self.fixed_candidate_vecs != self.s2s_agent.NULL_IDX)
-                s2s_likelihood = torch.empty(num_cands, dtype=torch.double)
-                lik_ind = 0
+                ### get likelihood from seq2seq model/agent ###
+                bt_size = 100
                 
-                ### get likelihood from seq2seq model/agent in batches ###
-                bt_size = 5
                 with torch.no_grad():
                     enc = self.s2s_agent.model.reorder_encoder_states(encoder_states, [i] * bt_size)
-                    scores, _ = self.s2s_agent.model.decode_forced(enc, self.cands_tensor[:bt_size,:])
-                    log_probs_batch = F.log_softmax(scores, dim=2).cpu()
                 
-                for j in range(bt_size):
-                    num_tok = torch.arange(mask[lik_ind,:].sum())
-                    s2s_likelihood[lik_ind] = log_probs_batch[
-                                                j, 
-                                                num_tok, 
-                                                self.fixed_candidate_vecs[
-                                                                        lik_ind, 
-                                                                        mask[lik_ind,:]
-                                                                        ]
-                                                ].sum()
-                    lik_ind += 1
-                
-                
-                # need -1 in top of range to ensure that the last batch 
-                # will not be empty if multiple of bt_size
-                for b in range(bt_size, self.cands_tensor.size(0)-1, bt_size):
-
-#                     print('range(b, b + bt_size)', range(b, b + bt_size))
-                        
-                        
-                    cands_batch = self.cands_tensor[b:(b+bt_size),:]
-                    
-                        
-                    if cands_batch.size(0) < bt_size:
-                        enc = self.s2s_agent.model.reorder_encoder_states(
-                                            encoder_states, [i] * cands_batch.size(0)
-                                            )       
-                    with torch.no_grad():
-                        scores, _ = self.s2s_agent.model.decode_forced(enc, cands_batch)
-                    
-                        
-                    log_probs_batch = F.log_softmax(scores, dim=2)
-                    
-                    
-                    for j in range(cands_batch.size(0)):
-                        num_tok = torch.arange(mask[lik_ind,:].sum())
-                        s2s_likelihood[lik_ind] = log_probs_batch[
-                                                    j, 
-                                                    num_tok, 
-                                                    self.fixed_candidate_vecs[
-                                                                            lik_ind, 
-                                                                            mask[lik_ind,:]
-                                                                            ]
-                                                    ].sum()
-                        lik_ind += 1
+                with torch.no_grad(): 
+                    s2s_likelihood = self.get_s2s_lik(enc, bt_size)
                         
                 print('#### done s2s likelihood')
                 
-                # Below is the code used in TorchGeneratorAgent to rank examples 
-                # but I think this is on loss scores, not on the likelihood, as we desire.
-#                 cand_losses = F.cross_entropy(
-#                     scores.view(num_cands * cands.size(1), -1),
-#                     cands.view(-1),
-#                     reduction='none',
-#                 ).view(num_cands, cands.size(1))
-                # now cand_losses is cands x seqlen size, but we still need to
-                # check padding and such
-#                 mask = (cands != self.s2s_agent.NULL_IDX).float()
-#                 cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
-#                 _, ordering = cand_scores.sort()
-
-                
+                                
                 ### Now get likelihood from LM ###
                 with torch.no_grad():
                     lm_likelihood = self.get_lm_lik(data_list[i], lm_hidden)
@@ -782,7 +727,7 @@ class SmoothedDecoderAgent(Agent):
                         print(vec_rep)
                         print('fixed_vecs: ', self.fixed_candidate_vecs[one_hot_ind.reshape(-1), :])
                         print('eval_labels: ', self.s2s_agent.observation['eval_labels'])
-                        for k in one_hot_ind.size(0):
+                        for k in range(one_hot_ind.size(0)):
                             print(self.fixed_candidates[one_hot_ind[k,:]])
                             
                         # TODO: This has to be fixed. Shouldn't one hot be size = 1?
@@ -794,7 +739,6 @@ class SmoothedDecoderAgent(Agent):
                                                                         one_hot_ind.reshape(-1))
                     print('#### got combo loss')
                     self.combo_model.cpu()
-                    
                  
                     # Getting gradients from parameters
                     self.combo_loss.backward()
@@ -814,12 +758,20 @@ class SmoothedDecoderAgent(Agent):
                     text.append('No response -- fitting lambda' )
                     
                 else:
-                    self.lm_likelihood = lm_likelihood.reshape(-1,1)
-                    self.s2s_likelihood = s2s_likelihood.reshape(-1,1)
+                    self.lm_likelihood = lm_likelihood.reshape(-1,1).data
+                    self.s2s_likelihood = s2s_likelihood.reshape(-1,1).data
+                    
                     with torch.no_grad():  
                         likelihood = self.combo_model(self.lm_likelihood, 
                                                         self.s2s_likelihood)
-                
+                    
+                    
+                    # Todo: need to add a while loop in here.
+                    # Options are decode until endofmessage is top of LMR or until num
+                    # where num comes from 1+argmax{numpy.random.multinomial(n, pvals)}
+                    # and pvals = self.num_seg_probs
+                    # inside loop, need to update the LMR history 
+        
                     _, ordering = likelihood.sort(descending=True)
                     text.append(self.fixed_candidates[ordering[0]])
 #                     cand_choices.append([self.fixed_candidates[o] for o in ordering])
@@ -845,6 +797,63 @@ class SmoothedDecoderAgent(Agent):
             
         return Output(text, cand_choices) #, cand_likelihood=[likelihood[o] for o in ordering])
 
+
+
+    def get_s2s_lik(enc, bt_size):    
+        
+        # Initialize        
+        mask = (self.fixed_candidate_vecs != self.s2s_agent.NULL_IDX)
+        s2s_likelihood = torch.empty(num_cands, dtype=torch.double)
+        lik_ind = 0
+        
+        # First batch to initialize everything. 
+        scores, _ = self.s2s_agent.model.decode_forced(enc, self.cands_tensor[:bt_size,:])
+        log_probs_batch = F.log_softmax(scores, dim=2).cpu()
+        
+        for j in range(bt_size):
+            num_tok = torch.arange(mask[lik_ind,:].sum())
+            s2s_likelihood[lik_ind] = log_probs_batch[
+                                        j, 
+                                        num_tok, 
+                                        self.fixed_candidate_vecs[
+                                                                lik_ind, 
+                                                                mask[lik_ind,:]
+                                                                ]
+                                        ].sum()
+            lik_ind += 1
+        
+        
+        # need to subtract 1 from top of range to ensure that the last  
+        # batch will not be empty if multiple of bt_size
+        for b in range(bt_size, self.cands_tensor.size(0)-1, bt_size):
+        
+            cands_batch = self.cands_tensor[b:(b+bt_size),:]
+                
+            if cands_batch.size(0) < bt_size:
+                with torch.no_grad():
+                    enc = self.s2s_agent.model.reorder_encoder_states(
+                                        encoder_states, [i] * cands_batch.size(0)
+                                        )       
+            with torch.no_grad():
+                scores, _ = self.s2s_agent.model.decode_forced(enc, cands_batch)
+            
+                
+            log_probs_batch = F.log_softmax(scores, dim=2)
+            
+            
+            for j in range(cands_batch.size(0)):
+                num_tok = torch.arange(mask[lik_ind,:].sum())
+                s2s_likelihood[lik_ind] = log_probs_batch[
+                                            j, 
+                                            num_tok, 
+                                            self.fixed_candidate_vecs[
+                                                                    lik_ind, 
+                                                                    mask[lik_ind,:]
+                                                                    ]
+                                            ].sum()
+                lik_ind += 1
+                
+        return s2s_likelihood
 
 
 
