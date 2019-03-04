@@ -1,0 +1,36 @@
+{
+  "extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
+  "plugins": ["ignore-generated-and-nolint"],
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "commonjs": true
+  },
+  "rules": {
+    "react/prop-types": 0,
+    "no-extra-boolean-cast": 0,
+    "react/no-unescaped-entities": 0,
+    "no-console": 0,
+    "no-unused-vars": [
+      0,
+      { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }
+    ],
+    "max-len": [
+      "error",
+      {
+        "code": 80,
+        "ignoreUrls": true,
+        "ignoreStrings": true
+      }
+    ]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "globals": {
+    "URL_DESTINATION": "readable"
+  }
+}
