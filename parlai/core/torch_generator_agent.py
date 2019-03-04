@@ -912,7 +912,7 @@ class Beam(object):
         if current_length < self.min_length:
             # penalize all eos probs to make it decode longer
             for hyp_id in range(softmax_probs.size(0)):
-                softmax_probs[hyp_id][self.eos] = -NEAR_INF
+                softmax_probs[hyp_id][self.eos] = -65504
         if len(self.bookkeep) == 0:
             # the first step we take only the first hypo into account since all
             # hypos are the same initially
@@ -933,13 +933,13 @@ class Beam(object):
                     counted_ngrams = Counter(current_ngrams)
                     if any(v > 1 for k, v in counted_ngrams.items()):
                         # block this hypothesis hard
-                        beam_scores[i] = -NEAR_INF
+                        beam_scores[i] = -65504
 
                 #  if previous output hypo token had eos
                 # we penalize those word probs to never be chosen
                 if self.outputs[-1][i] == self.eos:
                     # beam_scores[i] is voc_size array for i-th hypo
-                    beam_scores[i] = -NEAR_INF
+                    beam_scores[i] = -65504
 
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
