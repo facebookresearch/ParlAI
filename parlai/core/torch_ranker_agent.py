@@ -247,7 +247,7 @@ class TorchRankerAgent(TorchAgent):
                 Note 1: This can result in a very large number of
                         of candidates.
                 Note 2: In this case we will deduplicate candidates.
-                Note 3: just like with 'batch' the candidate set is identicall
+                Note 3: just like with 'batch' the candidate set is identical
                         for all examples in a batch.
             * inline: batch_size lists, one list per example
                 If each example comes with a list of possible candidates, use those.
