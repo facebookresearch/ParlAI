@@ -14,6 +14,7 @@ from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 from parlai.core.distributed_utils import is_distributed
 
+
 class TorchRankerAgent(TorchAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
@@ -55,6 +56,7 @@ class TorchRankerAgent(TorchAgent):
         if opt['eval_candidates'] is None:
             opt['eval_candidates'] = opt['candidates']
         super().__init__(opt, shared)
+
         if shared:
             self.model = shared['model']
             self.metrics = shared['metrics']
@@ -215,7 +217,6 @@ class TorchRankerAgent(TorchAgent):
             # candidates
             return obs
         return super()._set_label_cands_vec(*args, **kwargs)
-
 
     def _build_candidates(self, batch, source, mode):
         """Build a candidate set for this batch
