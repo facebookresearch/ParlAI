@@ -36,6 +36,11 @@ except ImportError:
 DEBUG = False  # change this to true to print to stdout anyway
 
 
+def is_this_travis():
+    """Returns if we are currently running in Travis."""
+    return bool(os.environ.get('TRAVIS'))
+
+
 def skipUnlessTorch(testfn, reason='pytorch is not installed'):
     """Decorator for skipping a test if torch is not installed."""
     return unittest.skipUnless(TORCH_AVAILABLE, reason)(testfn)
@@ -57,7 +62,7 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
 
 def skipIfTravis(testfn, reason='Test disabled in Travis'):
     """Decorator for skipping a test if running on Travis."""
-    return unittest.skipIf(os.environ.get('TRAVIS'), reason)(testfn)
+    return unittest.skipIf(is_this_travis(), reason)(testfn)
 
 
 class retry(object):
@@ -225,7 +230,7 @@ def download_unittest_models():
     model_filenames = [
         'seq2seq.tar.gz',
         'transformer_ranker.tar.gz',
-        'transformer_generator.tar.gz'
+        'transformer_generator2.tar.gz'
     ]
     with capture_output() as _:
-        download_models(opt, model_filenames, 'unittest')
+        download_models(opt, model_filenames, 'unittest', version='v2.0')

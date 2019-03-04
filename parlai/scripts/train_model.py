@@ -252,6 +252,7 @@ class TrainLoop():
 
         self.last_valid_epoch = 0
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
+        self.valid_reports = []
         self.best_valid = None
         if opt.get('model_file') and os.path.isfile(opt['model_file'] + '.best_valid'):
             with open(opt['model_file'] + ".best_valid", 'r') as f:
@@ -276,6 +277,7 @@ class TrainLoop():
                 self._preempted_epochs = obj.get('total_epochs', 0)
                 self.train_time.total = obj.get('train_time', 0)
                 self.impatience = obj.get('impatience', 0)
+                self.valid_reports = obj.get('valid_reports', [])
 
         if opt['tensorboard_log'] is True:
             self.writer = TensorboardLogger(opt)
@@ -313,6 +315,7 @@ class TrainLoop():
                     num_workers() * self.world.get_total_epochs()
                 ),
                 'impatience': self.impatience,
+                'valid_reports': self.valid_reports
             }, f)
 
     def validate(self):
@@ -326,7 +329,9 @@ class TrainLoop():
         valid_report = sync_object(run_eval(
             self.valid_world, opt, 'valid', opt['validation_max_exs'],
         ))
-
+        v = valid_report.copy()
+        v['train_time'] = self.train_time.time()
+        self.valid_reports.append(v)
         # logging
         if opt['tensorboard_log'] is True and is_primary_worker():
             self.writer.add_metrics('valid', int(self.train_time.time()), valid_report)

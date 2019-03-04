@@ -6,11 +6,13 @@
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
+from functools import lru_cache
 import math
 import os
 import random
 import time
 import warnings
+import heapq
 
 # some of the utility methods are helpful for Torch
 try:
@@ -261,7 +263,7 @@ class TimeLogger():
             for k, v in report.items():
                 if k not in log:
                     log[k] = v
-        text = str(int(self.tot_time)) + "s elapsed: " + str(log)
+        text = str(int(self.tot_time)) + "s elapsed: " + str(log).replace('\\n', '\n')
         return text, log
 
 
@@ -712,6 +714,90 @@ class OffensiveLanguageDetector(object):
     def __contains__(self, key):
         """Determine if text contains any offensive words in the filter."""
         return self.contains_offensive_language(key)
+
+    def str_segment(self, text, dict_agent, k=1, max_length=None):
+        """
+        Function that segments a word without spaces into the most
+        probable phrase with spaces
+
+        :param string text: string to segment
+        :param DictionaryAgent dict_agent: Dictionary we use
+            to look at word frequencies
+        :param int k: top k segmentations of string
+        :param int max_length: max length of a substring
+            (word) in the string. default (None) uses the
+            length of the string.
+        :returns: list of top k segmentations of the given string
+        :rtype: list
+
+        Example Usage:
+            dict_agent = DictionaryAgent using Wiki Toxic Comments data
+            old = OffensiveLanguageDector()
+
+            split_str = old.str_segment('fucku2', dict_agent)
+            split_str is 'fuck u 2'
+
+            We can then run old.contains_offensive_language(split_str)
+            which yields the offensive word 'fuck'
+
+        """
+        freqs = dict_agent.freqs()
+
+        # Total number of word tokensd
+        N = sum(freqs.values())
+
+        # Number of distinct words in the Vocab
+        V = len(freqs)
+
+        logNV = math.log(N + V)
+        max_heap = []
+
+        if not max_length:
+            max_length = len(text)
+
+        @lru_cache(maxsize=16)
+        def segment(text):
+            # Return a list of words that is the best segmentation of text.
+            if not text:
+                return []
+            candidates = [
+                [first] + segment(rem)
+                for first, rem in splits(text, max_length)
+            ]
+
+            nonlocal max_heap
+            max_heap = []
+
+            for c in candidates:
+                cand_score = (score(c), c)  # tuple of (score, candidate)
+                max_heap.append(cand_score)
+
+            heapq._heapify_max(max_heap)
+
+            return max_heap[0][1]
+
+        def splits(text, max_length):
+            # Returns a list of all possible first and remainder tuples where
+            return [
+                (text[:i+1], text[i+1:])
+                for i in range(min(len(text), max_length))
+            ]
+
+        def score(words):
+            # Returns probability for a sequence of words
+            return sum(logprob(w) for w in words) / len(words)
+
+        def logprob(word):
+            # Utilizes laplace smoothing to get a probability of
+            # unknown word
+            count_w = freqs.get(word, 0)
+            return math.log(count_w + 1) - logNV
+
+        segment(text)
+        res = []
+        for i in range(0, k):
+            res.append(heapq._heappop_max(max_heap)[1])
+        return res
 
 
 def clip_text(text, max_len):

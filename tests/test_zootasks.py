@@ -31,7 +31,8 @@ class TestZooAndTasks(unittest.TestCase):
         from parlai.zoo.model_list import model_list
         self._check_directory(
             "model_list", model_list, "parlai/zoo", "id",
-            ignore=["fasttext_cc_vectors", "fasttext_vectors", "glove_vectors"]
+            ignore=["fasttext_cc_vectors", "fasttext_vectors", "glove_vectors",
+                    "bert"]
         )
 
     def _check_directory(self, listname, thing_list, thing_dir, thing_key, ignore=[]):
