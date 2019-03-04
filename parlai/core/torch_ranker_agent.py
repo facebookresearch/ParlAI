@@ -46,11 +46,6 @@ class TorchRankerAgent(TorchAgent):
             help='Get predictions and calculate mean rank during the train '
                  'step. Turning this on may slow down training.'
         )
-        agent.add_argument(
-            '--add-history-neg', type='bool', default=False,
-            help='If true, then adds one random element of the history as '
-                 'negative. Only compatible with candidates==batch'
-        )
 
     def __init__(self, opt, shared=None):
         # Must call _get_model_file() first so that paths are updated if necessary
