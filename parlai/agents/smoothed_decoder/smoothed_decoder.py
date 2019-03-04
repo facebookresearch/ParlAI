@@ -41,9 +41,14 @@ class LinearComboModel(nn.Module):
 
     def forward(self, x1, x2):
         # LM then S2S
+#         out = torch.logsumexp(
+#                     torch.cat(((1.-self.lamb) * x1.reshape(-1,1), 
+#                                 self.lamb * x2.reshape(-1,1)),dim=1), 
+#                                 dim=1 )
+                                
         out = torch.logsumexp(
-                    torch.cat(((1.-self.lamb) * x1.reshape(-1,1), 
-                                self.lamb * x2.reshape(-1,1)),dim=1), 
+                    torch.cat((torch.log(1.-self.lamb) + x1.reshape(-1,1), 
+                                torch.log(self.lamb) + x2.reshape(-1,1)),dim=1), 
                                 dim=1 )
 
         return out
@@ -773,12 +778,19 @@ class SmoothedDecoderAgent(Agent):
                     just_said = ' '+ self.fixed_candidates[ordering[0]] 
                     response_ctr = 1
                     
+                    _, lm_ordering = copy.copy(lm_likelihood.reshape(-1).data).sort(descending=True)
+                    
                     # Todo: need to add a while loop in here.
                     # Options are decode until endofmessage is top of LMR or until num
                     # where num comes from 1+argmax{numpy.random.multinomial(n, pvals)}
                     # and pvals = self.num_seg_probs
                     # inside loop, need to update the LMR history 
-                    while response_ctr < 4: 
+                    print('### counselor: ', self.s2s_agent.observation['text'])
+                    
+                    while (response_ctr < 4):
+                        
+                        if self.fixed_candidates[lm_ordering[0]] == 'endofmessage':
+                            break 
                     
                         local_obs = {'text': self.lm_agent.observation['text'] + just_said}
                         
@@ -801,18 +813,27 @@ class SmoothedDecoderAgent(Agent):
                         _, ordering = likelihood.sort(descending=True)
                         text[i] += ' ' + self.fixed_candidates[ordering[0]]
                         
-                        print('### data_list[i]: ', data_list[i])
-                        print('### Local obs: ', local_obs)
-                        print('### Top candidates: \n', 
-                                '\n'.join([self.fixed_candidates[ordering[x]] for x in range(5)])
+#                         print('### data_list[i]: ', data_list[i])
+#                         print('### Local obs: ', local_obs)
+                        print('### Top candidates:\n', 
+                                '  |  '.join(['%.3f, %s' 
+                                            % (likelihood[ordering[x]].data.item(), 
+                                                self.fixed_candidates[ordering[x]]) 
+                                            for x in range(5)])
                                 )
+                                
+                                
                         _, s2s_ordering = copy.copy(s2s_likelihood.reshape(-1).data).sort(descending=True)
-                        print('### Top S2S candidates: \n', 
-                                '\n'.join([self.fixed_candidates[s2s_ordering[x]] for x in range(5)])
+                        print('### Top S2S candidates:\n', 
+                                '  |  '.join(['%.3f %s' %( s2s_likelihood[s2s_ordering[x]].data.item(), 
+                                                    self.fixed_candidates[s2s_ordering[x]])
+                                                    for x in range(5)])
                                 )
                         _, lm_ordering = copy.copy(lm_likelihood.reshape(-1).data).sort(descending=True)
-                        print('### Top LM candidates: \n', 
-                                '\n'.join([self.fixed_candidates[lm_ordering[x]] for x in range(5)])
+                        print('### Top LM candidates:\n', 
+                                '  |  '.join(['%.3f %s' % (lm_likelihood[lm_ordering[x]].data.item(), 
+                                                    self.fixed_candidates[lm_ordering[x]])
+                                                    for x in range(5)])
                                 )
                                 
                                 
@@ -894,7 +915,10 @@ class SmoothedDecoderAgent(Agent):
                                                                     mask[lik_ind,:]
                                                                     ]
                                             ].sum()
-                s2s_likelihood[lik_ind] = s2s_likelihood[lik_ind] / float(mask[lik_ind,:].sum())
+                                            
+                # scale by length of candidate. 
+#                 s2s_likelihood[lik_ind] = s2s_likelihood[lik_ind] / float(mask[lik_ind,:].sum())
+                
                 lik_ind += 1
                 
         return s2s_likelihood
@@ -959,8 +983,9 @@ class SmoothedDecoderAgent(Agent):
                 # this was use for computing loss, not likelihood 
                 # output_flat = output.view(-1, len(self.dict))
                 # loss += self.criterion(output_flat, targets.select(1, i).view(-1)).data
-            
-            cand_log_probs[c] = cand_log_probs[c] / float(sum(self.fixed_candidate_masks[c]))
+
+            # scale by length of candidate. 
+#             cand_log_probs[c] = cand_log_probs[c] / float(sum(self.fixed_candidate_masks[c]))
             
         return cand_log_probs
         

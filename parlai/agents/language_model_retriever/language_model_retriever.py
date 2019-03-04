@@ -128,8 +128,102 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         self.episode_history_text = 'endofsegment' # OAD
         self.reset_metrics()
         
-    
     def observe(self, observation):
+        return self.observe_appending_special_tokens(observation)
+#         return self.observe_no_special_tokens(observation)
+        
+        
+    def observe_no_special_tokens(self, observation):
+        
+        ''' This method does not track history with EOS and EOM interspersed'''
+        
+        """Save observation for act.
+        If multiple observations are from the same episode, concatenate them.
+        """
+        # shallow copy observation (deep copy can be expensive)
+        obs = observation.copy()
+        seq_len = self.opt['seq_len']
+        is_training = True
+        
+        if 'labels' not in obs:
+            is_training = False
+        if 'is_training_lambda' in self.opt and self.opt['is_training_lambda']:
+            is_training = False
+        
+        
+        
+        if is_training:
+            
+            if 'labels' in obs:
+                
+                obs['labels'][0] = obs['labels'][0]
+                
+                vec = self.parse(obs['labels'][0])
+                vec.append(self.END_IDX)
+#                 self.next_observe += vec
+            
+            # OAD: stop accumulating at the end of an episode.
+            if obs['episode_done']:
+                self.episode_history = [self.END_IDX,]
+                self.episode_history_text = 'endofsegment'
+                
+            else:
+                # accumulate episode history.
+                self.episode_history += vec[:-1] # don't track endofsegment token.
+                self.episode_history_text = ' '.join([self.episode_history_text, 
+                                                    obs['labels'][0]])                
+                
+                
+            if len(self.episode_history) < (seq_len + 1):
+                # not enough to return to make a batch
+                # we handle this case in vectorize
+                # labels indicates that we are training
+                self.observation = {'labels': ''}
+                return self.observation
+                
+            else:
+                vecs_to_return = []
+                overlap = 5
+                
+                # first obs will overlap 1 with current observation
+                start = max(0, len(self.episode_history) - (len(vec) - 1 + seq_len)) 
+                stop = len(self.episode_history) - (seq_len + 1)
+                
+                # take observations of seq-len that overlap with just observed 
+                for i in range(start, stop, overlap):
+                    vecs_to_return.append(self.episode_history[i:i+seq_len+1])
+                    
+                    
+                dict_to_return = {'text': '', 'labels': '', 'text2vec': vecs_to_return}
+                self.observation = dict_to_return
+                
+                return dict_to_return
+        else:
+            # No training. 
+            
+            if 'text' in obs:
+                
+                # truncate to approximate multiple of seq_len history
+                obs['text'] = ' '.join(self.episode_history_text.split(' ')[-4*seq_len:])
+                    
+            # OAD: stop accumulating at the end of an episode.
+            if obs['episode_done']:
+            
+                self.episode_history_text = 'endofsegment'
+                
+            else:
+                
+                # accumulate episode history *only* as tokens, no special tokens interspersed
+                self.episode_history_text = ' '.join([self.episode_history_text, 
+                                                            obs['eval_labels'][0]])
+                                                    
+            self.observation = obs
+            
+            return obs
+            
+            
+                    
+    def observe_appending_special_tokens(self, observation):
         
         """Save observation for act.
         If multiple observations are from the same episode, concatenate them.
@@ -210,13 +304,21 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
             else:
                 # add end tokens between message moves #TODO: replace sent_tokenize with spacy
                 response_formated = ' endofsegment '.join(sent_tokenize(obs['eval_labels'][0]))
-                response_formated += ' endofsegment endofmessage endofsegment'
+                response_formated += ' endofsegment endofmessage' # endofsegment'
 #                 response_formated = ' '.join(sent_tokenize(obs['eval_labels'][0]))
 #                 response_formated += ' endofmessage'
                 
+                # note: don't end history on EOS, as that's added to the input (history) 
+                # automatically at decode time. This should probably be a TODO to change. 
+                
                 # accumulate episode history
-                self.episode_history_text = ' '.join([self.episode_history_text, 
-                                                    response_formated])
+                if self.episode_history_text == 'endofsegment':
+                    self.episode_history_text = ' '.join([self.episode_history_text, 
+                                                        response_formated])
+                else: 
+                    self.episode_history_text = ' '.join([self.episode_history_text, 
+                                                        'endofsegment',
+                                                        response_formated])
                                                     
             self.observation = obs
             
