@@ -446,28 +446,28 @@ class TorchRankerAgent(TorchAgent):
             if opt.get('init_model'):
                 warn_once("[ warning: Ignoring --init-model since {}.opt"
                           " exists. ]".format(opt.get('init_model')))
-        elif opt.get('init_model') and os.path.isfile(opt['init_model'] + ".opt"):
-            # second case. There is no valid model available, and there
-            # seems to be a valid init file.
-            # In this case though, we need to load the options of the init_model
-            # as well.
+        elif opt.get('init_model'):
+            warn_once("Initialize the model based on {}".format(opt['init_model']))
             model_file = opt['init_model']
-            init_opt = load_opt(opt['init_model'] + ".opt")
-            # then init_opt become the default ones (this way for instance,
-            # the architecture of the model will be the good one when calling
-            # build_model() ). Except if option was an override.
-            overrides = opt.get("override", {})
-            for k, v in init_opt.items():
-                if (k == "override" or k == "task" or k == "pytorch_teacher_task"
-                        or k == "model_file" or k == "init_model"
-                        or k == "batchindex"):
-                    # TODO how can we make sure this list will not increase?
-                    continue
-                if k not in overrides and str(v) != str(opt.get(k, None)):
-                    print("[ warning: following init model opts, overriding "
-                          "opt['{}'] to {} (previously: {} )]"
-                          "".format(k, v, opt.get(k, None)))
-                    opt[k] = v
+
+            # If the model is accompanied by a .opt file, loudly print the
+            # the difference. However, does not override the current opts.
+            if os.path.isfile(opt['init_model'] + ".opt"):
+                init_opt = load_opt(opt['init_model'] + ".opt")
+                differences = []
+                for k, v in init_opt.items():
+                    if (k == "override"):
+                        continue
+                    if str(v) != str(opt.get(k, None)):
+                        differences.append((k, str(v), str(opt.get(k, None))))
+                if len(differences) > 0:
+                    message_lines = ["\n\n!!! WATCHOUT, THE MODEL SPECIFIED BY"
+                                     "--init-model WAS TRAINED WITH SOME OPTIONS"
+                                     " THAT DIFFER FROM THE CURRENT ONES!!:"]
+                    message_lines += [("key: {} value: {} (currently {})"
+                                      "".format(d[0], d[1], d[2]))
+                                      for d in differences]
+                    warn_once("\n".join(message_lines) + "\n")
 
         # in some cases, the dict is model_file + ".dict"
         if (model_file is not None
