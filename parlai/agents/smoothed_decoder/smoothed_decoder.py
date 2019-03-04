@@ -533,12 +533,6 @@ class SmoothedDecoderAgent(Agent):
         # create a batch for response model
         batch = self.s2s_agent.batchify([self.s2s_agent.observation])
         
-        # create a batch for speaker model
-        data_list, targets_list, labels, valid_inds, y_lens = self.lm_agent.vectorize(
-                [self.lm_agent.observation], self.opt['seq_len'], self.is_training
-            )
-        
-        
         
         if self.is_training:
             # output = self.train_step(batch)
@@ -546,7 +540,7 @@ class SmoothedDecoderAgent(Agent):
             print('Resetting is_training variable.')
             self.is_training = False
 
-        output = self.eval_step(batch, data_list)
+        output = self.eval_step(batch)
         
         
         if output is None:
@@ -615,7 +609,7 @@ class SmoothedDecoderAgent(Agent):
     ##### Retrieve candidates for evaluation/testing #####
     ######################################################
     
-    def eval_step(self, batch, data_list):
+    def eval_step(self, batch):
         print("""Evaluate a single batch of examples.""")
         
         
@@ -628,7 +622,7 @@ class SmoothedDecoderAgent(Agent):
         cand_scores = None
         
         text = []
-        lamb = torch.tensor(self.opt['lambda_weight'], dtype=torch.double)
+#         lamb = torch.tensor(self.opt['lambda_weight'], dtype=torch.double)
         
 #         if batch.label_vec is not None:
 #             # calculate loss on targets with teacher forcing
@@ -664,18 +658,24 @@ class SmoothedDecoderAgent(Agent):
                 ### get likelihood from seq2seq model/agent ###
                 bt_size = 100
                 
-                with torch.no_grad():
-                    enc = self.s2s_agent.model.reorder_encoder_states(encoder_states, [i] * bt_size)
                 
                 with torch.no_grad(): 
-                    s2s_likelihood = self.get_s2s_lik(enc, bt_size)
+                    s2s_likelihood = self.get_s2s_lik(encoder_states, bt_size, i)
                         
                 print('#### done s2s likelihood')
                 
-                                
+                
+                local_obs = {'text': self.lm_agent.observation['text']}
+                
+                # create a batch for speaker model
+                data_list, targets_list, labels, valid_inds, y_lens = self.lm_agent.vectorize(
+                        [local_obs,], self.opt['seq_len'], self.is_training
+                    )   
+                    
+                                 
                 ### Now get likelihood from LM ###
                 with torch.no_grad():
-                    lm_likelihood = self.get_lm_lik(data_list[i], lm_hidden)
+                    lm_likelihood = self.get_lm_lik(data_list[i], copy.copy(lm_hidden))
                 
                 print('#### done lm likelihood')
                 
@@ -765,16 +765,59 @@ class SmoothedDecoderAgent(Agent):
                         likelihood = self.combo_model(self.lm_likelihood, 
                                                         self.s2s_likelihood)
                     
+                    _, ordering = likelihood.sort(descending=True)
+                    text.append(self.fixed_candidates[ordering[0]])
+#                     cand_choices.append([self.fixed_candidates[o] for o in ordering])
+                    
+                    # first history already has end token, but have to append for other selections.
+                    just_said = ' '+ self.fixed_candidates[ordering[0]] 
+                    response_ctr = 1
                     
                     # Todo: need to add a while loop in here.
                     # Options are decode until endofmessage is top of LMR or until num
                     # where num comes from 1+argmax{numpy.random.multinomial(n, pvals)}
                     # and pvals = self.num_seg_probs
                     # inside loop, need to update the LMR history 
-        
-                    _, ordering = likelihood.sort(descending=True)
-                    text.append(self.fixed_candidates[ordering[0]])
-#                     cand_choices.append([self.fixed_candidates[o] for o in ordering])
+                    while response_ctr < 4: 
+                    
+                        local_obs = {'text': self.lm_agent.observation['text'] + just_said}
+                        
+                        # create a batch for speaker model
+                        data_list, targets_list, labels, valid_inds, y_lens = self.lm_agent.vectorize(
+                                [local_obs,], self.opt['seq_len'], self.is_training
+                            )   
+                        
+                        ### Now get likelihood from LM ###
+                        with torch.no_grad():
+                            lm_likelihood = self.get_lm_lik(data_list[i], copy.copy(lm_hidden))
+
+                        self.lm_likelihood = lm_likelihood.reshape(-1,1).data
+                        self.s2s_likelihood = s2s_likelihood.reshape(-1,1).data
+                    
+                        with torch.no_grad():  
+                            likelihood = self.combo_model(self.lm_likelihood, 
+                                                            self.s2s_likelihood)
+                    
+                        _, ordering = likelihood.sort(descending=True)
+                        text[i] += ' ' + self.fixed_candidates[ordering[0]]
+                        
+                        print('### data_list[i]: ', data_list[i])
+                        print('### Local obs: ', local_obs)
+                        print('### Top candidates: \n', 
+                                '\n'.join([self.fixed_candidates[ordering[x]] for x in range(5)])
+                                )
+                        _, s2s_ordering = copy.copy(s2s_likelihood.reshape(-1).data).sort(descending=True)
+                        print('### Top S2S candidates: \n', 
+                                '\n'.join([self.fixed_candidates[s2s_ordering[x]] for x in range(5)])
+                                )
+                        _, lm_ordering = copy.copy(lm_likelihood.reshape(-1).data).sort(descending=True)
+                        print('### Top LM candidates: \n', 
+                                '\n'.join([self.fixed_candidates[lm_ordering[x]] for x in range(5)])
+                                )
+                                
+                                
+                        just_said += ' endofsegment ' + self.fixed_candidates[ordering[0]] 
+                        response_ctr += 1
         
 
 #         print([(likelihood[o], self.fixed_candidates[o]) for o in ordering])
@@ -784,7 +827,7 @@ class SmoothedDecoderAgent(Agent):
 #         text = [self.fixed_candidates[ordering[0]],]
             
         if bsz > 1:
-            print('Batches should be size 1... If not, must handle')
+            print('Batches should be size 1 for using LMR for eval... If not, must handle')
             import sys; sys.exit()
             
                     
@@ -799,11 +842,13 @@ class SmoothedDecoderAgent(Agent):
 
 
 
-    def get_s2s_lik(enc, bt_size):    
+    def get_s2s_lik(self, encoder_states, bt_size, i): 
+    
+        enc = self.s2s_agent.model.reorder_encoder_states(encoder_states, [i] * bt_size)   
         
         # Initialize        
         mask = (self.fixed_candidate_vecs != self.s2s_agent.NULL_IDX)
-        s2s_likelihood = torch.empty(num_cands, dtype=torch.double)
+        s2s_likelihood = torch.empty(self.fixed_candidate_vecs.size(0), dtype=torch.double)
         lik_ind = 0
         
         # First batch to initialize everything. 
@@ -830,12 +875,10 @@ class SmoothedDecoderAgent(Agent):
             cands_batch = self.cands_tensor[b:(b+bt_size),:]
                 
             if cands_batch.size(0) < bt_size:
-                with torch.no_grad():
-                    enc = self.s2s_agent.model.reorder_encoder_states(
+                enc = self.s2s_agent.model.reorder_encoder_states(
                                         encoder_states, [i] * cands_batch.size(0)
                                         )       
-            with torch.no_grad():
-                scores, _ = self.s2s_agent.model.decode_forced(enc, cands_batch)
+            scores, _ = self.s2s_agent.model.decode_forced(enc, cands_batch)
             
                 
             log_probs_batch = F.log_softmax(scores, dim=2)
@@ -851,6 +894,7 @@ class SmoothedDecoderAgent(Agent):
                                                                     mask[lik_ind,:]
                                                                     ]
                                             ].sum()
+                s2s_likelihood[lik_ind] = s2s_likelihood[lik_ind] / float(mask[lik_ind,:].sum())
                 lik_ind += 1
                 
         return s2s_likelihood
@@ -915,7 +959,9 @@ class SmoothedDecoderAgent(Agent):
                 # this was use for computing loss, not likelihood 
                 # output_flat = output.view(-1, len(self.dict))
                 # loss += self.criterion(output_flat, targets.select(1, i).view(-1)).data
-
+            
+            cand_log_probs[c] = cand_log_probs[c] / float(sum(self.fixed_candidate_masks[c]))
+            
         return cand_log_probs
         
         
