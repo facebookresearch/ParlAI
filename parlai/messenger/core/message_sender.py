@@ -315,13 +315,14 @@ class MessageSender():
                     }
                 }
             }
-            filedata = {
-                "filedata": (
-                    payload['filename'],
-                    open(payload['filename'], 'rb'),
-                    payload['type'] + '/' + payload['format']
-                )
-            }
+            with open(payload['filename'], 'rb') as f:
+                filedata = {
+                    "filedata": (
+                        payload['filename'],
+                        f,
+                        payload['type'] + '/' + payload['format']
+                    )
+                }
             response = requests.post(
                 api_address,
                 params=self.auth_args,

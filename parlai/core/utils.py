@@ -263,7 +263,7 @@ class TimeLogger():
             for k, v in report.items():
                 if k not in log:
                     log[k] = v
-        text = str(int(self.tot_time)) + "s elapsed: " + str(log)
+        text = str(int(self.tot_time)) + "s elapsed: " + str(log).replace('\\n', '\n')
         return text, log
 
 
