@@ -35,7 +35,7 @@ workflows:
   commit:
     jobs:
       - build
-      - test
+      - test:
           requires:
             - build
   nightly:
@@ -48,9 +48,9 @@ workflows:
                 - master
     jobs:
       - build
-      - test
+      - test:
           requires:
             - build
-      - integration_test
+      - integration_test:
           requires:
             - build
