@@ -164,12 +164,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
         if self.use_cuda:
             self.criterion.cuda()
 
-    def vectorize(self, *args, **kwargs):
-        """Override vectorize for seq2seq."""
-        kwargs['add_start'] = False  # model does this in module code
-        kwargs['add_end'] = True  # we do want this
-        return super().vectorize(*args, **kwargs)
-
     def batchify(self, *args, **kwargs):
         """Override batchify options for seq2seq."""
         kwargs['sort'] = True  # need sorted for pack_padded
