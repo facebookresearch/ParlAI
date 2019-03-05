@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       - image: ubuntu:16.04
-    working_directory: ~/
+    working_directory: ~/ParlAI
     steps:
       - checkout
       - run: pip3 install --upgrade pip
@@ -17,14 +17,14 @@ jobs:
   test:
     docker:
       - image: ubuntu:16.04
-    working_directory: ~/
+    working_directory: ~/ParlAI
     steps:
       - run: bash ./tests/lint_changed.sh
       - run: python setup.py test -s tests.suites.travis -q
   integration_test:
     docker:
       - image: ubuntu:16.04
-    working_directory: ~/
+    working_directory: ~/ParlAI
     steps:
       - run: bash ./tests/lint_changed.sh
       # same for now
