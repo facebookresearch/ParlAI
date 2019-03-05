@@ -40,9 +40,9 @@ jobs:
             virtualenv ~/venv
             . ~/venv/bin/activate
             pip3 install --progress-bar off flake8 gitpython
-      -run:
-        description: Lint
-        command: bash ./tests/lint_changed.sh
+      - run:
+          description: Lint
+          command: bash ./tests/lint_changed.sh
 
   integration_test:
     docker:
