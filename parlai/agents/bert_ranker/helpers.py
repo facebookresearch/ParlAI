@@ -42,7 +42,7 @@ def add_common_args(parser):
                         'multiple gpus. NOTE This is incompatible'
                         ' with distributed training')
     parser.add_argument('--type-optimization', type=str,
-                        default='additional_layers',
+                        default='all_encoder_layers',
                         choices=[
                             'additional_layers',
                             'top_layer',
@@ -50,7 +50,7 @@ def add_common_args(parser):
                             'all_encoder_layers',
                             'all'],
                         help='Which part of the encoders do we optimize. '
-                             '(Default: the top one.)')
+                             '(Default: all_encoder_layers.)')
     parser.set_defaults(
         label_truncate=300,
         text_truncate=300,

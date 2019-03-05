@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.dict import DictionaryAgent
+from parlai.zoo.bert.build import download
 try:
     from pytorch_pretrained_bert import BertTokenizer
 except ImportError:
@@ -22,6 +23,7 @@ class BertDictionaryAgent(DictionaryAgent):
     def __init__(self, opt):
         super().__init__(opt)
         # initialize from voab path
+        download(opt['datapath'])
         vocab_path = os.path.join(opt['datapath'], 'models', 'bert_models',
                                   VOCAB_PATH)
         self.tokenizer = BertTokenizer.from_pretrained(vocab_path)
