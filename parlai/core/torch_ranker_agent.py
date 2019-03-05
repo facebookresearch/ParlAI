@@ -184,8 +184,7 @@ class TorchRankerAgent(TorchAgent):
 
         scores = self.score_candidates(batch, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
-        ranks = ranks.cpu()
-        label_inds = label_inds.cpu()
+
         # Update metrics
         if label_inds is not None:
             loss = self.rank_loss(scores, label_inds)
@@ -195,6 +194,7 @@ class TorchRankerAgent(TorchAgent):
                 rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['rank'] += 1 + rank
 
+        ranks = ranks.cpu()
         max_preds = self.opt["cap_num_predictions"]
         cand_preds = []
         for i, ordering in enumerate(ranks):
