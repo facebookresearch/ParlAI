@@ -8,6 +8,7 @@ jobs:
     steps:
       - checkout
       - run:
+          description: Install dependencies
           command: |
             # circleci goes a *little* crazy and sets master to HEAD
             git branch -f master origin/master
@@ -20,7 +21,9 @@ jobs:
             pip3 install --progress-bar off sphinx sphinx_rtd_theme
             pip3 install --progress-bar off boto3 botocore joblib websocket sh websocket_server
             pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
-            python setup.py test -s tests.suites.travis -q
+      - run:
+          description: unit tests
+          command: python setup.py test -s tests.suites.travis -q
 
   lint:
     docker:
@@ -29,6 +32,7 @@ jobs:
     steps:
       - checkout
       - run:
+          description: Install dependencies
           command: |
             # circleci goes a *little* crazy and sets master to HEAD
             git branch -f master origin/master
@@ -36,7 +40,9 @@ jobs:
             virtualenv ~/venv
             . ~/venv/bin/activate
             pip3 install --progress-bar off flake8 gitpython
-            bash ./tests/lint_changed.sh
+      -run:
+        description: Lint
+        command: bash ./tests/lint_changed.sh
 
   integration_test:
     docker:
@@ -45,6 +51,7 @@ jobs:
     steps:
       - checkout
       - run:
+          description: Install dependencies
           command: |
             # circleci goes a *little* crazy and sets master to HEAD
             git branch -f master origin/master
@@ -57,8 +64,9 @@ jobs:
             pip3 install --progress-bar off sphinx sphinx_rtd_theme
             pip3 install --progress-bar off boto3 botocore joblib websocket sh websocket_server
             pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
-            bash ./tests/lint_changed.sh
-            python setup.py test -s tests.suites.integration -q
+      - run:
+          description: integration tests
+          command: python setup.py test -s tests.suites.integration -q
 
 workflows:
   version: 2
