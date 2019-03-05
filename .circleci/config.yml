@@ -3,7 +3,7 @@ version: 2.0
 jobs:
   build:
     docker:
-      - image: ubuntu:16.04
+      - image: circleci/python:3.6.4
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -14,19 +14,19 @@ jobs:
       - run: pip3 install boto3 botocore joblib websocket sh websocket_server
       # gpu version: pip3 install torch torchvision
       - run: pip3 install https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+  lint:
+    working_directory: ~/ParlAI
+    steps:
+      - run: bash ./tests/lint_changed.sh
+
   test:
-    docker:
-      - image: ubuntu:16.04
     working_directory: ~/ParlAI
     steps:
       - run: bash ./tests/lint_changed.sh
       - run: python setup.py test -s tests.suites.travis -q
   integration_test:
-    docker:
-      - image: ubuntu:16.04
     working_directory: ~/ParlAI
     steps:
-      - run: bash ./tests/lint_changed.sh
       # same for now
       - run: python setup.py test -s tests.suites.travis -q
 
