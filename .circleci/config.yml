@@ -32,6 +32,12 @@ jobs:
 
 workflows:
   version: 2
+  commit:
+    jobs:
+      - build
+      - test
+          requires:
+            - build
   nightly:
     triggers:
       - schedule:
@@ -43,4 +49,8 @@ workflows:
     jobs:
       - build
       - test
+          requires:
+            - build
       - integration_test
+          requires:
+            - build
