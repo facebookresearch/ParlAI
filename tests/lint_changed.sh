@@ -11,7 +11,7 @@ set -e
 flake8 --version | grep '^3\.[6-9]\.' >/dev/null || \
     ( echo "Please install flake8 >=3.6.0." && false )
 
-CHANGED_FILES="$(git diff --name-only master... | grep '\.py$' | tr '\n' ' ')"
+CHANGED_FILES="$(git diff --name-only origin/master... | grep '\.py$' | tr '\n' ' ')"
 if [ "$CHANGED_FILES" != "" ]
 then
     exec flake8 $CHANGED_FILES
