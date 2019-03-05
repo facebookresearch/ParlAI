@@ -36,6 +36,9 @@ except ImportError:
 DEBUG = False  # change this to true to print to stdout anyway
 
 
+
+
+
 def is_this_travis():
     """Returns if we are currently running in Travis."""
     return bool(os.environ.get('TRAVIS')) or bool(os.environ.get('CIRCLECI'))
