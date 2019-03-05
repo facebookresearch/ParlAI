@@ -1,0 +1,89 @@
+version: 2.1
+
+# executors are environments where we run things
+executors:
+  standard_cpu:
+    docker:
+      - image: circleci/python:3.6.4
+
+
+# commands are nice shorthand
+commands:
+  setup:
+    description: "Minimal CircleCI setup"
+    steps:
+      - run:
+          name: Fixes git
+          command: |
+            git branch -f master origin/master
+      - run:
+          name: Sets up the virtual environment
+          command: |
+            mkdir -p ~/venv
+            virtualenv ~/venv
+            echo ". ~/venv/bin/activate" >> $BASH_ENV
+            . ~/venv/bin/activate
+            pip3 install --upgrade --progress-bar off pip
+            pip3 install --progress-bar off flake8 gitpython
+
+
+  installdeps:
+    description: "Installs all dependencies"
+    steps:
+      - run:
+          name: pip3 installs dependencies
+          command: |
+            pip3 install --progress-bar off -r requirements.txt
+            pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+
+jobs:
+  unittest:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - run:
+          name: Unit tests
+          command: python setup.py test -s tests.suites.travis -q
+
+  lint:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - run:
+          name: Lint
+          command: bash ./tests/lint_changed.sh
+
+  integration_test:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - run:
+          name: Integration tests
+          command: python setup.py test -s tests.suites.integration -q
+
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - lint
+      - unittest
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - unittest
+      - integration_test

@@ -38,7 +38,7 @@ DEBUG = False  # change this to true to print to stdout anyway
 
 def is_this_travis():
     """Returns if we are currently running in Travis."""
-    return bool(os.environ.get('TRAVIS'))
+    return bool(os.environ.get('TRAVIS')) or bool(os.environ.get('CIRCLECI'))
 
 
 def skipUnlessTorch(testfn, reason='pytorch is not installed'):
@@ -117,7 +117,7 @@ def git_changed_files(skip_nonexisting=True):
     """
     Lists all the changed files in the git repository.
     """
-    fork_point = git_.merge_base('--fork-point', 'origin/master').strip()
+    fork_point = git_.merge_base('origin/master', 'HEAD').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
         filenames = [fn for fn in filenames if os.path.exists(fn)]
