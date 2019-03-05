@@ -1,7 +1,7 @@
 version: 2.1
 
 # executors are environments where we run things
-executor:
+executors:
   standard_cpu:
     docker:
       - image: circleci/python:3.6.4
