@@ -185,6 +185,7 @@ class TorchRankerAgent(TorchAgent):
         scores = self.score_candidates(batch, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
         ranks = ranks.cpu()
+        label_inds = label_inds.cpu()
         # Update metrics
         if label_inds is not None:
             loss = self.rank_loss(scores, label_inds)
