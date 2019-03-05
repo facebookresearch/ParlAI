@@ -15,7 +15,7 @@ commands:
       - run:
           name: Fixes git
           command: |
-            git branch -f master origin/master
+            ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
       - run:
           name: Sets up the virtual environment
           command: |
