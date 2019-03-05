@@ -33,11 +33,7 @@ commands:
       - run:
           name: pip3 installs dependencies
           command: |
-            pip3 install --progress-bar off nltk
-            pip3 install --progress-bar off regex scipy scikit-learn pexpect
-            pip3 install --progress-bar off sphinx sphinx_rtd_theme
-            pip3 install --progress-bar off boto3 botocore joblib websocket sh websocket_server
-            pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+            pip3 install --progress-bar off -r requirements.txt
 
 jobs:
   build:
