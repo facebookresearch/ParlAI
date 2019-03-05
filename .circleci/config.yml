@@ -9,6 +9,8 @@ jobs:
       - checkout
       - run:
           command: |
+            # circleci goes a *little* crazy and sets master to HEAD
+            git branch -f master origin/master
             mkdir -p ~/venv
             virtualenv ~/venv
             . ~/venv/bin/activate
