@@ -1,49 +1,4 @@
-version: 2.1
-
-commands:
-  deps_setup:
-    description: "Set up basic dependencies"
-    run: |
-      # make sure we have latest pip
-      pip3 install --upgrade pip
-      # needed for tests
-      pip3 install flake8 gitpython nltk
-      # needed for tfidf-retriever
-      pip3 install regex scipy scikit-learn pexpect
-      # doc generation
-      pip3 install sphinx sphinx_rtd_theme
-      # mturk deps
-      pip3 install boto3 botocore joblib websocket sh websocket_server
-
-  torch_setup_cpu:
-    description: "Installs pytorch CPU"
-    run: |
-      pip3 install https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
-      pip3 install torchvision
-
-  torch_setup_gpu:
-    description "Installs pytorch GPU"
-    run: |
-      # TODO: maybe switch to cuda 10
-      pip3 install torch torchvision
-
-  parlai_setup:
-    description: "Set up the ParlAI repo."
-    run: python setup.py develop
-
-  lint_changed:
-    description: "Run the linter."
-    run: ./tests/lint_changed.sh
-
-  parlai_unit_tests:
-    description: "Run the basic ParlAI unit tests"
-    run: python setup.py test -s tests.suites.travis -q
-
-  parlai_integration_tests:
-    description: "More expensive integration tests"
-    run: python setup.py test -s tests.suites.integration
-
-
+version: 2.0
 
 jobs:
   build:
@@ -52,31 +7,40 @@ jobs:
     working_directory: ~/
     steps:
       - checkout
-      - deps_setup
-      - torch_setup_cpu
+      - run: pip3 install --upgrade pip
+      - run: pip3 install flake8 gitpython nltk
+      - run: pip3 install regex scipy scikit-learn pexpect
+      - run: pip3 install sphinx sphinx_rtd_theme
+      - run: pip3 install boto3 botocore joblib websocket sh websocket_server
+      # gpu version: pip3 install torch torchvision
+      - run: pip3 install https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
   test:
+    docker:
+      - image: ubuntu:16.04
+    working_directory: ~/
     steps:
-      - lint_changed
-      - parlai_unit_tests
-
+      - run: bash ./tests/lint_changed.sh
+      - run: python setup.py test -s tests.suites.travis -q
   integration_test:
+    docker:
+      - image: ubuntu:16.04
+    working_directory: ~/
     steps:
-      - parlai_integration_tests
-
+      - run: bash ./tests/lint_changed.sh
+      # same for now
+      - run: python setup.py test -s tests.suites.travis -q
 
 workflows:
   version: 2
   nightly:
     triggers:
       - schedule:
-        cron: "0 0 * * *"
-        filters:
-          branches:
-            only:
-              - master
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
     jobs:
       - build
       - test
       - integration_test
-
-
