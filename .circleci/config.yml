@@ -36,6 +36,7 @@ commands:
       - run:
           name: pip3 installs dependencies
           command: |
+            . ~/venv/bin/activate
             pip3 install --progress-bar off nltk
             pip3 install --progress-bar off regex scipy scikit-learn pexpect
             pip3 install --progress-bar off sphinx sphinx_rtd_theme
