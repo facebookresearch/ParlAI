@@ -37,7 +37,7 @@ commands:
             pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
 
 jobs:
-  build:
+  unittest:
     executor: standard_cpu
     working_directory: ~/ParlAI
     steps:
@@ -75,7 +75,7 @@ workflows:
   commit:
     jobs:
       - lint
-      - build
+      - unittest
   nightly:
     triggers:
       - schedule:
@@ -85,7 +85,5 @@ workflows:
               only:
                 - master
     jobs:
-      - build
-      - integration_test:
-          requires:
-            - build
+      - unittest
+      - integration_test
