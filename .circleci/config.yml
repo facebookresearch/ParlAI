@@ -28,25 +28,28 @@ jobs:
       - image: circleci/python:3.6.4
     working_directory: ~/ParlAI
     steps:
-      # same for now
       - checkout
-      - run: pip3 install --upgrade pip
-      - run: pip3 install flake8 gitpython nltk
-      - run: pip3 install regex scipy scikit-learn pexpect
-      - run: pip3 install sphinx sphinx_rtd_theme
-      - run: pip3 install boto3 botocore joblib websocket sh websocket_server
-      # gpu version: pip3 install torch torchvision
-      - run: pip3 install https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
-      - run: python setup.py test -s tests.suites.integration -q
+      - run:
+          command: |
+            # circleci goes a *little* crazy and sets master to HEAD
+            git branch -f master origin/master
+            mkdir -p ~/venv
+            virtualenv ~/venv
+            . ~/venv/bin/activate
+            pip3 install --upgrade --progress-bar off pip
+            pip3 install --progress-bar off flake8 gitpython nltk
+            pip3 install --progress-bar off regex scipy scikit-learn pexpect
+            pip3 install --progress-bar off sphinx sphinx_rtd_theme
+            pip3 install --progress-bar off boto3 botocore joblib websocket sh websocket_server
+            pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+            bash ./tests/lint_changed.sh
+            python setup.py test -s tests.suites.integration -q
 
 workflows:
   version: 2
   commit:
     jobs:
       - build
-      - test:
-          requires:
-            - build
   nightly:
     triggers:
       - schedule:
@@ -57,9 +60,6 @@ workflows:
                 - master
     jobs:
       - build
-      - test:
-          requires:
-            - build
       - integration_test:
           requires:
             - build
