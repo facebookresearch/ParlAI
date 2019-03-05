@@ -17,6 +17,8 @@ jobs:
       - run: bash ./tests/lint_changed.sh
       - run: python setup.py test -s tests.suites.travis -q
   integration_test:
+    docker:
+      - image: circleci/python:3.6.4
     working_directory: ~/ParlAI
     steps:
       # same for now
