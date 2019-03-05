@@ -10,6 +10,7 @@ from tqdm import tqdm
 import torch
 from torch import nn
 
+from itertools import islice
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once
@@ -52,7 +53,11 @@ class TorchRankerAgent(TorchAgent):
         agent.add_argument(
             '--train-predict', type='bool', default=False,
             help='Get predictions and calculate mean rank during the train '
-                 'step. Turning this on may slow down training.')
+                 'step. Turning this on may slow down training.'
+        )
+        agent.add_argument(
+            '--cap-num-predictions', type=int, default=100,
+            help='Limit to the number of predictions in output.text_candidates')
         agent.add_argument(
             '--ignore-bad-candidates', type='bool', default=False,
             help='Ignore examples for which the label is not present in the '
@@ -221,6 +226,8 @@ class TorchRankerAgent(TorchAgent):
                 rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['rank'] += 1 + rank
 
+        ranks = ranks.cpu()
+        max_preds = self.opt['cap_num_predictions']
         cand_preds = []
         for i, ordering in enumerate(ranks):
             if cand_vecs.dim() == 2:
@@ -231,7 +238,10 @@ class TorchRankerAgent(TorchAgent):
                 # ignore padding
                 true_ordering = [x for x in ordering if x < len(cand_list)]
                 ordering = true_ordering
-            cand_preds.append([cand_list[rank] for rank in ordering])
+            # using a generator instead of a list comprehension allows
+            # to cap the number of elements.
+            cand_preds_generator = (cand_list[rank] for rank in ordering)
+            cand_preds.append(list(islice(cand_preds_generator, max_preds)))
 
         preds = [cand_preds[i][0] for i in range(batchsize)]
         return Output(preds, cand_preds)
