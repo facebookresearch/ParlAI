@@ -117,7 +117,7 @@ def git_changed_files(skip_nonexisting=True):
     """
     Lists all the changed files in the git repository.
     """
-    fork_point = git_.merge_base('--fork-point', 'origin/master').strip()
+    fork_point = git_.merge_base('origin/master').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
         filenames = [fn for fn in filenames if os.path.exists(fn)]
