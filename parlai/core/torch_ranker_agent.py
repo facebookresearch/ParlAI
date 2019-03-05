@@ -195,7 +195,7 @@ class TorchRankerAgent(TorchAgent):
                 self.metrics['rank'] += 1 + rank
 
         ranks = ranks.cpu()
-        max_preds = self.opt["cap_num_predictions"]
+        max_preds = self.opt['cap_num_predictions']
         cand_preds = []
         for i, ordering in enumerate(ranks):
             if cand_vecs.dim() == 2:
