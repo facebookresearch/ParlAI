@@ -9,22 +9,19 @@ executors:
 
 # commands are nice shorthand
 commands:
-  fixcheckout:
-    description: "CircleCI goes a little overboard and sets master to HEAD. Fixes this."
+  setup:
+    description: "Minimal CircleCI setup"
     steps:
       - run:
-          name: fixes git
+          name: Fixes git
           command: |
             git branch -f master origin/master
-
-  virtualenv:
-    description: "Sets up the virtual environment"
-    steps:
       - run:
-          name: set up the virtual environment, with minimal dependencies
+          name: Sets up the virtual environment
           command: |
             mkdir -p ~/venv
             virtualenv ~/venv
+            echo ". ~/venv/bin/activate" >> $BASH_ENV
             . ~/venv/bin/activate
             pip3 install --upgrade --progress-bar off pip
             pip3 install --progress-bar off flake8 gitpython
@@ -36,7 +33,6 @@ commands:
       - run:
           name: pip3 installs dependencies
           command: |
-            . ~/venv/bin/activate
             pip3 install --progress-bar off nltk
             pip3 install --progress-bar off regex scipy scikit-learn pexpect
             pip3 install --progress-bar off sphinx sphinx_rtd_theme
@@ -49,41 +45,32 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - fixcheckout
-      - virtualenv
+      - setup
       - installdeps
       - run:
           name: Unit tests
-          command: |
-            . ~/venv/bin/activate
-            python setup.py test -s tests.suites.travis -q
+          command: python setup.py test -s tests.suites.travis -q
 
   lint:
     executor: standard_cpu
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - fixcheckout
-      - virtualenv
+      - setup
       - run:
           name: Lint
-          command: |
-            . ~/venv/bin/activate
-            bash ./tests/lint_changed.sh
+          command: bash ./tests/lint_changed.sh
 
   integration_test:
     executor: standard_cpu
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - fixcheckout
-      - virtualenv
+      - setup
       - installdeps
       - run:
           name: Integration tests
-          command: |
-            . ~/venv/bin/activate
-            python setup.py test -s tests.suites.integration -q
+          command: python setup.py test -s tests.suites.integration -q
 
 
 workflows:
