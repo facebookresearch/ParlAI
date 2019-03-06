@@ -14,7 +14,7 @@ from .build import build
 
 from parlai.core.agents import MultiTaskTeacher
 from parlai.core.teachers import ParlAIDialogTeacher
-from projects.metadialog.utils import add_person_tokens
+from projects.self_feeding.utils import add_person_tokens
 
 
 def _path(opt, filename_override=None):
@@ -35,15 +35,15 @@ def _path(opt, filename_override=None):
     return os.path.join(dp, filename)
 
 
-class MetadialogTeacher(ParlAIDialogTeacher):
-    """Teacher for the MetadialogAgent
+class SelfFeedingTeacher(ParlAIDialogTeacher):
+    """Teacher for the SelfFeedingAgent
 
     opt['datatype'] determines whether we use the designated filepath ('train') or
         one of the eval files ('valid', 'test'), which are identical regardless of
         what training set is being used.
 
     Example:
-    -t metadialog:dialog:train_a
+    -t self_feeding:dialog:train_a
         train on data/convai2meta/dialog/train_a.txt
         eval on data/convai2meta/dialog/valid.txt
         test on data/convai2meta/dialog/test.txt
@@ -52,7 +52,7 @@ class MetadialogTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         if 'subtask' not in opt:
-            print('Warning: Metadialog teacher should be assigned subtask. '
+            print('Warning: SelfFeedingteacher should be assigned subtask. '
                   'Defaulting to dialog')
             opt['subtask'] = 'dialog'
 
@@ -85,7 +85,7 @@ class MetadialogTeacher(ParlAIDialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        project = argparser.add_argument_group('Metadialog Tasks')
+        project = argparser.add_argument_group('Self-Feeding Tasks')
         project.add_argument('-st', '--subtasks', type=str,
                              help='comma-separated list of tasks used by MTL teacher')
         project.add_argument('-dia-train', '--dia-train', type=str, default='train',
@@ -119,7 +119,7 @@ class MetadialogTeacher(ParlAIDialogTeacher):
 
         Returns ``((x,y,r,c), new_episode?)`` tuples.
         """
-        print("[ Loading metadialog text data:" + path + "]")
+        print("[ Loading Self-Feeding text data:" + path + "]")
         self.episodes = []
         self.num_exs = 0
         self.max_train = self.opt.get('max_train', 0)
@@ -156,7 +156,7 @@ class MetadialogTeacher(ParlAIDialogTeacher):
                 self.episodes.append([episode])
 
 
-class MetadialogMTLTeacher(MultiTaskTeacher):
+class SelfFeedingMTLTeacher(MultiTaskTeacher):
     """Creates a teacher that is actually a set of teachers each based on
     a task string--each of these teachers will get called in turn,
     either randomly or in order.
@@ -167,10 +167,10 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
     """
 
     def __init__(self, opt, shared=None):
-        if opt['task'] == 'metadialog:MetadialogMTLTeacher':
+        if opt['task'] == 'self_feeding:SelfFeedingMTLTeacher':
             # This does not happen except in tests such as test_new_tasks.py
             opt = copy.deepcopy(opt)
-            opt['task'] = 'metadialog:MetadialogTeacher'
+            opt['task'] = 'self_feeding:SelfFeedingTeacher'
         super().__init__(opt, shared)
 
         # TODO: allow user to specify other strategies for creating sampling_prob
@@ -184,7 +184,7 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogTeacher.add_cmdline_args(argparser)
+        SelfFeedingTeacher.add_cmdline_args(argparser)
 
     def observe(self, observation):
         return self.tasks[self.task_idx].observe(observation)
@@ -226,7 +226,7 @@ class MetadialogMTLTeacher(MultiTaskTeacher):
         return m
 
 
-class DialogTeacher(MetadialogTeacher):
+class DialogTeacher(SelfFeedingTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['subtask'] = 'dialog'
@@ -234,10 +234,10 @@ class DialogTeacher(MetadialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogTeacher.add_cmdline_args(argparser)
+        SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class ExplanationTeacher(MetadialogTeacher):
+class ExplanationTeacher(SelfFeedingTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['subtask'] = 'explanation'
@@ -245,10 +245,10 @@ class ExplanationTeacher(MetadialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogTeacher.add_cmdline_args(argparser)
+        SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class SentimentTeacher(MetadialogTeacher):
+class SentimentTeacher(SelfFeedingTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['subtask'] = 'sentiment'
@@ -256,55 +256,55 @@ class SentimentTeacher(MetadialogTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogTeacher.add_cmdline_args(argparser)
+        SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class DiaexpTeacher(MetadialogMTLTeacher):
+class DiaexpTeacher(SelfFeedingMTLTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['subtasks'] = ['dialog', 'explanation']
         # Expand abbreviated task name ('both') into full task names
         train_files = [opt['dia_train'], opt['exp_train']]
         assert(len(opt['subtasks']) == len(train_files))
-        tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
+        tasks = [f'self_feeding:{subtask}:{train_file}' for subtask, train_file
                  in zip(opt['subtasks'], train_files)]
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogTeacher.add_cmdline_args(argparser)
+        SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class DiasenTeacher(MetadialogMTLTeacher):
+class DiasenTeacher(SelfFeedingMTLTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['subtasks'] = ['dialog', 'sentiment']
         # Expand abbreviated task name ('both') into full task names
         train_files = [opt['dia_train'], opt['sen_train']]
         assert(len(opt['subtasks']) == len(train_files))
-        tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
+        tasks = [f'self_feeding:{subtask}:{train_file}' for subtask, train_file
                  in zip(opt['subtasks'], train_files)]
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogTeacher.add_cmdline_args(argparser)
+        SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class AllTeacher(MetadialogMTLTeacher):
+class AllTeacher(SelfFeedingMTLTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['subtasks'] = ['dialog', 'explanation', 'sentiment']
         # Expand abbreviated task name ('all') into full task names
         train_files = [opt['dia_train'], opt['exp_train'], opt['sen_train']]
         assert(len(opt['subtasks']) == len(train_files))
-        tasks = [f'metadialog:{subtask}:{train_file}' for subtask, train_file
+        tasks = [f'self_feeding:{subtask}:{train_file}' for subtask, train_file
                  in zip(opt['subtasks'], train_files)]
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
     @staticmethod
     def add_cmdline_args(argparser):
-        MetadialogTeacher.add_cmdline_args(argparser)
+        SelfFeedingTeacher.add_cmdline_args(argparser)
