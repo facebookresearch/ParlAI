@@ -93,9 +93,19 @@ def fix_underscores(args):
 
 
 class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+    """Produces a custom-formatted `--help` option
+
+    See https://stackoverflow.com/questions/18275023/dont-show-long-options-twice-in-print-help-from-argparse
+    for details.
     """
-    https://stackoverflow.com/questions/18275023/dont-show-long-options-twice-in-print-help-from-argparse
-    """
+    def __init__(self, prog, indent_increment=2, max_help_position=24, width=None):
+        super().__init__(
+            prog,
+            indent_increment=2,
+            max_help_position=8,
+            width=130
+        )
+
     def _format_action_invocation(self, action):
         if not action.option_strings or action.nargs == 0:
             return super()._format_action_invocation(action)
@@ -127,8 +137,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         super().__init__(description=description, allow_abbrev=False,
                          conflict_handler='resolve',
-                         formatter_class=lambda prog: CustomHelpFormatter(
-                                prog, width=130, max_help_position=8))
+                         formatter_class=CustomHelpFormatter)
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
         self.register('type', 'class', str2class)
@@ -422,20 +431,19 @@ class ParlaiParser(argparse.ArgumentParser):
             '--batch-sort-field', type=str, default='text',
             help='What field to use when determining the length of an episode',
             hidden=True)
-        pytorch.add_argument('-pyclen', '--pytorch-context-length', default=-1,
-                             type=int,
-                             help='Number of past utterances to remember when '
-                                  'building flattened batches of data in multi-'
-                                  'example episodes.'
-                                  '(For use with PytorchDataTeacher)',
-                             hidden=True)
-        pytorch.add_argument('-pyincl', '--pytorch-include-labels',
-                             default=True, type='bool',
-                             help='Specifies whether or not to include labels '
-                                  'as past utterances when building flattened '
-                                  'batches of data in multi-example episodes.'
-                                  '(For use with PytorchDataTeacher)',
-                             hidden=True)
+        pytorch.add_argument(
+            '-pyclen', '--pytorch-context-length', default=-1,type=int,
+            help='Number of past utterances to remember when building flattened '
+                 'batches of data in multi-example episodes.'
+                 '(For use with PytorchDataTeacher)',
+            hidden=True)
+        pytorch.add_argument(
+            '-pyincl', '--pytorch-include-labels',
+            default=True, type='bool',
+            help='Specifies whether or not to include labels as past utterances when '
+                 'building flattened batches of data in multi-example episodes.'
+                 '(For use with PytorchDataTeacher)',
+            hidden=True)
 
     def add_model_args(self):
         """Add arguments related to models such as model files."""
