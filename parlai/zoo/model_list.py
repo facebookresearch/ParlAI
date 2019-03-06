@@ -21,6 +21,7 @@ model_list = [
         "description": (
             "KvMemNN trained on the ConvAI2 task, used as a baseline in the competition.",
         ),
+        "example": "python -m parlai.scripts.interactive -mf models:convai2/kvmemnn/model",
     },
     {
         "title": "Seq2Seq ConvAI2 model",
@@ -31,17 +32,7 @@ model_list = [
         "description": (
             "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition.",
         ),
-    },
-    {
-        "title": "Seq2Seq Twitter model",
-        "id": "twitter",
-        "path": "models:twitter/seq2seq/twitter_seq2seq_model",
-        "agent": "legacy:seq2seq:0",
-        "task": "twitter",
-        "description": (
-            "Seq2Seq conversational model trained on the Twitter task"
-        ),
-        "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
+        "example": "python -m parlai.scripts.interactive -mf models:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0",
     },
     {
         "title": "Seq2Seq Twitter model",
