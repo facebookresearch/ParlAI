@@ -19,7 +19,7 @@ If you want to train/eval/display with multiple tasks you can just use for examp
 
   python examples/display_data.py -t personachat,squad -dt train
 
-However, this will sample epsisodes equally from the two tasks.
+However, this will sample episodes equally from the two tasks (personachat and squad).
 To sample squad 10x more often you can do:
 
 .. code-block:: bash
