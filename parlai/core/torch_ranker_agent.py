@@ -395,6 +395,9 @@ class TorchRankerAgent(TorchAgent):
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
 
+            if self.opt.get('encode_candidate_vecs', False):
+                cand_vecs = self.fixed_candidate_encs
+
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
