@@ -112,7 +112,8 @@ model_list = [
         ),
     },
     {
-        "id": "Wizard of Wikipedia (End2End Generative)",
+        "title": "Wizard of Wikipedia (End to end Generator)",
+        "id": "wizard_of_wikipedia",
         "path": "models:wizard_of_wikipedia/end2end_generator/model",
         "description": (
             "End2End Generative model for Wizard of Wikipedia"
@@ -145,6 +146,7 @@ model_list = [
         ),
     },
     {
+        "title": "Twitter conversational model",
         "id": "twitter",
         "path": "models:twitter/seq2seq/twitter_seq2seq_model",
         "agent": "legacy:seq2seq:0",
