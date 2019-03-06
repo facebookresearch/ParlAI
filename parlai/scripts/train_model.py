@@ -51,7 +51,8 @@ def setup_args(parser=None):
     train.add_argument('--eval-batchsize', type=int,
                        hidden=True,
                        help='Eval time batch size (defaults to same as -bs)')
-    train.add_argument('--display-examples', type='bool', default=False)
+    train.add_argument('--display-examples', type='bool', default=False,
+                       hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time',
                        type=float, default=-1)
@@ -59,9 +60,8 @@ def setup_args(parser=None):
                        type=float, default=2)
     train.add_argument('-vtim', '--validation-every-n-secs',
                        type=float, default=-1,
-                       help='Validate every n seconds. Whenever the the best '
-                            'validation metric is found, saves the model to '
-                            'the model_file path if set.')
+                       help='Validate every n seconds. Saves model to model_file '
+                            '(if set) whenever best val metric is found')
     train.add_argument('-stim', '--save-every-n-secs',
                        type=float, default=-1,
                        help='Saves the model to model_file.checkpoint after '
@@ -72,9 +72,8 @@ def setup_args(parser=None):
                             'every validation (default %(default)s).')
     train.add_argument('-veps', '--validation-every-n-epochs',
                        type=float, default=-1,
-                       help='Validate every n epochs. Whenever the the best '
-                            'validation metric is found, saves the model to '
-                            'the model_file path if set.')
+                       help='Validate every n epochs. Saves model to model_file '
+                            '(if set) whenever best val metric is found')
     train.add_argument('-vme', '--validation-max-exs',
                        type=int, default=-1,
                        hidden=True,

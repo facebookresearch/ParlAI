@@ -92,6 +92,18 @@ def fix_underscores(args):
     return args
 
 
+class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+    """
+    https://stackoverflow.com/questions/18275023/dont-show-long-options-twice-in-print-help-from-argparse
+    """
+    def _format_action_invocation(self, action):
+        if not action.option_strings or action.nargs == 0:
+            return super()._format_action_invocation(action)
+        default = self._get_default_metavar_for_optional(action)
+        args_string = self._format_args(action, default)
+        return ', '.join(action.option_strings) + ' ' + args_string
+
+
 class ParlaiParser(argparse.ArgumentParser):
     """Pseudo-extension of ``argparse`` which sets a number of parameters
     for the ParlAI framework. More options can be added specific to other
@@ -115,7 +127,8 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         super().__init__(description=description, allow_abbrev=False,
                          conflict_handler='resolve',
-                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+                         formatter_class=lambda prog: CustomHelpFormatter(
+                                prog, width=130, max_help_position=8))
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
         self.register('type', 'class', str2class)
@@ -326,12 +339,12 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-im', '--image-mode', default='raw', type=str,
             help='image preprocessor to use. default is "raw". set to "none" '
-                 'to skip image loading.')
+                 'to skip image loading.',
+            hidden=True)
         parlai.add_argument(
             '-nt', '--numthreads', default=1, type=int,
-            help='number of threads. If batchsize set to 1, used for hogwild; '
-                 'otherwise, used for number of threads in threadpool loading,'
-                 ' e.g. in vqa')
+            help='number of threads. Used for hogwild if batchsize is 1, else '
+                 'for number of threads in threadpool loading,')
         parlai.add_argument(
             '--hide-labels', default=False, type='bool',
             hidden=True,
@@ -343,8 +356,7 @@ class ParlaiParser(argparse.ArgumentParser):
             'the probability of drawing the task in multitask case',
             hidden=True
         )
-        batch = self.add_argument_group('Batching Arguments')
-        batch.add_argument(
+        parlai.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
         self.add_parlai_data_path(parlai)
@@ -366,54 +378,64 @@ class ParlaiParser(argparse.ArgumentParser):
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
             '-pyt', '--pytorch-teacher-task',
-            help='Specify to use the PytorchDataTeacher for multiprocessed '
+            help='Use the PytorchDataTeacher for multiprocessed '
                  'data loading with a standard ParlAI task, e.g. "babi:Task1k"')
         pytorch.add_argument(
             '-pytd', '--pytorch-teacher-dataset',
-            help='Specify to use the PytorchDataTeacher for multiprocessed '
+            help='Use the PytorchDataTeacher for multiprocessed '
                  'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"')
         pytorch.add_argument(
             '--pytorch-datapath', type=str, default=None,
-            help='datapath for pytorch data loader (note: only specify if '
-                 'the data does not reside in the normal ParlAI datapath)')
+            help='datapath for pytorch data loader'
+                 '(note: only specify if the data does not reside'
+                 'in the normal ParlAI datapath)',
+            hidden=True)
         pytorch.add_argument(
             '-nw', '--numworkers', type=int, default=4,
-            help='how many workers the Pytorch dataloader should use')
+            help='how many workers the Pytorch dataloader should use',
+            hidden=True)
         pytorch.add_argument(
             '--pytorch-preprocess', type='bool', default=False,
             help='Whether the agent should preprocess the data while building'
-                 'the pytorch data')
+                 'the pytorch data',
+            hidden=True)
         pytorch.add_argument(
             '-pybsrt', '--pytorch-teacher-batch-sort',
             type='bool', default=False,
             help='Whether to construct batches of similarly sized episodes'
-            'when using the PytorchDataTeacher (either via specifying `-pyt`'
-            'or `-pytd`')
+            'when using the PytorchDataTeacher (either via specifying `-pyt`',
+            hidden=True)
         pytorch.add_argument(
             '--batch-sort-cache-type', type=str,
             choices=['pop', 'index', 'none'], default='pop',
-            help='how to build up the batch cache')
+            help='how to build up the batch cache',
+            hidden=True)
         pytorch.add_argument(
             '--batch-length-range', type=int, default=5,
-            help='degree of variation of size allowed in batch')
+            help='degree of variation of size allowed in batch',
+            hidden=True)
         pytorch.add_argument(
             '--shuffle', type='bool', default=False,
-            help='Whether to shuffle the data')
+            help='Whether to shuffle the data',
+            hidden=True)
         pytorch.add_argument(
             '--batch-sort-field', type=str, default='text',
-            help='What field to use when determining the length of an episode')
+            help='What field to use when determining the length of an episode',
+            hidden=True)
         pytorch.add_argument('-pyclen', '--pytorch-context-length', default=-1,
                              type=int,
                              help='Number of past utterances to remember when '
                                   'building flattened batches of data in multi-'
                                   'example episodes.'
-                                  '(For use with PytorchDataTeacher)')
+                                  '(For use with PytorchDataTeacher)',
+                             hidden=True)
         pytorch.add_argument('-pyincl', '--pytorch-include-labels',
                              default=True, type='bool',
                              help='Specifies whether or not to include labels '
                                   'as past utterances when building flattened '
                                   'batches of data in multi-example episodes.'
-                                  '(For use with PytorchDataTeacher)')
+                                  '(For use with PytorchDataTeacher)',
+                             hidden=True)
 
     def add_model_args(self):
         """Add arguments related to models such as model files."""
@@ -480,9 +502,11 @@ class ParlaiParser(argparse.ArgumentParser):
         try:
             parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
             parlai.add_argument('--image-size', type=int, default=256,
-                                help='resizing dimension for images')
+                                help='resizing dimension for images',
+                                hidden=True)
             parlai.add_argument('--image-cropsize', type=int, default=224,
-                                help='crop dimension for images')
+                                help='crop dimension for images',
+                                hidden=True)
         except argparse.ArgumentError:
             # already added
             pass
