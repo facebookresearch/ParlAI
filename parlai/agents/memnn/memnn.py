@@ -27,9 +27,6 @@ class MemnnAgent(TorchRankerAgent):
     def add_cmdline_args(argparser):
         arg_group = argparser.add_argument_group('MemNN Arguments')
         arg_group.add_argument(
-            '--init-model', type=str, default=None,
-            help='load dict/model/opts from this path')
-        arg_group.add_argument(
             '-esz', '--embedding-size', type=int, default=128,
             help='size of token embeddings')
         arg_group.add_argument(
