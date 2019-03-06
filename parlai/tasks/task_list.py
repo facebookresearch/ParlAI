@@ -181,9 +181,9 @@ task_list = [
         ),
     },
     {
-        "id": "MetaDialog",
-        "display_name": "MetaDialog",
-        "task": "metadialog",
+        "id": "SelfFeedingChatbot",
+        "display_name": "Self-Feeding Chatbot",
+        "task": "self_feeding",
         "tags": ["diaexp", "diasen", "All"],
         "description": (
             "Learning from Dialogue after Deployment. Leveraging user textual "
