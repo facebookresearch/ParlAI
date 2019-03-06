@@ -19,7 +19,7 @@ model_list = [
         "agent": "projects.personachat.kvmemnn.kvmemnn:Kvmemnn",
         "task": "convai2",
         "description": (
-            "KvMemNN trained on the ConvAI2 task, used as a baseline in the competition.",
+            "KvMemNN trained on the ConvAI2 task, used as a baseline in the competition."
         ),
         "example": "python -m parlai.scripts.interactive -mf models:convai2/kvmemnn/model",
     },
@@ -30,7 +30,7 @@ model_list = [
         "agent": "legacy:seq2seq:0",
         "task": "convai2",
         "description": (
-            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition.",
+            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
         ),
         "example": "python -m parlai.scripts.interactive -mf models:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0",
     },
