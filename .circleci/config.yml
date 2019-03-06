@@ -46,7 +46,7 @@ jobs:
       - installdeps
       - run:
           name: Unit tests
-          command: python setup.py test -s tests.suites.travis -q
+          command: python setup.py test -s tests.suites.oncommit -q
 
   lint:
     executor: standard_cpu
