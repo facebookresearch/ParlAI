@@ -3,7 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import find_ngrams
+import parlai.core.testing_utils as testing_utils
+import os
+import shutil
 import unittest
 
 
@@ -58,6 +62,28 @@ class TestDictionary(unittest.TestCase):
         assert len(vec) == 2
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
+
+    def test_mf_without_df(self):
+        """Check that moving a model without moving the dictionary raises the
+        appropriate error.
+        """
+        # Download model, move to a new location
+        testing_utils.download_unittest_models()
+        datapath = os.path.join(
+            (os.path.dirname(os.path.dirname(os.path.dirname(
+             os.path.realpath(__file__))))),
+            'ParlAI',
+            'data'
+        )
+        zoo_path = 'models:unittest/seq2seq/model'
+        model_path = modelzoo_path(datapath, zoo_path)
+        os.remove(model_path + '.dict')
+        # Test that eval model fails
+        with self.assertRaises(RuntimeError):
+            testing_utils.eval_model(dict(
+                task='babi:task1k:1',
+                model_file=model_path
+            ))
 
 
 if __name__ == '__main__':
