@@ -73,6 +73,10 @@ class TorchRankerAgent(TorchAgent):
         if shared:
             self.model = shared['model']
             self.metrics = shared['metrics']
+            self.fixed_candidates = shared['fixed_candidates']
+            self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
+            self.vocab_candidates = shared['vocab_candidates']
+            self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
             states = None
         else:
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
@@ -83,6 +87,9 @@ class TorchRankerAgent(TorchAgent):
                 states = self.load(model_file)
             else:
                 states = {}
+            # Vectorize and save fixed/vocab candidates once upfront if applicable
+            self.set_fixed_candidates(shared)
+            self.set_vocab_candidates(shared)
 
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
         if self.use_cuda:
@@ -183,11 +190,18 @@ class TorchRankerAgent(TorchAgent):
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
         scores = self.score_candidates(batch, cand_vecs)
+        _, ranks = scores.sort(1, descending=True)
+
         loss = self.rank_loss(scores, label_inds)
 
         # Update loss
         self.metrics['loss'] += loss.item()
         self.metrics['examples'] += batchsize
+
+        for b in range(batchsize):
+            rank = (ranks[b] == label_inds[b]).nonzero().item()
+            self.metrics['rank'] += 1 + rank
+
         loss.backward()
         self.update_params()
 
@@ -264,7 +278,11 @@ class TorchRankerAgent(TorchAgent):
 
         :param batch: a Batch object (defined in torch_agent.py)
         :param source: the source from which candidates should be built, one of
+<<<<<<< HEAD
+            ['batch', 'inline', 'fixed', 'vocab']
+=======
             ['batch', 'batch-all-cands', 'inline', 'fixed']
+>>>>>>> master
         :param mode: 'train' or 'eval'
 
         :return: tuple of tensors (label_inds, cands, cand_vecs)
@@ -476,9 +494,15 @@ class TorchRankerAgent(TorchAgent):
         model_file = None
 
         # first check load path in case we need to override paths
-        if opt.get('init_model') and os.path.isfile(opt['init_model']):
-            # check first for 'init_model' for loading model from file
-            model_file = opt['init_model']
+        if opt.get('init_model'):
+            if os.path.isfile(opt['init_model']):
+                # check first for 'init_model' for loading model from file
+                model_file = opt['init_model']
+            else:
+                raise RuntimeError(
+                    "Specified --init-model={} could not be found."
+                    .format(opt['init_model'])
+                )
 
         if opt.get('model_file') and os.path.isfile(opt['model_file']):
             # next check for 'model_file', this would override init_model
@@ -597,12 +621,12 @@ class TorchRankerAgent(TorchAgent):
 
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
-        print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 512) ]"
+        print("[ Vectorizing fixed candidate set ({} batch(es) of up to 512) ]"
               "".format(len(cand_batches)))
         cand_vecs = []
         for batch in tqdm(cand_batches):
             cand_vecs.extend(self.vectorize_fixed_candidates(batch))
-        return padded_3d([cand_vecs]).squeeze(0)
+        return padded_3d([cand_vecs], dtype=cand_vecs[0].dtype).squeeze(0)
 
     def save_candidates(self, vecs, path, cand_type='vectors'):
         print("[ Saving fixed candidate set {} to {} ]".format(cand_type,
