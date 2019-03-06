@@ -73,8 +73,11 @@ class TestDictionary(unittest.TestCase):
              os.path.realpath(__file__))))),
             'ParlAI/data',
         )
-
-        shutil.rmtree(os.path.join(datapath, 'models/unittest'))
+        try:
+            # remove unittest models if there before
+            shutil.rmtree(os.path.join(datapath, 'models/unittest'))
+        except FileNotFoundError:
+            pass
         testing_utils.download_unittest_models()
 
         zoo_path = 'models:unittest/seq2seq/model'
