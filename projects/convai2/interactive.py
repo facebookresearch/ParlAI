@@ -87,7 +87,7 @@ def interactive(opt, print_parser=None):
                 print(t.replace("partner's ", 'your '))
             if t.startswith('your persona:'):
                 bot_persona += t + '\n'
-        print("Enter [DONE] if you want a new partner at any time.")        
+        print("Enter [DONE] if you want a new partner at any time.")
         return bot_persona
 
     # Now run interactive mode, chatting with personas!
