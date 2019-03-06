@@ -44,10 +44,10 @@ class TestNewTasks(unittest.TestCase):
                 if ('teacher' in x.lower() and x not in BASE_TEACHERS)
             ]
 
-            if testing_utils.is_this_travis():
+            if testing_utils.is_this_circleci():
                 self.assertEqual(
                     len(subtasks), 0,
-                    'test_verify_data plays poorly with Travis. Please run '
+                    'test_verify_data plays poorly with CircleCI. Please run '
                     '`python tests/test_new_data.py` locally and paste the output '
                     'in your pull request.'
                 )

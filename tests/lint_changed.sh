@@ -14,5 +14,5 @@ flake8 --version | grep '^3\.[6-9]\.' >/dev/null || \
 CHANGED_FILES="$(git diff --name-only master... | grep '\.py$' | tr '\n' ' ')"
 if [ "$CHANGED_FILES" != "" ]
 then
-    exec flake8 $CHANGED_FILES
+    exec flake8 --show-source $CHANGED_FILES
 fi

@@ -36,9 +36,9 @@ except ImportError:
 DEBUG = False  # change this to true to print to stdout anyway
 
 
-def is_this_travis():
-    """Returns if we are currently running in Travis."""
-    return bool(os.environ.get('TRAVIS'))
+def is_this_circleci():
+    """Returns if we are currently running in CircleCI."""
+    return bool(os.environ.get('CIRCLECI'))
 
 
 def skipUnlessTorch(testfn, reason='pytorch is not installed'):
@@ -60,9 +60,9 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
-def skipIfTravis(testfn, reason='Test disabled in Travis'):
-    """Decorator for skipping a test if running on Travis."""
-    return unittest.skipIf(is_this_travis(), reason)(testfn)
+def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
+    """Decorator for skipping a test if running on CircleCI."""
+    return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
 class retry(object):
@@ -117,7 +117,7 @@ def git_changed_files(skip_nonexisting=True):
     """
     Lists all the changed files in the git repository.
     """
-    fork_point = git_.merge_base('--fork-point', 'origin/master').strip()
+    fork_point = git_.merge_base('origin/master', 'HEAD').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
         filenames = [fn for fn in filenames if os.path.exists(fn)]
@@ -230,7 +230,7 @@ def download_unittest_models():
     model_filenames = [
         'seq2seq.tar.gz',
         'transformer_ranker.tar.gz',
-        'transformer_generator.tar.gz'
+        'transformer_generator2.tar.gz'
     ]
     with capture_output() as _:
-        download_models(opt, model_filenames, 'unittest')
+        download_models(opt, model_filenames, 'unittest', version='v2.0')
