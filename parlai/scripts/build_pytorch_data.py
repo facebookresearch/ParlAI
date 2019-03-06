@@ -42,6 +42,7 @@ def get_pyt_dict_file(opt):
 def setup_args():
     from parlai.core.params import ParlaiParser
     parser = ParlaiParser(True, True, 'Builds a pytorch data file.')
+    parser.add_pytorch_datateacher_args()
     return dict_setup(parser)
 
 

@@ -171,9 +171,6 @@ class MultiTaskTeacher(Teacher):
         self.tasks = []
         self.opt = opt
 
-        opt['batch_sort'] = False
-        print('WARNING: batch_sort disabled for multitasking')
-
         self.id = opt['task']
         if shared and 'tasks' in shared:
             self.tasks = [create_agent_from_shared(t) for t in shared['tasks']]

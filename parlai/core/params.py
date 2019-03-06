@@ -347,36 +347,7 @@ class ParlaiParser(argparse.ArgumentParser):
         batch.add_argument(
             '-bs', '--batchsize', default=1, type=int,
             help='batch size for minibatch training schemes')
-        batch.add_argument('-bsrt', '--batch-sort', default=False, type='bool',
-                           help='**NOTE: This is deprecated, if you would like '
-                                'to make use of batch sort functionality, please'
-                                'use -pybsrt with the PytorchDataTeacher**.'
-                                'If enabled (default %(default)s), create batches by '
-                                'flattening all episodes to have exactly one '
-                                'utterance exchange and then sorting all the '
-                                'examples according to their length. This '
-                                'dramatically reduces the amount of padding '
-                                'present after examples have been parsed, '
-                                'speeding up training.')
-        batch.add_argument('-clen', '--context-length', default=-1, type=int,
-                           help='**NOTE: This is deprecated, if you would like '
-                                'to make use of batch sort functionality, please'
-                                'use -pybsrt with the PytorchDataTeacher**.'
-                                'Number of past utterances to remember when '
-                                'building flattened batches of data in multi-'
-                                'example episodes.')
-        batch.add_argument('-incl', '--include-labels',
-                           default=True, type='bool',
-                           help='**NOTE: This is deprecated, if you would like '
-                                'to make use of batch sort functionality, please'
-                                'use -pybsrt with the PytorchDataTeacher**.'
-                                'Specifies whether or not to include labels '
-                                'as past utterances when building flattened '
-                                'batches of data in multi-example episodes.')
-
         self.add_parlai_data_path(parlai)
-
-        self.add_pytorch_datateacher_args()
 
     def add_distributed_training_args(self):
         grp = self.add_argument_group('Distributed Training')
@@ -579,10 +550,6 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
-        if 'batchsize' in self.opt and self.opt['batchsize'] <= 1:
-            # hide batch options
-            self.opt.pop('batch_sort', None)
-            self.opt.pop('context_length', None)
 
         # set environment variables
         if self.opt.get('download_path'):
@@ -707,3 +674,8 @@ class ParlaiParser(argparse.ArgumentParser):
 
         arg_group.add_argument = ag_add_argument  # override _ => -
         return arg_group
+
+    def error(self, message):
+        _sys.stderr.write('error: %s\n' % message)
+        self.print_help()
+        _sys.exit(2)

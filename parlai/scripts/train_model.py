@@ -43,6 +43,7 @@ from parlai.scripts.build_pytorch_data import get_pyt_dict_file
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Train a model')
+    parser.add_pytorch_datateacher_args()
     train = parser.add_argument_group('Training Loop Arguments')
     train.add_argument('-et', '--evaltask',
                        help=('task to use for valid/test (defaults to the '

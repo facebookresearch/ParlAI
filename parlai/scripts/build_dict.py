@@ -30,6 +30,7 @@ import tqdm
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Build a dictionary.')
+    parser.add_pytorch_datateacher_args()
     dict_loop = parser.add_argument_group('Dictionary Loop Arguments')
     dict_loop.add_argument('--dict-maxexs', default=-1, type=int,
                            help='max number of examples to build dict on')
