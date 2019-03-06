@@ -13,7 +13,6 @@ from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.agents import AssignState
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
-import parlai.core.testing_utils as testing_utils
 
 import parlai.mturk.core.mturk_manager as MTurkManagerFile
 import parlai.mturk.core.data_model as data_model
