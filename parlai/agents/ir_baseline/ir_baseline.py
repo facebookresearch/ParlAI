@@ -23,6 +23,8 @@ depending on whether you train on the train set first, or not.
 import math
 from collections.abc import Sequence
 import heapq
+import json
+import torch
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -79,13 +81,69 @@ class MaxPriorityQueue(Sequence):
 
 
 stopwords = {
-    'i', 'a', 'an', 'are', 'about', 'as', 'at', 'be', 'by', 'for', 'from',
-    'how', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to',
-    'was', 'what', 'when', 'where', '--', '?', '.', "''", "''", "``", ',',
-    'do', 'see', 'want', 'people', 'and', "n't", "me", 'too', 'own', 'their',
-    '*', "'s", 'not', 'than', 'other', 'you', 'your', 'know', 'just', 'but',
-    'does', 'really', 'have', 'into', 'more', 'also', 'has', 'any', 'why',
-    'will'
+    'i',
+    'a',
+    'an',
+    'are',
+    'about',
+    'as',
+    'at',
+    'be',
+    'by',
+    'for',
+    'from',
+    'how',
+    'in',
+    'is',
+    'it',
+    'of',
+    'on',
+    'or',
+    'that',
+    'the',
+    'this',
+    'to',
+    'was',
+    'what',
+    'when',
+    'where',
+    '--',
+    '?',
+    '.',
+    "''",
+    "''",
+    "``",
+    ',',
+    'do',
+    'see',
+    'want',
+    'people',
+    'and',
+    "n't",
+    "me",
+    'too',
+    'own',
+    'their',
+    '*',
+    "'s",
+    'not',
+    'than',
+    'other',
+    'you',
+    'your',
+    'know',
+    'just',
+    'but',
+    'does',
+    'really',
+    'have',
+    'into',
+    'more',
+    'also',
+    'has',
+    'any',
+    'why',
+    'will',
 }
 
 
@@ -143,7 +201,7 @@ def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
         score = [0] * len(cands)
         for i, c in enumerate(cands):
             score[i] = -score_match(query_rep, c, length_penalty, dictionary)
-        r = [i[0] for i in sorted(enumerate(score), key=lambda x:x[1])]
+        r = [i[0] for i in sorted(enumerate(score), key=lambda x: x[1])]
         res = []
         for i in range(min(100, len(score))):
             res.append(cands[r[i]])
@@ -158,15 +216,26 @@ class IrBaselineAgent(Agent):
         """Add command line args specific to this agent."""
         parser = parser.add_argument_group('IrBaseline Arguments')
         parser.add_argument(
-            '-lp', '--length_penalty', type=float, default=0.5,
-            help='length penalty for responses')
+            '-lp',
+            '--length_penalty',
+            type=float,
+            default=0.5,
+            help='length penalty for responses',
+        )
         parser.add_argument(
-            '-hsz', '--history_size', type=int, default=1,
+            '-hsz',
+            '--history_size',
+            type=int,
+            default=1,
             help='number of utterances from the dialogue history to take use '
-                 'as the query')
+            'as the query',
+        )
         parser.add_argument(
-            '--label_candidates_file', type=str, default=None,
-            help='file of candidate responses to choose from')
+            '--label_candidates_file',
+            type=str,
+            default=None,
+            help='file of candidate responses to choose from',
+        )
 
     def __init__(self, opt, shared=None):
         """Initialize agent."""
@@ -217,21 +286,27 @@ class IrBaselineAgent(Agent):
         if cands:
             hist_sz = self.opt.get('history_size', 1)
             left_idx = max(0, len(self.history) - hist_sz)
-            text = ' '.join(self.history[left_idx:len(self.history)])
+            text = ' '.join(self.history[left_idx : len(self.history)])
             rep = self.build_query_representation(text)
-            reply['text_candidates'] = (
-                rank_candidates(rep, cands,
-                                self.length_penalty, self.dictionary))
+            reply['text_candidates'] = rank_candidates(
+                rep, cands, self.length_penalty, self.dictionary
+            )
             reply['text'] = reply['text_candidates'][0]
         else:
             reply['text'] = "I don't know."
         return reply
 
-    def save(self, fname=None):
+    def save(self, path=None):
         """Save dictionary tokenizer if available."""
-        fname = self.opt.get('model_file', None) if fname is None else fname
-        if fname:
-            self.dictionary.save(fname + '.dict')
+        path = self.opt.get('model_file', None) if path is None else path
+        if path:
+            self.dictionary.save(path + '.dict')
+            data = {}
+            data['opt'] = self.opt
+            with open(path, 'wb') as handle:
+                torch.save(data, handle)
+            with open(path + '.opt', 'w') as handle:
+                json.dump(self.opt, handle)
 
     def load(self, fname):
         """Load internal dictionary."""
