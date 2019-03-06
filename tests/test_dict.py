@@ -89,6 +89,11 @@ class TestDictionary(unittest.TestCase):
                 task='babi:task1k:1',
                 model_file=model_path
             ))
+        try:
+            # remove unittest models if there after
+            shutil.rmtree(os.path.join(datapath, 'models/unittest'))
+        except FileNotFoundError:
+            pass
 
     def test_train_model_no_df(self):
         """Check that attempting to train a model without specifying a dict_file
