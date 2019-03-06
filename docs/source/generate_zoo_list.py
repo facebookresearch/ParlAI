@@ -13,9 +13,6 @@ for model in model_list:
     fout.write(name)
     fout.write('\n')
     fout.write('-' * len(name))
-    # fout.write('\n')
-    # id = model.get('id').replace('_', ' ')
-    # fout.write("[zoo id: " + id + "]")
     fout.write('\n\n')
 
     fout.write(model['description'])
