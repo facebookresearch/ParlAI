@@ -13,14 +13,34 @@ automatically, e.g.:
 
 model_list = [
     {
+        "title": "KVMemNN ConvAI2 model",
+        "id": "convai2",
+        "path": "models:convai2/kvmemnn/model",
+        "agent": "projects.personachat.kvmemnn.kvmemnn:Kvmemnn",
+        "task": "convai2",
+        "description": (
+            "KvMemNN trained on the ConvAI2 task, used as a baseline in the competition."
+        ),
+        "example": "python -m parlai.scripts.interactive -mf models:convai2/kvmemnn/model",
+    },
+    {
+        "title": "Seq2Seq ConvAI2 model",
+        "id": "convai2",
+        "path": "models:convai2/seq2seq/convai2_self_seq2seq_model",
+        "agent": "legacy:seq2seq:0",
+        "task": "convai2",
+        "description": (
+            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
+        ),
+        "example": "python -m parlai.scripts.interactive -mf models:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0",
+    },
+    {
         "title": "Seq2Seq Twitter model",
         "id": "twitter",
         "path": "models:twitter/seq2seq/twitter_seq2seq_model",
         "agent": "legacy:seq2seq:0",
         "task": "twitter",
-        "description": (
-            "Seq2Seq conversational model trained on the Twitter task"
-        ),
+        "description": ("Seq2Seq conversational model trained on the Twitter task"),
         "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
     },
     {
@@ -59,7 +79,7 @@ model_list = [
             "Retrieval over Wikipedia dump, used for DrQA on the open squad "
             "dataset. This is the dump from the original paper, used for "
             "replicating results."
-        )
+        ),
     },
     {
         "title": "Wikipedia Retriever (used for Wizard of Wikipedia)",
@@ -68,8 +88,7 @@ model_list = [
         "agent": "tfidf_retriever",
         "task": "wikipedia:full",
         "description": (
-            "Retrieval over Wikipedia dump, used for DrQA on the open squad "
-            "dataset."
+            "Retrieval over Wikipedia dump, used for DrQA on the open squad " "dataset."
         ),
         "example": "python -m parlai.scripts.interactive --model tfidf_retriever -mf models:wikipedia_full/tfidf_retriever/model",  # noqa: E501
         "result": (
@@ -85,5 +104,5 @@ model_list = [
             In 2018 Yann LeCun picked a fight with a robot to support Facebook AI goals.
             """  # noqa: E501
         ),
-    }
+    },
 ]
