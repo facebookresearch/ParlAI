@@ -43,8 +43,8 @@ def mturk():
 
 
 @_clear_cmdline_args
-def travis():
-    """Tests needed to pass Travis."""
+def oncommit():
+    """Tests needed to pass Continuous Integration."""
     test_suite = unittest.TestSuite()
     test_suite.addTests(short())
     changed_files = testing_utils.git_changed_files(skip_nonexisting=False)
@@ -65,4 +65,4 @@ def full():
 
 
 if __name__ == '__main__':
-    unittest.run(travis())
+    unittest.run(oncommit())

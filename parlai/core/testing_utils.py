@@ -36,9 +36,9 @@ except ImportError:
 DEBUG = False  # change this to true to print to stdout anyway
 
 
-def is_this_travis():
-    """Returns if we are currently running in Travis."""
-    return bool(os.environ.get('TRAVIS')) or bool(os.environ.get('CIRCLECI'))
+def is_this_circleci():
+    """Returns if we are currently running in CircleCI."""
+    return bool(os.environ.get('CIRCLECI'))
 
 
 def skipUnlessTorch(testfn, reason='pytorch is not installed'):
@@ -60,9 +60,9 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
-def skipIfTravis(testfn, reason='Test disabled in Travis'):
-    """Decorator for skipping a test if running on Travis."""
-    return unittest.skipIf(is_this_travis(), reason)(testfn)
+def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
+    """Decorator for skipping a test if running on CircleCI."""
+    return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
 class retry(object):
