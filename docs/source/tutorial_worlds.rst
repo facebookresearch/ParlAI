@@ -421,8 +421,9 @@ a batch; e.g., by how many characters each example in a cache will, at most, dev
 A ``--batch-length-range`` of 5 would mean that each example in the batch
 would differ by no more than 5 characters (in a text-based dataset).
 
-Explanation/Benefits of Batch Sorting
-*************************************
+Explanation and Benefits of Batch Sorting
++++++++++++++++++++++++++++++++++++++++++
+
 Batch sorting can help training by
 reducing the amount of zero-padding in tensors constructed from batches of text.
 This technique alone sped up the time to train on a single epoch of WMT De-En
