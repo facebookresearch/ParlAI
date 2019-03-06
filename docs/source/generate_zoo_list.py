@@ -25,7 +25,7 @@ for model in model_list:
         example = "python -m parlai.scripts.eval_model --model {} --task {} -mf {}".format(
             model['agent'], model['task'], model['path']
         )
-    result = model['result'].strip().split("\n")
+    result = model.get('result', '').strip().split("\n")
     # strip leading whitespace from results
     result = [r.strip() for r in result]
     # make sure we indent for markdown though
