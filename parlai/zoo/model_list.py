@@ -14,7 +14,7 @@ automatically, e.g.:
 model_list = [
     {
         "title": "KVMemNN ConvAI2 model",
-        "id": "kvmemnn-convai2",
+        "id": "convai2",
         "path": "models:convai2/kvmemnn/model",
         "agent": "projects.personachat.kvmemnn.kvmemnn:Kvmemnn",
         "task": "convai2",
@@ -25,7 +25,7 @@ model_list = [
     },
     {
         "title": "Seq2Seq ConvAI2 model",
-        "id": "seq2seq-convai2",
+        "id": "convai2",
         "path": "models:convai2/seq2seq/convai2_self_seq2seq_model",
         "agent": "legacy:seq2seq:0",
         "task": "convai2",
