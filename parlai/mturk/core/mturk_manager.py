@@ -634,7 +634,6 @@ class MTurkManager():
             elif agent.get_status() == AssignState.STATUS_WAITING:
                 if self.is_task_world(conversation_id):
                     agent.set_status(AssignState.STATUS_IN_TASK)
-                    agent.clear_messages()
                     return
                 # Reconnecting in waiting is either the first reconnect after
                 # being told to wait or a waiting reconnect. Restore state if
@@ -775,6 +774,7 @@ class MTurkManager():
                     MTurkDataHandler.save_world_data(
                         save_data, self.task_group_id,
                         conversation_id, sandbox=self.is_sandbox)
+                mturk_agent.clear_messages()
 
             # once onboarding is done, move into a waiting world
             self._move_agents_to_waiting([mturk_agent])
