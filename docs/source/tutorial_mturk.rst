@@ -206,6 +206,75 @@ Other Tips
 - If you notice that certain workers are doing a really good job on the task, send them bonuses, as this will encourage them to work on your HITs more in the future. It will also be a visible way for you to acknowledge their good work.
 
 
+ParlAI-MTurk Alpha Functionality
+--------------------------------
+
+ParlAI-MTurk has a number of alpha features that surround maintaining a local database of run information. This alpha functionality includes a local webapp for testing, monitoring, and reviewing tasks, as well as a standardized flow for saving the data collected during a task run. Using this alpha functionality is blocked behind ``MTurkManager(use_db=True)``. Setting this flag to true when initializing your ``MTurkManager`` begins storing information locally in a place that the PMT platform knows where to find it. This functionality is very much still in alpha, and thus the documentation is going to be brief and primarily point to code as the source of truth.
+
+Running the ParlAI-MTurk Webapp
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To launch the webapp, you'll need to run ``python server.py`` from within the ``ParlAI/parlai/mturk/webapp`` folder. At the moment, you will need to kill and restart this server in order to apply any changes to task files.
+
+Testing a task in the webapp
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+One primary feature of the webapp is an easy-to-iterate way to test new tasks without needing to launch to sandbox. If you're using the react frontend (which you should be), you can test tasks by navigating to ``/app/tasks/<your_task_name>``, where ``<your_task_name>`` is the task directory that contains your ``run.py`` and ``worlds.py`` files. Making edits to these files will require relaunching the webapp to test changes at the moment.
+
+Reviewing tasks in the webapp
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Another primary feature of the webapp is being able to review work from a task that is complete or still running. Generally this can be accessed from a particular run's page, which can be navigated to from the home page.
+
+Saving and Loading data via the database
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If using ``use_db``, all runs will attempt to save data into local directories and link them via their run ids and worker ids. The data that is saved by default is defined in the ``MTurkDataWorld`` class, along with instructions on how to save custom data. The actual saving process occurs in ``MTurkDataHandler``.
+
+Data can later be queried using ``MTurkDataHandler``. Below is a code snippet example for building an array of all of the runs and associated data by leveraging the class directly:
+
+.. code-block:: python
+
+    from importlib import reload
+    from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
+    db_logger = MTurkDataHandler()
+
+    all_runs = db_logger.get_all_run_data()
+
+    pairings = []
+    for run_id in all_runs:
+        pairings = pairings + db_logger.get_pairings_for_run(run_id['run_id'])
+
+    def row_to_dict(row):
+         return (dict(zip(row.keys(), row)))
+
+    pairings = [row_to_dict(p) for p in pairings]
+
+    for pairing in pairings:
+        if pairing['conversation_id'] is not None:
+            pairing['assign_data'] = db_logger.get_conversation_data(pairing['run_id'], pairing['conversation_id'], pairing['worker_id'], False)
+        else:
+            pairing['assign_data'] = None
+
+    for pairing in pairings:
+        pairing['review_status'] = db_logger.get_assignment_data(pairing['assignment_id'])['status']
+
+    pairings = [p for p in pairings if p['assign_data'] is not None]
+    pairings = [p for p in pairings if p['assign_data'].get('data') is not None]
+
+    pairings_by_conv_run_id = {}
+    for p in pairings:
+        key_id = '{}|{}'.format(p['conversation_id'], p['run_id'])
+        if key_id not in pairings_by_conv_run_id:
+            pairings_by_conv_run_id[key_id] = {'workers_info': []}
+        pairings_by_conv_run_id[key_id]['workers_info'].append(p)
+
+    for key_id, p in pairings_by_conv_run_id.items():
+        stuff = key_id.split('|')
+        conv_id = stuff[0]
+        run_id = stuff[1]
+        p['conv_info'] = db_logger.get_full_conversation_data(run_id, conv_id, False)
+
 -------
 
 \* Turker icon credit: `Amazon Mechanical Turk <https://requester.mturk.com/>`__. Robot icon credit: `Icons8 <https://icons8.com/>`__.
