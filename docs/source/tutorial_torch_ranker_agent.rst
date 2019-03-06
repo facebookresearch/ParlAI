@@ -69,7 +69,6 @@ There are several options:
 
 Possible sources of candidates:
 
-
 1. **batch:**
   Use all labels in the batch as the candidate set (with all but the
   example's label being treated as negatives).
@@ -79,11 +78,10 @@ Possible sources of candidates:
   the correct label will be treated as a negative.
 2. **batch-all-cands:**
   Use all inline candidates in the batch as candidate set.
-  Note 1: This can result in a very large number of
-          of candidates.
+  Note 1: This can result in a very large number of candidates.
   Note 2: In this case we will deduplicate candidates.
-  Note 3: just like with 'batch' the candidate set is identical
-          for all examples in a batch.
+  Note 3: just like with 'batch' the candidate set is identical for all
+  examples in a batch.
 3. **inline:**
   If each example comes with a list of possible label candidates, use those.
   Each teacher act for the task should contain the field 'label_candidates'.
