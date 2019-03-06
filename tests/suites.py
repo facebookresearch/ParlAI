@@ -19,10 +19,10 @@ def _clear_cmdline_args(fn):
 
 
 @_clear_cmdline_args
-def integration():
-    """Integration tests. Longer, and may need a GPU."""
+def nightly_cpu():
+    """Nightly CPU tests. Runs on CircleCI"""
     test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover('tests/integration')
+    test_suite = test_loader.discover('tests/nightly/cpu')
     return test_suite
 
 
@@ -51,16 +51,6 @@ def oncommit():
     if any('parlai/mturk' in fn for fn in changed_files):
         # if any mturk stuff changed, run those tests too
         test_suite.addTests(mturk())
-    return test_suite
-
-
-@_clear_cmdline_args
-def full():
-    """All tests."""
-    test_suite = unittest.TestSuite()
-    test_suite.addTests(short())
-    test_suite.addTests(integration())
-    test_suite.addTests(mturk())
     return test_suite
 
 

@@ -58,7 +58,7 @@ jobs:
           name: Lint
           command: bash ./tests/lint_changed.sh
 
-  integration_test:
+  nightly_cpu_test:
     executor: standard_cpu
     working_directory: ~/ParlAI
     steps:
@@ -66,8 +66,8 @@ jobs:
       - setup
       - installdeps
       - run:
-          name: Integration tests
-          command: python setup.py test -s tests.suites.integration -q
+          name: All nightly CPU tests
+          command: python setup.py test -s tests.suites.nightly_cpu -q
 
 
 workflows:
@@ -79,11 +79,11 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: "0 0 * * *"
+          cron: "0 10 * * *"  # 10am UTC is 5am NYC
           filters:
             branches:
               only:
                 - master
     jobs:
       - unittest
-      - integration_test
+      - nightly_cpu_test
