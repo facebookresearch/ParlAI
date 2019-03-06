@@ -175,11 +175,15 @@ class History(object):
         self.reset_on_next_update = False
 
     def parse(self, text):
-        """Tokenize text with the given dictionary."""
+        """
+        Tokenize text with the given dictionary.
+        """
         return self.dict.txt2vec(text)
 
     def reset(self):
-        """Clear the history."""
+        """
+        Clear the history.
+        """
         self.history_strings = []
         self.history_vecs = []
 
@@ -196,10 +200,12 @@ class History(object):
         self.history_vecs.append(self.parse(text))
 
     def update_history(self, obs, add_next=None):
-        """Update the history with the given observation.
+        """
+        Update the history with the given observation.
 
-        :param add_next:   string to append to history prior to updating it
-                           with the observation
+        :param add_next:
+            string to append to history prior to updating it with the
+            observation
         """
         if self.reset_on_next_update:
             # this is the first example in a new episode, clear the previous
@@ -558,10 +564,15 @@ class TorchAgent(Agent):
         """
         Initialize optimizer with model parameters.
 
-        :param params: parameters from the model
-        :param optim_states: optional argument providing states of optimizer to load
-        :saved_optim_type: type of optimizer being loaded, if changed will
-            skip loading optimizer states
+        :param params:
+            parameters from the model
+
+        :param optim_states:
+            optional argument providing states of optimizer to load
+
+        :param saved_optim_type:
+            type of optimizer being loaded, if changed will skip loading
+            optimizer states
         """
 
         opt = self.opt
@@ -838,10 +849,14 @@ class TorchAgent(Agent):
             return vec
 
     def _copy_embeddings(self, weight, emb_type, log=True):
-        """Copy embeddings from the pretrained embeddings to the lookuptable.
+        """
+        Copy embeddings from the pretrained embeddings to the lookuptable.
 
-        :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
-        :param emb_type: pretrained embedding type
+        :param weight:
+            weights of lookup table (nn.Embedding/nn.EmbeddingBag)
+
+        :param emb_type:
+            pretrained embedding type
         """
         if not is_primary_worker():
             # we're in distributed mode, copying embeddings in the workers
@@ -861,7 +876,8 @@ class TorchAgent(Agent):
                   ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
 
     def share(self):
-        """Share fields from parent as well as useful objects in this class.
+        """
+        Share fields from parent as well as useful objects in this class.
 
         Subclasses will likely want to share their model as well.
         """
@@ -879,7 +895,9 @@ class TorchAgent(Agent):
         return vec
 
     def _v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         if hasattr(vec, 'cpu'):
             vec = vec.cpu()
@@ -917,7 +935,9 @@ class TorchAgent(Agent):
         return tensor
 
     def _check_truncate(self, vec, truncate, truncate_left=False):
-        """Check that vector is truncated correctly."""
+        """
+        Check that vector is truncated correctly.
+        """
         if truncate is None:
             return vec
         if len(vec) <= truncate:

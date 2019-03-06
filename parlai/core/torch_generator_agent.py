@@ -36,13 +36,13 @@ class TorchGeneratorModel(nn.Module):
     """
     This Interface expects you to implement model with the following reqs:
 
-    :field model.encoder:
+    :attribute model.encoder:
         takes input returns tuple (enc_out, enc_hidden, attn_mask)
 
-    :field model.decoder:
+    :attribute model.decoder:
         takes decoder params and returns decoder outputs after attn
 
-    :field model.output:
+    :attribute model.output:
         takes decoder outputs and returns distr over dictionary
     """
     def __init__(
@@ -286,7 +286,8 @@ class TorchGeneratorModel(nn.Module):
 
 
 class TorchGeneratorAgent(TorchAgent):
-    """Abstract Generator agent. Only meant to be extended.
+    """
+    Abstract Generator agent. Only meant to be extended.
 
     TorchGeneratorAgent aims to handle much of the bookkeeping and
     infrastructure work for any generative models, like seq2seq or transformer.
@@ -411,18 +412,23 @@ class TorchGeneratorAgent(TorchAgent):
         return self.dict.vec2txt(new_vec)
 
     def build_model(self):
-        """Construct the model. The model should be set to self.model, and support
-        the TorchGeneratorModel interface."""
+        """
+        Construct the model.
+
+        The model should be set to self.model, and support
+        the TorchGeneratorModel interface.
+        """
         raise NotImplementedError(
             "AbstractClass: build_model must be implemented by the user."
         )
 
     def build_criterion(self):
-        """Constructs the loss function. By default torch.nn.CrossEntropyLoss.
+        """
+        Constructs the loss function. By default torch.nn.CrossEntropyLoss.
         The criterion function should be set to self.criterion.
 
         If overridden, this model should (1) handle calling cuda and (2)
-            produce a sum that can be used for a per-token loss.
+        produce a sum that can be used for a per-token loss.
         """
         self.criterion = nn.CrossEntropyLoss(
             ignore_index=self.NULL_IDX, reduction='sum'
@@ -441,7 +447,9 @@ class TorchGeneratorAgent(TorchAgent):
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
-        """Pre-initialize CUDA buffer by doing fake forward pass."""
+        """
+        Pre-initialize CUDA buffer by doing fake forward pass.
+        """
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
@@ -457,7 +465,9 @@ class TorchGeneratorAgent(TorchAgent):
                     raise e
 
     def reset_metrics(self):
-        """Reset metrics for reporting loss and perplexity."""
+        """
+        Reset metrics for reporting loss and perplexity.
+        """
         super().reset_metrics()
         self.metrics['loss'] = 0.0
         self.metrics['nll_loss'] = 0.0
@@ -484,7 +494,8 @@ class TorchGeneratorAgent(TorchAgent):
         return shared
 
     def report(self):
-        """Report loss and perplexity from model's perspective.
+        """
+        Report loss and perplexity from model's perspective.
 
         Note that this includes predicting __END__ and __UNK__ tokens and may
         differ from a truly independent measurement.
@@ -509,7 +520,9 @@ class TorchGeneratorAgent(TorchAgent):
         return base
 
     def vectorize(self, *args, **kwargs):
-        """Override vectorize for generative models."""
+        """
+        Override vectorize for generative models.
+        """
         kwargs['add_start'] = False  # model does this in module code
         kwargs['add_end'] = True  # we do want this
         return super().vectorize(*args, **kwargs)
@@ -554,7 +567,9 @@ class TorchGeneratorAgent(TorchAgent):
             return loss
 
     def train_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
         batchsize = batch.text_vec.size(0)
         # helps with memory usage
         self._init_cuda_buffer(batchsize, self.truncate or 256)
@@ -580,7 +595,9 @@ class TorchGeneratorAgent(TorchAgent):
                 raise e
 
     def _write_beam_dots(self, text_vecs, beams):
-        """Write the beam dot files to disk."""
+        """
+        Write the beam dot files to disk.
+        """
         for i, b in enumerate(beams):
             dot_graph = b.get_beam_dot(dictionary=self.dict, n_best=3)
             image_name = self._v2t(text_vecs[i, -20:])
@@ -590,7 +607,9 @@ class TorchGeneratorAgent(TorchAgent):
             )
 
     def eval_step(self, batch):
-        """Evaluate a single batch of examples."""
+        """
+        Evaluate a single batch of examples.
+        """
         if batch.text_vec is None:
             return
         bsz = batch.text_vec.size(0)
@@ -659,24 +678,33 @@ class TorchGeneratorAgent(TorchAgent):
 
     def beam_search(self, model, batch, beam_size, start=1, end=2,
                     pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0):
-        """Beam search given the model and Batch
-
+        """
+        Beam search given the model and Batch
 
         This function expects to be given a TorchGeneratorModel. Please refer to
         that interface for information.
 
-        :param TorchGeneratorModel model: Implements the above interface
-        :param Batch batch: Batch structure with input and labels
-        :param int beam_size: Size of each beam during the search
-        :param int start: start of sequence token
-        :param int end: end of sequence token
-        :param int pad: padding token
-        :param int min_length: minimum length of the decoded sequence
-        :param int min_n_best: minimum number of completed hypothesis generated
-            from each beam
-        :param int max_ts: the maximum length of the decoded sequence
+        :param TorchGeneratorModel model:
+            Implements the above interface
+        :param Batch batch:
+            Batch structure with input and labels
+        :param int beam_size:
+            Size of each beam during the search
+        :param int start:
+            start of sequence token
+        :param int end:
+            end of sequence token
+        :param int pad:
+            padding token
+        :param int min_length:
+            minimum length of the decoded sequence
+        :param int min_n_best:
+            minimum number of completed hypothesis generated from each beam
+        :param int max_ts:
+            the maximum length of the decoded sequence
 
-        :return: tuple (beam_pred_scores, n_best_pred_scores, beams)
+        :return:
+            tuple (beam_pred_scores, n_best_pred_scores, beams)
 
             - beam_preds_scores: list of (prediction, score) pairs for each sample in
               Batch
@@ -751,13 +779,15 @@ class TorchGeneratorAgent(TorchAgent):
 
 
 class _mydefaultdict(defaultdict):
-    """Get function also uses default_factory for this defaultdict.
+    """
+    Get function also uses default_factory for this defaultdict.
 
     This makes dict.get() behave like dict[] if a default is not provided.
     """
 
     def get(self, key, default=None):
-        """Return value at key or default if key is not in dict.
+        """
+        Return value at key or default if key is not in dict.
 
         If a default is not provided, return the default factory value.
         """
@@ -766,7 +796,8 @@ class _mydefaultdict(defaultdict):
 
 
 class PerplexityEvaluatorAgent(TorchGeneratorAgent):
-    """Subclass for doing standardized perplexity evaluation.
+    """
+    Subclass for doing standardized perplexity evaluation.
 
     This is designed to be used in conjunction with the PerplexityWorld at
     parlai/scripts/eval_ppl.py. It uses the `next_word_probability` function
@@ -789,12 +820,15 @@ class PerplexityEvaluatorAgent(TorchGeneratorAgent):
         This probability is based on both nn input and partial true output.
         This is used to calculate the per-word perplexity.
 
-        :param observation: input observation dict
-        :param partial_out: -- list of previous "true" words
+        :param observation:
+            input observation dict
 
-        :return: a dict, where each key is a word and each value is a
-            probability score for that word.
-            Unset keys will use a probability of 1e-7.
+        :param partial_out:
+            list of previous "true" words
+
+        :return:
+            a dict, where each key is a word and each value is a probability
+            score for that word.  Unset keys will use a probability of 1e-7.
 
             e.g. {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
@@ -830,16 +864,24 @@ class Beam(object):
 
     def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1,
                  eos_token=2, min_n_best=3, cuda='cpu', block_ngram=0):
-        """Instantiate Beam object.
+        """
+        Instantiate Beam object.
 
-        :param beam_size: number of hypothesis in the beam
-        :param min_length: minimum length of the predicted sequence
-        :param padding_token: Set to 0 as usual in ParlAI
-        :param bos_token: Set to 1 as usual in ParlAI
-        :param eos_token: Set to 2 as usual in ParlAI
-        :param min_n_best: Beam will not be done unless this amount of finished
-                           hypothesis (with EOS) is done
-        :param cuda: What device to use for computations
+        :param beam_size:
+            number of hypothesis in the beam
+        :param min_length:
+            minimum length of the predicted sequence
+        :param padding_token:
+            Set to 0 as usual in ParlAI
+        :param bos_token:
+            Set to 1 as usual in ParlAI
+        :param eos_token:
+            Set to 2 as usual in ParlAI
+        :param min_n_best:
+            Beam will not be done unless this amount of finished hypothesis
+            (with EOS) is done
+        :param cuda:
+            What device to use for computations
         """
         self.beam_size = beam_size
         self.min_length = min_length
@@ -870,19 +912,27 @@ class Beam(object):
 
     @staticmethod
     def find_ngrams(input_list, n):
-        """Get list of ngrams with context length n-1"""
+        """
+        Get list of ngrams with context length n-1
+        """
         return list(zip(*[input_list[i:] for i in range(n)]))
 
     def get_output_from_current_step(self):
-        """Get the outputput at the current step."""
+        """
+        Get the outputput at the current step.
+        """
         return self.outputs[-1]
 
     def get_backtrack_from_current_step(self):
-        """Get the backtrack at the current step."""
+        """
+        Get the backtrack at the current step.
+        """
         return self.bookkeep[-1]
 
     def advance(self, softmax_probs):
-        """Advance the beam one step."""
+        """
+        Advance the beam one step.
+        """
         voc_size = softmax_probs.size(-1)
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
@@ -951,11 +1001,14 @@ class Beam(object):
                 self.eos_top_ts = len(self.outputs) - 1
 
     def done(self):
-        """Return whether beam search is complete."""
+        """
+        Return whether beam search is complete.
+        """
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
-        """Get single best hypothesis.
+        """
+        Get single best hypothesis.
 
         :return: hypothesis sequence and the final score
         """
@@ -966,9 +1019,14 @@ class Beam(object):
     def get_hyp_from_finished(self, hypothesis_tail):
         """Extract hypothesis ending with EOS at timestep with hyp_id.
 
-        :param timestep: timestep with range up to len(self.outputs)-1
-        :param hyp_id: id with range up to beam_size-1
-        :return: hypothesis sequence
+        :param timestep:
+            timestep with range up to len(self.outputs)-1
+
+        :param hyp_id:
+            id with range up to beam_size-1
+
+        :return:
+            hypothesis sequence
         """
         assert (self.outputs[hypothesis_tail.timestep]
                 [hypothesis_tail.hypid] == self.eos)
@@ -985,7 +1043,9 @@ class Beam(object):
 
     @staticmethod
     def get_pretty_hypothesis(list_of_hypotails):
-        """Return prettier version of the hypotheses."""
+        """
+        Return prettier version of the hypotheses.
+        """
         hypothesis = []
         for i in list_of_hypotails:
             hypothesis.append(i.tokenid)
@@ -997,8 +1057,11 @@ class Beam(object):
     def get_rescored_finished(self, n_best=None):
         """Return finished hypotheses in rescored order.
 
-        :param n_best: how many n best hypothesis to return
-        :return: list with hypothesis
+        :param n_best:
+            how many n best hypothesis to return
+
+        :return:
+            list with hypothesis
         """
         rescored_finished = []
         for finished_item in self.finished:
@@ -1019,11 +1082,10 @@ class Beam(object):
         return srted
 
     def check_finished(self):
-        """Check if self.finished is empty and add hyptail in that case.
+        """
+        Check if self.finished is empty and add hyptail in that case.
 
         This will be suboptimal hypothesis since the model did not get any EOS
-
-        :returns: None
         """
         if len(self.finished) == 0:
             # we change output because we want outputs to have eos
@@ -1038,11 +1100,17 @@ class Beam(object):
             self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):
-        """Create pydot graph representation of the beam.
+        """
+        Create pydot graph representation of the beam.
 
-        :param outputs: self.outputs from the beam
-        :param dictionary: tok 2 word dict to save words in the tree nodes
-        :returns: pydot graph
+        :param outputs:
+            self.outputs from the beam
+
+        :param dictionary:
+            tok 2 word dict to save words in the tree nodes
+
+        :returns:
+            pydot graph
         """
         try:
             import pydot
