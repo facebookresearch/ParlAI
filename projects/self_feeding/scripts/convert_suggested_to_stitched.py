@@ -6,7 +6,7 @@
 from argparse import ArgumentParser
 import json
 
-from parlai.projects.metadialog.utils import (
+from parlai.projects.self_feeding.utils import (
     Parley,
     extract_parlai_episodes,
     add_person_tokens,
@@ -28,7 +28,7 @@ def main(config):
     input: a .suggested file of logs (in ParlaiDialog format) from Mturk task 2, each of
         which starts with an initial prompt or topic request, and ends with a y
         that corresponds to the y_exp given in the previous turn
-    output: a .stitched file (in metadialog format) with the original mistake by the bot
+    output: a .stitched file (in self-feeding format) with the original mistake by the bot
         replace with the mturked y (based on y_exp)
     """
     examples = []
@@ -58,12 +58,12 @@ def main(config):
                 history.append(parley.context)
                 history.append(parley.response)
 
-    # Write new episodes to metadialog format
+    # Write new episodes to self-feeding format
     with open(config['outfile'], 'w') as outfile:
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 
-    print(f"Extracted {len(examples)} metadialog episodes out of "
+    print(f"Extracted {len(examples)} self-feeding episodes out of "
           f"{len(episodes)} parlai episodes and wrote them to {config['outfile']}.")
 
 

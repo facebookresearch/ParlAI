@@ -6,7 +6,7 @@
 from argparse import ArgumentParser
 import json
 
-from parlai.projects.metadialog.utils import (
+from parlai.projects.self_feeding.utils import (
     Parley,
     extract_parlai_episodes,
     add_person_tokens,
@@ -27,7 +27,7 @@ def main(config):
 
     input: a .sliced file of logs (in ParlaiDialog format) from Mturk task 1, each of
         which starts with an initial prompt or topic request, and ends with a y_exp
-    output: a .unfiltered file (in metadialog format) with every utterance output by
+    output: a .unfiltered file (in self-feeding format) with every utterance output by
         bot used as a label (i.e., act as though the bot was a human and we want to
         train in a normal supervised way).
     """
@@ -52,12 +52,12 @@ def main(config):
                 history.append(parley.context)
                 history.append(parley.response)
 
-    # Write new episodes to metadialog format
+    # Write new episodes to self-feeding format
     with open(config['outfile'], 'w') as outfile:
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 
-    print(f"Extracted {len(examples)} metadialog episodes out of "
+    print(f"Extracted {len(examples)} self-feeding episodes out of "
           f"{len(episodes)} parlai episodes and wrote them to {config['outfile']}.")
 
 

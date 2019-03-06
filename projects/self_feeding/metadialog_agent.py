@@ -3,9 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""A metadialog chatbot (a chatbot wrapped with an NRC and QGen)
+"""A self-feeding chatbot (a chatbot wrapped with an NRC and QGen)
 
-A metadialog chatbot consists of three components:
+A self-feeding chatbot consists of three components:
 - dialog agent: this is a typical model for handlin a conversastion(e.g. Transformer)
 - feedback classifier: this classifies incoming user responses
 - question generator: when the feedback classifier predicts a sufficiently negative
@@ -26,7 +26,7 @@ from parlai.agents.transformer.transformer import TransformerRankerAgent
 from .feedback_classifier.feedback_classifier import (
     FeedbackClassifierRegex,
 )
-from .modules import MetadialogModel
+from .modules import SelfFeedingModel
 from .utils import add_person_tokens
 
 EPS = 1e-9
@@ -49,14 +49,14 @@ THANKS = "Thanks! I'll try to remember that."
 NEWTOPIC = "Can you pick a new topic for us to talk about now?"
 
 
-class MetadialogAgent(TransformerRankerAgent):
+class SelfFeedingAgent(TransformerRankerAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         super().add_cmdline_args(argparser)
-        MetadialogModel.add_cmdline_args(argparser)
+        SelfFeedingModel.add_cmdline_args(argparser)
 
-        agent = argparser.add_argument_group('MetadialogAgent')
+        agent = argparser.add_argument_group('Self-feeding Agent')
         agent.add_argument('--request-rating', type='bool', default=False,
                            help="If True, ocassionally request ratings")
         agent.add_argument('--rating-frequency', type=float, default=0.01,
@@ -107,7 +107,7 @@ class MetadialogAgent(TransformerRankerAgent):
             help="Mark as true if you are in a setting where you are only doing "
                  "evaluation, and always with the same fixed candidate set.")
 
-        variants = argparser.add_argument_group('Metadialog Variants')
+        variants = argparser.add_argument_group('Self-feeding Variants')
         variants.add_argument('-rgx', '--regex', type='bool', default=False,
                               help="If True, classify sentiment using regexes instead "
                               "of model")
@@ -183,7 +183,7 @@ class MetadialogAgent(TransformerRankerAgent):
 
     # NOTE: This is the only method of TransformerAgent being overwritten
     def build_model(self):
-        self.model = MetadialogModel(self.opt, self.dict)
+        self.model = SelfFeedingModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             for embeddings in [getattr(self.model, 'dia_embeddings', None),
                                getattr(self.model, 'exp_embeddings', None),
@@ -730,8 +730,8 @@ class MetadialogAgent(TransformerRankerAgent):
         return cands, cand_vecs
 
     def _extract_prev_responses(self, batch):
-        # Extract prev_responses for metadialog-formatted examples
-        warn_once("WARNING: This code is specific to metadialog-formatted examples")
+        # Extract prev_responses for self-feeding formatted examples
+        warn_once("WARNING: This code is specific to self-feeding formatted examples")
 
         # TODO: Pull out p1/p2 once elsewhere, not every time
         p1 = self.dict.txt2vec('__p1__')[0]

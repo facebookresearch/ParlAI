@@ -34,7 +34,7 @@ from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 
-from parlai.projects.metadialog.utils import Parley
+from parlai.projects.self_feeding.utils import Parley
 
 PARLAIHOME = os.environ['PARLAIHOME']
 NUM_INLINE_CANDS = 20
@@ -140,6 +140,6 @@ if __name__ == '__main__':
     parser = setup_args()
     opt = parser.parse_args()
     opt['dict_file'] = os.path.splitext(opt['model_file'])[0] + '.dict'
-    opt['task'] = 'metadialog:convai2:' + opt['deploy_file']
+    opt['task'] = 'self_feeding:convai2:' + opt['deploy_file']
     opt['outfile'] = PARLAIHOME + '/data/convai2meta/' + opt['supp_file'] + '.txt'
     create_supp(opt)

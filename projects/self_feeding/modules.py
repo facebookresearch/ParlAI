@@ -11,10 +11,10 @@ import torch.nn as nn
 from parlai.agents.transformer.modules import TransformerEncoder
 
 
-class MetadialogModel(nn.Module):
+class SelfFeedingModel(nn.Module):
     @classmethod
     def add_cmdline_args(cls, argparser):
-        model = argparser.add_argument_group('MetadialogModel')
+        model = argparser.add_argument_group('Self Feeding Model')
 
         model.add_argument('-shl', '--sen-head-layers', type=int,
                            default=1, help="The number of linear layers in the "
