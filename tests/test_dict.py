@@ -68,13 +68,15 @@ class TestDictionary(unittest.TestCase):
         appropriate error.
         """
         # Download model, move to a new location
-        testing_utils.download_unittest_models()
         datapath = os.path.join(
             (os.path.dirname(os.path.dirname(os.path.dirname(
              os.path.realpath(__file__))))),
-            'ParlAI',
-            'data'
+            'ParlAI/data',
         )
+
+        shutil.rmtree(os.path.join(datapath, 'models/unittest'))
+        testing_utils.download_unittest_models()
+
         zoo_path = 'models:unittest/seq2seq/model'
         model_path = modelzoo_path(datapath, zoo_path)
         os.remove(model_path + '.dict')
@@ -84,6 +86,21 @@ class TestDictionary(unittest.TestCase):
                 task='babi:task1k:1',
                 model_file=model_path
             ))
+
+    def test_train_model_no_df(self):
+        """Check that attempting to train a model without specifying a dict_file
+        or model_file fails
+        """
+        import parlai.scripts.train_model as tms
+        with testing_utils.capture_output():
+            parser = tms.setup_args()
+            parser.set_params(
+                task='babi:task1k:1',
+                model='seq2seq'
+            )
+            popt = parser.parse_args(print_args=False)
+            with self.assertRaises(RuntimeError):
+                tms.TrainLoop(popt)
 
 
 if __name__ == '__main__':
