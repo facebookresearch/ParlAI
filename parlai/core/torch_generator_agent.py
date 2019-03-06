@@ -6,11 +6,8 @@
 
 
 """
-**BETA**: This module is in beta. Feedback is most welcome, and the API may change
-underneath you.
-
-Generic Pytorch-based Generator agent. Implements quite a bit of boilerplate,
-including Beam search.
+Generic PyTorch-based Generator agent. Implements quite a bit of boilerplate,
+including forced-decoding loss and beam search.
 
 Contains the following utilities:
 
@@ -39,9 +36,14 @@ class TorchGeneratorModel(nn.Module):
     """
     This Interface expects you to implement model with the following reqs:
 
-    :field model.encoder: takes input returns tuple (enc_out, enc_hidden, attn_mask)
-    :field model.decoder: takes decoder params and returns decoder outputs after attn
-    :field model.output: takes decoder outputs and returns distr over dictionary
+    :field model.encoder:
+        takes input returns tuple (enc_out, enc_hidden, attn_mask)
+
+    :field model.decoder:
+        takes decoder params and returns decoder outputs after attn
+
+    :field model.output:
+        takes decoder outputs and returns distr over dictionary
     """
     def __init__(
         self,
@@ -65,14 +67,24 @@ class TorchGeneratorModel(nn.Module):
     def decode_greedy(self, encoder_states, bsz, maxlen):
         """Greedy search
 
-        :param int bsz: Batch size. Because encoder_states is model-specific, it
-            cannot infer this automatically.
-        :param encoder_states: Output of the encoder model.
-        :type encoder_states: model specific
-        :param int maxlen: Maximum decoding length
+        :param int bsz:
+            Batch size. Because encoder_states is model-specific, it cannot
+            infer this automatically.
 
-        :return: pair (logits, choices) of the greedy decode
-        :rtype: (FloatTensor[bsz, maxlen, vocab], LongTensor[bsz, maxlen])
+        :param encoder_states:
+            Output of the encoder model.
+
+        :type encoder_states:
+            Model specific
+
+        :param int maxlen:
+            Maximum decoding length
+
+        :return:
+            pair (logits, choices) of the greedy decode
+
+        :rtype:
+            (FloatTensor[bsz, maxlen, vocab], LongTensor[bsz, maxlen])
         """
         xs = self._starts(bsz)
         incr_state = None
@@ -93,17 +105,27 @@ class TorchGeneratorModel(nn.Module):
         return logits, xs
 
     def decode_forced(self, encoder_states, ys):
-        """Decode with a fixed, true sequence, computing loss. Useful for
+        """
+        Decode with a fixed, true sequence, computing loss. Useful for
         training, or ranking fixed candidates.
 
-        :param ys: the prediction targets. Contains both
-            the start and end tokens.
-        :type ys: LongTensor[bsz, time]
-        :param encoder_states: Output of the encoder. Model specific types.
-        :type encoder_states: model specific
+        :param ys:
+            the prediction targets. Contains both the start and end tokens.
 
-        :return: pair (logits, choices) containing the logits and MLE predictions
-        :rtype: (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys])
+        :type ys:
+            LongTensor[bsz, time]
+
+        :param encoder_states:
+            Output of the encoder. Model specific types.
+
+        :type encoder_states:
+            model specific
+
+        :return:
+            pair (logits, choices) containing the logits and MLE predictions
+
+        :rtype:
+            (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys])
         """
         bsz = ys.size(0)
         seqlen = ys.size(1)
@@ -115,7 +137,8 @@ class TorchGeneratorModel(nn.Module):
         return logits, preds
 
     def reorder_encoder_states(self, encoder_states, indices):
-        """Reorder encoder states according to a new set of indices.
+        """
+        Reorder encoder states according to a new set of indices.
 
         This is an abstract method, and *must* be implemented by the user.
 
@@ -140,22 +163,32 @@ class TorchGeneratorModel(nn.Module):
                       [0.3]
                       [0.3]]
 
-        :param encoder_states: output from encoder. type is model specific.
-        :type encoder_states: model specific
-        :param indices: the indices to select over. The user must support
-            non-tensor inputs.
+        :param encoder_states:
+            output from encoder. type is model specific.
+
+        :type encoder_states:
+            model specific
+
+        :param indices:
+            the indices to select over. The user must support non-tensor
+            inputs.
+
         :type indices: list[int]
 
-        :return: The re-ordered encoder states. It should be of the same type as
+        :return:
+            The re-ordered encoder states. It should be of the same type as
             encoder states, and it must be a valid input to the decoder.
-        :rtype: model specific
+
+        :rtype:
+            model specific
         """
         raise NotImplementedError(
             "reorder_encoder_states must be implemented by the model"
         )
 
     def reorder_decoder_incremental_state(self, incremental_state, inds):
-        """Reorder incremental state for the decoder.
+        """
+        Reorder incremental state for the decoder.
 
         Used to expand selected beams in beam_search. Unlike reorder_encoder_states,
         implementing this method is optional. However, without incremental decoding,
@@ -165,16 +198,26 @@ class TorchGeneratorModel(nn.Module):
         In order to fall back to non-incremental decoding, just return None from this
         method.
 
-        :param incremental_state: second output of model.decoder
-        :type incremental_state: model specific
-        :param inds: indices to select and reorder over.
-        :type inds: LongTensor[n]
+        :param incremental_state:
+            second output of model.decoder
 
-        :return: The re-ordered decoder incremental states. It should be the same
-            type as incremental_state, and usable as an input to the decoder. This
-            method should return None if the model does not support incremental
-            decoding.
-        :rtype: model specific
+        :type incremental_state:
+            model specific
+
+        :param inds:
+            indices to select and reorder over.
+
+        :type inds:
+            LongTensor[n]
+
+        :return:
+            The re-ordered decoder incremental states. It should be the same
+            type as incremental_state, and usable as an input to the decoder.
+            This method should return None if the model does not support
+            incremental decoding.
+
+        :rtype:
+            model specific
         """
         raise NotImplementedError(
             "reorder_decoder_incremental_state must be implemented by model"
@@ -184,21 +227,34 @@ class TorchGeneratorModel(nn.Module):
                 bsz=None):
         """Get output predictions from the model.
 
-        :param xs: input to the encoder
-        :type xs: LongTensor[bsz, seqlen]
-        :param ys: Expected output from the decoder. Used
-            for teacher forcing to calculate loss.
-        :type ys: LongTensor[bsz, outlen]
-        :param prev_enc: if you know you'll pass in the same xs multiple times,
-            you can pass in the encoder output from the last forward pass to skip
-            recalcuating the same encoder output.
-        :param maxlen: max number of tokens to decode. if not set, will use the
-            length of the longest label this model has seen. ignored when ys is not
-            None.
-        :param bsz: if ys is not provided, then you must specify the bsz for
-            greedy decoding.
+        :param xs:
+            input to the encoder
 
-        :return: (scores, candidate_scores, encoder_states) tuple
+        :type xs:
+            LongTensor[bsz, seqlen]
+
+        :param ys:
+            Expected output from the decoder. Used
+            for teacher forcing to calculate loss.
+
+        :type ys:
+            LongTensor[bsz, outlen]
+
+        :param prev_enc:
+            if you know you'll pass in the same xs multiple times, you can pass
+            in the encoder output from the last forward pass to skip
+            recalcuating the same encoder output.
+
+        :param maxlen:
+            max number of tokens to decode. if not set, will use the length of
+            the longest label this model has seen. ignored when ys is not None.
+
+        :param bsz:
+            if ys is not provided, then you must specify the bsz for greedy
+            decoding.
+
+        :return:
+            (scores, candidate_scores, encoder_states) tuple
 
             - scores contains the model's predicted token scores.
               (FloatTensor[bsz, seqlen, num_features])
