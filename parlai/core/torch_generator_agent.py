@@ -380,8 +380,8 @@ class TorchGeneratorAgent(TorchAgent):
         or otherwise force a null backward pass after an OOM.
         """
         return Batch(
-            text_vec=torch.zeros(batchsize, maxlen).long().cuda(),
-            label_vec=torch.zeros(batchsize, 2).long().cuda(),
+            text_vec=torch.ones(batchsize, maxlen).long().cuda(),
+            label_vec=torch.ones(batchsize, 2).long().cuda(),
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
