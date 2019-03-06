@@ -301,6 +301,52 @@ def name_to_agent_class(name):
     return class_name
 
 
+def compare_init_model_opts(opt, curr_opts):
+    optfile = opt.get('init_model', '') + '.opt'
+    if not os.path.isfile(optfile):
+        return
+    init_model_opt = self._load_opt_file(optfile)
+
+    extra_opts = {}
+    different_opts = {}
+
+    # search through init model opts
+    for k, v in init_model_opt.items()
+        if k in init_model_opt and init_model_opt[k] != curr_opt[k]:
+            different_opts[k] = v
+
+    # search through opts to load
+    for k, v in curr_opt.items():
+        if k not in init_model_opt:
+            extra_opts[k] = v
+
+    # print warnings
+    extra_strs = ['{}: {}'.format(k, v) for k, v in extra_opts.items()]
+    if extra_strs:
+        print('[ WARNING ] : your model is being loaded with opts that do not '
+              'exist in the model you are initializing the weights with: '
+              '{}'.format(','.join(extra_strs)))
+
+    different_strs = ['--{} {}'.format(k, v).replace('_', '-') for k, v in
+                      different_opts.items()]
+    if different_strs:
+        print('[ WARNING ] : your model is being loaded with opts that differ '
+              ' from the model you are initializing the weights with. Add the '
+              ' following args to your run command to change this:  ')
+
+
+def _load_opt_file(filepath):
+    try:
+        # try json first
+        with open(optfile, 'r') as handle:
+            opt = json.load(handle)
+    except UnicodeDecodeError:
+        # oops it's pickled
+        with open(optfile, 'rb') as handle:
+            opt = pickle.load(handle)
+    return opt
+
+
 def load_agent_module(opt):
     """Load agent options and module from file if opt file exists.
 
@@ -314,14 +360,7 @@ def load_agent_module(opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
-        try:
-            # try json first
-            with open(optfile, 'r') as handle:
-                new_opt = json.load(handle)
-        except UnicodeDecodeError:
-            # oops it's pickled
-            with open(optfile, 'rb') as handle:
-                new_opt = pickle.load(handle)
+        new_opt = _load_opt_file(optfile)
         if 'batchindex' in new_opt:
             # This saved variable can cause trouble if we switch to BS=1 at test time
             del new_opt['batchindex']
@@ -338,6 +377,10 @@ def load_agent_module(opt):
                 new_opt[k] = v
         new_opt['model_file'] = model_file
         model_class = get_agent_module(new_opt['model'])
+
+        # if we want to load weights from --init-model, compare opts with
+        # loaded ones
+        compare_init_model_opts(opt, new_opt)
 
         # check for model version
         if hasattr(model_class, 'model_version'):
