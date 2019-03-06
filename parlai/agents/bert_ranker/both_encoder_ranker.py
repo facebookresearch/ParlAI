@@ -39,6 +39,9 @@ class BothEncoderRankerAgent(TorchAgent):
             type=int,
             default=-1,
             help='crossencoder will be fed those many elements at train or eval time.')
+        parser.set_defaults(
+            encode_candidate_vecs=True
+        )
 
     def __init__(self, opt, shared=None):
         opt['lr_scheduler'] = 'none'
@@ -71,14 +74,6 @@ class BothEncoderRankerAgent(TorchAgent):
     def dictionary_class():
         return BertDictionaryAgent
 
-    def _set_text_vec(self, *args, **kwargs):
-        obs = super()._set_text_vec(*args, **kwargs)
-        # concatenate the [CLS] and [SEP] tokens
-        if obs is not None and 'text_vec' in obs:
-            obs['text_vec'] = surround(obs['text_vec'], self.START_IDX,
-                                       self.END_IDX)
-        return obs
-
     def train_step(self, batch):
         self.biencoder.train_step(batch)
         # the crossencoder requires batches that are smaller.
@@ -101,9 +96,7 @@ class BothEncoderRankerAgent(TorchAgent):
         if output_biencoder is None:
             return None
         new_candidate_vecs = [
-            [surround(batch.text_vec.new_tensor(self.dict.txt2vec(c)),
-                      self.START_IDX, self.END_IDX)
-             for c in cands[0:self.top_n_bi]]
+            self.biencoder.vectorize_fixed_candidates(cands[0:self.top_n_bi])
             for cands in output_biencoder.text_candidates
         ]
         new_candidates = [[c for c in cands[0:self.top_n_bi]]
