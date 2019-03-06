@@ -68,6 +68,8 @@ This flag is used to determine which candidates to rank during training.
 There are several options:
 
 Possible sources of candidates:
+
+
 1. **batch:**
   Use all labels in the batch as the candidate set (with all but the
   example's label being treated as negatives).
