@@ -1,9 +1,11 @@
-# ![mage](scribe.png) LIGHT: Language in Interactive Games with Humans and Text
+# <img width="5%" src="scribe.png"/> LIGHT
 
-<p align="center"><img width="15%" src="bar.png" /></p>
+### Language in Interactive Games with Humans and Text
+
+<p align="center"><img width="60%" src="tavern.png" /></p>
 
 The LIGHT project is a large scale fantasy text adventure game platform for training agents
-that can both converse and act. 
+that can both talk and act. 
 
 ## Abstract
 
@@ -19,13 +21,14 @@ relate to agents that can talk and act successfully.
 
 ## Datasets
 
-Available very very soon.
-You can train your own ParlAI agent on the LIGHT task with
+Available here very soon.
+
+You will be able to train your own ParlAI agent on the LIGHT tasks with
 `-t light`.
 
 ## Pretrained Models
 
-Finalized models are not yet released. Please check back here in the future.
+Models will be released soon. Please check back here in the future.
 
 ## Citation
 
