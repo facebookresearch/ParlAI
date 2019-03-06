@@ -1,9 +1,7 @@
 # <img width="5%" src="scribe.png"/> LIGHT
 
 ### Learning in Interactive Games with Humans and Text
-
-<p align="center"><img width="60%" src="tavern.png" /></p>
-
+<p align="center"><img width="90%" src="tavern.png" /></p>
 The LIGHT project is a large scale fantasy text adventure game platform for training agents
 that can both talk and act. 
 
