@@ -1053,7 +1053,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     return output, lens
 
 
-def padded_3d(tensors, pad_idx=0, use_cuda=0):
+def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long):
     """Make 3D padded tensor for list of lists of 1D tensors or lists.
 
     :param tensors:  list of lists of 1D tensors (or lists)
@@ -1069,14 +1069,14 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0):
     # pad empty tensors
     c = max(c, 1)
 
-    output = torch.LongTensor(a, b, c).fill_(pad_idx)
+    output = torch.full((a, b, c), pad_idx, dtype=dtype)
 
     for i, row in enumerate(tensors):
         for j, item in enumerate(row):
             if len(item) == 0:
                 continue
             if not isinstance(item, torch.Tensor):
-                item = torch.LongTensor(item)
+                item = torch.Tensor(item, dtype=dtype)
             output[i, j, :len(item)] = item
 
     if use_cuda:

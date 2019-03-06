@@ -457,6 +457,9 @@ class ParlaiParser(argparse.ArgumentParser):
             '-mf', '--model-file', default=None,
             help='model file name for loading and saving models')
         model_args.add_argument(
+            '-im', '--init-model', default=None, type=str,
+            help='load model weights and dict from this file')
+        model_args.add_argument(
             '--dict-class',
             hidden=True,
             help='the class of the dictionary agent uses')

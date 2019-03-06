@@ -7,8 +7,8 @@
 import unittest
 import time
 import uuid
-import os
 from unittest import mock
+import parlai.core.testing_utils as testing_utils
 from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.agents import AssignState
 
@@ -447,7 +447,7 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
     def tearDown(self):
         self.fake_socket.close()
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_init_and_reg_shutdown(self):
         '''Test initialization of a socket manager'''
         self.assertFalse(self.fake_socket.connected)
@@ -482,7 +482,7 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
                 "than {}".format(val_func(), val)
             time.sleep(0.1)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_init_and_socket_shutdown(self):
         '''Test initialization of a socket manager with a failed shutdown'''
         self.assertFalse(self.fake_socket.connected)
@@ -519,7 +519,7 @@ class TestSocketManagerSetupAndFunctions(unittest.TestCase):
         self.assertFalse(nop_called)
         socket_manager.shutdown()
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_init_and_socket_shutdown_then_restart(self):
         '''Test restoring connection to a socket'''
         self.assertFalse(self.fake_socket.connected)
@@ -653,7 +653,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.socket_manager.shutdown()
         self.fake_socket.close()
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_init_state(self):
         '''Ensure all of the initial state of the socket_manager is ready'''
         self.assertEqual(self.socket_manager.server_url, 'https://127.0.0.1')
@@ -679,7 +679,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.assertFalse(self.socket_manager.is_shutdown)
         self.assertEqual(self.socket_manager.get_my_sender_id(), self.WORLD_ID)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_needed_heartbeat(self):
         '''Ensure needed heartbeat sends heartbeats at the right time'''
         self.socket_manager._safe_send = mock.MagicMock()
@@ -729,7 +729,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.assertEqual(used_packet.requires_ack, False)
         self.assertEqual(used_packet.blocking, False)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_ack_send(self):
         '''Ensure acks are being properly created and sent'''
         self.socket_manager._safe_send = mock.MagicMock()
@@ -761,7 +761,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         send_thread.start()
         time.sleep(0.02)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_blocking_ack_packet_send(self):
         '''Checks to see if ack'ed blocking packets are working properly'''
         self.socket_manager._safe_send = mock.MagicMock()
@@ -790,7 +790,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.socket_manager._safe_send.assert_not_called()
         self.socket_manager._safe_put.assert_not_called()
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_non_blocking_ack_packet_send(self):
         '''Checks to see if ack'ed non-blocking packets are working'''
         self.socket_manager._safe_send = mock.MagicMock()
@@ -823,7 +823,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.assertDictEqual(used_packet_dict['content'],
                              self.MESSAGE_SEND_PACKET_3.as_dict())
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_non_ack_packet_send(self):
         '''Checks to see if non-ack'ed packets are working'''
         self.socket_manager._safe_send = mock.MagicMock()
@@ -846,7 +846,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         self.assertDictEqual(used_packet_dict['content'],
                              self.MESSAGE_SEND_PACKET_2.as_dict())
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_simple_packet_channel_management(self):
         '''Ensure that channels are created, managed, and then removed
         as expected
@@ -909,7 +909,7 @@ class TestSocketManagerRoutingFunctionality(unittest.TestCase):
         time.sleep(0.1)
         self.assertEqual(len(self.socket_manager.queues), 0)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_safe_put(self):
         '''Test safe put and queue retrieval mechanisms'''
         self.socket_manager._send_packet = mock.MagicMock()
@@ -987,7 +987,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.socket_manager.shutdown()
         self.fake_socket.close()
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_alive_send_and_disconnect(self):
         acked_packet = None
         incoming_hb = None
@@ -1064,7 +1064,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         self.assertEqual(self.dead_assignment_id, TEST_ASSIGNMENT_ID_1)
         self.assertGreater(hb_count, 1)
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_failed_ack_resend(self):
         '''Ensures when a message from the manager is dropped, it gets
         retried until it works as long as there hasn't been a disconnect
@@ -1140,7 +1140,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
             6,
         )
 
-    @unittest.skipIf(os.environ.get('TRAVIS'), 'Travis fails socket setup')
+    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_one_agent_disconnect_other_alive(self):
         acked_packet = None
         incoming_hb = None
