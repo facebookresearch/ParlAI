@@ -96,7 +96,7 @@ Task 6: Advanced Functionality - React Task Demo
 
 ParlAI MTurk allows creation of arbitrary tasks, so long as the required components can be created in React. The `React Task Demo <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/react_task_demo>`__ task exists to show how this is set up for both cases where you are building your own components from scratch and cases where you want to import other components as dependancies.
 
-This task consists of 3 agents participating in different roles with different frontend needs. By setting ``MTurkAgent.id`` to the correct values, different interfaces are displayed to an 'Asker' who can ask any questions, an 'Answerer' who is only able to respond with numeric values, and an `Evaluator` who observes the chat and approves or rejects at the end. These components are defined and linked in the ``frontend/custom.jsx`` file.
+This task consists of 3 agents participating in different roles with different frontend needs. By setting ``MTurkAgent.id`` to the correct values, different interfaces are displayed to an 'Asker' who can ask any questions, an 'Answerer' who is only able to respond with numeric values, and an `Evaluator` who observes the chat and approves or rejects at the end. These components are defined and linked in the ``frontend/components/custom.jsx`` file.
 
 Creating Your Own Task
 ----------------------
@@ -118,9 +118,9 @@ The ParlAI-MTurk platform allows for a number of advanced customization techniqu
 Custom Frontend Components
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to show a custom webpage (instead of the default one) for any of your MTurk agents, you can create an ``frontend`` folder within your task directory, and then create the ``custom.jsx`` within (see the React Task Demo for an example). For most custom tasks, creating your desired frontend is as simple as creating a ``frontend/custom.jsx`` file in your task directory that overrides a component you want to replace, and setting `task_config['frontend_version'] = 1` in your ``task_config.py``. Custom task components are keyed on the ``MTurkAgent.id`` field, as such it is possible to render different frontends for different agents in a task. The react task demo displays this possibility by having 3 roles, each with custom components.
+If you want to show a custom webpage (instead of the default one) for any of your MTurk agents, you can create an ``frontend`` folder within your task directory, and then create the ``custom.jsx`` within (see the React Task Demo for an example). For most custom tasks, creating your desired frontend is as simple as creating a ``frontend/components/custom.jsx`` file in your task directory that overrides a component you want to replace, and setting `task_config['frontend_version'] = 1` in your ``task_config.py``. Custom task components are keyed on the ``MTurkAgent.id`` field, as such it is possible to render different frontends for different agents in a task. The react task demo displays this possibility by having 3 roles, each with custom components.
 
-In general, if you want to create a custom component that replaces a component from the baseline UI, you should start off by copying the component you want to replace from `the core components file <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/core/react_server/dev/components/core_components.jsx>`__ into your ``frontend/custom.jsx`` file. After creating your own version of a component, you'll need to export it properly, as displayed below:
+In general, if you want to create a custom component that replaces a component from the baseline UI, you should start off by copying the component you want to replace from `the core components file <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/core/react_server/dev/components/core_components.jsx>`__ into your ``frontend/components/custom.jsx`` file. After creating your own version of a component, you'll need to export it properly, as displayed below:
 
 .. code-block:: javascript
 
