@@ -45,8 +45,10 @@ class TestNewTasks(unittest.TestCase):
             ]
 
             if testing_utils.is_this_circleci():
-                self.assertEqual(
-                    len(subtasks), 0,
+                if len(subtasks) == 0:
+                    continue
+
+                self.fail(
                     'test_verify_data plays poorly with CircleCI. Please run '
                     '`python tests/test_new_data.py` locally and paste the output '
                     'in your pull request.'
