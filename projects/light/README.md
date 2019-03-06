@@ -17,6 +17,9 @@ including location descriptions  and  the  objects (and affordances of those obj
 We analyze the ingredients necessary for successful grounding in this setting, and how each of these factors
 relate to agents that can talk and act successfully.
 
+<p align="center"><img width="90%" src="example-dialog.png" /></p>
+
+
 ## Datasets
 
 Available here very soon.
