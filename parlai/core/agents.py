@@ -301,28 +301,43 @@ def name_to_agent_class(name):
     return class_name
 
 
-def compare_init_model_opts(opt, curr_opts):
-    optfile = opt.get('init_model', '') + '.opt'
+def compare_init_model_opts(opt, curr_opt):
+    """Prints loud warning when `init_model` opts differ from those that
+    are being loaded."""
+    if opt.get('init_model') is None:
+        return
+    optfile = opt['init_model'] + '.opt'
     if not os.path.isfile(optfile):
         return
-    init_model_opt = self._load_opt_file(optfile)
+    init_model_opt = _load_opt_file(optfile)
 
     extra_opts = {}
     different_opts = {}
+    exempt_opts = ['model_file', 'dict_file', 'override', 'starttime',
+                   'init_model']
 
     # search through init model opts
-    for k, v in init_model_opt.items()
-        if k in init_model_opt and init_model_opt[k] != curr_opt[k]:
-            different_opts[k] = v
+    for k, v in init_model_opt.items():
+        if (k not in exempt_opts and k in init_model_opt and
+                init_model_opt[k] != curr_opt[k]):
+            if isinstance(v, list):
+                if init_model_opt[k] != list(curr_opt[k]):
+                    different_opts[k] = ','.join([str(x) for x in v])
+            else:
+                different_opts[k] = v
 
     # search through opts to load
     for k, v in curr_opt.items():
-        if k not in init_model_opt:
-            extra_opts[k] = v
+        if k not in exempt_opts and k not in init_model_opt:
+            if isinstance(v, list):
+                extra_opts[k] = ','.join([str(x) for x in v])
+            else:
+                extra_opts[k] = v
 
     # print warnings
     extra_strs = ['{}: {}'.format(k, v) for k, v in extra_opts.items()]
     if extra_strs:
+        print('\n' + '*' * 75)
         print('[ WARNING ] : your model is being loaded with opts that do not '
               'exist in the model you are initializing the weights with: '
               '{}'.format(','.join(extra_strs)))
@@ -330,12 +345,15 @@ def compare_init_model_opts(opt, curr_opts):
     different_strs = ['--{} {}'.format(k, v).replace('_', '-') for k, v in
                       different_opts.items()]
     if different_strs:
+        print('\n' + '*' * 75)
         print('[ WARNING ] : your model is being loaded with opts that differ '
-              ' from the model you are initializing the weights with. Add the '
-              ' following args to your run command to change this:  ')
+              'from the model you are initializing the weights with. Add the '
+              'following args to your run command to change this: \n'
+              '\n{}'.format(' '.join(different_strs)))
+        print('*' * 75)
 
 
-def _load_opt_file(filepath):
+def _load_opt_file(optfile):
     try:
         # try json first
         with open(optfile, 'r') as handle:
@@ -376,11 +394,8 @@ def load_agent_module(opt):
             if k not in new_opt:
                 new_opt[k] = v
         new_opt['model_file'] = model_file
-        model_class = get_agent_module(new_opt['model'])
 
-        # if we want to load weights from --init-model, compare opts with
-        # loaded ones
-        compare_init_model_opts(opt, new_opt)
+        model_class = get_agent_module(new_opt['model'])
 
         # check for model version
         if hasattr(model_class, 'model_version'):
@@ -400,6 +415,10 @@ def load_agent_module(opt):
                     # otherwise generic one
                     raise RuntimeError(m.format(m='modelname', v=curr_version,
                                                 c='ModelAgent'))
+
+        # if we want to load weights from --init-model, compare opts with
+        # loaded ones
+        compare_init_model_opts(opt, new_opt)
         return model_class(new_opt)
     else:
         return None
@@ -531,6 +550,9 @@ def create_agent(opt, requireModelExists=False):
 
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
+        # if we want to load weights from --init-model, compare opts with
+        # loaded ones
+        compare_init_model_opts(opt, opt)
         model = model_class(opt)
         if requireModelExists and hasattr(model, 'load') and not opt.get('model_file'):
             # double check that we didn't forget to set model_file on loadable model
