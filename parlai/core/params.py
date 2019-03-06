@@ -95,8 +95,7 @@ def fix_underscores(args):
 class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
     """Produces a custom-formatted `--help` option
 
-    See https://stackoverflow.com/questions/18275023/dont-show-long-options-twice-in-print-help-from-argparse
-    for details.
+    See https://goo.gl/DKtHb5 for details.
     """
     def __init__(self, prog, indent_increment=2, max_help_position=24, width=None):
         super().__init__(
@@ -432,7 +431,7 @@ class ParlaiParser(argparse.ArgumentParser):
             help='What field to use when determining the length of an episode',
             hidden=True)
         pytorch.add_argument(
-            '-pyclen', '--pytorch-context-length', default=-1,type=int,
+            '-pyclen', '--pytorch-context-length', default=-1, type=int,
             help='Number of past utterances to remember when building flattened '
                  'batches of data in multi-example episodes.'
                  '(For use with PytorchDataTeacher)',
