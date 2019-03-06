@@ -319,7 +319,7 @@ def compare_init_model_opts(opt, curr_opt):
     # search through init model opts
     for k, v in init_model_opt.items():
         if (k not in exempt_opts and k in init_model_opt and
-                init_model_opt[k] != curr_opt[k]):
+                init_model_opt[k] != curr_opt.get(k)):
             if isinstance(v, list):
                 if init_model_opt[k] != list(curr_opt[k]):
                     different_opts[k] = ','.join([str(x) for x in v])
