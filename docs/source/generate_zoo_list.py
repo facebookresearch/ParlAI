@@ -9,10 +9,13 @@ from parlai.zoo.model_list import model_list
 fout = open('zoo_list.inc', 'w')
 
 for model in model_list:
-    name = model['id'].replace('_', ' ').title()
+    name = model.get('title').title()
     fout.write(name)
     fout.write('\n')
     fout.write('-' * len(name))
+    #fout.write('\n')
+    #id = model.get('id').replace('_', ' ') 
+    #fout.write("[zoo id: " + id + "]")
     fout.write('\n\n')
 
     fout.write(model['description'])

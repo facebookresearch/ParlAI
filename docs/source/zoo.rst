@@ -26,4 +26,17 @@ Example invocation:
 
   python -m parlai.scripts.train_model -t convai2 -m seq2seq -emb fasttext_cc
 
+BERT
+----
+
+BERT is in the model zoo and is automatically used for initialization of
+bert bi-ranker and cross-rankers.
+
+Example invocation:
+
+.. code-block:: shell
+
+  python -m parlai.scripts.train_model -t convai2 -m bert_ranker/bi_encoder_ranker
+
+
 .. include:: zoo_list.inc
