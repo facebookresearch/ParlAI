@@ -97,13 +97,10 @@ class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
 
     See https://goo.gl/DKtHb5 for details.
     """
-    def __init__(self, prog, indent_increment=2, max_help_position=24, width=None):
-        super().__init__(
-            prog,
-            indent_increment=2,
-            max_help_position=8,
-            width=130
-        )
+    def __init__(self, *args, **kwargs):
+        kwargs['max_help_position'] = 8
+        kwargs['width'] = 130
+        super().__init__(*args, **kwargs)
 
     def _format_action_invocation(self, action):
         if not action.option_strings or action.nargs == 0:
