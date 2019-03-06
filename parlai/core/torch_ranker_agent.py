@@ -13,7 +13,7 @@ from torch import nn
 from itertools import islice
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, padded_3d, warn_once
+from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 from parlai.core.distributed_utils import is_distributed
 
 
@@ -24,14 +24,14 @@ class TorchRankerAgent(TorchAgent):
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
             '-cands', '--candidates', type=str, default='inline',
-            choices=['batch', 'inline', 'fixed'],
+            choices=['batch', 'inline', 'fixed', 'batch-all-cands'],
             help='The source of candidates during training '
                  '(see TorchRankerAgent._build_candidates() for details).')
         agent.add_argument(
             '-ecands', '--eval-candidates', type=str, default='inline',
-            choices=['batch', 'inline', 'fixed', 'vocab'],
-            help='The source of candidates during evaluation (defaults to '
-                 'inline candidates).')
+            choices=['batch', 'inline', 'fixed', 'vocab', 'batch-all-cands'],
+            help='The source of candidates during evaluation (defaults to the same'
+                 'value as --candidates if no flag is given)')
         agent.add_argument(
             '-fcp', '--fixed-candidates-path', type=str,
             help='A text file of fixed candidates to use for all examples, one '
@@ -85,14 +85,13 @@ class TorchRankerAgent(TorchAgent):
                 states = {}
 
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
+        if self.use_cuda:
+            self.model.cuda()
+            self.rank_loss.cuda()
 
         # Vectorize and save fixed/vocab candidates once upfront if applicable
         self.set_fixed_candidates(shared)
         self.set_vocab_candidates(shared)
-
-        if self.use_cuda:
-            self.model.cuda()
-            self.rank_loss.cuda()
 
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
@@ -253,7 +252,8 @@ class TorchRankerAgent(TorchAgent):
         obs = args[0]
         cands_key = ('candidates' if 'labels' in obs else
                      'eval_candidates' if 'eval_labels' in obs else None)
-        if cands_key is None or self.opt[cands_key] != 'inline':
+        if (cands_key is None or
+                self.opt[cands_key] not in ['inline', 'batch-all-cands']):
             # vectorize label candidates if and only if we are using inline
             # candidates
             return obs
@@ -264,7 +264,7 @@ class TorchRankerAgent(TorchAgent):
 
         :param batch: a Batch object (defined in torch_agent.py)
         :param source: the source from which candidates should be built, one of
-            ['batch', 'inline', 'fixed']
+            ['batch', 'batch-all-cands', 'inline', 'fixed']
         :param mode: 'train' or 'eval'
 
         :return: tuple of tensors (label_inds, cands, cand_vecs)
@@ -283,6 +283,13 @@ class TorchRankerAgent(TorchAgent):
                 examples in a batch. This option may be undesirable if it is possible
                 for duplicate labels to occur in a batch, since the second instance of
                 the correct label will be treated as a negative.
+            * batch-all-cands: the set of all candidates in this batch
+                Use all candidates in the batch as candidate set.
+                Note 1: This can result in a very large number of
+                        of candidates.
+                Note 2: In this case we will deduplicate candidates.
+                Note 3: just like with 'batch' the candidate set is identical
+                        for all examples in a batch.
             * inline: batch_size lists, one list per example
                 If each example comes with a list of possible candidates, use those.
                 Note: With this setting, each example will have its own candidate set.
@@ -320,6 +327,34 @@ class TorchRankerAgent(TorchAgent):
             cands = batch.labels
             cand_vecs = label_vecs
             label_inds = label_vecs.new_tensor(range(batchsize))
+
+        elif source == 'batch-all-cands':
+            warn_once(
+                '[ Executing {} mode with all candidates provided in the batch ]'
+                ''.format(mode)
+            )
+            if batch.candidate_vecs is None:
+                raise ValueError(
+                    "If using candidate source 'batch-all-cands', then batch."
+                    "candidate_vecs cannot be None. If your task does not have "
+                    "inline candidates, consider using one of "
+                    "--{m}={{'batch','fixed','vocab'}}."
+                    "".format(m='candidates' if mode == 'train' else 'eval-candidates'))
+            # initialize the list of cands with the labels
+            cands = []
+            all_cands_vecs = []
+            # dictionary used for deduplication
+            cands_to_id = {}
+            for i, cands_for_sample in enumerate(batch.candidates):
+                for j, cand in enumerate(cands_for_sample):
+                    if cand not in cands_to_id:
+                        cands.append(cand)
+                        cands_to_id[cand] = len(cands_to_id)
+                        all_cands_vecs.append(batch.candidate_vecs[i][j])
+            cand_vecs, _ = padded_tensor(all_cands_vecs, self.NULL_IDX,
+                                         use_cuda=self.use_cuda)
+            label_inds = label_vecs.new_tensor([cands_to_id[label]
+                                                for label in batch.labels])
 
         elif source == 'inline':
             warn_once(
@@ -379,6 +414,8 @@ class TorchRankerAgent(TorchAgent):
             cand_vecs = self.vocab_candidate_vecs
             # NOTE: label_inds is None here, as we will not find the label in
             # the set of vocab candidates
+        else:
+            raise Exception("Unrecognized source: %s" % source)
 
         return (cands, cand_vecs, label_inds)
 
