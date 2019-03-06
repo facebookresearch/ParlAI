@@ -9,6 +9,7 @@
 
 """
 from .teachers import FixedDialogTeacher
+from parlai.core.utils import warn_once
 from parlai.scripts.build_pytorch_data import build_data
 from .agents import get_agent_module
 import json
@@ -586,6 +587,11 @@ class PytorchDataTeacher(FixedDialogTeacher):
                         ('stream' in self.datatype and not opt.get('shuffle')))
         if self.ordered:
             # force index for ordered, so that we see every example
+            warn_once(
+                '\nNote: You are using PytorchDataTeacher with ordered '
+                'examples. Please specify `--shuffle` if you would like '
+                'to have examples loaded in randomized order.\n'
+            )
             self.batch_cache_type = 'index'
 
         if not shared:
