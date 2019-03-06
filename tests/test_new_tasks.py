@@ -50,7 +50,7 @@ class TestNewTasks(unittest.TestCase):
 
                 self.fail(
                     'test_verify_data plays poorly with CircleCI. Please run '
-                    '`python tests/test_new_data.py` locally and paste the output '
+                    '`python tests/test_new_tasks.py` locally and paste the output '
                     'in your pull request.'
                 )
 
