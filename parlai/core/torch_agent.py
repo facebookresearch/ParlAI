@@ -133,11 +133,11 @@ class History(object):
     :param maxlen:
         if `vec_type` is 'deque', this sets the maximum length of that object
 
-    :param p1_token: 
+    :param p1_token:
         token indicating 'person 1'; opt must have 'person_tokens' set to True
         for this to be added
 
-    :param p1_token: 
+    :param p1_token:
         token indicating 'person 2'; opt must have 'person_tokens' set to True
         for this to be added
 
