@@ -776,7 +776,6 @@ class MTurkManager():
                         conversation_id, sandbox=self.is_sandbox)
                 mturk_agent.clear_messages()
 
-
             # once onboarding is done, move into a waiting world
             self._move_agents_to_waiting([mturk_agent])
 
