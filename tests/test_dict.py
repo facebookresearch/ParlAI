@@ -63,7 +63,7 @@ class TestDictionary(unittest.TestCase):
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
 
-    def test_mf_without_df(self):
+    def test_set_model_file_without_dict_file(self):
         """Check that moving a model without moving the dictionary raises the
         appropriate error.
         """
@@ -95,7 +95,7 @@ class TestDictionary(unittest.TestCase):
         except FileNotFoundError:
             pass
 
-    def test_train_model_no_df(self):
+    def test_train_model_with_no_dict_file(self):
         """Check that attempting to train a model without specifying a dict_file
         or model_file fails
         """
