@@ -28,7 +28,7 @@ class TorchRankerAgent(TorchAgent):
             help='The source of candidates during training '
                  '(see TorchRankerAgent._build_candidates() for details).')
         agent.add_argument(
-            '-ecands', '--eval-candidates', type=str,
+            '-ecands', '--eval-candidates', type=str, default='inline',
             choices=['batch', 'inline', 'fixed', 'vocab', 'batch-all-cands'],
             help='The source of candidates during evaluation (defaults to the same'
                  'value as --candidates if no flag is given)')
@@ -414,6 +414,8 @@ class TorchRankerAgent(TorchAgent):
             cand_vecs = self.vocab_candidate_vecs
             # NOTE: label_inds is None here, as we will not find the label in
             # the set of vocab candidates
+        else:
+            raise Exception("Unrecognized source: %s" % source)
 
         return (cands, cand_vecs, label_inds)
 
