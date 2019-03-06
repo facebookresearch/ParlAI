@@ -19,9 +19,12 @@ model_list = [
         "agent": "projects.personachat.kvmemnn.kvmemnn:Kvmemnn",
         "task": "convai2",
         "description": (
-            "KvMemNN trained on the ConvAI2 task, used as a baseline in the competition."
+            "KvMemNN trained on the ConvAI2 task, used as a baseline in the "
+            "competition."
         ),
-        "example": "python -m parlai.scripts.interactive -mf models:convai2/kvmemnn/model",
+        "example": (
+            "python -m parlai.scripts.interactive -mf models:convai2/kvmemnn/model"
+        ),
     },
     {
         "title": "Seq2Seq ConvAI2 model",
@@ -32,7 +35,10 @@ model_list = [
         "description": (
             "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
         ),
-        "example": "python -m parlai.scripts.interactive -mf models:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0",
+        "example": (
+            "python -m parlai.scripts.interactive -mf "
+            "models:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0"
+        ),
     },
     {
         "title": "Seq2Seq Twitter model",
@@ -105,4 +111,49 @@ model_list = [
             """  # noqa: E501
         ),
     },
+    {
+        "title": "Wizard of Wikipedia (End to end Generator)",
+        "id": "wizard_of_wikipedia",
+        "path": "models:wizard_of_wikipedia/end2end_generator/model",
+        "description": (
+            "End2End Generative model for Wizard of Wikipedia"
+        ),
+        "task": "wizard_of_wikipedia:generator",
+        "example": (
+            "python examples/display_model.py -t wizard_of_wikipedia:generator "
+            "-mf models:wizard_of_wikipedia/end2end_generator/model -n 1 "
+            "--display-ignore-fields knowledge_parsed"
+        ),
+        "result": (
+            """
+            [chosen_topic]: Gardening
+            [knowledge]: no_passages_used __knowledge__ no_passages_used
+            Gardening __knowledge__ Gardening is the practice of growing and cultivating plants as part of horticulture.
+            Gardening __knowledge__ In gardens, ornamental plants are often grown for their flowers, foliage, or overall appearance; useful plants, such as root vegetables, leaf vegetables, fruits, and herbs, are grown for consumption, for use as dyes, or for medicinal or cosmetic use.
+            Gardening __knowledge__ Gardening is considered by many people to be a relaxing activity.
+            Gardening __knowledge__ Gardening ranges in scale from fruit orchards, to long boulevard plantings with one or more different types of shrubs, trees, and herbaceous plants, to residential yards including lawns and foundation plantings, to plants in large or small containers ...
+            there had been several other notable gardening magazines in circulation, including the "Gardeners' Chronicle" and "Gardens Illustrated", but these were tailored more for the professional gardener.
+
+            [title]: Gardening
+            [checked_sentence]: Gardening is considered by many people to be a relaxing activity.
+            [eval_labels_choice]: I live on a farm, we garden all year long, it is very relaxing.
+            [checked_sentence_parsed]: Gardening __knowledge__ Gardening is considered by many people to be a relaxing activity.
+            [WizTeacher]: Gardening
+            I like Gardening, even when I've only been doing it for a short time.
+            [eval_labels: I live on a farm, we garden all year long, it is very relaxing.]
+            [TorchAgent]: i love gardening , it is considered a relaxing activity .
+            """  # noqa: E501
+        ),
+    },
+    {
+        "title": "Twitter conversational model",
+        "id": "twitter",
+        "path": "models:twitter/seq2seq/twitter_seq2seq_model",
+        "agent": "legacy:seq2seq:0",
+        "task": "twitter",
+        "description": (
+            "Generic conversational model trained on the twitter task"
+        ),
+        "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
+    }
 ]

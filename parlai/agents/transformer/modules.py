@@ -172,12 +172,12 @@ class TransformerMemNetModel(nn.Module):
 
 def create_position_codes(n_pos, dim, out):
     position_enc = np.array([
-        [pos / np.power(10000, 2 * (j // 2) / dim) for j in range(dim)]
+        [pos / np.power(10000, 2 * j / dim) for j in range(dim // 2)]
         for pos in range(n_pos)
     ])
 
-    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc[:, 0::2]))
-    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc[:, 1::2]))
+    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc))
+    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc))
     out.detach_()
     out.requires_grad = False
 
@@ -300,9 +300,7 @@ class TransformerEncoder(nn.Module):
             inside the sequence and 0 outside.
         """
         mask = input != self.padding_idx
-        seq_len = input.size(1)
-        positions = input.new(seq_len).long()
-        positions = torch.arange(seq_len, out=positions).unsqueeze(0)
+        positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
@@ -605,9 +603,11 @@ class MultiHeadAttention(nn.Module):
         self.q_lin = nn.Linear(dim, dim)
         self.k_lin = nn.Linear(dim, dim)
         self.v_lin = nn.Linear(dim, dim)
+        # TODO: merge for the initialization step
         nn.init.xavier_normal_(self.q_lin.weight)
         nn.init.xavier_normal_(self.k_lin.weight)
         nn.init.xavier_normal_(self.v_lin.weight)
+        # and set biases to 0
         self.out_lin = nn.Linear(dim, dim)
 
         nn.init.xavier_normal_(self.out_lin.weight)
@@ -684,6 +684,7 @@ class TransformerFFN(nn.Module):
         self.lin2 = nn.Linear(dim_hidden, dim)
         nn.init.xavier_uniform_(self.lin1.weight)
         nn.init.xavier_uniform_(self.lin2.weight)
+        # TODO: initialize biases to 0
 
     def forward(self, x):
         x = F.relu(self.lin1(x))
