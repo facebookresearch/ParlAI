@@ -895,8 +895,7 @@ class RightPane extends React.Component {
 
 class TaskDescription extends React.Component {
   render () {
-    // TODO pull from templating variable
-    let header_text = "Live Chat";
+    let header_text = CHAT_TITLE;
     let task_desc = this.props.task_description || 'Task Description Loading';
     return (
       <div>
