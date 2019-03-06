@@ -1,6 +1,6 @@
 # <img width="5%" src="scribe.png"/> LIGHT
 
-### Language in Interactive Games with Humans and Text
+### Learning in Interactive Games with Humans and Text
 
 <p align="center"><img width="60%" src="tavern.png" /></p>
 
