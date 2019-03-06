@@ -3,14 +3,18 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from parlai.core.distributed_utils import is_distributed
 from parlai.core.torch_ranker_agent import TorchRankerAgent
+from parlai.core.utils import padded_3d
+from parlai.zoo.bert.build import download
+
 from .bert_dictionary import BertDictionaryAgent
 from .helpers import (get_bert_optimizer, BertWrapper, BertModel,
-                      add_common_args, surround)
-from parlai.core.utils import padded_3d
-from parlai.core.distributed_utils import is_distributed
+                      add_common_args, surround, MODEL_PATH)
+
+import os
 import torch
-import tqdm
+from tqdm import tqdm
 
 
 class BiEncoderRankerAgent(TorchRankerAgent):
@@ -21,13 +25,19 @@ class BiEncoderRankerAgent(TorchRankerAgent):
     @staticmethod
     def add_cmdline_args(parser):
         add_common_args(parser)
+        parser.set_defaults(
+            encode_candidate_vecs=True
+        )
 
     def __init__(self, opt, shared=None):
-        opt['rank_candidates'] = True
-        opt['candidates'] = "batch"
-        if opt.get('eval_candidates', None) is None:
-            opt['eval_candidates'] = "inline"
+        # download pretrained models
+        download(opt['datapath'])
+        self.pretrained_path = os.path.join(opt['datapath'], 'models',
+                                            'bert_models', MODEL_PATH)
+        opt['pretrained_path'] = self.pretrained_path
+
         self.clip = -1
+
         super().__init__(opt, shared)
         # it's easier for now to use DataParallel when
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
@@ -53,38 +63,76 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                                             self.opt["type_optimization"],
                                             self.opt["learningrate"])
 
-    def make_candidate_vecs(self, cands):
-        cand_batches = [cands[i:i + 200] for i in range(0, len(cands), 200)]
-        cand_vecs = []
-        for batch in tqdm.tqdm(cand_batches,
-                               desc="[ Vectorizing fixed candidates set from "
-                                    "({} batch(es) of up to 200) ]"
-                                    "".format(len(cand_batches))):
-            token_idx = [self._vectorize_text(cand, add_start=True, add_end=True,
-                                              truncate=self.opt["label_truncate"])
-                         for cand in batch]
-            padded_input = padded_3d([token_idx]).squeeze(0)
-            token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
-                padded_input, self.NULL_IDX)
-            _, embedding_cands = self.model(
-                None, None, None, token_idx_cands, segment_idx_cands, mask_cands)
-            cand_vecs.append(embedding_cands.cpu().detach())
-        return torch.cat(cand_vecs, 0)
+    def set_vocab_candidates(self, shared):
+        """Load the tokens from the vocab as candidates
 
-    def vectorize(self, obs, add_start=True, add_end=True, split_lines=False,
-                  text_truncate=None, label_truncate=None):
-        return super().vectorize(
-            obs,
-            add_start=True,
-            add_end=True,
-            text_truncate=self.text_truncate,
-            label_truncate=self.label_truncate)
+        self.vocab_candidates will contain a [num_cands] list of strings
+        self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
+        """
+        if shared:
+            self.vocab_candidates = shared['vocab_candidates']
+            self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
+        else:
+            if 'vocab' in (self.opt['candidates'], self.opt['eval_candidates']):
+                cands = []
+                vecs = []
+                for ind in range(1, len(self.dict)):
+                    txt = self.dict[ind]
+                    cands.append(txt)
+                    vecs.append(
+                        self._vectorize_text(txt, add_start=True, add_end=True,
+                                             truncate=self.label_truncate)
+                    )
+                self.vocab_candidates = cands
+                self.vocab_candidate_vecs = padded_3d([vecs]).squeeze(0)
+                print("[ Loaded fixed candidate set (n = {}) from vocabulary ]"
+                      "".format(len(self.vocab_candidates)))
+                enc_path = self.opt.get('model_file') + '.vocab.encs'
+                if os.path.isfile(enc_path):
+                    self.vocab_candidate_encs = self.load_candidates(
+                        enc_path, cand_type='vocab encodings')
+                else:
+                    cand_encs = []
+                    vec_batches = [
+                        self.vocab_candidate_vecs[i:i + 512] for i in
+                        range(0, len(self.vocab_candidate_vecs), 512)
+                    ]
+                    print("[ Vectorizing vocab candidates ({} batch(es) of up "
+                          "to 512) ]".format(len(vec_batches)))
+                    for vec_batch in tqdm(vec_batches):
+                        cand_encs.append(self.encode_candidates(vec_batch))
+                    self.vocab_candidate_encs = torch.cat(cand_encs, 0)
+                    self.save_candidates(
+                        self.vocab_candidate_encs, enc_path,
+                        cand_type='vocab encodings')
+                if self.use_cuda:
+                    self.vocab_candidate_vecs = self.vocab_candidate_vecs.cuda()
+                    self.vocab_candidate_encs = self.vocab_candidate_encs.cuda()
+            else:
+                self.vocab_candidates = None
+                self.vocab_candidate_vecs = None
+                self.vocab_candidate_encs = None
 
-    def _set_text_vec(self, obs, truncate, split_lines):
-        super()._set_text_vec(obs, truncate, split_lines)
+    def vectorize_fixed_candidates(self, cands_batch):
+        """Override from TorchRankerAgent.
+        """
+        return [self._vectorize_text(cand, add_start=True, add_end=True,
+                truncate=self.label_truncate) for cand in cands_batch]
+
+    def encode_candidates(self, padded_cands):
+        token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
+            padded_cands, self.NULL_IDX)
+        _, embedding_cands = self.model(
+            None, None, None, token_idx_cands, segment_idx_cands, mask_cands)
+
+        return embedding_cands.cpu().detach()
+
+    def _set_text_vec(self, *args, **kwargs):
+        obs = super()._set_text_vec(*args, **kwargs)
         # concatenate the [CLS] and [SEP] tokens
-        if obs is not None and "text_vec" in obs:
-            obs["text_vec"] = surround(obs["text_vec"], self.START_IDX, self.END_IDX)
+        if obs is not None and 'text_vec' in obs:
+            obs['text_vec'] = surround(obs['text_vec'], self.START_IDX,
+                                       self.END_IDX)
         return obs
 
     def score_candidates(self, batch, cand_vecs):
@@ -94,6 +142,17 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         embedding_ctxt, _ = self.model(
             token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
             None, None, None)
+
+        # evaluating a fixed set of candidates
+        if (hasattr(self, 'fixed_candidate_encs') and
+                self.fixed_candidate_encs is not None):
+            return embedding_ctxt.mm(self.fixed_candidate_encs.t())
+
+        # evaluating vocab candidates:
+        if (hasattr(self, 'vocab_candidate_encs') and
+                self.vocab_candidate_encs is not None):
+            return embedding_ctxt.mm(self.vocab_candidate_encs.t())
+
         if len(cand_vecs.size()) == 2 and cand_vecs.dtype == torch.long:
             # train time. We compare with all elements of the batch
             token_idx_cands, segment_idx_cands, mask_cands = to_bert_input(
@@ -133,17 +192,17 @@ class BiEncoderModule(torch.nn.Module):
     def __init__(self, opt):
         super(BiEncoderModule, self).__init__()
         self.context_encoder = BertWrapper(
-            BertModel.from_pretrained(
-                opt["pretrained_bert_path"]),
-            opt["out_dim"],
-            add_transformer_layer=opt["add_transformer_layer"],
-            layer_pulled=opt["pull_from_layer"])
+            BertModel.from_pretrained(opt['pretrained_path']),
+            opt['out_dim'],
+            add_transformer_layer=opt['add_transformer_layer'],
+            layer_pulled=opt['pull_from_layer']
+        )
         self.cand_encoder = BertWrapper(
-            BertModel.from_pretrained(
-                opt["pretrained_bert_path"]),
-            opt["out_dim"],
-            add_transformer_layer=opt["add_transformer_layer"],
-            layer_pulled=opt["pull_from_layer"])
+            BertModel.from_pretrained(opt['pretrained_path']),
+            opt['out_dim'],
+            add_transformer_layer=opt['add_transformer_layer'],
+            layer_pulled=opt['pull_from_layer']
+        )
 
     def forward(self, token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
                 token_idx_cands, segment_idx_cands, mask_cands):
