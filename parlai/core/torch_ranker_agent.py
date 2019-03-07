@@ -409,6 +409,9 @@ class TorchRankerAgent(TorchAgent):
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
 
+            if self.opt.get('encode_candidate_vecs', False):
+                cand_vecs = self.fixed_candidate_encs
+
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
@@ -570,7 +573,8 @@ class TorchRankerAgent(TorchAgent):
                         encs = self.load_candidates(
                             enc_path, cand_type='encodings')
                     else:
-                        encs = self.make_candidate_encs(vecs, path=enc_path)
+                        encs = self.make_candidate_encs(self.fixed_candidate_vecs,
+                                                        path=enc_path)
                         self.save_candidates(encs, path=enc_path,
                                              cand_type='encodings')
                     self.fixed_candidate_encs = encs
@@ -610,11 +614,12 @@ class TorchRankerAgent(TorchAgent):
 
     def make_candidate_encs(self, vecs, path):
         cand_encs = []
-        vec_batches = [vecs[i:i + 512] for i in range(0, len(vecs), 512)]
-        print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 512) ]"
+        vec_batches = [vecs[i:i + 256] for i in range(0, len(vecs), 256)]
+        print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 256) ]"
               "".format(len(vec_batches)))
-        for vec_batch in tqdm(vec_batches):
-            cand_encs.append(self.encode_candidates(vec_batch))
+        with torch.no_grad():
+            for vec_batch in tqdm(vec_batches):
+                cand_encs.append(self.encode_candidates(vec_batch))
         return torch.cat(cand_encs, 0)
 
     def vectorize_fixed_candidates(self, cands_batch):
