@@ -5,6 +5,13 @@ executors:
   standard_cpu:
     docker:
       - image: circleci/python:3.6.4
+  gpu:
+    environment:
+      PYTHON_VERSION: "3.6"
+      CUDA_VERSION: "9.2"
+    machine:
+      image: default
+    resource_class: gpu.medium  # tesla m60
 
 
 # commands are nice shorthand
@@ -36,6 +43,30 @@ commands:
             pip3 install --progress-bar off -r requirements.txt
             pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
 
+  setupcuda:
+    description: "Sets up the CUDA environment"
+    steps:
+      - run:
+          name: Setup CUDA
+          command: |
+            wget 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-396.26.run'
+            sudo /bin/bash ./NVIDIA-Linux-x86_64-396.26.run -s --no-drm
+            curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+            sudo apt-key add -
+            distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+            curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+            sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+            sudo apt-get update
+            # Get the exact docker version required by nvidia-docker
+            # (and not the newer version)
+            sudo apt-get install -y docker-ce=18.06.2~ce~3-0~ubuntu
+            sudo apt-get install -y nvidia-docker2
+            sudo pkill -SIGHUP dockerd
+            # docker login --username cherrypidocker --password ${DOCKERHUB_PASSWORD}
+            # docker pull cherrypidocker/repo:9.2-cudnn7-devel-gcc7-clang8-ubuntu16.04 >/dev/null
+            # docker run --runtime=nvidia  --name cuda_bash  -v /home/circleci/repo:/repo --rm -t -d -w /repo  cherrypidocker/repo:9.2-cudnn7-devel-gcc7-clang8-ubuntu16.04 /bin/bash
+
+
 jobs:
   unittest:
     executor: standard_cpu
@@ -57,6 +88,18 @@ jobs:
       - run:
           name: Lint
           command: bash ./tests/lint_changed.sh
+
+  nightly_gpu_test:
+    executor: gpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setupcuda
+      - setup
+      - installdeps
+      - run:
+          name: Nightly GPU tests
+          command: python setup.py test -s tests.suites.nightly_gpu -q
 
   nightly_cpu_test:
     executor: standard_cpu
