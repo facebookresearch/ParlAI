@@ -1,11 +1,13 @@
-import parlai_internal.tasks.light_maps.utils as utils
+import parlai.tasks.light_maps.utils as utils
 import copy
 import random
 import io
 import os
+
 rand = random.Random(42)
 import pickle
 from parlai.core.utils import msg_to_str
+
 
 def use_feat(opt, field, ttype):
     if 'all' in opt.get(field) or opt.get(field) == ttype:
@@ -13,11 +15,13 @@ def use_feat(opt, field, ttype):
     else:
         return False
 
-mx=0
-    
+
+mx = 0
+
+
 def fix_labels(act, opt):
     labels = act.get('labels', act.get('eval_labels'))
-    clip =  int(opt.get('light_use_clip_cands', 1000))
+    clip = int(opt.get('light_use_clip_cands', 1000))
     while len(act['label_candidates']) >= clip:
         act['label_candidates'].pop()
     is_label_cand = {}
@@ -29,14 +33,21 @@ def fix_labels(act, opt):
         if has == False:
             print("***ADDING A LABEL CAND****")
             act['label_candidates'].append(l)
-            
+
+
 def write_dialog(opt, fw, d, label_type, split):
     l = len(d['speech'])
     msgs = []
     text = '_task_' + label_type + '\n'
     if opt['light_use_setting']:
-        text += '_setting_name ' + d['setting']['name']  + ", " + d['setting']['category'] + '\n'
-        text += '_setting_desc ' + d['setting']['description']  + '\n'
+        text += (
+            '_setting_name '
+            + d['setting']['name']
+            + ", "
+            + d['setting']['category']
+            + '\n'
+        )
+        text += '_setting_desc ' + d['setting']['description'] + '\n'
     if opt['light_use_person_names']:
         text += '_partner_name ' + d['partner_agent']['name'] + '\n'
         text += '_self_name ' + d['self_agent']['name'] + '\n'
@@ -55,76 +66,108 @@ def write_dialog(opt, fw, d, label_type, split):
             for o in d['wearing'][0]:
                 text += '_object_wearing ' + o + '\n'
             for o in d['wielding'][0]:
-                text += '_object_wielding ' + o + '\n' 
+                text += '_object_wielding ' + o + '\n'
     for i in range(0, l, 2):
         if i < l - 1:
-            if (use_feat(opt, 'light_use_speech', 'partner') and d['speech'][i] != None):
-                text +=  '_partner_say ' + str(d['speech'][i]) + '\n'
+            if use_feat(opt, 'light_use_speech', 'partner') and d['speech'][i] != None:
+                text += '_partner_say ' + str(d['speech'][i]) + '\n'
             if use_feat(opt, 'light_use_action', 'partner') and d['action'][i] != None:
-                text +=  '_partner_act ' + str(d['action'][i]) + '\n'
+                text += '_partner_act ' + str(d['action'][i]) + '\n'
             if use_feat(opt, 'light_use_emote', 'partner') and d['emote'][i] != None:
-                text +=  '_partner_emote ' + str(d['emote'][i]) + '\n'
+                text += '_partner_emote ' + str(d['emote'][i]) + '\n'
             if opt.get('light_use_repeat') == 'self_last':
                 if i > 0:
-                    text =  str(d['speech'][i-1])
+                    text = str(d['speech'][i - 1])
                 else:
-                    text =  'nothing'
+                    text = 'nothing'
             if opt.get('light_use_repeat') == 'partner_last':
-                text =  str(d['speech'][i])
+                text = str(d['speech'][i])
             if opt.get('light_use_repeat') == 'both_last':
                 text = ''
                 if i > 0:
-                    text += str(d['speech'][i-1]) + ' '
+                    text += str(d['speech'][i - 1]) + ' '
                 text += str(d['speech'][i])
-            label =  d[label_type][i+1]
+            label = d[label_type][i + 1]
             used_current = False
             shown = {}
-            if (use_feat(opt, 'light_use_current_self_output', 'all') and label_type != 'speech' and
-                use_feat(opt, 'light_use_speech', 'self') and d['speech'][i+1] != None):
+            if (
+                use_feat(opt, 'light_use_current_self_output', 'all')
+                and label_type != 'speech'
+                and use_feat(opt, 'light_use_speech', 'self')
+                and d['speech'][i + 1] != None
+            ):
                 if 'remove' not in opt['light_use_current_self_output']:
-                    text +=  '_self_say ' + str(d['speech'][i+1]) + '\n'
+                    text += '_self_say ' + str(d['speech'][i + 1]) + '\n'
                     shown['speech'] = True
                 used_current = True
-            if (use_feat(opt, 'light_use_current_self_output', 'all') and label_type != 'action' and
-                use_feat(opt, 'light_use_action', 'self') and d['action'][i+1] != None):
+            if (
+                use_feat(opt, 'light_use_current_self_output', 'all')
+                and label_type != 'action'
+                and use_feat(opt, 'light_use_action', 'self')
+                and d['action'][i + 1] != None
+            ):
                 if 'remove' not in opt['light_use_current_self_output']:
-                    text += '_self_act ' + str(d['action'][i+1]) + '\n'
+                    text += '_self_act ' + str(d['action'][i + 1]) + '\n'
                     shown['action'] = True
-                used_current = True    
-            if (use_feat(opt, 'light_use_current_self_output', 'all') and label_type != 'emote' and
-                use_feat(opt, 'light_use_emote', 'self')  and d['emote'][i+1] != None):
+                used_current = True
+            if (
+                use_feat(opt, 'light_use_current_self_output', 'all')
+                and label_type != 'emote'
+                and use_feat(opt, 'light_use_emote', 'self')
+                and d['emote'][i + 1] != None
+            ):
                 if 'remove' not in opt['light_use_current_self_output']:
-                    text += '_self_emote ' + str(d['emote'][i+1]) + '\n'
+                    text += '_self_emote ' + str(d['emote'][i + 1]) + '\n'
                     shown['emote'] = True
                 used_current = True
-            if 'all_filtered' in opt['light_use_current_self_output'] and used_current == False:
+            if (
+                'all_filtered' in opt['light_use_current_self_output']
+                and used_current == False
+            ):
                 label = None
             if label != None:
                 msg = {}
                 msg['text'] = text
                 msg['labels'] = label
-                add_negs(msg, d, i+1, label_type, split, int(opt.get('light_use_cands', 100)))
+                add_negs(
+                    msg,
+                    d,
+                    i + 1,
+                    label_type,
+                    split,
+                    int(opt.get('light_use_cands', 100)),
+                )
                 msgs.append(msg)
                 text = ''
-            if (use_feat(opt, 'light_use_speech', 'self') and d['speech'][i+1] != None
-            and ('speech' not in shown)):
-                text +=  '_self_say ' + str(d['speech'][i+1]) + '\n'
-            if (use_feat(opt, 'light_use_action', 'self') and  d['action'][i+1] != None
-            and ('action' not in shown)):
-                text += '_self_act ' + str(d['action'][i+1]) + '\n'
-            if (use_feat(opt, 'light_use_emote', 'self') and d['emote'][i+1] != None
-            and ('emote' not in shown)):
-                text += '_self_emote ' + str(d['emote'][i+1]) + '\n'
+            if (
+                use_feat(opt, 'light_use_speech', 'self')
+                and d['speech'][i + 1] != None
+                and ('speech' not in shown)
+            ):
+                text += '_self_say ' + str(d['speech'][i + 1]) + '\n'
+            if (
+                use_feat(opt, 'light_use_action', 'self')
+                and d['action'][i + 1] != None
+                and ('action' not in shown)
+            ):
+                text += '_self_act ' + str(d['action'][i + 1]) + '\n'
+            if (
+                use_feat(opt, 'light_use_emote', 'self')
+                and d['emote'][i + 1] != None
+                and ('emote' not in shown)
+            ):
+                text += '_self_emote ' + str(d['emote'][i + 1]) + '\n'
     if len(msgs) > 0:
         msgs[-1]['episode_done'] = True
         for m in msgs:
             # print(m.replace('\n', '\\n'))
             fix_labels(m, opt)
             global mx
-            mx = max(len(m['label_candidates']),mx)
-            #print(mx)
+            mx = max(len(m['label_candidates']), mx)
+            # print(mx)
             txt = msg_to_str(m)
             fw.write(txt + '\n')
+
 
 def write_alldata(opt, db, dpath, ltype, split):
     # for now train, valid and test will all be identical
@@ -142,12 +185,17 @@ def write_alldata(opt, db, dpath, ltype, split):
         d2 = d.copy()
         d2['self_agent'] = d2['agents'][0]
         d2['partner_agent'] = d2['agents'][1]
-        d2['speech'] = list(d2['speech']); d2['speech'].insert(0, None)
-        d2['emote'] = list(d2['emote']); d2['emote'].insert(0, None)
-        d2['action'] = list(d2['action']); d2['action'].insert(0, None)
-        d2['available_actions'] = list(d2['available_actions']); d2['available_actions'].insert(0, None)
+        d2['speech'] = list(d2['speech'])
+        d2['speech'].insert(0, None)
+        d2['emote'] = list(d2['emote'])
+        d2['emote'].insert(0, None)
+        d2['action'] = list(d2['action'])
+        d2['action'].insert(0, None)
+        d2['available_actions'] = list(d2['available_actions'])
+        d2['available_actions'].insert(0, None)
         write_dialog(opt, fw_tst, d2, ltype, split)
     fw_tst.close()
+
 
 def add_negs(msg, d, ind, label_type, split, num_cands):
     if label_type == 'emote':
@@ -158,23 +206,26 @@ def add_negs(msg, d, ind, label_type, split, num_cands):
         cnt = 0
         label = msg['labels']
         negs = []
-        #negs.append(label)
+        # negs.append(label)
         used = {}
         # find 99 random negs that are != gold label
         while True:
-            ind = rand.randint(0, len(cands['speech']) -1)
+            ind = rand.randint(0, len(cands['speech']) - 1)
             txt = cands['speech'][ind]
             if txt != label and ind not in used:
                 negs.append(txt)
                 used[ind] = True
                 cnt += 1
-                if cnt == num_cands-1:
+                if cnt == num_cands - 1:
                     break
-        # insert label in a random position        
-        negs.insert(rand.randrange(len(negs)+1), label)
+        # insert label in a random position
+        negs.insert(rand.randrange(len(negs) + 1), label)
         msg['label_candidates'] = negs
-        
+
+
 cands = {}  # candidates
+
+
 def write_out_candidates(db, dpath, dtype):
     emotes = {}
     acts = {}
@@ -195,13 +246,13 @@ def write_out_candidates(db, dpath, dtype):
         for s in d['speech']:
             if s != None:
                 cands['speech'].append(s)
-    for l in ['emote', 'speech'  , 'action']:
+    for l in ['emote', 'speech', 'action']:
         fw = io.open(os.path.join(dpath, l + "_" + dtype + "_cands.txt"), 'w')
         for k in cands[l]:
             fw.write(k + "\n")
         fw.close
 
-    
+
 def build_from_db(opt, db_path, data_path, fname, fname2):
     # set up database
     dbp = os.path.join(db_path, fname)
@@ -211,7 +262,7 @@ def build_from_db(opt, db_path, data_path, fname, fname2):
     dbp = os.path.join(db_path, fname2)
     file = open(dbp, 'rb')
     db_unseen = pickle.load(file)
-    
+
     # add test set labeling
     for i in range(0, len(db)):
         db[i]['split'] = 'train'
@@ -227,16 +278,15 @@ def build_from_db(opt, db_path, data_path, fname, fname2):
         db[x[i]]['split'] = 'test'
     for i in range(1000, 1500):
         db[x[i]]['split'] = 'valid'
-    
+
     for split in ['train', 'valid', 'test']:
         write_out_candidates(db, data_path, split)
         write_alldata(opt, db, data_path, 'speech', split)
         write_alldata(opt, db, data_path, 'action', split)
         write_alldata(opt, db, data_path, 'emote', split)
-    
+
     for split in ['test_unseen']:
         write_out_candidates(db_unseen, data_path, split)
         write_alldata(opt, db_unseen, data_path, 'speech', split)
         write_alldata(opt, db_unseen, data_path, 'action', split)
         write_alldata(opt, db_unseen, data_path, 'emote', split)
-    

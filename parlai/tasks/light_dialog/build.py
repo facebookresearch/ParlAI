@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+1;10;0c
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
@@ -9,7 +9,7 @@
 
 import parlai.core.build_data as build_data
 import os
-from parlai_internal.tasks.light_dialog.builder import build_from_db
+from parlai.tasks.light_dialog.builder import build_from_db
         
 def build(opt):
     version = 'v2.01'
