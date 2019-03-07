@@ -1,4 +1,3 @@
-import parlai.tasks.light_maps.utils as utils
 import copy
 import random
 import io

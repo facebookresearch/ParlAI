@@ -9,7 +9,8 @@
 import parlai.core.build_data as build_data
 import os
 from parlai.tasks.light_dialog.builder import build_from_db
-        
+
+
 def build(opt):
     version = 'v2.01'
     # download pickled database
@@ -32,8 +33,19 @@ def build(opt):
         build_data.mark_done(dpath, version)
 
     # create particular instance of dataset depending on flags..
-    fields = ['setting', 'objects', 'person_names', 'persona', 'emote',
-              'speech', 'action', 'repeat', 'cands', 'current_self_output', 'clip_cands']
+    fields = [
+        'setting',
+        'objects',
+        'person_names',
+        'persona',
+        'emote',
+        'speech',
+        'action',
+        'repeat',
+        'cands',
+        'current_self_output',
+        'clip_cands',
+    ]
     fpath = ''
     for f in fields:
         fpath += f + str(opt['light_use_' + f]) + "_"
