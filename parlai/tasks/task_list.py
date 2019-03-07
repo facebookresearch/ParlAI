@@ -181,16 +181,15 @@ task_list = [
         ),
     },
     {
-        "id": "SelfFeedingChatbot",
-        "display_name": "Self-Feeding Chatbot",
-        "task": "self_feeding",
-        "tags": ["diaexp", "diasen", "All"],
+        "id": "LIGHT-Dialogue",
+        "display_name": "LIGHT-Dialogue",
+        "task": "light_dialog",
+        "tags": ["All", "Grounded"],
         "description": (
-            "Learning from Dialogue after Deployment. Leveraging user textual "
-            "feedback to improve the chatbot's abilities. "
-            "From Hancock et al. 2019, Link: "
-            "https://arxiv.org/abs/1901.05415"
-        )
+            "LIGHT is a text adventure game with actions and dialogue collected."
+            "The source data is collected between crowdworkers playing the game."
+            "Link: http://parl.ai/projects/light"
+        ),
     },
     {
         "id": "MutualFriends",
@@ -352,6 +351,18 @@ task_list = [
             "Daily Mail article, Hermann et al. '15. Link: "
             "https://arxiv.org/abs/1506.03340"
         ),
+    },
+    {
+        "id": "SelfFeedingChatbot",
+        "display_name": "Self-Feeding Chatbot",
+        "task": "self_feeding",
+        "tags": ["diaexp", "diasen", "All"],
+        "description": (
+            "Learning from Dialogue after Deployment. Leveraging user textual "
+            "feedback to improve the chatbot's abilities. "
+            "From Hancock et al. 2019, Link: "
+            "https://arxiv.org/abs/1901.05415"
+        )
     },
     {
         "id": "SimpleQuestions",
