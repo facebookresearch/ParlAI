@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import ParlAIDialogTeacher
-from parlai.core.agents import MultiTaskTeacher
 from .build import build
 
 import copy
@@ -18,7 +17,7 @@ def _path(opt):
     # for now train, valid and test will be identical, will change with more data.
     dt = opt['datatype'].split(':')[0]
     if (
-        opt.get('light_unseen_test', False) == True
+        opt.get('light_unseen_test', False) is True
         or opt.get('light_unseen_test', False) == 'True'
     ):
         if dt == 'test':

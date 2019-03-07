@@ -4,14 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import copy
 import random
 import io
 import os
-
-rand = random.Random(42)
 import pickle
 from parlai.core.utils import msg_to_str
+
+rand = random.Random(42)
 
 
 def use_feat(opt, field, ttype):
@@ -35,7 +34,7 @@ def fix_labels(act, opt):
         if c in is_label_cand:
             is_label_cand[c] = True
     for l, has in is_label_cand.items():
-        if has == False:
+        if has is False:
             print("***ADDING A LABEL CAND****")
             act['label_candidates'].append(l)
 
@@ -74,11 +73,20 @@ def write_dialog(opt, fw, d, label_type, split):
                 text += '_object_wielding ' + o + '\n'
     for i in range(0, l, 2):
         if i < l - 1:
-            if use_feat(opt, 'light_use_speech', 'partner') and d['speech'][i] != None:
+            if (
+                use_feat(opt, 'light_use_speech', 'partner')
+                and d['speech'][i] is not None
+            ):
                 text += '_partner_say ' + str(d['speech'][i]) + '\n'
-            if use_feat(opt, 'light_use_action', 'partner') and d['action'][i] != None:
+            if (
+                use_feat(opt, 'light_use_action', 'partner')
+                and d['action'][i] is not None
+            ):
                 text += '_partner_act ' + str(d['action'][i]) + '\n'
-            if use_feat(opt, 'light_use_emote', 'partner') and d['emote'][i] != None:
+            if (
+                use_feat(opt, 'light_use_emote', 'partner')
+                and d['emote'][i] is not None
+            ):
                 text += '_partner_emote ' + str(d['emote'][i]) + '\n'
             if opt.get('light_use_repeat') == 'self_last':
                 if i > 0:
@@ -99,7 +107,7 @@ def write_dialog(opt, fw, d, label_type, split):
                 use_feat(opt, 'light_use_current_self_output', 'all')
                 and label_type != 'speech'
                 and use_feat(opt, 'light_use_speech', 'self')
-                and d['speech'][i + 1] != None
+                and d['speech'][i + 1] is not None
             ):
                 if 'remove' not in opt['light_use_current_self_output']:
                     text += '_self_say ' + str(d['speech'][i + 1]) + '\n'
@@ -109,7 +117,7 @@ def write_dialog(opt, fw, d, label_type, split):
                 use_feat(opt, 'light_use_current_self_output', 'all')
                 and label_type != 'action'
                 and use_feat(opt, 'light_use_action', 'self')
-                and d['action'][i + 1] != None
+                and d['action'][i + 1] is not None
             ):
                 if 'remove' not in opt['light_use_current_self_output']:
                     text += '_self_act ' + str(d['action'][i + 1]) + '\n'
@@ -119,7 +127,7 @@ def write_dialog(opt, fw, d, label_type, split):
                 use_feat(opt, 'light_use_current_self_output', 'all')
                 and label_type != 'emote'
                 and use_feat(opt, 'light_use_emote', 'self')
-                and d['emote'][i + 1] != None
+                and d['emote'][i + 1] is not None
             ):
                 if 'remove' not in opt['light_use_current_self_output']:
                     text += '_self_emote ' + str(d['emote'][i + 1]) + '\n'
@@ -127,10 +135,10 @@ def write_dialog(opt, fw, d, label_type, split):
                 used_current = True
             if (
                 'all_filtered' in opt['light_use_current_self_output']
-                and used_current == False
+                and used_current is False
             ):
                 label = None
-            if label != None:
+            if label is not None:
                 msg = {}
                 msg['text'] = text
                 msg['labels'] = label
@@ -146,19 +154,19 @@ def write_dialog(opt, fw, d, label_type, split):
                 text = ''
             if (
                 use_feat(opt, 'light_use_speech', 'self')
-                and d['speech'][i + 1] != None
+                and d['speech'][i + 1] is not None
                 and ('speech' not in shown)
             ):
                 text += '_self_say ' + str(d['speech'][i + 1]) + '\n'
             if (
                 use_feat(opt, 'light_use_action', 'self')
-                and d['action'][i + 1] != None
+                and d['action'][i + 1] is not None
                 and ('action' not in shown)
             ):
                 text += '_self_act ' + str(d['action'][i + 1]) + '\n'
             if (
                 use_feat(opt, 'light_use_emote', 'self')
-                and d['emote'][i + 1] != None
+                and d['emote'][i + 1] is not None
                 and ('emote' not in shown)
             ):
                 text += '_self_emote ' + str(d['emote'][i + 1]) + '\n'
@@ -241,15 +249,15 @@ def write_out_candidates(db, dpath, dtype):
         if d['split'] != dtype:
             continue
         for e in d['emote']:
-            if e != None and e not in emotes:
+            if e is not None and e not in emotes:
                 cands['emote'].append(e)
                 emotes[e] = True
         for act in d['action']:
-            if act != None and act not in acts:
+            if act is not None and act not in acts:
                 cands['action'].append(act)
                 acts[act] = True
         for s in d['speech']:
-            if s != None:
+            if s is not None:
                 cands['speech'].append(s)
     for l in ['emote', 'speech', 'action']:
         fw = io.open(os.path.join(dpath, l + "_" + dtype + "_cands.txt"), 'w')
