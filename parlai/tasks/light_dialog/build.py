@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-1;10;0c
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
