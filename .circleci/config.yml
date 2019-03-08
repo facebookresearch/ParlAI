@@ -40,7 +40,6 @@ commands:
           name: pip3 installs dependencies
           command: |
             pip3 install --progress-bar off -r requirements.txt
-            pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
 
   setupcuda:
     description: "Sets up the CUDA environment"
@@ -51,18 +50,7 @@ commands:
           command: |
             wget 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-410.79.run'
             sudo /bin/bash ./NVIDIA-Linux-x86_64-410.79.run -s --no-drm
-            # curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
-            # distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-            # curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
-            #     sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-            # sudo apt-get update
-            # # Get the exact docker version required by nvidia-docker
-            # # (and not the newer version)
-            # sudo apt-get install -y docker-ce=18.06.2~ce~3-0~ubuntu
-            # sudo apt-get install -y nvidia-docker2
-            # sudo pkill -SIGHUP dockerd
-
-            wget https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+            wget -q https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
             sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
             sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
             # sudo apt-get update
@@ -70,8 +58,7 @@ commands:
             # docker pull circleci/python:3.6.4
             #docker run --runtime=nvidia  --name cuda_bash  -v /home/circleci/ParlAI:/repo --rm -t -d -w /repo  circleci/python:3.6.4 /bin/bash
             pyenv global 3.6.5
-            pip3 install numpy
-
+            pip3 install --progress-bar off numpy
 
 
 jobs:
@@ -105,6 +92,9 @@ jobs:
       - setup
       - installdeps
       - run:
+          name: Install torch GPU
+          command: pip3 install --progress-bar off torch
+      - run:
           name: Nightly GPU tests
           command: python setup.py test -s tests.suites.nightly_gpu -q
 
@@ -115,6 +105,9 @@ jobs:
       - checkout
       - setup
       - installdeps
+      - run:
+          name: Install torch CPU
+          command: pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
       - run:
           name: All nightly CPU tests
           command: python setup.py test -s tests.suites.nightly_cpu -q
