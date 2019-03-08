@@ -76,7 +76,19 @@ commands:
 
 
 jobs:
-  unittest:
+  datatests:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - installtorchcpu
+      - run:
+          name: Data tests
+          command: python setup.py test -s tests.suites.datatests -q
+
+  unittests:
     executor: standard_cpu
     working_directory: ~/ParlAI
     steps:
@@ -86,7 +98,7 @@ jobs:
       - installtorchcpu
       - run:
           name: Unit tests
-          command: python setup.py test -s tests.suites.oncommit -q
+          command: python setup.py test -s tests.suites.unittests -q
 
   lint:
     executor: standard_cpu
@@ -98,7 +110,7 @@ jobs:
           name: Lint
           command: bash ./tests/lint_changed.sh
 
-  nightly_gpu_test:
+  nightly_gpu_tests:
     executor: gpu
     working_directory: ~/ParlAI
     steps:
@@ -111,7 +123,7 @@ jobs:
           name: Nightly GPU tests
           command: python setup.py test -s tests.suites.nightly_gpu -q
 
-  nightly_cpu_test:
+  nightly_cpu_tests:
     executor: standard_cpu
     working_directory: ~/ParlAI
     steps:
@@ -129,7 +141,8 @@ workflows:
   commit:
     jobs:
       - lint
-      - unittest
+      - datatests
+      - unittests
   nightly:
     triggers:
       - schedule:
@@ -139,6 +152,6 @@ workflows:
               only:
                 - master
     jobs:
-      - unittest
-      - nightly_cpu_test
-      - nightly_gpu_test
+      - unittests
+      - nightly_cpu_tests
+      - nightly_gpu_tests
