@@ -447,9 +447,7 @@ class TorchGeneratorAgent(TorchAgent):
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
-        """
-        Pre-initialize CUDA buffer by doing fake forward pass.
-        """
+        """Pre-initialize CUDA buffer by doing fake forward pass."""
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
@@ -465,9 +463,7 @@ class TorchGeneratorAgent(TorchAgent):
                     raise e
 
     def reset_metrics(self):
-        """
-        Reset metrics for reporting loss and perplexity.
-        """
+        """Reset metrics for reporting loss and perplexity."""
         super().reset_metrics()
         self.metrics['loss'] = 0.0
         self.metrics['nll_loss'] = 0.0
@@ -520,9 +516,7 @@ class TorchGeneratorAgent(TorchAgent):
         return base
 
     def vectorize(self, *args, **kwargs):
-        """
-        Override vectorize for generative models.
-        """
+        """Override vectorize for generative models."""
         kwargs['add_start'] = False  # model does this in module code
         kwargs['add_end'] = True  # we do want this
         return super().vectorize(*args, **kwargs)
@@ -567,9 +561,7 @@ class TorchGeneratorAgent(TorchAgent):
             return loss
 
     def train_step(self, batch):
-        """
-        Train on a single batch of examples.
-        """
+        """Train on a single batch of examples."""
         batchsize = batch.text_vec.size(0)
         # helps with memory usage
         self._init_cuda_buffer(batchsize, self.truncate or 256)
@@ -595,9 +587,7 @@ class TorchGeneratorAgent(TorchAgent):
                 raise e
 
     def _write_beam_dots(self, text_vecs, beams):
-        """
-        Write the beam dot files to disk.
-        """
+        """Write the beam dot files to disk."""
         for i, b in enumerate(beams):
             dot_graph = b.get_beam_dot(dictionary=self.dict, n_best=3)
             image_name = self._v2t(text_vecs[i, -20:])
@@ -607,9 +597,7 @@ class TorchGeneratorAgent(TorchAgent):
             )
 
     def eval_step(self, batch):
-        """
-        Evaluate a single batch of examples.
-        """
+        """Evaluate a single batch of examples."""
         if batch.text_vec is None:
             return
         bsz = batch.text_vec.size(0)
@@ -912,27 +900,19 @@ class Beam(object):
 
     @staticmethod
     def find_ngrams(input_list, n):
-        """
-        Get list of ngrams with context length n-1
-        """
+        """Get list of ngrams with context length n-1"""
         return list(zip(*[input_list[i:] for i in range(n)]))
 
     def get_output_from_current_step(self):
-        """
-        Get the outputput at the current step.
-        """
+        """Get the outputput at the current step."""
         return self.outputs[-1]
 
     def get_backtrack_from_current_step(self):
-        """
-        Get the backtrack at the current step.
-        """
+        """Get the backtrack at the current step."""
         return self.bookkeep[-1]
 
     def advance(self, softmax_probs):
-        """
-        Advance the beam one step.
-        """
+        """Advance the beam one step."""
         voc_size = softmax_probs.size(-1)
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
@@ -1001,9 +981,7 @@ class Beam(object):
                 self.eos_top_ts = len(self.outputs) - 1
 
     def done(self):
-        """
-        Return whether beam search is complete.
-        """
+        """Return whether beam search is complete."""
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
@@ -1043,9 +1021,7 @@ class Beam(object):
 
     @staticmethod
     def get_pretty_hypothesis(list_of_hypotails):
-        """
-        Return prettier version of the hypotheses.
-        """
+        """Return prettier version of the hypotheses."""
         hypothesis = []
         for i in list_of_hypotails:
             hypothesis.append(i.tokenid)

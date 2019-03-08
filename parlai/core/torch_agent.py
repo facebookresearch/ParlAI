@@ -175,15 +175,11 @@ class History(object):
         self.reset_on_next_update = False
 
     def parse(self, text):
-        """
-        Tokenize text with the given dictionary.
-        """
+        """Tokenize text with the given dictionary."""
         return self.dict.txt2vec(text)
 
     def reset(self):
-        """
-        Clear the history.
-        """
+        """Clear the history."""
         self.history_strings = []
         self.history_vecs = []
 
@@ -725,9 +721,7 @@ class TorchAgent(Agent):
         return metrics
 
     def _is_lr_warming_up(self):
-        """
-        Checks if we're warming up the learning rate.
-        """
+        """Checks if we're warming up the learning rate."""
         return (
             self.warmup_scheduler is not None and
             self._number_training_updates <= self.opt['warmup_updates']
@@ -895,9 +889,7 @@ class TorchAgent(Agent):
         return vec
 
     def _v2t(self, vec):
-        """
-        Convert token indices to string of tokens.
-        """
+        """Convert token indices to string of tokens."""
         new_vec = []
         if hasattr(vec, 'cpu'):
             vec = vec.cpu()
@@ -935,9 +927,7 @@ class TorchAgent(Agent):
         return tensor
 
     def _check_truncate(self, vec, truncate, truncate_left=False):
-        """
-        Check that vector is truncated correctly.
-        """
+        """Check that vector is truncated correctly."""
         if truncate is None:
             return vec
         if len(vec) <= truncate:
@@ -1343,18 +1333,14 @@ class TorchAgent(Agent):
         return states
 
     def reset(self):
-        """
-        Clear internal states.
-        """
+        """Clear internal states."""
         self.observation = {}
         self.history.reset()
         self.replies.clear()
         self.reset_metrics()
 
     def act(self):
-        """
-        Call batch_act with the singleton batch.
-        """
+        """Call batch_act with the singleton batch."""
         return self.batch_act([self.observation])[0]
 
     def batch_act(self, observations):
@@ -1397,17 +1383,13 @@ class TorchAgent(Agent):
         return batch_reply
 
     def train_step(self, batch):
-        """
-        [Abstract] Process one batch with training labels.
-        """
+        """[Abstract] Process one batch with training labels."""
         raise NotImplementedError(
             'Abstract class: user must implement train_step'
         )
 
     def eval_step(self, batch):
-        """
-        [Abstract] Process one batch but do not train on it.
-        """
+        """[Abstract] Process one batch but do not train on it."""
         raise NotImplementedError(
             'Abstract class: user must implement eval_step'
         )
