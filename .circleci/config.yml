@@ -8,10 +8,8 @@ executors:
   gpu:
     environment:
       CUDA_VERSION: "10.0"
-    docker:
-      - image: circleci/python:3.6.5
-    # machine:
-    #   image: default
+    machine:
+      image: default
     resource_class: gpu.medium  # tesla m60
 
 
