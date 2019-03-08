@@ -27,6 +27,14 @@ def nightly_cpu():
 
 
 @_clear_cmdline_args
+def nightly_gpu():
+    """Nightly GPU tests. Runs on internal infra."""
+    test_loader = unittest.TestLoader()
+    test_suite = test_loader.discover('tests/nightly/gpu')
+    return test_suite
+
+
+@_clear_cmdline_args
 def short():
     """Short tests, found in tests root directory."""
     test_loader = unittest.TestLoader()
