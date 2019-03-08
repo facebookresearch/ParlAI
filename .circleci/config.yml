@@ -4,12 +4,12 @@ version: 2.1
 executors:
   standard_cpu:
     docker:
-      - image: circleci/python:3.6.4
+      - image: circleci/python:3.6.5
   gpu:
     environment:
       CUDA_VERSION: "10.0"
     machine:
-      image: circleci/python:3.6.4
+      image: default
     resource_class: gpu.medium  # tesla m60
 
 
@@ -26,7 +26,7 @@ commands:
           name: Sets up the virtual environment
           command: |
             mkdir -p ~/venv
-            virtualenv ~/venv
+            virtualenv --python=python3.6 ~/venv
             echo ". ~/venv/bin/activate" >> $BASH_ENV
             . ~/venv/bin/activate
             pip3 install --upgrade --progress-bar off pip
