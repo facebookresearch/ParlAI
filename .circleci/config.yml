@@ -9,7 +9,7 @@ executors:
     environment:
       CUDA_VERSION: "10.0"
     machine:
-      - image: circleci/python:3.6.4
+      image: circleci/python:3.6.4
     resource_class: gpu.medium  # tesla m60
 
 
