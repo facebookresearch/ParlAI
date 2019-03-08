@@ -130,7 +130,6 @@ workflows:
     jobs:
       - lint
       - unittest
-      - nightly_gpu_test
   nightly:
     triggers:
       - schedule:
