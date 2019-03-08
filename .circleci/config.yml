@@ -7,7 +7,7 @@ executors:
       - image: circleci/python:3.6.4
   gpu:
     environment:
-      PYTHON_VERSION: "3.6.4"
+      PYTHON_VERSION: "3.6.5"
       CUDA_VERSION: "9.2"
     machine:
       image: default
