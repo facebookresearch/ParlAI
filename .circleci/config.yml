@@ -7,10 +7,9 @@ executors:
       - image: circleci/python:3.6.4
   gpu:
     environment:
-      PYTHON_VERSION: "3.6.5"
-      CUDA_VERSION: "9.2"
+      CUDA_VERSION: "10.0"
     machine:
-      image: default
+      - image: circleci/python:3.6.4
     resource_class: gpu.medium  # tesla m60
 
 
@@ -49,7 +48,7 @@ commands:
       - run:
           name: Setup CUDA
           command: |
-            wget 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-396.26.run'
+            wget 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-410.79.run'
             sudo /bin/bash ./NVIDIA-Linux-x86_64-396.26.run -s --no-drm
             curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
             sudo apt-key add -
@@ -62,8 +61,9 @@ commands:
             sudo apt-get install -y docker-ce=18.06.2~ce~3-0~ubuntu
             sudo apt-get install -y nvidia-docker2
             nvidia-smi
-            # sudo pkill -SIGHUP dockerd
-            # docker login --username cherrypidocker --password ${DOCKERHUB_PASSWORD}
+            sudo pkill -SIGHUP dockerd
+            docker pull pytorch/1.0.1-cuda10.0-cudnn7-runtime
+            # docker run --runtime=nvidia 
             # docker pull cherrypidocker/repo:9.2-cudnn7-devel-gcc7-clang8-ubuntu16.04 >/dev/null
             # docker run --runtime=nvidia  --name cuda_bash  -v /home/circleci/repo:/repo --rm -t -d -w /repo  cherrypidocker/repo:9.2-cudnn7-devel-gcc7-clang8-ubuntu16.04 /bin/bash
 
