@@ -43,11 +43,13 @@ commands:
 
   installtorchgpu:
     description: "Install Torch (GPU)"
+    steps:
       - run:
           name: Install torch GPU
           command: pip3 install --progress-bar off torch
   installtorchcpu:
     description: "Install Torch (CPU)"
+    steps:
       - run:
           name: Install torch CPU
           command: pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
