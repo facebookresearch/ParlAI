@@ -400,7 +400,7 @@ def load_agent_module(opt):
             raise RuntimeError(
                 'WARNING: Neither the specified dict file ({}) nor the '
                 '`model_file`.dict file ({}) exists, check to make sure either '
-                'is correct: {}'.format(old_dict_file, new_opt['dict_file'])
+                'is correct'.format(old_dict_file, new_opt['dict_file'])
             )
         model_class = get_agent_module(new_opt['model'])
 
