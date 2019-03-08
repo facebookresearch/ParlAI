@@ -41,6 +41,17 @@ commands:
           command: |
             pip3 install --progress-bar off -r requirements.txt
 
+  installtorchgpu:
+    description: "Install Torch (GPU)"
+      - run:
+          name: Install torch GPU
+          command: pip3 install --progress-bar off torch
+  installtorchcpu:
+    description: "Install Torch (CPU)"
+      - run:
+          name: Install torch CPU
+          command: pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+
   setupcuda:
     description: "Sets up the CUDA environment"
     steps:
@@ -69,6 +80,7 @@ jobs:
       - checkout
       - setup
       - installdeps
+      - installtorchcpu
       - run:
           name: Unit tests
           command: python setup.py test -s tests.suites.oncommit -q
@@ -90,10 +102,8 @@ jobs:
       - checkout
       - setupcuda
       - setup
+      - installtorchgpu
       - installdeps
-      - run:
-          name: Install torch GPU
-          command: pip3 install --progress-bar off torch
       - run:
           name: Nightly GPU tests
           command: python setup.py test -s tests.suites.nightly_gpu -q
@@ -105,9 +115,7 @@ jobs:
       - checkout
       - setup
       - installdeps
-      - run:
-          name: Install torch CPU
-          command: pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+      - installtorchcpu
       - run:
           name: All nightly CPU tests
           command: python setup.py test -s tests.suites.nightly_cpu -q
