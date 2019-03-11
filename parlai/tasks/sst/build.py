@@ -24,10 +24,15 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'stanfordSentimentTreebank.zip'
-        url = 'http://nlp.stanford.edu/~socherr/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        url_base = 'https://raw.githubusercontent.com/openai/generating-reviews-discovering-sentiment/master/data/'
+        fnames = [
+            'train_binary_sent.csv',
+            'dev_binary_sent.csv',
+            'test_binary_sent.csv'
+        ]
+        for fname in fnames:
+            url = url_base + fname
+            build_data.download(url, dpath, fname)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

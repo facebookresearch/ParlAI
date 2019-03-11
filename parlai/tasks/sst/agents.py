@@ -23,38 +23,32 @@ class SSTTeacher(DialogTeacher):
 
         self.SST_LABELS = ['negative', 'positive']
 
-        self.label_path, opt['datafile'] = self._path(opt)
+        opt['datafile'] = self._path(opt)
 
         super().__init__(opt, shared)
 
     def _path(self, opt):
         build(opt)
-        labels_path = os.path.join(opt['datapath'], 'SST', 'stanfordSentimentTreebank',
-                                   'sentiment_labels.txt')
-        data_path = os.path.join(opt['datapath'], 'SST', 'stanfordSentimentTreebank',
-                                 'dictionary.txt')
-        return labels_path, data_path
+
+        dt = opt['datatype'].split(':')[0]
+        # Using matched set as valid and mismatched set as test
+        if dt == 'valid':
+            dt = 'dev'
+        fname = dt + '_binary_sent.csv'
+        path = os.path.join(opt['datapath'], 'SST', fname)
+
+        return path
 
     def setup_data(self, path):
         print('loading: ' + path)
 
-        def to_binary_label(label):
-            sentiment_val = float(label)
-            if sentiment_val <= 0.333:
-                return self.SST_LABELS[0]
-            elif sentiment_val > 0.666:
-                return self.SST_LABELS[1]
-            return False
-
         with open(path) as data_file:
-            self.contexts = sorted(
-                [data.split("|") for data in data_file.read().split("\n")[1:-1]],
-                key=lambda x: int(x[1]))
-            self.contexts = [x[0] for x in self.contexts]
+            self.all_lines = [
+                l.strip().split(',', 1) for l in data_file.read().split("\n")[1:-1]
+            ]
 
-        with open(self.label_path) as labels_file:
-            self.labels = [to_binary_label(label.split("|")[1]) for label in
-                           labels_file.read().split("\n")[1:-1]]
+            self.labels = [self.SST_LABELS[int(x[0])] for x in self.all_lines]
+            self.contexts = [x[1] for x in self.all_lines]
 
         new_episode = True
         # define standard question, since it doesn't change for this task
