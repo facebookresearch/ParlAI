@@ -98,6 +98,11 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
                  'from Glove or Fasttext. Preinitialized embeddings can also '
                  'be fixed so they are not updated during training.')
                  
+        agent.add_argument(
+            '-wcidf', '--weight-criterion-idf', type='bool', default=False,
+            help='Whether to weight the loss with the idf weights '
+                '(must be pre-calculated)')
+                 
                  
         LanguageModelAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
@@ -114,7 +119,31 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         if not self.states and opt['embedding_type'] != 'random':
             # `not states`: only set up embeddings if not loading model
             self._copy_embeddings(self.model.encoder.weight, opt['embedding_type'])
-                                  
+        
+        # Weight token importance, if desired. 
+        if opt['weight_criterion_idf']:
+            import pickle
+            
+            datasetname = opt['task']
+            with open('data/%s/%s/tfidf_vectorizer.pkl'% (datasetname, datasetname), 'rb') as f:
+                
+                vectorizer = pickle.load(f)
+                word_weights = torch.zeros(len(self.dict.freq.keys()))
+                
+                for tok in self.dict.freq.keys(): 
+                    
+                    word_idf = vectorizer.idf_[vectorizer.vocabulary_[tok]]
+                    word_weights[self.dict.tok2ind[tok]] = word_idf
+                    
+                    # word_weights[self.dict.tok2ind[tok]] = 1./(float(self.dict.freq[tok]) + 1.)**.5
+            
+            # set up criteria
+            self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
+                                                 size_average=False, 
+                                                 weight=word_weights)
+            if self.use_cuda:
+                # push to cuda
+                self.criterion.cuda()                                  
         
         self.id = 'LanguageModelRetriever'
         
@@ -129,98 +158,7 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         self.reset_metrics()
         
     def observe(self, observation):
-        return self.observe_appending_special_tokens(observation)
-#         return self.observe_no_special_tokens(observation)
-        
-        
-    def observe_no_special_tokens(self, observation):
-        
-        ''' This method does not track history with EOS and EOM interspersed'''
-        
-        """Save observation for act.
-        If multiple observations are from the same episode, concatenate them.
-        """
-        # shallow copy observation (deep copy can be expensive)
-        obs = observation.copy()
-        seq_len = self.opt['seq_len']
-        is_training = True
-        
-        if 'labels' not in obs:
-            is_training = False
-        if 'is_training_lambda' in self.opt and self.opt['is_training_lambda']:
-            is_training = False
-        
-        
-        
-        if is_training:
-            
-            if 'labels' in obs:
-                
-                obs['labels'][0] = obs['labels'][0]
-                
-                vec = self.parse(obs['labels'][0])
-                vec.append(self.END_IDX)
-#                 self.next_observe += vec
-            
-            # OAD: stop accumulating at the end of an episode.
-            if obs['episode_done']:
-                self.episode_history = [self.END_IDX,]
-                self.episode_history_text = 'endofsegment'
-                
-            else:
-                # accumulate episode history.
-                self.episode_history += vec[:-1] # don't track endofsegment token.
-                self.episode_history_text = ' '.join([self.episode_history_text, 
-                                                    obs['labels'][0]])                
-                
-                
-            if len(self.episode_history) < (seq_len + 1):
-                # not enough to return to make a batch
-                # we handle this case in vectorize
-                # labels indicates that we are training
-                self.observation = {'labels': ''}
-                return self.observation
-                
-            else:
-                vecs_to_return = []
-                overlap = 5
-                
-                # first obs will overlap 1 with current observation
-                start = max(0, len(self.episode_history) - (len(vec) - 1 + seq_len)) 
-                stop = len(self.episode_history) - (seq_len + 1)
-                
-                # take observations of seq-len that overlap with just observed 
-                for i in range(start, stop, overlap):
-                    vecs_to_return.append(self.episode_history[i:i+seq_len+1])
-                    
-                    
-                dict_to_return = {'text': '', 'labels': '', 'text2vec': vecs_to_return}
-                self.observation = dict_to_return
-                
-                return dict_to_return
-        else:
-            # No training. 
-            
-            if 'text' in obs:
-                
-                # truncate to approximate multiple of seq_len history
-                obs['text'] = ' '.join(self.episode_history_text.split(' ')[-4*seq_len:])
-                    
-            # OAD: stop accumulating at the end of an episode.
-            if obs['episode_done']:
-            
-                self.episode_history_text = 'endofsegment'
-                
-            else:
-                
-                # accumulate episode history *only* as tokens, no special tokens interspersed
-                self.episode_history_text = ' '.join([self.episode_history_text, 
-                                                            obs['eval_labels'][0]])
-                                                    
-            self.observation = obs
-            
-            return obs
-            
+        return self.observe_appending_special_tokens(observation)            
             
                     
     def observe_appending_special_tokens(self, observation):
@@ -239,6 +177,17 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
             is_training = False
         
         
+        if obs['turn_num'] == 0: 
+        
+            if obs['first_message'] != '':
+            
+                response_formated = ' endofsegment '.join(sent_tokenize(obs['first_message']))
+                response_formated += ' endofsegment endofmessage'
+            
+                self.episode_history_text = response_formated
+                self.episode_history = self.parse(obs['first_message']
+                                                        + ' endofmessage endofsegment')
+            
         
         if is_training:
             
@@ -275,7 +224,7 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
                 
             else:
                 vecs_to_return = []
-                overlap = 3
+                overlap = 3 
                 
                 # first obs will overlap 1 with current observation
                 start = max(0, len(self.episode_history) - (len(vec) + seq_len)) 
