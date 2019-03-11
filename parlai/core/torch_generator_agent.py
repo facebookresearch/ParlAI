@@ -597,8 +597,7 @@ class TorchGeneratorAgent(TorchAgent):
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
-            with torch.no_grad():
-                loss = self.compute_loss(batch)  # noqa: F841  we need the side effects
+            loss = self.compute_loss(batch)  # noqa: F841  we need the side effects
             self.metrics['loss'] += loss.item()
 
         preds = None
@@ -609,8 +608,7 @@ class TorchGeneratorAgent(TorchAgent):
             )
         elif self.beam_size == 1:
             # greedy decode
-            with torch.no_grad():
-                _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz)
+            _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz)
         elif self.beam_size > 1:
             out = self.beam_search(
                 self.model,
