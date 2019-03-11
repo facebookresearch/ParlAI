@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """Basic example which iterates through the tasks specified and prints them out.
 Used for verification of data loading and iteration.
 
@@ -29,6 +27,7 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Display data from a task')
+    parser.add_pytorch_datateacher_args()
     # Get command line arguments
     parser.add_argument('-ne', '--num_examples', type=int, default=10)
     parser.add_argument('-mdl', '--max_display_len', type=int, default=1000)

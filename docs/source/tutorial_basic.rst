@@ -1,9 +1,7 @@
 ..
-  Copyright (c) 2017-present, Facebook, Inc.
-  All rights reserved.
-  This source code is licensed under the BSD-style license found in the
-  LICENSE file in the root directory of this source tree. An additional grant
-  of patent rights can be found in the PATENTS file in the same directory.
+  Copyright (c) Facebook, Inc. and its affiliates.
+  This source code is licensed under the MIT license found in the
+  LICENSE file in the root directory of this source tree.
 
 What is ParlAI?
 ===============
@@ -301,7 +299,7 @@ the labels aren't available:
             reply['text'] = ', '.join(self.observation['labels'])
         elif 'label_candidates' in self.observation:
             cands = self.observation['label_candidates']
-            reply['text'] = random.choice(cands)
+            reply['text'] = random.choice(list(cands))
         else:
             reply['text'] = "I don't know."
         return reply
@@ -358,7 +356,7 @@ Of course every model has various parameters and hyperparameters to set in gener
 
 **Model Zoo**
 
-A new feature in ParlAI is that it also now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_.
+A new feature in ParlAI is that it also now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See the devoted documentation section or `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_.
 
 The set of agents and models in the model zoo in ParlAI is continually growing from contributors.
 

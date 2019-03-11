@@ -1,0 +1,157 @@
+version: 2.1
+
+# executors are environments where we run things
+executors:
+  standard_cpu:
+    docker:
+      - image: circleci/python:3.6.5
+  gpu:
+    environment:
+      CUDA_VERSION: "10.0"
+    machine:
+      image: default
+    resource_class: gpu.medium  # tesla m60
+
+
+# commands are nice shorthand
+commands:
+  setup:
+    description: "Minimal CircleCI setup"
+    steps:
+      - run:
+          name: Fixes git
+          command: |
+            ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
+      - run:
+          name: Sets up the virtual environment
+          command: |
+            mkdir -p ~/venv
+            virtualenv --python=python3.6 ~/venv
+            echo ". ~/venv/bin/activate" >> $BASH_ENV
+            . ~/venv/bin/activate
+            pip3 install --upgrade --progress-bar off pip
+            pip3 install --progress-bar off flake8 gitpython
+
+
+  installdeps:
+    description: "Installs all dependencies"
+    steps:
+      - run:
+          name: Installs basic dependencies
+          command: |
+            pip3 install --progress-bar off -r requirements.txt
+
+  installtorchgpu:
+    description: "Install Torch (GPU)"
+    steps:
+      - run:
+          name: Install torch GPU
+          command: |
+            pip3 install --progress-bar off numpy
+            pip3 install --progress-bar off torch
+  installtorchcpu:
+    description: "Install Torch (CPU)"
+    steps:
+      - run:
+          name: Install torch CPU
+          command: |
+            pip3 install --progress-bar off numpy
+            pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+
+  setupcuda:
+    description: "Sets up the CUDA environment"
+    steps:
+      - run:
+          name: Setup CUDA
+          working_directory: ~/
+          command: |
+            # download and install nvidia drivers, cuda, etc
+            wget -q 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-410.79.run'
+            sudo /bin/bash ./NVIDIA-Linux-x86_64-410.79.run -s --no-drm
+            wget -q https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+            sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+            sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
+            nvidia-smi
+            pyenv global 3.6.5
+
+
+jobs:
+  datatests:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - installtorchcpu
+      - run:
+          name: Data tests
+          command: python setup.py test -s tests.suites.datatests -q
+
+  unittests:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - installtorchcpu
+      - run:
+          name: Unit tests
+          command: python setup.py test -s tests.suites.unittests -q
+
+  lint:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - run:
+          name: Lint
+          command: bash ./tests/lint_changed.sh
+
+  nightly_gpu_tests:
+    executor: gpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setupcuda
+      - setup
+      - installtorchgpu
+      - installdeps
+      - run:
+          name: Nightly GPU tests
+          command: python setup.py test -s tests.suites.nightly_gpu -q
+
+  nightly_cpu_tests:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - installtorchcpu
+      - run:
+          name: All nightly CPU tests
+          command: python setup.py test -s tests.suites.nightly_cpu -q
+
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - lint
+      - datatests
+      - unittests
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 10 * * *"  # 10am UTC is 5am NYC
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - unittests
+      - nightly_cpu_tests
+      - nightly_gpu_tests

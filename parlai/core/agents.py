@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """This module provides a set of basic agents:
 
     ``Agent(object)``
@@ -173,9 +171,6 @@ class MultiTaskTeacher(Teacher):
         self.tasks = []
         self.opt = opt
 
-        opt['batch_sort'] = False
-        print('WARNING: batch_sort disabled for multitasking')
-
         self.id = opt['task']
         if shared and 'tasks' in shared:
             self.tasks = [create_agent_from_shared(t) for t in shared['tasks']]
@@ -191,6 +186,18 @@ class MultiTaskTeacher(Teacher):
         self.task_idx = -1
         self.new_task = True
         self.random = opt.get('datatype') == 'train'
+        # Make multi-task task probabilities.
+        self.cum_task_weights = [1] * len(self.tasks)
+        self.task_choices = range(len(self.tasks))
+        weights = self.opt.get('multitask_weights', [1])
+        sum = 0
+        for i in self.task_choices:
+            if len(weights) > i:
+                weight = weights[i]
+            else:
+                weight = 1
+            self.cum_task_weights[i] = weight + sum
+            sum += weight
 
     def num_examples(self):
         if not hasattr(self, 'num_exs'):
@@ -220,7 +227,8 @@ class MultiTaskTeacher(Teacher):
             self.new_task = False
             if self.random:
                 # select random teacher
-                self.task_idx = random.randrange(len(self.tasks))
+                self.task_idx = random.choices(
+                    self.task_choices, cum_weights=self.cum_task_weights)[0]
             else:
                 # do at most one full loop looking for unfinished task
                 for _ in range(len(self.tasks)):
@@ -290,6 +298,70 @@ def name_to_agent_class(name):
     return class_name
 
 
+def compare_init_model_opts(opt, curr_opt):
+    """Prints loud warning when `init_model` opts differ from those that
+    are being loaded."""
+    if opt.get('init_model') is None:
+        return
+    optfile = opt['init_model'] + '.opt'
+    if not os.path.isfile(optfile):
+        return
+    init_model_opt = _load_opt_file(optfile)
+
+    extra_opts = {}
+    different_opts = {}
+    exempt_opts = ['model_file', 'dict_file', 'override', 'starttime',
+                   'init_model']
+
+    # search through init model opts
+    for k, v in init_model_opt.items():
+        if (k not in exempt_opts and k in init_model_opt and
+                init_model_opt[k] != curr_opt.get(k)):
+            if isinstance(v, list):
+                if init_model_opt[k] != list(curr_opt[k]):
+                    different_opts[k] = ','.join([str(x) for x in v])
+            else:
+                different_opts[k] = v
+
+    # search through opts to load
+    for k, v in curr_opt.items():
+        if k not in exempt_opts and k not in init_model_opt:
+            if isinstance(v, list):
+                extra_opts[k] = ','.join([str(x) for x in v])
+            else:
+                extra_opts[k] = v
+
+    # print warnings
+    extra_strs = ['{}: {}'.format(k, v) for k, v in extra_opts.items()]
+    if extra_strs:
+        print('\n' + '*' * 75)
+        print('[ WARNING ] : your model is being loaded with opts that do not '
+              'exist in the model you are initializing the weights with: '
+              '{}'.format(','.join(extra_strs)))
+
+    different_strs = ['--{} {}'.format(k, v).replace('_', '-') for k, v in
+                      different_opts.items()]
+    if different_strs:
+        print('\n' + '*' * 75)
+        print('[ WARNING ] : your model is being loaded with opts that differ '
+              'from the model you are initializing the weights with. Add the '
+              'following args to your run command to change this: \n'
+              '\n{}'.format(' '.join(different_strs)))
+        print('*' * 75)
+
+
+def _load_opt_file(optfile):
+    try:
+        # try json first
+        with open(optfile, 'r') as handle:
+            opt = json.load(handle)
+    except UnicodeDecodeError:
+        # oops it's pickled
+        with open(optfile, 'rb') as handle:
+            opt = pickle.load(handle)
+    return opt
+
+
 def load_agent_module(opt):
     """Load agent options and module from file if opt file exists.
 
@@ -303,14 +375,7 @@ def load_agent_module(opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
-        try:
-            # try json first
-            with open(optfile, 'r') as handle:
-                new_opt = json.load(handle)
-        except UnicodeDecodeError:
-            # oops it's pickled
-            with open(optfile, 'rb') as handle:
-                new_opt = pickle.load(handle)
+        new_opt = _load_opt_file(optfile)
         if 'batchindex' in new_opt:
             # This saved variable can cause trouble if we switch to BS=1 at test time
             del new_opt['batchindex']
@@ -326,6 +391,17 @@ def load_agent_module(opt):
             if k not in new_opt:
                 new_opt[k] = v
         new_opt['model_file'] = model_file
+        if not new_opt.get('dict_file'):
+            new_opt['dict_file'] = model_file + '.dict'
+        elif new_opt.get('dict_file') and not os.path.isfile(new_opt['dict_file']):
+            old_dict_file = new_opt['dict_file']
+            new_opt['dict_file'] = model_file + '.dict'
+        if not os.path.isfile(new_opt['dict_file']):
+            raise RuntimeError(
+                'WARNING: Neither the specified dict file ({}) nor the '
+                '`model_file`.dict file ({}) exists, check to make sure either '
+                'is correct'.format(old_dict_file, new_opt['dict_file'])
+            )
         model_class = get_agent_module(new_opt['model'])
 
         # check for model version
@@ -346,6 +422,10 @@ def load_agent_module(opt):
                     # otherwise generic one
                     raise RuntimeError(m.format(m='modelname', v=curr_version,
                                                 c='ModelAgent'))
+
+        # if we want to load weights from --init-model, compare opts with
+        # loaded ones
+        compare_init_model_opts(opt, new_opt)
         return model_class(new_opt)
     else:
         return None
@@ -372,6 +452,10 @@ def get_agent_module(dir_name):
     To use legacy agent versions, you can prepend "legacy:" to model arguments,
     e.g. "legacy:seq2seq:0" will translate to ``legacy_agents/seq2seq/seq2seq_v0``.
 
+    To use agents in projects, you can prepend "projects:" and the name of the
+    project folder to model arguments, e.g. "projects:personachat:kvmemnn"
+    will translate to ``projects/personachat/kvmemnn``.
+
     :param dir_name: path to model class in one of the above formats.
     """
     repo = 'parlai'
@@ -393,6 +477,18 @@ def get_agent_module(dir_name):
         model_name = s[1]  # seq2seq
         module_name = 'parlai.agents.legacy_agents.{m}.{m}_v{v}'.format(
             m=model_name, v=s[2])
+        class_name = name_to_agent_class(model_name)
+    elif dir_name.startswith('projects:'):
+        # e.g. -m projects:personachat:kvmemnn
+        s = dir_name.split(':')
+        if len(s) != 3:
+            raise RuntimeError('projects paths should follow pattern '
+                               'projects:folder:model; you used {}'
+                               ''.format(dir_name))
+        folder_name = s[1]
+        model_name = s[2]
+        module_name = 'projects.{p}.{m}.{m}'.format(
+            m=model_name, p=folder_name)
         class_name = name_to_agent_class(model_name)
     elif ':' in dir_name:
         # e.g. -m "parlai.agents.seq2seq.seq2seq:Seq2seqAgent"
@@ -461,6 +557,9 @@ def create_agent(opt, requireModelExists=False):
 
     if opt.get('model'):
         model_class = get_agent_module(opt['model'])
+        # if we want to load weights from --init-model, compare opts with
+        # loaded ones
+        compare_init_model_opts(opt, opt)
         model = model_class(opt)
         if requireModelExists and hasattr(model, 'load') and not opt.get('model_file'):
             # double check that we didn't forget to set model_file on loadable model
@@ -551,6 +650,7 @@ def get_task_module(taskname):
     teacher_class = getattr(my_module, teacher)
     return teacher_class
 
+
 def add_task_flags_to_agent_opt(agent, opt, flags):
     """Allows to insert task flags in the task name itself, they are
     put inside the opt before the task is created.
@@ -564,8 +664,8 @@ def add_task_flags_to_agent_opt(agent, opt, flags):
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
-            
-            
+
+
 def create_task_agent_from_taskname(opt):
     """Create task agent(s) assuming the input ``task_dir:teacher_class``.
 

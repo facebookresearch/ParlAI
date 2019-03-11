@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """Example sequence to sequence agent for ParlAI "Creating an Agent" tutorial.
 http://parl.ai/static/docs/tutorial_seq2seq.html
 """
@@ -84,10 +82,10 @@ class ExampleSeq2seqAgent(TorchAgent):
     <http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html>`_.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
-        TorchAgent.add_cmdline_args(argparser)
+        super(ExampleSeq2seqAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument('-hs', '--hiddensize', type=int, default=128,
                            help='size of the hidden layers')

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 """
 ParlAI has limited support for using models from
@@ -68,11 +66,6 @@ NON_OVERRIDABLE_ARGS = {
     'decoder_out_embed_dim',
     'decoder_attention',
 }
-
-
-def _is_nonempty_observation(obs):
-    """Check if an observation has no tokens in it."""
-    return len(obs.get('text_vec', [])) > 0
 
 
 def _fairseq_opt_wrapper(opt, skip_pretrained_embedding_loading=False):
@@ -229,10 +222,7 @@ class FairseqAgent(TorchAgent):
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         # first we need to add the general torch agent operations
-        TorchAgent.add_cmdline_args(argparser)
-        # Dictionary construction stuff. Using the subclass in case we end up
-        # needing any fairseq specific things
-        cls.dictionary_class().add_cmdline_args(argparser)
+        super(FairseqAgent, cls).add_cmdline_args(argparser)
 
         # let's store any defaults that were overridden
         old_defaults = argparser._defaults
@@ -460,7 +450,7 @@ class FairseqAgent(TorchAgent):
     def load(self, path):
         """Load using fairseq's checkpointing."""
         if self.trainer:
-            old_options = self.trainer.load_checkpoint(path)
+            old_options = self.trainer.load_checkpoint(path, self.args.reset_optimizer)
             self._check_opts_unchanged(old_options, self.opt)
         else:
             load_model_state(path, self.model)
@@ -477,6 +467,11 @@ class FairseqAgent(TorchAgent):
         super().reset()
         self.reset_metrics()
 
+    def is_valid(self, obs):
+        """Override from TorchAgent.
+        Check if an observation has no tokens in it."""
+        return len(obs.get('text_vec', [])) > 0
+
     def batchify(self, obs_batch):
         """
         Override parent batchify to set requirements for fairseq.
@@ -484,7 +479,7 @@ class FairseqAgent(TorchAgent):
         Fairseq depends on sorted batch inputs for a call to rnn.pad_packed_sequence.
         Fairseq models cannot handle zero length sentences
         """
-        return super().batchify(obs_batch, sort=True, is_valid=_is_nonempty_observation)
+        return super().batchify(obs_batch, sort=True)
 
     def _update_metrics(self, metrics, sample):
         if metrics is None:

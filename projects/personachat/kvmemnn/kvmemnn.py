@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -200,7 +198,9 @@ class KvmemnnAgent(Agent):
         agent.add_argument('--interactive-mode',
                            default=False, type='bool',
                            choices=[True, False])
-
+        agent.add_argument('--loadcands', type='bool', default=True,
+                           help='Load candidates to rank from .candspair files, or not.')
+        
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
@@ -257,7 +257,7 @@ class KvmemnnAgent(Agent):
             self.fixedCands = False
             self.fixedX = None
             path = opt['model_file'] + '.candspair'
-            if os.path.isfile(path):
+            if os.path.isfile(path) and opt.get('loadcands') != False:
                 print("[loading candidates: " + path + "*]")
                 fc = load_cands(path)
                 fcs = []
@@ -322,7 +322,10 @@ class KvmemnnAgent(Agent):
         """Convert string to token indices."""
         text = text.lower()
         text = text.replace("n't", " not")
-        return self.dict.txt2vec(text)
+        vec = self.dict.txt2vec(text)
+        if vec == []:
+            vec = [self.dict[self.dict.null_token]]
+        return vec
 
     def t2v(self, text):
         p = self.dict.txt2vec(text)

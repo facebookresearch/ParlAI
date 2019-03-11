@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
+from functools import lru_cache
 import math
 import os
 import random
 import time
 import warnings
+import heapq
 
 # some of the utility methods are helpful for Torch
 try:
@@ -263,7 +263,7 @@ class TimeLogger():
             for k, v in report.items():
                 if k not in log:
                     log[k] = v
-        text = str(int(self.tot_time)) + "s elapsed: " + str(log)
+        text = str(int(self.tot_time)) + "s elapsed: " + str(log).replace('\\n', '\n')
         return text, log
 
 
@@ -311,116 +311,6 @@ def round_sigfigs(x, sigfigs=4):
             raise ex
 
 
-def flatten(teacher, context_length=-1, include_labels=True):
-    """
-    DEPRECATED: If you would like to make use of batch sorting, please
-    use the PytorchDataTeacher instead
-
-    Return a flattened version of a teacher's data.
-
-    All episodes will have length 1 but contain the desired amount of context.
-
-    If context_length is not -1, will use only that many past utterances.
-    Default is -1, full past. Setting it to one only uses the input text.
-
-    If include_labels is True, will include a random label in past utterances.
-    Default is True.
-    """
-    warnings.warn('flatten is deprecated. Please use PytorchDataTeacher.',
-                  DeprecationWarning)
-    data = []
-    current = []
-    episode_done = False
-    context_length = context_length if context_length >= 0 else None
-    context = deque(maxlen=context_length)
-    try:
-        while not teacher.epoch_done():
-            # collect examples in episode
-            while not episode_done:
-                action = teacher.act()
-                current.append(action)
-                episode_done = action['episode_done']
-
-            # build separate episodes from each example
-            for ex in current:
-                context.append(ex.get('text', ''))
-                if len(context) != 1:
-                    ex['text'] = '\n'.join(context)
-                ex['episode_done'] = True
-                if include_labels:
-                    # add labels to context
-                    labels = ex.get('labels', ex.get('eval_labels'))
-                    if labels is not None:
-                        context.append(random.choice(labels))
-                data.append(ex)
-            # reset flags and content
-            episode_done = False
-            current.clear()
-            context.clear()
-        return data
-    except MemoryError:
-        raise MemoryError('Ran out of memory building flattened data batches. '
-                          'Try using --context-length set to a small value to '
-                          'limit the length of each flattened example, '
-                          'disabling batch sorting / flattening by setting '
-                          '--batch-sort false, or switching to data streaming '
-                          'using --datatype {type}:stream to read from disk '
-                          'if it is supported for your dataset.')
-
-
-def sort_data(data, key='text_label', method='spaces'):
-    """
-    DEPRECATED: If you would like to make use of batch sorting, please
-    use the PytorchDataTeacher instead.
-
-    Given a list of data, sort it according to the method and key.
-
-    Currently the only supported method is counting the number of spaces.
-    This appeared to be reliable enough and much faster than tokenizing.
-    It performs much better than just using the length of the string.
-
-    Currently the only supported key is sorting by first the text, then the
-    label.
-    See https://arxiv.org/abs/1706.05765 for an evaluation of alternative
-    approaches for machine translation.
-    Sorting by the source (text) gives a good improvement in speed over random
-    batching and is robust to different types of optimization.
-    Breaking ties by sorting by label length gives a further improvement in
-    speed but can reduce robustness with some optimization schemes.
-    """
-    warnings.warn('sort_data is deprecated. Please use PytorchDataTeacher.',
-                  DeprecationWarning)
-    # TODO: support different keys and different methods
-    tpls = []
-    for ex in data:
-        # first sort by input length
-        fst = ex.get('text', '').count(' ')
-
-        # then sort by target length (don't sort by eval_labels, no need)
-        snd = 0
-        labels = ex.get('labels', None)
-        if labels is not None:
-            # use average label length (probably just one answer usually)
-            snd = sum(l.count(' ') for l in labels) / len(labels)
-
-        tiebreaker = random.random()
-        tpls.append((fst, snd, tiebreaker, ex))
-    tpls.sort()
-    return [e[-1] for e in tpls]
-
-
-def make_batches(data, bsz):
-    """
-    DEPRECATED: If you would like to make use of batch sorting, please
-    use the PytorchDataTeacher instead.
-
-    Return a list of lists of size bsz given a list of examples.
-    """
-    warnings.warn('make_batches is deprecated. Please use PytorchDataTeacher.',
-                  DeprecationWarning)
-    return [data[i:i + bsz] for i in range(0, len(data), bsz)]
-
-
 class NoLock(object):
     """Empty `lock`. Does nothing when you enter or exit."""
 
@@ -439,57 +329,6 @@ single_nolock = NoLock()
 def no_lock():
     """Build a nolock for other classes to use for no-op locking."""
     return single_nolock
-
-
-class ProgressLogger(object):
-    """Throttles and display progress in human readable form."""
-
-    def __init__(self, throttle=1, should_humanize=True):
-        """Initialize Progress logger.
-
-        :param throttle: default 1, number in seconds to use as throttle rate
-        :param should_humanize: default True, whether to humanize data units
-        """
-        self.latest = time.time()
-        self.throttle_speed = throttle
-        self.should_humanize = should_humanize
-
-    def humanize(self, num, suffix='B'):
-        """Convert units to more human-readable format."""
-        if num < 0:
-            return num
-        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
-            if abs(num) < 1024.0:
-                return "%3.1f%s%s" % (num, unit, suffix)
-            num /= 1024.0
-        return "%.1f%s%s" % (num, 'Yi', suffix)
-
-    def log(self, curr, total, width=40, force=False):
-        """Display a bar showing the current progress."""
-        if curr == 0 and total == -1:
-            print('[ no data received for this file ]', end='\r')
-            return
-        curr_time = time.time()
-        if not force and curr_time - self.latest < self.throttle_speed:
-            return
-        else:
-            self.latest = curr_time
-
-        self.latest = curr_time
-        done = min(curr * width // total, width)
-        remain = width - done
-
-        if self.should_humanize:
-            curr = self.humanize(curr)
-            total = self.humanize(total)
-
-        progress = '[{}{}] {} / {}'.format(
-            ''.join(['|'] * done),
-            ''.join(['.'] * remain),
-            curr,
-            total
-        )
-        print(progress, end='\r')
 
 
 class PaddingUtils(object):
@@ -766,6 +605,90 @@ class OffensiveLanguageDetector(object):
         """Determine if text contains any offensive words in the filter."""
         return self.contains_offensive_language(key)
 
+    def str_segment(self, text, dict_agent, k=1, max_length=None):
+        """
+        Function that segments a word without spaces into the most
+        probable phrase with spaces
+
+        :param string text: string to segment
+        :param DictionaryAgent dict_agent: Dictionary we use
+            to look at word frequencies
+        :param int k: top k segmentations of string
+        :param int max_length: max length of a substring
+            (word) in the string. default (None) uses the
+            length of the string.
+        :returns: list of top k segmentations of the given string
+        :rtype: list
+
+        Example Usage:
+            dict_agent = DictionaryAgent using Wiki Toxic Comments data
+            old = OffensiveLanguageDector()
+
+            split_str = old.str_segment('fucku2', dict_agent)
+            split_str is 'fuck u 2'
+
+            We can then run old.contains_offensive_language(split_str)
+            which yields the offensive word 'fuck'
+
+        """
+        freqs = dict_agent.freqs()
+
+        # Total number of word tokensd
+        N = sum(freqs.values())
+
+        # Number of distinct words in the Vocab
+        V = len(freqs)
+
+        logNV = math.log(N + V)
+        max_heap = []
+
+        if not max_length:
+            max_length = len(text)
+
+        @lru_cache(maxsize=16)
+        def segment(text):
+            # Return a list of words that is the best segmentation of text.
+            if not text:
+                return []
+            candidates = [
+                [first] + segment(rem)
+                for first, rem in splits(text, max_length)
+            ]
+
+            nonlocal max_heap
+            max_heap = []
+
+            for c in candidates:
+                cand_score = (score(c), c)  # tuple of (score, candidate)
+                max_heap.append(cand_score)
+
+            heapq._heapify_max(max_heap)
+
+            return max_heap[0][1]
+
+        def splits(text, max_length):
+            # Returns a list of all possible first and remainder tuples where
+            return [
+                (text[:i+1], text[i+1:])
+                for i in range(min(len(text), max_length))
+            ]
+
+        def score(words):
+            # Returns probability for a sequence of words
+            return sum(logprob(w) for w in words) / len(words)
+
+        def logprob(word):
+            # Utilizes laplace smoothing to get a probability of
+            # unknown word
+            count_w = freqs.get(word, 0)
+            return math.log(count_w + 1) - logNV
+
+        segment(text)
+        res = []
+        for i in range(0, k):
+            res.append(heapq._heappop_max(max_heap)[1])
+        return res
+
 
 def clip_text(text, max_len):
     """Clip text to max length, adding ellipses."""
@@ -939,6 +862,7 @@ def msg_to_str(msg, ignore_fields=''):
 def set_namedtuple_defaults(namedtuple, default=None):
     """Set *all* of the fields for a given nametuple to a singular value.
 
+    Additionally removes the default docstring for each field.
     Modifies the tuple in place, but returns it anyway.
 
     More info:
@@ -950,6 +874,8 @@ def set_namedtuple_defaults(namedtuple, default=None):
     :returns: the modified namedtuple
     """
     namedtuple.__new__.__defaults__ = (default,) * len(namedtuple._fields)
+    for f in namedtuple._fields:
+        del getattr(namedtuple, f).__doc__
     return namedtuple
 
 
@@ -1017,7 +943,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     return output, lens
 
 
-def padded_3d(tensors, pad_idx=0, use_cuda=0):
+def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long):
     """Make 3D padded tensor for list of lists of 1D tensors or lists.
 
     :param tensors:  list of lists of 1D tensors (or lists)
@@ -1033,14 +959,14 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0):
     # pad empty tensors
     c = max(c, 1)
 
-    output = torch.LongTensor(a, b, c).fill_(pad_idx)
+    output = torch.full((a, b, c), pad_idx, dtype=dtype)
 
     for i, row in enumerate(tensors):
         for j, item in enumerate(row):
             if len(item) == 0:
                 continue
             if not isinstance(item, torch.Tensor):
-                item = torch.LongTensor(item)
+                item = torch.Tensor(item, dtype=dtype)
             output[i, j, :len(item)] = item
 
     if use_cuda:
@@ -1085,4 +1011,4 @@ def warn_once(msg, warningtype=None):
     global _seen_warnings
     if msg not in _seen_warnings:
         _seen_warnings.add(msg)
-        warnings.warn(msg, warningtype)
+        warnings.warn(msg, warningtype, stacklevel=2)

@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """
 This file provides interface to log any metrics in tensorboard, could be
 extended to any other tool like visdom
@@ -31,16 +29,19 @@ class TensorboardLogger(Shared):
         logger = argparser.add_argument_group('Tensorboard Arguments')
         logger.add_argument(
             '-tblog', '--tensorboard-log', type='bool', default=False,
-            help="Tensorboard logging of metrics, default is %(default)s"
+            help="Tensorboard logging of metrics, default is %(default)s",
+            hidden=True
         )
         logger.add_argument(
             '-tbtag', '--tensorboard-tag', type=str, default=None,
-            help='Specify all opt keys which you want to be presented in in TB name'
+            help='Specify all opt keys which you want to be presented in in TB name',
+            hidden=True
         )
         logger.add_argument(
             '-tbmetrics', '--tensorboard-metrics', type=str, default=None,
             help='Specify metrics which you want to track, it will be extracted '
-                 'from report dict.'
+                 'from report dict.',
+            hidden=True
         )
         logger.add_argument(
             '-tbcomment', '--tensorboard-comment', type=str, default='',

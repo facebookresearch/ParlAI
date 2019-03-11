@@ -1,8 +1,6 @@
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 from parlai.core.agents import Agent
 from parlai.core.utils import warn_once
@@ -12,6 +10,8 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent
 
 from .modules import TransformerMemNetModel
 from .modules import TransformerGeneratorModel
+
+import torch
 
 
 warn_once(
@@ -25,14 +25,22 @@ warn_once(
 def add_common_cmdline_args(argparser):
     argparser.add_argument('-esz', '--embedding-size', type=int, default=300,
                            help='Size of all embedding layers')
-    argparser.add_argument('--n-layers', type=int, default=2)
-    argparser.add_argument('--ffn-size', type=int, default=300,
+    argparser.add_argument('-nl', '--n-layers', type=int, default=2)
+    argparser.add_argument('-hid', '--ffn-size', type=int, default=300,
                            help='Hidden size of the FFN layers')
-    argparser.add_argument('--attention-dropout', type=float, default=0.0)
-    argparser.add_argument('--relu-dropout', type=float, default=0.0)
-    argparser.add_argument('--n-heads', type=int, default=3)
+    argparser.add_argument('--dropout', type=float, default=0.0,
+                           help='Dropout used in Vaswani 2017.')
+    argparser.add_argument('--attention-dropout', type=float, default=0.0,
+                           help='Dropout used after attention softmax.')
+    argparser.add_argument('--relu-dropout', type=float, default=0.0,
+                           help='Dropout used after ReLU. From tensor2tensor.')
+    argparser.add_argument('--n-heads', type=int, default=2,
+                           help='Number of multihead attention heads')
     argparser.add_argument('--learn-positional-embeddings', type='bool', default=False)
     argparser.add_argument('--embeddings-scale', type='bool', default=True)
+    argparser.add_argument('--n-positions', type=int, default=None, hidden=True,
+                           help='Number of positional embeddings to learn. Defaults '
+                                'to truncate or 1024 if not provided.')
 
 
 class Transformer(Agent):
@@ -51,9 +59,13 @@ class TransformerRankerAgent(TorchRankerAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
+        super(TransformerRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
         # memory and knowledge arguments
+        agent.add_argument('--use-memories', type='bool', default=False,
+                           help='use memories: must implement the function '
+                                '`_vectorize_memories` to use this')
         agent.add_argument('--wrap-memory-encoder', type='bool',
                            default=False,
                            help='wrap memory encoder with MLP')
@@ -63,19 +75,41 @@ class TransformerRankerAgent(TorchRankerAgent):
                                 'when using transformer to encode memories')
         # model specific arguments
         agent.add_argument('--normalize-sent-emb', type='bool', default=False)
-        agent.add_argument('--share-encoders', type='bool', default=False)
-        agent.add_argument('--has-memories', type='bool', default=False,
-                           help='If true, text contains newline separated memories '
-                                'before the actual text')
-        agent.add_argument('--use-memories', type='bool', default=False,
-                           help='If true, use the memories to help with predictions')
-        agent.add_argument('--scores-norm', choices={'dot', 'sqrt', 'dim'},
-                           default='dot', hidden=True)
-
+        agent.add_argument('--share-encoders', type='bool', default=True)
+        agent.add_argument('--learn-embeddings', type='bool', default=True,
+                           help='learn embeddings')
+        agent.add_argument('--data-parallel', type='bool', default=False,
+                           help='use model in data parallel, requires '
+                                'multiple gpus')
+        argparser.set_defaults(
+            learningrate=0.0001,
+            optimizer='adamax',
+            truncate=1024,
+        )
         cls.dictionary_class().add_cmdline_args(argparser)
 
-        super(cls, TransformerRankerAgent).add_cmdline_args(argparser)
         return agent
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.data_parallel = opt.get('data_parallel') and self.use_cuda
+        if self.data_parallel:
+            from parlai.core.distributed_utils import is_distributed
+            if is_distributed():
+                raise ValueError(
+                    'Cannot combine --data-parallel and distributed mode'
+                )
+            self.model = torch.nn.DataParallel(self.model)
+
+    def _score(self, output, cands):
+        if cands.dim() == 2:
+            return torch.matmul(output, cands.t())
+        elif cands.dim() == 3:
+            return torch.bmm(output.unsqueeze(1),
+                             cands.transpose(1, 2)).squeeze(1)
+        else:
+            raise RuntimeError('Unexpected candidate dimensions {}'
+                               ''.format(cands.dim()))
 
     def build_model(self, states=None):
         self.model = TransformerMemNetModel(self.opt, self.dict)
@@ -85,17 +119,32 @@ class TransformerRankerAgent(TorchRankerAgent):
             )
         return self.model
 
+    def batchify(self, obs_batch, sort=False):
+        """Override so that we can add memories to the Batch object."""
+        batch = super().batchify(obs_batch, sort)
+        if self.opt['use_memories']:
+            valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if
+                         self.is_valid(ex)]
+            valid_inds, exs = zip(*valid_obs)
+            mems = None
+            if any('memory_vecs' in ex for ex in exs):
+                mems = [ex.get('memory_vecs', None) for ex in exs]
+            batch.memory_vecs = mems
+        return batch
+
+    def _vectorize_memories(self, obs):
+        # TODO: move this to Torch Ranker Agent
+        raise NotImplementedError(
+            'Abstract class: user must implement this function to use memories'
+        )
+
     def vectorize(self, *args, **kwargs):
-        """Override options in vectorize from parent."""
         kwargs['add_start'] = False
         kwargs['add_end'] = False
-        kwargs['split_lines'] = self.opt['has_memories']
-        return super().vectorize(*args, **kwargs)
-
-    def get_dialog_history(self, *args, **kwargs):
-        """Override options in get_dialog_history from parent."""
-        kwargs['add_p1_after_newln'] = True  # will only happen if -pt True
-        return super().get_dialog_history(*args, **kwargs)
+        obs = super().vectorize(*args, **kwargs)
+        if self.opt['use_memories']:
+            obs = self._vectorize_memories(obs)
+        return obs
 
     def score_candidates(self, batch, cand_vecs):
         # convoluted check that not all memories are empty
@@ -105,11 +154,15 @@ class TransformerRankerAgent(TorchRankerAgent):
         else:
             mems = None
 
-        return self.model(
+        context_h, cands_h = self.model(
             xs=batch.text_vec,
             mems=mems,
             cands=cand_vecs,
         )
+
+        scores = self._score(context_h, cands_h)
+
+        return scores
 
 
 class TransformerGeneratorAgent(TorchGeneratorAgent):
@@ -120,7 +173,7 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         add_common_cmdline_args(agent)
         cls.dictionary_class().add_cmdline_args(argparser)
 
-        super(cls, TransformerGeneratorAgent).add_cmdline_args(argparser)
+        super(TransformerGeneratorAgent, cls).add_cmdline_args(argparser)
         return agent
 
     def build_model(self, states=None):

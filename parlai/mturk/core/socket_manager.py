@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import errno
 import logging
@@ -163,13 +161,13 @@ class SocketManager():
     """
 
     # Time to acknowledge different message types
-    ACK_TIME = {Packet.TYPE_ALIVE: 2,
-                Packet.TYPE_MESSAGE: 0.5}
+    ACK_TIME = {Packet.TYPE_ALIVE: 4,
+                Packet.TYPE_MESSAGE: 4}
 
     # Default pongs without heartbeat before socket considered dead
-    DEF_MISSED_PONGS = 10
-    HEARTBEAT_RATE = 2
-    DEF_DEAD_TIME = 20
+    DEF_MISSED_PONGS = 20
+    HEARTBEAT_RATE = 4
+    DEF_DEAD_TIME = 30
 
     def __init__(self, server_url, port, alive_callback, message_callback,
                  socket_dead_callback, task_group_id,
@@ -206,6 +204,7 @@ class SocketManager():
         self.listen_thread = None
         self.send_thread = None
         self.queues = {}
+        self.blocking_packets = {}  # connection_id to blocking packet map
         self.threads = {}
         self.run = {}
         self.last_sent_heartbeat_time = {}  # time of last heartbeat sent
@@ -324,8 +323,10 @@ class SocketManager():
         if packet.requires_ack:
             if packet.blocking:
                 # Put the packet right back into its place to prevent sending
-                # other packets
+                # other packets, then block that connection
                 self._safe_put(connection_id, (send_time, packet))
+                t = time.time() + self.ACK_TIME[packet.type]
+                self.blocking_packets[connection_id] = (t, packet)
             else:
                 # non-blocking ack: add ack-check to queue
                 t = time.time() + self.ACK_TIME[packet.type]
@@ -512,6 +513,15 @@ class SocketManager():
         self.send_thread.daemon = True
         self.send_thread.start()
 
+    def packet_should_block(self, packet_item):
+        """Helper function to determine if a packet is still blocking"""
+        t, packet = packet_item
+        if time.time() > t:
+            return False  # Exceeded blocking time
+        if packet.status in [Packet.STATUS_ACK, Packet.STATUS_FAIL]:
+            return False  # No longer in blocking status
+        return True
+
     def channel_thread(self):
         """Handler thread for monitoring all channels"""
         # while the thread is still alive
@@ -539,6 +549,12 @@ class SocketManager():
                     if connection_id not in self.queues:
                         self.run[connection_id] = False
                         break
+                    if self.blocking_packets.get(connection_id) is not None:
+                        packet_item = self.blocking_packets[connection_id]
+                        if not self.packet_should_block(packet_item):
+                            self.blocking_packets[connection_id] = None
+                        else:
+                            continue
                     try:
                         # Get first item in the queue, check if can send it yet
                         item = self.queues[connection_id].get(block=False)

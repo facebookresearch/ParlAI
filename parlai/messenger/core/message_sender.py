@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 import json
 import logging
 import requests
@@ -317,13 +315,14 @@ class MessageSender():
                     }
                 }
             }
-            filedata = {
-                "filedata": (
-                    payload['filename'],
-                    open(payload['filename'], 'rb'),
-                    payload['type'] + '/' + payload['format']
-                )
-            }
+            with open(payload['filename'], 'rb') as f:
+                filedata = {
+                    "filedata": (
+                        payload['filename'],
+                        f,
+                        payload['type'] + '/' + payload['format']
+                    )
+                }
             response = requests.post(
                 api_address,
                 params=self.auth_args,

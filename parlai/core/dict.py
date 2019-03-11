@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 """Contains code for parsing and building a dictionary from text."""
 
 from parlai.core.build_data import modelzoo_path
@@ -111,7 +109,8 @@ class DictionaryAgent(Agent):
         dictionary.add_argument(
             '-df', '--dict-file',
             help='path to dictionary file. defaults to [model_file].dict if '
-                 'not set and model_file is set.')
+                 'not set and model_file is set.',
+            hidden=True)
         dictionary.add_argument(
             '--dict-initpath',
             hidden=True,
@@ -132,11 +131,13 @@ class DictionaryAgent(Agent):
             '--dict-minfreq', default=DictionaryAgent.default_minfreq,
             type=int,
             help='minimum frequency of words to include them in sorted '
-                 'dict or minimum frequency of bpe codecs')
+                 'dict or minimum frequency of bpe codecs',
+            hidden=True)
         dictionary.add_argument(
             '--dict-maxtokens', default=DictionaryAgent.default_maxtokens,
             type=int,
-            help='max number of tokens to include in dictionary or bpe codecs')
+            help='max number of tokens to include in dictionary or bpe codecs',
+            hidden=True)
         dictionary.add_argument(
             '--dict-nulltoken', default=DictionaryAgent.default_null,
             hidden=True,
@@ -157,10 +158,12 @@ class DictionaryAgent(Agent):
             '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
             help='Which tokenizer to use. Defaults to "split", which splits '
                  'on whitespace as well as recognizing basic punctuation. '
-                 'Other options include nltk and spacy.')
+                 'Other options include nltk and spacy.',
+            hidden=True)
         dictionary.add_argument(
             '--dict-lower', default=DictionaryAgent.default_lower, type='bool',
-            help='Whether or not to lowercase all text seen.')
+            help='Whether or not to lowercase all text seen.',
+            hidden=True)
         dictionary.add_argument(
             '--bpe-debug', action='store_true',
             hidden=True,
@@ -222,6 +225,10 @@ class DictionaryAgent(Agent):
                 self.add_token(self.unk_token)
 
             loaded = False
+            # If data built via pytorch data teacher, we need to load prebuilt dict
+            if opt.get('pytorch_teacher_task'):
+                from parlai.scripts.build_pytorch_data import get_pyt_dict_file
+                opt['dict_file'] = get_pyt_dict_file(opt)
             if opt.get('dict_file'):
                 opt['dict_file'] = modelzoo_path(opt.get('datapath'),
                                                  opt['dict_file'])

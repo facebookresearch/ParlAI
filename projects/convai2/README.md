@@ -28,6 +28,19 @@ We will then run the automatic evaluations against the hidden test set (which is
 You can submit a maximum of once per month.
 We will use the same submitted code for the top performing models for computing human evaluations when the submission system is locked on September 30th.
 
+## Talking to a model interactively on the commandline:
+
+This is possible with this script:
+
+```bash
+python projects/convai2/interactive.py -mf models:convai2/kvmemnn/model
+```
+
+You can change the model you talk to with the '--model-file' (-mf) argument, e.g. you can use seq2seq too:
+
+```bash
+python projects/convai2/interactive.py -mf models:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0
+```
 
 ## Remarks on dataset versions
 

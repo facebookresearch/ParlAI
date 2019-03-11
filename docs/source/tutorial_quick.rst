@@ -1,9 +1,7 @@
 ..
-  Copyright (c) 2017-present, Facebook, Inc.
-  All rights reserved.
-  This source code is licensed under the BSD-style license found in the
-  LICENSE file in the root directory of this source tree. An additional grant
-  of patent rights can be found in the PATENTS file in the same directory.
+  Copyright (c) Facebook, Inc. and its affiliates.
+  This source code is licensed under the MIT license found in the
+  LICENSE file in the root directory of this source tree.
 
 ParlAI Quick-start
 ==================
@@ -43,14 +41,14 @@ Now let's try to train a model on it (even on your laptop, this should train fas
 .. code-block:: bash
 
   # train MemNN using batch size 8 and 4 threads for 5 epochs
-  python examples/train_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -bs 8 -nt 4 -eps 5 -m memnn
+  python examples/train_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -bs 8 -nt 4 -eps 5 -m memnn --no-cuda
 
 Let's print some of its predictions to make sure it's working.
 
 .. code-block:: bash
 
   # display predictions for model save at specified file on bAbI task 1
-  python examples/display_model.py -t babi:task10k:1 -mf /tmp/babi_memnn
+  python examples/display_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
 
 The "eval_labels" and "MemNN" lines should (usually) match!
 

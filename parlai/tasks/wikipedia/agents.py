@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 '''
     Provides a dump of Wikipedia articles from 2/3/18.
 
@@ -53,7 +51,7 @@ class FullTeacher(DialogTeacher):
                         if self.key_value:
                             yield (title, [text]), True
                         else:
-                            yield (text, None), True
+                            yield (text, ['']), True
 
     def get_extraction_instructions(self):
         '''If one wants to run extraction themselves on a raw wikipedia dump'''
@@ -98,7 +96,7 @@ class SummaryTeacher(DialogTeacher):
                 if self.key_value:
                     yield (title, [text]), True
                 else:
-                    yield (title + '\n' + text, None), True
+                    yield (title + '\n' + text, ['']), True
 
 
 class DefaultTeacher(SummaryTeacher):
