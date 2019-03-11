@@ -44,11 +44,11 @@ class CrisisChatsTeacher(FixedDialogTeacher):
         dialog = []
         for i in range(len(df)):
 
-            row_parts = df[i].strip().split("\t")
+            row_parts = df[i].split("\t")
             
-            t, message, d, d_tilde, response, episode_done = row_parts
+            t, message, d, d_tilde, response, episode_done, first_message = row_parts
             
-            dialog.append((t, message, d, d_tilde, response, episode_done))
+            dialog.append((t, message, d, d_tilde, response, episode_done, first_message))
 
             if episode_done=='True':
                 self.data.append(dialog)
@@ -57,7 +57,7 @@ class CrisisChatsTeacher(FixedDialogTeacher):
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
         i = entry_idx
-        t, message, d, d_tilde, response, episode_done = ep[i]
+        t, message, d, d_tilde, response, episode_done, first_message = ep[i]
         action = {
             'text': message,
             'labels': [response,],
@@ -65,6 +65,7 @@ class CrisisChatsTeacher(FixedDialogTeacher):
             'turn_num': float(t),
             'depth': float(d),
             'depth_tilde': float(d_tilde),
+            'first_message': first_message, 
         }
         return action
 

@@ -985,7 +985,7 @@ class SmoothedDecoderAgent(Agent):
                 # loss += self.criterion(output_flat, targets.select(1, i).view(-1)).data
 
             # scale by length of candidate. 
-#             cand_log_probs[c] = cand_log_probs[c] / float(sum(self.fixed_candidate_masks[c]))
+            cand_log_probs[c] = cand_log_probs[c] / float(sum(self.fixed_candidate_masks[c]))
             
         return cand_log_probs
         
