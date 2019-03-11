@@ -24,6 +24,7 @@ except ImportError:
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
+NEAR_INF_FP16 = 65504
 
 
 DISPLAY_MESSAGE_DEFAULT_FIELDS = {
@@ -40,6 +41,14 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'text_vec',
     'label_candidates_vecs'
 }
+
+
+def neginf(dtype):
+    """Returns a representable finite number near -inf for a dtype."""
+    if dtype is torch.float16:
+        return -NEAR_INF_FP16
+    else:
+        return -NEAR_INF
 
 
 def maintain_dialog_history(history, observation, reply='',

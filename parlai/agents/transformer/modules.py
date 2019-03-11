@@ -10,14 +10,26 @@ import math
 import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
+from parlai.core.utils import neginf
+from torch.nn import LayerNorm
 
-from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
-#from torch.nn import LayerNorm
+try:
+    from apex.normalization.fused_layer_norm import FusedLayerNorm
+    APEX_AVAILABLE = True
+except ImportError:
+    APEX_AVAILABLE = False
+
+
+def _get_layer_norm(use_cuda):
+    """Selects LayerNorm type. Uses apex's FusedLayerNorm if available."""
+    if use_cuda and APEX_AVAILABLE:
+        return FusedLayerNorm
+    else:
+        return LayerNorm
+
 
 def _normalize(tensor, norm_layer):
-    """
-    Broadcast layer norm
-    """
+    """Broadcast layer norm"""
     size = tensor.size()
     return norm_layer(tensor.view(-1, size[-1])).view(size)
 
@@ -25,9 +37,6 @@ def _normalize(tensor, norm_layer):
 def _create_embeddings(dictionary, embedding_size, padding_idx):
     """Create and initialize word embeddings."""
     n = len(dictionary)
-    if n % 8 != 0:
-        n += 8 - (n % 8)
-    assert n % 8 == 0
     e = nn.Embedding(n, embedding_size, padding_idx)
     nn.init.normal_(e.weight, mean=0, std=embedding_size ** -0.5)
     nn.init.constant_(e.weight[padding_idx], 0)
@@ -659,7 +668,7 @@ class MultiHeadAttention(nn.Module):
         k = prepare_head(self.k_lin(key))
         v = prepare_head(self.v_lin(value))
 
-        dot_prod = q.div_(scale).bmm(k.transpose(1, 2))  #.float()
+        dot_prod = q.div_(scale).bmm(k.transpose(1, 2))
         # [B * n_heads, query_len, key_len]
         attn_mask = (
             (mask == 0)
@@ -669,7 +678,7 @@ class MultiHeadAttention(nn.Module):
             .view(batch_size * n_heads, query_len, key_len)
         )
         assert attn_mask.shape == dot_prod.shape
-        dot_prod.masked_fill_(attn_mask, -65504)
+        dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
         attn_weights = F.softmax(dot_prod, dim=-1).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout

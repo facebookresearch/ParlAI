@@ -507,6 +507,11 @@ class TorchAgent(Agent):
             if opt.get('person_tokens'):
                 self.dict[self.P1_TOKEN] = 999999999
                 self.dict[self.P2_TOKEN] = 999999998
+            if opt.get('fp16'):
+                # pad the dictionary if needed
+                if len(self.dict) % 8 != 0:
+                    for i in range(8 - len(self.dict) % 8):
+                        self.dict['__FP16_PAD_{}__'.format(i)] = 1
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']

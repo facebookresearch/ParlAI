@@ -27,7 +27,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.torch_agent import TorchAgent, Batch, Output
-from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs, warn_once
+from parlai.core.utils import padded_tensor, round_sigfigs, warn_once
 from parlai.core.thread_utils import SharedTable
 from parlai.core.distributed_utils import is_distributed
 
