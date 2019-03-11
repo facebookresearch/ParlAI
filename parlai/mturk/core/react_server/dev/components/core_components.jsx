@@ -839,19 +839,26 @@ class FormResponse extends React.Component {
 
   tryMessageSend() {
     let form_elements = this.props.task_data["respond_with_form"];
-    let response_data = {};
+    let response_data = [];
     let response_text = "";
+    let all_response_filled = true;
     for (let ind in form_elements){
       let question = form_elements[ind]["question"];
       let response = this.state.responses[ind];
-      response_data[question] = response;
+      if (response == ''){
+        all_response_filled = false;
+      }
+      response_data.push({
+        "question": question,
+        "response": response
+      });
       response_text += question + ": " + response + "\n";
     }
 
-    if (this.state.textval != '' && this.props.active && !this.state.sending) {
+    if (all_response_filled && this.props.active && !this.state.sending) {
       this.setState({sending: true});
       this.props.onMessageSend(
-        response_text, response_data,
+        response_text, {"form_responses": response_data},
         () => this.setState({'sending': false}));
     }
   }
@@ -861,9 +868,11 @@ class FormResponse extends React.Component {
     const listFormElements= form_elements.map((form_elem, index) => {
         let question = form_elem["question"];
         if (form_elem["type"] == "choices"){
-          let choices = [<option></option>].concat(
-            form_elem["choices"].map((option_label) => {
-              return <option>{option_label}</option>
+          let choices = [<option key="empty_option"></option>].concat(
+            form_elem["choices"].map((option_label, index) => {
+              return <option key={"option_" + index.toString()}>
+                        {option_label}
+                      </option>
             }));
           return (<FormGroup>
                     <Col
