@@ -27,7 +27,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.torch_agent import TorchAgent, Batch, Output
-from parlai.core.utils import padded_tensor, round_sigfigs, warn_once
+from parlai.core.utils import padded_tensor, round_sigfigs, warn_once, neginf
 from parlai.core.thread_utils import SharedTable
 from parlai.core.distributed_utils import is_distributed
 
@@ -612,18 +612,17 @@ class TorchGeneratorAgent(TorchAgent):
             with torch.no_grad():
                 _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz)
         elif self.beam_size > 1:
-            with torch.no_grad():
-                out = self.beam_search(
-                    self.model,
-                    batch,
-                    self.beam_size,
-                    start=self.START_IDX,
-                    end=self.END_IDX,
-                    pad=self.NULL_IDX,
-                    min_length=self.beam_min_length,
-                    min_n_best=self.beam_min_n_best,
-                    block_ngram=self.beam_block_ngram
-                )
+            out = self.beam_search(
+                self.model,
+                batch,
+                self.beam_size,
+                start=self.START_IDX,
+                end=self.END_IDX,
+                pad=self.NULL_IDX,
+                min_length=self.beam_min_length,
+                min_n_best=self.beam_min_n_best,
+                block_ngram=self.beam_block_ngram
+            )
             beam_preds_scores, _, beams = out
             preds, scores = zip(*beam_preds_scores)
 
@@ -912,7 +911,7 @@ class Beam(object):
         if current_length < self.min_length:
             # penalize all eos probs to make it decode longer
             for hyp_id in range(softmax_probs.size(0)):
-                softmax_probs[hyp_id][self.eos] = -65504
+                softmax_probs[hyp_id][self.eos] = neginf(softmax_probs.dtype)
         if len(self.bookkeep) == 0:
             # the first step we take only the first hypo into account since all
             # hypos are the same initially
@@ -933,13 +932,13 @@ class Beam(object):
                     counted_ngrams = Counter(current_ngrams)
                     if any(v > 1 for k, v in counted_ngrams.items()):
                         # block this hypothesis hard
-                        beam_scores[i] = -65504
+                        beam_scores[i] = neginf(softmax_probs.dtype)
 
                 #  if previous output hypo token had eos
                 # we penalize those word probs to never be chosen
                 if self.outputs[-1][i] == self.eos:
                     # beam_scores[i] is voc_size array for i-th hypo
-                    beam_scores[i] = -65504
+                    beam_scores[i] = neginf(softmax_probs.dtype)
 
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
