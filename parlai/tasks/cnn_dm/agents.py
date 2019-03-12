@@ -12,15 +12,17 @@
 from parlai.core.teachers import DialogTeacher
 from .build import build
 import os
+import unicodedata
 
 
 class CNNDMTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
-        self.dt = opt['datatype'].split(':')[0]
+        self.dt = opt.get('datatype', 'train').split(':')[0]
 
         # store identifier for the teacher in the dialog
         self.id = 'cnn_dm'
+        self.datapath = os.path.join(opt['datapath'], 'CNN_DM')
 
         opt['datafile'] = self._path(opt)
 
@@ -28,31 +30,60 @@ class CNNDMTeacher(DialogTeacher):
 
     def _path(self, opt):
         build(opt)
-        return os.path.join(opt['datapath'], 'CNN_DM')
+        dt = opt['datatype'].split(':')[0]
+        return os.path.join(self.datapath, dt + '.txt')
 
     def setup_data(self, input_path):
-
-        print('loading: ' + input_path)
-        paths = [os.path.join(input_path, 'cnn', 'stories'),
-                 os.path.join(input_path, 'dailymail', 'stories')]
-
-        # Function to extract function and labels
-        def extract_data_and_labels(text):
-            text_sections = text.split('@highlight')
-            return text_sections[0], [text.strip('\n') for text in text_sections[1:]]
+        def fix_missing_period(line):
+            """Adds a period to a line that is missing a period"""
+            dm_single_close_quote = u'\u2019'
+            dm_double_close_quote = u'\u201d'
+            END_TOKENS = [
+                '.', '!', '?', '...', "'", "`", '"',
+                dm_single_close_quote, dm_double_close_quote, ")"
+            ]  # acceptable ways to end a sentence
+            if "@highlight" in line or line == "" or line[-1] in END_TOKENS:
+                return line
+            return line + "."
 
         self.question = 'What is the summary?'
-
         new_episode = True
+        missing_stories = 0
+        stories_added = 0
 
-        # Read and parse the files
-        for path in paths:
-            for file in os.listdir(path):
-                if file.endswith('.story'):
-                    with open(os.path.join(path, file)) as file_data:
-                        data, label = extract_data_and_labels(file_data.read())
+        print('loading: ' + input_path)
 
-                    yield (data + '\n' + self.question, label, None, None), new_episode
+        with open(input_path) as stories_file:
+            for story in stories_file:
+                try:
+                    story_file = open(os.path.join(self.datapath, story.strip()))
+                except EnvironmentError:
+                    missing_stories += 1
+                else:
+                    stories_added += 1
+                    with story_file:
+                        article, highlights = [], []
+                        is_highlight = False
+                        for line in story_file:
+                            line = line.strip()
+                            if line == "":
+                                continue
+                            line = fix_missing_period(line)
+                            if line.startswith("@highlight"):
+                                is_highlight = True
+                                if len(line.strip()) < 11:
+                                    continue
+                            elif "@highlight" in line:
+                                raise
+                            if is_highlight:
+                                highlights.append(line.strip())
+                            else:
+                                article.append(line)
+                        text = unicodedata.normalize('NFKC', ' '.join(article)) + '\n' + self.question
+                        label = [unicodedata.normalize('NFKC', ' '.join(highlights))]
+                        yield((text, label, None, None), new_episode)
+
+        print(f"{stories_added} stories added, {missing_stories} stories missing.")
 
 
 class DefaultTeacher(CNNDMTeacher):
