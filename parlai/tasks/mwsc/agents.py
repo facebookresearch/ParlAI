@@ -12,6 +12,7 @@ from parlai.core.teachers import DialogTeacher
 from .build import build
 import os
 import re
+import json
 
 
 class MWSCTeacher(DialogTeacher):
@@ -23,35 +24,28 @@ class MWSCTeacher(DialogTeacher):
         self.id = 'mwsc'
 
         build(opt)
-        opt['datafile'] = os.path.join(opt['datapath'], 'MWSC')
+        self.datapath = os.path.join(opt['datapath'], 'MWSC')
+        opt['datafile'] = self._path(opt)
+
         super().__init__(opt, shared)
+
+    def _path(self, opt):
+        build(opt)
+        dt = opt['datatype'].split(':')[0]
+        return os.path.join(self.datapath, dt + '.json')
 
     def setup_data(self, input_path):
         print('loading: ' + input_path)
-        file_path = os.path.join(input_path, 'schema.txt')
-
         new_episode = True
 
-        with open(file_path) as file:
-            data = file.read()[:-1].split('\n\n')
-
-        def parse_square_bracket(input_data):
-            output = re.split('\]|/|\[', input_data)
-            if len(output) == 1:
-                return output * 2
-            else:
-                return [''.join(output[:1] + output[2:]),
-                        ''.join(output[:2] + output[3:])]
-
-        for qa in data:
-
-            context, question, answer = qa.split('\n')
-            context = parse_square_bracket(context)
-            question = parse_square_bracket(question)
-            answer = answer.split('/')
-            for i in range(2):
-                yield (context[i] + '\n' + question[i],
-                       [answer[i]], None, None), new_episode
+        with open(input_path) as file:
+            for l in file:
+                schema_line = json.loads(l.strip())
+                answer = schema_line.get('answer')
+                question = schema_line.get('question')
+                context = schema_line.get('context')
+                yield (context + '\n' + question,
+                       [answer], None, None), new_episode
 
 
 class DefaultTeacher(MWSCTeacher):
