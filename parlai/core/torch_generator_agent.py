@@ -372,7 +372,12 @@ class TorchGeneratorAgent(TorchAgent):
                 broadcast_buffers=False,
             )
 
-        if 'train' in opt.get('datatype', '') and shared is None:
+        if (
+            # only build an optimizer if we're training
+            'train' in opt.get('datatype', '') and
+            # and this is the main model, or on every fork if doing hogwild
+            (shared is None or self.opt.get('numthreads', 1) > 1)
+        ):
             # do this regardless of share state, but don't
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
