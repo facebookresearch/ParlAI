@@ -172,7 +172,7 @@ class TransformerRankerAgent(TorchRankerAgent):
             mems=mems,
             cands=cand_vecs,
         )
-        
+
         if cand_encs is not None:
             cands_h = cand_encs
 

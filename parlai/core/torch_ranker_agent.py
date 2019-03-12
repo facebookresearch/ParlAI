@@ -113,14 +113,14 @@ class TorchRankerAgent(TorchAgent):
             )
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
-        """Given a batch and candidate set, return scores (for ranking).
+        """
+        Given a batch and candidate set, return scores (for ranking).
 
-        :param batch:       a Batch object (defined in torch_agent.py)
-        :param cand_vecs:   padded and tokenized candidates
-        :param cand_encs:   encoded candidates, if these are passed in to the
-                            function (in cases where we cache the candidate
-                            encodings), you do not need to call self.model
-                            on cand_vecs
+        :param Batch batch: a Batch object (defined in torch_agent.py)
+        :param LongTensor cand_vecs: padded and tokenized candidates
+        :param FloatTensor cand_encs: encoded candidates, if these are passed
+            into the function (in cases where we cache the candidate
+            encodings), you do not need to call self.model on cand_vecs
         """
         raise NotImplementedError(
             'Abstract class: user must implement score()')
