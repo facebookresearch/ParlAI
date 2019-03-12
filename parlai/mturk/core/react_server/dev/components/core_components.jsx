@@ -11,7 +11,7 @@ import ReactDOM from 'react-dom';
 import {
   FormControl, Button, ButtonGroup, InputGroup, FormGroup,
   MenuItem, DropdownButton, Badge, Popover, Overlay,
-  Nav, NavItem,
+  Nav, NavItem, Col,ControlLabel, Form,
 } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import $ from 'jquery';
@@ -822,11 +822,149 @@ class TextResponse extends React.Component {
   }
 }
 
+class FormResponse extends React.Component {
+  // Provide a form-like interface to MTurk interface.
+
+  constructor(props) {
+    super(props);
+    // At this point it should be assumed that task_data
+    // has a field "respond_with_form"
+    let responses = []
+    for (let _ of this.props.task_data["respond_with_form"]){
+      responses.push('');
+    }
+    this.state = {'responses': responses, 'sending': false};
+  }
+
+
+  tryMessageSend() {
+    let form_elements = this.props.task_data["respond_with_form"];
+    let response_data = [];
+    let response_text = "";
+    let all_response_filled = true;
+    for (let ind in form_elements){
+      let question = form_elements[ind]["question"];
+      let response = this.state.responses[ind];
+      if (response == ''){
+        all_response_filled = false;
+      }
+      response_data.push({
+        "question": question,
+        "response": response
+      });
+      response_text += question + ": " + response + "\n";
+    }
+
+    if (all_response_filled && this.props.active && !this.state.sending) {
+      this.setState({sending: true});
+      this.props.onMessageSend(
+        response_text, {"form_responses": response_data},
+        () => this.setState({'sending': false}));
+    }
+  }
+
+  render() {
+    let form_elements = this.props.task_data["respond_with_form"];
+    const listFormElements= form_elements.map((form_elem, index) => {
+        let question = form_elem["question"];
+        if (form_elem["type"] == "choices"){
+          let choices = [<option key="empty_option"></option>].concat(
+            form_elem["choices"].map((option_label, index) => {
+              return <option key={"option_" + index.toString()}>
+                        {option_label}
+                      </option>
+            }));
+          return (<FormGroup>
+                    <Col
+                      componentClass={ControlLabel}
+                      sm={6}
+                      style={{'fontSize': '16px'}}>
+                      {question}
+                    </Col>
+                    <Col sm={5}>
+                      <FormControl componentClass="select"
+                        style={{'fontSize': '16px'}}
+                        value={this.state.responses[index]}
+                        onChange={(e) => {
+                          var text = e.target.value;
+                          this.setState((prevState) => {
+                            let new_res = prevState["responses"];
+                            new_res[index] = text;
+                            return {responses: new_res}
+                          });
+                        }}>
+                        {choices}
+                      </FormControl>
+                    </Col>
+                  </FormGroup>);
+        }
+        return <FormGroup>
+                  <Col
+                    style={{'fontSize': '16px'}}
+                    componentClass={ControlLabel}
+                    sm={6}>
+                    {question}
+                  </Col>
+                  <Col sm={5}>
+                    <FormControl
+                      type="text"
+                      style={{'fontSize': '16px'}}
+                      value={this.state.responses[index]}
+                      onChange={(e) => {
+                        var text = e.target.value;
+                        this.setState((prevState) => {
+                          let new_res = prevState["responses"];
+                          new_res[index] = text;
+                          return {responses: new_res}
+                        });
+                      }}/>
+                  </Col>
+               </FormGroup>;
+      }
+    );
+    let submit_button = (
+      <Button
+        className="btn btn-primary"
+        style={{'height': '40px', 'width': '100px', 'fontSize': '16px'}}
+        id="id_send_msg_button"
+        disabled={
+          this.state.textval == '' || !this.props.active || this.state.sending}
+        onClick={() => this.tryMessageSend()}>
+          Send
+      </Button>
+    );
+
+    return (
+      <div
+        id="response-type-text-input"
+        className="response-type-module"
+        style={{'paddingTop': '15px',
+                'float': 'left',
+                'width': '100%',
+                'backgroundColor': '#eeeeee'}}>
+            <Form horizontal
+                style={{backgroundColor: '#eeeeee', paddingBottom: '10px'}}>
+              {listFormElements}
+              <FormGroup>
+                <Col sm={6}>
+                </Col>
+                <Col sm={5}>
+                  {submit_button}
+                </Col>
+             </FormGroup>
+            </Form>
+      </div>
+    );
+  }
+}
+
+
 class ResponsePane extends React.Component {
   render() {
     let v_id = this.props.v_id;
     let XDoneResponse = getCorrectComponent('XDoneResponse', v_id);
     let XTextResponse = getCorrectComponent('XTextResponse', v_id);
+    let XFormResponse = getCorrectComponent('XFormResponse', v_id);
     let XIdleResponse = getCorrectComponent('XIdleResponse', v_id);
 
     let response_pane = null;
@@ -839,10 +977,18 @@ class ResponsePane extends React.Component {
         break;
       case 'text_input':
       case 'waiting':
-        response_pane = <XTextResponse
-          {...this.props}
-          active={this.props.chat_state == 'text_input'}
-        />;
+        if (this.props.task_data && this.props.task_data["respond_with_form"]){
+          response_pane = <XFormResponse
+            {...this.props}
+            active={this.props.chat_state == 'text_input'}
+          />;
+        }
+        else{
+          response_pane = <XTextResponse
+            {...this.props}
+            active={this.props.chat_state == 'text_input'}
+          />;
+        }
         break;
       case 'idle':
       default:
@@ -961,7 +1107,7 @@ class LeftPane extends React.Component {
     };
     let XTaskDescription = getCorrectComponent('XTaskDescription', v_id);
     let pane_size = this.props.is_cover_page ? 'col-xs-12' : 'col-xs-4';
-    let has_context = this.props.task_data.last_update !== undefined;
+    let has_context = this.props.task_data.has_context;
     if (this.props.is_cover_page || !has_context) {
       return (
         <div id="left-pane" className={pane_size} style={frame_style}>
@@ -1104,6 +1250,7 @@ component_list = {
   'XRightPane': ['RightPane', RightPane],
   'XResponsePane': ['ResponsePane', ResponsePane],
   'XTextResponse': ['TextResponse', TextResponse],
+  'XFormResponse': ['FormResponse', FormResponse],
   'XDoneResponse': ['DoneResponse', DoneResponse],
   'XIdleResponse': ['IdleResponse', IdleResponse],
   'XDoneButton': ['DoneButton', DoneButton],
