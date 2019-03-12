@@ -7,7 +7,7 @@
 import os
 
 NEEDLE1 = '<a href="#" class="icon icon-home"> ParlAI'
-NEEDLE2 = '<a href="index.html" class="icon icon-home"> ParlAI',
+NEEDLE2 = '<a href="index.html" class="icon icon-home"> ParlAI'
 REPLACEMENT = """
 <a href="/" style="float: left">
     <img style="padding: 0px; background-color: #fff; width: 53px; height: 53px; margin-left: 70px;" src="/static/img/icon.png">
