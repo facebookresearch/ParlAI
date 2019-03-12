@@ -724,10 +724,11 @@ task_list = [
         "task": "sst",
         "tags": ["All"],
         "description": (
-            "Dataset containing sentiment trees of movie reviews. This is implemented:"
-            "as part of the DecaNLP task, and hence splits the trees to phrases and "
-            "binary labels (positive/negative)"
-            "https://nlp.stanford.edu/sentiment/index.html"
+            "Dataset containing sentiment trees of movie reviews. We use the modified "
+            "binary sentence analysis subtask given by the DecaNLP paper here, "
+            "originally from Radford, et. al "
+            "https://nlp.stanford.edu/sentiment/index.html "
+            "https://github.com/openai/generating-reviews-discovering-sentiment/"
         )
     },
     {
@@ -744,7 +745,7 @@ task_list = [
     },
     {
         "id": "qasrl",
-        "display name": "QA-SRL Semantic Role Labelling",
+        "display name": "QA-SRL Semantic Role Labeling",
         "task": "qasrl",
         "tags": ["All"],
         "description":(
@@ -769,9 +770,10 @@ task_list = [
         "task": "woz",
         "tags": ["All"],
         "description": (
-            "Dataset containing dialogues dengotiating a resturant reservation"
-            "Implemented as part of the DecaNLP task and hence the current"
-            "implementation is focused on the change in the dialogue state"
+            "Dataset containing dialogues dengotiating a resturant reservation. "
+            "Implemented as part of the DecaNLP task, focused on the change "
+            "in the dialogue state. Original paper: "
+            "https://arxiv.org/abs/1604.04562"
         )
     },
     {
@@ -802,7 +804,8 @@ task_list = [
         "description": (
             "A collection of 10 tasks (SQuAD, IWSLT, CNN/DM, MNLI, SST, QA‑SRL,"
             "QA‑ZRE, WOZ, WikiSQL and MWSC) designed to challenge a model with a range "
-            "of different tasks."
+            "of different tasks. Note that we use IWSLT 2014 instead of 2016/2013-test/2014-test "
+            "for train/dev/test as given in the DecaNLP paper. "
             "See paper https://arxiv.org/abs/1806.08730 for more information and "
             "github: https://github.com/salesforce/decaNLP for data sources"
         )
