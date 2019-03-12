@@ -55,7 +55,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
                                             self.opt['type_optimization'],
                                             self.opt['learningrate'])
 
-    def score_candidates(self, batch, cand_vecs):
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
         # concatenate text and candidates (not so easy)
         # unpad and break
         nb_cands = cand_vecs.size()[1]

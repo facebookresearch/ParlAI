@@ -144,6 +144,9 @@ class TransformerMemNetModel(nn.Module):
 
     def encode_context_memory(self, context_w, memories_w):
         # [batch, d]
+        if context_w is None:
+            return None, None
+
         context_h = self.context_encoder(context_w)
 
         if memories_w is None:
