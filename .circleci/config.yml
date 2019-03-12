@@ -31,6 +31,7 @@ commands:
             . ~/venv/bin/activate
             pip3 install --upgrade --progress-bar off pip
             pip3 install --progress-bar off flake8 gitpython
+            python setup.py develop
 
 
   installdeps:
