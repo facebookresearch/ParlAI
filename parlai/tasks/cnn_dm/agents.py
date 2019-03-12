@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
+# Copyright (c) Facebook, Inc. and its affiliates.
 # All rights reserved.
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
@@ -79,7 +79,10 @@ class CNNDMTeacher(DialogTeacher):
                                 highlights.append(line.strip())
                             else:
                                 article.append(line)
-                        text = unicodedata.normalize('NFKC', ' '.join(article)) + '\n' + self.question
+                        text = (
+                            unicodedata.normalize('NFKC', ' '.join(article)) +
+                            '\n' + self.question
+                        )
                         label = [unicodedata.normalize('NFKC', ' '.join(highlights))]
                         yield((text, label, None, None), new_episode)
 

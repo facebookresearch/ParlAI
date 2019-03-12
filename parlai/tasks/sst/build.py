@@ -24,7 +24,9 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        url_base = 'https://raw.githubusercontent.com/openai/generating-reviews-discovering-sentiment/master/data/'
+        url_base = (
+            'https://raw.githubusercontent.com/openai/'
+            'generating-reviews-discovering-sentiment/master/data/')
         fnames = [
             'train_binary_sent.csv',
             'dev_binary_sent.csv',

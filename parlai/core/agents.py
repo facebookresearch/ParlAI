@@ -692,7 +692,10 @@ def create_task_agent_from_taskname(opt):
         return task_agents
     else:
         # Multitask teacher/agent
-        if len(opt.get('task').split(':'))>1 and opt.get('task').split(':')[1] == 'MultiTaskTeacher':
+        if (
+            len(opt.get('task').split(':')) > 1 and
+            opt.get('task').split(':')[1] == 'MultiTaskTeacher'
+        ):
             opt['task'] = opt.get('task').split(':')[0]
         task_agents = MultiTaskTeacher(opt)
         if type(task_agents) != list:

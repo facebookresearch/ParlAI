@@ -26,14 +26,38 @@ def build(opt):
 
         # Download the data.
         cnn_urls = {
-            'train': ('https://raw.githubusercontent.com/abisee/cnn-dailymail/master/url_lists/cnn_wayback_training_urls.txt', 'cnn_wayback_training_urls.txt'),
-            'valid': ('https://raw.githubusercontent.com/abisee/cnn-dailymail/master/url_lists/cnn_wayback_validation_urls.txt', 'cnn_wayback_validation_urls.txt'),
-            'test': ('https://raw.githubusercontent.com/abisee/cnn-dailymail/master/url_lists/cnn_wayback_test_urls.txt', 'cnn_wayback_test_urls.txt'),
+            'train': (
+                'https://raw.githubusercontent.com/abisee/cnn-dailymail/master/'
+                    'url_lists/cnn_wayback_training_urls.txt',
+                'cnn_wayback_training_urls.txt'
+            ),
+            'valid': (
+                'https://raw.githubusercontent.com/abisee/cnn-dailymail/master/'
+                'url_lists/cnn_wayback_validation_urls.txt',
+                'cnn_wayback_validation_urls.txt'
+            ),
+            'test': (
+                'https://raw.githubusercontent.com/abisee/cnn-dailymail/master/'
+                'url_lists/cnn_wayback_test_urls.txt',
+                'cnn_wayback_test_urls.txt'
+            ),
         }
         dm_urls = {
-            'train': ('https://raw.githubusercontent.com/abisee/cnn-dailymail/master/url_lists/dailymail_wayback_training_urls.txt', 'dailymail_wayback_training_urls.txt'),
-            'valid': ('https://raw.githubusercontent.com/abisee/cnn-dailymail/master/url_lists/dailymail_wayback_validation_urls.txt', 'dailymail_wayback_validation_urls.txt'),
-            'test': ('https://raw.githubusercontent.com/abisee/cnn-dailymail/master/url_lists/dailymail_wayback_test_urls.txt', 'dailymail_wayback_test_urls.txt')
+            'train': (
+                'https://raw.githubusercontent.com/abisee/cnn-dailymail/master/'
+                'url_lists/dailymail_wayback_training_urls.txt',
+                'dailymail_wayback_training_urls.txt'
+            ),
+            'valid': (
+                'https://raw.githubusercontent.com/abisee/cnn-dailymail/master/'
+                'url_lists/dailymail_wayback_validation_urls.txt',
+                'dailymail_wayback_validation_urls.txt'
+            ),
+            'test': (
+                'https://raw.githubusercontent.com/abisee/cnn-dailymail/master/'
+                'url_lists/dailymail_wayback_test_urls.txt',
+                'dailymail_wayback_test_urls.txt'
+            )
         }
         cnn_fname = 'cnn_stories.tgz'
         cnn_gd_id = '0BwmD_VLjROrfTHk4NFg2SndKcjQ'
@@ -48,7 +72,8 @@ def build(opt):
         for dt in cnn_urls:
             (url, fname) = cnn_urls[dt]
             build_data.download(url, dpath, fname)
-            with open(os.path.join(dpath, fname)) as urls_file, open(os.path.join(dpath, dt + '.txt'), 'a') as split_file:
+            with open(os.path.join(dpath, fname)) as urls_file, open(
+                            os.path.join(dpath, dt + '.txt'), 'a') as split_file:
                 for url in urls_file:
                     file_name = hashlib.sha1(url.strip().encode('utf-8')).hexdigest()
                     split_file.write(f"cnn/stories/{file_name}.story\n")
@@ -56,7 +81,8 @@ def build(opt):
         for dt in dm_urls:
             (url, fname) = dm_urls[dt]
             build_data.download(url, dpath, fname)
-            with open(os.path.join(dpath, fname)) as urls_file, open(os.path.join(dpath, dt + '.txt'), 'a') as split_file:
+            with open(os.path.join(dpath, fname)) as urls_file, open(
+                            os.path.join(dpath, dt + '.txt'), 'a') as split_file:
                 for url in urls_file:
                     file_name = hashlib.sha1(url.strip().encode('utf-8')).hexdigest()
                     split_file.write(f"dailymail/stories/{file_name}.story\n")

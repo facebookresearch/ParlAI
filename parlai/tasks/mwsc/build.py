@@ -67,7 +67,11 @@ def build(opt):
             for idx in range(2):
                 answer = answers[idx]
                 question = questions[idx] + f' {answers[0]} or {answers[1]}?'
-                examples.append({'context': contexts[idx], 'question': question, 'answer': answer})
+                examples.append({
+                    'context': contexts[idx],
+                    'question': question,
+                    'answer': answer
+                })
 
         traindev = examples[:-100]
         test = examples[-100:]
@@ -76,7 +80,7 @@ def build(opt):
 
         splits = ['train', 'validation', 'test']
         for split, examples in zip(splits, [train, dev, test]):
-            with open(os.path.expanduser(os.path.join(dpath, f'{split}.json')), 'a') as split_file:
+            with open(os.path.join(dpath, f'{split}.json'), 'a') as split_file:
                 for ex in examples:
                     split_file.write(json.dumps(ex)+'\n')
 
