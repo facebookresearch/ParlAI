@@ -73,8 +73,6 @@ class TorchRankerAgent(TorchAgent):
         if shared:
             self.model = shared['model']
             self.metrics = shared['metrics']
-            self.vocab_candidates = shared['vocab_candidates']
-            self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
             states = None
         else:
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
