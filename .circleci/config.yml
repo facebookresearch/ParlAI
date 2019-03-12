@@ -135,6 +135,24 @@ jobs:
           name: All nightly CPU tests
           command: python setup.py test -s tests.suites.nightly_cpu -q
 
+  deploy_website:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - run:
+          working_directory: ~/ParlAI/website
+          name: Build the website
+          command: make
+      - run:
+          working_directory: ~/ParlAI/
+          name: Upload the website
+          command: |
+            sudo apt-get install s3cmd
+            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parlai-website/"
+
 
 workflows:
   version: 2
@@ -143,6 +161,10 @@ workflows:
       - lint
       - datatests
       - unittests
+      - deploy_website:
+          filters:
+            branches:
+              only: website  # TODO: change this to master in the end
   nightly:
     triggers:
       - schedule:
