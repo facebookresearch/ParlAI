@@ -143,6 +143,7 @@ jobs:
       - checkout
       - setup
       - installdeps
+      - installtorchcpu
       - run:
           working_directory: ~/ParlAI/website
           name: Build the website
