@@ -175,8 +175,9 @@ function _load_hit_config() {
 
 app.post('/sns_posts', async function(req, res, next) {
   res.end('Successful POST');
+  let content;
   if (req.headers['x-amz-sns-message-type'] == 'SubscriptionConfirmation') {
-    var content = JSON.parse(req.body);
+    content = JSON.parse(req.body);
     var confirm_url = content.SubscribeURL;
     request(confirm_url, function(error, response, body) {
       if (!error && response.statusCode == 200) {
@@ -186,7 +187,7 @@ app.post('/sns_posts', async function(req, res, next) {
   } else {
     var task_group_id = req.query['task_group_id'];
     var world_id = '[World_' + task_group_id + ']';
-    var content = JSON.parse(req.body);
+    content = JSON.parse(req.body);
     if (content['MessageId'] != '') {
       var message_id = content['MessageId'];
       var sender_id = 'AmazonMTurk';

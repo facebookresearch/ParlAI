@@ -27,13 +27,16 @@
   },
   "settings": {
     "react": {
-      "version": "detect"
+      "version": "16.5.2"
     }
   },
   "globals": {
-    "URL_DESTINATION": "readonly",
-
     "verbosity": "readonly",
+
+    "process": "readonly",
+    "__dirname": "readonly",
+
+    "URL_DESTINATION": "readonly",
     "IS_COVER_PAGE": "readonly",
     "WORKER_ID": "readonly",
     "ASSIGNMENT_ID": "readonly",
