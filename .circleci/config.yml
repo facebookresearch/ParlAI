@@ -168,7 +168,7 @@ workflows:
       - deploy_website:
           filters:
             branches:
-              only: website  # TODO: change this to master in the end
+              only: master
   nightly:
     triggers:
       - schedule:
