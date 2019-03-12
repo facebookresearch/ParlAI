@@ -9,9 +9,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  FormControl, Button, ButtonGroup, InputGroup, FormGroup,
-  MenuItem, DropdownButton, Badge, Popover, Overlay,
-  Nav, NavItem, Col,ControlLabel, Form,
+  FormControl,
+  Button,
+  ButtonGroup,
+  InputGroup,
+  FormGroup,
+  MenuItem,
+  DropdownButton,
+  Badge,
+  Popover,
+  Overlay,
+  Nav,
+  NavItem,
+  Col,
+  ControlLabel,
+  Form,
 } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import $ from 'jquery';
@@ -46,16 +58,22 @@ class ChatMessage extends React.Component {
       let duration_minutes = Math.floor(this.props.duration / 60000);
       let min_text = duration_minutes > 0 ? duration_minutes + ' min' : '';
       let sec_text = duration_seconds > 0 ? duration_seconds + ' sec' : '';
-      duration = <small>
-        <br /><i>Duration: </i>{min_text + ' ' + sec_text}
-      </small>;
+      duration = (
+        <small>
+          <br />
+          <i>Duration: </i>
+          {min_text + ' ' + sec_text}
+        </small>
+      );
     }
     return (
-      <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
+      <div className={'row'} style={{ marginLeft: '0', marginRight: '0' }}>
         <div
-          className={"alert " + alert_class} role="alert"
-          style={{'float': float_loc, 'display': 'table'}}>
-          <span style={{'fontSize': '16px', 'whiteSpace': 'pre-wrap'}}>
+          className={'alert ' + alert_class}
+          role="alert"
+          style={{ float: float_loc, display: 'table' }}
+        >
+          <span style={{ fontSize: '16px', whiteSpace: 'pre-wrap' }}>
             <b>{this.props.agent_id}</b>: {this.props.message}
           </span>
           {duration}
@@ -75,25 +93,25 @@ class MessageList extends React.Component {
     let XChatMessage = getCorrectComponent('XChatMessage', this.props.v_id);
     let onClickMessage = this.props.onClickMessage;
     if (typeof onClickMessage !== 'function') {
-      onClickMessage = (idx) => {};
+      onClickMessage = idx => {};
     }
-    return messages.map(
-      (m, idx) =>
-        <div key={m.message_id} onClick={() => onClickMessage(idx)}>
-          <XChatMessage
-            is_self={m.id == agent_id}
-            agent_id={m.id}
-            message={m.text}
-            task_data={m.task_data}
-            message_id={m.message_id}
-            duration={this.props.is_review ? m.duration : undefined}/>
-        </div>
-    );
+    return messages.map((m, idx) => (
+      <div key={m.message_id} onClick={() => onClickMessage(idx)}>
+        <XChatMessage
+          is_self={m.id == agent_id}
+          agent_id={m.id}
+          message={m.text}
+          task_data={m.task_data}
+          message_id={m.message_id}
+          duration={this.props.is_review ? m.duration : undefined}
+        />
+      </div>
+    ));
   }
 
-  render () {
+  render() {
     return (
-      <div id="message_thread" style={{'width': '100%'}}>
+      <div id="message_thread" style={{ width: '100%' }}>
         {this.makeMessages()}
       </div>
     );
@@ -101,9 +119,12 @@ class MessageList extends React.Component {
 }
 
 class ConnectionIndicator extends React.Component {
-  render () {
+  render() {
     let indicator_style = {
-      'opacity': '1', 'fontSize': '11px', 'color': 'white', float: 'right'
+      opacity: '1',
+      fontSize: '11px',
+      color: 'white',
+      float: 'right',
     };
     let text = '';
     switch (this.props.socket_status) {
@@ -132,8 +153,9 @@ class ConnectionIndicator extends React.Component {
         id="connected-button"
         className="btn btn-lg"
         style={indicator_style}
-        disabled={true} >
-          {text}
+        disabled={true}
+      >
+        {text}
       </button>
     );
   }
@@ -142,44 +164,58 @@ class ConnectionIndicator extends React.Component {
 class VolumeControl extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {slider_shown: false}
+    this.state = { slider_shown: false };
   }
 
   render() {
     let volume_control_style = {
-      'opacity': '1', 'fontSize': '11px', 'color': 'white', float: 'right',
-      marginRight: '10px'
+      opacity: '1',
+      fontSize: '11px',
+      color: 'white',
+      float: 'right',
+      marginRight: '10px',
     };
 
     let slider_style = {
-      height: 26, width: 150, 'marginRight': 14, float: 'left',
-    }
+      height: 26,
+      width: 150,
+      marginRight: 14,
+      float: 'left',
+    };
 
     let content = null;
     if (this.state.slider_shown) {
-      content = <div style={volume_control_style}>
-        <div style={slider_style}>
-          <Slider
-            onChange={(v) => this.props.onVolumeChange(v / 100)}
-            style={{marginTop: 10}}
-            defaultValue={this.props.volume * 100}
-          />
+      content = (
+        <div style={volume_control_style}>
+          <div style={slider_style}>
+            <Slider
+              onChange={v => this.props.onVolumeChange(v / 100)}
+              style={{ marginTop: 10 }}
+              defaultValue={this.props.volume * 100}
+            />
+          </div>
+          <Button onClick={() => this.setState({ slider_shown: false })}>
+            <span
+              style={{ marginRight: 5 }}
+              className="glyphicon glyphicon-remove"
+            />
+            Hide Volume
+          </Button>
         </div>
-        <Button onClick={() => this.setState({slider_shown: false})}>
-          <span style={{marginRight:5}} className="glyphicon glyphicon-remove"/>
-          Hide Volume
-        </Button>
-      </div>;
+      );
     } else {
-      content = <div style={volume_control_style}>
-        <Button onClick={() => this.setState({slider_shown: true})}>
-          <span
-            className="glyphicon glyphicon glyphicon-volume-up"
-            style={{marginRight:5}}
-            aria-hidden="true" />
-          Volume
-        </Button>
-      </div>
+      content = (
+        <div style={volume_control_style}>
+          <Button onClick={() => this.setState({ slider_shown: true })}>
+            <span
+              className="glyphicon glyphicon glyphicon-volume-up"
+              style={{ marginRight: 5 }}
+              aria-hidden="true"
+            />
+            Volume
+          </Button>
+        </div>
+      );
     }
     return content;
   }
@@ -188,12 +224,12 @@ class VolumeControl extends React.Component {
 class ChatBox extends React.Component {
   state = {
     hidden: true,
-    msg: ''
-  }
+    msg: '',
+  };
 
   smoothlyAnimateToBottom() {
     if (this.bottomAnchorRef) {
-      this.bottomAnchorRef.scrollIntoView({ block: "end", behavior: 'smooth' });
+      this.bottomAnchorRef.scrollIntoView({ block: 'end', behavior: 'smooth' });
     }
   }
 
@@ -229,155 +265,188 @@ class ChatBox extends React.Component {
     const unreadCount = this.props.has_new_message;
     const messages = this.props.off_chat_messages || [];
 
-    return <div style={{float: "right", marginRight: 7}}>
-      <Button
-        onClick={() => this.setState({hidden: !this.state.hidden})}
-        ref={el => {this.buttonRef = el}}
-      >
-        Chat Messages&nbsp;
-        {!!unreadCount &&
-          (<Badge style={{backgroundColor: "#d9534f", marginLeft: 3}}>
-            {unreadCount}
-          </Badge>)
-        }
-      </Button>
-
-    <Overlay
-      rootClose
-      show={!this.state.hidden}
-      onHide={() => this.setState({hidden: true})}
-      placement="bottom"
-      target={this.buttonRef}
-    >
-      <Popover id="chat_messages" title={"Chat Messages"}>
-        <div className="chat-list"
-          ref={el => { this.chatContainerRef = el }}
-          style={{minHeight: 300, maxHeight: 300, overflowY: "scroll"}}
+    return (
+      <div style={{ float: 'right', marginRight: 7 }}>
+        <Button
+          onClick={() => this.setState({ hidden: !this.state.hidden })}
+          ref={el => {
+            this.buttonRef = el;
+          }}
         >
-        {messages.map((message, idx) => (
-          <div
-            key={idx}
-            style={{textAlign: this.isOwnMessage(message) ? "right" : "left"}}>
-            <div
-              style={{borderRadius: 4,
-                marginBottom: 10,
-                padding: "5px 10px",
-                display: "inline-block",
-                ...(this.isOwnMessage(message)? {
-                  marginLeft: 20,
-                  textAlign: "right",
-                  backgroundColor: "#dff1d7"
-                } : {
-                  marginRight: 20,
-                  backgroundColor: "#eee"
-                })
-              }}
-              >
-                {message.msg}
-              </div>
-            </div>))}
-          <div className="bottom-anchor" ref={el => {this.bottomAnchorRef = el}}></div>
-        </div>
-        <form style={{paddingTop: 10}} onSubmit={(e) => {
-          e.preventDefault();
-          if (this.state.msg === '') return;
-          this.props.onMessageSend(this.state.msg);
-          this.setState({msg: ''});
-        }}>
-          <FormGroup>
-            <InputGroup>
-              <FormControl type="text"
-                value={this.state.msg}
-                onChange={(e) => this.setState({msg: e.target.value})}
-              />
-              <InputGroup.Button>
-                <Button className="btn-primary" disabled={this.state.msg === ''}
-                  type="submit"
-                >Send</Button>
-              </InputGroup.Button>
-            </InputGroup>
-          </FormGroup>
-        </form>
-      </Popover>
-    </Overlay>
-  </div>;
+          Chat Messages&nbsp;
+          {!!unreadCount && (
+            <Badge style={{ backgroundColor: '#d9534f', marginLeft: 3 }}>
+              {unreadCount}
+            </Badge>
+          )}
+        </Button>
 
+        <Overlay
+          rootClose
+          show={!this.state.hidden}
+          onHide={() => this.setState({ hidden: true })}
+          placement="bottom"
+          target={this.buttonRef}
+        >
+          <Popover id="chat_messages" title={'Chat Messages'}>
+            <div
+              className="chat-list"
+              ref={el => {
+                this.chatContainerRef = el;
+              }}
+              style={{ minHeight: 300, maxHeight: 300, overflowY: 'scroll' }}
+            >
+              {messages.map((message, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    textAlign: this.isOwnMessage(message) ? 'right' : 'left',
+                  }}
+                >
+                  <div
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 10,
+                      padding: '5px 10px',
+                      display: 'inline-block',
+                      ...(this.isOwnMessage(message)
+                        ? {
+                            marginLeft: 20,
+                            textAlign: 'right',
+                            backgroundColor: '#dff1d7',
+                          }
+                        : {
+                            marginRight: 20,
+                            backgroundColor: '#eee',
+                          }),
+                    }}
+                  >
+                    {message.msg}
+                  </div>
+                </div>
+              ))}
+              <div
+                className="bottom-anchor"
+                ref={el => {
+                  this.bottomAnchorRef = el;
+                }}
+              />
+            </div>
+            <form
+              style={{ paddingTop: 10 }}
+              onSubmit={e => {
+                e.preventDefault();
+                if (this.state.msg === '') return;
+                this.props.onMessageSend(this.state.msg);
+                this.setState({ msg: '' });
+              }}
+            >
+              <FormGroup>
+                <InputGroup>
+                  <FormControl
+                    type="text"
+                    value={this.state.msg}
+                    onChange={e => this.setState({ msg: e.target.value })}
+                  />
+                  <InputGroup.Button>
+                    <Button
+                      className="btn-primary"
+                      disabled={this.state.msg === ''}
+                      type="submit"
+                    >
+                      Send
+                    </Button>
+                  </InputGroup.Button>
+                </InputGroup>
+              </FormGroup>
+            </form>
+          </Popover>
+        </Overlay>
+      </div>
+    );
   }
 }
 
 class ChatNavbar extends React.Component {
-
   state = {
     // TODO: replace hardcoded initial chat state with some API integration
-    chat: [
-      {msg: "hey", owner: 3},
-      {msg: "anyone else there?", owner: 3},
-    ]
-  }
+    chat: [{ msg: 'hey', owner: 3 }, { msg: 'anyone else there?', owner: 3 }],
+  };
 
-  render () {
+  render() {
     // const displayChatBox = true;
     const displayChatBox = this.props.displayChatBox || false;
     let nav_style = {
-      position: 'absolute', backgroundColor: '#EEEEEE', borderColor: '#e7e7e7',
-      height: 46, top: 0, borderWidth: '0 0 1px', borderRadius: 0, right: 0,
-      left: 0, zIndez: 1030, padding: 5
-    }
+      position: 'absolute',
+      backgroundColor: '#EEEEEE',
+      borderColor: '#e7e7e7',
+      height: 46,
+      top: 0,
+      borderWidth: '0 0 1px',
+      borderRadius: 0,
+      right: 0,
+      left: 0,
+      zIndez: 1030,
+      padding: 5,
+    };
     return (
       <div style={nav_style}>
         <ConnectionIndicator {...this.props} />
         <VolumeControl {...this.props} />
-        {displayChatBox && <ChatBox
-          off_chat_messages={this.state.chat}
-          onMessageSend={(msg) => this.setState({chat: [...this.state.chat, {msg, owner: 0}]})}
-          has_new_message={2}/> }
+        {displayChatBox && (
+          <ChatBox
+            off_chat_messages={this.state.chat}
+            onMessageSend={msg =>
+              this.setState({ chat: [...this.state.chat, { msg, owner: 0 }] })
+            }
+            has_new_message={2}
+          />
+        )}
       </div>
     );
   }
 }
 
 class Hourglass extends React.Component {
-  render () {
+  render() {
     // TODO move to CSS document
     let hourglass_style = {
-      'marginTop': '-1px', 'marginRight': '5px',
-      'display': 'inline', 'float': 'left'
+      marginTop: '-1px',
+      marginRight: '5px',
+      display: 'inline',
+      float: 'left',
     };
 
     // TODO animate?
     return (
       <div id="hourglass" style={hourglass_style}>
-        <span
-          className="glyphicon glyphicon-hourglass"
-          aria-hidden="true" />
+        <span className="glyphicon glyphicon-hourglass" aria-hidden="true" />
       </div>
     );
   }
 }
 
 class WaitingMessage extends React.Component {
-  render () {
+  render() {
     let message_style = {
-      float: 'left', display: 'table', 'backgroundColor': '#fff'
+      float: 'left',
+      display: 'table',
+      backgroundColor: '#fff',
     };
-    let text = 'Waiting for the next person to speak...'
+    let text = 'Waiting for the next person to speak...';
     if (this.props.world_state == 'waiting') {
-      text = 'Waiting to pair with a task...'
+      text = 'Waiting to pair with a task...';
     }
     return (
       <div
         id="waiting-for-message"
         className="row"
-        style={{'marginLeft': '0', 'marginRight': '0'}}>
-          <div
-            className="alert alert-warning"
-            role="alert"
-            style={message_style}>
-            <Hourglass />
-            <span style={{'fontSize': '16px'}}>
-              {text}
-            </span>
-          </div>
+        style={{ marginLeft: '0', marginRight: '0' }}
+      >
+        <div className="alert alert-warning" role="alert" style={message_style}>
+          <Hourglass />
+          <span style={{ fontSize: '16px' }}>{text}</span>
+        </div>
       </div>
     );
   }
@@ -386,14 +455,17 @@ class WaitingMessage extends React.Component {
 class ChatPane extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {chat_height: this.getChatHeight()}
+    this.state = { chat_height: this.getChatHeight() };
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.message_count != prevProps.message_count) {
-      $('div#message-pane-segment').animate({
-        scrollTop: $('div#message-pane-segment').get(0).scrollHeight
-      }, 500);
+      $('div#message-pane-segment').animate(
+        {
+          scrollTop: $('div#message-pane-segment').get(0).scrollHeight,
+        },
+        500
+      );
     }
   }
 
@@ -408,41 +480,46 @@ class ChatPane extends React.Component {
 
   handleResize() {
     if (this.getChatHeight() != this.state.chat_height) {
-      this.setState({chat_height: this.getChatHeight()});
+      this.setState({ chat_height: this.getChatHeight() });
     }
   }
 
-  render () {
+  render() {
     let v_id = this.props.v_id;
     let XMessageList = getCorrectComponent('XMessageList', v_id);
     let XWaitingMessage = getCorrectComponent('XWaitingMessage', v_id);
 
     // TODO move to CSS
     let top_pane_style = {
-      'width': '100%', position: 'relative',
+      width: '100%',
+      position: 'relative',
     };
 
     let chat_style = {
-      'width': '100%', height: '100%', 'paddingTop': '60px',
-      'paddingLeft': '20px', 'paddingRight': '20px',
-      'paddingBottom': '20px', 'overflowY': 'scroll'
+      width: '100%',
+      height: '100%',
+      paddingTop: '60px',
+      paddingLeft: '20px',
+      paddingRight: '20px',
+      paddingBottom: '20px',
+      overflowY: 'scroll',
     };
 
     window.setTimeout(() => {
-      this.handleResize()
+      this.handleResize();
     }, 10);
 
-    top_pane_style['height'] = (this.state.chat_height) + 'px'
+    top_pane_style['height'] = this.state.chat_height + 'px';
 
     let wait_message = null;
     if (this.props.chat_state == 'waiting') {
-      wait_message = <XWaitingMessage {...this.props}/>;
+      wait_message = <XWaitingMessage {...this.props} />;
     }
 
     return (
       <div id="right-top-pane" style={top_pane_style}>
         <ChatNavbar {...this.props} />
-        <div id="message-pane-segment" style={chat_style} >
+        <div id="message-pane-segment" style={chat_style}>
           <XMessageList {...this.props} />
           {wait_message}
         </div>
@@ -453,49 +530,44 @@ class ChatPane extends React.Component {
 
 class IdleResponse extends React.Component {
   render() {
-    return (
-      <div
-        id="response-type-idle"
-        className="response-type-module" />
-    );
+    return <div id="response-type-idle" className="response-type-module" />;
   }
 }
 
 class ReviewButtons extends React.Component {
-  GOOD_REASONS = [
-    "Not specified",
-    "Interesting/Creative",
-    "Other",
-  ]
+  GOOD_REASONS = ['Not specified', 'Interesting/Creative', 'Other'];
 
   BAD_REASONS = [
-    "Not specified",
+    'Not specified',
     "Didn't understand task",
-    "Bad grammar/spelling",
-    "Total nonsense",
-    "Slow responder",
-    "Other",
-  ]
+    'Bad grammar/spelling',
+    'Total nonsense',
+    'Slow responder',
+    'Other',
+  ];
 
-  RATING_VALUES = [1, 2, 3, 4, 5]
+  RATING_VALUES = [1, 2, 3, 4, 5];
 
   RATING_TITLES = [
-    "Terrible", "Bad", "Average/Good",
-    "Great", "Above and Beyond"
-  ]
+    'Terrible',
+    'Bad',
+    'Average/Good',
+    'Great',
+    'Above and Beyond',
+  ];
 
   constructor(props) {
     super(props);
-    let init_state = props.init_state
+    let init_state = props.init_state;
     if (init_state !== undefined) {
       this.state = init_state;
     } else {
       this.state = {
-        'current_rating': null,
-        'submitting': false,
-        'submitted': false,
-        'text': '',
-        'dropdown_value': 'Not specified',
+        current_rating: null,
+        submitting: false,
+        submitted: false,
+        text: '',
+        dropdown_value: 'Not specified',
       };
     }
   }
@@ -511,31 +583,31 @@ class ReviewButtons extends React.Component {
     let current_rating = this.state.current_rating;
     let button_vals = this.RATING_VALUES;
     let rating_titles = this.RATING_TITLES;
-    let buttons = button_vals.map (
-      (v) => {
-        let use_style = 'info';
-        if (v < 3) {
-          use_style = 'danger';
-        } else if (v > 3) {
-          use_style = 'success'
-        }
-
-        return (
-          <Button
-            onClick={() => this.setState({
-              'current_rating': v,
-              'text': '',
-              'dropdown_value': 'Not specified',
-            })}
-            bsStyle={current_rating == v ? use_style : 'default'}
-            disabled={this.state.submitting}
-            key={'button-rating-' + v}
-          >
-            {rating_titles[v-1]}
-          </Button>
-        );
+    let buttons = button_vals.map(v => {
+      let use_style = 'info';
+      if (v < 3) {
+        use_style = 'danger';
+      } else if (v > 3) {
+        use_style = 'success';
       }
-    )
+
+      return (
+        <Button
+          onClick={() =>
+            this.setState({
+              current_rating: v,
+              text: '',
+              dropdown_value: 'Not specified',
+            })
+          }
+          bsStyle={current_rating == v ? use_style : 'default'}
+          disabled={this.state.submitting}
+          key={'button-rating-' + v}
+        >
+          {rating_titles[v - 1]}
+        </Button>
+      );
+    });
 
     // Dropdown and other only appear in some cases
     let dropdown = null;
@@ -543,15 +615,15 @@ class ReviewButtons extends React.Component {
     let reason_input = null;
     if (current_rating != null && current_rating != 3) {
       let options = current_rating > 3 ? this.GOOD_REASONS : this.BAD_REASONS;
-      let dropdown_vals = options.map((opt) => (
+      let dropdown_vals = options.map(opt => (
         <MenuItem
           key={'dropdown-item-' + opt}
           eventKey={opt}
-          onSelect={(key) => this.setState({dropdown_value: key, text: ''})}
+          onSelect={key => this.setState({ dropdown_value: key, text: '' })}
         >
           {opt}
         </MenuItem>
-      ))
+      ));
       dropdown = (
         <DropdownButton
           dropup={true}
@@ -568,41 +640,43 @@ class ReviewButtons extends React.Component {
     // Create other text
     if (dropdown != null && this.state.dropdown_value == 'Other') {
       // Optional input for if the user says other
-      other_input = <FormControl
-        type="text"
-        placeholder="Enter reason (optional)"
-        value={this.state.text}
-        onChange={(t) => this.setState({text: t.target.value})}
-        disabled={this.state.submitting}
-      />;
+      other_input = (
+        <FormControl
+          type="text"
+          placeholder="Enter reason (optional)"
+          value={this.state.text}
+          onChange={t => this.setState({ text: t.target.value })}
+          disabled={this.state.submitting}
+        />
+      );
     }
     if (dropdown != null) {
-      reason_input = <div style={{marginBottom: '8px'}}>
-        Give a reason for your rating (optional):
-        <InputGroup>
-          {dropdown}
-          {other_input}
-        </InputGroup>
-      </div>
+      reason_input = (
+        <div style={{ marginBottom: '8px' }}>
+          Give a reason for your rating (optional):
+          <InputGroup>
+            {dropdown}
+            {other_input}
+          </InputGroup>
+        </div>
+      );
     }
 
     // Assemble flow components
-    let disable_submit = (this.state.submitting || current_rating == null);
+    let disable_submit = this.state.submitting || current_rating == null;
     let review_flow = (
       <div>
         Rate your chat partner (fully optional & confidential):
         <br />
-        <ButtonGroup>
-          {buttons}
-        </ButtonGroup>
+        <ButtonGroup>{buttons}</ButtonGroup>
         {reason_input}
-        <div style={{marginBottom: '8px'}}>
-          <ButtonGroup style={{marginBottom: '8px'}}>
+        <div style={{ marginBottom: '8px' }}>
+          <ButtonGroup style={{ marginBottom: '8px' }}>
             <Button
               disabled={disable_submit}
               bsStyle="info"
               onClick={() => {
-                this.setState({'submitting': true});
+                this.setState({ submitting: true });
                 let feedback_data = {
                   rating: this.state.current_rating,
                   reason_category: this.state.dropdown_value,
@@ -611,8 +685,8 @@ class ReviewButtons extends React.Component {
                 this.props.onMessageSend(
                   '[PEER_REVIEW]',
                   feedback_data,
-                  () => this.setState({submitted: true}),
-                  true, // This is a system message, shouldn't be put in feed
+                  () => this.setState({ submitted: true }),
+                  true // This is a system message, shouldn't be put in feed
                 );
                 this.props.onChoice(true);
               }}
@@ -655,25 +729,30 @@ class DoneButton extends React.Component {
     let review_flow = null;
     let done_button = (
       <button
-        id="done-button" type="button"
+        id="done-button"
+        type="button"
         className="btn btn-primary btn-lg"
-        onClick={() => this.props.allDoneCallback()}>
-          <span
-            className="glyphicon glyphicon-ok-circle"
-            aria-hidden="true" /> Done with this HIT
+        onClick={() => this.props.allDoneCallback()}
+      >
+        <span className="glyphicon glyphicon-ok-circle" aria-hidden="true" />{' '}
+        Done with this HIT
       </button>
     );
     if (this.props.display_feedback) {
       if (this.state.feedback_shown) {
         let XReviewButtons = getCorrectComponent(
-          'XReviewButtons', this.props.v_id);
+          'XReviewButtons',
+          this.props.v_id
+        );
         review_flow = (
           <XReviewButtons
             {...this.props}
-            onChoice={(did_give) => this.setState({
-              feedback_shown: false,
-              feedback_given: did_give
-            })}
+            onChoice={did_give =>
+              this.setState({
+                feedback_shown: false,
+                feedback_given: did_give,
+              })
+            }
           />
         );
         done_button = null;
@@ -684,9 +763,7 @@ class DoneButton extends React.Component {
     return (
       <div>
         {review_flow}
-        <div>
-          {done_button}
-        </div>
+        <div>{done_button}</div>
       </div>
     );
   }
@@ -697,37 +774,38 @@ class DoneResponse extends React.Component {
     this.props.onInputResize();
   }
 
-  render () {
+  render() {
     let v_id = this.props.v_id;
     let XDoneButton = getCorrectComponent('XDoneButton', v_id);
 
     let inactive_pane = null;
     if (this.props.done_text) {
       inactive_pane = (
-        <span
-          id="inactive"
-          style={{'fontSize': '14pt', 'marginRight': '15px'}}>
+        <span id="inactive" style={{ fontSize: '14pt', marginRight: '15px' }}>
           {this.props.done_text}
         </span>
       );
     }
     // TODO maybe move to CSS?
     let pane_style = {
-      'paddingLeft': '25px',
-      'paddingTop': '20px',
-      'paddingBottom': '20px',
-      'paddingRight': '25px',
-      'float': 'left'
+      paddingLeft: '25px',
+      paddingTop: '20px',
+      paddingBottom: '20px',
+      paddingRight: '25px',
+      float: 'left',
     };
     let done_button = <XDoneButton {...this.props} />;
     if (!this.props.task_done) {
       done_button = null;
     }
     return (
-      <div id="response-type-done" className="response-type-module"
-        style={pane_style}>
-          {inactive_pane}
-          {done_button}
+      <div
+        id="response-type-done"
+        className="response-type-module"
+        style={pane_style}
+      >
+        {inactive_pane}
+        {done_button}
       </div>
     );
   }
@@ -736,7 +814,7 @@ class DoneResponse extends React.Component {
 class TextResponse extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {'textval': '', 'sending': false};
+    this.state = { textval: '', sending: false };
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -744,17 +822,17 @@ class TextResponse extends React.Component {
     // focus event. Not having this would make the focus occur on every
     // state update (including things like volume changes)
     if (this.props.active && !prevProps.active) {
-      $("input#id_text_input").focus();
+      $('input#id_text_input').focus();
     }
     this.props.onInputResize();
   }
 
   tryMessageSend() {
     if (this.state.textval != '' && this.props.active && !this.state.sending) {
-      this.setState({sending: true});
-      this.props.onMessageSend(
-        this.state.textval, {},
-        () => this.setState({textval: '', 'sending': false}));
+      this.setState({ sending: true });
+      this.props.onMessageSend(this.state.textval, {}, () =>
+        this.setState({ textval: '', sending: false })
+      );
     }
   }
 
@@ -769,31 +847,44 @@ class TextResponse extends React.Component {
   render() {
     // TODO maybe move to CSS?
     let pane_style = {
-      'paddingLeft': '25px',
-      'paddingTop': '20px',
-      'paddingBottom': '20px',
-      'paddingRight': '25px',
-      'float': 'left',
-      'width': '100%'
+      paddingLeft: '25px',
+      paddingTop: '20px',
+      paddingBottom: '20px',
+      paddingRight: '25px',
+      float: 'left',
+      width: '100%',
     };
     let input_style = {
-      height: "50px", width: "100%", display: "block", float: 'left'
+      height: '50px',
+      width: '100%',
+      display: 'block',
+      float: 'left',
     };
     let submit_style = {
-      'width': '100px', 'height': '100%', 'fontSize': '16px',
-      'float': 'left', 'marginLeft': '10px', 'padding': '0px'
+      width: '100px',
+      height: '100%',
+      fontSize: '16px',
+      float: 'left',
+      marginLeft: '10px',
+      padding: '0px',
     };
 
     let text_input = (
       <FormControl
         type="text"
         id="id_text_input"
-        style={{width: '80%', height: '100%', float: 'left', 'fontSize': '16px'}}
+        style={{
+          width: '80%',
+          height: '100%',
+          float: 'left',
+          fontSize: '16px',
+        }}
         value={this.state.textval}
         placeholder="Please enter here..."
-        onKeyPress={(e) => this.handleKeyPress(e)}
-        onChange={(e) => this.setState({textval: e.target.value})}
-        disabled={!this.props.active || this.state.sending}/>
+        onKeyPress={e => this.handleKeyPress(e)}
+        onChange={e => this.setState({ textval: e.target.value })}
+        disabled={!this.props.active || this.state.sending}
+      />
     );
 
     let submit_button = (
@@ -802,9 +893,11 @@ class TextResponse extends React.Component {
         style={submit_style}
         id="id_send_msg_button"
         disabled={
-          this.state.textval == '' || !this.props.active || this.state.sending}
-        onClick={() => this.tryMessageSend()}>
-          Send
+          this.state.textval == '' || !this.props.active || this.state.sending
+        }
+        onClick={() => this.tryMessageSend()}
+      >
+        Send
       </Button>
     );
 
@@ -812,11 +905,12 @@ class TextResponse extends React.Component {
       <div
         id="response-type-text-input"
         className="response-type-module"
-        style={pane_style}>
-          <div style={input_style}>
-            {text_input}
-            {submit_button}
-          </div>
+        style={pane_style}
+      >
+        <div style={input_style}>
+          {text_input}
+          {submit_button}
+        </div>
       </div>
     );
   }
@@ -829,108 +923,120 @@ class FormResponse extends React.Component {
     super(props);
     // At this point it should be assumed that task_data
     // has a field "respond_with_form"
-    let responses = []
-    for (let _ of this.props.task_data["respond_with_form"]){
+    let responses = [];
+    for (let _ of this.props.task_data['respond_with_form']) {
       responses.push('');
     }
-    this.state = {'responses': responses, 'sending': false};
+    this.state = { responses: responses, sending: false };
   }
 
-
   tryMessageSend() {
-    let form_elements = this.props.task_data["respond_with_form"];
+    let form_elements = this.props.task_data['respond_with_form'];
     let response_data = [];
-    let response_text = "";
+    let response_text = '';
     let all_response_filled = true;
-    for (let ind in form_elements){
-      let question = form_elements[ind]["question"];
+    for (let ind in form_elements) {
+      let question = form_elements[ind]['question'];
       let response = this.state.responses[ind];
-      if (response == ''){
+      if (response == '') {
         all_response_filled = false;
       }
       response_data.push({
-        "question": question,
-        "response": response
+        question: question,
+        response: response,
       });
-      response_text += question + ": " + response + "\n";
+      response_text += question + ': ' + response + '\n';
     }
 
     if (all_response_filled && this.props.active && !this.state.sending) {
-      this.setState({sending: true});
+      this.setState({ sending: true });
       this.props.onMessageSend(
-        response_text, {"form_responses": response_data},
-        () => this.setState({'sending': false}));
+        response_text,
+        { form_responses: response_data },
+        () => this.setState({ sending: false })
+      );
     }
   }
 
   render() {
-    let form_elements = this.props.task_data["respond_with_form"];
-    const listFormElements= form_elements.map((form_elem, index) => {
-        let question = form_elem["question"];
-        if (form_elem["type"] == "choices"){
-          let choices = [<option key="empty_option"></option>].concat(
-            form_elem["choices"].map((option_label, index) => {
-              return <option key={"option_" + index.toString()}>
-                        {option_label}
-                      </option>
-            }));
-          return (<FormGroup>
-                    <Col
-                      componentClass={ControlLabel}
-                      sm={6}
-                      style={{'fontSize': '16px'}}>
-                      {question}
-                    </Col>
-                    <Col sm={5}>
-                      <FormControl componentClass="select"
-                        style={{'fontSize': '16px'}}
-                        value={this.state.responses[index]}
-                        onChange={(e) => {
-                          var text = e.target.value;
-                          this.setState((prevState) => {
-                            let new_res = prevState["responses"];
-                            new_res[index] = text;
-                            return {responses: new_res}
-                          });
-                        }}>
-                        {choices}
-                      </FormControl>
-                    </Col>
-                  </FormGroup>);
-        }
-        return <FormGroup>
-                  <Col
-                    style={{'fontSize': '16px'}}
-                    componentClass={ControlLabel}
-                    sm={6}>
-                    {question}
-                  </Col>
-                  <Col sm={5}>
-                    <FormControl
-                      type="text"
-                      style={{'fontSize': '16px'}}
-                      value={this.state.responses[index]}
-                      onChange={(e) => {
-                        var text = e.target.value;
-                        this.setState((prevState) => {
-                          let new_res = prevState["responses"];
-                          new_res[index] = text;
-                          return {responses: new_res}
-                        });
-                      }}/>
-                  </Col>
-               </FormGroup>;
+    let form_elements = this.props.task_data['respond_with_form'];
+    const listFormElements = form_elements.map((form_elem, index) => {
+      let question = form_elem['question'];
+      if (form_elem['type'] == 'choices') {
+        let choices = [<option key="empty_option" />].concat(
+          form_elem['choices'].map((option_label, index) => {
+            return (
+              <option key={'option_' + index.toString()}>{option_label}</option>
+            );
+          })
+        );
+        return (
+          <FormGroup key={'form_el_' + index}>
+            <Col
+              componentClass={ControlLabel}
+              sm={6}
+              style={{ fontSize: '16px' }}
+            >
+              {question}
+            </Col>
+            <Col sm={5}>
+              <FormControl
+                componentClass="select"
+                style={{ fontSize: '16px' }}
+                value={this.state.responses[index]}
+                onChange={e => {
+                  var text = e.target.value;
+                  this.setState(prevState => {
+                    let new_res = prevState['responses'];
+                    new_res[index] = text;
+                    return { responses: new_res };
+                  });
+                }}
+              >
+                {choices}
+              </FormControl>
+            </Col>
+          </FormGroup>
+        );
       }
-    );
+      return (
+        <FormGroup key={'form_el_' + index}>
+          <Col
+            style={{ fontSize: '16px' }}
+            componentClass={ControlLabel}
+            sm={6}
+          >
+            {question}
+          </Col>
+          <Col sm={5}>
+            <FormControl
+              type="text"
+              style={{ fontSize: '16px' }}
+              value={this.state.responses[index]}
+              onChange={e => {
+                var text = e.target.value;
+                this.setState(prevState => {
+                  let new_res = prevState['responses'];
+                  new_res[index] = text;
+                  return { responses: new_res };
+                });
+              }}
+            />
+          </Col>
+        </FormGroup>
+      );
+    });
     let submit_button = (
       <Button
         className="btn btn-primary"
-        style={{'height': '40px', 'width': '100px', 'fontSize': '16px'}}
+        style={{ height: '40px', width: '100px', fontSize: '16px' }}
         id="id_send_msg_button"
         disabled={
-          this.state.textval == '' || !this.props.active || this.state.sending}
-        onClick={() => this.tryMessageSend()}>
-          Send
+          this.state.textval == '' || !this.props.active || this.state.sending
+        }
+        onClick={() => this.tryMessageSend()}
+      >
+        Send
       </Button>
     );
 
@@ -938,26 +1044,27 @@ class FormResponse extends React.Component {
       <div
         id="response-type-text-input"
         className="response-type-module"
-        style={{'paddingTop': '15px',
-                'float': 'left',
-                'width': '100%',
-                'backgroundColor': '#eeeeee'}}>
-            <Form horizontal
-                style={{backgroundColor: '#eeeeee', paddingBottom: '10px'}}>
-              {listFormElements}
-              <FormGroup>
-                <Col sm={6}>
-                </Col>
-                <Col sm={5}>
-                  {submit_button}
-                </Col>
-             </FormGroup>
-            </Form>
+        style={{
+          paddingTop: '15px',
+          float: 'left',
+          width: '100%',
+          backgroundColor: '#eeeeee',
+        }}
+      >
+        <Form
+          horizontal
+          style={{ backgroundColor: '#eeeeee', paddingBottom: '10px' }}
+        >
+          {listFormElements}
+          <FormGroup>
+            <Col sm={6} />
+            <Col sm={5}>{submit_button}</Col>
+          </FormGroup>
+        </Form>
       </div>
     );
   }
 }
-
 
 class ResponsePane extends React.Component {
   render() {
@@ -971,23 +1078,24 @@ class ResponsePane extends React.Component {
     switch (this.props.chat_state) {
       case 'done':
       case 'inactive':
-        response_pane = <XDoneResponse
-          {...this.props}
-        />;
+        response_pane = <XDoneResponse {...this.props} />;
         break;
       case 'text_input':
       case 'waiting':
-        if (this.props.task_data && this.props.task_data["respond_with_form"]){
-          response_pane = <XFormResponse
-            {...this.props}
-            active={this.props.chat_state == 'text_input'}
-          />;
-        }
-        else{
-          response_pane = <XTextResponse
-            {...this.props}
-            active={this.props.chat_state == 'text_input'}
-          />;
+        if (this.props.task_data && this.props.task_data['respond_with_form']) {
+          response_pane = (
+            <XFormResponse
+              {...this.props}
+              active={this.props.chat_state == 'text_input'}
+            />
+          );
+        } else {
+          response_pane = (
+            <XTextResponse
+              {...this.props}
+              active={this.props.chat_state == 'text_input'}
+            />
+          );
         }
         break;
       case 'idle':
@@ -999,7 +1107,8 @@ class ResponsePane extends React.Component {
     return (
       <div
         id="right-bottom-pane"
-        style={{width: '100%', 'backgroundColor': '#eee'}}>
+        style={{ width: '100%', backgroundColor: '#eee' }}
+      >
         {response_pane}
       </div>
     );
@@ -1015,15 +1124,17 @@ class RightPane extends React.Component {
     }
   }
 
-  render () {
+  render() {
     let v_id = this.props.v_id;
     let XChatPane = getCorrectComponent('XChatPane', v_id);
     let XResponsePane = getCorrectComponent('XResponsePane', v_id);
 
     // TODO move to CSS
     let right_pane = {
-      'minHeight': '100%', 'display': 'flex', 'flexDirection': 'column',
-      'justifyContent': 'spaceBetween'
+      minHeight: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'spaceBetween',
     };
 
     return (
@@ -1031,51 +1142,60 @@ class RightPane extends React.Component {
         <XChatPane
           message_count={this.props.messages.length}
           {...this.props}
-          ref={(pane) => {this.chat_pane = pane}}
+          ref={pane => {
+            this.chat_pane = pane;
+          }}
         />
-        <XResponsePane {...this.props} onInputResize={() => this.handleResize()}/>
+        <XResponsePane
+          {...this.props}
+          onInputResize={() => this.handleResize()}
+        />
       </div>
     );
   }
 }
 
 class TaskDescription extends React.Component {
-  render () {
+  render() {
     let header_text = CHAT_TITLE;
     let task_desc = this.props.task_description || 'Task Description Loading';
     return (
       <div>
-          <h1>{header_text}</h1>
-          <hr style={{'borderTop': '1px solid #555'}} />
-          <span
-            id="task-description" style={{'fontSize': '16px'}}
-            dangerouslySetInnerHTML={{__html: task_desc}}
-          />
+        <h1>{header_text}</h1>
+        <hr style={{ borderTop: '1px solid #555' }} />
+        <span
+          id="task-description"
+          style={{ fontSize: '16px' }}
+          dangerouslySetInnerHTML={{ __html: task_desc }}
+        />
       </div>
     );
   }
 }
 
 class ContextView extends React.Component {
-  render () {
+  render() {
     // TODO pull context title from templating variable
     let header_text = 'Context';
-    let context = (
+    let context =
       'To render context here, write or select a ContextView ' +
       'that can render your task_data, or write the desired ' +
-      'content into the task_data.html field of your act');
-    if (this.props.task_data !== undefined &&
-        this.props.task_data.html !== undefined) {
+      'content into the task_data.html field of your act';
+    if (
+      this.props.task_data !== undefined &&
+      this.props.task_data.html !== undefined
+    ) {
       context = this.props.task_data.html;
     }
     return (
       <div>
-          <h1>{header_text}</h1>
-          <hr style={{'borderTop': '1px solid #555'}} />
-          <span
-            id="context" style={{'fontSize': '16px'}}
-            dangerouslySetInnerHTML={{__html: context}}
-          />
+        <h1>{header_text}</h1>
+        <hr style={{ borderTop: '1px solid #555' }} />
+        <span
+          id="context"
+          style={{ fontSize: '16px' }}
+          dangerouslySetInnerHTML={{ __html: context }}
+        />
       </div>
     );
   }
@@ -1084,24 +1204,27 @@ class ContextView extends React.Component {
 class LeftPane extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {current_pane: 'instruction', last_update: 0};
+    this.state = { current_pane: 'instruction', last_update: 0 };
   }
 
-  static getDerivedStateFromProps(nextProps, prevState){
-    if (nextProps.task_data.last_update !== undefined &&
-        nextProps.task_data.last_update > prevState.last_update) {
-      return {current_pane: 'context',
-              last_update: nextProps.task_data.last_update};
-    }
-    else return null;
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (
+      nextProps.task_data.last_update !== undefined &&
+      nextProps.task_data.last_update > prevState.last_update
+    ) {
+      return {
+        current_pane: 'context',
+        last_update: nextProps.task_data.last_update,
+      };
+    } else return null;
   }
 
-  render () {
+  render() {
     let v_id = this.props.v_id;
     let frame_height = this.props.frame_height;
     let frame_style = {
       height: frame_height + 'px',
-      'backgroundColor': '#dff0d8',
+      backgroundColor: '#dff0d8',
       padding: '30px',
       overflow: 'auto',
     };
@@ -1111,7 +1234,7 @@ class LeftPane extends React.Component {
     if (this.props.is_cover_page || !has_context) {
       return (
         <div id="left-pane" className={pane_size} style={frame_style}>
-            <XTaskDescription {...this.props} />
+          <XTaskDescription {...this.props} />
         </div>
       );
     } else {
@@ -1122,23 +1245,25 @@ class LeftPane extends React.Component {
         <NavItem
           eventKey={'instruction'}
           key={'instruction-selector'}
-          title={'Task Instructions'}>
+          title={'Task Instructions'}
+        >
           {'Task Instructions'}
         </NavItem>,
         <NavItem
           eventKey={'context'}
           key={'context-selector'}
-          title={'Context'}>
+          title={'Context'}
+        >
           {'Context'}
-        </NavItem>
+        </NavItem>,
       ];
       let display_instruction = {
-        'backgroundColor': '#dff0d8',
+        backgroundColor: '#dff0d8',
         padding: '10px 20px 20px 20px',
         flex: '1 1 auto',
       };
       let display_context = {
-        'backgroundColor': '#dff0d8',
+        backgroundColor: '#dff0d8',
         padding: '10px 20px 20px 20px',
         flex: '1 1 auto',
       };
@@ -1153,13 +1278,13 @@ class LeftPane extends React.Component {
         </div>,
         <div style={display_context} key={'context-display'}>
           <XContextView {...this.props} />
-        </div>
-      ]
+        </div>,
+      ];
 
       let frame_style = {
         height: frame_height + 'px',
-        'backgroundColor': '#eee',
-        'padding': '10px 0px 0px 0px',
+        backgroundColor: '#eee',
+        padding: '10px 0px 0px 0px',
         overflow: 'auto',
         display: 'flex',
         flexFlow: 'column',
@@ -1170,30 +1295,26 @@ class LeftPane extends React.Component {
           <Nav
             bsStyle="tabs"
             activeKey={this.state.current_pane}
-            onSelect={key => this.setState({current_pane: key})}
+            onSelect={key => this.setState({ current_pane: key })}
           >
             {nav_items}
           </Nav>
           {nav_panels}
         </div>
-      )
+      );
     }
-
   }
 }
 
 class ContentLayout extends React.Component {
-  render () {
+  render() {
     let layout_style = '2-PANEL'; // Currently the only layout style is 2 panel
     let v_id = this.props.v_id;
     let XLeftPane = getCorrectComponent('XLeftPane', v_id);
     let XRightPane = getCorrectComponent('XRightPane', v_id);
     return (
       <div className="row" id="ui-content">
-        <XLeftPane
-          {...this.props}
-          layout_style={layout_style}
-        />
+        <XLeftPane {...this.props} layout_style={layout_style} />
         <XRightPane {...this.props} layout_style={layout_style} />
       </div>
     );
@@ -1201,7 +1322,7 @@ class ContentLayout extends React.Component {
 }
 
 class BaseFrontend extends React.Component {
-  render () {
+  render() {
     let v_id = this.props.v_id;
     let XLeftPane = getCorrectComponent('XLeftPane', v_id);
     let XContentLayout = getCorrectComponent('XContentLayout', v_id);
@@ -1210,25 +1331,27 @@ class BaseFrontend extends React.Component {
     if (this.props.is_cover_page) {
       content = (
         <div className="row" id="ui-content">
-          <XLeftPane
-            {...this.props}
-          />
+          <XLeftPane {...this.props} />
         </div>
       );
     } else if (this.props.initialization_status == 'initializing') {
       content = <div id="ui-placeholder">Initializing...</div>;
     } else if (this.props.initialization_status == 'websockets_failure') {
-      content = <div id="ui-placeholder">
-        Sorry, but we found that your browser does not support WebSockets.
-        Please consider updating your browser to a newer version and check
-        this HIT again.
-      </div>;
+      content = (
+        <div id="ui-placeholder">
+          Sorry, but we found that your browser does not support WebSockets.
+          Please consider updating your browser to a newer version and check
+          this HIT again.
+        </div>
+      );
     } else if (this.props.initialization_status == 'failed') {
-      content = <div id="ui-placeholder">
-        Unable to initialize. We may be having issues with our chat servers.
-        Please refresh the page, or if that isn't working return the HIT and
-        try again later if you would like to work on this task.
-      </div>;
+      content = (
+        <div id="ui-placeholder">
+          Unable to initialize. We may be having issues with our chat servers.
+          Please refresh the page, or if that isn't working return the HIT and
+          try again later if you would like to work on this task.
+        </div>
+      );
     } else {
       content = <XContentLayout {...this.props} />;
     }
@@ -1245,29 +1368,42 @@ function setCustomComponents(new_components) {
 }
 
 component_list = {
-  'XContentLayout': ['ContentLayout', ContentLayout],
-  'XLeftPane': ['LeftPane', LeftPane],
-  'XRightPane': ['RightPane', RightPane],
-  'XResponsePane': ['ResponsePane', ResponsePane],
-  'XTextResponse': ['TextResponse', TextResponse],
-  'XFormResponse': ['FormResponse', FormResponse],
-  'XDoneResponse': ['DoneResponse', DoneResponse],
-  'XIdleResponse': ['IdleResponse', IdleResponse],
-  'XDoneButton': ['DoneButton', DoneButton],
-  'XChatPane': ['ChatPane', ChatPane],
-  'XWaitingMessage': ['WaitingMessage', WaitingMessage],
-  'XMessageList': ['MessageList', MessageList],
-  'XChatMessage': ['ChatMessage', ChatMessage],
-  'XTaskDescription': ['XTaskDescription', TaskDescription],
-  'XReviewButtons': ['XReviewButtons', ReviewButtons],
-  'XContextView': ['XContextView', ContextView],
+  XContentLayout: ['ContentLayout', ContentLayout],
+  XLeftPane: ['LeftPane', LeftPane],
+  XRightPane: ['RightPane', RightPane],
+  XResponsePane: ['ResponsePane', ResponsePane],
+  XTextResponse: ['TextResponse', TextResponse],
+  XFormResponse: ['FormResponse', FormResponse],
+  XDoneResponse: ['DoneResponse', DoneResponse],
+  XIdleResponse: ['IdleResponse', IdleResponse],
+  XDoneButton: ['DoneButton', DoneButton],
+  XChatPane: ['ChatPane', ChatPane],
+  XWaitingMessage: ['WaitingMessage', WaitingMessage],
+  XMessageList: ['MessageList', MessageList],
+  XChatMessage: ['ChatMessage', ChatMessage],
+  XTaskDescription: ['XTaskDescription', TaskDescription],
+  XReviewButtons: ['XReviewButtons', ReviewButtons],
+  XContextView: ['XContextView', ContextView],
 };
 
 export {
   // Original Components
-  ChatMessage, MessageList, ConnectionIndicator, Hourglass, WaitingMessage,
-  ChatPane, IdleResponse, DoneButton, DoneResponse, TextResponse, ResponsePane,
-  RightPane, LeftPane, ContentLayout, BaseFrontend,
+  ChatMessage,
+  MessageList,
+  ConnectionIndicator,
+  Hourglass,
+  WaitingMessage,
+  ChatPane,
+  IdleResponse,
+  DoneButton,
+  DoneResponse,
+  TextResponse,
+  ResponsePane,
+  RightPane,
+  LeftPane,
+  ContentLayout,
+  BaseFrontend,
   // Functions to update and get current components
-  setCustomComponents, getCorrectComponent
+  setCustomComponents,
+  getCorrectComponent,
 };

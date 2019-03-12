@@ -31,6 +31,17 @@
     }
   },
   "globals": {
-    "URL_DESTINATION": "readable"
+    "URL_DESTINATION": "readonly",
+
+    "verbosity": "readonly",
+    "IS_COVER_PAGE": "readonly",
+    "WORKER_ID": "readonly",
+    "ASSIGNMENT_ID": "readonly",
+    "HIT_ID": "readonly",
+    "TASK_GROUP_ID": "readonly",
+    "DISPLAY_FEEDBACK": "readonly",
+    "FRAME_HEIGHT": "readonly",
+    "BLOCK_MOBILE": "readonly",
+    "CHAT_TITLE": "readonly"
   }
 }
