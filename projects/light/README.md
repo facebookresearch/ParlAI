@@ -19,6 +19,9 @@ relate to agents that can talk and act successfully.
 
 <p align="center"><img width="90%" src="example-dialog.png" /></p>
 
+## Paper
+
+A detailed description may be found in [Urbanek et al., 2019](https://arxiv.org/abs/1903.03094).
 
 ## Datasets
 
@@ -38,4 +41,11 @@ Models will be released soon. Please check back here in the future.
 If you use the dataset or models in your own work, please cite with the
 following BibTex entry:
 
-TBD
+    @inproceedings{urbanek2019light,
+      author={Jack Urbanek, Angela Fan, Siddharth Karamcheti, Saachi Jain, Samuel Humeau, Emily Dinan, Tim Rocktäschel, Douwe Kiela, Arthur Szlam, Jason Weston},
+      title={Learning to Speak and Act in a Fantasy Text Adventure Game},
+      journal={arXiv preprint arXiv:1903.03094},
+      year={2019},
+    }
+    
+ 

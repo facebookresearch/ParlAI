@@ -11,7 +11,7 @@ import parlai.core.testing_utils as testing_utils
 @testing_utils.skipUnlessGPU
 class TestDrQAModel(unittest.TestCase):
     """Checks that DrQA Model can be downloaded and achieve appropriate results"""
-    def test_eval(self):
+    def test_pretrained(self):
         stdout, _, test = testing_utils.eval_model(dict(
             task='squad:index',
             model_file='models:drqa/squad/model',
