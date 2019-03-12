@@ -1,4 +1,10 @@
-/*! normalize.css v5.0.0 | MIT License | github.com/necolas/normalize.css */html {
+/*! normalize.css v5.0.0 | MIT License | github.com/necolas/normalize.css */
+/*
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+html {
     font-family: sans-serif;
     line-height: 1.15;
     -ms-text-size-adjust: 100%;
