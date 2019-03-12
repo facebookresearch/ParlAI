@@ -486,14 +486,14 @@ class TrainLoop():
             
             self.writer.add_metrics('train', self._total_exs, train_report)
             
-            if opt['model'] == 'seq2seq': 
+            if opt['model'] in ['seq2seq', 'seq2seq_retriever']: 
             
                 self.writer.writer.add_scalars('s2s_embed_weights', {'embed_weight_%s' % iii: 
-                                            self.agent.model.encoder.weight[iii+5,3].data 
+                                            self.agent.model.encoder.lt.weight[iii+5,6].data 
                                             for iii in range(10)}, self._total_exs)
                                         
                 self.writer.writer.add_scalars('s2s_hidden_weights', {'hidden_weight_%s' % iii: 
-                                            self.agent.model.encoder.lt.weight_hh_l0[iii,0].data 
+                                            self.agent.model.encoder.rnn.weight_hh_l0[iii,0].data 
                                             for iii in range(10)}, self._total_exs)
                                             
             else: 
