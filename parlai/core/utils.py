@@ -889,7 +889,7 @@ def set_namedtuple_defaults(namedtuple, default=None):
 
 
 def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
-                  max_len=None):
+                  max_len=None, fp16friendly=False):
     """Create a right-padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
@@ -906,6 +906,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     :param bool use_cuda: if true, places `padded` on GPU
     :param bool left_padded:
     :param int max_len: if None, the max length is the maximum item length
+    :param bool fp16friendly: if True, pads the time dimension to be a multiple of 8.
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
@@ -926,7 +927,8 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     # if input tensors are empty, we should expand to nulls
     t = max(t, 1)
 
-    if t % 8 != 0:
+    if fp16friendly and (t % 8 != 0):
+        # pad to be a multiple of 8 to ensure we use the tensor cores
         t += 8 - (t % 8)
 
     if isinstance(items[0], torch.Tensor):

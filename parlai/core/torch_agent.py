@@ -652,7 +652,7 @@ class TorchAgent(Agent):
                     'https://github.com/NVIDIA/apex'
                 )
             self.optimizer = apex.fp16_utils.FP16_Optimizer(
-                self.optimizer, dynamic_loss_scale=True, verbose=False,
+                self.optimizer, dynamic_loss_scale=True, verbose=True,
             )
 
         if optim_states:
@@ -1157,7 +1157,9 @@ class TorchAgent(Agent):
         xs, x_lens = None, None
         if any('text_vec' in ex for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(_xs, self.NULL_IDX, self.use_cuda)
+            xs, x_lens = padded_tensor(
+                _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16'),
+            )
             if sort:
                 sort = False  # now we won't sort on labels
                 xs, x_lens, valid_inds, exs = argsort(
@@ -1177,7 +1179,10 @@ class TorchAgent(Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
-            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda)
+            ys, y_lens = padded_tensor(
+                label_vecs, self.NULL_IDX, self.use_cuda,
+                fp16friendly=self.opt.get('fp16')
+            )
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
                     y_lens, ys, valid_inds, label_vecs, labels, y_lens,

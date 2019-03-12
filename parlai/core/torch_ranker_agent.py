@@ -78,13 +78,15 @@ class TorchRankerAgent(TorchAgent):
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
                             'train_accuracy': 0.0}
             self.build_model()
+            if self.fp16:
+                self.model = self.model.half()
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
                 states = self.load(init_model)
             else:
                 states = {}
 
-        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
+        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=True)
         if self.use_cuda:
             self.model.cuda()
             self.rank_loss.cuda()
@@ -204,7 +206,10 @@ class TorchRankerAgent(TorchAgent):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
 
-        loss.backward()
+        if self.fp16:
+            self.optimizer.backward(loss)
+        else:
+            loss.backward()
         self.update_params()
 
         # Get train predictions
