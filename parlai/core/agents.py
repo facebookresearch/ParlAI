@@ -682,7 +682,7 @@ def create_task_agent_from_taskname(opt):
                            '--task {task_name}.')
     if not opt.get('task'):
         opt['task'] = 'pytorch_teacher'
-    if ',' not in opt['task'] and 'MultiTaskTeacher' not in opt['task']:
+    if ',' not in opt['task']:
         # Single task
         teacher_class = get_task_module(opt['task'])
         add_task_flags_to_agent_opt(teacher_class, opt, opt['task'])
@@ -692,11 +692,6 @@ def create_task_agent_from_taskname(opt):
         return task_agents
     else:
         # Multitask teacher/agent
-        if (
-            len(opt.get('task').split(':')) > 1 and
-            opt.get('task').split(':')[1] == 'MultiTaskTeacher'
-        ):
-            opt['task'] = opt.get('task').split(':')[0]
         task_agents = MultiTaskTeacher(opt)
         if type(task_agents) != list:
             task_agents = [task_agents]

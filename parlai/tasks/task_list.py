@@ -270,7 +270,7 @@ task_list = [
         "id": "MultiNLI",
         "display_name": "MultiNLI",
         "task": "multinli",
-        "tags": ["All", "Entailment"],
+        "tags": ["All", "Entailment", "decanlp"],
         "description": (
             "A dataset designed for use in the development and evaluation of "
             "machine learning models for sentence understanding. Each example "
@@ -574,7 +574,7 @@ task_list = [
         "id": "IWSLT14",
         "display_name": "IWSLT14",
         "task": "iwslt14",
-        "tags": ["All", "MT"],
+        "tags": ["All", "MT", "decanlp"],
         "description": (
             "2014 International Workshop on Spoken Language task, currently "
             "only includes en_de and de_en. From Cettolo et al. '12. Link: "
@@ -596,7 +596,7 @@ task_list = [
         "id": "ConvAI_ChitChat",
         "display_name": "ConvAI_ChitChat",
         "task": "convai_chitchat",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "decanlp"],
         "description": (
             "Human-bot dialogues containing free discussions of randomly chosen "
             "paragraphs from SQuAD. Link to dataset: http://convai.io/data/"
@@ -722,7 +722,7 @@ task_list = [
         "id": "sst",
         "display name": "SST Sentiment Analysis",
         "task": "sst",
-        "tags": ["All"],
+        "tags": ["All", "decanlp"],
         "description": (
             "Dataset containing sentiment trees of movie reviews. We use the modified "
             "binary sentence analysis subtask given by the DecaNLP paper here, "
@@ -735,7 +735,7 @@ task_list = [
         "id": "cnn_dm",
         "display name": "CNN/DM Summarisation",
         "task": "cnn_dm",
-        "tags": ["All"],
+        "tags": ["All", "decanlp"],
         "description": (
             "Dataset collected from CNN and the Daily Mail with summaries as labels, "
             "Implemented as part of the DecaNLP task"
@@ -747,7 +747,7 @@ task_list = [
         "id": "qasrl",
         "display name": "QA-SRL Semantic Role Labeling",
         "task": "qasrl",
-        "tags": ["All"],
+        "tags": ["All", "decanlp"],
         "description":(
             "QA dataset implemented as part of the DecaNLP task. More info on the"
             "dataset can be found here: https://dada.cs.washington.edu/qasrl/"
@@ -757,7 +757,7 @@ task_list = [
         "id": "qazre",
         "display name": "QA-ZRE Relation Extraction",
         "task": "qazre",
-        "tags": ["All"],
+        "tags": ["All", "decanlp"],
         "description": (
             "Zero Shot relation extraction task implemented as part of the DecaNLP "
             "task. More info on the dataset can be found here:"
@@ -768,7 +768,7 @@ task_list = [
         "id": "woz",
         "display name": "WOZ restuarant reservation (Goal-Oriented Dialogue)",
         "task": "woz",
-        "tags": ["All"],
+        "tags": ["All", "decanlp", "Goal"],
         "description": (
             "Dataset containing dialogues dengotiating a resturant reservation. "
             "Implemented as part of the DecaNLP task, focused on the change "
@@ -780,7 +780,7 @@ task_list = [
         "id": "wikisql",
         "display name": "WikiSQL semantic parsing task",
         "task": "wikisql",
-        "tags": ["All"],
+        "tags": ["All", "decanlp"],
         "description":(
             "Dataset for parsing sentences to SQL code, given a table. "
             "Implemented as part of the DecaNLP task. More info can be found here:"
@@ -791,7 +791,7 @@ task_list = [
         "id": "mwsc",
         "display name": "MWSC pronoun resolution",
         "task": "mwsc",
-        "tags": ["All"],
+        "tags": ["All", "decanlp"],
         "description":
             "Resolving possible ambiguous pronouns. Implemented as part of the DecaNLP"
             "task, and can be found on the decaNLP github"

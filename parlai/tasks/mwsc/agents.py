@@ -9,7 +9,6 @@
 from parlai.core.teachers import DialogTeacher
 from .build import build
 import os
-import re
 import json
 
 
@@ -42,8 +41,7 @@ class MWSCTeacher(DialogTeacher):
                 answer = schema_line.get('answer')
                 question = schema_line.get('question')
                 context = schema_line.get('context')
-                yield (context + '\n' + question,
-                       [answer], None, None), new_episode
+                yield (context + '\n' + question, [answer], None, None), new_episode
 
 
 class DefaultTeacher(MWSCTeacher):

@@ -25,11 +25,13 @@ def build(opt):
 
         # Download the data.
         fname = 'schema.txt'
-        url = 'https://raw.githubusercontent.com/salesforce/decanlp/' \
-              'd594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/' + fname
+        url = (
+            'https://raw.githubusercontent.com/salesforce/decanlp/'
+            'd594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/' + fname
+        )
         build_data.download(url, dpath, fname)
 
-        pattern = '\[.*\]'
+        pattern = '\\[.*\\]'
 
         def get_both_schema(context):
             variations = [x[1:-1].split('/') for x in re.findall(pattern, context)]
@@ -64,7 +66,7 @@ def build(opt):
             answers = answer.split('/')
             for idx in range(2):
                 answer = answers[idx]
-                question = questions[idx] + f' {answers[0]} or {answers[1]}?'
+                question = questions[idx] + ' {} or {}?'.format(answers[0], answers[1])
                 examples.append({
                     'context': contexts[idx],
                     'question': question,
@@ -78,9 +80,10 @@ def build(opt):
 
         splits = ['train', 'validation', 'test']
         for split, examples in zip(splits, [train, dev, test]):
-            with open(os.path.join(dpath, f'{split}.json'), 'a') as split_file:
+            split_fname = '{}.json'.format(split)
+            with open(os.path.join(dpath, split_fname), 'a') as split_file:
                 for ex in examples:
-                    split_file.write(json.dumps(ex)+'\n')
+                    split_file.write(json.dumps(ex) + '\n')
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

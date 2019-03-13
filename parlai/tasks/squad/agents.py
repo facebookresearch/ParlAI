@@ -196,8 +196,10 @@ class TitleTeacher(DefaultTeacher):
                     question = qa['question']
                     answers = (a['text'] for a in qa['answers'])
                     context = paragraph['context']
-                    yield ('\n'.join([title, context, question]),
-                           answers), True
+                    yield (
+                        '\n'.join([title, context, question]),
+                        answers
+                    ), True
 
 
 class FulldocTeacher(ParlAIDialogTeacher):
