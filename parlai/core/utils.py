@@ -957,12 +957,13 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     return output, lens
 
 
-def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long):
+def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long, fp16friendly=False):
     """Make 3D padded tensor for list of lists of 1D tensors or lists.
 
     :param tensors:  list of lists of 1D tensors (or lists)
     :param pad_idx:  padding to fill tensor with
     :param use_cuda: whether to call cuda() before returning
+    :param bool fp16friendly: if True, pads the final dimension to be a multiple of 8.
 
     :returns: 3D tensor with the maximum dimensions of the inputs
     """
@@ -971,6 +972,8 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long):
     c = max(len(item) for row in tensors for item in row)
 
     # pad empty tensors
+    if fp16friendly and c % 8 != 0:
+        c += 8 - (c % 8)
     c = max(c, 1)
 
     output = torch.full((a, b, c), pad_idx, dtype=dtype)

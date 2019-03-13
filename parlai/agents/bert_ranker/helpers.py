@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-from parlai.core.utils import _ellipse
+from parlai.core.utils import _ellipse, neginf
 
 try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig
@@ -94,12 +94,12 @@ class BertWrapper(torch.nn.Module):
             token_ids, segment_ids, attention_mask)
         # output_bert is a list of 12 (for bert base) layers.
         layer_of_interest = output_bert[self.layer_pulled]
+        dtype = next(self.parameters()).dtype
         if self.add_transformer_layer:
             # Follow up by yet another transformer layer
             extended_attention_mask = attention_mask.unsqueeze(1).unsqueeze(2)
-            extended_attention_mask = extended_attention_mask.to(
-                dtype=next(self.parameters()).dtype)  # fp16 compatibility
-            extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
+            extended_attention_mask = extended_attention_mask.to(dtype)
+            extended_attention_mask = (1.0 - extended_attention_mask) * neginf(dtype)
             embedding_layer = self.additional_transformer_layer(
                 layer_of_interest, extended_attention_mask)
         else:
@@ -116,7 +116,7 @@ class BertWrapper(torch.nn.Module):
         elif self.aggregation == "max":
             #  consider the max of all the output except CLS
             outputs_of_interest = embedding_layer[:, 1:, :]
-            mask = (attention_mask[:, 1:].float().unsqueeze(2) - 1) * 10000
+            mask = (attention_mask[:, 1:].float().unsqueeze(2) - 1) * neginf(dtype)
             embeddings, _ = torch.max(outputs_of_interest + mask, dim=1)
         else:
             # easiest, we consider the output of "CLS" as the embedding
@@ -205,7 +205,7 @@ def get_bert_optimizer(models, type_optimization, learning_rate, fp16=False):
                 'https://github.com/NVIDIA/apex'
             )
         optimizer = apex.fp16_utils.FP16_Optimizer(
-            optimizer, dynamic_loss_scale=True, verbose=True,
+            optimizer, dynamic_loss_scale=True, verbose=False,
         )
 
     return optimizer
