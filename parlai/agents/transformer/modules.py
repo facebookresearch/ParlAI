@@ -11,21 +11,6 @@ import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.core.utils import neginf
-from torch.nn import LayerNorm
-
-try:
-    from apex.normalization.fused_layer_norm import FusedLayerNorm
-    APEX_AVAILABLE = True
-except ImportError:
-    APEX_AVAILABLE = False
-
-
-def _get_layer_norm(use_cuda):
-    """Selects LayerNorm type. Uses apex's FusedLayerNorm if available."""
-    if use_cuda and APEX_AVAILABLE:
-        return FusedLayerNorm
-    else:
-        return LayerNorm
 
 
 def _normalize(tensor, norm_layer):
@@ -358,9 +343,9 @@ class TransformerEncoderLayer(nn.Module):
             n_heads, embedding_size,
             dropout=attention_dropout,  # --attention-dropout
         )
-        self.norm1 = LayerNorm(embedding_size)
+        self.norm1 = nn.LayerNorm(embedding_size)
         self.ffn = TransformerFFN(embedding_size, ffn_size, relu_dropout=relu_dropout)
-        self.norm2 = LayerNorm(embedding_size)
+        self.norm2 = nn.LayerNorm(embedding_size)
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
@@ -483,15 +468,15 @@ class TransformerDecoderLayer(nn.Module):
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm1 = LayerNorm(embedding_size)
+        self.norm1 = nn.LayerNorm(embedding_size)
 
         self.encoder_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm2 = LayerNorm(embedding_size)
+        self.norm2 = nn.LayerNorm(embedding_size)
 
         self.ffn = TransformerFFN(embedding_size, ffn_size, relu_dropout=relu_dropout)
-        self.norm3 = LayerNorm(embedding_size)
+        self.norm3 = nn.LayerNorm(embedding_size)
 
     def forward(self, x, encoder_output, encoder_mask):
         decoder_mask = self._create_selfattn_mask(x)
