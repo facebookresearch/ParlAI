@@ -720,7 +720,7 @@ task_list = [
     },
     {
         "id": "sst",
-        "display name": "SST Sentiment Analysis",
+        "display_name": "SST Sentiment Analysis",
         "task": "sst",
         "tags": ["All", "decanlp"],
         "description": (
@@ -733,7 +733,7 @@ task_list = [
     },
     {
         "id": "cnn_dm",
-        "display name": "CNN/DM Summarisation",
+        "display_name": "CNN/DM Summarisation",
         "task": "cnn_dm",
         "tags": ["All", "decanlp"],
         "description": (
@@ -745,7 +745,7 @@ task_list = [
     },
     {
         "id": "qasrl",
-        "display name": "QA-SRL Semantic Role Labeling",
+        "display_name": "QA-SRL Semantic Role Labeling",
         "task": "qasrl",
         "tags": ["All", "decanlp"],
         "description":(
@@ -755,7 +755,7 @@ task_list = [
     },
     {
         "id": "qazre",
-        "display name": "QA-ZRE Relation Extraction",
+        "display_name": "QA-ZRE Relation Extraction",
         "task": "qazre",
         "tags": ["All", "decanlp"],
         "description": (
@@ -766,9 +766,9 @@ task_list = [
     },
     {
         "id": "woz",
-        "display name": "WOZ restuarant reservation (Goal-Oriented Dialogue)",
+        "display_name": "WOZ restuarant reservation (Goal-Oriented Dialogue)",
         "task": "woz",
-        "tags": ["All", "decanlp", "Goal"],
+        "tags": ["All", "decanlp"],
         "description": (
             "Dataset containing dialogues dengotiating a resturant reservation. "
             "Implemented as part of the DecaNLP task, focused on the change "
@@ -778,7 +778,7 @@ task_list = [
     },
     {
         "id": "wikisql",
-        "display name": "WikiSQL semantic parsing task",
+        "display_name": "WikiSQL semantic parsing task",
         "task": "wikisql",
         "tags": ["All", "decanlp"],
         "description":(
@@ -789,7 +789,7 @@ task_list = [
     },
     {
         "id": "mwsc",
-        "display name": "MWSC pronoun resolution",
+        "display_name": "MWSC pronoun resolution",
         "task": "mwsc",
         "tags": ["All", "decanlp"],
         "description":
@@ -798,7 +798,7 @@ task_list = [
     },
     {
         "id": "decanlp",
-        "display name": "DecaNLP: The Natural Language Decathlon",
+        "display_name": "DecaNLP: The Natural Language Decathlon",
         "task": "decanlp",
         "tags": ["All"],
         "description": (
