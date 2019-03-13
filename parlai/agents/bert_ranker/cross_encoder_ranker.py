@@ -48,7 +48,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             1,
             add_transformer_layer=self.opt['add_transformer_layer'],
             layer_pulled=self.opt['pull_from_layer'],
-            aggregation=opt['bert_aggregation']
+            aggregation=self.opt['bert_aggregation']
         )
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
