@@ -277,7 +277,14 @@ class MTurkManager():
         worker_data = self.worker_manager.get_worker_data_package()
         data = {'worker_data': worker_data}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        requests.post(PARLAI_MTURK_UPLOAD_URL, json=data, headers=headers)
+        try:
+            requests.post(PARLAI_MTURK_UPLOAD_URL, json=data, headers=headers)
+        except Exception:
+            shared_utils.print_and_log(
+                logging.WARNING,
+                'Unable to log worker statistics to parl.ai',
+                should_print=True,
+            )
 
     def _maintain_hit_status(self):
         def update_status():
@@ -997,13 +1004,19 @@ class MTurkManager():
             except Exception:
                 # not all users will be drawing configs from internal settings
                 pass
-            resp = requests.post(notice_url)
-            warnings = resp.json()
-            for warn in warnings:
-                print('Notice: ' + warn)
-                accept = input('Continue? (Y/n): ')
+            try:
+                resp = requests.post(notice_url)
+                warnings = resp.json()
+                for warn in warnings:
+                    print('Notice: ' + warn)
+                    accept = input('Continue? (Y/n): ')
+                    if accept == 'n':
+                        raise SystemExit('Additional notice was rejected.')
+            except Exception:
+                print('Unable to query warnings from the parl.ai website.')
+                accept = input('Continue without checking warnings? (Y/n): ')
                 if accept == 'n':
-                    raise SystemExit('Additional notice was rejected.')
+                    raise SystemExit('Aborted.')
 
         self.logging_permitted = self._logging_permission_check()
 
