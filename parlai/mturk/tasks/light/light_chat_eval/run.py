@@ -5,10 +5,10 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.params import ParlaiParser
-from parlai_internal.mturk.tasks.light_chat_eval.worlds import \
+from parlai.mturk.tasks.light.light_chat_eval.worlds import \
     LightEvalTestWorld, LightEvalTaskWorld
 from parlai.mturk.core.mturk_manager import MTurkManager
-from parlai_internal.mturk.tasks.light_chat_eval.task_config import task_config
+from parlai.mturk.tasks.light.light_chat_eval.task_config import task_config
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 import os
