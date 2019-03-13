@@ -3,7 +3,6 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.agents.transformer.transformer import TransformerRankerAgent
-from parlai.core.torch_agent import TorchAgent
 from .wizard_dict import WizardDictAgent
 
 import numpy as np

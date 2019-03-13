@@ -77,10 +77,7 @@ class WizardDictAgent(DictionaryAgent):
         return word_tokens
 
     def re_tokenize(self, text):
-        """Find boundaries between word characters, newlines, and non-word
-        non-whitespace tokens (r'[\w\n]+ | [^\w\s] | \n').
-
-        This splits along whitespace and punctuation and keeps the newline as
-        a token in the returned list.
+        """This splits along whitespace and punctuation and keeps the newline
+        as a token in the returned list.
         """
         return RETOK.findall(text)
