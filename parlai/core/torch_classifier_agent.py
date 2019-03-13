@@ -7,9 +7,6 @@ from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import round_sigfigs, warn_once
 from collections import defaultdict
 
-import os
-import json
-import math
 import torch
 import torch.nn.functional as F
 
@@ -39,7 +36,7 @@ class TorchClassifierAgent(TorchAgent):
                                  'ref class; only applies to binary '
                                  'classification')
         # interactive mode
-        parser.add_argument('--interactive-mode', type='bool', default= False)
+        parser.add_argument('--interactive-mode', type='bool', default=False)
         parser.add_argument('--print-scores', type='bool', default=False,
                             help='print probability of chosen class during '
                                  'interactive mode')
@@ -48,7 +45,6 @@ class TorchClassifierAgent(TorchAgent):
                             help='uses nn.DataParallel for multi GPU')
         parser.add_argument('--get-all-metrics', type='bool', default=True,
                             help='give prec/recall metrics for all classes')
-
 
     def __init__(self, opt, shared=None):
         init_model, _ = self._get_init_model(opt, shared)
