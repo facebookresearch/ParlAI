@@ -9,8 +9,8 @@ import os
 from parlai.tasks.light_dialog.builder import build_from_db
 
 
-def build(opt):
-    version = 'v2.01'
+def download(opt):
+    version = 'v2.02'
     # download pickled database
     dpath = os.path.join(opt['datapath'], 'light_dialogue')
     if not build_data.built(dpath, version):
@@ -28,8 +28,18 @@ def build(opt):
         url = 'https://dl.fbaipublicfiles.com/parlai/light/light-unseen-processed2.pkl'
         fname = 'light_unseen_data.pkl'
         build_data.download(url, dpath, fname)
+
+        # Download the environment dataset.
+        url = 'https://dl.fbaipublicfiles.com/parlai/light/light-environment.pkl'
+        fname = 'light_environment.pkl'
+        build_data.download(url, dpath, fname)
+
         # Mark the data as built.
         build_data.mark_done(dpath, version)
+
+
+def build(opt):
+    download(opt)
 
     # create particular instance of dataset depending on flags..
     fields = [
