@@ -66,7 +66,6 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             1).expand(-1, nb_cands, -1).contiguous().view(nb_cands * size_batch, -1)
         segments_context = tokens_context * 0
 
-        # remove the start token ["CLS"] from candidates
         tokens_cands = cand_vecs.view(nb_cands * size_batch, -1)
         segments_cands = tokens_cands * 0 + 1
         all_tokens = torch.cat([tokens_context, tokens_cands], 1)
@@ -87,3 +86,15 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             obs['text_vec'] = surround(obs['text_vec'], self.START_IDX,
                                        self.END_IDX)
         return obs
+
+    def _set_label_vec(self, *args, **kwargs):
+        # don't put the CLS token in labels
+        kwargs['add_start'] = False
+        kwargs['add_end'] = True
+        return super()._set_label_vec(*args, **kwargs)
+
+    def _set_label_cands_vec(self, *args, **kwargs):
+        # don't put the CLS token in labels
+        kwargs['add_start'] = False
+        kwargs['add_end'] = True
+        return super()._set_label_cands_vec(*args, **kwargs)
