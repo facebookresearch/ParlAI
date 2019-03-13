@@ -3,10 +3,8 @@ from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import display_messages
 
 import json
-import socketserver
 import time
 
 HOST_NAME = 'localhost'
@@ -165,6 +163,7 @@ WEB_HTML = """
 </html>
 """
 
+
 class MyHandler(BaseHTTPRequestHandler):
 
     def interactive_running(self, opt, reply_text):
@@ -183,7 +182,6 @@ class MyHandler(BaseHTTPRequestHandler):
         if self.path == '/interact':
             content_length = int(self.headers['Content-Length'])
             body = self.rfile.read(content_length)
-
             model_response = self.interactive_running(SHARED.get('opt'), body.decode('utf-8'))
 
             self.send_response(200)
@@ -226,7 +224,7 @@ def setup_interactive(shared):
     print_parser = parser
 
     if print_parser is not None:
-        if print_parser is True and isinstance(self.server.SHARED['opt'], ParlaiParser):
+        if print_parser is True and isinstance(SHARED['opt'], ParlaiParser):
             print_parser = SHARED['opt']
         elif print_parser is False:
             print_parser = None
