@@ -16,10 +16,8 @@ import torch
 
 
 class CrossEncoderRankerAgent(TorchRankerAgent):
-    """
-    BERT Cross-encoder, which leverages the the 2-sentence training setup of BERT.
-
-    It might be called by the Both Encoder.
+    """ TorchRankerAgent implementation of the crossencoder.
+        It is a standalone Agent. It might be called by the Both Encoder.
     """
 
     @staticmethod
