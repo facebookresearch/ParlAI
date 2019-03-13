@@ -73,10 +73,6 @@ class TorchRankerAgent(TorchAgent):
         if shared:
             self.model = shared['model']
             self.metrics = shared['metrics']
-            self.fixed_candidates = shared['fixed_candidates']
-            self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
-            self.vocab_candidates = shared['vocab_candidates']
-            self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
             states = None
         else:
             self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
@@ -87,9 +83,6 @@ class TorchRankerAgent(TorchAgent):
                 states = self.load(init_model)
             else:
                 states = {}
-            # Vectorize and save fixed/vocab candidates once upfront if applicable
-            self.set_fixed_candidates(shared)
-            self.set_vocab_candidates(shared)
 
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
         if self.use_cuda:
@@ -119,8 +112,16 @@ class TorchRankerAgent(TorchAgent):
                 broadcast_buffers=False,
             )
 
-    def score_candidates(self, batch, cand_vecs):
-        """Given a batch and candidate set, return scores (for ranking)"""
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
+        """
+        Given a batch and candidate set, return scores (for ranking).
+
+        :param Batch batch: a Batch object (defined in torch_agent.py)
+        :param LongTensor cand_vecs: padded and tokenized candidates
+        :param FloatTensor cand_encs: encoded candidates, if these are passed
+            into the function (in cases where we cache the candidate
+            encodings), you do not need to call self.model on cand_vecs
+        """
         raise NotImplementedError(
             'Abstract class: user must implement score()')
 
@@ -189,6 +190,7 @@ class TorchRankerAgent(TorchAgent):
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
+
         scores = self.score_candidates(batch, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
 
@@ -227,7 +229,16 @@ class TorchRankerAgent(TorchAgent):
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['eval_candidates'], mode='eval')
 
-        scores = self.score_candidates(batch, cand_vecs)
+        cand_encs = None
+        if self.opt['encode_candidate_vecs']:
+            # if we cached candidate encodings for a fixed list of candidates,
+            # pass those into the score_candidates function
+            if self.opt['eval_candidates'] == 'fixed':
+                cand_encs = self.fixed_candidate_encs
+            elif self.opt['eval_candidates'] == 'vocab':
+                cand_encs = self.vocab_candidate_encs
+
+        scores = self.score_candidates(batch, cand_vecs, cand_encs=cand_encs)
         _, ranks = scores.sort(1, descending=True)
 
         # Update metrics
@@ -456,6 +467,7 @@ class TorchRankerAgent(TorchAgent):
         shared['metrics'] = self.metrics
         shared['fixed_candidates'] = self.fixed_candidates
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
+        shared['fixed_candidate_encs'] = self.fixed_candidate_encs
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
         shared['optimizer'] = self.optimizer
@@ -530,6 +542,7 @@ class TorchRankerAgent(TorchAgent):
         if shared:
             self.fixed_candidates = shared['fixed_candidates']
             self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
+            self.fixed_candidate_encs = shared['fixed_candidate_encs']
         else:
             opt = self.opt
             cand_path = opt['fixed_candidates_path']

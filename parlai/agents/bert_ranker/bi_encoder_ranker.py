@@ -69,9 +69,11 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         self.vocab_candidates will contain a [num_cands] list of strings
         self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
         """
+        self.opt['encode_candidate_vecs'] = True
         if shared:
             self.vocab_candidates = shared['vocab_candidates']
             self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
+            self.vocab_candidate_encs = shared['vocab_candidate_encs']
         else:
             if 'vocab' in (self.opt['candidates'], self.opt['eval_candidates']):
                 cands = []
@@ -135,7 +137,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                                        self.END_IDX)
         return obs
 
-    def score_candidates(self, batch, cand_vecs):
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
         # Encode contexts first
         token_idx_ctxt, segment_idx_ctxt, mask_ctxt = to_bert_input(
             batch.text_vec, self.NULL_IDX)
@@ -143,15 +145,8 @@ class BiEncoderRankerAgent(TorchRankerAgent):
             token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
             None, None, None)
 
-        # evaluating a fixed set of candidates
-        if (hasattr(self, 'fixed_candidate_encs') and
-                self.fixed_candidate_encs is not None):
-            return embedding_ctxt.mm(self.fixed_candidate_encs.t())
-
-        # evaluating vocab candidates:
-        if (hasattr(self, 'vocab_candidate_encs') and
-                self.vocab_candidate_encs is not None):
-            return embedding_ctxt.mm(self.vocab_candidate_encs.t())
+        if cand_encs is not None:
+            return embedding_ctxt.mm(cand_encs.t())
 
         if len(cand_vecs.size()) == 2 and cand_vecs.dtype == torch.long:
             # train time. We compare with all elements of the batch
@@ -183,6 +178,12 @@ class BiEncoderRankerAgent(TorchRankerAgent):
 
         # otherwise: cand_vecs should be 2D float vector ncands x embed_size
         return embedding_ctxt.mm(cand_vecs.t())
+
+    def share(self):
+        """Share model parameters."""
+        shared = super().share()
+        shared['vocab_candidate_encs'] = self.vocab_candidate_encs
+        return shared
 
 
 class BiEncoderModule(torch.nn.Module):
