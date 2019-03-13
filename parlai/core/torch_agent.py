@@ -1111,12 +1111,8 @@ class TorchAgent(Agent):
             'cands_vec' fields added.
         """
         self._set_text_vec(obs, history, text_truncate)
-        self._set_label_vec(
-            obs, add_start=add_start, add_end=add_end, truncate=label_truncate
-        )
-        self._set_label_cands_vec(
-            obs, add_start=add_start, add_end=add_end, truncate=label_truncate
-        )
+        self._set_label_vec(obs, add_start, add_end, label_truncate)
+        self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
         return obs
 
     def is_valid(self, obs):

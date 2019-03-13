@@ -28,8 +28,6 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
 
     def __init__(self, opt, shared=None):
         # download pretrained models
-        if opt['candidates'] != 'inline':
-            raise ValueError('Cross encoder requires --candidates inline')
         download(opt['datapath'])
         self.pretrained_path = os.path.join(opt['datapath'], 'models',
                                             'bert_models', MODEL_PATH)
@@ -92,15 +90,3 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             obs['text_vec'] = surround(obs['text_vec'], self.START_IDX,
                                        self.END_IDX)
         return obs
-
-    def _set_label_vec(self, *args, **kwargs):
-        # don't put the CLS token in labels
-        kwargs['add_start'] = False
-        kwargs['add_end'] = True
-        return super()._set_label_vec(*args, **kwargs)
-
-    def _set_label_cands_vec(self, *args, **kwargs):
-        # don't put the CLS token in labels
-        kwargs['add_start'] = False
-        kwargs['add_end'] = True
-        return super()._set_label_cands_vec(*args, **kwargs)
