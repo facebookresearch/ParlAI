@@ -196,13 +196,15 @@ class BiEncoderModule(torch.nn.Module):
             BertModel.from_pretrained(opt['pretrained_path']),
             opt['out_dim'],
             add_transformer_layer=opt['add_transformer_layer'],
-            layer_pulled=opt['pull_from_layer']
+            layer_pulled=opt['pull_from_layer'],
+            aggregation=opt['bert_aggregation']
         )
         self.cand_encoder = BertWrapper(
             BertModel.from_pretrained(opt['pretrained_path']),
             opt['out_dim'],
             add_transformer_layer=opt['add_transformer_layer'],
-            layer_pulled=opt['pull_from_layer']
+            layer_pulled=opt['pull_from_layer'],
+            aggregation=opt['bert_aggregation']
         )
 
     def forward(self, token_idx_ctxt, segment_idx_ctxt, mask_ctxt,
