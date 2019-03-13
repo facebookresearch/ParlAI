@@ -1,17 +1,23 @@
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 from parlai.agents.transformer.transformer import TransformerRankerAgent
 from parlai.core.torch_agent import TorchAgent
+from .wizard_dict import WizardDictAgent
 
 import numpy as np
 import torch
 
 
+SOC_TOKEN = '__SOC__'
+
+
 class WizardTransformerRankerAgent(TransformerRankerAgent):
+    @staticmethod
+    def dictionary_class():
+        return WizardDictAgent
+
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
@@ -34,14 +40,19 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             '--knowledge-truncate', type=int, default=50,
             help='truncate knowledge to this length'
         )
+        agent.add_argument(
+            '--legacy', type='bool', default=False,
+            help='legacy model'
+        )
         argparser.set_defaults(
             learningrate=0.0008,
             eval_candidates='inline',
             candidates='batch',
             lr_factor=1,
-            delimiter=' ',
             add_p1_after_newln=False,
+            delimiter=' '
         )
+
         return agent
 
     def __init__(self, opt, shared=None):
@@ -55,6 +66,18 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
                                 self.use_knowledge)
         self.knowledge_dropout = opt.get('knowledge_dropout', 0)
         self.knowledge_truncate = opt.get('knowledge_truncate', 50)
+
+    def _set_text_vec(self, *args, **kwargs):
+        """
+        Sets the 'text_vec' field in the observation.
+
+        Useful to override to change vectorization behavior
+        """
+        obs = super()._set_text_vec(*args, **kwargs)
+        if self.opt.get('legacy'):
+            soc_tensor = torch.LongTensor([self.dict[SOC_TOKEN]])
+            obs['text_vec'] = torch.cat([soc_tensor, obs['text_vec']])
+        return obs
 
     def _vectorize_memories(self, observation):
         """Override abstract method from TransformerRankerAgent to use
@@ -96,7 +119,6 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             line in to_vectorize
         ]
         return observation
-
 
     def load(self, path):
         """Return opt and model states.
