@@ -2286,37 +2286,37 @@ class LockedConstraint(GraphConstraint):
 
 
 class LockedWithConstraint(GraphConstraint):
-        """Determining if a path has a particular status
+    """Determining if a path has a particular status
 
-        args are:
-            0 => actor_id
-            1 => target_id
-            2 => key_id
+    args are:
+        0 => actor_id
+        1 => target_id
+        2 => key_id
+    """
+    name = 'locked_with'
+
+    def get_failure_action(self, graph, args, spec_fail='failed'):
+        item_desc = graph.node_to_desc(args[2])
+        return {'caller': self.name, 'name': spec_fail,
+                'room_id': graph.location(args[0]),
+                'actors': args[:2], 'add_descs': [item_desc]}
+
+    def get_action_observation_format(self, action, descs):
+        descs[2] = descs[2].capitalize()
+        return '{2} doesn\'t work with that. '
+
+    def evaluate_constraint(self, graph, args):
+        """Return true or false for whether the object would fit in the
+        container
         """
-        name = 'locked_with'
-
-        def get_failure_action(self, graph, args, spec_fail='failed'):
-            item_desc = graph.node_to_desc(args[2])
-            return {'caller': self.name, 'name': spec_fail,
-                    'room_id': graph.location(args[0]),
-                    'actors': args[:2], 'add_descs': [item_desc]}
-
-        def get_action_observation_format(self, action, descs):
-            descs[2] = descs[2].capitalize()
-            return '{2} doesn\'t work with that. '
-
-        def evaluate_constraint(self, graph, args):
-            """Return true or false for whether the object would fit in the
-            container
-            """
-            actor_id, target_id, key_id = args[0], args[1], args[2]
-            if 'room' in graph.get_prop(target_id, 'classes'):
-                room_id = graph.location(actor_id)
-                locked_with = \
-                    graph.get_path_locked_with(room_id, target_id)
-            else:
-                locked_with = graph.get_prop(target_id, 'locked_with', False)
-            return locked_with == key_id
+        actor_id, target_id, key_id = args[0], args[1], args[2]
+        if 'room' in graph.get_prop(target_id, 'classes'):
+            room_id = graph.location(actor_id)
+            locked_with = \
+                graph.get_path_locked_with(room_id, target_id)
+        else:
+            locked_with = graph.get_prop(target_id, 'locked_with', False)
+        return locked_with == key_id
 
 
 class NotLocationOfConstraint(GraphConstraint):
@@ -3108,11 +3108,11 @@ class Graph(object):
                 ent = self.get_prop(id, 'player_name')
             elif self.has_prop(id, 'agent') or self.has_prop(id, 'object'):
                 prefix = self.name_prefix(id, ent, use_the)
-                if prefix is not '':
+                if prefix != '':
                     ent = prefix + ' ' + ent
             elif self.has_prop(id, 'room'):
                 prefix = self.name_prefix(id, ent, use_the)
-                if prefix is not '':
+                if prefix != '':
                     ent = prefix + ' ' + ent
                 else:
                     ent = 'the ' + ent

@@ -37,9 +37,11 @@ def download(opt):
         # Mark the data as built.
         build_data.mark_done(dpath, version)
 
+    return dpath, version
+
 
 def build(opt):
-    download(opt)
+    dpath, version = download(opt)
 
     # create particular instance of dataset depending on flags..
     fields = [

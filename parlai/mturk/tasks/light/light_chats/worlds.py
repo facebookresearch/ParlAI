@@ -183,12 +183,13 @@ class LightChatTaskWorld(MTurkTaskWorld):
                         "You can find the original instructions on the "
                         "'Task Instructions' tab to the left."
                         "".format(self.c_names[1-i]),
-                    'task_data': {
-                        'base_name': self.c_names[i],
-                        'persona': self.characters[i][1]['personas'][0],
-                        'setting': context,
-                        'actions': actions,
-                    }
+                    'task_data':
+                        {
+                            'base_name': self.c_names[i],
+                            'persona': self.characters[i][1]['personas'][0],
+                            'setting': context,
+                            'actions': actions,
+                        }
                 }
 
                 self.mturk_agents[i].observe(ad)
