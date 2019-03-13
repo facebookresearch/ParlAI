@@ -86,7 +86,7 @@ class TorchRankerAgent(TorchAgent):
             else:
                 states = {}
 
-        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=True)
+        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
         if self.use_cuda:
             self.model.cuda()
             self.rank_loss.cuda()
