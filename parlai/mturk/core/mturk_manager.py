@@ -282,7 +282,7 @@ class MTurkManager():
         except Exception:
             shared_utils.print_and_log(
                 logging.WARNING,
-                "Unable to log worker statistics to parl.ai",
+                'Unable to log worker statistics to parl.ai',
                 should_print=True,
             )
 
