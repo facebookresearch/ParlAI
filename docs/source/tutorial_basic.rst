@@ -356,7 +356,7 @@ Of course every model has various parameters and hyperparameters to set in gener
 
 **Model Zoo**
 
-A new feature in ParlAI is that it also now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_.
+A new feature in ParlAI is that it also now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See the devoted documentation section or `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_.
 
 The set of agents and models in the model zoo in ParlAI is continually growing from contributors.
 

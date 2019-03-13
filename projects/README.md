@@ -6,6 +6,9 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Generative Models
 
+- **What makes a good conversation? How controllable attributes affect human judgments** [[paper]](https://arxiv.org/abs/1902.08654). 
+  _Optimizing for multi-turn engaging conversations -- by controlling question-asking, specificity, response-relatedness and repetition._
+
 - **Retrieve and Refine** [[paper]](https://arxiv.org/abs/1808.04776). 
   _Models for improved chitchat ability by combining retrieval with generative refinement._
   
@@ -19,14 +22,14 @@ This directory also contains subfolders for some of the projects which are house
   
 ## Chit-chat
 
-- **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat). 
-_Task & models for chitchat with a given persona._
+- **Dialogue Natural Language Inference** [[website]](https://wellecks.github.io/dialogue_nli/). 
+  _Task and method for improving dialogue consistency._
 
 - **ConvAI2 Competition** [[website]](http://convai.io/). 
 _Competition on dialogue chitchat based on the PersonaChat task._
 
-- **Dialogue Natural Language Inference** [[website]](https://wellecks.github.io/dialogue_nli/). 
-  _Task and method for improving dialogue consistency._
+- **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat). 
+_Task & models for chitchat with a given persona._
   
 ## Knowledge Grounded
 
@@ -42,6 +45,9 @@ _Competition on dialogue chitchat based on the PersonaChat task._
   _Task for personality-based engaging comments on images._
 
 ## Environment Grounded
+
+- **LIGHT** [[website]](http://parl.ai/projects/light/) 
+_A large-scale text adventure game research platform for agents that speak and act._
 
 - **Mastering the Dungeon** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/mastering_the_dungeon). 
 _Task & models for training grounded agents in a text adventure game via MTurk._

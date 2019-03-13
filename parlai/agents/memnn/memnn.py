@@ -27,9 +27,6 @@ class MemnnAgent(TorchRankerAgent):
     def add_cmdline_args(argparser):
         arg_group = argparser.add_argument_group('MemNN Arguments')
         arg_group.add_argument(
-            '--init-model', type=str, default=None,
-            help='load dict/model/opts from this path')
-        arg_group.add_argument(
             '-esz', '--embedding-size', type=int, default=128,
             help='size of token embeddings')
         arg_group.add_argument(
@@ -86,7 +83,7 @@ class MemnnAgent(TorchRankerAgent):
         self.model = MemNN(len(self.dict), self.opt['embedding_size'],
                            padding_idx=self.NULL_IDX, **kwargs)
 
-    def score_candidates(self, batch, cand_vecs):
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
         mems = self._build_mems(batch.memory_vecs)
         scores = self.model(batch.text_vec, mems, cand_vecs)
         return scores
@@ -102,13 +99,13 @@ class MemnnAgent(TorchRankerAgent):
         kwargs['add_end'] = False
         return super().vectorize(*args, **kwargs)
 
-    def batchify(self, obs_batch, sort=False,
-                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
+    def batchify(self, obs_batch, sort=False):
         """Override so that we can add memories to the Batch object."""
-        batch = super().batchify(obs_batch, sort, is_valid)
+        batch = super().batchify(obs_batch, sort)
 
         # get valid observations
-        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
+        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if
+                     self.is_valid(ex)]
 
         if len(valid_obs) == 0:
             return batch

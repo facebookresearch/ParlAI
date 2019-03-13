@@ -37,6 +37,7 @@ def _build_encoder(opt, dictionary, embedding=None, padding_idx=None, reduction=
         ffn_size=opt['ffn_size'],
         vocabulary_size=len(dictionary),
         embedding=embedding,
+        dropout=opt['dropout'],
         attention_dropout=opt['attention_dropout'],
         relu_dropout=opt['relu_dropout'],
         padding_idx=padding_idx,
@@ -56,6 +57,7 @@ def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
         ffn_size=opt['ffn_size'],
         vocabulary_size=len(dictionary),
         embedding=embedding,
+        dropout=opt['dropout'],
         attention_dropout=opt['attention_dropout'],
         relu_dropout=opt['relu_dropout'],
         padding_idx=padding_idx,
@@ -142,6 +144,11 @@ class TransformerMemNetModel(nn.Module):
 
     def encode_context_memory(self, context_w, memories_w):
         # [batch, d]
+        if context_w is None:
+            # it's possible that only candidates were passed into the
+            # forward function, return None here for LHS representation
+            return None, None
+
         context_h = self.context_encoder(context_w)
 
         if memories_w is None:
@@ -170,12 +177,12 @@ class TransformerMemNetModel(nn.Module):
 
 def create_position_codes(n_pos, dim, out):
     position_enc = np.array([
-        [pos / np.power(10000, 2 * (j // 2) / dim) for j in range(dim)]
+        [pos / np.power(10000, 2 * j / dim) for j in range(dim // 2)]
         for pos in range(n_pos)
     ])
 
-    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc[:, 0::2]))
-    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc[:, 1::2]))
+    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc))
+    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc))
     out.detach_()
     out.requires_grad = False
 
@@ -197,7 +204,31 @@ class TransformerResponseWrapper(nn.Module):
 
 
 class TransformerEncoder(nn.Module):
-    """Transformer model"""
+    """
+    Transformer encoder module.
+
+    :param int n_heads: the number of multihead attention heads.
+    :param int n_layers: number of transformer layers.
+    :param int embedding_size: the embedding sizes. Must be a multiple of n_heads.
+    :param int ffn_size: the size of the hidden layer in the FFN
+    :param embedding: an embedding matrix for the bottom layer of the transformer.
+        If none, one is created for this encoder.
+    :param float dropout: Dropout used around embeddings and before layer
+        layer normalizations. This is used in Vaswani 2017 and works well on
+        large datasets.
+    :param float attention_dropout: Dropout performed after the multhead attention
+        softmax. This is not used in Vaswani 2017.
+    :param float relu_attention: Dropout used after the ReLU in the FFN. Not used
+        in Vaswani 2017, but used in Tensor2Tensor.
+    :param int padding_idx: Reserved padding index in the embeddings matrix.
+    :param bool learn_positional_embeddings: If off, sinusoidal embeddings are
+        used. If on, position embeddings are learned from scratch.
+    :param bool embeddings_scale: Scale embeddings relative to their dimensionality.
+        Found useful in fairseq.
+    :param bool reduction: If true, returns the mean vector for the entire encoding
+        sequence.
+    :param int n_positions: Size of the position embeddings matrix.
+    """
     def __init__(
         self,
         n_heads,
@@ -206,6 +237,7 @@ class TransformerEncoder(nn.Module):
         ffn_size,
         vocabulary_size,
         embedding=None,
+        dropout=0.0,
         attention_dropout=0.0,
         relu_dropout=0.0,
         padding_idx=0,
@@ -224,6 +256,8 @@ class TransformerEncoder(nn.Module):
         self.embeddings_scale = embeddings_scale
         self.reduction = reduction
         self.padding_idx = padding_idx
+        # this is --dropout, not --relu-dropout or --attention-dropout
+        self.dropout = nn.Dropout(p=dropout)
 
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
@@ -258,7 +292,10 @@ class TransformerEncoder(nn.Module):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(TransformerEncoderLayer(
-                n_heads, embedding_size, ffn_size, attention_dropout, relu_dropout
+                n_heads, embedding_size, ffn_size,
+                attention_dropout=attention_dropout,
+                relu_dropout=relu_dropout,
+                dropout=dropout,
             ))
 
     def forward(self, input):
@@ -268,13 +305,13 @@ class TransformerEncoder(nn.Module):
             inside the sequence and 0 outside.
         """
         mask = input != self.padding_idx
-        seq_len = input.size(1)
-        positions = input.new(seq_len).long()
-        positions = torch.arange(seq_len, out=positions).unsqueeze(0)
+        positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+        # --dropout on the embeddings
+        tensor = self.dropout(tensor)
 
         tensor *= mask.unsqueeze(-1).float()
         for i in range(self.n_layers):
@@ -297,27 +334,54 @@ class TransformerEncoderLayer(nn.Module):
         ffn_size,
         attention_dropout=0.0,
         relu_dropout=0.0,
+        dropout=0.0,
     ):
         super().__init__()
         self.dim = embedding_size
         self.ffn_dim = ffn_size
         self.attention = MultiHeadAttention(
-            n_heads, embedding_size, dropout=attention_dropout
+            n_heads, embedding_size,
+            dropout=attention_dropout,  # --attention-dropout
         )
         self.norm1 = nn.LayerNorm(embedding_size)
-        self.ffn = TransformerFFN(embedding_size, ffn_size, dropout=relu_dropout)
+        self.ffn = TransformerFFN(embedding_size, ffn_size, relu_dropout=relu_dropout)
         self.norm2 = nn.LayerNorm(embedding_size)
+        self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
-        tensor = tensor + self.attention(tensor, mask=mask)
+        tensor = tensor + self.dropout(self.attention(tensor, mask=mask))
         tensor = _normalize(tensor, self.norm1)
-        tensor = tensor + self.ffn(tensor)
+        tensor = tensor + self.dropout(self.ffn(tensor))
         tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).float()
         return tensor
 
 
 class TransformerDecoder(nn.Module):
+    """
+    Transformer Decoder layer.
+
+    :param int n_heads: the number of multihead attention heads.
+    :param int n_layers: number of transformer layers.
+    :param int embedding_size: the embedding sizes. Must be a multiple of n_heads.
+    :param int ffn_size: the size of the hidden layer in the FFN
+    :param embedding: an embedding matrix for the bottom layer of the transformer.
+        If none, one is created for this encoder.
+    :param float dropout: Dropout used around embeddings and before layer
+        layer normalizations. This is used in Vaswani 2017 and works well on
+        large datasets.
+    :param float attention_dropout: Dropout performed after the multhead attention
+        softmax. This is not used in Vaswani 2017.
+    :param float relu_attention: Dropout used after the ReLU in the FFN. Not used
+        in Vaswani 2017, but used in Tensor2Tensor.
+    :param int padding_idx: Reserved padding index in the embeddings matrix.
+    :param bool learn_positional_embeddings: If off, sinusoidal embeddings are
+        used. If on, position embeddings are learned from scratch.
+    :param bool embeddings_scale: Scale embeddings relative to their dimensionality.
+        Found useful in fairseq.
+    :param int n_positions: Size of the position embeddings matrix.
+    """
+
     def __init__(
         self,
         n_heads,
@@ -326,6 +390,7 @@ class TransformerDecoder(nn.Module):
         ffn_size,
         vocabulary_size,
         embedding=None,
+        dropout=0.0,
         attention_dropout=0.0,
         relu_dropout=0.0,
         embeddings_scale=True,
@@ -340,6 +405,7 @@ class TransformerDecoder(nn.Module):
         self.n_heads = n_heads
         self.dim = embedding_size
         self.embeddings_scale = embeddings_scale
+        self.dropout = nn.Dropout(p=dropout)  # --dropout
 
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
@@ -360,7 +426,10 @@ class TransformerDecoder(nn.Module):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(TransformerDecoderLayer(
-                n_heads, embedding_size, ffn_size, attention_dropout, relu_dropout
+                n_heads, embedding_size, ffn_size,
+                attention_dropout=attention_dropout,
+                relu_dropout=relu_dropout,
+                dropout=dropout,
             ))
 
     def forward(self, input, encoder_state, incr_state=None):
@@ -373,6 +442,7 @@ class TransformerDecoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+        tensor = self.dropout(tensor)  # --dropout
 
         for layer in self.layers:
             tensor = layer(tensor, encoder_output, encoder_mask)
@@ -388,10 +458,12 @@ class TransformerDecoderLayer(nn.Module):
         ffn_size,
         attention_dropout=0.0,
         relu_dropout=0.0,
+        dropout=0.0,
     ):
         super().__init__()
         self.dim = embedding_size
         self.ffn_dim = ffn_size
+        self.dropout = nn.Dropout(p=dropout)
 
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
@@ -403,7 +475,7 @@ class TransformerDecoderLayer(nn.Module):
         )
         self.norm2 = nn.LayerNorm(embedding_size)
 
-        self.ffn = TransformerFFN(embedding_size, ffn_size, dropout=relu_dropout)
+        self.ffn = TransformerFFN(embedding_size, ffn_size, relu_dropout=relu_dropout)
         self.norm3 = nn.LayerNorm(embedding_size)
 
     def forward(self, x, encoder_output, encoder_mask):
@@ -412,7 +484,7 @@ class TransformerDecoderLayer(nn.Module):
         residual = x
         # don't peak into the future!
         x = self.self_attention(query=x, mask=decoder_mask)
-        # x = dropout(x)
+        x = self.dropout(x)  # --dropout
         x = x + residual
         x = _normalize(x, self.norm1)
 
@@ -423,13 +495,14 @@ class TransformerDecoderLayer(nn.Module):
             value=encoder_output,
             mask=encoder_mask
         )
-        # x = dropout(x)
+        x = self.dropout(x)  # --dropout
         x = residual + x
         x = _normalize(x, self.norm2)
 
         # finally the ffn
         residual = x
         x = self.ffn(x)
+        x = self.dropout(x)  # --dropout
         x = residual + x
         x = _normalize(x, self.norm3)
 
@@ -448,8 +521,10 @@ class TransformerDecoderLayer(nn.Module):
 
 class TransformerGeneratorModel(TorchGeneratorModel):
     def __init__(self, opt, dictionary):
-        super().__init__()
         self.pad_idx = dictionary[dictionary.null_token]
+        self.start_idx = dictionary[dictionary.start_token]
+        self.end_idx = dictionary[dictionary.end_token]
+        super().__init__(self.pad_idx, self.start_idx, self.end_idx)
         self.embeddings = _create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
@@ -529,14 +604,15 @@ class MultiHeadAttention(nn.Module):
         self.n_heads = n_heads
         self.dim = dim
 
-        # multi head is seen as one layer, dropout is only applied to the input
-        self.dropout = nn.Dropout(p=dropout)
+        self.attn_dropout = nn.Dropout(p=dropout)  # --attention-dropout
         self.q_lin = nn.Linear(dim, dim)
         self.k_lin = nn.Linear(dim, dim)
         self.v_lin = nn.Linear(dim, dim)
+        # TODO: merge for the initialization step
         nn.init.xavier_normal_(self.q_lin.weight)
         nn.init.xavier_normal_(self.k_lin.weight)
         nn.init.xavier_normal_(self.v_lin.weight)
+        # and set biases to 0
         self.out_lin = nn.Linear(dim, dim)
 
         nn.init.xavier_normal_(self.out_lin.weight)
@@ -590,7 +666,7 @@ class MultiHeadAttention(nn.Module):
         dot_prod.masked_fill_(attn_mask, -float(1e20))
 
         attn_weights = F.softmax(dot_prod / scale, dim=-1)
-        attn_weights = self.dropout(attn_weights)
+        attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
         attentioned = (
@@ -606,17 +682,17 @@ class MultiHeadAttention(nn.Module):
 
 
 class TransformerFFN(nn.Module):
-    def __init__(self, dim, dim_hidden, dropout=0):
+    def __init__(self, dim, dim_hidden, relu_dropout=0):
         super(TransformerFFN, self).__init__()
-        self.dropout = nn.Dropout(p=dropout)
+        self.relu_dropout = nn.Dropout(p=relu_dropout)
         self.lin1 = nn.Linear(dim, dim_hidden)
         self.lin2 = nn.Linear(dim_hidden, dim)
         nn.init.xavier_uniform_(self.lin1.weight)
         nn.init.xavier_uniform_(self.lin2.weight)
+        # TODO: initialize biases to 0
 
     def forward(self, x):
         x = F.relu(self.lin1(x))
-        x = self.dropout(x)
+        x = self.relu_dropout(x)  # --relu-dropout
         x = self.lin2(x)
-        x = self.dropout(x)
         return x

@@ -28,8 +28,12 @@ def add_common_cmdline_args(argparser):
     argparser.add_argument('-nl', '--n-layers', type=int, default=2)
     argparser.add_argument('-hid', '--ffn-size', type=int, default=300,
                            help='Hidden size of the FFN layers')
-    argparser.add_argument('--attention-dropout', type=float, default=0.0)
-    argparser.add_argument('--relu-dropout', type=float, default=0.0)
+    argparser.add_argument('--dropout', type=float, default=0.0,
+                           help='Dropout used in Vaswani 2017.')
+    argparser.add_argument('--attention-dropout', type=float, default=0.0,
+                           help='Dropout used after attention softmax.')
+    argparser.add_argument('--relu-dropout', type=float, default=0.0,
+                           help='Dropout used after ReLU. From tensor2tensor.')
     argparser.add_argument('--n-heads', type=int, default=2,
                            help='Number of multihead attention heads')
     argparser.add_argument('--learn-positional-embeddings', type='bool', default=False)
@@ -115,12 +119,12 @@ class TransformerRankerAgent(TorchRankerAgent):
             )
         return self.model
 
-    def batchify(self, obs_batch, sort=False,
-                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
+    def batchify(self, obs_batch, sort=False):
         """Override so that we can add memories to the Batch object."""
-        batch = super().batchify(obs_batch, sort, is_valid)
+        batch = super().batchify(obs_batch, sort)
         if self.opt['use_memories']:
-            valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if is_valid(ex)]
+            valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if
+                         self.is_valid(ex)]
             valid_inds, exs = zip(*valid_obs)
             mems = None
             if any('memory_vecs' in ex for ex in exs):
@@ -142,7 +146,16 @@ class TransformerRankerAgent(TorchRankerAgent):
             obs = self._vectorize_memories(obs)
         return obs
 
-    def score_candidates(self, batch, cand_vecs):
+    def encode_candidates(self, padded_cands):
+        _, cands = self.model(
+            xs=None,
+            mems=None,
+            cands=padded_cands,
+        )
+
+        return cands
+
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
         # convoluted check that not all memories are empty
         if (self.opt['use_memories'] and batch.memory_vecs is not None and
                 sum(len(m) for m in batch.memory_vecs)):
@@ -150,11 +163,18 @@ class TransformerRankerAgent(TorchRankerAgent):
         else:
             mems = None
 
+        if cand_encs is not None:
+            # we pre-encoded the candidates, do not re-encode here
+            cand_vecs = None
+
         context_h, cands_h = self.model(
             xs=batch.text_vec,
             mems=mems,
             cands=cand_vecs,
         )
+
+        if cand_encs is not None:
+            cands_h = cand_encs
 
         scores = self._score(context_h, cands_h)
 

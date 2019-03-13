@@ -221,6 +221,7 @@ app.get('/chat_index', async function (req, res) {
   var frame_height = config_vars.frame_height || 650;
   var allow_reviews = config_vars.allow_reviews || false;
   var block_mobile = config_vars.block_mobile;
+  var chat_title = config_vars.chat_title || 'Live Chat';
   block_mobile = (block_mobile === undefined) ? true : block_mobile;
 
   var params = req.query;
@@ -232,7 +233,8 @@ app.get('/chat_index', async function (req, res) {
     is_cover_page: params['assignmentId'] == 'ASSIGNMENT_ID_NOT_AVAILABLE',
     allow_reviews: allow_reviews,
     frame_height: frame_height,
-    block_mobile: block_mobile
+    block_mobile: block_mobile,
+    chat_title: chat_title
   };
 
   res.render('index.html', template_context);

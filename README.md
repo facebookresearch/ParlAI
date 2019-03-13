@@ -103,6 +103,11 @@ Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from o
 python examples/eval_model.py -t squad -mf "models:drqa/squad/model"
 ```
 
+Talk to a ConvAI2 baseline KvMemNN model from the model zoo:
+```bash
+python projects/convai2/interactive.py -mf models:convai2/kvmemnn/model
+```
+
 ## Requirements
 
 ParlAI currently requires Python3.

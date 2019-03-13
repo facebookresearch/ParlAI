@@ -1,6 +1,8 @@
 <h2>News</h2>
-2019-01-16: ParlAI has been relicensed under the MIT open source license.
 
+2019-03-09: Added [LIGHT](http://parl.ai/projects/light) text adventure game research platform for learning to speak and act. [[press]](https://venturebeat.com/2019/03/08/facebook-ai-researchers-create-a-text-based-adventure-to-study-how-ai-speak-and-act/)
+
+2019-01-16: ParlAI has been relicensed under the MIT open source license.
 
 2018-12-13: Added [Daily Dialog](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/dailydialog/agents.py), an open-domain daily dialogue dataset.
 
