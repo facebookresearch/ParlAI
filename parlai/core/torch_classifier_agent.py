@@ -257,12 +257,10 @@ class TorchClassifierAgent(TorchAgent):
 
             if len(examples_per_class) > 1:
                 # get weighted f1
-                percent_of_total = [
-                    x / sum(examples_per_class) for x in examples_per_class
-                ]
                 f1 = 0
+                total_exs = sum(examples_per_class)
                 for i in range(len(self.class_list)):
-                    f1 += (percent_of_total[i] *
+                    f1 += ((self.class_list[i] / total_exs) *
                            m['class_{}_f1'.format(self.class_list[i])])
                 m['weighted_f1'] = f1
 
