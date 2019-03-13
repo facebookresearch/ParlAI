@@ -508,7 +508,10 @@ class TorchAgent(Agent):
                 self.dict[self.P1_TOKEN] = 999999999
                 self.dict[self.P2_TOKEN] = 999999998
             if opt.get('fp16'):
-                # pad the dictionary if needed
+                # Volta cores revert to FP32 hardware if tensors are not multiples
+                # of 8 in all dimensions. This INCLUDES the embeddings layer! As
+                # such, we need some extra magic to ensure the dictionary is padded
+                # with extra tokens to make it a multiple of 8.
                 if len(self.dict) % 8 != 0:
                     for i in range(8 - len(self.dict) % 8):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
@@ -652,7 +655,7 @@ class TorchAgent(Agent):
                     'https://github.com/NVIDIA/apex'
                 )
             self.optimizer = apex.fp16_utils.FP16_Optimizer(
-                self.optimizer, dynamic_loss_scale=True, verbose=True,
+                self.optimizer, dynamic_loss_scale=True, verbose=False,
             )
 
         if optim_states:

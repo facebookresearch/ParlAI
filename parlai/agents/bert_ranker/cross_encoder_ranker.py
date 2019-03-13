@@ -54,7 +54,8 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         self.optimizer = get_bert_optimizer([self.model],
                                             self.opt['type_optimization'],
-                                            self.opt['learningrate'])
+                                            self.opt['learningrate'],
+                                            fp16=self.opt.get('fp16'))
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         # concatenate text and candidates (not so easy)

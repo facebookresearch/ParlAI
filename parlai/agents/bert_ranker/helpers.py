@@ -161,7 +161,7 @@ patterns_optimizer = {
 }
 
 
-def get_bert_optimizer(models, type_optimization, learning_rate):
+def get_bert_optimizer(models, type_optimization, learning_rate, fp16=False):
     """ Optimizes the network with AdamWithDecay
     """
     if type_optimization not in patterns_optimizer:
@@ -195,6 +195,19 @@ def get_bert_optimizer(models, type_optimization, learning_rate):
     ]
     optimizer = AdamWithDecay(optimizer_grouped_parameters,
                               lr=learning_rate)
+
+    if fp16:
+        try:
+            import apex.fp16_utils
+        except ImportError:
+            raise ImportError(
+                'No fp16 support without apex. Please install it from '
+                'https://github.com/NVIDIA/apex'
+            )
+        optimizer = apex.fp16_utils.FP16_Optimizer(
+            optimizer, dynamic_loss_scale=True, verbose=True,
+        )
+
     return optimizer
 
 
