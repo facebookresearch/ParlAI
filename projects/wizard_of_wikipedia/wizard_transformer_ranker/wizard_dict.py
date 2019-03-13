@@ -69,9 +69,10 @@ class WizardDictAgent(DictionaryAgent):
         elif self.tokenizer == 'whitespace':
             return text.split(' ')
 
-        word_tokens = text.replace('.', ' . ').replace('. . .', '...').replace(',', ' , ')\
-            .replace(';', ' ; ').replace(':', ' : ').replace('!', ' ! ')\
-            .replace('?', ' ? ').replace('  ', ' ').replace('  ', ' ').strip().split(" ")
+        word_tokens = text.replace('.', ' . ').replace('. . .', '...')\
+            .replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ')\
+            .replace('!', ' ! ').replace('?', ' ? ').replace('  ', ' ')\
+            .replace('  ', ' ').strip().split(" ")
 
         return word_tokens
 
