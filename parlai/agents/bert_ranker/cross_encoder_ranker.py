@@ -26,6 +26,8 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
 
     def __init__(self, opt, shared=None):
         # download pretrained models
+        if opt['candidates'] != 'inline':
+            raise ValueError('Cross encoder requires --candidates inline')
         download(opt['datapath'])
         self.pretrained_path = os.path.join(opt['datapath'], 'models',
                                             'bert_models', MODEL_PATH)
