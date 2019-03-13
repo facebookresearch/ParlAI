@@ -7,7 +7,7 @@ from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.light.light_chats.worlds import \
     LightChatOnboardingWorld, LightChatTaskWorld
 import parlai.mturk.core.mturk_utils as mturk_utils
-import parlai.tasks.light_dialog.graph as graph
+import parlai.mturk.tasks.light.light_chats.graph as graph
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.light.light_chats.task_config import task_config
 from parlai.tasks.light_dialog.build import download as download_light
