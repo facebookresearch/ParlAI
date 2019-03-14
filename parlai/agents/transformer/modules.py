@@ -145,6 +145,10 @@ class TransformerMemNetModel(nn.Module):
     def encode_context_memory(self, context_w, memories_w):
         # [batch, d]
         context_h = self.context_encoder(context_w)
+        if context_w is None:
+            # it's possible that only candidates were passed into the
+            # forward function, return None here for LHS representation
+            return None, None
 
         if memories_w is None:
             return [], context_h
@@ -589,6 +593,7 @@ class BasicAttention(nn.Module):
         lhs_emb = torch.bmm(l2, ys)
         # add back the query
         lhs_emb = lhs_emb.add(xs)
+
         return lhs_emb.squeeze(self.dim - 1), l2
 
 
