@@ -1,3 +1,14 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+"""
+Basic script which allows human keyboard input to talk to a trained
+model on a web server.
+"""
+
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
@@ -161,7 +172,7 @@ WEB_HTML = """
 
     </body>
 </html>
-"""
+"""  # noqa: E501
 
 
 class MyHandler(BaseHTTPRequestHandler):
@@ -182,7 +193,10 @@ class MyHandler(BaseHTTPRequestHandler):
         if self.path == '/interact':
             content_length = int(self.headers['Content-Length'])
             body = self.rfile.read(content_length)
-            model_response = self.interactive_running(SHARED.get('opt'), body.decode('utf-8'))
+            model_response = self.interactive_running(
+                SHARED.get('opt'),
+                body.decode('utf-8')
+            )
 
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
@@ -251,7 +265,13 @@ if __name__ == '__main__':
     Handler.protocol_version = 'HTTP/1.0'
     httpd = server_class((HOST_NAME, PORT_NUMBER), Handler)
 
-    print(time.asctime(), 'Server Starts - %s:%s' % (HOST_NAME, PORT_NUMBER))
+    print(
+        time.asctime(),
+        '\n\nServer started, visit at: http://%s:%s/ \n' % (
+            HOST_NAME,
+            PORT_NUMBER
+        )
+    )
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
