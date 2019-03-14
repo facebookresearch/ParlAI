@@ -6,6 +6,7 @@
 from parlai.core.build_data import download_models
 from parlai.core.params import ParlaiParser
 from parlai.scripts.eval_model import eval_model
+from parlai.zoo.wizard_of_wikipedia.full_dialogue_retrieval import download
 from projects.wizard_of_wikipedia.wizard_transformer_ranker\
     .wizard_transformer_ranker import WizardTransformerRankerAgent
 
@@ -35,9 +36,6 @@ if __name__ == '__main__':
     )
 
     opt = parser.parse_args()
-    # download models
-    fnames = ['full_dialogue_retrieval_model.tgz']
-    opt['model_type'] = 'retrieval_models'
-    download_models(opt, fnames, 'wizard_of_wikipedia')
+    download(opt)  # download pretrained retrieval model
 
     eval_model(parser)
