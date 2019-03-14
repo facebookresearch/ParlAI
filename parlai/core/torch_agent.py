@@ -471,8 +471,12 @@ class TorchAgent(Agent):
                  'useful for tasks that include some kind of context before '
                  'the actual utterance (e.g. squad, babi, personachat).')
         agent.add_argument(
-            '--delimiter', type=str, default='\n',
+            '--delimiter', type=str, default='__newln__',
             help='Join history lines with this token, defaults to newline'
+        )
+        agent.add_argument(
+            '--add-delimiter-token', type='bool', default=True,
+            help='Add the history delimiter as an explicit token.'
         )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
@@ -500,6 +504,8 @@ class TorchAgent(Agent):
             if opt.get('person_tokens'):
                 self.dict[self.P1_TOKEN] = 999999999
                 self.dict[self.P2_TOKEN] = 999999998
+            if self.opt.get('add_delimiter_token') and self.opt.get('delimiter'):
+                self.dict[self.opt['delimiter']] = 999999997
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']

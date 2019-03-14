@@ -155,10 +155,6 @@ class DictionaryAgent(Agent):
             hidden=True,
             help='token to return for unavailable words')
         dictionary.add_argument(
-            '--add-newline-token', default=False, type='bool', hidden=True,
-            help='automatically add the newline token to the dictionary.'
-        )
-        dictionary.add_argument(
             '-tok', '--dict-tokenizer', default=DictionaryAgent.default_tok,
             help='Which tokenizer to use. Defaults to "split", which splits '
                  'on whitespace as well as recognizing basic punctuation. '
@@ -228,9 +224,6 @@ class DictionaryAgent(Agent):
                 # set special unknown word token
                 self.add_token(self.unk_token)
 
-            if self.opt.get('add_newline_token'):
-                self.add_token('__newln__')
-
             loaded = False
             # If data built via pytorch data teacher, we need to load prebuilt dict
             if opt.get('pytorch_teacher_task'):
@@ -296,9 +289,6 @@ class DictionaryAgent(Agent):
             if self.unk_token:
                 # fix count for unknown token to one billion
                 self.freq[self.unk_token] = 1000000000
-
-            if self.opt.get('add_newline_token'):
-                self.freq['__newln__'] = 999999999
 
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
