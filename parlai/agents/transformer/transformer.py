@@ -146,7 +146,16 @@ class TransformerRankerAgent(TorchRankerAgent):
             obs = self._vectorize_memories(obs)
         return obs
 
-    def score_candidates(self, batch, cand_vecs):
+    def encode_candidates(self, padded_cands):
+        _, cands = self.model(
+            xs=None,
+            mems=None,
+            cands=padded_cands,
+        )
+
+        return cands
+
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
         # convoluted check that not all memories are empty
         if (self.opt['use_memories'] and batch.memory_vecs is not None and
                 sum(len(m) for m in batch.memory_vecs)):
@@ -154,11 +163,18 @@ class TransformerRankerAgent(TorchRankerAgent):
         else:
             mems = None
 
+        if cand_encs is not None:
+            # we pre-encoded the candidates, do not re-encode here
+            cand_vecs = None
+
         context_h, cands_h = self.model(
             xs=batch.text_vec,
             mems=mems,
             cands=cand_vecs,
         )
+
+        if cand_encs is not None:
+            cands_h = cand_encs
 
         scores = self._score(context_h, cands_h)
 

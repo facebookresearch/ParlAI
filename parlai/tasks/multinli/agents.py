@@ -56,7 +56,7 @@ def setup_data(path):
             hypo = MULTINLI_HYPO_PREFIX + pair[MULTINLI_HYPO_KEY]
             answer = [pair[MULTINLI_ANSWER_KEY]]
 
-            if answer == '-':
+            if answer == ['-']:
                 continue
 
             question = premise + '\n' + hypo

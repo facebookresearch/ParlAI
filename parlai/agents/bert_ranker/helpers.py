@@ -51,6 +51,13 @@ def add_common_args(parser):
                             'all'],
                         help='Which part of the encoders do we optimize. '
                              '(Default: all_encoder_layers.)')
+    parser.add_argument('--bert-aggregation', type=str,
+                        default='first',
+                        choices=[
+                            'first',
+                            'max',
+                            'mean'],
+                        help='How do we transform a list of output into one')
     parser.set_defaults(
         label_truncate=300,
         text_truncate=300,
@@ -65,9 +72,11 @@ class BertWrapper(torch.nn.Module):
     """
 
     def __init__(self, bert_model, output_dim,
-                 add_transformer_layer=False, layer_pulled=-1):
+                 add_transformer_layer=False, layer_pulled=-1,
+                 aggregation="first"):
         super(BertWrapper, self).__init__()
         self.layer_pulled = layer_pulled
+        self.aggregation = aggregation
         self.add_transformer_layer = add_transformer_layer
         # deduce bert output dim from the size of embeddings
         bert_output_dim = bert_model.embeddings.word_embeddings.weight.size(1)
@@ -91,11 +100,31 @@ class BertWrapper(torch.nn.Module):
             extended_attention_mask = extended_attention_mask.to(
                 dtype=next(self.parameters()).dtype)  # fp16 compatibility
             extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
-            embeddings = self.additional_transformer_layer(
-                layer_of_interest, extended_attention_mask)[:, 0, :]
+            embedding_layer = self.additional_transformer_layer(
+                layer_of_interest, extended_attention_mask)
         else:
-            embeddings = layer_of_interest[:, 0, :]
+            embedding_layer = layer_of_interest
+
+        if self.aggregation == "mean":
+            #  consider the average of all the output except CLS.
+            # obviously ignores masked elements
+            outputs_of_interest = embedding_layer[:, 1:, :]
+            mask = attention_mask[:, 1:].float().unsqueeze(2)
+            sumed_embeddings = torch.sum(outputs_of_interest * mask, dim=1)
+            nb_elems = torch.sum(attention_mask[:, 1:].float(), dim=1).unsqueeze(1)
+            embeddings = sumed_embeddings / nb_elems
+        elif self.aggregation == "max":
+            #  consider the max of all the output except CLS
+            outputs_of_interest = embedding_layer[:, 1:, :]
+            mask = (attention_mask[:, 1:].float().unsqueeze(2) - 1) * 10000
+            embeddings, _ = torch.max(outputs_of_interest + mask, dim=1)
+        else:
+            # easiest, we consider the output of "CLS" as the embedding
+            embeddings = embedding_layer[:, 0, :]
+
+        # We need this in case of dimensionality reduction
         result = self.additional_linear_layer(embeddings)
+
         # Sort of hack to make it work with distributed: this way the pooler layer
         # is used for grad computation, even though it does not change anything...
         # in practice, it just adds a very (768*768) x (768*batchsize) matmul
