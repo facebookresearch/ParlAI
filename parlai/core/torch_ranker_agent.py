@@ -51,6 +51,9 @@ class TorchRankerAgent(TorchAgent):
                  'or evaluating on fixed candidate set when the encoding of '
                  'the candidates is independent of the input.')
         agent.add_argument(
+            '--init-model', type=str, default=None,
+            help='Initialize model with weights from this file.')
+        agent.add_argument(
             '--train-predict', type='bool', default=False,
             help='Get predictions and calculate mean rank during the train '
                  'step. Turning this on may slow down training.'
@@ -64,7 +67,7 @@ class TorchRankerAgent(TorchAgent):
                  'label candidates. Default behavior results in RuntimeError. ')
 
     def __init__(self, opt, shared=None):
-        # Must call _get_model_file() first so that paths are updated if necessary
+        # Must call _get_init_model() first so that paths are updated if necessary
         # (e.g., a .dict file)
         init_model, _ = self._get_init_model(opt, shared)
         opt['rank_candidates'] = True
