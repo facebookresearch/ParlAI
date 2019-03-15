@@ -3,23 +3,19 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""
-Basic script which allows human keyboard input to talk to a trained
-model on a web server.
-"""
+""" Talk with a model using a web UI. """
 
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.core.params import ParlaiParser
 
 import json
 import time
 
 HOST_NAME = 'localhost'
-PORT_NUMBER = 8080
+PORT = 8080
 SHARED = {}
 STYLE_SHEET = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.3.1/js/all.js"
@@ -31,7 +27,7 @@ WEB_HTML = """
     <body>
         <div class="columns">
             <div class="column is-three-fifths is-offset-one-fifth">
-              <section class="hero is-info is-large has-background-light has-text-grey-dark	">
+              <section class="hero is-info is-large has-background-light has-text-grey-dark">
                 <div id="parent" class="hero-body">
                     <article class="media">
                       <figure class="media-left">
@@ -154,22 +150,21 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
-        if self.path == '/interact':
-            content_length = int(self.headers['Content-Length'])
-            body = self.rfile.read(content_length)
-            model_response = self.interactive_running(
-                SHARED.get('opt'),
-                body.decode('utf-8')
-            )
+        if self.path != '/interact':
+            return self.respond({'status': 500})
 
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            json_str = json.dumps(model_response)
-            self.wfile.write(bytes(json_str, 'utf-8'))
+        content_length = int(self.headers['Content-Length'])
+        body = self.rfile.read(content_length)
+        model_response = self.interactive_running(
+            SHARED.get('opt'),
+            body.decode('utf-8')
+        )
 
-        else:
-            self.respond({'status': 500})
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        json_str = json.dumps(model_response)
+        self.wfile.write(bytes(json_str, 'utf-8'))
 
     def do_GET(self):
         paths = {
@@ -198,17 +193,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 def setup_interactive(shared):
     parser = setup_args()
-    SHARED['opt'] = parser.parse_args(print_args=False)
-    print_parser = parser
-
-    if print_parser is not None:
-        if print_parser is True and isinstance(SHARED['opt'], ParlaiParser):
-            print_parser = SHARED['opt']
-        elif print_parser is False:
-            print_parser = None
-    if isinstance(SHARED['opt'], ParlaiParser):
-        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
-        SHARED['opt'] = SHARED['opt'].parse_args()
+    SHARED['opt'] = parser.parse_args(print_args=True)
 
     SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
@@ -216,24 +201,19 @@ def setup_interactive(shared):
     SHARED['agent'] = create_agent(SHARED.get('opt'), requireModelExists=True)
     SHARED['world'] = create_task(SHARED.get('opt'), SHARED['agent'])
 
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = SHARED['agent'].opt
-        print_parser.print_args()
-
 
 if __name__ == '__main__':
     setup_interactive(SHARED)
     server_class = HTTPServer
     Handler = MyHandler
     Handler.protocol_version = 'HTTP/1.0'
-    httpd = server_class((HOST_NAME, PORT_NUMBER), Handler)
+    httpd = server_class((HOST_NAME, PORT), Handler)
 
     print(
         time.asctime(),
         '\n\nServer started, visit at: http://%s:%s/ \n' % (
             HOST_NAME,
-            PORT_NUMBER
+            PORT
         )
     )
     try:
@@ -241,4 +221,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     httpd.server_close()
-    print(time.asctime(), 'Server Stops - %s:%s' % (HOST_NAME, PORT_NUMBER))
