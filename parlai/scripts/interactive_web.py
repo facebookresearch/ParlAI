@@ -66,46 +66,44 @@ WEB_HTML = """
 
         <script>
             function createChatRow(agent, text) {{
+                var article = document.createElement("article");
+                article.className = "media"
 
-            var article = document.createElement("article");
-            article.className = "media"
+                var figure = document.createElement("figure");
+                figure.className = "media-left";
 
-            var figure = document.createElement("figure");
-            figure.className = "media-left";
+                var span = document.createElement("span");
+                span.className = "icon is-large";
 
-            var span = document.createElement("span");
-            span.className = "icon is-large";
+                var icon = document.createElement("i");
+                icon.className = "fas fas fa-2x" + (agent === "You" ? " fa-user " : agent === "Model" ? " fa-robot" : "");
 
-            var icon = document.createElement("i");
-            icon.className = "fas fas fa-2x" + (agent === "You" ? " fa-user " : agent === "Model" ? " fa-robot" : "");
+                var media = document.createElement("div");
+                media.className = "media-content";
 
-            var media = document.createElement("div");
-            media.className = "media-content";
+                var content = document.createElement("div");
+                content.className = "content";
 
-            var content = document.createElement("div");
-            content.className = "content";
+                var para = document.createElement("p");
+                var paraText = document.createTextNode(text);
 
-            var para = document.createElement("p");
-            var paraText = document.createTextNode(text);
+                var strong = document.createElement("strong");
+                strong.innerHTML = agent;
+                var br = document.createElement("br");
 
-            var strong = document.createElement("strong");
-            strong.innerHTML = agent;
-            var br = document.createElement("br");
+                para.appendChild(strong);
+                para.appendChild(br);
+                para.appendChild(paraText);
+                content.appendChild(para);
+                media.appendChild(content);
 
-            para.appendChild(strong);
-            para.appendChild(br);
-            para.appendChild(paraText);
-            content.appendChild(para);
-            media.appendChild(content);
+                span.appendChild(icon);
+                figure.appendChild(span);
 
-            span.appendChild(icon);
-            figure.appendChild(span);
+                article.appendChild(figure);
+                article.appendChild(media);
 
-            article.appendChild(figure);
-            article.appendChild(media);
-
-            return article;
-
+                return article;
             }}
             document.getElementById("interact").addEventListener("submit", function(event){{
                 event.preventDefault()
@@ -208,14 +206,8 @@ if __name__ == '__main__':
     Handler = MyHandler
     Handler.protocol_version = 'HTTP/1.0'
     httpd = server_class((HOST_NAME, PORT), Handler)
+    print('http://{}:{}/'.format(HOST_NAME, PORT))
 
-    print(
-        time.asctime(),
-        '\n\nServer started, visit at: http://%s:%s/ \n' % (
-            HOST_NAME,
-            PORT
-        )
-    )
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
