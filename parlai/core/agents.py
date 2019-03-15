@@ -375,10 +375,26 @@ def load_agent_module(opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
+        # Note: new_opt is a bit of a misnomer: opt is what comes from the CLI args,
+        # and new_opt is the options on disk
         new_opt = _load_opt_file(optfile)
         if 'batchindex' in new_opt:
             # This saved variable can cause trouble if we switch to BS=1 at test time
             del new_opt['batchindex']
+
+        # we need to potentially upgrade any old options we might have
+        assert 'model' in new_opt, "Old .opt file doesn't have a model!?"
+        if opt.get('model'):
+            # if the model was specified in the CLI options, use that
+            model_class = get_agent_module(opt['model'])
+            if hasattr(model_class, 'upgrade_saved_opt'):
+                new_opt = model_class.upgrade_saved_opt(new_opt)
+        else:
+            # else, use the model that was specified by the model file on disk
+            model_class = get_agent_module(new_opt['model'])
+            if hasattr(model_class, 'upgrade_saved_opt'):
+                new_opt = model_class.upgrade_saved_opt(new_opt)
+
         # only override opts specified in 'override' dict
         if opt.get('override'):
             for k, v in opt['override'].items():
@@ -386,10 +402,12 @@ def load_agent_module(opt):
                     print("[ warning: overriding opt['{}'] to {} ("
                           "previously: {} )]".format(k, v, new_opt.get(k, None)))
                 new_opt[k] = v
+
         # add model arguments to new_opt if they aren't in new_opt already
         for k, v in opt.items():
             if k not in new_opt:
                 new_opt[k] = v
+
         new_opt['model_file'] = model_file
         if not new_opt.get('dict_file'):
             new_opt['dict_file'] = model_file + '.dict'

@@ -475,7 +475,7 @@ class TorchAgent(Agent):
             help='Join history lines with this token, defaults to newline'
         )
         agent.add_argument(
-            '--add-delimiter-token', type='bool', default=True,
+            '--add-delimiter-token', type='bool', default=True, hidden=True,
             help='Add the history delimiter as an explicit token.'
         )
         # GPU arguments
@@ -492,6 +492,33 @@ class TorchAgent(Agent):
         )
 
         cls.dictionary_class().add_cmdline_args(argparser)
+
+    @classmethod
+    def upgrade_saved_opt(cls, old_opt):
+        """
+        Upgrade an old opt file loaded from disk.
+
+        This aims to facilitate backwards compatibility of old model files, while
+        encouraging better defaults to be used in the future. Namely, it enables
+        for command line defaults to be set to one value, but old models on disk
+        to expect another default value.
+
+        Subclasses may *extend* this behavior, but should always call the
+        super-class.
+
+        :param old_opt:
+            The stored options, as loaded directly from disk.
+        :return:
+            The upgraded options. (May be inplace)
+        """
+
+        if 'add_delimiter_token' not in old_opt:
+            # Old models didn't automatically insert the delimiter token into the
+            # dictionary
+            print('Option add_delimiter_token implied False')
+            old_opt['add_delimiter_token'] = False
+
+        return old_opt
 
     def __init__(self, opt, shared=None):
         """Initialize agent."""
