@@ -193,22 +193,28 @@ class TorchRankerAgent(TorchAgent):
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
-
-        scores = self.score_candidates(batch, cand_vecs)
-        _, ranks = scores.sort(1, descending=True)
-
-        loss = self.rank_loss(scores, label_inds)
+        try:
+            scores = self.score_candidates(batch, cand_vecs)
+            loss = self.rank_loss(scores, label_inds)
+            loss.backward()
+            self.update_params()
+        except RuntimeError as e:
+            # catch out of memory exceptions during fwd/bck (skip batch)
+            if 'out of memory' in str(e):
+                print('| WARNING: ran out of memory, skipping batch. '
+                      'if this happens frequently, decrease batchsize or '
+                      'truncate the inputs to the model.')
+                return Output()
+            else:
+                raise e
 
         # Update loss
         self.metrics['loss'] += loss.item()
         self.metrics['examples'] += batchsize
-
+        _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
-
-        loss.backward()
-        self.update_params()
 
         # Get train predictions
         if self.opt['candidates'] == 'batch':
