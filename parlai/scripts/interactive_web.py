@@ -12,7 +12,6 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 
 import json
-import time
 
 HOST_NAME = 'localhost'
 PORT = 8080
