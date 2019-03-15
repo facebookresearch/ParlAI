@@ -69,6 +69,48 @@ WEB_HTML = """
         </div>
 
         <script>
+            function createChatRow(agent, text) {{
+
+            var article = document.createElement("article");
+            article.className = "media"
+
+            var figure = document.createElement("figure");
+            figure.className = "media-left";
+
+            var span = document.createElement("span");
+            span.className = "icon is-large";
+
+            var icon = document.createElement("i");
+            icon.className = "fas fas fa-2x" + (agent === "You" ? " fa-user " : agent === "Model" ? " fa-robot" : "");
+
+            var media = document.createElement("div");
+            media.className = "media-content";
+
+            var content = document.createElement("div");
+            content.className = "content";
+
+            var para = document.createElement("p");
+            var paraText = document.createTextNode(text);
+
+            var strong = document.createElement("strong");
+            strong.innerHTML = agent;
+            var br = document.createElement("br");
+
+            para.appendChild(strong);
+            para.appendChild(br);
+            para.appendChild(paraText);
+            content.appendChild(para);
+            media.appendChild(content);
+
+            span.appendChild(icon);
+            figure.appendChild(span);
+
+            article.appendChild(figure);
+            article.appendChild(media);
+
+            return article;
+
+            }}
             document.getElementById("interact").addEventListener("submit", function(event){{
                 event.preventDefault()
                 var text = document.getElementById("userIn").value;
@@ -83,89 +125,11 @@ WEB_HTML = """
                 }}).then(response=>response.json()).then(data=>{{
                     var parDiv = document.getElementById("parent");
 
-                    var article = document.createElement("article");
-                    article.className = "media"
-
-                    var figure = document.createElement("figure");
-                    figure.className = "media-left";
-
-                    var span = document.createElement("span");
-                    span.className = "icon is-large";
-
-                    var icon = document.createElement("i");
-                    icon.className = "fas fa-user fas fa-2x";
-
-                    var media = document.createElement("div");
-                    media.className = "media-content";
-
-                    var content = document.createElement("div");
-                    content.className = "content";
-
-                    var para = document.createElement("p");
-                    var paraText = document.createTextNode(text);
-
-                    var strong = document.createElement("strong");
-                    strong.innerHTML = "You";
-                    var br = document.createElement("br");
-
-                    para.appendChild(strong);
-                    para.appendChild(br);
-                    para.appendChild(paraText);
-                    console.log("paraText")
-                    console.log(paraText);
-                    content.appendChild(para);
-                    media.appendChild(content);
-
-                    span.appendChild(icon);
-                    figure.appendChild(span);
-
-                    article.appendChild(figure);
-                    article.appendChild(media);
-
-                    parDiv.append(article);
+                    parDiv.append(createChatRow("You", text));
 
                     // Change info for Model response
-
-                    var articleM = document.createElement("article");
-                    articleM.className = "media";
-
-                    var figureM = document.createElement("figure");
-                    figureM.className = "media-left";
-
-                    var spanM = document.createElement("span");
-                    spanM.className = "icon is-large";
-
-                    var iconM = document.createElement("i");
-                    iconM.className = "fas fa-robot fas fa-2x";
-
-                    var mediaM = document.createElement("div");
-                    mediaM.className = "media-content";
-
-                    var contentM = document.createElement("div");
-                    contentM.className = "content";
-
-                    var paraM = document.createElement("p");
-                    var paraTextM = document.createTextNode(data.text);
-                    console.log('paraTextM');
-                    console.log(paraTextM);
-
-                    var strongM = document.createElement("strong");
-                    strongM.innerHTML = "Model";
-                    var brM = document.createElement("br");
-
-                    paraM.appendChild(strongM);
-                    paraM.appendChild(brM);
-                    paraM.appendChild(paraTextM);
-                    contentM.appendChild(paraM);
-                    mediaM.appendChild(contentM);
-
-                    spanM.appendChild(iconM);
-                    figureM.appendChild(spanM);
-
-                    articleM.appendChild(figureM);
-                    articleM.appendChild(mediaM);
-
-                    parDiv.append(articleM);
+                    parDiv.append(createChatRow("Model", data.text));
+                    window.scrollTo(0,document.body.scrollHeight);
                 }})
             }});
         </script>
