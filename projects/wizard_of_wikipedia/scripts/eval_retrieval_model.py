@@ -13,6 +13,13 @@ from projects.wizard_of_wikipedia.wizard_transformer_ranker\
 
 NOTE: Metrics here differ slightly to those reported in the paper as a result
 of code changes.
+
+Results on seen test set:
+Hits@1/100: 86.7
+
+Results on unseen test set (run with flag
+`-t wizard_of_wikipedia:WizardDialogKnowledge:topic_split`):
+Hits@1/100: 68.96
 """
 
 if __name__ == '__main__':
