@@ -1,11 +1,11 @@
 
 
-
-
 from parlai.core.agents import Agent
 from parlai.agents.seq2seq.seq2seq import Seq2seqAgent
 
 from parlai.agents.seq2seq.modules import Seq2seq, opt_to_kwargs
+
+from parlai.misc.idf_counter import IDFScorer
 
 
 import torch
@@ -90,35 +90,76 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
 
 
     def build_criterion(self):
+    
+    
+        if self.opt['datatype'] == 'train': 
         
-        # Weight token importance, if desired. 
-        if opt['weight_criterion_idf']:
-            import pickle
+            if self.opt['weight_criterion_idf']:
             
-            datasetname = opt['task']
-            with open('data/%s/%s/tfidf_vectorizer.pkl'% (datasetname, datasetname), 'rb') as f:
-            
-                vectorizer = pickle.load(f)
+                # Weight token importance with idf, if desired.
                 word_weights = torch.zeros(len(self.dict.freq.keys()))
-            
+                        
                 for tok in self.dict.freq.keys(): 
-                
-                    word_idf = vectorizer.idf_[vectorizer.vocabulary_[tok]]
-                    word_weights[self.dict.tok2ind[tok]] = word_idf
+                    if self.dict.freq[tok] > 0: 
+                        word_idf = torch.log(
+                                        torch.tensor([float(self.dict.tot_doc) 
+                                                            / float(self.dict.doc_freq[tok])]
+                                                    )
+                                            )
+                        word_weights[self.dict.tok2ind[tok]] = word_idf
+                    else: 
+                        print(tok, self.dict.doc_freq[str(tok)], )
+                    
+            
+#                 idf_scorer = IDFScorer(self.opt)
+#                 min_idf = min(idf_scorer.vectorizer.idf_)
+#                 word_weights = min_idf * torch.ones(len(self.dict.freq.keys()))
+#                         
+#                 for tok in self.dict.freq.keys(): 
+#                 
+#                     if tok != self.dict.null_token:
+#                     
+#                         try:
+#                             word_idf = idf_scorer.vectorizer.idf_[idf_scorer.vectorizer.vocabulary_[tok]]
+#                             word_weights[self.dict.tok2ind[tok]] = word_idf
+#                         except: 
+#                             if tok in [self.dict.start_token, 
+#                                         self.dict.end_token, 
+#                                         self.dict.unk_token]:
+#                                 pass # leave set to minimum idf, as initialized.
+#                             
+#                             else: 
+#                                 print('there is no idf for token: ', tok, ' type: ', type(tok))
         
-        else: 
-            word_weights = torch.zeros(len(self.dict.freq.keys()))
-            for tok in self.dict.freq.keys(): 
-                word_weights[self.dict.tok2ind[tok]] = 1./(float(self.dict.freq[tok]) + 1.)**.5
+            else: 
+            
+                # weight with 1/sqrt(freq)
+            
+                word_weights = torch.zeros(len(self.dict.freq.keys()))
+                for tok in self.dict.freq.keys(): 
+                    word_weights[self.dict.tok2ind[tok]] = 1./(float(self.dict.freq[tok]) + 1.)**.5
                 
                 
-        # set up criteria
-        if self.opt.get('numsoftmax', 1) > 1:
-            self.criterion = nn.NLLLoss(
-                ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
+            # set up criteria
+            if self.opt.get('numsoftmax', 1) > 1:
+                self.criterion = nn.NLLLoss(
+                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
+            else:
+                self.criterion = nn.CrossEntropyLoss(
+                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
+        
         else:
-            self.criterion = nn.CrossEntropyLoss(
-                ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
+        
+            # don't increase weights when decoding, only for training. 
+            
+            # set up criteria
+            if self.opt.get('numsoftmax', 1) > 1:
+                self.criterion = nn.NLLLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
+            else:
+                self.criterion = nn.CrossEntropyLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
+                    
 
         if self.use_cuda:
             self.criterion.cuda()

@@ -9,6 +9,8 @@
 from parlai.agents.language_model.language_model import LanguageModelAgent
 from parlai.core.dict import DictionaryAgent
 
+from parlai.misc.idf_counter import IDFScorer
+
 import torch
 # from torch.autograd import Variable
 import torch.nn as nn
@@ -122,20 +124,29 @@ class LanguageModelRetrieverAgent(LanguageModelAgent):
         
         # Weight token importance, if desired. 
         if opt['weight_criterion_idf']:
-            import pickle
             
-            datasetname = opt['task']
-            with open('data/%s/%s/tfidf_vectorizer.pkl'% (datasetname, datasetname), 'rb') as f:
+            idf_scorer = IDFScorer(opt)
+            min_idf = min(idf_scorer.vectorizer.idf_)
+            word_weights = min_idf * torch.ones(len(self.dict.freq.keys()))
                 
-                vectorizer = pickle.load(f)
-                word_weights = torch.zeros(len(self.dict.freq.keys()))
+            for tok in self.dict.freq.keys(): 
                 
-                for tok in self.dict.freq.keys(): 
+                if tok != self.dict.null_token:
                     
-                    word_idf = vectorizer.idf_[vectorizer.vocabulary_[tok]]
-                    word_weights[self.dict.tok2ind[tok]] = word_idf
-                    
-                    # word_weights[self.dict.tok2ind[tok]] = 1./(float(self.dict.freq[tok]) + 1.)**.5
+                    try:
+                        word_idf = idf_scorer.vectorizer.idf_[idf_scorer.vectorizer.vocabulary_[tok]]
+                        word_weights[self.dict.tok2ind[tok]] = word_idf
+                    except: 
+                        if tok in [self.dict.start_token, 
+                                    self.dict.end_token, 
+                                    self.dict.unk_token]:
+                            pass # leave set to minimum idf, as initialized.
+                            
+                        else: 
+                            print('there is no idf for token: ', tok, ' type: ', type(tok))
+#                             import sys; sys.exit()
+                
+                # word_weights[self.dict.tok2ind[tok]] = 1./(float(self.dict.freq[tok]) + 1.)**.5
             
             # set up criteria
             self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,

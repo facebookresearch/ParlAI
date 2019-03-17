@@ -197,10 +197,13 @@ class DictionaryAgent(Agent):
 
         if shared:
             self.freq = shared.get('freq', {})
+            self.doc_freq = shared.get('doc_freq', {}) # OAD
             self.tok2ind = shared.get('tok2ind', {})
             self.ind2tok = shared.get('ind2tok', {})
         else:
             self.freq = defaultdict(int)
+            self.doc_freq = defaultdict(int) # OAD
+            self.tot_doc = 0 # OAD
             self.tok2ind = {}
             self.ind2tok = {}
 
@@ -272,18 +275,22 @@ class DictionaryAgent(Agent):
             if self.null_token:
                 # fix count for null token to one billion and three
                 self.freq[self.null_token] = 1000000003
+                self.doc_freq[self.null_token] = 1000000003 # OAD
 
             if self.start_token:
                 # fix count for start of sentence token to one billion and two
                 self.freq[self.start_token] = 1000000002
+                self.doc_freq[self.start_token] = 1000000002 # OAD
 
             if self.end_token:
                 # fix count for end of sentence token to one billion and one
                 self.freq[self.end_token] = 1000000001
+                self.doc_freq[self.end_token] = 1000000001 # OAD
 
             if self.unk_token:
                 # fix count for unknown token to one billion
                 self.freq[self.unk_token] = 1000000000
+                self.doc_freq[self.unk_token] = 1000000000 # OAD
 
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
@@ -328,6 +335,7 @@ class DictionaryAgent(Agent):
         if self.lower:
             key = key.lower()
         self.freq[key] = int(value)
+        self.doc_freq[key] += 1 # OAD
         self.add_token(key)
 
     def keys(self):
@@ -352,6 +360,10 @@ class DictionaryAgent(Agent):
 
     def freqs(self):
         return self.freq
+        
+    # OAD
+    def doc_freqs(self):
+        return self.doc_freq
 
     def spacy_tokenize(self, text, **kwargs):
         tokens = self.NLP.tokenizer(text)
@@ -434,6 +446,12 @@ class DictionaryAgent(Agent):
         for token in tokens:
             self.add_token(token)
             self.freq[token] += 1
+        
+        # OAD: Add doc frequency so that idf can be calculated. 
+        for token in set(tokens):
+            self.doc_freq[token] += 1
+        self.tot_doc += 1 
+        
 
     def remove_tail(self, min_freq):
         """Remove elements below the frequency cutoff from the dictionary."""
@@ -445,6 +463,7 @@ class DictionaryAgent(Agent):
 
         for token in to_remove:
             del self.freq[token]
+            del self.doc_freq[token] # OAD
             idx = self.tok2ind.pop(token)
             del self.ind2tok[idx]
 
@@ -460,6 +479,7 @@ class DictionaryAgent(Agent):
                 to_remove.append(token)
         for token in to_remove:
             del self.freq[token]
+            del self.doc_freq[token] # OAD
             idx = self.tok2ind.pop(token)
             del self.ind2tok[idx]
         for token, freq in to_add:
@@ -474,6 +494,7 @@ class DictionaryAgent(Agent):
                 del self.ind2tok[k]
                 del self.tok2ind[v]
                 del self.freq[v]
+                del self.doc_freq[v] # OAD
 
     def load(self, filename):
         """Load pre-existing dictionary in 'token[<TAB>count]' format.
@@ -494,7 +515,25 @@ class DictionaryAgent(Agent):
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
                 self.add_token(token)
+        
+        # OAD        
+        with codecs.open(filename+'.doc_freq', 'r', encoding='utf-8', errors='ignore') as read:
+            for line in read:
+                split = line.strip().split('\t')
+                token = unescape(split[0])
+                if lower_special and token in SPECIAL_TOKENS:
+                    token = token.lower()
+                cnt = int(split[1]) if len(split) > 1 else 0
+                self.doc_freq[token] = cnt
+                
+        # OAD
+        with codecs.open(filename+'.tot_doc', 'r', encoding='utf-8', errors='ignore') as read:
+            for line in read:
+                split = line.strip().split('\t')
+                self.tot_doc = int(split[0])
+                
         print('[ num words =  %d ]' % len(self))
+        
 
     def save(self, filename=None, append=False, sort=True):
         """Save dictionary to file.
@@ -524,6 +563,17 @@ class DictionaryAgent(Agent):
                 tok = self.ind2tok[i]
                 cnt = self.freq[tok]
                 write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
+        
+        # OAD
+        with open(filename+'.doc_freq', 'a' if append else 'w') as write:
+            for i in range(len(self.ind2tok)):
+                tok = self.ind2tok[i]
+                cnt = self.doc_freq[tok]
+                write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
+                
+        # OAD
+        with open(filename+'.tot_doc', 'w') as write:
+            write.write('{cnt}\n'.format(cnt=self.tot_doc))
 
         # save opt file
         with open(filename + '.opt', 'w') as handle:
@@ -618,6 +668,8 @@ class DictionaryAgent(Agent):
         """Share internal dicts."""
         shared = super().share()
         shared['freq'] = self.freq
+        shared['doc_freq'] = self.doc_freq # OAD
+        shared['tot_doc'] = self.tot_doc # OAD
         shared['tok2ind'] = self.tok2ind
         shared['ind2tok'] = self.ind2tok
         return shared
