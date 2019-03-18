@@ -10,8 +10,6 @@ from .modules import Seq2seq, opt_to_kwargs
 import torch
 import torch.nn as nn
 
-import json
-
 
 class Seq2seqAgent(TorchGeneratorAgent):
     """Agent which takes an input sequence and produces an output sequence.
