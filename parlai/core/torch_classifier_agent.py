@@ -3,6 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from parlai.core.distributed_utils import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import round_sigfigs, warn_once
 from collections import defaultdict
@@ -103,6 +104,10 @@ class TorchClassifierAgent(TorchAgent):
             self.model.cuda()
             self.classifier_loss.cuda()
             if self.opt['data_parallel']:
+                if is_distributed():
+                    raise ValueError(
+                        'Cannot combine --data-parallel and distributed mode'
+                    )
                 self.model = torch.nn.DataParallel(self.model)
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
@@ -142,9 +147,11 @@ class TorchClassifierAgent(TorchAgent):
     def _update_confusion_matrix(self, batch, predictions):
         """Update the confusion matrix given the batch and predictions.
 
-        :param Batch batch: a Batch object (defined in torch_agent.py)
-        :param list predictions: (list of string of length batchsize) label
-            predicted by the classifier
+        :param batch:
+            a Batch object (defined in torch_agent.py)
+        :param predictions:
+            (list of string of length batchsize) label predicted by the
+            classifier
         """
         for i, pred in enumerate(predictions):
             label = batch.labels[i]
@@ -276,8 +283,10 @@ class TorchClassifierAgent(TorchAgent):
     def score(self, batch):
         """Given a batch and labels, returns the scores.
 
-        :param Batch batch: a Batch object (defined in torch_agent.py)
-        :return: a [bsz, num_classes] FloatTensor containing the score of each
+        :param batch:
+            a Batch object (defined in torch_agent.py)
+        :return:
+            a [bsz, num_classes] FloatTensor containing the score of each
             class.
         """
         raise NotImplementedError(
