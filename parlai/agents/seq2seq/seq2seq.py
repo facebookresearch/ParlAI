@@ -174,7 +174,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
         Override to include longest_label
         """
-        states = super().get_state_dict()
+        states = super().get_save_dict()
         if hasattr(self.model, 'module'):
             states['longest_label'] = self.model.module.longest_label
         else:

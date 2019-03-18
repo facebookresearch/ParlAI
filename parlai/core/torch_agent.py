@@ -1298,8 +1298,7 @@ class TorchAgent(Agent):
     def get_save_dict(self):
         """Get the state dict for saving
 
-        Override this method to include additional/different things when
-        saving the model
+        Override this method for more specific saving.
         """
         states = {}
         if hasattr(self, 'model'):  # save model params
@@ -1333,14 +1332,15 @@ class TorchAgent(Agent):
         """
         Save model parameters to path (or default to model_file arg).
 
-        Override this method for more specific saving.
+        Please try to refrain from overriding this function, and instead
+        override `get_save_dict(self)` for more specific saving.
         """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path:
             if hasattr(self, 'dict'):  # force save dictionary
                 self.dict.save(path + '.dict', sort=True)
-            states = self.get_state_dict()
+            states = self.get_save_dict()
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
                     torch.save(states, write)
