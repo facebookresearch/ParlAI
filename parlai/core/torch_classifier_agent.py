@@ -158,7 +158,7 @@ class TorchClassifierAgent(TorchAgent):
         for i, pred_id in enumerate(prediction_id.tolist()):
             prob = round_sigfigs(probs[i][pred_id], 4)
             preds.append('Predicted class: {}\nwith probability: {}'.format(
-                         self.class_list[pred_id],prob))
+                         self.class_list[pred_id], prob))
         return preds
 
     def train_step(self, batch):
