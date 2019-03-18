@@ -6,6 +6,8 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+/* global browser */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
@@ -55,11 +57,11 @@ function getHitConfig(callback_function) {
 // Sees if the current browser supports WebSockets
 function doesSupportWebsockets() {
   return !(
-    (bowser.msie && bowser.version < 10) ||
-    (bowser.firefox && bowser.version < 11) ||
-    (bowser.chrome && bowser.version < 16) ||
-    (bowser.safari && bowser.version < 7) ||
-    (bowser.opera && bowser.version < 12.1)
+    (browser.msie && browser.version < 10) ||
+    (browser.firefox && browser.version < 11) ||
+    (browser.chrome && browser.version < 16) ||
+    (browser.safari && browser.version < 7) ||
+    (browser.opera && browser.version < 12.1)
   );
 }
 

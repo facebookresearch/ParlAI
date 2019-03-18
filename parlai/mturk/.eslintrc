@@ -44,6 +44,7 @@
     "TASK_GROUP_ID": "readonly",
     "DISPLAY_FEEDBACK": "readonly",
     "FRAME_HEIGHT": "readonly",
-    "BLOCK_MOBILE": "readonly"
+    "BLOCK_MOBILE": "readonly",
+    "CHAT_TITLE": "readonly"
   }
 }
