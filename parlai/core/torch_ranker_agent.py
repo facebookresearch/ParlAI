@@ -51,6 +51,9 @@ class TorchRankerAgent(TorchAgent):
                  'or evaluating on fixed candidate set when the encoding of '
                  'the candidates is independent of the input.')
         agent.add_argument(
+            '--init-model', type=str, default=None,
+            help='Initialize model with weights from this file.')
+        agent.add_argument(
             '--train-predict', type='bool', default=False,
             help='Get predictions and calculate mean rank during the train '
                  'step. Turning this on may slow down training.'
@@ -64,7 +67,7 @@ class TorchRankerAgent(TorchAgent):
                  'label candidates. Default behavior results in RuntimeError. ')
 
     def __init__(self, opt, shared=None):
-        # Must call _get_model_file() first so that paths are updated if necessary
+        # Must call _get_init_model() first so that paths are updated if necessary
         # (e.g., a .dict file)
         init_model, _ = self._get_init_model(opt, shared)
         opt['rank_candidates'] = True
@@ -137,6 +140,12 @@ class TorchRankerAgent(TorchAgent):
         targets = torch.arange(batchsize, out=targets)
         nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
         self.metrics['train_accuracy'] += nb_ok
+        # calculate mean_rank
+        above_dot_prods = scores - scores.diag().view(-1, 1)
+        ranks = (above_dot_prods > 0).float().sum(dim=1) + 1
+        inv_rank = 1.0 / (ranks + 0.00001)
+        self.metrics['rank'] += torch.sum(ranks).item()
+        self.metrics['inv_rank'] += torch.sum(inv_rank).item()
 
     def get_train_preds(self, scores, label_inds, cands, cand_vecs):
         # TODO: speed these calculations up
@@ -187,23 +196,24 @@ class TorchRankerAgent(TorchAgent):
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
-
-        scores = self.score_candidates(batch, cand_vecs)
-        _, ranks = scores.sort(1, descending=True)
-
-        loss = self.rank_loss(scores, label_inds)
+        try:
+            scores = self.score_candidates(batch, cand_vecs)
+            loss = self.rank_loss(scores, label_inds)
+            loss.backward()
+            self.update_params()
+        except RuntimeError as e:
+            # catch out of memory exceptions during fwd/bck (skip batch)
+            if 'out of memory' in str(e):
+                print('| WARNING: ran out of memory, skipping batch. '
+                      'if this happens frequently, decrease batchsize or '
+                      'truncate the inputs to the model.')
+                return Output()
+            else:
+                raise e
 
         # Update loss
         self.metrics['loss'] += loss.item()
         self.metrics['examples'] += batchsize
-
-        for b in range(batchsize):
-            rank = (ranks[b] == label_inds[b]).nonzero().item()
-            self.metrics['rank'] += 1 + rank
-            self.metrics['inv_rank'] += 1.0 / (1 + rank)
-
-        loss.backward()
-        self.update_params()
 
         # Get train predictions
         if self.opt['candidates'] == 'batch':
