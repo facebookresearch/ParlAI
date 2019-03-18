@@ -36,12 +36,11 @@ class TorchClassifierAgent(TorchAgent):
                                  'ref class; only applies to binary '
                                  'classification')
         # interactive mode
-        parser.add_argument('--interactive-mode', type='bool', default=False)
         parser.add_argument('--print-scores', type='bool', default=False,
                             help='print probability of chosen class during '
                                  'interactive mode')
         # miscellaneous arguments
-        parser.add_argument('--data-parallel', type="bool", default=False,
+        parser.add_argument('--data-parallel', type='bool', default=False,
                             help='uses nn.DataParallel for multi GPU')
         parser.add_argument('--get-all-metrics', type='bool', default=True,
                             help='give prec/recall metrics for all classes')
@@ -143,13 +142,24 @@ class TorchClassifierAgent(TorchAgent):
     def _update_confusion_matrix(self, batch, predictions):
         """Update the confusion matrix given the batch and predictions.
 
-        :param batch:         a Batch object (defined in torch_agent.py)
-        :param predictions:   (list of string of length batchsize) label
-                              predicted by the classifier
+        :param Batch batch: a Batch object (defined in torch_agent.py)
+        :param list predictions: (list of string of length batchsize) label
+            predicted by the classifier
         """
         for i, pred in enumerate(predictions):
             label = batch.labels[i]
             self.metrics['confusion_matrix'][(label, pred)] += 1
+
+    def _format_interactive_output(self, probs, prediction_id):
+        """Nicely format interactive mode output when we want to also
+        print the scores associated with the predictions.
+        """
+        preds = []
+        for i, pred_id in enumerate(prediction_id.tolist()):
+            prob = round_sigfigs(probs[i][pred_id], 4)
+            preds.append('Predicted class: {}\nwith probability: {}'.format(
+                         self.class_list[pred_id],prob))
+        return preds
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
@@ -192,16 +202,10 @@ class TorchClassifierAgent(TorchAgent):
             prediction_id = ref_prob <= self.threshold
         preds = [self.class_list[idx] for idx in prediction_id]
 
-        if self.opt.get('interactive_mode', False):
+        if batch.labels is None:
+            # interactive mode
             if self.opt.get('print_scores', False):
-                probabilities = []
-                for score in scores:
-                    probabilities.append(probs[0])
-                preds = []
-                for i, pred_id in enumerate(prediction_id):
-                    prob = round_sigfigs(probabilities[i][pred_id], 4)
-                    preds.append('{}: {}'.format(self.class_list[pred_id],
-                                                 prob))
+                preds = self._format_interactive_output(probs, prediction_id)
         else:
             labels = self._get_labels(batch)
             loss = self.classifier_loss(scores, labels)
@@ -272,9 +276,9 @@ class TorchClassifierAgent(TorchAgent):
     def score(self, batch):
         """Given a batch and labels, returns the scores.
 
-        :param batch:   a Batch object (defined in torch_agent.py)
-        :return:        a [bsz, num_classes] FloatTensor containing the score
-                        of each class.
+        :param Batch batch: a Batch object (defined in torch_agent.py)
+        :return: a [bsz, num_classes] FloatTensor containing the score of each
+            class.
         """
         raise NotImplementedError(
             'Abstract class: user must implement score()')
