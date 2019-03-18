@@ -17,12 +17,11 @@ import os
 
 
 class BertDictionaryAgent(DictionaryAgent):
-    """ Allow to use the Torch Agent with the wordpiece dictionary of Hugging Face.
+    """Allow to use the Torch Agent with the wordpiece dictionary of Hugging Face.
     """
-
     def __init__(self, opt):
         super().__init__(opt)
-        # initialize from voab path
+        # initialize from vocab path
         download(opt['datapath'])
         vocab_path = os.path.join(opt['datapath'], 'models', 'bert_models',
                                   VOCAB_PATH)
@@ -54,3 +53,6 @@ class BertDictionaryAgent(DictionaryAgent):
         idxs = [idx.item() for idx in tensor.cpu()]
         toks = self.tokenizer.convert_ids_to_tokens(idxs)
         return ' '.join(toks)
+
+    def act(self):
+        return {}

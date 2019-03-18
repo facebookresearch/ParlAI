@@ -64,6 +64,7 @@ def add_common_args(parser):
         learningrate=0.00005,
         eval_candidates='inline',
         candidates='batch',
+        dict_maxexes=0,  # skip building dictionary
     )
 
 
