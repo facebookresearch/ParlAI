@@ -113,6 +113,7 @@ jobs:
       - setupjslinting
       - run:
           name: JS Lint
+          working_directory: ~/ParlAI/parlai/mturk
           command: npm run lint
       - run:
           name: Lint
