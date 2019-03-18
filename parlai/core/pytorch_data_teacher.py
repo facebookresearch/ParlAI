@@ -420,7 +420,8 @@ def deserialize(obj):
     """
         Deserializes lists into Tensors
     """
-    for key in obj:
+    keys = list(obj.keys())
+    for key in keys:
         if type(obj[key]) is dict and obj[key].get('deserialized_tensor', False):
             dtype = STR_TO_TORCH_DTYPE[obj[key]['type']]
             val = obj[key]['value']

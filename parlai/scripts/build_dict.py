@@ -108,7 +108,7 @@ def build_dict(opt, skip_if_built=False):
         print('[ running dictionary over data.. ]')
         log_time = TimeLogger()
         total = world_dict.num_examples()
-        if opt['dict_maxexs'] > 0:
+        if opt['dict_maxexs'] >= 0:
             total = min(total, opt['dict_maxexs'])
 
         log_every_n_secs = opt.get('log_every_n_secs', None)
@@ -121,7 +121,7 @@ def build_dict(opt, skip_if_built=False):
             pbar = None
         while not world_dict.epoch_done():
             cnt += 1
-            if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
+            if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] >= 0:
                 print('Processed {} exs, moving on.'.format(opt['dict_maxexs']))
                 # don't wait too long...
                 break

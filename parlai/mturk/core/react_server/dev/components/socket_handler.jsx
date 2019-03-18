@@ -400,7 +400,14 @@ class SocketHandler extends React.Component {
     this.state.displayed_messages.push(new_message_id);
     this.props.onNewMessage(message);
     if (message.task_data !== undefined) {
+      let has_context = false;
+      for (let key of Object.keys(message.task_data)){
+        if (key !== "respond_with_form"){
+          has_context = true;
+        }
+      }
       message.task_data.last_update = (new Date()).getTime();
+      message.task_data.has_context = has_context;
       this.props.onNewTaskData(message.task_data);
     }
     this.setState({displayed_messages: this.state.displayed_messages});

@@ -45,11 +45,13 @@ must implement the following functions:
 
 .. code-block:: python
 
-    def score_candidates(self, batch, cand_vecs):
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """This function takes in a Batch object as well as a Tensor of
         candidate vectors. It must return a list of scores corresponding to
         the likelihood that the candidate vector at that index is the
-        proper response.
+        proper response. If `cand_encs` is not None (when we cache the
+        encoding of the candidate vectors), you may use these instead of
+        calling self.model on `cand_vecs`.
         """
         pass
 

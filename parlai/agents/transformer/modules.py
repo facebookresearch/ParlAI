@@ -144,6 +144,11 @@ class TransformerMemNetModel(nn.Module):
 
     def encode_context_memory(self, context_w, memories_w):
         # [batch, d]
+        if context_w is None:
+            # it's possible that only candidates were passed into the
+            # forward function, return None here for LHS representation
+            return None, None
+
         context_h = self.context_encoder(context_w)
 
         if memories_w is None:
@@ -618,6 +623,7 @@ class MultiHeadAttention(nn.Module):
         batch_size, query_len, dim = query.size()
         assert dim == self.dim, \
             f'Dimensions do not match: {dim} query vs {self.dim} configured'
+        assert mask is not None, 'Mask is None, please specify a mask'
         n_heads = self.n_heads
         dim_per_head = dim // n_heads
         scale = math.sqrt(dim_per_head)

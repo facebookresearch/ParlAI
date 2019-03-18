@@ -391,9 +391,17 @@ def load_agent_module(opt):
             if k not in new_opt:
                 new_opt[k] = v
         new_opt['model_file'] = model_file
-        if new_opt.get('dict_file') and not os.path.isfile(new_opt['dict_file']):
-            raise RuntimeError('WARNING: Dict file does not exist, check to make '
-                               'sure it is correct: {}'.format(new_opt['dict_file']))
+        if not new_opt.get('dict_file'):
+            new_opt['dict_file'] = model_file + '.dict'
+        elif new_opt.get('dict_file') and not os.path.isfile(new_opt['dict_file']):
+            old_dict_file = new_opt['dict_file']
+            new_opt['dict_file'] = model_file + '.dict'
+        if not os.path.isfile(new_opt['dict_file']):
+            raise RuntimeError(
+                'WARNING: Neither the specified dict file ({}) nor the '
+                '`model_file`.dict file ({}) exists, check to make sure either '
+                'is correct'.format(old_dict_file, new_opt['dict_file'])
+            )
         model_class = get_agent_module(new_opt['model'])
 
         # check for model version

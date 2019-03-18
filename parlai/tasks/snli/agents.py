@@ -49,3 +49,6 @@ class DefaultTeacher(DialogTeacher):
 
     def setup_data(self, path):
         return setup_data(path)
+
+    def label_candidates(self):
+        return ('entailment', 'contradiction', 'neutral')
