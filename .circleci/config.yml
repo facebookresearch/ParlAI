@@ -82,7 +82,7 @@ commands:
 jobs:
   datatests:
     executor: standard_cpu
-    working_directory: ~/ParlAI/parlai/
+    working_directory: ~/ParlAI
     steps:
       - checkout
       - setup
