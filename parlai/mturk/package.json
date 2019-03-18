@@ -4,6 +4,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
     "eslint": "^5.14.1",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-ignore-generated-and-nolint": "^1.0.0",
