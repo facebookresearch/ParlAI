@@ -230,6 +230,29 @@ class TorchClassifierAgent(TorchAgent):
         self.metrics['examples'] = 0
         self.metrics['loss'] = 0.0
 
+    def _report_prec_recall_metrics(self, confmat, class_name, metrics):
+        """Uses the confusion matrix to predict the recall and precision for
+        class `class_name`. Returns the number of examples of each class.
+        """
+        eps = 0.00001  # prevent divide by zero errors
+        true_positives = confmat[(class_name, class_name)]
+        num_actual_positives = sum([confmat[(class_name, c)]
+                                   for c in self.class_list]) + eps
+        num_predicted_positives = sum([confmat[(c, class_name)]
+                                      for c in self.class_list]) + eps
+
+        recall_str = 'class_{}_recall'.format(class_name)
+        prec_str = 'class_{}_prec'.format(class_name)
+        f1_str = 'class_{}_f1'.format(class_name)
+
+        # update metrics dict
+        metrics[recall_str] = true_positives / num_actual_positives
+        metrics[prec_str] = true_positives / num_predicted_positives
+        metrics[f1_str] = 2 * ((metrics[recall_str] * metrics[prec_str]) /
+                               (metrics[recall_str] + metrics[prec_str] + eps))
+
+        return num_actual_positives
+
     def report(self):
         """Report loss as well as precision, recall, and F1 metrics."""
         m = super().report()
@@ -247,31 +270,17 @@ class TorchClassifierAgent(TorchAgent):
                 metrics_list = [self.ref_class]
 
             examples_per_class = []
-
             for class_i in metrics_list:
-                # uses the confusion matrix to predict the recall and precision
-                true_positives = confmat[(class_i, class_i)]
-                num_actual_positives = sum([confmat[(class_i, c)]
-                                           for c in self.class_list]) + 0.0001
-                num_predicted_positives = sum([confmat[(c, class_i)]
-                                              for c in self.class_list]) + 0.0001
-                examples_per_class.append(num_actual_positives)
-
-                recall_str = 'class_{}_recall'.format(class_i)
-                prec_str = 'class_{}_prec'.format(class_i)
-                f1_str = 'class_{}_f1'.format(class_i)
-
-                m[recall_str] = true_positives / num_actual_positives
-                m[prec_str] = true_positives / num_predicted_positives
-                m[f1_str] = 2 * ((m[recall_str] * m[prec_str]) /
-                                 (m[recall_str] + m[prec_str] + 0.0001))
+                class_total = self._report_prec_recall_metrics(confmat,
+                                                               class_i, m)
+                examples_per_class.append(class_total)
 
             if len(examples_per_class) > 1:
                 # get weighted f1
                 f1 = 0
                 total_exs = sum(examples_per_class)
                 for i in range(len(self.class_list)):
-                    f1 += ((self.class_list[i] / total_exs) *
+                    f1 += ((examples_per_class[i] / total_exs) *
                            m['class_{}_f1'.format(self.class_list[i])])
                 m['weighted_f1'] = f1
 
