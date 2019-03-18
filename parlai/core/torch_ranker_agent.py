@@ -75,8 +75,8 @@ class TorchRankerAgent(TorchAgent):
             self.metrics = shared['metrics']
             states = None
         else:
-            self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0, 'inv_rank':0,
-                            'train_accuracy': 0.0}
+            self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
+                            'inv_rank': 0, 'train_accuracy': 0.0}
             self.build_model()
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
