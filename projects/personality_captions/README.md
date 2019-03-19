@@ -21,7 +21,7 @@ are [made available](https://github.com/facebookresearch/ParlAI/tree/master/parl
 
 ## Model Examples
 
-<p align="center"><img width="15%" src="Examples.png" /></p>
+<p align="center"><img width="85%" src="Examples.png" /></p>
 
 ## Citation
 
