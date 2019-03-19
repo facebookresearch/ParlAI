@@ -47,7 +47,7 @@ available for download.
 
 If you use the dataset or models in your own work, please cite with the following BibText entry:
 
-    @inproceedings{shuster2019perscap,
+    @inproceedings{shuster2019_personality_caps,
       author={Shuster, Kurt and Humeau, Samuel and Hu, Hexiang and Bordes, Antoine and Weston, Jason},
       title={Engaging Image Captioning via Personality},
       booktitle = {2019 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
