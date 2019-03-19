@@ -15,8 +15,23 @@ The Personality-Captions dataset can be accessed via ParlAI, with `-t personalit
 Additionally, the ParlAI MTurk tasks for data collection and human evaluation
 are [made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/personality_captions) in ParlAI.
 
-## Leaderboard
+## Leaderboards for Personality-Captions Task
 
+### Retrieval Models
+
+Model                                | Paper          | Test R@1
+------------------------------------ | -------------- | --------
+TransResNet, ResNeXt-IG-3.5B         | [Shuster et al. (2019)](https://arxiv.org/abs/1810.10665) | 77.5
+TransResNet, ResNet152               | [Shuster et al. (2019)](https://arxiv.org/abs/1810.10665) | 51.7
+TransResNet, No Images               | [Shuster et al. (2019)](https://arxiv.org/abs/1810.10665) | 25.8
+
+### Generative Models
+
+Model                                | Paper          | BLEU1 | BLEU4 | ROUGE-L | CIDEr | SPICE
+------------------------------------ | -------------- | ----- | ----- | ------- | ----- | -----
+UpDown, ResNeXt-IG-3.5B              | [Shuster et al. (2019)](https://arxiv.org/abs/1810.10665) | 44.0 | 8.0 | 27.4 | 16.5 | 5.2
+ShowAttTell, ResNeXt-IG-3.5B         | [Shuster et al. (2019)](https://arxiv.org/abs/1810.10665) | 43.3 | 7.1 | 27.0 | 12.6 | 3.6
+ShotTell, ResNeXt-IG-3.5B            | [Shuster et al. (2019)](https://arxiv.org/abs/1810.10665) | 38.4 | 7.3 | 24.3 | 9.6 | 1.6
 
 
 ## Pretrained Models
