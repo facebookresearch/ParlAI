@@ -1,5 +1,7 @@
 # Engaging Image Captioning via Personality
 
+Kurt Shuster, Samuel Humeau, Hexiang Hu, Antoine Bordes, Jason Weston
+
 Please see [Shuster et al. (CVPR 2019)](https://arxiv.org/abs/1810.10665) for more details.
 
 ## Abstract
@@ -18,6 +20,9 @@ are [made available](https://github.com/facebookresearch/ParlAI/tree/master/parl
 
 
 ## Pretrained Models
+
+Pretrained models are forthcoming; this website will be updated when they are
+available for download.
 
 ## Model Examples
 
