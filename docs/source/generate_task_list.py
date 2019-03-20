@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.tasks.task_list import task_list
 
-category_order = ['QA', 'Cloze', 'Goal', 'ChitChat', 'Negotiation', 'Visual']
+category_order = ['QA', 'Cloze', 'Goal', 'ChitChat', 'Negotiation', 'Visual', 'decanlp']
 category_task_list = {x: [] for x in category_order}
 
 fout = open('task_list.inc', 'w')
