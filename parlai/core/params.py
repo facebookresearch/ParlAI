@@ -628,7 +628,7 @@ class ParlaiParser(argparse.ArgumentParser):
             # also check override
             self.opt['override']['dict_file'] = modelzoo_path(
                 self.opt.get('datapath'), self.opt['override']['dict_file'])
-            
+
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
 
