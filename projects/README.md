@@ -41,7 +41,7 @@ _Task & models for chitchat with a given persona._
 - **Image Chat** [[paper]](https://klshuster.github.io/image_chat/) [[task]](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/image_chat).
   _Task for personality-based engaging dialogue on images._
 
-- **Personality-Captions** [[website]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://arxiv.org/abs/1810.10665).
+- **Personality-Captions** [[website]](http://parl.ai/projects/personality_captions/) [[paper]](https://arxiv.org/abs/1810.10665).
   _Task for personality-based engaging comments on images._
 
 ## Environment Grounded
