@@ -115,9 +115,7 @@ model_list = [
         "title": "Wizard of Wikipedia (End to end Generator)",
         "id": "wizard_of_wikipedia",
         "path": "models:wizard_of_wikipedia/end2end_generator/model",
-        "description": (
-            "End2End Generative model for Wizard of Wikipedia"
-        ),
+        "description": ("End2End Generative model for Wizard of Wikipedia"),
         "task": "wizard_of_wikipedia:generator",
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia:generator "
@@ -146,14 +144,27 @@ model_list = [
         ),
     },
     {
+        "title": "LIGHT BERT-Biranker Dialogue model",
+        "id": "light",
+        "path": "models:light/biranker_dialogue/model",
+        "agent": "bert_ranker/bi_encoder_ranker",
+        "task": "light_dialog",
+        "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
+        "example": (
+            "python examples/eval_model.py -t light_dialog "
+            "-mf models:light/biranker_dialogue/model"
+        ),
+        "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"
+        "'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'num_updates': 15050,"
+        "'examples': 6623, 'loss': 5307.0, 'mean_loss': 0.8013, 'mean_rank': 1.599, 'train_accuracy': 0}",
+    },
+    {
         "title": "Twitter conversational model",
         "id": "twitter",
         "path": "models:twitter/seq2seq/twitter_seq2seq_model",
         "agent": "legacy:seq2seq:0",
         "task": "twitter",
-        "description": (
-            "Generic conversational model trained on the twitter task"
-        ),
+        "description": ("Generic conversational model trained on the twitter task"),
         "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
-    }
+    },
 ]
