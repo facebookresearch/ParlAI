@@ -140,6 +140,10 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
                 self.eval_criterion = nn.CrossEntropyLoss(
                     ignore_index=self.NULL_IDX, size_average=False)
                     
+            if self.use_cuda:
+                self.train_criterion.cuda()
+                self.eval_criterion.cuda()
+            
                     
         else:
         
@@ -151,12 +155,12 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
             else:
                 self.criterion = nn.CrossEntropyLoss(
                     ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
+
             
-        
-           
+            if self.use_cuda:
+                self.criterion.cuda()           
                     
-        if self.use_cuda:
-            self.criterion.cuda()
+        
             
             
             
