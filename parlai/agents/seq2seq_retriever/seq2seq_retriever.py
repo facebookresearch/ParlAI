@@ -76,6 +76,11 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
             help='Whether to weight the loss with the idf weights '
                 '(must be pre-calculated)')
                 
+        agent.add_argument(
+            '-swap', '--swap-criterion-train-eval', type='bool', default=False,
+            help='Whether to swap the criterion between training and evaluation'
+            'i.e., train with idf weighting, but eval without idf in criterion')
+                
         super(Seq2seqRetrieverAgent, cls).add_cmdline_args(argparser)
         return agent
 
@@ -91,26 +96,125 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
 
     def build_criterion(self):
     
-    
-        if self.opt['datatype'] == 'train': 
+        if self.opt['weight_criterion_idf']:
         
-            if self.opt['weight_criterion_idf']:
+            # Weight token importance with idf, if desired.
+            tot_doc = float(self.dict.tot_doc)
+            min_idf = torch.log(torch.tensor([ tot_doc/ (tot_doc - 1.)]))
             
-                # Weight token importance with idf, if desired.
-                word_weights = torch.zeros(len(self.dict.freq.keys()))
-                        
-                for tok in self.dict.freq.keys(): 
-                    if self.dict.freq[tok] > 0: 
-                        word_idf = torch.log(
-                                        torch.tensor([float(self.dict.tot_doc) 
-                                                            / float(self.dict.doc_freq[tok])]
-                                                    )
-                                            )
-                        word_weights[self.dict.tok2ind[tok]] = word_idf
-                    else: 
-                        print(tok, self.dict.doc_freq[str(tok)], )
+            word_weights = min_idf * torch.ones(len(self.dict.freq.keys()))
+            
+            for tok in self.dict.freq.keys(): 
+                if self.dict.freq[tok] > 0: 
+                    word_idf = torch.log(
+                                    torch.tensor([tot_doc 
+                                                    / (1. + float(self.dict.doc_freq[tok]))]
+                                                )
+                                        )
+                    word_weights[self.dict.tok2ind[tok]] = torch.max(torch.tensor([word_idf, min_idf])) 
+                else: 
+                    print(tok, self.dict.doc_freq[str(tok)], )
                     
+        else: 
+        
+            # weight with 1/sqrt(freq)
+        
+            word_weights = torch.zeros(len(self.dict.freq.keys()))
+            for tok in self.dict.freq.keys(): 
+                word_weights[self.dict.tok2ind[tok]] = 1./(float(self.dict.freq[tok]) + 1.)**.5
+        
+        
+        if self.opt['swap_criterion_train_eval']:
             
+            # set up train criteria
+            if self.opt.get('numsoftmax', 1) > 1:
+                
+                self.train_criterion = nn.NLLLoss(
+                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
+                self.eval_criterion = nn.NLLLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
+                    
+            else:
+                self.train_criterion = nn.CrossEntropyLoss(
+                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
+                self.eval_criterion = nn.CrossEntropyLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
+                    
+                    
+        else:
+        
+            # set up universal criterion
+            if self.opt.get('numsoftmax', 1) > 1:
+                self.criterion = nn.NLLLoss(
+                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
+            
+            else:
+                self.criterion = nn.CrossEntropyLoss(
+                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
+            
+        
+           
+                    
+        if self.use_cuda:
+            self.criterion.cuda()
+            
+            
+            
+    
+    def compute_loss(self, batch, return_output=False):
+        
+        ''' modified from parlai/core/torch_generator_agent.py 
+        This function overwrites parent class to compute idf-weighted loss 
+        if training and not weight the loss if validating. This encourages
+        more agressive updates to less frequent words during training, but 
+        training should stop when the text looks good over all vocabulary.'''
+        
+        
+        """
+        Computes and returns the loss for the given batch. Easily overridable for
+        customized loss functions.
+        If return_output is True, the full output from the call to self.model()
+        is also returned, via a (loss, model_output) pair.
+        """
+        
+        is_training = any('labels' in obs for obs in self.observation)  
+        
+        if batch.label_vec is None:
+            raise ValueError('Cannot compute loss without a label.')
+        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
+        scores, preds, *_ = model_output
+        score_view = scores.view(-1, scores.size(-1))
+        
+        if self.opt['swap_criterion_train_eval']:
+        
+            if is_training: 
+                loss = self.train_criterion(score_view, batch.label_vec.view(-1))
+            else: 
+                loss = self.eval_criterion(score_view, batch.label_vec.view(-1))
+                
+        else: 
+            loss = self.criterion(score_view, batch.label_vec.view(-1))
+            
+        # save loss to metrics
+        notnull = batch.label_vec.ne(self.NULL_IDX)
+        target_tokens = notnull.long().sum().item()
+        correct = ((batch.label_vec == preds) * notnull).sum().item()
+        self.metrics['correct_tokens'] += correct
+        self.metrics['nll_loss'] += loss.item()
+        self.metrics['num_tokens'] += target_tokens
+        loss /= target_tokens  # average loss per token
+        if return_output:
+            return (loss, model_output)
+        else:
+            return loss            
+            
+ 
+
+
+
+
+
+
 #                 idf_scorer = IDFScorer(self.opt)
 #                 min_idf = min(idf_scorer.vectorizer.idf_)
 #                 word_weights = min_idf * torch.ones(len(self.dict.freq.keys()))
@@ -130,44 +234,9 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
 #                             
 #                             else: 
 #                                 print('there is no idf for token: ', tok, ' type: ', type(tok))
-        
-            else: 
-            
-                # weight with 1/sqrt(freq)
-            
-                word_weights = torch.zeros(len(self.dict.freq.keys()))
-                for tok in self.dict.freq.keys(): 
-                    word_weights[self.dict.tok2ind[tok]] = 1./(float(self.dict.freq[tok]) + 1.)**.5
-                
-                
-            # set up criteria
-            if self.opt.get('numsoftmax', 1) > 1:
-                self.criterion = nn.NLLLoss(
-                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
-            else:
-                self.criterion = nn.CrossEntropyLoss(
-                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
-        
-        else:
-        
-            # don't increase weights when decoding, only for training. 
-            
-            # set up criteria
-            if self.opt.get('numsoftmax', 1) > 1:
-                self.criterion = nn.NLLLoss(
-                    ignore_index=self.NULL_IDX, size_average=False)
-            else:
-                self.criterion = nn.CrossEntropyLoss(
-                    ignore_index=self.NULL_IDX, size_average=False)
-                    
 
-        if self.use_cuda:
-            self.criterion.cuda()
-            
-            
-            
-            
-            
-            
+
+
+
             
             
