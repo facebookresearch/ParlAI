@@ -87,7 +87,7 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
 
     def __init__(self, opt, shared=None):
         
-        if shared and self.opt['swap_criterion_train_eval']:
+        if shared and opt['swap_criterion_train_eval']:
             # set up shared properties
             self.train_criterion = shared['train_criterion']
             self.eval_criterion = shared['eval_criterion']
