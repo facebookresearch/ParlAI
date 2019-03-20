@@ -87,11 +87,28 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
 
     def __init__(self, opt, shared=None):
         
+        if shared and self.opt['swap_criterion_train_eval']:
+            # set up shared properties
+            self.train_criterion = shared['train_criterion']
+            self.eval_criterion = shared['eval_criterion']
+            
         """Set up model."""
         super().__init__(opt, shared)
         self.id = 'Seq2SeqRetriever'
         
         
+        
+        
+    def share(self):
+    
+        shared = super().share()
+        
+        if self.opt['swap_criterion_train_eval']: 
+            shared['train_criterion'] = self.train_criterion
+            shared['eval_criterion'] = self.eval_criterion
+        
+        return shared
+
 
 
     def build_criterion(self):
@@ -134,15 +151,23 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
                 self.eval_criterion = nn.NLLLoss(
                     ignore_index=self.NULL_IDX, size_average=False)
                     
+                self.criterion = nn.NLLLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
+                    
             else:
                 self.train_criterion = nn.CrossEntropyLoss(
                     ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
                 self.eval_criterion = nn.CrossEntropyLoss(
                     ignore_index=self.NULL_IDX, size_average=False)
                     
+                    
+                self.criterion = nn.CrossEntropyLoss(
+                    ignore_index=self.NULL_IDX, size_average=False)
+                    
             if self.use_cuda:
                 self.train_criterion.cuda()
                 self.eval_criterion.cuda()
+                self.criterion.cuda()
             
                     
         else:
