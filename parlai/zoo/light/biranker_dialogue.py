@@ -17,5 +17,5 @@ def download(datapath):
     }
     fnames = ['biranker_dialogue.tar.gz']
     download_models(
-        opt, fnames, 'light', version='v0.5' #, use_model_type=False
+        opt, fnames, 'light', version='v0.5', use_model_type=True
     )

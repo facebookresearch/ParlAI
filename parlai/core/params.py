@@ -25,6 +25,7 @@ def get_model_name(opt):
         # try to get model name from model opt file
         model_file = opt.get('model_file', None)
         if model_file is not None:
+            model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
             if os.path.isfile(optfile):
                 try:
@@ -627,7 +628,7 @@ class ParlaiParser(argparse.ArgumentParser):
             # also check override
             self.opt['override']['dict_file'] = modelzoo_path(
                 self.opt.get('datapath'), self.opt['override']['dict_file'])
-
+            
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
 

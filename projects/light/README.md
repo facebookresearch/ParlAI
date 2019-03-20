@@ -34,7 +34,10 @@ You can view the data or train your own ParlAI agent on the LIGHT tasks with
 
 ## Pretrained Models
 
-Models will be released soon. Please check back here in the future.
+The BERT Bi-Ranker dialogue model is available e.g. via this command (which automatically downloads it):
+
+    python examples/eval_model.py -t light_dialog -mf models:light/biranker_dialogue/model
+
 
 ## Citation
 
