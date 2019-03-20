@@ -146,6 +146,20 @@ model_list = [
         ),
     },
     {
+        "title": "LIGHT BERT-Biranker Dialogue model",
+        "id": "light",
+        "path": "models:light/biranker_dialogue/model",
+        "agent": "bert_ranker/bi_encoder_ranker",
+        "task": "light_dialog",
+        "description": (
+            "LIGHT Dialogue task, replicating the numbers from the paper."
+        ),
+        "example": (
+            "python examples/eval_model.py -t light_dialog -mf models:light/biranker_dialogue/model"
+        ),
+        "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965, 'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'num_updates': 15050, 'examples': 6623, 'loss': 5307.0, 'mean_loss': 0.8013, 'mean_rank': 1.599, 'train_accuracy': 0}"
+    }
+    {
         "title": "Twitter conversational model",
         "id": "twitter",
         "path": "models:twitter/seq2seq/twitter_seq2seq_model",
