@@ -108,37 +108,26 @@ class LightEvalTestWorld(MTurkOnboardWorld):
                 'turn': 'SECOND_TURN',
                 'curr_message_context': {'action': 'gesture frown'},
                 'actions': [
-                    'You think you can say whatever you want '
-                    'because we\'re alone?',
+                    'You think you can say whatever you want because we\'re alone?',
                     'Do you want to grab some tea?',
-                    'What makes you think you can stand up to me, silly man? '
-                    'I have three times your strength. I have weapons to the '
-                    'teeth. What would make you think this was a good idea?',
+                    'What makes you think you can stand up to me, silly man? I have three times your strength. I have weapons to the teeth. What would make you think this was a good idea?',  # NOQA
                     'Yeah that guy is something of a jerk',
                     'I just feel he doesn\'t have the best sense of humor...',
                     'Yeah landlubber, aye find this is a great hiding spot too.',
-                    'If only you could say that to my face one more time. '
-                    'I\'ve missed you too much...',
-                    'One more beer for the gang? I feel like you would be the '
-                    'type to have plenty to drink.',
+                    'If only you could say that to my face one more time. I\'ve missed you too much...',  # NOQA
+                    'One more beer for the gang? I feel like you would be the type to have plenty to drink.', # NOQA
                     'The servants quarters are pretty tightly packed aren\'t they?',
                     'I hate being an archer...',
                     correct_phrase,
-                    'Once upon a time I lived for that king, but nowadays '
-                    'I feel like I could go without him. Thats why I\'m here '
-                    'in the servants quarters.',
+                    'Once upon a time I lived for that king, but nowadays I feel like I could go without him. Thats why I\'m here in the servants quarters.',  # NOQA
                     'Hey there little fella, do you think you can get me some food?',
-                    'I know you want more than just some of our wares, '
-                    'I\'m selling everything.',
+                    'I know you want more than just some of our wares, I\'m selling everything.',  # NOQA
                     'One more song! I know you know a few more of them!',
                     'If that isn\'t a good joke, I don\'t know what is? Hahahahaha',
-                    'Three fort nights too late, I will not stand for this! '
-                    'You should have been here sooner!',
+                    'Three fort nights too late, I will not stand for this! You should have been here sooner!',  # NOQA
                     'Aw sweetheart, I just want you to know how much I care.',
-                    'I have no spells for you! My wizardry is just for me and '
-                    'my acolytes.',
-                    'How did you find out the kinds of jokes that the king '
-                    'likes so much?',
+                    'I have no spells for you! My wizardry is just for me and my acolytes.',  # NOQA
+                    'How did you find out the kinds of jokes that the king likes so much?',  # NOQA
                 ]
             }
         }

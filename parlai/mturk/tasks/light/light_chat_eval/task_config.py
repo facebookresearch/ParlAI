@@ -20,10 +20,10 @@ task_config['hit_title'] = 'Play a character in a room of a text adventure game'
 On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
 view of search results, and in the HIT and assignment screens.
 """
-task_config['hit_description'] = \
-    'Given a character and a personality, as well as a setting, communicate ' \
+task_config['hit_description'] = (
+    'Given a character and a personality, as well as a setting, communicate '
     'with your partner and complete game actions.'
-
+)
 
 """One or more words or phrases that describe the HIT, separated by commas.
 On MTurk website, these words are used in searches to find HITs.

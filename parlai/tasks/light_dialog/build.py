@@ -20,17 +20,17 @@ def download(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
         # Download the data.
-        url = ('https://dl.fbaipublicfiles.com/parlai/light/' +
+        url = ('http://parl.ai/downloads/light/' +
                'light-dialog-processed-small7.pkl')
         fname = 'light_data.pkl'
         build_data.download(url, dpath, fname)
         # Download the unseen data.
-        url = 'https://dl.fbaipublicfiles.com/parlai/light/light-unseen-processed2.pkl'
+        url = 'http://parl.ai/downloads/light/light-unseen-processed2.pkl'
         fname = 'light_unseen_data.pkl'
         build_data.download(url, dpath, fname)
 
         # Download the environment dataset.
-        url = 'https://dl.fbaipublicfiles.com/parlai/light/light-environment.pkl'
+        url = 'http://parl.ai/downloads/light/light-environment.pkl'
         fname = 'light_environment.pkl'
         build_data.download(url, dpath, fname)
 

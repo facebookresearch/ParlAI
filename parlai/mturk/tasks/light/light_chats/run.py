@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
-from parlai.mturk.tasks.light.light_chats.worlds import \
+from parlai.mturk.tasks.light.light_chats.worlds import (
     LightChatOnboardingWorld, LightChatTaskWorld
+)
 import parlai.mturk.core.mturk_utils as mturk_utils
 import parlai.mturk.tasks.light.light_chats.graph as graph
 from parlai.mturk.core.mturk_manager import MTurkManager
