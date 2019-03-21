@@ -54,8 +54,8 @@ SNS_ASSIGN_ABANDONDED = 'AssignmentAbandoned'
 SNS_ASSIGN_SUBMITTED = 'AssignmentSubmitted'
 SNS_ASSIGN_RETURNED = 'AssignmentReturned'
 
-PARLAI_MTURK_NOTICE_URL = 'http://www.parl.ai/mturk/mturk_notice/'
-PARLAI_MTURK_UPLOAD_URL = 'http://www.parl.ai/mturk/mturk_stats/'
+PARLAI_MTURK_NOTICE_URL = 'http://mturk.parl.ai/mturk/mturk_notice/'
+PARLAI_MTURK_UPLOAD_URL = 'http://mturk.parl.ai/mturk/mturk_stats/'
 PARLAI_CRED_DIR = os.path.expanduser('~/.parlai')
 PARLAI_MTURK_LOG_PERMISSION_FILE = \
     os.path.join(PARLAI_CRED_DIR, 'mturk_log_permission.pickle')
