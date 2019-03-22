@@ -355,8 +355,8 @@ class TransformerEncoder(nn.Module):
         tensor *= mask.unsqueeze(-1).float()
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
-
-        if self.reduction_type == 'first' :
+        if self.reduction:
+            if self.reduction_type == 'first' :
                 return tensor[:,0,:]
             elif self.reduction_type == 'max' :
                 return tensor.max(dim=1)[0]
@@ -739,7 +739,7 @@ class TransformerFFN(nn.Module):
         # TODO: initialize biases to 0
 
     def forward(self, x):
-         if self.gelu_activation:
+        if self.gelu_activation:
             x = gelu(self.lin1(x))
         else:
             x = F.relu(self.lin1(x))
