@@ -210,6 +210,10 @@ class SocketManager():
         self.last_sent_heartbeat_time = {}  # time of last heartbeat sent
         self.last_received_heartbeat = {}  # actual last received heartbeat
         self.pongs_without_heartbeat = {}
+        # TODO update processed packets to *ensure* only one execution per
+        # packet, as right now two threads can be spawned to process the
+        # same packet at the same time, as the packet is only added to this
+        # set after processing is complete.
         self.processed_packets = set()
         self.packet_map = {}
         self.alive = False
