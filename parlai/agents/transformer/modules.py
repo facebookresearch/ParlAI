@@ -322,7 +322,7 @@ class TransformerEncoder(nn.Module):
         else:
             nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
 
-         #embedding normalization
+        #embedding normalization
         if self.embedding_normalization:
             self.layer_norm_emb = nn.LayerNorm(self.dim, eps=1e-12)
 
