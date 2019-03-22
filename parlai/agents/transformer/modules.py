@@ -121,7 +121,7 @@ class TransformerMemNetModel(nn.Module):
         else:
             self.reduction_type = None
 
-         self.context_encoder = _build_encoder(
+        self.context_encoder = _build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx,
             reduction = True, reduction_type = self.reduction_type,
             n_positions = n_positions, gelu_activation = self.gelu_activation,
@@ -133,7 +133,7 @@ class TransformerMemNetModel(nn.Module):
                 self.context_encoder, self.context_encoder.out_dim,
             )
         else:
-             self.cand_encoder = _build_encoder(
+            self.cand_encoder = _build_encoder(
                 opt, dictionary, self.embeddings, self.pad_idx,
                 n_positions=n_positions,
                 reduction=True, reduction_type = self.reduction_type,
