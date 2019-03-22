@@ -29,8 +29,9 @@ def _create_embeddings(dictionary, embedding_size, padding_idx):
 
 
 def _build_encoder(opt, dictionary, embedding=None, padding_idx=None,
-                   reduction=True,reduction_type=None,
-                   n_positions=1024, gelu_activation=False, embedding_normalization=False):
+                   reduction=True, reduction_type=None,
+                   n_positions=1024, gelu_activation=False,
+                   embedding_normalization=False):
     return TransformerEncoder(
         n_heads=opt['n_heads'],
         n_layers=opt['n_layers'],
@@ -390,7 +391,9 @@ class TransformerEncoderLayer(nn.Module):
             dropout=attention_dropout,  # --attention-dropout
         )
         self.norm1 = nn.LayerNorm(embedding_size,eps=1e-12)
-        self.ffn = TransformerFFN(embedding_size, ffn_size, relu_dropout=relu_dropout,gelu_activation=self.gelu_activation)
+        self.ffn = TransformerFFN(embedding_size, ffn_size,
+                                  relu_dropout=relu_dropout,
+                                  gelu_activation=self.gelu_activation)
         self.norm2 = nn.LayerNorm(embedding_size,eps=1e-12)
         self.dropout = nn.Dropout(p=dropout)
 
