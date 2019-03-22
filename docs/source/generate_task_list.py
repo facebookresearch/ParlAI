@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.tasks.task_list import task_list
 
-category_order = ['QA', 'Cloze', 'Goal', 'ChitChat', 'Negotiation', 'Visual']
+category_order = ['QA', 'Cloze', 'Goal', 'ChitChat', 'Negotiation', 'Visual', 'decanlp']
 category_task_list = {x: [] for x in category_order}
 
 fout = open('task_list.inc', 'w')
@@ -39,16 +39,16 @@ for category, tl in category_task_list.items():
         fout.write("**" + display_name + "**   " + description + '  ')
         # fout.write('^' * len(display_name) + '\n\n')
 
-        urlend = task[:max(task.find(':'), len(task))]
+        urlend = task[: max(task.find(':'), len(task))]
         url = (
-            "https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/" +
-            urlend
+            "https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/"
+            + urlend
         )
         # codez = "`c <" + url + ">`_"
         fout.write("[ task:`" + task + " <" + url + ">`_  tags:``#" + id + '``, ')
         tag_list_string = ''
         for i in range(len(tags)):
-            tag_list_string += ('``#' + tags[i] + '``')
+            tag_list_string += '``#' + tags[i] + '``'
             if i < len(tags) - 1:
                 tag_list_string += ', '
         fout.write(tag_list_string + ' ]\n\n')

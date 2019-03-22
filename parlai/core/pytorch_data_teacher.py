@@ -9,6 +9,7 @@
 
 """
 from .teachers import FixedDialogTeacher
+from parlai.core.utils import warn_once
 from parlai.scripts.build_pytorch_data import build_data
 from .agents import get_agent_module
 import json
@@ -419,7 +420,8 @@ def deserialize(obj):
     """
         Deserializes lists into Tensors
     """
-    for key in obj:
+    keys = list(obj.keys())
+    for key in keys:
         if type(obj[key]) is dict and obj[key].get('deserialized_tensor', False):
             dtype = STR_TO_TORCH_DTYPE[obj[key]['type']]
             val = obj[key]['value']
@@ -586,6 +588,11 @@ class PytorchDataTeacher(FixedDialogTeacher):
                         ('stream' in self.datatype and not opt.get('shuffle')))
         if self.ordered:
             # force index for ordered, so that we see every example
+            warn_once(
+                '\nNote: You are using PytorchDataTeacher with ordered '
+                'examples. Please specify `--shuffle` if you would like '
+                'to have examples loaded in randomized order.\n'
+            )
             self.batch_cache_type = 'index'
 
         if not shared:

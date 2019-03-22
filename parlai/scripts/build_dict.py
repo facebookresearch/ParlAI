@@ -27,18 +27,23 @@ import os
 import tqdm
 
 
-def setup_args(parser=None):
+def setup_args(parser=None, hidden=True):
     if parser is None:
         parser = ParlaiParser(True, True, 'Build a dictionary.')
+    parser.add_pytorch_datateacher_args()
     dict_loop = parser.add_argument_group('Dictionary Loop Arguments')
     dict_loop.add_argument('--dict-maxexs', default=-1, type=int,
-                           help='max number of examples to build dict on')
+                           help='max number of examples to build dict on',
+                           hidden=hidden)
     dict_loop.add_argument('--dict-include-valid', default=False, type='bool',
                            help='Include validation set in dictionary building '
-                                'for task.')
+                                'for task.',
+                           hidden=hidden)
     dict_loop.add_argument('--dict-include-test', default=False, type='bool',
-                           help='Include test set in dictionary building for task.')
-    dict_loop.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+                           help='Include test set in dictionary building for task.',
+                           hidden=hidden)
+    dict_loop.add_argument('-ltim', '--log-every-n-secs', type=float, default=2,
+                           hidden=hidden)
     partial, _ = parser.parse_known_args(nohelp=True)
     if vars(partial).get('dict_class'):
         str2class(vars(partial).get('dict_class')).add_cmdline_args(parser)
@@ -103,7 +108,7 @@ def build_dict(opt, skip_if_built=False):
         print('[ running dictionary over data.. ]')
         log_time = TimeLogger()
         total = world_dict.num_examples()
-        if opt['dict_maxexs'] > 0:
+        if opt['dict_maxexs'] >= 0:
             total = min(total, opt['dict_maxexs'])
 
         log_every_n_secs = opt.get('log_every_n_secs', None)
@@ -116,7 +121,7 @@ def build_dict(opt, skip_if_built=False):
             pbar = None
         while not world_dict.epoch_done():
             cnt += 1
-            if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] > 0:
+            if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] >= 0:
                 print('Processed {} exs, moving on.'.format(opt['dict_maxexs']))
                 # don't wait too long...
                 break
@@ -133,4 +138,4 @@ def build_dict(opt, skip_if_built=False):
 
 
 if __name__ == '__main__':
-    build_dict(setup_args().parse_args())
+    build_dict(setup_args(hidden=False).parse_args())

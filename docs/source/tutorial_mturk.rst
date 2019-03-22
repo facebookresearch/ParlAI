@@ -5,7 +5,7 @@
 
 Using Mechanical Turk
 =====================
-**Authors**: Will Feng, Jack Urbanek, Emily Dinan
+**Authors**: Jack Urbanek, Emily Dinan, Will Feng
 
 In ParlAI, you can use Amazon Mechanical Turk for **data collection**, **training**, or **evaluation** of your dialog model.
 
@@ -32,6 +32,7 @@ We provide a few examples of using Mechanical Turk with ParlAI:
 - `Multi-Agent Dialog <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/multi_agent_dialog/>`__: round-robin chat between a local human agent and two Turkers.
 - `Deal or No Deal <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/dealnodeal/>`__: negotiation chat between two agents over how to fairly divide a fixed set of items when each agent values the items differently.
 - `Qualification Flow Example <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/qualification_flow_example>`__: filter out workers from working on more instances of your task if they fail to complete a test instance properly.
+- `React Task Demo <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/react_task_demo>`__: Demo task for displaying custom components using the React frontend.
 
 Task 1: Collecting Data
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -90,17 +91,51 @@ ParlAI MTurk is able to support filtering users through a form of qualification 
 In this task, all users see a test version of the task on the first time they enter it and a real version every subsequent time, however users that fail to pass the test version are assigned a qualification that prevents them from working on the task again. Thus ParlAI users are able to filter out workers from the very beginning who don't necessarily meet the specifications you are going for.
 This is preferred to filtering out workers using the onboarding world for tasks that require a full instance's worth of work to verify a worker's readiness.
 
+Task 6: Advanced Functionality - React Task Demo
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ParlAI MTurk allows creation of arbitrary tasks, so long as the required components can be created in React. The `React Task Demo <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/react_task_demo>`__ task exists to show how this is set up for both cases where you are building your own components from scratch and cases where you want to import other components as dependancies.
+
+This task consists of 3 agents participating in different roles with different frontend needs. By setting ``MTurkAgent.id`` to the correct values, different interfaces are displayed to an 'Asker' who can ask any questions, an 'Answerer' who is only able to respond with numeric values, and an `Evaluator` who observes the chat and approves or rejects at the end. These components are defined and linked in the ``frontend/components/custom.jsx`` file.
+
 Creating Your Own Task
 ----------------------
 
-ParlAI provides a generic MTurk dialog interface that one can use to implement any kind of dialog tasks. To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example ``worlds.py``, ``run.py`` and ``task_config.py`` files to create your task.
+ParlAI provides a generic MTurk dialog interface that one can use to implement any kind of dialog tasks. To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example ``worlds.py``, ``run.py`` and ``task_config.py`` files to create your task. Be sure to update import locations!
 
 A few things to keep in mind:
 
 1. To end a conversation, you should check to see if an action has ``episode_done`` set to ``True``, as this signals that the world should start returning ``True`` for the ``episode_done`` function.
-2. In ``run.py``, You can use ``hit_index`` and ``assignment_index`` to differentiate between different HITs and assignments, and change the content of the task accordingly.
-3. Make sure to test your dialog task using MTurk's sandbox mode before pushing it live, by using the ``--sandbox`` flag (enabled by default) when running ``run.py``.
-4. [Optional] If you want to show a custom webpage (instead of the default one) for any of your MTurk agents, you can create an ``html`` folder within your task directory, and then create the ``<mturk_agent_id>_cover_page.html`` and ``<mturk_agent_id>_index.html`` files within the ``html`` directory. In those files, you can extend from ``core.html`` and override any code blocks that you want to change. (Please look at `parlai/mturk/core/html/mturk_index.html <https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/core/server/html/mturk_index.html>`__ as an example.) These agent-specific templates will automatically be shown to the Turkers in the next run.
+2. Make sure to test your dialog task using MTurk's sandbox mode before pushing it live, by using the ``--sandbox`` flag (enabled by default) when running ``run.py``.
+3. Your ``worlds.py`` worlds should be handling different types of agent disconnect messages. ``MTurkAgent.act()`` can return any of ``MTURK_DISCONNECT_MESSAGE``, ``RETURN_MESSAGE``, and ``TIMEOUT_MESSAGE`` as defined in ``MTurkAgent``. Your world should still be able to continue to completion in any of these circumstances.
+4. NO DATA is saved automatically in the way that regular MTurk tasks save data. Unless you're using the Alpha saving and loading functionality described below, you'll need to save your data in your ``world.shutdown()`` function.
+
+Advanced Task Techniques
+------------------------
+
+The ParlAI-MTurk platform allows for a number of advanced customization techniques to cover specialized tasks. The below sections explain how to leverage these more advanced features for task control.
+
+Custom Frontend Components
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to show a custom webpage (instead of the default one) for any of your MTurk agents, you can create an ``frontend`` folder within your task directory, and then create the ``custom.jsx`` within (see the React Task Demo for an example). For most custom tasks, creating your desired frontend is as simple as creating a ``frontend/components/custom.jsx`` file in your task directory that overrides a component you want to replace, and setting `task_config['frontend_version'] = 1` in your ``task_config.py``. Custom task components are keyed on the ``MTurkAgent.id`` field, as such it is possible to render different frontends for different agents in a task. The react task demo displays this possibility by having 3 roles, each with custom components.
+
+In general, if you want to create a custom component that replaces a component from the baseline UI, you should start off by copying the component you want to replace from `the core components file <https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/core/react_server/dev/components/core_components.jsx>`__ into your ``frontend/components/custom.jsx`` file. After creating your own version of a component, you'll need to export it properly, as displayed below:
+
+.. code-block:: javascript
+
+    export default {
+      // XWantedComponentName: {'agent_id': ReplacementComponentForAgent},
+    };
+
+In the above code snippet, we're intending to replace ``WantedComponentName`` (like ``ChatMessage`` or ``TextResponse``). For the system to properly pick this up, we prepend ``X`` to the component name in the module that we export. The object that corresponds to the component we want to replace should be a map from the value in the ``MTurkAgent.id`` field for a given agent to the specific custom component you want them to be able to see. You can use ``'default'`` to have the same component displayed for all agent ids. If on runtime the linker finds no custom component for a given agent's id, it will use the default defined in ``core_components.jsx``.
+
+Displaying Task Context
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Some tasks may want to display additional context, such as an image. In order to support this as controllable from your ``worlds.py`` file, we support a special field that can be observed from the ``act`` dict supplied to ``MTurkAgent.observe(act)``. This is the ``act['task_data']`` field, and anything you put inside it will be available to all frontend components in the  ``this.props.task_data`` field. It will also be rendered in the ``ContextView`` component in the left pane.
+
+More details and an example coming soon.
 
 Running a Task
 --------------
@@ -179,6 +214,11 @@ Rejecting Work
 - Most Turkers take their work very seriously, so if you find yourself with many different workers making similar mistakes on your task, it's possible the task itself is unclear. You **shouldn't** be rejecting work in this case, rather you should update your instructions and see if the problem resolves.
 - Reject sparingly at first and give clear reasons for rejection/how to improve. Rejections with no context are a violation of Amazon's TOS.
 
+Filtering Workers
+^^^^^^^^^^^^^^^^^
+- For tasks where it is reasonably easy to tell whether or not a worker is capable of working on the task (generally less than 5 minutes of reading and interacting), it's appropriate to build a testing stage into your onboarding world. This stage should only be shown to workers once, and failing the task should soft block the worker and expire the HIT.
+- For tasks where it can be difficult to assess a worker's quality level, you should use the kind of flow demonstrated in the MTurk Qualification Flow demo task.
+
 Soft-blocking vs. Hard-blocking
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -205,6 +245,75 @@ Other Tips
 - Check your MTurk-associated email frequently when running a task, and be responsive to the workers working on your tasks. This is important to keep a good reputation in the MTurk community.
 - If you notice that certain workers are doing a really good job on the task, send them bonuses, as this will encourage them to work on your HITs more in the future. It will also be a visible way for you to acknowledge their good work.
 
+
+ParlAI-MTurk Alpha Functionality
+--------------------------------
+
+ParlAI-MTurk has a number of alpha features that surround maintaining a local database of run information. This alpha functionality includes a local webapp for testing, monitoring, and reviewing tasks, as well as a standardized flow for saving the data collected during a task run. Using this alpha functionality is blocked behind ``MTurkManager(use_db=True)``. Setting this flag to true when initializing your ``MTurkManager`` begins storing information locally in a place that the PMT platform knows where to find it. This functionality is very much still in alpha, and thus the documentation is going to be brief and primarily point to code as the source of truth.
+
+Running the ParlAI-MTurk Webapp
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To launch the webapp, you'll need to run ``python server.py`` from within the ``ParlAI/parlai/mturk/webapp`` folder. At the moment, you will need to kill and restart this server in order to apply any changes to task files.
+
+Testing a task in the webapp
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+One primary feature of the webapp is an easy-to-iterate way to test new tasks without needing to launch to sandbox. If you're using the react frontend (which you should be), you can test tasks by navigating to ``/app/tasks/<your_task_name>``, where ``<your_task_name>`` is the task directory that contains your ``run.py`` and ``worlds.py`` files. Making edits to these files will require relaunching the webapp to test changes at the moment.
+
+Reviewing tasks in the webapp
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Another primary feature of the webapp is being able to review work from a task that is complete or still running. Generally this can be accessed from a particular run's page, which can be navigated to from the home page.
+
+Saving and Loading data via the database
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If using ``use_db``, all runs will attempt to save data into local directories and link them via their run ids and worker ids. The data that is saved by default is defined in the ``MTurkDataWorld`` class, along with instructions on how to save custom data. The actual saving process occurs in ``MTurkDataHandler``.
+
+Data can later be queried using ``MTurkDataHandler``. Below is a code snippet example for building an array of all of the runs and associated data by leveraging the class directly:
+
+.. code-block:: python
+
+    from importlib import reload
+    from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
+    db_logger = MTurkDataHandler()
+
+    all_runs = db_logger.get_all_run_data()
+
+    pairings = []
+    for run_id in all_runs:
+        pairings = pairings + db_logger.get_pairings_for_run(run_id['run_id'])
+
+    def row_to_dict(row):
+         return (dict(zip(row.keys(), row)))
+
+    pairings = [row_to_dict(p) for p in pairings]
+
+    for pairing in pairings:
+        if pairing['conversation_id'] is not None:
+            pairing['assign_data'] = db_logger.get_conversation_data(pairing['run_id'], pairing['conversation_id'], pairing['worker_id'], False)
+        else:
+            pairing['assign_data'] = None
+
+    for pairing in pairings:
+        pairing['review_status'] = db_logger.get_assignment_data(pairing['assignment_id'])['status']
+
+    pairings = [p for p in pairings if p['assign_data'] is not None]
+    pairings = [p for p in pairings if p['assign_data'].get('data') is not None]
+
+    pairings_by_conv_run_id = {}
+    for p in pairings:
+        key_id = '{}|{}'.format(p['conversation_id'], p['run_id'])
+        if key_id not in pairings_by_conv_run_id:
+            pairings_by_conv_run_id[key_id] = {'workers_info': []}
+        pairings_by_conv_run_id[key_id]['workers_info'].append(p)
+
+    for key_id, p in pairings_by_conv_run_id.items():
+        stuff = key_id.split('|')
+        conv_id = stuff[0]
+        run_id = stuff[1]
+        p['conv_info'] = db_logger.get_full_conversation_data(run_id, conv_id, False)
 
 -------
 

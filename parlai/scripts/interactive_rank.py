@@ -31,6 +31,7 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser()
+    parser.add_pytorch_datateacher_args()
     parser.set_params(model='parlai.agents.local_human.local_human:LocalHumanAgent')
     return parser
 

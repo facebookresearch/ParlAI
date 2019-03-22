@@ -47,7 +47,8 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             BertModel.from_pretrained(self.pretrained_path),
             1,
             add_transformer_layer=self.opt['add_transformer_layer'],
-            layer_pulled=self.opt['pull_from_layer']
+            layer_pulled=self.opt['pull_from_layer'],
+            aggregation=self.opt['bert_aggregation']
         )
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
@@ -55,7 +56,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
                                             self.opt['type_optimization'],
                                             self.opt['learningrate'])
 
-    def score_candidates(self, batch, cand_vecs):
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
         # concatenate text and candidates (not so easy)
         # unpad and break
         nb_cands = cand_vecs.size()[1]

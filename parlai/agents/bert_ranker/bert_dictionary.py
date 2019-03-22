@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.dict import DictionaryAgent
+from parlai.zoo.bert.build import download
 try:
     from pytorch_pretrained_bert import BertTokenizer
 except ImportError:
@@ -16,12 +17,12 @@ import os
 
 
 class BertDictionaryAgent(DictionaryAgent):
-    """ Allow to use the Torch Agent with the wordpiece dictionary of Hugging Face.
+    """Allow to use the Torch Agent with the wordpiece dictionary of Hugging Face.
     """
-
     def __init__(self, opt):
         super().__init__(opt)
-        # initialize from voab path
+        # initialize from vocab path
+        download(opt['datapath'])
         vocab_path = os.path.join(opt['datapath'], 'models', 'bert_models',
                                   VOCAB_PATH)
         self.tokenizer = BertTokenizer.from_pretrained(vocab_path)
@@ -52,3 +53,6 @@ class BertDictionaryAgent(DictionaryAgent):
         idxs = [idx.item() for idx in tensor.cpu()]
         toks = self.tokenizer.convert_ids_to_tokens(idxs)
         return ' '.join(toks)
+
+    def act(self):
+        return {}

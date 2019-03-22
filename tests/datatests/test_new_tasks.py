@@ -12,7 +12,7 @@ from parlai.scripts.verify_data import verify, setup_args
 import parlai.core.testing_utils as testing_utils
 
 KEYS = ['missing_text', 'missing_labels', 'empty_label_candidates']
-BASE_TEACHERS = dir(teach_module) + ['PytorchDataTeacher']
+BASE_TEACHERS = dir(teach_module) + ['PytorchDataTeacher', 'MultiTaskTeacher']
 
 
 class TestNewTasks(unittest.TestCase):
@@ -44,17 +44,21 @@ class TestNewTasks(unittest.TestCase):
                 if ('teacher' in x.lower() and x not in BASE_TEACHERS)
             ]
 
-            if testing_utils.is_this_travis():
-                self.assertEqual(
-                    len(subtasks), 0,
-                    'test_verify_data plays poorly with Travis. Please run '
-                    '`python tests/test_new_data.py` locally and paste the output '
-                    'in your pull request.'
+            if testing_utils.is_this_circleci():
+                if len(subtasks) == 0:
+                    continue
+
+                self.fail(
+                    'test_verify_data plays poorly with CircleCI. Please run '
+                    '`python tests/datatests/test_new_tasks.py` locally and '
+                    'paste the output in your pull request.'
                 )
 
             for subt in subtasks:
+                parser = setup_args()
+                opt = parser.parse_args(args=['--task', subt], print_args=False)
                 opt['task'] = subt
-                with testing_utils.capture_output() as _:
+                with testing_utils.capture_output():
                     text, log = verify(opt, print_parser=False)
                 for key in KEYS:
                     self.assertEqual(
