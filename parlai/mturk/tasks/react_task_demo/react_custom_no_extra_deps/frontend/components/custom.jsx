@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import {FormControl, Button} from 'react-bootstrap';
+import { FormControl, Button } from 'react-bootstrap';
 import $ from 'jquery';
 
 // Create custom components
@@ -15,18 +15,19 @@ class EvaluatorIdleResponse extends React.Component {
   render() {
     // TODO maybe move to CSS?
     let pane_style = {
-      'paddingLeft': '25px',
-      'paddingTop': '20px',
-      'paddingBottom': '20px',
-      'paddingRight': '25px',
-      'float': 'left'
+      paddingLeft: '25px',
+      paddingTop: '20px',
+      paddingBottom: '20px',
+      paddingRight: '25px',
+      float: 'left',
     };
 
     return (
       <div
         id="response-type-idle"
         className="response-type-module"
-        style={pane_style}>
+        style={pane_style}
+      >
         <span>
           Pay attention to the conversation above, as you'll need to evaluate.
         </span>
@@ -38,7 +39,7 @@ class EvaluatorIdleResponse extends React.Component {
 class NumericResponse extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {'textval': '', 'sending': false};
+    this.state = { textval: '', sending: false };
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -46,17 +47,17 @@ class NumericResponse extends React.Component {
     // focus event. Not having this would make the focus occur on every
     // state update (including things like volume changes)
     if (this.props.active && !prevProps.active) {
-      $("input#id_text_input").focus();
+      $('input#id_text_input').focus();
     }
     this.props.onInputResize();
   }
 
   tryMessageSend() {
     if (this.state.textval != '' && this.props.active && !this.state.sending) {
-      this.setState({sending: true});
-      this.props.onMessageSend(
-        this.state.textval, {},
-        () => this.setState({textval: '', 'sending': false}));
+      this.setState({ sending: true });
+      this.props.onMessageSend(this.state.textval, {}, () =>
+        this.setState({ textval: '', sending: false })
+      );
     }
   }
 
@@ -73,37 +74,50 @@ class NumericResponse extends React.Component {
       return;
     }
     amount = amount == '' ? 0 : amount;
-    this.setState({textval: '' + amount})
+    this.setState({ textval: '' + amount });
   }
 
   render() {
     // TODO maybe move to CSS?
     let pane_style = {
-      'paddingLeft': '25px',
-      'paddingTop': '20px',
-      'paddingBottom': '20px',
-      'paddingRight': '25px',
-      'float': 'left',
-      'width': '100%'
+      paddingLeft: '25px',
+      paddingTop: '20px',
+      paddingBottom: '20px',
+      paddingRight: '25px',
+      float: 'left',
+      width: '100%',
     };
     let input_style = {
-      height: "50px", width: "100%", display: "block", float: 'left'
+      height: '50px',
+      width: '100%',
+      display: 'block',
+      float: 'left',
     };
     let submit_style = {
-      'width': '100px', 'height': '100%', 'fontSize': '16px',
-      'float': 'left', 'marginLeft': '10px', 'padding': '0px'
+      width: '100px',
+      height: '100%',
+      fontSize: '16px',
+      float: 'left',
+      marginLeft: '10px',
+      padding: '0px',
     };
 
     let text_input = (
       <FormControl
         type="text"
         id="id_text_input"
-        style={{width: '80%', height: '100%', float: 'left', 'fontSize': '16px'}}
+        style={{
+          width: '80%',
+          height: '100%',
+          float: 'left',
+          fontSize: '16px',
+        }}
         value={this.state.textval}
         placeholder="Please enter here..."
-        onKeyPress={(e) => this.handleKeyPress(e)}
-        onChange={(e) => this.updateValue(e.target.value)}
-        disabled={!this.props.active || this.state.sending}/>
+        onKeyPress={e => this.handleKeyPress(e)}
+        onChange={e => this.updateValue(e.target.value)}
+        disabled={!this.props.active || this.state.sending}
+      />
     );
 
     // TODO attach send message callback
@@ -113,9 +127,11 @@ class NumericResponse extends React.Component {
         style={submit_style}
         id="id_send_msg_button"
         disabled={
-          this.state.textval == '' || !this.props.active || this.state.sending}
-        onClick={() => this.tryMessageSend()}>
-          Send
+          this.state.textval == '' || !this.props.active || this.state.sending
+        }
+        onClick={() => this.tryMessageSend()}
+      >
+        Send
       </Button>
     );
 
@@ -123,11 +139,12 @@ class NumericResponse extends React.Component {
       <div
         id="response-type-text-input"
         className="response-type-module"
-        style={pane_style}>
-          <div style={input_style}>
-            {text_input}
-            {submit_button}
-          </div>
+        style={pane_style}
+      >
+        <div style={input_style}>
+          {text_input}
+          {submit_button}
+        </div>
       </div>
     );
   }
@@ -136,33 +153,41 @@ class NumericResponse extends React.Component {
 class EvaluationResponse extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {'textval': '', sending: false};
+    this.state = { textval: '', sending: false };
   }
 
   tryMessageSend(value) {
     if (this.props.active && !this.state.sending) {
-      this.setState({sending: true});
-      this.props.onMessageSend(
-        value, {}, () => this.setState({textval: '', sending: false}));
+      this.setState({ sending: true });
+      this.props.onMessageSend(value, {}, () =>
+        this.setState({ textval: '', sending: false })
+      );
     }
   }
 
   render() {
     // TODO maybe move to CSS?
     let pane_style = {
-      'paddingLeft': '25px',
-      'paddingTop': '20px',
-      'paddingBottom': '20px',
-      'paddingRight': '25px',
-      'float': 'left',
-      'width': '100%'
+      paddingLeft: '25px',
+      paddingTop: '20px',
+      paddingBottom: '20px',
+      paddingRight: '25px',
+      float: 'left',
+      width: '100%',
     };
     let input_style = {
-      height: "50px", width: "100%", display: "block", float: 'left'
+      height: '50px',
+      width: '100%',
+      display: 'block',
+      float: 'left',
     };
     let submit_style = {
-      'width': '100px', 'height': '100%', 'fontSize': '16px',
-      'float': 'left', 'marginLeft': '10px', 'padding': '0px'
+      width: '100px',
+      height: '100%',
+      fontSize: '16px',
+      float: 'left',
+      marginLeft: '10px',
+      padding: '0px',
     };
 
     let reject_button = (
@@ -171,8 +196,9 @@ class EvaluationResponse extends React.Component {
         style={submit_style}
         id="id_reject_chat_button"
         disabled={!this.props.active || this.state.sending}
-        onClick={() => this.tryMessageSend('reject')}>
-          Reject
+        onClick={() => this.tryMessageSend('reject')}
+      >
+        Reject
       </Button>
     );
 
@@ -182,8 +208,9 @@ class EvaluationResponse extends React.Component {
         style={submit_style}
         id="id_approve_chat_button"
         disabled={!this.props.active || this.state.sending}
-        onClick={() => this.tryMessageSend('approve')}>
-          Approve
+        onClick={() => this.tryMessageSend('approve')}
+      >
+        Approve
       </Button>
     );
 
@@ -191,11 +218,12 @@ class EvaluationResponse extends React.Component {
       <div
         id="response-type-text-input"
         className="response-type-module"
-        style={pane_style}>
-          <div style={input_style}>
-            {reject_button}
-            {approve_button}
-          </div>
+        style={pane_style}
+      >
+        <div style={input_style}>
+          {reject_button}
+          {approve_button}
+        </div>
       </div>
     );
   }
@@ -204,19 +232,19 @@ class EvaluationResponse extends React.Component {
 // Package components
 var IdleResponseHolder = {
   // default: leave blank to use original default when no ids match
-  'Evaluator': EvaluatorIdleResponse
-}
+  Evaluator: EvaluatorIdleResponse,
+};
 
 var TextResponseHolder = {
   // default: leave blank to use original default when no ids match
-  'Evaluator': EvaluationResponse,
+  Evaluator: EvaluationResponse,
   'Onboarding Evaluator': EvaluationResponse,
-  'Answerer': NumericResponse,
-  'Onboarding Answerer': NumericResponse
-}
+  Answerer: NumericResponse,
+  'Onboarding Answerer': NumericResponse,
+};
 
 export default {
   // ComponentName: CustomReplacementComponentMap
   XTextResponse: TextResponseHolder,
-  XIdleResponse: IdleResponseHolder
+  XIdleResponse: IdleResponseHolder,
 };

@@ -6,37 +6,39 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+/* eslint-disable react/no-direct-mutation-state */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 /* ================= Data Model Constants ================= */
 
 // Incoming message commands
-const COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE'
-const COMMAND_SHOW_DONE_BUTTON = 'COMMAND_SHOW_DONE_BUTTON'
-const COMMAND_EXPIRE_HIT = 'COMMAND_EXPIRE_HIT'
-const COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT'
-const COMMAND_CHANGE_CONVERSATION = 'COMMAND_CHANGE_CONVERSATION'
-const COMMAND_RESTORE_STATE = 'COMMAND_RESTORE_STATE'
-const COMMAND_INACTIVE_HIT = 'COMMAND_INACTIVE_HIT'
-const COMMAND_INACTIVE_DONE = 'COMMAND_INACTIVE_DONE'
+const COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE';
+const COMMAND_SHOW_DONE_BUTTON = 'COMMAND_SHOW_DONE_BUTTON';
+const COMMAND_EXPIRE_HIT = 'COMMAND_EXPIRE_HIT';
+const COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT';
+const COMMAND_CHANGE_CONVERSATION = 'COMMAND_CHANGE_CONVERSATION';
+const COMMAND_RESTORE_STATE = 'COMMAND_RESTORE_STATE';
+const COMMAND_INACTIVE_HIT = 'COMMAND_INACTIVE_HIT';
+const COMMAND_INACTIVE_DONE = 'COMMAND_INACTIVE_DONE';
 
 // Socket function names
-const SOCKET_OPEN_STRING = 'socket_open' // fires when a socket opens
-const SOCKET_DISCONNECT_STRING = 'disconnect' // fires if a socket disconnects
-const SOCKET_NEW_PACKET_STRING = 'new packet' // fires when packets arrive
-const SOCKET_ROUTE_PACKET_STRING = 'route packet' // to send outgoing packets
-const SOCKET_AGENT_ALIVE_STRING = 'agent alive' // to send alive packets
+const SOCKET_OPEN_STRING = 'socket_open'; // fires when a socket opens
+const SOCKET_DISCONNECT_STRING = 'disconnect'; // fires if a socket disconnects
+const SOCKET_NEW_PACKET_STRING = 'new packet'; // fires when packets arrive
+const SOCKET_ROUTE_PACKET_STRING = 'route packet'; // to send outgoing packets
+const SOCKET_AGENT_ALIVE_STRING = 'agent alive'; // to send alive packets
 
 // Message types
-const MESSAGE_TYPE_MESSAGE = 'MESSAGE'
-const MESSAGE_TYPE_COMMAND = 'COMMAND'
+const MESSAGE_TYPE_MESSAGE = 'MESSAGE';
+const MESSAGE_TYPE_COMMAND = 'COMMAND';
 
 // Packet types
 const TYPE_ACK = 'ack';
 const TYPE_MESSAGE = 'message';
 const TYPE_HEARTBEAT = 'heartbeat';
-const TYPE_PONG = 'pong';  // For messages back from the router on heartbeat
+const TYPE_PONG = 'pong'; // For messages back from the router on heartbeat
 const TYPE_ALIVE = 'alive';
 
 /* ================= Local Constants ================= */
@@ -48,38 +50,36 @@ const STATUS_INIT = 'init';
 const STATUS_SENT = 'sent';
 const CONNECTION_DEAD_MISSING_PONGS = 25;
 const REFRESH_SOCKET_MISSING_PONGS = 10;
-const HEARTBEAT_TIME = 4000;  // One heartbeat every 4 seconds
-
+const HEARTBEAT_TIME = 4000; // One heartbeat every 4 seconds
 
 /* ============== Priority Queue Data Structure ============== */
 
 // Initializing a 'priority queue'
 function PriorityQueue() {
-  this.data = []
+  this.data = [];
 }
 
 // Pushes an element as far back as it needs to go in order to insert
 PriorityQueue.prototype.push = function(element, priority) {
-  priority = +priority
+  priority = +priority;
   for (var i = 0; i < this.data.length && this.data[i][0] < priority; i++);
-  this.data.splice(i, 0, [element, priority])
-}
+  this.data.splice(i, 0, [element, priority]);
+};
 
 // Remove and return the front element of the queue
 PriorityQueue.prototype.pop = function() {
-  return this.data.shift()
-}
+  return this.data.shift();
+};
 
 // Show the front element of the queue
 PriorityQueue.prototype.peek = function() {
-  return this.data[0]
-}
+  return this.data[0];
+};
 
 // gets the size of the queue
 PriorityQueue.prototype.size = function() {
-  return this.data.length
-}
-
+  return this.data.length;
+};
 
 /* ================= Utility functions ================= */
 
@@ -92,33 +92,33 @@ PriorityQueue.prototype.size = function() {
 //         4 - Practically anything
 function log(data, level) {
   if (verbosity >= level) {
-    console.log(data)
+    console.log(data);
   }
 }
 
 // Checks to see if given conversation_id is for a waiting world
 function isWaiting(conversation_id) {
-  return (conversation_id != null && conversation_id.indexOf('w_') !== -1);
+  return conversation_id != null && conversation_id.indexOf('w_') !== -1;
 }
 
 // Checks to see if given conversation_id is for a task world
 function isTask(conversation_id) {
-  return (conversation_id != null && conversation_id.indexOf('t_') !== -1);
+  return conversation_id != null && conversation_id.indexOf('t_') !== -1;
 }
 
 // Checks to see if given conversation_id is for an onboarding world
 function isOnboarding(conversation_id) {
-  return (conversation_id != null && conversation_id.indexOf('o_') !== -1);
+  return conversation_id != null && conversation_id.indexOf('o_') !== -1;
 }
 
 // Generate a random id
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    var r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
-
 
 class SocketHandler extends React.Component {
   constructor(props) {
@@ -126,53 +126,57 @@ class SocketHandler extends React.Component {
     this.q = new PriorityQueue();
     this.socket = null;
     this.state = {
-      heartbeat_id: null,         // Timeout id for heartbeat thread
-      socket_closed: false,       // Flag for intentional socket closure
-      setting_socket: false,      // Flag for socket setup being underway
+      heartbeat_id: null, // Timeout id for heartbeat thread
+      socket_closed: false, // Flag for intentional socket closure
+      setting_socket: false, // Flag for socket setup being underway
       pongs_without_heartbeat: 0, // Pongs from router w/o hb from MTurkManager
       heartbeats_without_pong: 0, // HBs to the router without a pong back
-      packet_map: {},             // Map from packet ids to packets
-      packet_callback: {},        // Map from packet ids to callbacks
-      blocking_id: null,          // Packet id of a blocking message underway
-      blocking_sent_time: null,   // Time blocking message was sent
+      packet_map: {}, // Map from packet ids to packets
+      packet_callback: {}, // Map from packet ids to callbacks
+      blocking_id: null, // Packet id of a blocking message underway
+      blocking_sent_time: null, // Time blocking message was sent
       blocking_intend_send_time: null, // Time of blocking message priority
-      displayed_messages: [],     // Message ids that are already displayed
-      message_request_time: null  // Last request for a message to find delay
+      displayed_messages: [], // Message ids that are already displayed
+      message_request_time: null, // Last request for a message to find delay
     };
   }
 
   /*************************************************
-  * ----- Packet sending/management functions ------
-  *
-  * The following functions comprise the outgoing
-  * packet management system. Messages are enqueued
-  * using sendPacket. The sendingThread works through
-  * the queued packets and passes them to sendHelper
-  * when appropriate (unblocked, not already sent).
-  * sendHelper handles updating blocking state during
-  * a send, and then pushes the packet through using
-  * safePacketSend.
-  **/
+   * ----- Packet sending/management functions ------
+   *
+   * The following functions comprise the outgoing
+   * packet management system. Messages are enqueued
+   * using sendPacket. The sendingThread works through
+   * the queued packets and passes them to sendHelper
+   * when appropriate (unblocked, not already sent).
+   * sendHelper handles updating blocking state during
+   * a send, and then pushes the packet through using
+   * safePacketSend.
+   **/
 
   // Push a packet through the socket
   safePacketSend(packet) {
     if (this.socket.readyState == 0) {
       return;
     } else if (this.socket.readyState > 1) {
-      log("Socket not in ready state, restarting if possible", 2);
+      log('Socket not in ready state, restarting if possible', 2);
       try {
         this.socket.close();
-      } catch(e) {/* Socket already terminated */}
+      } catch (e) {
+        /* Socket already terminated */
+      }
       this.setupSocket();
       return;
     }
     try {
       this.socket.send(JSON.stringify(packet));
-    } catch(e) {
-      log("Had error " + e + " sending message, trying to restart", 2);
+    } catch (e) {
+      log('Had error ' + e + ' sending message, trying to restart', 2);
       try {
         this.socket.close();
-      } catch(e) {/* Socket already terminated */}
+      } catch (e) {
+        /* Socket already terminated */
+      }
       this.setupSocket();
     }
   }
@@ -187,7 +191,7 @@ class SocketHandler extends React.Component {
       if (msg.type === TYPE_ALIVE) {
         event_name = SOCKET_AGENT_ALIVE_STRING;
       }
-      this.safePacketSend({type: event_name, content: msg});
+      this.safePacketSend({ type: event_name, content: msg });
 
       if (msg.require_ack) {
         if (msg.blocking) {
@@ -195,7 +199,7 @@ class SocketHandler extends React.Component {
           this.setState({
             blocking_id: msg.id,
             blocking_sent_time: Date.now(),
-            blocking_intend_send_time: queue_time
+            blocking_intend_send_time: queue_time,
           });
         } else {
           // Check to see if the packet is acknowledged in the future
@@ -232,7 +236,7 @@ class SocketHandler extends React.Component {
       let blocking_intend_send_time = this.state.blocking_intend_send_time;
       // blocking on packet `blocking_id`
       // See if we've waited too long for the packet to be acknowledged
-      if ((Date.now() - blocking_sent_time) > ACK_WAIT_TIME) {
+      if (Date.now() - blocking_sent_time > ACK_WAIT_TIME) {
         log('Timeout: ' + blocking_id, 1);
         // Send the packet again now
         var m = packet_map[blocking_id];
@@ -258,7 +262,7 @@ class SocketHandler extends React.Component {
       data: data,
       status: STATUS_INIT,
       require_ack: require_ack,
-      blocking: blocking
+      blocking: blocking,
     };
 
     this.q.push(msg, time);
@@ -268,13 +272,13 @@ class SocketHandler extends React.Component {
 
   // Required function - The BaseApp class will call this function to enqueue
   // packet sends that are requested by the frontend user (worker)
-  handleQueueMessage(text, task_data, callback, is_system=false) {
+  handleQueueMessage(text, task_data, callback, is_system = false) {
     let new_message_id = uuidv4();
     let duration = null;
     if (!is_system && this.state.message_request_time != null) {
-      let cur_time = (new Date()).getTime();
+      let cur_time = new Date().getTime();
       duration = cur_time - this.state.message_request_time;
-      this.setState({message_request_time: null});
+      this.setState({ message_request_time: null });
     }
     this.sendPacket(
       TYPE_MESSAGE,
@@ -288,7 +292,7 @@ class SocketHandler extends React.Component {
       },
       true,
       true,
-      (msg) => {
+      msg => {
         if (!is_system) {
           this.props.messages.push(msg.data);
           this.props.onSuccessfulSend();
@@ -308,7 +312,7 @@ class SocketHandler extends React.Component {
         hit_id: this.props.hit_id,
         assignment_id: this.props.assignment_id,
         worker_id: this.props.worker_id,
-        conversation_id: this.props.conversation_id
+        conversation_id: this.props.conversation_id,
       },
       true,
       true,
@@ -320,31 +324,31 @@ class SocketHandler extends React.Component {
   }
 
   /**************************************************
-  * ----- Packet reception infra and functions ------
-  *
-  * The following functions are all related to
-  * handling incoming messages. parseSocketMessage
-  * filters out actions based on the type of message,
-  * including updating the state of health when
-  * recieving pongs and heartbeats. handleNewMessage
-  * is used to process an incoming Message that is
-  * supposed to be entered into the chat. handleCommand
-  * handles the various commands that are sent from
-  * the ParlAI host to change the frontend state.
-  **/
+   * ----- Packet reception infra and functions ------
+   *
+   * The following functions are all related to
+   * handling incoming messages. parseSocketMessage
+   * filters out actions based on the type of message,
+   * including updating the state of health when
+   * recieving pongs and heartbeats. handleNewMessage
+   * is used to process an incoming Message that is
+   * supposed to be entered into the chat. handleCommand
+   * handles the various commands that are sent from
+   * the ParlAI host to change the frontend state.
+   **/
 
   parseSocketMessage(event) {
     let msg = JSON.parse(event.data)['content'];
     if (msg.type === TYPE_HEARTBEAT) {
       // Heartbeats ensure we're not disconnected from the server
       log('received heartbeat: ' + msg.id, 5);
-      this.setState({pongs_without_heartbeat: 0});
+      this.setState({ pongs_without_heartbeat: 0 });
     } else if (msg.type === TYPE_PONG) {
       // Messages incoming from the router, ensuring that we're at least
       // connected to it.
       this.setState({
         pongs_without_heartbeat: this.state.pongs_without_heartbeat + 1,
-        heartbeats_without_pong: 0
+        heartbeats_without_pong: 0,
       });
       if (this.state.pongs_without_heartbeat >= 3) {
         this.props.onStatusChange('reconnecting_server');
@@ -357,7 +361,7 @@ class SocketHandler extends React.Component {
         if (this.state.packet_callback[msg.id]) {
           this.state.packet_callback[msg.id](this.state.packet_map[msg.id]);
         }
-        this.setState({blocking_id: null, blocking_sent_time: null});
+        this.setState({ blocking_id: null, blocking_sent_time: null });
       }
       this.state.packet_map[msg.id].status = STATUS_ACK;
     } else if (msg.type === TYPE_MESSAGE) {
@@ -371,8 +375,8 @@ class SocketHandler extends React.Component {
           assignment_id: this.props.assignment_id,
           conversation_id: this.props.conversation_id,
           type: TYPE_ACK,
-          data: null
-        }
+          data: null,
+        },
       });
       log(msg, 3);
       if (msg.data.type === MESSAGE_TYPE_COMMAND) {
@@ -401,16 +405,16 @@ class SocketHandler extends React.Component {
     this.props.onNewMessage(message);
     if (message.task_data !== undefined) {
       let has_context = false;
-      for (let key of Object.keys(message.task_data)){
-        if (key !== "respond_with_form"){
+      for (let key of Object.keys(message.task_data)) {
+        if (key !== 'respond_with_form') {
           has_context = true;
         }
       }
-      message.task_data.last_update = (new Date()).getTime();
+      message.task_data.last_update = new Date().getTime();
       message.task_data.has_context = has_context;
       this.props.onNewTaskData(message.task_data);
     }
-    this.setState({displayed_messages: this.state.displayed_messages});
+    this.setState({ displayed_messages: this.state.displayed_messages });
   }
 
   // Handle incoming command messages
@@ -423,7 +427,7 @@ class SocketHandler extends React.Component {
       if (this.state.message_request_time === null) {
         this.props.playNotifSound();
       }
-      this.setState({message_request_time: (new Date()).getTime()});
+      this.setState({ message_request_time: new Date().getTime() });
       log('Waiting for worker input', 4);
     } else if (command === COMMAND_SHOW_DONE_BUTTON) {
       // Update the UI to show the done button
@@ -476,19 +480,19 @@ class SocketHandler extends React.Component {
   }
 
   /**************************************************
-  * ---------- socket lifecycle functions -----------
-  *
-  * These functions comprise the socket's ability to
-  * start up, check it's health, restart, and close.
-  * setupSocket registers the socket handlers, and
-  * when the socket opens it sets a timeout for
-  * having the ParlAI host ack the alive (failInitialize).
-  * It also starts heartbeats (using heartbeatThread) if
-  * they aren't already underway. On an error the socket
-  * restarts. The heartbeat thread manages sending
-  * heartbeats and tracking when the router responds
-  * but the parlai host does not.
-  **/
+   * ---------- socket lifecycle functions -----------
+   *
+   * These functions comprise the socket's ability to
+   * start up, check it's health, restart, and close.
+   * setupSocket registers the socket handlers, and
+   * when the socket opens it sets a timeout for
+   * having the ParlAI host ack the alive (failInitialize).
+   * It also starts heartbeats (using heartbeatThread) if
+   * they aren't already underway. On an error the socket
+   * restarts. The heartbeat thread manages sending
+   * heartbeats and tracking when the router responds
+   * but the parlai host does not.
+   **/
 
   // Sets up and registers the socket and the callbacks
   setupSocket() {
@@ -497,8 +501,8 @@ class SocketHandler extends React.Component {
     }
 
     // Note we are setting up the socket, ready to clear on failure
-    this.setState({setting_socket: true});
-    window.setTimeout(() => this.setState({setting_socket: false}), 4000);
+    this.setState({ setting_socket: true });
+    window.setTimeout(() => this.setState({ setting_socket: false }), 4000);
 
     let url = window.location;
     if (url.hostname == 'localhost') {
@@ -511,7 +515,9 @@ class SocketHandler extends React.Component {
     // other reasonable domain. If that succeeds, assume the heroku server
     // died.
 
-    this.socket.onmessage = (event) => {this.parseSocketMessage(event)};
+    this.socket.onmessage = event => {
+      this.parseSocketMessage(event);
+    };
 
     this.socket.onopen = () => {
       log('Server connected.', 2);
@@ -521,30 +527,32 @@ class SocketHandler extends React.Component {
       let heartbeat_id = null;
       if (this.state.heartbeat_id == null) {
         heartbeat_id = window.setInterval(
-          () => this.heartbeatThread(), HEARTBEAT_TIME);
+          () => this.heartbeatThread(),
+          HEARTBEAT_TIME
+        );
       } else {
         heartbeat_id = this.state.heartbeat_id;
       }
       this.setState({
         heartbeat_id: heartbeat_id,
-        setting_socket: setting_socket
+        setting_socket: setting_socket,
       });
-    }
+    };
 
     this.socket.onerror = () => {
       log('Server disconnected.', 3);
       try {
         this.socket.close();
-      } catch(e) {
+      } catch (e) {
         log('Server had error ' + e + ' when closing after an error', 1);
       }
       window.setTimeout(() => this.setupSocket(), 500);
-    }
+    };
 
     this.socket.onclose = () => {
       log('Server closing.', 3);
       this.props.onStatusChange('disconnected');
-    }
+    };
   }
 
   failInitialize() {
@@ -555,11 +563,11 @@ class SocketHandler extends React.Component {
 
   closeSocket() {
     if (!this.state.socket_closed) {
-      log("Socket closing", 3);
+      log('Socket closing', 3);
       this.socket.close();
-      this.setState({socket_closed: true});
+      this.setState({ socket_closed: true });
     } else {
-      log("Socket already closed", 2);
+      log('Socket already closed', 2);
     }
   }
 
@@ -576,7 +584,7 @@ class SocketHandler extends React.Component {
     if (this.state.socket_closed) {
       // No reason to keep a heartbeat if the socket is closed
       window.clearInterval(this.state.heartbeat_id);
-      this.setState({heartbeat_id: null});
+      this.setState({ heartbeat_id: null });
       return;
     }
 
@@ -584,11 +592,14 @@ class SocketHandler extends React.Component {
     if (pongs_without_heartbeat == REFRESH_SOCKET_MISSING_PONGS) {
       pongs_without_heartbeat += 1;
       try {
-        this.socket.close();  // Force a socket close to make it reconnect
-      } catch(e) {/* Socket already terminated */}
+        this.socket.close(); // Force a socket close to make it reconnect
+      } catch (e) {
+        /* Socket already terminated */
+      }
       window.clearInterval(this.state.heartbeat_id);
       this.setState({
-        pongs_without_heartbeat: pongs_without_heartbeat, heartbeat_id: null
+        pongs_without_heartbeat: pongs_without_heartbeat,
+        heartbeat_id: null,
       });
       this.setupSocket();
     }
@@ -596,29 +607,30 @@ class SocketHandler extends React.Component {
     // Check to see if we've disconnected from the server
     if (this.state.pongs_without_heartbeat > CONNECTION_DEAD_MISSING_PONGS) {
       this.closeSocket();
-      let done_text = ('Our server appears to have gone down during the \
-        duration of this HIT. Please send us a message if you\'ve done \
+      let done_text =
+        "Our server appears to have gone down during the \
+        duration of this HIT. Please send us a message if you've done \
         substantial work and we can find out if the hit is complete enough to \
-        compensate.');
+        compensate.";
       window.clearInterval(this.state.heartbeat_id);
-      this.setState({heartbeat_id: null});
+      this.setState({ heartbeat_id: null });
       this.props.onExpire(done_text);
     }
 
     var hb = {
-      'id': uuidv4(),
-      'receiver_id': '[World_' + TASK_GROUP_ID + ']',
-      'assignment_id': this.props.assignment_id,
-      'sender_id' : this.props.worker_id,
-      'conversation_id': this.props.conversation_id,
-      'type': TYPE_HEARTBEAT,
-      'data': null
+      id: uuidv4(),
+      receiver_id: '[World_' + TASK_GROUP_ID + ']',
+      assignment_id: this.props.assignment_id,
+      sender_id: this.props.worker_id,
+      conversation_id: this.props.conversation_id,
+      type: TYPE_HEARTBEAT,
+      data: null,
     };
 
-    this.safePacketSend({type: SOCKET_ROUTE_PACKET_STRING, content: hb});
+    this.safePacketSend({ type: SOCKET_ROUTE_PACKET_STRING, content: hb });
 
     this.setState({
-      heartbeats_without_pong: this.state.heartbeats_without_pong + 1
+      heartbeats_without_pong: this.state.heartbeats_without_pong + 1,
     });
     if (this.state.heartbeats_without_pong >= 12) {
       this.closeSocket();
@@ -628,7 +640,9 @@ class SocketHandler extends React.Component {
   }
 
   // No rendering component for the SocketHandler
-  render() { return null; }
+  render() {
+    return null;
+  }
 }
 
 export default SocketHandler;

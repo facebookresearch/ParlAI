@@ -6,18 +6,25 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+/* global browser */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BaseFrontend, setCustomComponents}
-  from './components/core_components.jsx';
+import {
+  BaseFrontend,
+  setCustomComponents,
+} from './components/core_components.jsx';
 import BuiltCustomComponents from 'custom_built_frontend';
 import CustomComponents from './components/custom.jsx';
 import SocketHandler from './components/socket_handler.jsx';
-import {MTurkSubmitForm, allDoneCallback} from './components/mturk_submit_form.jsx';
+import {
+  MTurkSubmitForm,
+  allDoneCallback,
+} from './components/mturk_submit_form.jsx';
 import 'fetch';
 import $ from 'jquery';
 
-var UseCustomComponents = {}
+var UseCustomComponents = {};
 if (Object.keys(BuiltCustomComponents).length) {
   UseCustomComponents = BuiltCustomComponents;
 } else if (Object.keys(CustomComponents).length) {
@@ -31,30 +38,31 @@ setCustomComponents(UseCustomComponents);
 // Determine if the browser is a mobile phone
 function isMobile() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent);
+    navigator.userAgent
+  );
 }
 
 // Sends a request to get the hit_config
 function getHitConfig(callback_function) {
   $.ajax({
     url: '/get_hit_config',
-    timeout: 3000 // in milliseconds
-  }).then(
-    function(data) {
-      if (callback_function) {
-        callback_function(data);
-      }
+    timeout: 3000, // in milliseconds
+  }).then(function(data) {
+    if (callback_function) {
+      callback_function(data);
     }
-  );
+  });
 }
 
 // Sees if the current browser supports WebSockets
 function doesSupportWebsockets() {
-  return !((bowser.msie && bowser.version < 10) ||
-           (bowser.firefox && bowser.version < 11) ||
-           (bowser.chrome && bowser.version < 16) ||
-           (bowser.safari && bowser.version < 7) ||
-           (bowser.opera && bowser.version < 12.1));
+  return !(
+    (browser.msie && browser.version < 10) ||
+    (browser.firefox && browser.version < 11) ||
+    (browser.chrome && browser.version < 16) ||
+    (browser.safari && browser.version < 7) ||
+    (browser.opera && browser.version < 12.1)
+  );
 }
 
 class MainApp extends React.Component {
@@ -76,43 +84,42 @@ class MainApp extends React.Component {
       worker_id: WORKER_ID, // gotten from template
       conversation_id: null,
       initialization_status: initialization_status,
-      world_state: null,  // TODO cover onboarding and waiting separately
+      world_state: null, // TODO cover onboarding and waiting separately
       is_cover_page: IS_COVER_PAGE, // gotten from template
       done_text: null,
-      chat_state: 'idle',  // idle, text_input, inactive, done
+      chat_state: 'idle', // idle, text_input, inactive, done
       task_done: false,
       messages: [],
       agent_id: 'NewWorker',
       task_data: {},
-      volume: 1 // min volume is 0, max is 1, TODO pull from local-storage?
+      volume: 1, // min volume is 0, max is 1, TODO pull from local-storage?
     };
   }
 
   playNotifSound() {
-    let audio = new Audio('./notif.mp3')
-    audio.volume = this.state.volume
+    let audio = new Audio('./notif.mp3');
+    audio.volume = this.state.volume;
     audio.play();
   }
 
   handleIncomingHITData(data) {
     let task_description = data['task_description'];
     if (isMobile() && BLOCK_MOBILE) {
-      task_description = (
-        "<h1>Sorry, this task cannot be completed on mobile devices. " +
-        "Please use a computer.</h1><br>Task Description follows:<br>" +
-        data['task_description']
-      );
+      task_description =
+        '<h1>Sorry, this task cannot be completed on mobile devices. ' +
+        'Please use a computer.</h1><br>Task Description follows:<br>' +
+        data['task_description'];
     }
 
     this.setState({
       task_description: task_description,
       frame_height: data['frame_height'] || 650,
-      mturk_submit_url: data['mturk_submit_url']
+      mturk_submit_url: data['mturk_submit_url'],
     });
   }
 
   componentDidMount() {
-    getHitConfig((data) => this.handleIncomingHITData(data));
+    getHitConfig(data => this.handleIncomingHITData(data));
   }
 
   onMessageSend(text, data, callback, is_system) {
@@ -125,52 +132,72 @@ class MainApp extends React.Component {
   render() {
     let socket_handler = null;
     if (!this.state.is_cover_page) {
-      socket_handler = <SocketHandler
-        onNewMessage={(new_message) => {
-          this.state.messages.push(new_message);
-          this.setState({messages: this.state.messages});
-
-        }}
-        onNewTaskData={(new_task_data) => this.setState(
-          {task_data: Object.assign(this.state.task_data, new_task_data)}
-        )}
-        onRequestMessage={() => this.setState({chat_state: 'text_input'})}
-        onTaskDone={() => this.setState({
-          task_done: true, chat_state: 'done', done_text: ''
-        })}
-        onInactiveDone={(inactive_text) => this.setState({
-          task_done: true, chat_state: 'done', done_text: inactive_text
-        })}
-        onForceDone={allDoneCallback}
-        onExpire={(expire_reason) => this.setState({
-          chat_state: 'inactive', done_text: expire_reason
-        })}
-        onConversationChange={(world_state, conversation_id, agent_id) => {
-          this.setState({
-            world_state: world_state, conversation_id: conversation_id,
-            agent_id: agent_id
-          });
-          if (world_state == 'waiting') {
-            this.setState({'messages': [], 'chat_state': 'waiting'});
+      socket_handler = (
+        <SocketHandler
+          onNewMessage={new_message => {
+            this.state.messages.push(new_message);
+            this.setState({ messages: this.state.messages });
+          }}
+          onNewTaskData={new_task_data =>
+            this.setState({
+              task_data: Object.assign(this.state.task_data, new_task_data),
+            })
           }
-        }}
-        onSuccessfulSend={() => this.setState({
-          chat_state: 'waiting', messages: this.state.messages
-        })}
-        onConfirmInit={() => this.setState({initialization_status: 'done'})}
-        onFailInit={() => this.setState({initialization_status: 'failed'})}
-        onStatusChange={(status) => this.setState({'socket_status': status})}
-        assignment_id={this.state.assignment_id}
-        conversation_id={this.state.conversation_id}
-        worker_id={this.state.worker_id}
-        agent_id={this.state.agent_id}
-        hit_id={this.state.hit_id}
-        initialization_status={this.state.initialization_status}
-        messages={this.state.messages}
-        task_done={this.state.task_done}
-        ref={(m) => {this.socket_handler = m}}
-        playNotifSound={() => this.playNotifSound()}
-      />;
+          onRequestMessage={() => this.setState({ chat_state: 'text_input' })}
+          onTaskDone={() =>
+            this.setState({
+              task_done: true,
+              chat_state: 'done',
+              done_text: '',
+            })
+          }
+          onInactiveDone={inactive_text =>
+            this.setState({
+              task_done: true,
+              chat_state: 'done',
+              done_text: inactive_text,
+            })
+          }
+          onForceDone={allDoneCallback}
+          onExpire={expire_reason =>
+            this.setState({
+              chat_state: 'inactive',
+              done_text: expire_reason,
+            })
+          }
+          onConversationChange={(world_state, conversation_id, agent_id) => {
+            this.setState({
+              world_state: world_state,
+              conversation_id: conversation_id,
+              agent_id: agent_id,
+            });
+            if (world_state == 'waiting') {
+              this.setState({ messages: [], chat_state: 'waiting' });
+            }
+          }}
+          onSuccessfulSend={() =>
+            this.setState({
+              chat_state: 'waiting',
+              messages: this.state.messages,
+            })
+          }
+          onConfirmInit={() => this.setState({ initialization_status: 'done' })}
+          onFailInit={() => this.setState({ initialization_status: 'failed' })}
+          onStatusChange={status => this.setState({ socket_status: status })}
+          assignment_id={this.state.assignment_id}
+          conversation_id={this.state.conversation_id}
+          worker_id={this.state.worker_id}
+          agent_id={this.state.agent_id}
+          hit_id={this.state.hit_id}
+          initialization_status={this.state.initialization_status}
+          messages={this.state.messages}
+          task_done={this.state.task_done}
+          ref={m => {
+            this.socket_handler = m;
+          }}
+          playNotifSound={() => this.playNotifSound()}
+        />
+      );
     }
     return (
       <div>
@@ -191,20 +218,21 @@ class MainApp extends React.Component {
           v_id={this.state.agent_id}
           allDoneCallback={() => allDoneCallback()}
           volume={this.state.volume}
-          onVolumeChange={(v) => this.setState({volume: v})}
+          onVolumeChange={v => this.setState({ volume: v })}
           display_feedback={DISPLAY_FEEDBACK}
         />
         <MTurkSubmitForm
           assignment_id={this.state.assignment_id}
           hit_id={this.state.hit_id}
           worker_id={this.state.worker_id}
-          mturk_submit_url={this.state.mturk_submit_url}/>
+          mturk_submit_url={this.state.mturk_submit_url}
+        />
         {socket_handler}
       </div>
     );
   }
 }
 
-var main_app = <MainApp/>;
+var main_app = <MainApp />;
 
 ReactDOM.render(main_app, document.getElementById('app'));
