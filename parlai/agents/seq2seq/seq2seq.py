@@ -167,12 +167,12 @@ class Seq2seqAgent(TorchGeneratorAgent):
         kwargs['sort'] = True  # need sorted for pack_padded
         return super().batchify(*args, **kwargs)
 
-    def get_save_dict(self):
+    def state_dict(self):
         """Get the model states for saving
 
         Override to include longest_label
         """
-        states = super().get_save_dict()
+        states = super().state_dict()
         if hasattr(self.model, 'module'):
             states['longest_label'] = self.model.module.longest_label
         else:
