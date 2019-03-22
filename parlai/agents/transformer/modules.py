@@ -48,8 +48,8 @@ def _build_encoder(opt, dictionary, embedding=None, padding_idx=None,
         reduction=reduction,
         reduction_type=reduction_type,
         n_positions=n_positions,
-        gelu_activation = gelu_activation,
-        embedding_normalization = embedding_normalization
+        gelu_activation=gelu_activation,
+        embedding_normalization=embedding_normalization
     )
 
 
