@@ -28,8 +28,9 @@ def _create_embeddings(dictionary, embedding_size, padding_idx):
     return e
 
 
-def _build_encoder(opt, dictionary, embedding=None, padding_idx=None, reduction=True,reduction_type=None,
-                   n_positions=1024,gelu_activation=False,embedding_normalization=False):
+def _build_encoder(opt, dictionary, embedding=None, padding_idx=None,
+                   reduction=True,reduction_type=None,
+                   n_positions=1024, gelu_activation=False, embedding_normalization=False):
     return TransformerEncoder(
         n_heads=opt['n_heads'],
         n_layers=opt['n_layers'],
@@ -71,7 +72,7 @@ def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
 
 
 def gelu(tensor):
-    return 0.5 * tensor * (1.0 + torch.erf(tensor/math.sqrt(2.0)))
+    return 0.5 * tensor * (1.0 + torch.erf(tensor / math.sqrt(2.0)))
 
 
 class TransformerMemNetModel(nn.Module):
@@ -123,9 +124,9 @@ class TransformerMemNetModel(nn.Module):
 
         self.context_encoder = _build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx,
-            reduction = True, reduction_type = self.reduction_type,
-            n_positions = n_positions, gelu_activation = self.gelu_activation,
-            embedding_normalization = self.embedding_normalization
+            reduction=True, reduction_type=self.reduction_type,
+            n_positions=n_positions, gelu_activation=self.gelu_activation,
+            embedding_normalization=self.embedding_normalization
         )
 
         if opt.get('share_encoders'):
@@ -136,9 +137,9 @@ class TransformerMemNetModel(nn.Module):
             self.cand_encoder = _build_encoder(
                 opt, dictionary, self.embeddings, self.pad_idx,
                 n_positions=n_positions,
-                reduction=True, reduction_type = self.reduction_type,
-                gelu_activation = self.gelu_activation,
-                embedding_normalization = self.embedding_normalization
+                reduction=True, reduction_type=self.reduction_type,
+                gelu_activation=self.gelu_activation,
+                embedding_normalization=self.embedding_normalization
             )
 
         # build memory encoder
