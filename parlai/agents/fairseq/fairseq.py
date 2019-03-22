@@ -448,7 +448,7 @@ class FairseqAgent(TorchAgent):
             json.dump(self.opt, handle)
 
         # force save the dict
-        self.dict.save(path + '.dict', sort=True)
+        self.dict.save(path + '.dict')
 
     def load(self, path):
         """Load using fairseq's checkpointing."""

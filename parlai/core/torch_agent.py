@@ -1295,7 +1295,7 @@ class TorchAgent(Agent):
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
 
-    def get_save_dict(self):
+    def state_dict(self):
         """Get the state dict for saving
 
         Override this method for more specific saving.
@@ -1333,14 +1333,14 @@ class TorchAgent(Agent):
         Save model parameters to path (or default to model_file arg).
 
         Please try to refrain from overriding this function, and instead
-        override `get_save_dict(self)` for more specific saving.
+        override `state_dict(self)` for more specific saving.
         """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path:
             if hasattr(self, 'dict'):  # force save dictionary
-                self.dict.save(path + '.dict', sort=True)
-            states = self.get_save_dict()
+                self.dict.save(path + '.dict')
+            states = self.state_dict()
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
                     torch.save(states, write)
