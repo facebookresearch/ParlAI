@@ -447,9 +447,6 @@ class FairseqAgent(TorchAgent):
                 del self.opt['override']
             json.dump(self.opt, handle)
 
-        # force save the dict
-        self.dict.save(path + '.dict')
-
     def load(self, path):
         """Load using fairseq's checkpointing."""
         if self.trainer:

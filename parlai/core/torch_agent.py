@@ -497,6 +497,8 @@ class TorchAgent(Agent):
             # intitialize any important structures from scratch
             self.replies = {}  # past replies
             self.dict = self.dictionary_class()(opt)
+            if opt.get('model_file'):
+                self.dict.save(opt['model_file'] + '.dict')
             if opt.get('person_tokens'):
                 self.dict[self.P1_TOKEN] = 999999999
                 self.dict[self.P2_TOKEN] = 999999998
@@ -1338,8 +1340,6 @@ class TorchAgent(Agent):
         path = self.opt.get('model_file', None) if path is None else path
 
         if path:
-            if hasattr(self, 'dict'):  # force save dictionary
-                self.dict.save(path + '.dict')
             states = self.state_dict()
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
