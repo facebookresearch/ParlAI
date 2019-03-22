@@ -65,7 +65,7 @@ class TorchRankerAgent(TorchAgent):
             '--ignore-bad-candidates', type='bool', default=False,
             help='Ignore examples for which the label is not present in the '
                  'label candidates. Default behavior results in RuntimeError. ')
-         agent.add_argument(
+        agent.add_argument(
             '--embedding-normalization', type='bool', default=False,
             help='normalization after embeddings for transformer. True or False'
         )
