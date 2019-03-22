@@ -358,11 +358,11 @@ class TransformerEncoder(nn.Module):
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
         if self.reduction:
-            if self.reduction_type == 'first' :
-                return tensor[:,0,:]
-            elif self.reduction_type == 'max' :
+            if self.reduction_type == 'first':
+                return tensor[:, 0, :]
+            elif self.reduction_type == 'max':
                 return tensor.max(dim=1)[0]
-            else :
+            else:
                 divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1e-20)
                 output = tensor.sum(dim=1) / divisor
                 return output
@@ -390,11 +390,11 @@ class TransformerEncoderLayer(nn.Module):
             n_heads, embedding_size,
             dropout=attention_dropout,  # --attention-dropout
         )
-        self.norm1 = nn.LayerNorm(embedding_size,eps=1e-12)
+        self.norm1 = nn.LayerNorm(embedding_size, eps=1e-12)
         self.ffn = TransformerFFN(embedding_size, ffn_size,
                                   relu_dropout=relu_dropout,
                                   gelu_activation=self.gelu_activation)
-        self.norm2 = nn.LayerNorm(embedding_size,eps=1e-12)
+        self.norm2 = nn.LayerNorm(embedding_size, eps=1e-12)
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
@@ -732,7 +732,7 @@ class MultiHeadAttention(nn.Module):
 
 
 class TransformerFFN(nn.Module):
-    def __init__(self, dim, dim_hidden, relu_dropout=0,gelu_activation=False):
+    def __init__(self, dim, dim_hidden, relu_dropout=0, gelu_activation=False):
         super(TransformerFFN, self).__init__()
         self.relu_dropout = nn.Dropout(p=relu_dropout)
         self.gelu_activation = gelu_activation
