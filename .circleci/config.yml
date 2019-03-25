@@ -49,6 +49,7 @@ commands:
           command: |
             pip3 install --progress-bar off numpy
             pip3 install --progress-bar off torch
+            pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
   installtorchcpu:
     description: "Install Torch (CPU)"
     steps:
