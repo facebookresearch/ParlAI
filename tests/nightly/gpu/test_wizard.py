@@ -14,6 +14,7 @@ END2END_OPTIONS = {
     'model_file': 'models:wizard_of_wikipedia/end2end_generator/model',
     'batchsize': 32,
     'log_every_n_secs': 30,
+    'embedding_type': 'random',
 }
 
 
