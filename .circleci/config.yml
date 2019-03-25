@@ -144,6 +144,7 @@ workflows:
       - lint
       - datatests
       - unittests
+      - nightly_gpu_tests
   nightly:
     triggers:
       - schedule:
