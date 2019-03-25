@@ -365,13 +365,6 @@ class TorchGeneratorAgent(TorchAgent):
             else:
                 states = {}
 
-        if shared is None and is_distributed():
-            self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model,
-                device_ids=[self.opt['gpu']],
-                broadcast_buffers=False,
-            )
-
         if (
             # only build an optimizer if we're training
             'train' in opt.get('datatype', '') and
@@ -385,6 +378,13 @@ class TorchGeneratorAgent(TorchAgent):
                 saved_optim_type=states.get('optimizer_type')
             )
             self.build_lr_scheduler(states, hard_reset=is_finetune)
+
+        if shared is None and is_distributed():
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model,
+                device_ids=[self.opt['gpu']],
+                broadcast_buffers=False,
+            )
 
         self.reset()
 
@@ -440,10 +440,7 @@ class TorchGeneratorAgent(TorchAgent):
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
-                if self.fp16:
-                    self.optimizer.backward(loss)
-                else:
-                    loss.backward()
+                self.backward(loss)
                 self.buffer_initialized = True
             except RuntimeError as e:
                 if 'out of memory' in str(e):
@@ -563,10 +560,7 @@ class TorchGeneratorAgent(TorchAgent):
         try:
             loss = self.compute_loss(batch)
             self.metrics['loss'] += loss.item()
-            if self.fp16:
-                self.optimizer.backward(loss)
-            else:
-                loss.backward()
+            self.backward(loss)
             self.update_params()
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)

@@ -1464,6 +1464,17 @@ class TorchAgent(Agent):
             'Abstract class: user must implement eval_step'
         )
 
+    def backward(self, loss):
+        """
+        Perform a backward pass. It is recommended you use this instead of
+        loss.backward(), for integration with distributed training and FP16
+        training.
+        """
+        if self.fp16:
+            self.optimizer.backward(loss, update_master_grads=False)
+        else:
+            loss.backward()
+
     def update_params(self):
         """
         Perform step of optimization, clipping gradients and adjusting LR
@@ -1495,6 +1506,11 @@ class TorchAgent(Agent):
         if self.opt.get('lr_scheduler') == 'invsqrt' and not self._is_lr_warming_up():
             # training step scheduler
             self.scheduler.step(self._number_training_updates)
+
+        if self.fp16:
+            # we've been accumulating grads in fp16 and delaying the fp32 copy update.
+            # finally time to perform the update.
+            self.optimizer.update_master_grads()
 
         if self.opt.get('gradient_clip', -1) > 0:
             if self.fp16:

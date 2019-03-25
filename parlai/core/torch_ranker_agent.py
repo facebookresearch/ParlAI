@@ -206,10 +206,7 @@ class TorchRankerAgent(TorchAgent):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
 
-        if self.fp16:
-            self.optimizer.backward(loss)
-        else:
-            loss.backward()
+        self.backward(loss)
         self.update_params()
 
         # Get train predictions
