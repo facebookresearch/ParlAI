@@ -177,10 +177,7 @@ workflows:
       - deploy_website:
           filters:
             branches:
-              only:
-                - master
-                - website
-              #only: master
+              only: master
   nightly:
     triggers:
       - schedule:
