@@ -1,0 +1,3 @@
+parlai/mturk/webapp/dev/task_components/
+dist/
+static/main.bundle.js

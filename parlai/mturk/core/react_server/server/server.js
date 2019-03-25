@@ -6,40 +6,40 @@
 
 const bodyParser = require('body-parser');
 const express = require('express');
-const fs = require("fs");
-const http = require("http");
+const fs = require('fs');
+const http = require('http');
 const nunjucks = require('nunjucks');
 var request = require('request');
 const WebSocket = require('ws');
 
-const task_directory_name = 'static'
+const task_directory_name = 'static';
 
 const PORT = process.env.PORT || 3000;
 
 // Initialize app
-const app = express()
+const app = express();
 app.use(bodyParser.text());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 app.use(bodyParser.json());
 
 nunjucks.configure(task_directory_name, {
-    autoescape: true,
-    express: app
+  autoescape: true,
+  express: app,
 });
 
 // ======================= <Socket> =======================
 
-const server = http.createServer(app)
-const wss = new WebSocket.Server(
-  {server}
-);
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
 // Track connections
 var connection_id_to_socket = {};
 var room_id_to_connection_id = {};
-var NOTIF_ID = 'MTURK_NOTIFICATIONS'
+var NOTIF_ID = 'MTURK_NOTIFICATIONS';
 
 // Handles sending a message through the socket
 function _send_message(connection_id, event_name, event_data) {
@@ -64,7 +64,7 @@ function _send_message(connection_id, event_name, event_data) {
     if (error === undefined) {
       return;
     }
-    setTimeout(function () {
+    setTimeout(function() {
       socket.send(JSON.stringify(packet), function ack2(error2) {
         if (error2 === undefined) {
           return;
@@ -73,7 +73,6 @@ function _send_message(connection_id, event_name, event_data) {
     }, 500);
   });
 }
-
 
 // Connection ids differ when they are heading to or from the world, these
 // functions let the rest of message sending logic remain consistent
@@ -121,28 +120,28 @@ function handle_alive(socket, data) {
   if (!(sender_id && sender_id.startsWith('[World'))) {
     _send_message(out_connection_id, 'new packet', data);
   } else {
-    socket.send(JSON.stringify(
-      {'type': 'conn_success', 'content': 'Socket is open!'}
-    ));
+    socket.send(
+      JSON.stringify({ type: 'conn_success', content: 'Socket is open!' })
+    );
   }
 }
 
 // Register handlers
-wss.on('connection', function (socket) {
+wss.on('connection', function(socket) {
   console.log('Client connected');
   // Disconnects are logged
-  socket.on('disconnect', function () {
+  socket.on('disconnect', function() {
     var connection_id = room_id_to_connection_id[socket.id];
     console.log('Client disconnected: ' + connection_id);
   });
 
-  socket.on('error', (err) => {
+  socket.on('error', err => {
     console.log('Caught socket error');
     console.log(err);
   });
 
   // handles routing a packet to the desired recipient
-  socket.on('message', function (data) {
+  socket.on('message', function(data) {
     try {
       data = JSON.parse(data);
       if (data['type'] == 'agent alive') {
@@ -153,8 +152,8 @@ wss.on('connection', function (socket) {
           handle_pong(data['content']);
         }
       }
-    } catch(error) {
-      console.log("Transient error on message");
+    } catch (error) {
+      console.log('Transient error on message');
       console.log(error);
     }
   });
@@ -170,25 +169,25 @@ server.listen(PORT, function() {
 
 // Wrapper around getting the hit config details
 function _load_hit_config() {
-  var content = fs.readFileSync(task_directory_name+'/hit_config.json');
+  var content = fs.readFileSync(task_directory_name + '/hit_config.json');
   return JSON.parse(content);
 }
 
-
-app.post('/sns_posts', async function (req, res, next) {
+app.post('/sns_posts', async function(req, res, next) {
   res.end('Successful POST');
+  let content;
   if (req.headers['x-amz-sns-message-type'] == 'SubscriptionConfirmation') {
-    var content = JSON.parse(req.body);
+    content = JSON.parse(req.body);
     var confirm_url = content.SubscribeURL;
-    request(confirm_url, function (error, response, body) {
+    request(confirm_url, function(error, response, body) {
       if (!error && response.statusCode == 200) {
-        console.log('Subscribed successfully')
+        console.log('Subscribed successfully');
       }
-    })
+    });
   } else {
     var task_group_id = req.query['task_group_id'];
     var world_id = '[World_' + task_group_id + ']';
-    var content = JSON.parse(req.body);
+    content = JSON.parse(req.body);
     if (content['MessageId'] != '') {
       var message_id = content['MessageId'];
       var sender_id = 'AmazonMTurk';
@@ -198,7 +197,7 @@ app.post('/sns_posts', async function (req, res, next) {
       var data = {
         text: event_type,
         id: sender_id,
-        message_id: message_id
+        message_id: message_id,
       };
       var msg = {
         id: message_id,
@@ -207,7 +206,7 @@ app.post('/sns_posts', async function (req, res, next) {
         assignment_id: assignment_id,
         conversation_id: 'AmazonSNS',
         receiver_id: world_id,
-        data: data
+        data: data,
       };
       _send_message(world_id, 'new packet', msg);
     }
@@ -216,13 +215,13 @@ app.post('/sns_posts', async function (req, res, next) {
 
 // Renders the chat page by setting up the template_context given the
 // sent params for the request
-app.get('/chat_index', async function (req, res) {
+app.get('/chat_index', async function(req, res) {
   var config_vars = _load_hit_config();
   var frame_height = config_vars.frame_height || 650;
   var allow_reviews = config_vars.allow_reviews || false;
   var block_mobile = config_vars.block_mobile;
   var chat_title = config_vars.chat_title || 'Live Chat';
-  block_mobile = (block_mobile === undefined) ? true : block_mobile;
+  block_mobile = block_mobile === undefined ? true : block_mobile;
 
   var params = req.query;
   var template_context = {
@@ -234,20 +233,20 @@ app.get('/chat_index', async function (req, res) {
     allow_reviews: allow_reviews,
     frame_height: frame_height,
     block_mobile: block_mobile,
-    chat_title: chat_title
+    chat_title: chat_title,
   };
 
   res.render('index.html', template_context);
 });
 
 // Returns the hit config
-app.get('/get_hit_config', function (req, res) {
+app.get('/get_hit_config', function(req, res) {
   res.json(_load_hit_config());
 });
 
 // Returns server time for now
-app.get('/get_timestamp', function (req, res) {
-  res.json({'timestamp': Date.now()}); // in milliseconds
+app.get('/get_timestamp', function(req, res) {
+  res.json({ timestamp: Date.now() }); // in milliseconds
 });
 
 app.use(express.static('static'));

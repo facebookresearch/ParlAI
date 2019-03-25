@@ -210,6 +210,11 @@ class SocketManager():
         self.last_sent_heartbeat_time = {}  # time of last heartbeat sent
         self.last_received_heartbeat = {}  # actual last received heartbeat
         self.pongs_without_heartbeat = {}
+        # TODO update processed packets to *ensure* only one execution per
+        # packet, as right now two threads can be spawned to process the
+        # same packet at the same time, as the packet is only added to this
+        # set after processing is complete.
+        self.processed_packets = set()
         self.packet_map = {}
         self.alive = False
         self.is_shutdown = False
@@ -443,7 +448,13 @@ class SocketManager():
                 pong_conn_id = packet.get_receiver_connection_id()
                 if self.last_received_heartbeat[pong_conn_id] is not None:
                     self.pongs_without_heartbeat[pong_conn_id] += 1
+            elif packet_id in self.processed_packets:
+                # We don't want to re-process a packet that has already
+                # been recieved, but we do need to tell the sender it is ack'd
+                # re-acknowledge the packet was recieved and already processed
+                self._send_ack(packet)
             else:
+
                 # Remaining packet types need to be acknowledged
                 shared_utils.print_and_log(
                     logging.DEBUG,
@@ -457,6 +468,10 @@ class SocketManager():
 
                 # acknowledge the packet was recieved and processed
                 self._send_ack(packet)
+
+                # Note to self that this packet has already been processed,
+                # and shouldn't be processed again in the future
+                self.processed_packets.add(packet_id)
 
         def run_socket(*args):
             url_base_name = self.server_url.split('https://')[1]

@@ -21,7 +21,7 @@ function inMTurkHITPage() {
 // Callback for submission
 function allDoneCallback() {
   if (inMTurkHITPage()) {
-    $("input#mturk_submit_button").click();
+    $('input#mturk_submit_button').click();
   }
 }
 
@@ -40,21 +40,33 @@ class MTurkSubmitForm extends React.Component {
   render() {
     return (
       <form
-        id="mturk_submit_form" action={this.props.mturk_submit_url}
-        method="post" style={{"display": "none"}}>
-          <input
-            id="assignmentId" name="assignmentId"
-            value={this.props.assignment_id} readOnly />
-          <input id="hitId" name="hitId" value={this.props.hit_id} readOnly />
-          <input
-            id="workerId" name="workerId"
-            value={this.props.worker_id} readOnly />
-          <input
-            type="submit" value="Submit"
-            name="submitButton" id="mturk_submit_button" />
+        id="mturk_submit_form"
+        action={this.props.mturk_submit_url}
+        method="post"
+        style={{ display: 'none' }}
+      >
+        <input
+          id="assignmentId"
+          name="assignmentId"
+          value={this.props.assignment_id}
+          readOnly
+        />
+        <input id="hitId" name="hitId" value={this.props.hit_id} readOnly />
+        <input
+          id="workerId"
+          name="workerId"
+          value={this.props.worker_id}
+          readOnly
+        />
+        <input
+          type="submit"
+          value="Submit"
+          name="submitButton"
+          id="mturk_submit_button"
+        />
       </form>
     );
   }
 }
 
-export {allDoneCallback, MTurkSubmitForm};
+export { allDoneCallback, MTurkSubmitForm };
