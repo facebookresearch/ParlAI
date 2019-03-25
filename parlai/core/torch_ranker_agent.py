@@ -495,8 +495,11 @@ class TorchRankerAgent(TorchAgent):
             m['examples'] = examples
             m['loss'] = self.metrics['loss']
             m['mean_loss'] = self.metrics['loss'] / examples
-            m['mean_rank'] = self.metrics['rank'] / examples
-            if self.opt['candidates'] == 'batch':
+            batch_train = self.opt['candidates'] == 'batch' and self.is_training
+            if (not self.is_training or self.opt.get('train_predict') or
+                    batch_train):
+                m['mean_rank'] = self.metrics['rank'] / examples
+            if batch_train:
                 m['train_accuracy'] = self.metrics['train_accuracy'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
