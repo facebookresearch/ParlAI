@@ -110,6 +110,7 @@ def main():
                 agent_qualifications.append(MASTER_QUALIF_SDBOX)
             else:
                 agent_qualifications.append(MASTER_QUALIF)
+        mturk_manager.ready_to_accept_workers()
         mturk_manager.create_hits(qualifications=agent_qualifications)
 
         if not opt['is_sandbox']:
@@ -127,7 +128,6 @@ def main():
             world.parley()
             world.shutdown()
         mturk_manager.set_onboard_function(onboard_function=run_onboard)
-        mturk_manager.ready_to_accept_workers()
 
         def check_worker_eligibility(worker):
             return True
