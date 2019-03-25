@@ -4,14 +4,13 @@ version: 2.1
 executors:
   standard_cpu:
     docker:
-      - image: circleci/python:3.6.5
+      - image: circleci/python:3.6.5-node
   gpu:
     environment:
       CUDA_VERSION: "10.0"
     machine:
       image: default
-    resource_class: gpu.medium  # tesla m60
-
+    resource_class: gpu.medium # tesla m60
 
 # commands are nice shorthand
 commands:
@@ -31,7 +30,6 @@ commands:
             . ~/venv/bin/activate
             pip3 install --upgrade --progress-bar off pip
             pip3 install --progress-bar off flake8 gitpython
-
 
   installdeps:
     description: "Installs all dependencies"
@@ -73,7 +71,13 @@ commands:
             sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
             nvidia-smi
             pyenv global 3.6.5
-
+  setupjslinting:
+    description: "Sets up the ability to do js linting for the MTurk webapp"
+    steps:
+      - run:
+          name: Setup JS Linting
+          working_directory: ~/ParlAI/parlai/mturk
+          command: npm install
 
 jobs:
   datatests:
@@ -106,6 +110,11 @@ jobs:
     steps:
       - checkout
       - setup
+      - setupjslinting
+      - run:
+          name: JS Lint
+          working_directory: ~/ParlAI/parlai/mturk
+          command: npm run lint
       - run:
           name: Lint
           command: bash ./tests/lint_changed.sh
@@ -135,7 +144,6 @@ jobs:
           name: All nightly CPU tests
           command: python setup.py test -s tests.suites.nightly_cpu -q
 
-
 workflows:
   version: 2
   commit:
@@ -146,7 +154,7 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: "0 10 * * *"  # 10am UTC is 5am NYC
+          cron: "0 10 * * *" # 10am UTC is 5am NYC
           filters:
             branches:
               only:

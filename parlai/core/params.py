@@ -25,6 +25,7 @@ def get_model_name(opt):
         # try to get model name from model opt file
         model_file = opt.get('model_file', None)
         if model_file is not None:
+            model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
             if os.path.isfile(optfile):
                 try:

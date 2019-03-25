@@ -7,6 +7,7 @@
 import boto3
 import os
 import json
+import re
 from datetime import datetime
 
 from botocore.exceptions import ClientError
@@ -374,7 +375,9 @@ def expire_hit(is_sandbox, hit_id):
 def setup_sns_topic(task_name, server_url, task_group_id):
     # Create the topic and subscribe to it so that our server receives notifs
     client = boto3.client('sns', region_name='us-east-1',)
-    response = client.create_topic(Name=task_name)
+    pattern = re.compile('[^a-zA-Z0-9_-]+')
+    filtered_task_name = pattern.sub('', task_name)
+    response = client.create_topic(Name=filtered_task_name)
     arn = response['TopicArn']
     topic_sub_url = \
         '{}/sns_posts?task_group_id={}'.format(server_url, task_group_id)
