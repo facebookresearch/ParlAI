@@ -54,14 +54,16 @@ function getHitConfig(callback_function) {
   });
 }
 
-// Sees if the current browser supports WebSockets
+// Sees if the current browser supports WebSockets, using *bowser*
+/* global bowser */
+// TODO import bowser as a regular dependency, rather than in the static html
 function doesSupportWebsockets() {
   return !(
-    (browser.msie && browser.version < 10) ||
-    (browser.firefox && browser.version < 11) ||
-    (browser.chrome && browser.version < 16) ||
-    (browser.safari && browser.version < 7) ||
-    (browser.opera && browser.version < 12.1)
+    (bowser.msie && bowser.version < 10) ||
+    (bowser.firefox && bowser.version < 11) ||
+    (bowser.chrome && bowser.version < 16) ||
+    (bowser.safari && bowser.version < 7) ||
+    (bowser.opera && bowser.version < 12.1)
   );
 }
 
