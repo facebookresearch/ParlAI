@@ -102,7 +102,7 @@ jobs:
       - installtorchcpu
       - run:
           name: Unit tests
-          command: python setup.py test -s tests.suites.unittests -v
+          command: python setup.py test -s tests.suites.unittests -q
 
   lint:
     executor: standard_cpu
