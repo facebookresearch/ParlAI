@@ -86,7 +86,7 @@ jobs:
       - installtorchcpu
       - run:
           name: Data tests
-          command: python setup.py test -s tests.suites.datatests -q
+          command: python setup.py test -s tests.suites.datatests -v
 
   unittests:
     executor: standard_cpu
@@ -98,7 +98,7 @@ jobs:
       - installtorchcpu
       - run:
           name: Unit tests
-          command: python setup.py test -s tests.suites.unittests -q
+          command: python setup.py test -s tests.suites.unittests -v
 
   lint:
     executor: standard_cpu
@@ -121,7 +121,8 @@ jobs:
       - installdeps
       - run:
           name: Nightly GPU tests
-          command: python setup.py test -s tests.suites.nightly_gpu -q
+          no_output_timeout: 30m
+          command: python setup.py test -s tests.suites.nightly_gpu -v
 
   nightly_cpu_tests:
     executor: standard_cpu
@@ -133,7 +134,7 @@ jobs:
       - installtorchcpu
       - run:
           name: All nightly CPU tests
-          command: python setup.py test -s tests.suites.nightly_cpu -q
+          command: python setup.py test -s tests.suites.nightly_cpu -v
 
 
 workflows:
