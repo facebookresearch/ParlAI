@@ -55,7 +55,7 @@ function getHitConfig(callback_function) {
 }
 
 // Sees if the current browser supports WebSockets, using *bowser*
-/*eslint-disable */
+/* global bowser */
 // TODO import bowser as a regular dependency, rather than in the static html
 function doesSupportWebsockets() {
   return !(
@@ -66,7 +66,6 @@ function doesSupportWebsockets() {
     (bowser.opera && bowser.version < 12.1)
   );
 }
-/*eslint-enable */
 
 class MainApp extends React.Component {
   constructor(props) {
