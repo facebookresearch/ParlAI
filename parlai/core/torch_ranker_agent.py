@@ -84,7 +84,7 @@ class TorchRankerAgent(TorchAgent):
                 'loss': 0.0,
                 'examples': 0,
                 'rank': 0.0,
-                'inv_rank': 0.0,
+                'mrr': 0.0,
                 'train_accuracy': 0.0
             }
             self.build_model()
@@ -150,9 +150,9 @@ class TorchRankerAgent(TorchAgent):
         # calculate mean_rank
         above_dot_prods = scores - scores.diag().view(-1, 1)
         ranks = (above_dot_prods > 0).float().sum(dim=1) + 1
-        inv_rank = 1.0 / (ranks + 0.00001)
+        mrr = 1.0 / (ranks + 0.00001)
         self.metrics['rank'] += torch.sum(ranks).item()
-        self.metrics['inv_rank'] += torch.sum(inv_rank).item()
+        self.metrics['mrr'] += torch.sum(mrr).item()
 
     def get_train_preds(self, scores, label_inds, cands, cand_vecs):
         # TODO: speed these calculations up
@@ -161,7 +161,7 @@ class TorchRankerAgent(TorchAgent):
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
-            self.metrics['inv_rank'] += 1.0 / (1 + rank)
+            self.metrics['mrr'] += 1.0 / (1 + rank)
 
         # Get predictions but not full rankings for the sake of speed
         if cand_vecs.dim() == 2:
@@ -264,7 +264,7 @@ class TorchRankerAgent(TorchAgent):
             for b in range(batchsize):
                 rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['rank'] += 1 + rank
-                self.metrics['inv_rank'] += 1.0 / (1 + rank)
+                self.metrics['mrr'] += 1.0 / (1 + rank)
 
         ranks = ranks.cpu()
         max_preds = self.opt['cap_num_predictions']
@@ -497,7 +497,7 @@ class TorchRankerAgent(TorchAgent):
         self.metrics['examples'] = 0
         self.metrics['loss'] = 0.0
         self.metrics['rank'] = 0.0
-        self.metrics['inv_rank'] = 0.0
+        self.metrics['mrr'] = 0.0
         self.metrics['train_accuracy'] = 0.0
 
     def report(self):
@@ -510,7 +510,7 @@ class TorchRankerAgent(TorchAgent):
             m['loss'] = self.metrics['loss']
             m['mean_loss'] = self.metrics['loss'] / examples
             m['mean_rank'] = self.metrics['rank'] / examples
-            m['mrr'] = self.metrics['inv_rank'] / examples
+            m['mrr'] = self.metrics['mrr'] / examples
             if self.opt['candidates'] == 'batch':
                 m['train_accuracy'] = self.metrics['train_accuracy'] / examples
         for k, v in m.items():
