@@ -78,8 +78,15 @@ class TorchRankerAgent(TorchAgent):
             self.metrics = shared['metrics']
             states = None
         else:
-            self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
-                            'inv_rank': 0, 'train_accuracy': 0.0}
+            # Note: we cannot change the type of metrics ahead of time, so you
+            # should correctly initialize to floats or ints here
+            self.metrics = {
+                'loss': 0.0,
+                'examples': 0,
+                'rank': 0.0,
+                'inv_rank': 0.0,
+                'train_accuracy': 0.0
+            }
             self.build_model()
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
@@ -485,10 +492,12 @@ class TorchRankerAgent(TorchAgent):
     def reset_metrics(self):
         """Reset metrics."""
         super().reset_metrics()
+        # Note: we cannot change the type of metrics ahead of time, so you
+        # should correctly initialize to floats or ints here
         self.metrics['examples'] = 0
         self.metrics['loss'] = 0.0
-        self.metrics['rank'] = 0
-        self.metrics['inv_rank'] = 0
+        self.metrics['rank'] = 0.0
+        self.metrics['inv_rank'] = 0.0
         self.metrics['train_accuracy'] = 0.0
 
     def report(self):

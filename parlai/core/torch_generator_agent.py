@@ -334,6 +334,8 @@ class TorchGeneratorAgent(TorchAgent):
             self.metrics = shared['metrics']
             states = shared.get('states', {})
         else:
+            # Note: we cannot change the type of metrics ahead of time, so you
+            # should correctly initialize to floats or ints here
             self.metrics = {
                 'nll_loss': 0.0,
                 'loss': 0.0,
@@ -447,6 +449,8 @@ class TorchGeneratorAgent(TorchAgent):
     def reset_metrics(self):
         """Reset metrics for reporting loss and perplexity."""
         super().reset_metrics()
+        # Note: we cannot change the type of metrics ahead of time, so you
+        # should correctly initialize to floats or ints here
         self.metrics['loss'] = 0.0
         self.metrics['nll_loss'] = 0.0
         self.metrics['num_tokens'] = 0
