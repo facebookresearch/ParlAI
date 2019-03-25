@@ -555,6 +555,7 @@ class TorchAgent(Agent):
             dict_agent=self.dict,
         )
 
+        self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
@@ -1390,12 +1391,12 @@ class TorchAgent(Agent):
         batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
 
         # check if there are any labels available, if so we will train on them
-        is_training = any('labels' in obs for obs in observations)
+        self.is_training = any('labels' in obs for obs in observations)
 
         # create a batch from the vectors
         batch = self.batchify(observations)
 
-        if is_training:
+        if self.is_training:
             output = self.train_step(batch)
         else:
             with torch.no_grad():

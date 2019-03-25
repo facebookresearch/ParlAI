@@ -87,7 +87,6 @@ class TorchRankerAgent(TorchAgent):
             else:
                 states = {}
 
-        self.is_training = False  # track whether model is training
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
         if self.use_cuda:
             self.model.cuda()
@@ -186,7 +185,6 @@ class TorchRankerAgent(TorchAgent):
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
-        self.is_training = True
         if batch.text_vec is None:
             return
         batchsize = batch.text_vec.size(0)
@@ -228,7 +226,6 @@ class TorchRankerAgent(TorchAgent):
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
-        self.is_training = False
         if batch.text_vec is None:
             return
         batchsize = batch.text_vec.size(0)
