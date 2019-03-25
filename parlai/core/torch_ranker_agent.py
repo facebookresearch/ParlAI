@@ -87,6 +87,7 @@ class TorchRankerAgent(TorchAgent):
             else:
                 states = {}
 
+        self.is_training = False  # track whether model is training
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
         if self.use_cuda:
             self.model.cuda()
@@ -185,6 +186,7 @@ class TorchRankerAgent(TorchAgent):
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
+        self.is_training = True
         if batch.text_vec is None:
             return
         batchsize = batch.text_vec.size(0)
@@ -226,6 +228,7 @@ class TorchRankerAgent(TorchAgent):
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
+        self.is_training = False
         if batch.text_vec is None:
             return
         batchsize = batch.text_vec.size(0)
@@ -495,8 +498,11 @@ class TorchRankerAgent(TorchAgent):
             m['examples'] = examples
             m['loss'] = self.metrics['loss']
             m['mean_loss'] = self.metrics['loss'] / examples
-            m['mean_rank'] = self.metrics['rank'] / examples
-            if self.opt['candidates'] == 'batch':
+            batch_train = self.opt['candidates'] == 'batch' and self.is_training
+            if (not self.is_training or self.opt.get('train_predict') or
+                    batch_train):
+                m['mean_rank'] = self.metrics['rank'] / examples
+            if batch_train:
                 m['train_accuracy'] = self.metrics['train_accuracy'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
