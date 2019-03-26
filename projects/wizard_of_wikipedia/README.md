@@ -81,6 +81,11 @@ You can also evaluate the model on the unseen topic split too:
         -bs 64 -t wizard_of_wikipedia:end2end_generator:topic_split \
         -mf models:wizard_of_wikipedia/wizard_generator/model
 
+You can evaluate a retrieval model on the full dialogue task by running the
+following script:
+
+    python projects/wizard_of_wikipedia/scripts/eval_retrieval_model.py
+
 Check back later for more pretrained models soon!
 
 ## Citation
@@ -94,4 +99,3 @@ following BibTex entry:
       booktitle = {Proceedings of the International Conference on Learning Representations (ICLR)},
       year={2019},
     }
-
