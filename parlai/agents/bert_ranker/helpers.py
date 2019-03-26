@@ -99,8 +99,7 @@ class BertWrapper(torch.nn.Module):
         if self.add_transformer_layer:
             # Follow up by yet another transformer layer
             extended_attention_mask = attention_mask.unsqueeze(1).unsqueeze(2)
-            extended_attention_mask = extended_attention_mask.to(dtype)
-            extended_attention_mask = (1.0 - extended_attention_mask) * neginf(dtype)
+            extended_attention_mask = (~extended_attention_mask).to(dtype) * neginf(dtype)  # noqa: E501
             embedding_layer = self.additional_transformer_layer(
                 layer_of_interest, extended_attention_mask)
         else:
@@ -117,7 +116,7 @@ class BertWrapper(torch.nn.Module):
         elif self.aggregation == "max":
             #  consider the max of all the output except CLS
             outputs_of_interest = embedding_layer[:, 1:, :]
-            mask = (attention_mask[:, 1:].float().unsqueeze(2) - 1) * neginf(dtype)
+            mask = (~attention_mask[:, 1:]).float().unsqueeze(2) * neginf(dtype)
             embeddings, _ = torch.max(outputs_of_interest + mask, dim=1)
         else:
             # easiest, we consider the output of "CLS" as the embedding
