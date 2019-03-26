@@ -189,8 +189,16 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
             
             # Weight token importance with idf, if desired.
             tot_doc = float(self.dict.tot_doc)
-            min_idf = torch.log(torch.tensor([ tot_doc/ (tot_doc - 1.)]))
+            # min_idf = torch.log(torch.tensor([ tot_doc/ (tot_doc - 1.)]))
             
+            special_tokens = [self.dict.null_token, self.dict.start_token,
+                                self.dict.end_token, self.dict.unk_token]
+                                
+            max_doc_freq = sorted([self.dict.doc_freq[t] 
+                                    for t in self.dict.doc_freq.keys() 
+                                        if t not in special_tokens])[-1]
+                                        
+            min_idf = torch.log(torch.tensor([ tot_doc/ (max_doc_freq)]))
             word_weights = min_idf * torch.ones(len(self.dict.freq.keys()))
             
             for tok in self.dict.freq.keys(): 
@@ -204,13 +212,13 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
                 else: 
                     print(tok, self.dict.doc_freq[str(tok)], )
                     
-        else: 
-        
-            # weight with 1/sqrt(freq)
-        
-            word_weights = torch.zeros(len(self.dict.freq.keys()))
-            for tok in self.dict.freq.keys(): 
-                word_weights[self.dict.tok2ind[tok]] = 1./(float(self.dict.freq[tok]) + 1.)**.5
+#         else: 
+#         
+#             # weight with 1/sqrt(freq)
+#         
+#             word_weights = torch.zeros(len(self.dict.freq.keys()))
+#             for tok in self.dict.freq.keys(): 
+#                 word_weights[self.dict.tok2ind[tok]] = 1./(float(self.dict.freq[tok]) + 1.)**.5
         
         
         if self.opt['swap_criterion_train_eval']:
