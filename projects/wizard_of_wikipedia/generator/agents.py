@@ -76,6 +76,8 @@ class TwoStageAgent(_GenericWizardAgent):
         if 'text_vec' not in obs:
             fields = []
             dialogue_history = history.get_history_str()
+            if dialogue_history is None:
+                dialogue_history = ''
             if 'chosen_topic' in obs:
                 fields += [obs['title']]
             if 'checked_sentence' in obs:
