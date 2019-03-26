@@ -78,8 +78,15 @@ class TorchRankerAgent(TorchAgent):
             self.metrics = shared['metrics']
             states = None
         else:
-            self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
-                            'train_accuracy': 0.0}
+            # Note: we cannot change the type of metrics ahead of time, so you
+            # should correctly initialize to floats or ints here
+            self.metrics = {
+                'loss': 0.0,
+                'examples': 0,
+                'rank': 0.0,
+                'mrr': 0.0,
+                'train_accuracy': 0.0
+            }
             self.build_model()
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
@@ -140,10 +147,12 @@ class TorchRankerAgent(TorchAgent):
         targets = torch.arange(batchsize, out=targets)
         nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
         self.metrics['train_accuracy'] += nb_ok
-        # calculate mean rank
+        # calculate mean_rank
         above_dot_prods = scores - scores.diag().view(-1, 1)
-        rank = (above_dot_prods > 0).float().sum().item()
-        self.metrics['rank'] += rank
+        ranks = (above_dot_prods > 0).float().sum(dim=1) + 1
+        mrr = 1.0 / (ranks + 0.00001)
+        self.metrics['rank'] += torch.sum(ranks).item()
+        self.metrics['mrr'] += torch.sum(mrr).item()
 
     def get_train_preds(self, scores, label_inds, cands, cand_vecs):
         # TODO: speed these calculations up
@@ -152,6 +161,7 @@ class TorchRankerAgent(TorchAgent):
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
+            self.metrics['mrr'] += 1.0 / (1 + rank)
 
         # Get predictions but not full rankings for the sake of speed
         if cand_vecs.dim() == 2:
@@ -254,6 +264,7 @@ class TorchRankerAgent(TorchAgent):
             for b in range(batchsize):
                 rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['rank'] += 1 + rank
+                self.metrics['mrr'] += 1.0 / (1 + rank)
 
         ranks = ranks.cpu()
         max_preds = self.opt['cap_num_predictions']
@@ -481,9 +492,12 @@ class TorchRankerAgent(TorchAgent):
     def reset_metrics(self):
         """Reset metrics."""
         super().reset_metrics()
+        # Note: we cannot change the type of metrics ahead of time, so you
+        # should correctly initialize to floats or ints here
         self.metrics['examples'] = 0
         self.metrics['loss'] = 0.0
-        self.metrics['rank'] = 0
+        self.metrics['rank'] = 0.0
+        self.metrics['mrr'] = 0.0
         self.metrics['train_accuracy'] = 0.0
 
     def report(self):
@@ -499,6 +513,7 @@ class TorchRankerAgent(TorchAgent):
             if (not self.is_training or self.opt.get('train_predict') or
                     batch_train):
                 m['mean_rank'] = self.metrics['rank'] / examples
+                m['mrr'] = self.metrics['mrr'] / examples
             if batch_train:
                 m['train_accuracy'] = self.metrics['train_accuracy'] / examples
         for k, v in m.items():
