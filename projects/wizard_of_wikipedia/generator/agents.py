@@ -76,13 +76,11 @@ class TwoStageAgent(_GenericWizardAgent):
         if 'text_vec' not in obs:
             fields = []
             dialogue_history = history.get_history_str()
-            if dialogue_history is None:
-                dialogue_history = ''
             if 'chosen_topic' in obs:
                 fields += [obs['title']]
             if 'checked_sentence' in obs:
                 fields += [TOKEN_KNOWLEDGE, obs['checked_sentence']]
-            if dialogue_history != '':
+            if dialogue_history:
                 fields += [TOKEN_DIALOG, dialogue_history]
             obs['text'] = ' '.join(fields)
             obs['text_vec'] = self.dict.txt2vec(obs['text'])
