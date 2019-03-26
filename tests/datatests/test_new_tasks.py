@@ -71,7 +71,7 @@ class TestNewTasks(unittest.TestCase):
                     if log[key] != 0:
                         print('There are {} {} in {}.'.format(
                             log[key],
-                            log,
+                            key,
                             subt,
                         ))
                         found_errors = True
