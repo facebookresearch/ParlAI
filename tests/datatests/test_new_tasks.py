@@ -63,7 +63,7 @@ class TestNewTasks(unittest.TestCase):
                 try:
                     with testing_utils.capture_output():
                         text, log = verify(opt, print_parser=False)
-                except Exception as e:
+                except Exception:
                     found_errors = True
                     traceback.print_exc()
                     print("Got above exception in {}".format(subt))
