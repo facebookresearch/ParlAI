@@ -159,7 +159,8 @@ class TransformerRankerAgent(TorchRankerAgent):
         # convoluted check that not all memories are empty
         if (self.opt['use_memories'] and batch.memory_vecs is not None and
                 sum(len(m) for m in batch.memory_vecs)):
-            mems = padded_3d(batch.memory_vecs, use_cuda=self.use_cuda)
+            mems = padded_3d(batch.memory_vecs, use_cuda=self.use_cuda,
+                             pad_idx=self.NULL_IDX)
         else:
             mems = None
 

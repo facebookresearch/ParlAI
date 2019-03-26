@@ -1,6 +1,10 @@
-<h2>News</h2>
+## News
+
+2019-03-15: The [Wizard of Wikipedia project page](http://parl.ai/projects/wizard_of_wikipedia/) is updated with pretrained models and specialized model code.
 
 2019-03-09: Added [LIGHT](http://parl.ai/projects/light) text adventure game research platform for learning to speak and act. [[press]](https://venturebeat.com/2019/03/08/facebook-ai-researchers-create-a-text-based-adventure-to-study-how-ai-speak-and-act/)
+
+2019-02-07: Added [BERT Ranker agents](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/bert_ranker), several variations of a ranking model based on the pretrained language model BERT.
 
 2019-01-16: ParlAI has been relicensed under the MIT open source license.
 
@@ -19,7 +23,6 @@
 2018-05-22: Two new tasks added: [COCO Image Captioning](http://cocodataset.org/#captions-2015) and [Flickr30k Entities](http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/)
 
 2018-04-13: [NIPS ConvAI2 competition!](http://convai.io/) Train Dialogue Agents to chat about personal interests and get to know their dialogue partner -- using the PersonaChat dataset as a training source, with data and baseline code in ParlAI. Competition starts now! Ends September 1st.
-
 
 2018-03-13: Added [ParlAI-Messenger](http://parl.ai/static/docs/messenger.html), a new method for connecting human agents to a world in ParlAI using Facebook Messenger. Host your bots on Facebook Messenger to expose them to a broad audience!
 

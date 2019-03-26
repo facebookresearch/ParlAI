@@ -58,48 +58,38 @@ class _GenericWizardAgent(TransformerGeneratorAgent):
             checked_sentences.append(checked_sentence)
 
         batch['checked_sentence'] = checked_sentences
+
         return batch
 
 
 class TwoStageAgent(_GenericWizardAgent):
-    def __init__(self, opt, shared):
+    def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         if shared is not None:
             # make sure the dialogue token appears
             self.dict[TOKEN_DIALOG] = 9999999
 
-    def observe(self, obs):
+    def _set_text_vec(self, obs, history, truncate):
         if 'text' not in obs:
             return obs
 
-        # TODO: resolve this with #1421
-        # get the dialog stuff
-        reply = self.last_reply()
-        self.observation = self.get_dialog_history(obs, reply=reply)
-        # we need to store the old text so that we can restore it
-        oldtext = obs['text']
+        if 'text_vec' not in obs:
+            fields = []
+            dialogue_history = history.get_history_str()
+            if 'chosen_topic' in obs:
+                fields += [obs['title']]
+            if 'checked_sentence' in obs:
+                fields += [TOKEN_KNOWLEDGE, obs['checked_sentence']]
+            if dialogue_history:
+                fields += [TOKEN_DIALOG, dialogue_history]
+            obs['text'] = ' '.join(fields)
+            obs['text_vec'] = self.dict.txt2vec(obs['text'])
 
-        # now we want to force prepend the knowledge stuff
-        fields = []
-        if 'chosen_topic' in obs:
-            fields += [obs['title']]
-        if 'checked_sentence' in obs:
-            fields += [TOKEN_KNOWLEDGE, obs['checked_sentence']]
-        if obs['text'] != '':
-            fields += [TOKEN_DIALOG, obs['text']]
-        obs['text'] = ' '.join(fields)
-
-        # now vectorize with the extra knowledge. It'll all get stored in the
-        # text_vec operation, etc
-        self.vectorize(
-            obs,
-            text_truncate=self.text_truncate,
-            label_truncate=self.label_truncate
-        )
-
-        # finally we need to return the old text to the way it was
-        obs['text'] = oldtext
-        assert obs is self.observation
+        # check truncation
+        if 'text_vec' in obs:
+            obs['text_vec'] = th.LongTensor(
+                self._check_truncate(obs['text_vec'], truncate, True)
+            )
 
         return obs
 

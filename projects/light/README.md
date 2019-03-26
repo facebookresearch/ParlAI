@@ -30,11 +30,14 @@ described entirely in natural language. Within that game world, we collect 11,00
 character interactions (talking and acting).
 
 You can view the data or train your own ParlAI agent on the LIGHT tasks with
-`-t light_dialog`.
+`-t light_dialog`. See the [ParlAI quickstart for help](http://www.parl.ai/static/docs/tutorial_quick.html).
 
 ## Pretrained Models
 
-Models will be released soon. Please check back here in the future.
+The BERT Bi-Ranker dialogue model is available e.g. via this command (which automatically downloads it):
+
+    python examples/eval_model.py -t light_dialog -mf models:light/biranker_dialogue/model
+
 
 ## Citation
 

@@ -29,6 +29,7 @@ important research direction.
 
 You can train your own ParlAI agent on the Wizard of Wikipedia task with
 `-t wizard_of_wikipedia`.
+See the [ParlAI quickstart for help](http://www.parl.ai/static/docs/tutorial_quick.html).
 
 The ParlAI MTurk collection scripts are also
 [made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/wizard_of_wikipedia),
@@ -66,19 +67,26 @@ Vanilla Transformer (no knowledge)   | [Dinan et al. (2019)](https://arxiv.org/a
 You can evaluate the pretrained End-to-end generative models via:
 
     python examples/eval_model.py \
-        -bs 64 -t wizard_of_wikipedia:end2end_generator:random_split \
-        -mf models:wizard_of_wikipedia/wizard_generator/endtoend_model
+        -bs 64 -t wizard_of_wikipedia:generator:random_split \
+        -mf models:wizard_of_wikipedia/end2end_generator/model
 
 
 This produces the following metrics:
 
     {'f1': 0.1717, 'ppl': 61.21, 'know_acc': 0.2201, 'know_chance': 0.02625}
 
+This differs slightly from the results in the paper, as it is a recreation trained
+from scratch for public release.
+
 You can also evaluate the model on the unseen topic split too:
 
     python examples/eval_model.py \
-        -bs 64 -t wizard_of_wikipedia:end2end_generator:topic_split \
-        -mf models:wizard_of_wikipedia/wizard_generator/model
+        -bs 64 -t wizard_of_wikipedia:generator:topic_split \
+        -mf models:wizard_of_wikipedia/end2end_generator/model
+
+This will produce:
+
+    {'f1': 0.1498, 'ppl': 103.1, 'know_acc': 0.1123, 'know_chance': 0.02496}
 
 Check back later for more pretrained models soon!
 

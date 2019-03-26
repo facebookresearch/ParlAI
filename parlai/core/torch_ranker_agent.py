@@ -51,6 +51,9 @@ class TorchRankerAgent(TorchAgent):
                  'or evaluating on fixed candidate set when the encoding of '
                  'the candidates is independent of the input.')
         agent.add_argument(
+            '--init-model', type=str, default=None,
+            help='Initialize model with weights from this file.')
+        agent.add_argument(
             '--train-predict', type='bool', default=False,
             help='Get predictions and calculate mean rank during the train '
                  'step. Turning this on may slow down training.'
@@ -64,7 +67,7 @@ class TorchRankerAgent(TorchAgent):
                  'label candidates. Default behavior results in RuntimeError. ')
 
     def __init__(self, opt, shared=None):
-        # Must call _get_model_file() first so that paths are updated if necessary
+        # Must call _get_init_model() first so that paths are updated if necessary
         # (e.g., a .dict file)
         init_model, _ = self._get_init_model(opt, shared)
         opt['rank_candidates'] = True
@@ -75,8 +78,15 @@ class TorchRankerAgent(TorchAgent):
             self.metrics = shared['metrics']
             states = None
         else:
-            self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
-                            'train_accuracy': 0.0}
+            # Note: we cannot change the type of metrics ahead of time, so you
+            # should correctly initialize to floats or ints here
+            self.metrics = {
+                'loss': 0.0,
+                'examples': 0,
+                'rank': 0.0,
+                'mrr': 0.0,
+                'train_accuracy': 0.0
+            }
             self.build_model()
             if self.fp16:
                 self.model = self.model.half()
@@ -139,10 +149,12 @@ class TorchRankerAgent(TorchAgent):
         targets = torch.arange(batchsize, out=targets)
         nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
         self.metrics['train_accuracy'] += nb_ok
-        # calculate mean rank
+        # calculate mean_rank
         above_dot_prods = scores - scores.diag().view(-1, 1)
-        rank = (above_dot_prods > 0).float().sum().item()
-        self.metrics['rank'] += rank
+        ranks = (above_dot_prods > 0).float().sum(dim=1) + 1
+        mrr = 1.0 / (ranks + 0.00001)
+        self.metrics['rank'] += torch.sum(ranks).item()
+        self.metrics['mrr'] += torch.sum(mrr).item()
 
     def get_train_preds(self, scores, label_inds, cands, cand_vecs):
         # TODO: speed these calculations up
@@ -151,6 +163,7 @@ class TorchRankerAgent(TorchAgent):
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
+            self.metrics['mrr'] += 1.0 / (1 + rank)
 
         # Get predictions but not full rankings for the sake of speed
         if cand_vecs.dim() == 2:
@@ -192,22 +205,24 @@ class TorchRankerAgent(TorchAgent):
 
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.opt['candidates'], mode='train')
-
-        scores = self.score_candidates(batch, cand_vecs)
-        _, ranks = scores.sort(1, descending=True)
-
-        loss = self.rank_loss(scores, label_inds)
+        try:
+            scores = self.score_candidates(batch, cand_vecs)
+            loss = self.rank_loss(scores, label_inds)
+            self.backward(loss)
+            self.update_params()
+        except RuntimeError as e:
+            # catch out of memory exceptions during fwd/bck (skip batch)
+            if 'out of memory' in str(e):
+                print('| WARNING: ran out of memory, skipping batch. '
+                      'if this happens frequently, decrease batchsize or '
+                      'truncate the inputs to the model.')
+                return Output()
+            else:
+                raise e
 
         # Update loss
         self.metrics['loss'] += loss.item()
         self.metrics['examples'] += batchsize
-
-        for b in range(batchsize):
-            rank = (ranks[b] == label_inds[b]).nonzero().item()
-            self.metrics['rank'] += 1 + rank
-
-        self.backward(loss)
-        self.update_params()
 
         # Get train predictions
         if self.opt['candidates'] == 'batch':
@@ -251,6 +266,7 @@ class TorchRankerAgent(TorchAgent):
             for b in range(batchsize):
                 rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['rank'] += 1 + rank
+                self.metrics['mrr'] += 1.0 / (1 + rank)
 
         ranks = ranks.cpu()
         max_preds = self.opt['cap_num_predictions']
@@ -479,9 +495,12 @@ class TorchRankerAgent(TorchAgent):
     def reset_metrics(self):
         """Reset metrics."""
         super().reset_metrics()
+        # Note: we cannot change the type of metrics ahead of time, so you
+        # should correctly initialize to floats or ints here
         self.metrics['examples'] = 0
         self.metrics['loss'] = 0.0
-        self.metrics['rank'] = 0
+        self.metrics['rank'] = 0.0
+        self.metrics['mrr'] = 0.0
         self.metrics['train_accuracy'] = 0.0
 
     def report(self):
@@ -493,8 +512,12 @@ class TorchRankerAgent(TorchAgent):
             m['examples'] = examples
             m['loss'] = self.metrics['loss']
             m['mean_loss'] = self.metrics['loss'] / examples
-            m['mean_rank'] = self.metrics['rank'] / examples
-            if self.opt['candidates'] == 'batch':
+            batch_train = self.opt['candidates'] == 'batch' and self.is_training
+            if (not self.is_training or self.opt.get('train_predict') or
+                    batch_train):
+                m['mean_rank'] = self.metrics['rank'] / examples
+                m['mrr'] = self.metrics['mrr'] / examples
+            if batch_train:
                 m['train_accuracy'] = self.metrics['train_accuracy'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats

@@ -8,6 +8,7 @@ joblib
 nltk
 numpy
 pexpect
+py-gfm
 pyzmq
 regex
 requests

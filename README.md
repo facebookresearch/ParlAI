@@ -10,7 +10,7 @@ Its goal is to provide researchers:
 - many popular datasets available all in one place -- from open-domain chitchat to visual question answering.
 - a wide set of reference models -- from retrieval baselines to Transformers.
 - seamless integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome) for data collection and human evaluation
-- integration with [Facebook Messenger](http://www.parl.ai/static/docs/tutorial_messenger.html) to connect agents with humans in a chat interface
+- integration with [Facebook Messenger](http://www.parl.ai/docs/tutorial_messenger.html) to connect agents with humans in a chat interface
 
 Many [tasks](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) are supported, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) for the current complete task list.
 
@@ -150,7 +150,7 @@ All agents (including teachers) speak to each other with a single format -- the 
 This is used to pass text, labels, rewards, and more between agents.
 It’s the same object type when talking (acting) or listening (observing), but a different view (i.e. with different values in the fields).
 
-The observation/action dict fields are as follows (or see [the documentation](http://parl.ai/static/docs/observations.html)):
+The observation/action dict fields are as follows (or see [the documentation](http://parl.ai/docs/observations.html)):
 
 <p align=center><img width="33%" src="docs/source/\_static/img/act-obs-dict.png" /></p>
 
@@ -279,7 +279,7 @@ Each task folder contains:
 - **agents.py** file which contains default or special teacher classes used by core.create_task to instantiate these classes from command-line arguments (if desired).
 - **worlds.py** file can optionally be added for tasks that need to define new/complex environments.
 
-To add your own task, see the [tutorial](http://www.parl.ai/static/docs/tutorial_task.html).
+To add your own task, see the [tutorial](http://www.parl.ai/docs/tutorial_task.html).
 
 
 ### MTurk
@@ -316,11 +316,11 @@ To add your own MTurk task:
 - implement __run.py__, with code for setting up and running the world where `MTurkAgent` lives in.
 - (Optional) implement __worlds.py__, with a world class that extends from `World`.
 
-Please see [the MTurk tutorial](http://parl.ai/static/docs/tutorial_mturk.html) to learn more about the MTurk examples and how to create and run your own task.
+Please see [the MTurk tutorial](http://parl.ai/docs/tutorial_mturk.html) to learn more about the MTurk examples and how to create and run your own task.
 
 ### Messenger
 
-Please see [the Facebook Messenger tutorial](http://parl.ai/static/docs/tutorial_messenger.html) to learn more about how to use ParlAI with Facebook Messenger.
+Please see [the Facebook Messenger tutorial](http://parl.ai/docs/tutorial_messenger.html) to learn more about how to use ParlAI with Facebook Messenger.
 
 
 ## Support

@@ -15,7 +15,7 @@ module.exports = {
   },
   node: {
     net: 'empty',
-    dns: 'empty'
+    dns: 'empty',
   },
   module: {
     rules: [
@@ -23,20 +23,20 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
-        options: { presets: ["@babel/env"] }
+        options: { presets: ['@babel/env'] },
       },
       {
         test: /\.css$/,
-        loader: "style-loader!css-loader"
+        loader: 'style-loader!css-loader',
       },
       {
         test: /\.png$/,
-        loader: "url-loader?limit=100000"
+        loader: 'url-loader?limit=100000',
       },
       {
         test: /\.jpg$/,
-        loader: "file-loader"
+        loader: 'file-loader',
       },
-    ]
+    ],
   },
 };
