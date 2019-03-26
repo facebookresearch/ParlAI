@@ -10,8 +10,11 @@ import parlai.core.testing_utils as testing_utils
 
 @testing_utils.skipUnlessGPU
 class TestBertModel(unittest.TestCase):
-    """Checks that Both Biencoder and CrossEncoder of Bert can be trained
-       for about 100 samples on convai2
+    """
+    Test of Bert biencoder and crossencoder.
+
+    Checks that Both Biencoder and CrossEncoder of Bert can be trained
+    for about 100 samples on convai2
     """
 
     def test_biencoder(self):
