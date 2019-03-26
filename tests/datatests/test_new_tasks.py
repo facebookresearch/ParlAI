@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import importlib.util
+import traceback
 import unittest
 
 import parlai.core.teachers as teach_module
@@ -34,6 +35,7 @@ class TestNewTasks(unittest.TestCase):
         if not changed_task_files:
             return
 
+        found_errors = False
         for file in changed_task_files:
             task = file.split('/')[-2]
             module_name = "%s.tasks.%s.agents" % ('parlai', task)
@@ -58,16 +60,23 @@ class TestNewTasks(unittest.TestCase):
                 parser = setup_args()
                 opt = parser.parse_args(args=['--task', subt], print_args=False)
                 opt['task'] = subt
-                with testing_utils.capture_output():
-                    text, log = verify(opt, print_parser=False)
+                try:
+                    with testing_utils.capture_output():
+                        text, log = verify(opt, print_parser=False)
+                except Exception:
+                    found_errors = True
+                    traceback.print_exc()
+                    print("Got above exception in {}".format(subt))
                 for key in KEYS:
-                    self.assertEqual(
-                        log[key],
-                        0,
-                        'There are {} {} in this task.'.format(
+                    if log[key] != 0:
+                        print('There are {} {} in {}.'.format(
                             log[key],
-                            log
+                            key,
+                            subt,
                         ))
+                        found_errors = True
+
+        self.assertFalse(found_errors, "Errors were found.")
 
 
 if __name__ == '__main__':
