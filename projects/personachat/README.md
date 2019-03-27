@@ -6,7 +6,9 @@ the Mechanical Turk tasks used to collect the Persona-Chat dataset used in this 
 
 Note that the dataset for the ConvAI2 competition is larger than the Persona-Chat dataset, so
 we are computing new baselines for that competition. See the baselines for that competition
-[here](https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2).
+[here](https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2). Also note
+that the Profile Memory model has been deprecated and removed from this codebase; for
+generative models trained on the ConvAI2 dataset you can see that project folder.
 
 ## Examples
 
@@ -19,15 +21,4 @@ Interact with a pre-trained Key-Value Memory Net model trained on Persona-Chat
 using persona 'self':
 ```bash
 python projects/personachat/scripts/kvmemnn_interactive.py
-```
-
-Evaluate pre-trained profile memory model trained to optimize f1 metric on
-Persona-Chat using persona 'self':
-```bash
-python projects/personachat/scripts/profilememory_eval_f1.py
-```
-
-Train a profile memory model on Persona-Chat using persona 'self':
-```bash
-bash projects/personachat/scripts/profilememory_train.sh
 ```

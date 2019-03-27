@@ -1,0 +1,137 @@
+<div class="jumbotron" style="background-color: #ce3239; margin-bottom: 0px">
+    <div class="container" style="text-align: center; color: #fff">
+        <h1 style="font-size: 40px; margin-bottom: 30px; margin-top: 32px; letter-spacing: -0.01em;
+line-height: 1.22em">A unified platform for sharing, training and evaluating dialogue models across many tasks.</h1>
+        <h3 style="font-size: 18px; margin-bottom: 25px; line-height: 1.55em;
+letter-spacing: 0em;">Many popular datasets available all in one place -- from open-domain chitchat to visual question answering.</h3>
+        <h3 style="font-size: 18px; margin-bottom: 25px; line-height: 1.55em;
+letter-spacing: 0em;"> A wide set of reference models -- from retrieval baselines to Transformers.</h3>
+        <h3 style="font-size: 18px; margin-bottom: 25px; line-height: 1.55em;
+letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data collection, training and human evaluation.</h3>
+        <a id="main-button" class="btn btn-hero" style="margin-bottom: 32px; ">See Examples</a>
+        <a href="https://github.com/facebookresearch/ParlAI"><img style="position: absolute; top: 75px; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+    </div>
+</div>
+
+<section class="install-wizard wrap" style="background-color: #f7f7f7">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <h3>What's New</h3>
+            </div>
+        </div>
+        <!-- <div class="row"> -->
+        <article class="markdown-body">
+            {{{CONTENT}}}
+        </article>
+        <!-- </div> -->
+    </div>
+</section>
+
+<section class="install-wizard wrap">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <h3>Get Started</h3>
+            </div>
+        </div>
+        <!-- <div class="row">
+            <div class="col-md-7" style="padding-top: 20px; padding-bottom: 20px">
+              <h4 style="color: #555"><b>To install ParlAI:</b></h4>
+            </div>
+        </div>
+        <div class="command" style="margin-bottom: 20px">
+            <div class="label">Run this command:</div>
+            <div class="text">pip install parlai</div>
+        </div> -->
+        <div class="row">
+            <div class="col-md-7" style="padding-top: 20px; padding-bottom: 20px">
+              <h4 style="color: #555"><b>Check out our <a href="https://github.com/facebookresearch/ParlAI/blob/master/README.md">GitHub repository</a>:</b></h4>
+            </div>
+        </div>
+        <div class="command">
+            <div class="label">Run this command:</div>
+            <div class="text">git clone https://github.com/facebookresearch/ParlAI.git<br>cd ParlAI; python setup.py develop</div>
+        </div>
+    </div>
+</section>
+
+<section class="projects-tutorials wrap" style="padding: 108px 0;">
+    <div class="container">
+        <!-- <div class="row">
+            <div class="col-md-6 box exmaples">
+                <img src="/static/img/examples.svg">
+                <h3>Examples</h3>
+                <h4>Browse examples of what ParlAI can do</h4>
+                <a class="btn" href="#">Explore Examples</a>
+            </div>
+            <div class="col-md-6 box tutorials">
+                <img src="/static/img/tutorials.svg">
+                <h3>Tutorials</h3>
+                <h4>Learn how to use the ParlAI library</h4>
+                <a class="btn" href="#">Browse Tutorials</a>
+            </div>
+        </div> -->
+        <div id="examples" class="row">
+            <div class="col-md-5">
+                <h3 style="font-size: 50px">Examples</h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="padding-top: 20px;">
+              <h4 style="color: #555; margin-bottom: 20px; font-size: 16px; line-height: 140%"><b>Display 10 random examples from task 1 of the "1k training examples" bAbI task:</b></h4>
+            </div>
+        </div>
+        <div class="command" style="margin-bottom: 20px">
+            <div class="label">Run this command:</div>  
+            <div class="text" style="background-color: #fff">python examples/display_data.py -t babi:task1k:1</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="padding-top: 20px;">
+              <h4 style="color: #555; margin-bottom: 20px; font-size: 16px; line-height: 140%"><b>Displays 100 random examples from multitasking on the bAbI task and the SQuAD dataset at the same time:</b></h4>
+            </div>
+        </div>
+        <div class="command" style="margin-bottom: 20px">
+            <div class="label">Run this command:</div>  
+            <div class="text" style="background-color: #fff">python examples/display_data.py -t babi:task1k:1,squad -n 100</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="padding-top: 20px;">
+              <h4 style="color: #555; margin-bottom: 20px; font-size: 16px; line-height: 140%"><b>Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:</b></h4>
+            </div>
+        </div>
+        <div class="command" style="margin-bottom: 20px">
+            <div class="label">Run this command:</div>  
+            <div class="text" style="background-color: #fff">python examples/eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="padding-top: 20px;">
+              <h4 style="color: #555; margin-bottom: 20px; font-size: 16px; line-height: 140%"><b>Display the predictions of that same IR baseline model:</b></h4>
+            </div>
+        </div>
+        <div class="command" style="margin-bottom: 20px">
+            <div class="label">Run this command:</div>  
+            <div class="text" style="background-color: #fff">python examples/display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="padding-top: 20px;">
+              <h4 style="color: #555; margin-bottom: 20px; font-size: 16px; line-height: 140%"><b>Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):</b></h4>
+            </div>
+        </div>
+        <div class="command" style="margin-bottom: 20px">
+            <div class="label">Run this command:</div>  
+            <div class="text" style="background-color: #fff">python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="padding-top: 20px;">
+              <h4 style="color: #555; margin-bottom: 20px; font-size: 16px; line-height: 140%"><b>For more examples, please read our <a href="/static/docs/index.html">tutorial</a>. To learn more about ParlAI, click <a href="/about/">here</a>.</b></h4>
+            </div>
+        </div>
+    </div>
+</section>

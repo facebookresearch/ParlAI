@@ -18,7 +18,7 @@ Task 4: Dialogs discussing Movies from Reddit (the /r/movies SubReddit).
 """
 
 from parlai.core.teachers import FbDialogTeacher
-from parlai.core.agents import MultiTaskTeacher
+import parlai.core.agents as core_agents
 from .build import build
 
 import copy
@@ -87,7 +87,7 @@ class TaskTeacher(FbDialogTeacher):
 
 
 # By default train on all tasks at once.
-class DefaultTeacher(MultiTaskTeacher):
+class DefaultTeacher(core_agents.MultiTaskTeacher):
     """By default will load teacher with all four tasks."""
 
     def __init__(self, opt, shared=None):
