@@ -45,7 +45,7 @@ class TestBertModel(unittest.TestCase):
             batchsize=1,
             candidates="inline",
             type_optimization="all_encoder_layers",
-            warmup_updates=100,,
+            warmup_updates=100,
             truncate=40,
         ))
         # The cross encoder reaches an interesting state MUCH faster
