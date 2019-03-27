@@ -227,6 +227,6 @@ def to_bert_input(token_idx, null_idx):
     """
     segment_idx = token_idx * 0
     mask = (token_idx != null_idx)
-     # nullify elements in case self.NULL_IDX was not 0
+    # nullify elements in case self.NULL_IDX was not 0
     token_idx = token_idx * mask.long()
     return token_idx, segment_idx, mask
