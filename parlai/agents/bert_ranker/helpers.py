@@ -113,19 +113,12 @@ class BertWrapper(torch.nn.Module):
             outputs_of_interest = embedding_layer[:, 1:, :]
             mask = attention_mask[:, 1:].type_as(embedding_layer).unsqueeze(2)
             sumed_embeddings = torch.sum(outputs_of_interest * mask, dim=1)
-            nb_elems = torch.sum(
-                attention_mask[:, 1:].type_as(embedding_layer),
-                dim=1
-            ).unsqueeze(1)
+            nb_elems = torch.sum(attention_mask[:, 1:].type(dtype), dim=1).unsqueeze(1)
             embeddings = sumed_embeddings / nb_elems
         elif self.aggregation == "max":
             #  consider the max of all the output except CLS
             outputs_of_interest = embedding_layer[:, 1:, :]
-            mask = (
-                (~attention_mask[:, 1:])
-                .type_as(embedding_layer)
-                .unsqueeze(2)
-            ) * neginf(dtype)
+            mask = (~attention_mask[:, 1:]).type(dtype).unsqueeze(2) * neginf(dtype)
             embeddings, _ = torch.max(outputs_of_interest + mask, dim=1)
         else:
             # easiest, we consider the output of "CLS" as the embedding
