@@ -70,8 +70,11 @@ class SelfOriginalTeacher(FbDialogTeacher):
 
 
 class LimitedSelfOriginalTeacher(SelfOriginalTeacher):
-    """ SelfOriginal teacher limited to the 20 first dialogs ( 100 examples)
-        Can be used for debug or testing.
+    """
+    SelfOriginal teacher limited to the 20 first dialogs.
+
+    SelfOriginal teacher limited to the 20 first dialogs ( 100 examples)
+    Can be used for debug or testing.
     """
 
     def num_episodes(self):
