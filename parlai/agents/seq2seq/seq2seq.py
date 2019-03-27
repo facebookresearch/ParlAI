@@ -168,10 +168,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
         return super().batchify(*args, **kwargs)
 
     def state_dict(self):
-        """Get the model states for saving
-
-        Override to include longest_label
-        """
+        """Get the model states for saving. Overriden to include longest_label"""
         states = super().state_dict()
         if hasattr(self.model, 'module'):
             states['longest_label'] = self.model.module.longest_label

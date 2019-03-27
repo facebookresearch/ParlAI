@@ -1296,7 +1296,8 @@ class TorchAgent(Agent):
                               label_truncate=self.label_truncate)
 
     def state_dict(self):
-        """Get the state dict for saving
+        """
+        Get the state dict for saving
 
         Override this method for more specific saving.
         """
