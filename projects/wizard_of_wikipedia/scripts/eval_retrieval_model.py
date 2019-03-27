@@ -31,7 +31,7 @@ if __name__ == '__main__':
     parser.set_defaults(
         task='wizard_of_wikipedia',
         model='projects:wizard_of_wikipedia:wizard_transformer_ranker',
-        model_file='models:wizard_of_wikipedia/retrieval_models/model',
+        model_file='models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
         datatype='test',
         n_heads=6,
         ffn_size=1200,
@@ -42,6 +42,6 @@ if __name__ == '__main__':
     )
 
     opt = parser.parse_args()
-    download(opt)  # download pretrained retrieval model
+    download(opt['datapath'])  # download pretrained retrieval model
 
     eval_model(parser)
