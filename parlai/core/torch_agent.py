@@ -27,7 +27,8 @@ from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (
-    AttrDict, argsort, padded_tensor, warn_once, round_sigfigs
+    AttrDict, argsort, padded_tensor, warn_once, round_sigfigs,
+    fp16_optimizer_wrapper
 )
 from parlai.core.distributed_utils import is_primary_worker
 
@@ -648,16 +649,7 @@ class TorchAgent(Agent):
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
-            try:
-                import apex.fp16_utils
-            except ImportError:
-                raise ImportError(
-                    'No fp16 support without apex. Please install it from '
-                    'https://github.com/NVIDIA/apex'
-                )
-            self.optimizer = apex.fp16_utils.FP16_Optimizer(
-                self.optimizer, dynamic_loss_scale=True, verbose=False,
-            )
+            self.optimizer = fp16_optimizer_wrapper(self.optimizer)
 
         if optim_states:
             if saved_optim_type != opt['optimizer']:

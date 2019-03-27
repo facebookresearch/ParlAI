@@ -1029,3 +1029,36 @@ def warn_once(msg, warningtype=None):
     if msg not in _seen_warnings:
         _seen_warnings.add(msg)
         warnings.warn(msg, warningtype, stacklevel=2)
+
+
+def fp16_optimizer_wrapper(optimizer, verbose=False, dynamic_loss_scale=True):
+    """
+    Wraps the an optimizer with FP16 loss scaling protection.
+
+    Requires apex to be installed. Will throw an ImportError if it is not.
+
+    :param optimizer:
+        Any torch optimizer
+    :param verbose:
+        Enables verbose output in the FP16 optimizer. Turning this on can help
+        debug when FP16 is underperforming.
+    :param dynamic_loss_scaling:
+        FP16 requires loss scaling to avoid underflows. It is recommended this
+        stays on, but advanced users may want it off.
+
+    :returns:
+        An APEX FP16 optimizer. Please note this has different requirements on
+        how backward() and step() are called.
+    """
+    try:
+        import apex.fp16_utils
+    except ImportError:
+        raise ImportError(
+            'No fp16 support without apex. Please install it from '
+            'https://github.com/NVIDIA/apex'
+        )
+    return apex.fp16_utils.FP16_Optimizer(
+        optimizer,
+        dynamic_loss_scale=dynamic_loss_scale,
+        verbose=verbose,
+    )

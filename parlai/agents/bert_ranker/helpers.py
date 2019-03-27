@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-from parlai.core.utils import _ellipse, neginf
+from parlai.core.utils import _ellipse, neginf, fp16_optimizer_wrapper
 
 try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig
@@ -206,16 +206,7 @@ def get_bert_optimizer(models, type_optimization, learning_rate, fp16=False):
                               lr=learning_rate)
 
     if fp16:
-        try:
-            import apex.fp16_utils
-        except ImportError:
-            raise ImportError(
-                'No fp16 support without apex. Please install it from '
-                'https://github.com/NVIDIA/apex'
-            )
-        optimizer = apex.fp16_utils.FP16_Optimizer(
-            optimizer, dynamic_loss_scale=True, verbose=False,
-        )
+        optimizer = fp16_optimizer_wrapper(optimizer)
 
     return optimizer
 
