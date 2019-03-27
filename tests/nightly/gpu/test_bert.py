@@ -23,7 +23,7 @@ class TestBertModel(unittest.TestCase):
             model='bert_ranker/bi_encoder_ranker',
             num_epochs=1.0,
             batchsize=8,
-            truncate=40,
+            text_truncate=20,
         ))
         # can't conclude much from the biencoder after that little iterations.
         # accuracy should be present and somewhere between 0.01 and 0.2
@@ -46,13 +46,14 @@ class TestBertModel(unittest.TestCase):
             candidates="inline",
             type_optimization="all_encoder_layers",
             warmup_updates=100,
-            truncate=40,
+            text_truncate=20,
+            label_truncate=20,
         ))
         # The cross encoder reaches an interesting state MUCH faster
         # accuracy should be present and somewhere between 0.2 and 0.8
         # (large interval so that it doesn't flake.)
         self.assertGreaterEqual(
-            test['accuracy'], 0.2,
+            test['accuracy'], 0.15,
             'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout)
         )
         self.assertLessEqual(
