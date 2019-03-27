@@ -1031,7 +1031,12 @@ def warn_once(msg, warningtype=None):
         warnings.warn(msg, warningtype, stacklevel=2)
 
 
-def fp16_optimizer_wrapper(optimizer, verbose=False, dynamic_loss_scale=True):
+def fp16_optimizer_wrapper(
+    optimizer,
+    verbose=False,
+    dynamic_loss_scale=True
+    loss_initial_scale=2.**17
+):
     """
     Wraps the an optimizer with FP16 loss scaling protection.
 
@@ -1039,12 +1044,15 @@ def fp16_optimizer_wrapper(optimizer, verbose=False, dynamic_loss_scale=True):
 
     :param optimizer:
         Any torch optimizer
-    :param verbose:
+    :param bool verbose:
         Enables verbose output in the FP16 optimizer. Turning this on can help
         debug when FP16 is underperforming.
-    :param dynamic_loss_scaling:
+    :param bool dynamic_loss_scaling:
         FP16 requires loss scaling to avoid underflows. It is recommended this
         stays on, but advanced users may want it off.
+    :param float loss_initial_scale:
+        Initial loss scaling. Default chosen empirically, but models with very low
+        or high loss values may need this adjusted. Stick with powers of 2.
 
     :returns:
         An APEX FP16 optimizer. Please note this has different requirements on
@@ -1061,4 +1069,8 @@ def fp16_optimizer_wrapper(optimizer, verbose=False, dynamic_loss_scale=True):
         optimizer,
         dynamic_loss_scale=dynamic_loss_scale,
         verbose=verbose,
+        # TODO: We may later want to remove this flag. Right now it
+        # empirically improves the first few backward passes, but future APEX
+        # improvements may make this unnecessary.
+        dynamic_loss_args={'init_scale': loss_initial_scale},
     )
