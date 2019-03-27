@@ -1034,7 +1034,7 @@ def warn_once(msg, warningtype=None):
 def fp16_optimizer_wrapper(
     optimizer,
     verbose=False,
-    dynamic_loss_scale=True
+    dynamic_loss_scale=True,
     loss_initial_scale=2.**17
 ):
     """
