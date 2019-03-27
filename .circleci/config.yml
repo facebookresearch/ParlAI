@@ -80,6 +80,14 @@ commands:
           working_directory: ~/ParlAI/parlai/mturk
           command: npm install
 
+  installhfbert:
+    description: "Install Hugging Face version of Bert"
+    steps:
+      - run:
+          name: Install Bert
+          command: |
+            pip3 install --progress-bar off pytorch-pretrained-bert
+
 jobs:
   datatests:
     executor: standard_cpu
@@ -129,6 +137,7 @@ jobs:
       - setup
       - installtorchgpu
       - installdeps
+      - installhfbert
       - run:
           name: Nightly GPU tests
           command: python setup.py test -s tests.suites.nightly_gpu -q
