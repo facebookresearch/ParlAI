@@ -22,7 +22,8 @@ class TestBertModel(unittest.TestCase):
             task='convai2:LimitedSelfOriginalTeacher',
             model='bert_ranker/bi_encoder_ranker',
             num_epochs=1.0,
-            batchsize=8
+            batchsize=8,
+            truncate=40,
         ))
         # can't conclude much from the biencoder after that little iterations.
         # accuracy should be present and somewhere between 0.01 and 0.2
@@ -44,7 +45,8 @@ class TestBertModel(unittest.TestCase):
             batchsize=1,
             candidates="inline",
             type_optimization="all_encoder_layers",
-            warmup_updates=100,
+            warmup_updates=100,,
+            truncate=40,
         ))
         # The cross encoder reaches an interesting state MUCH faster
         # accuracy should be present and somewhere between 0.2 and 0.8
