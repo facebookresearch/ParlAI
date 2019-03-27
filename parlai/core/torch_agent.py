@@ -1340,6 +1340,7 @@ class TorchAgent(Agent):
 
         if path:
             if hasattr(self, 'dict'):  # force save dictionary
+                # TODO: Look into possibly overriding opt('dict_file') with new path
                 self.dict.save(path + '.dict', sort=False)
             states = self.state_dict()
             if states:  # anything found to save?
