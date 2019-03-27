@@ -72,8 +72,8 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         segments_cands = tokens_cands * 0 + 1
         all_tokens = torch.cat([tokens_context, tokens_cands], 1)
         all_segments = torch.cat([segments_context, segments_cands], 1)
-        all_mask = (all_tokens != self.NULL_IDX).long()
-        all_tokens *= all_mask
+        all_mask = (all_tokens != self.NULL_IDX)
+        all_tokens *= all_mask.long()
         scores = self.model(all_tokens, all_segments, all_mask)
         return scores.view(size_batch, nb_cands)
 
