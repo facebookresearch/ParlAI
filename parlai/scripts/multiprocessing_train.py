@@ -45,6 +45,7 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
         multiple distributed training setups on the same machine.
     :param int gpu: Which GPU to use. Defaults to using rank and local devices,
         but must be manually specified when using many-hosts.
+        TODO UPDATE
     :param str hostname: Hostname of the main server.
     """
     # Set per-host options
@@ -70,7 +71,10 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     )
 
     # perform distributed setup, ensuring all hosts are ready
-    torch.cuda.set_device(opt['gpu'])
+    if gpu != -1:
+        assert isinstance(gpu, int)
+        import ipdb; ipdb.set_trace()
+        torch.cuda.set_device(opt['gpu'])
     dist.init_process_group(
         backend="nccl",
         init_method="tcp://{}:{}".format(hostname, port),

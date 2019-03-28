@@ -201,3 +201,34 @@ def sync_object(data, max_size=16384):
             )
 
     return data
+
+
+def distributed_wrapper(model, gpu=None):
+    """
+    Prepare a model for distributed training.
+
+    If not in distributed mode, this is a nop
+
+    :param model:
+        A torch nn.Module. Generally the model you want to parallelize
+    :param gpu:
+        An int referring to which GPU should be used for this instance. If -1,
+        all GPUs on the machine are used.
+    :return:
+        The distributed model
+    """
+    if not is_distributed():
+        return model
+
+    if gpu == -1:
+        device_ids = None
+    elif isinstance(gpu, int):
+        device_ids = [gpu]
+    else:
+        raise ValueError('Invalid input gpu={}'.format(gpu))
+
+    return torch.nn.parallel.DistributedDataParallel(
+        model,
+        device_ids=device_ids,
+        # broadcast_buffers=False,
+    )

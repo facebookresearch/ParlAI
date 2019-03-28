@@ -40,11 +40,6 @@ class BiEncoderRankerAgent(TorchRankerAgent):
 
         super().__init__(opt, shared)
         # it's easier for now to use DataParallel when
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel:
-            self.model = torch.nn.DataParallel(self.model)
-        if is_distributed():
-            raise ValueError('Cannot combine --data-parallel and distributed mode')
         self.NULL_IDX = self.dict.pad_idx
         self.START_IDX = self.dict.start_idx
         self.END_IDX = self.dict.end_idx

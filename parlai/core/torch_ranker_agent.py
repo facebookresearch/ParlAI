@@ -14,7 +14,7 @@ from itertools import islice
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
-from parlai.core.distributed_utils import is_distributed
+from parlai.core.distributed_utils import is_distributed, distributed_wrapper
 
 
 class TorchRankerAgent(TorchAgent):
@@ -118,11 +118,7 @@ class TorchRankerAgent(TorchAgent):
             self.build_lr_scheduler(states)
 
         if shared is None and is_distributed():
-            self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model,
-                device_ids=[self.opt['gpu']],
-                broadcast_buffers=False,
-            )
+            self.model = distributed_wrapper(self.model, self.opt['gpu'])
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
