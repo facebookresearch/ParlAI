@@ -87,7 +87,7 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
 
 
     def __init__(self, opt, shared=None):
-        print('#### Init-ed my method!')
+#         print('#### Init-ed my method!')
             
         """Set up model."""
         super().__init__(opt, shared)
@@ -169,10 +169,10 @@ class Seq2seqRetrieverAgent(Seq2seqAgent):
         if self.opt['swap_criterion_train_eval']:
             
             if is_training: 
-                print('Using training loss!')
+#                 print('Using training loss!')
                 loss = self.train_criterion(score_view, label_view)
             else: 
-                print('Using evaluation loss!')
+#                 print('Using evaluation loss!')
                 loss = self.eval_criterion(score_view, label_view)
                 
         else: 
