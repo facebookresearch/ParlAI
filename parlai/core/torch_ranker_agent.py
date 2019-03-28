@@ -11,7 +11,7 @@ import torch
 from torch import nn
 
 from itertools import islice
-from parlai.core.torch_agent import TorchAgent, Output
+from parlai.core.torch_agent import TorchAgent, Output, Batch
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 from parlai.core.distributed_utils import is_distributed, distributed_wrapper
@@ -120,6 +120,37 @@ class TorchRankerAgent(TorchAgent):
         if shared is None and is_distributed():
             self.model = distributed_wrapper(self.model, self.opt['gpu'])
 
+    def _dummy_batch(self, batchsize, maxlen):
+        """
+        Creates a dummy batch. This is used to preinitialize the cuda buffer,
+        or otherwise force a null backward pass after an OOM.
+        """
+        return Batch(
+            text_vec=torch.ones(batchsize, maxlen).long().cuda(),
+            label_vec=torch.ones(batchsize, 2).long().cuda(),
+        )
+
+    def _init_cuda_buffer(self, batchsize, maxlen, force=False):
+        """Pre-initialize CUDA buffer by doing fake forward pass."""
+        if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
+            try:
+                batch = self._dummy_batch(batchsize, maxlen)
+                cand_vecs = torch.ones(batchsize, 2, 1).long().cuda()
+                label_inds = torch.zeros(batchsize).long().cuda()
+                scores = self.score_candidates(batch, cand_vecs)
+                loss = self.rank_loss(scores, label_inds)
+                self.backward(loss)
+                self.buffer_initialized = True
+            except RuntimeError as e:
+                if 'out of memory' in str(e):
+                    m = ('CUDA OOM: Lower batch size (-bs) from {} or lower '
+                         ' max sequence length (-tr) from {}'
+                         ''.format(batchsize, maxlen))
+                    raise RuntimeError(m)
+                else:
+                    raise e
+
+
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
         Given a batch and candidate set, return scores (for ranking).
@@ -212,6 +243,7 @@ class TorchRankerAgent(TorchAgent):
                 print('| WARNING: ran out of memory, skipping batch. '
                       'if this happens frequently, decrease batchsize or '
                       'truncate the inputs to the model.')
+                self._init_cuda_buffer(batchsize, 4, force=True)
                 return Output()
             else:
                 raise e
