@@ -27,7 +27,8 @@ from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (
-    AttrDict, argsort, padded_tensor, warn_once, round_sigfigs
+    AttrDict, argsort, padded_tensor, warn_once, round_sigfigs,
+    fp16_optimizer_wrapper
 )
 from parlai.core.distributed_utils import is_primary_worker
 
@@ -309,6 +310,11 @@ class TorchAgent(Agent):
         # first pull torch.optim in
         optims = {k.lower(): v for k, v in optim.__dict__.items()
                   if not k.startswith('__') and k[0].isupper()}
+        try:
+            import apex.optimizers.fused_adam as fused_adam
+            optims['fused_adam'] = fused_adam.FusedAdam
+        except ImportError:
+            pass
 
         try:
             # https://openreview.net/pdf?id=S1fUpoR5FQ
@@ -361,6 +367,8 @@ class TorchAgent(Agent):
                  'ignored unless you append "-force" to your choice.'
         )
         # optimizer arguments
+        agent.add_argument(
+            '--fp16', type='bool', default=False, help='Use fp16 computations.')
         agent.add_argument(
             '-opt', '--optimizer', default='sgd', choices=cls.optim_opts(),
             help='Choose between pytorch optimizers. Any member of torch.optim'
@@ -500,6 +508,14 @@ class TorchAgent(Agent):
             if opt.get('person_tokens'):
                 self.dict[self.P1_TOKEN] = 999999999
                 self.dict[self.P2_TOKEN] = 999999998
+            if opt.get('fp16'):
+                # Volta cores revert to FP32 hardware if tensors are not multiples
+                # of 8 in all dimensions. This INCLUDES the embeddings layer! As
+                # such, we need some extra magic to ensure the dictionary is padded
+                # with extra tokens to make it a multiple of 8.
+                if len(self.dict) % 8 != 0:
+                    for i in range(8 - len(self.dict) % 8):
+                        self.dict['__FP16_PAD_{}__'.format(i)] = 1
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
@@ -521,6 +537,8 @@ class TorchAgent(Agent):
                 print('[ Using CUDA ]')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
+        # indicate whether using fp16
+        self.fp16 = self.opt.get('fp16', False)
 
         # now set up any fields that all instances may need
         self.id = 'TorchAgent'  # child can override
@@ -630,6 +648,9 @@ class TorchAgent(Agent):
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
+        if self.fp16:
+            self.optimizer = fp16_optimizer_wrapper(self.optimizer)
+
         if optim_states:
             if saved_optim_type != opt['optimizer']:
                 print('WARNING: not loading optim state since optim class '
@@ -659,6 +680,11 @@ class TorchAgent(Agent):
         :param bool hard_reset: If true, the LR scheduler should ignore the
             state dictionary.
         """
+        optimizer = self.optimizer
+        if self.fp16:
+            # lr schedulers don't work with apex, they expect the "real" optimizer
+            optimizer = optimizer.optimizer
+
         if self.opt.get('warmup_updates', -1) > 0:
             def _warmup_lr(step):
                 start = self.opt['warmup_rate']
@@ -668,7 +694,7 @@ class TorchAgent(Agent):
                 return lr_mult
 
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
-                self.optimizer,
+                optimizer,
                 _warmup_lr,
             )
         else:
@@ -688,7 +714,7 @@ class TorchAgent(Agent):
             self.scheduler = None
         elif self.opt.get('lr_scheduler') == 'reduceonplateau':
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer,
+                optimizer,
                 'min',
                 factor=decay,
                 patience=patience,
@@ -696,7 +722,7 @@ class TorchAgent(Agent):
             )
         elif self.opt.get('lr_scheduler') == 'fixed':
             self.scheduler = optim.lr_scheduler.StepLR(
-                self.optimizer,
+                optimizer,
                 patience,
                 gamma=decay,
             )
@@ -712,7 +738,7 @@ class TorchAgent(Agent):
                 return decay_factor / np.sqrt(max(1, step))
 
             self.scheduler = optim.lr_scheduler.LambdaLR(
-                self.optimizer,
+                optimizer,
                 _invsqrt_lr,
             )
         else:
@@ -1127,7 +1153,9 @@ class TorchAgent(Agent):
         xs, x_lens = None, None
         if any('text_vec' in ex for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(_xs, self.NULL_IDX, self.use_cuda)
+            xs, x_lens = padded_tensor(
+                _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16'),
+            )
             if sort:
                 sort = False  # now we won't sort on labels
                 xs, x_lens, valid_inds, exs = argsort(
@@ -1147,7 +1175,10 @@ class TorchAgent(Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
-            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda)
+            ys, y_lens = padded_tensor(
+                label_vecs, self.NULL_IDX, self.use_cuda,
+                fp16friendly=self.opt.get('fp16')
+            )
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
                     y_lens, ys, valid_inds, label_vecs, labels, y_lens,
@@ -1426,6 +1457,17 @@ class TorchAgent(Agent):
             'Abstract class: user must implement eval_step'
         )
 
+    def backward(self, loss):
+        """
+        Perform a backward pass. It is recommended you use this instead of
+        loss.backward(), for integration with distributed training and FP16
+        training.
+        """
+        if self.fp16:
+            self.optimizer.backward(loss, update_master_grads=False)
+        else:
+            loss.backward()
+
     def update_params(self):
         """
         Perform step of optimization, clipping gradients and adjusting LR
@@ -1458,10 +1500,18 @@ class TorchAgent(Agent):
             # training step scheduler
             self.scheduler.step(self._number_training_updates)
 
+        if self.fp16:
+            # we've been accumulating grads in fp16 and delaying the fp32 copy update.
+            # finally time to perform the update.
+            self.optimizer.update_master_grads()
+
         if self.opt.get('gradient_clip', -1) > 0:
-            torch.nn.utils.clip_grad_norm_(
-                self.model.parameters(), self.opt['gradient_clip']
-            )
+            if self.fp16:
+                self.optimizer.clip_master_grads(self.opt['gradient_clip'])
+            else:
+                torch.nn.utils.clip_grad_norm_(
+                    self.model.parameters(), self.opt['gradient_clip']
+                )
 
         self.optimizer.step()
 

@@ -24,6 +24,7 @@ except ImportError:
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
+NEAR_INF_FP16 = 65504
 
 
 DISPLAY_MESSAGE_DEFAULT_FIELDS = {
@@ -40,6 +41,14 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'text_vec',
     'label_candidates_vecs'
 }
+
+
+def neginf(dtype):
+    """Returns a representable finite number near -inf for a dtype."""
+    if dtype is torch.float16:
+        return -NEAR_INF_FP16
+    else:
+        return -NEAR_INF
 
 
 def maintain_dialog_history(history, observation, reply='',
@@ -880,7 +889,7 @@ def set_namedtuple_defaults(namedtuple, default=None):
 
 
 def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
-                  max_len=None):
+                  max_len=None, fp16friendly=False):
     """Create a right-padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
@@ -897,6 +906,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     :param bool use_cuda: if true, places `padded` on GPU
     :param bool left_padded:
     :param int max_len: if None, the max length is the maximum item length
+    :param bool fp16friendly: if True, pads the time dimension to be a multiple of 8.
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
@@ -916,6 +926,10 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
 
     # if input tensors are empty, we should expand to nulls
     t = max(t, 1)
+
+    if fp16friendly and (t % 8 != 0):
+        # pad to be a multiple of 8 to ensure we use the tensor cores
+        t += 8 - (t % 8)
 
     if isinstance(items[0], torch.Tensor):
         # keep type of input tensors, they may already be cuda ones
@@ -943,12 +957,13 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     return output, lens
 
 
-def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long):
+def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long, fp16friendly=False):
     """Make 3D padded tensor for list of lists of 1D tensors or lists.
 
     :param tensors:  list of lists of 1D tensors (or lists)
     :param pad_idx:  padding to fill tensor with
     :param use_cuda: whether to call cuda() before returning
+    :param bool fp16friendly: if True, pads the final dimension to be a multiple of 8.
 
     :returns: 3D tensor with the maximum dimensions of the inputs
     """
@@ -957,6 +972,8 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long):
     c = max(len(item) for row in tensors for item in row)
 
     # pad empty tensors
+    if fp16friendly and c % 8 != 0:
+        c += 8 - (c % 8)
     c = max(c, 1)
 
     output = torch.full((a, b, c), pad_idx, dtype=dtype)
@@ -1012,3 +1029,48 @@ def warn_once(msg, warningtype=None):
     if msg not in _seen_warnings:
         _seen_warnings.add(msg)
         warnings.warn(msg, warningtype, stacklevel=2)
+
+
+def fp16_optimizer_wrapper(
+    optimizer,
+    verbose=False,
+    dynamic_loss_scale=True,
+    loss_initial_scale=2.**17
+):
+    """
+    Wraps the an optimizer with FP16 loss scaling protection.
+
+    Requires apex to be installed. Will throw an ImportError if it is not.
+
+    :param optimizer:
+        Any torch optimizer
+    :param bool verbose:
+        Enables verbose output in the FP16 optimizer. Turning this on can help
+        debug when FP16 is underperforming.
+    :param bool dynamic_loss_scaling:
+        FP16 requires loss scaling to avoid underflows. It is recommended this
+        stays on, but advanced users may want it off.
+    :param float loss_initial_scale:
+        Initial loss scaling. Default chosen empirically, but models with very low
+        or high loss values may need this adjusted. Stick with powers of 2.
+
+    :returns:
+        An APEX FP16 optimizer. Please note this has different requirements on
+        how backward() and step() are called.
+    """
+    try:
+        import apex.fp16_utils
+    except ImportError:
+        raise ImportError(
+            'No fp16 support without apex. Please install it from '
+            'https://github.com/NVIDIA/apex'
+        )
+    return apex.fp16_utils.FP16_Optimizer(
+        optimizer,
+        dynamic_loss_scale=dynamic_loss_scale,
+        verbose=verbose,
+        # TODO: We may later want to remove this flag. Right now it
+        # empirically improves the first few backward passes, but future APEX
+        # improvements may make this unnecessary.
+        dynamic_loss_args={'init_scale': loss_initial_scale},
+    )

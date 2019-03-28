@@ -88,6 +88,8 @@ class TorchRankerAgent(TorchAgent):
                 'train_accuracy': 0.0
             }
             self.build_model()
+            if self.fp16:
+                self.model = self.model.half()
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
                 states = self.load(init_model)
@@ -206,7 +208,7 @@ class TorchRankerAgent(TorchAgent):
         try:
             scores = self.score_candidates(batch, cand_vecs)
             loss = self.rank_loss(scores, label_inds)
-            loss.backward()
+            self.backward(loss)
             self.update_params()
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)
@@ -393,7 +395,8 @@ class TorchRankerAgent(TorchAgent):
                         cands_to_id[cand] = len(cands_to_id)
                         all_cands_vecs.append(batch.candidate_vecs[i][j])
             cand_vecs, _ = padded_tensor(all_cands_vecs, self.NULL_IDX,
-                                         use_cuda=self.use_cuda)
+                                         use_cuda=self.use_cuda,
+                                         fp16friendly=self.fp16)
             label_inds = label_vecs.new_tensor([cands_to_id[label]
                                                 for label in batch.labels])
 
@@ -411,7 +414,7 @@ class TorchRankerAgent(TorchAgent):
 
             cands = batch.candidates
             cand_vecs = padded_3d(batch.candidate_vecs, self.NULL_IDX,
-                                  use_cuda=self.use_cuda)
+                                  use_cuda=self.use_cuda, fp16friendly=self.fp16)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):

@@ -10,12 +10,11 @@ import math
 import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
+from parlai.core.utils import neginf
 
 
 def _normalize(tensor, norm_layer):
-    """
-    Broadcast layer norm
-    """
+    """Broadcast layer norm"""
     size = tensor.size()
     return norm_layer(tensor.view(-1, size[-1])).view(size)
 
@@ -181,8 +180,8 @@ def create_position_codes(n_pos, dim, out):
         for pos in range(n_pos)
     ])
 
-    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc))
-    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc))
+    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc)).type_as(out)
+    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc)).type_as(out)
     out.detach_()
     out.requires_grad = False
 
@@ -313,12 +312,12 @@ class TransformerEncoder(nn.Module):
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
 
-        tensor *= mask.unsqueeze(-1).float()
+        tensor *= mask.unsqueeze(-1).type_as(tensor)
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
 
         if self.reduction:
-            divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1e-20)
+            divisor = mask.type_as(tensor).sum(dim=1).unsqueeze(-1).clamp(min=1e-7)
             output = tensor.sum(dim=1) / divisor
             return output
         else:
@@ -353,7 +352,7 @@ class TransformerEncoderLayer(nn.Module):
         tensor = _normalize(tensor, self.norm1)
         tensor = tensor + self.dropout(self.ffn(tensor))
         tensor = _normalize(tensor, self.norm2)
-        tensor *= mask.unsqueeze(-1).float()
+        tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
 
 
@@ -654,7 +653,7 @@ class MultiHeadAttention(nn.Module):
         k = prepare_head(self.k_lin(key))
         v = prepare_head(self.v_lin(value))
 
-        dot_prod = q.bmm(k.transpose(1, 2))
+        dot_prod = q.div_(scale).bmm(k.transpose(1, 2))
         # [B * n_heads, query_len, key_len]
         attn_mask = (
             (mask == 0)
@@ -664,14 +663,14 @@ class MultiHeadAttention(nn.Module):
             .view(batch_size * n_heads, query_len, key_len)
         )
         assert attn_mask.shape == dot_prod.shape
-        dot_prod.masked_fill_(attn_mask, -float(1e20))
+        dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(dot_prod / scale, dim=-1)
+        attn_weights = F.softmax(dot_prod, dim=-1).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
         attentioned = (
-            attentioned
+            attentioned.type_as(query)
             .view(batch_size, n_heads, query_len, dim_per_head)
             .transpose(1, 2).contiguous()
             .view(batch_size, query_len, dim)
