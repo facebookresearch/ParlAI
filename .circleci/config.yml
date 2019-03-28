@@ -176,6 +176,7 @@ workflows:
       - lint
       - datatests
       - unittests
+      - nightly_gpu_tests
       - deploy_website:
           filters:
             branches:
@@ -191,4 +192,3 @@ workflows:
     jobs:
       - unittests
       - nightly_cpu_tests
-      - nightly_gpu_tests
