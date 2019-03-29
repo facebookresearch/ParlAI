@@ -61,7 +61,7 @@ class TestWizardModel(unittest.TestCase):
         )
 
     def test_retrieval(self):
-        stdout, test, _ = testing_utils.eval_model(RETRIEVAL_OPTIONS)
+        stdout, _, test = testing_utils.eval_model(RETRIEVAL_OPTIONS)
         self.assertGreaterEqual(
             test['accuracy'], 0.86,
             'test acc = {}\nLOG:\n{}'.format(test['accuracy'], stdout)
