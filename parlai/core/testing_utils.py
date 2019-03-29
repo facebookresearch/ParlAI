@@ -204,7 +204,7 @@ def eval_model(opt):
 
     import parlai.scripts.eval_model as ems
     parser = ems.setup_args()
-    parser.set_params(**opt)
+    parser.set_defaults(**opt)
     popt = parser.parse_args(print_args=False)
 
     # ensure the params we pass in override any defaults
