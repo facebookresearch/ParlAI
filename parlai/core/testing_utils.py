@@ -204,12 +204,8 @@ def eval_model(opt):
 
     import parlai.scripts.eval_model as ems
     parser = ems.setup_args()
-    parser.set_defaults(**opt)
+    parser.set_params(**opt)
     popt = parser.parse_args(print_args=False)
-
-    # ensure the params we pass in override any defaults
-    for k, v in opt.items():
-        popt[k] = v
 
     if popt.get('model_file') and not popt.get('dict_file'):
         popt['dict_file'] = popt['model_file'] + '.dict'
