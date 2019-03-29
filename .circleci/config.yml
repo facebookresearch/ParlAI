@@ -81,6 +81,14 @@ commands:
           working_directory: ~/ParlAI/parlai/mturk
           command: npm install
 
+  installgpudeps:
+    description: "Install Dependencies specific to GPU testing"
+    steps:
+      - run:
+          name: GPU dependencies
+          command: |
+            pip3 install --progress-bar off pytorch-pretrained-bert
+
 jobs:
   datatests:
     executor: standard_cpu
@@ -130,6 +138,7 @@ jobs:
       - setup
       - installtorchgpu
       - installdeps
+      - installgpudeps
       - run:
           name: Nightly GPU tests
           no_output_timeout: 30m
