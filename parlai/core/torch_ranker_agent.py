@@ -295,8 +295,8 @@ class TorchRankerAgent(TorchAgent):
         obs = args[0]
         cands_key = ('candidates' if 'labels' in obs else
                      'eval_candidates' if 'eval_labels' in obs else None)
-        if (cands_key is None or
-                self.opt[cands_key] not in ['inline', 'batch-all-cands']):
+        if (cands_key is not None and self.opt[cands_key] not in
+                ['inline', 'batch-all-cands']):
             # vectorize label candidates if and only if we are using inline
             # candidates
             return obs
