@@ -84,6 +84,15 @@ if __name__ == '__main__':
             stats = '%s, %s, %.3f, %.3f, %.3f, %.3f, %s' % \
                         tuple([dataset, modelname] + list(outputs) + [filename,])
             result_lines.append(stats)
+            
+            if modelname=='FACE': 
+                filename = 'tmp/%s/%s_minfreq_2_greedy_test.out' % (dataset, modelprefix)
+                outputs = get_stats(filename, df_dict, tot_doc, modelname)
+                stats = '%s, %s_greedy, %.3f, %.3f, %.3f, %.3f, %s' % \
+                            tuple([dataset, modelname] + list(outputs) + [filename,])
+                result_lines.append(stats)
+                
+                
     print('datasetname, modelname, avg_mean_idf, avg_max_idf, avg_length, distinct-unigram-ratio')        
     print('\n'.join(result_lines))
             
