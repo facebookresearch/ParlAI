@@ -222,6 +222,7 @@ app.get('/chat_index', async function(req, res) {
   var block_mobile = config_vars.block_mobile;
   var chat_title = config_vars.chat_title || 'Live Chat';
   block_mobile = block_mobile === undefined ? true : block_mobile;
+  var template_type = config_vars.template_type;
 
   var params = req.query;
   var template_context = {
@@ -234,6 +235,7 @@ app.get('/chat_index', async function(req, res) {
     frame_height: frame_height,
     block_mobile: block_mobile,
     chat_title: chat_title,
+    template_type: template_type,
   };
 
   res.render('index.html', template_context);
