@@ -12,7 +12,6 @@ import torch
 import torch.nn as nn
 
 import json
-import warnings
 
 
 class Seq2seqAgent(TorchGeneratorAgent):
@@ -205,4 +204,20 @@ class Seq2seqAgent(TorchGeneratorAgent):
         return states
 
     def is_valid(self, obs):
-        return super().is_valid(obs) and obs['text_vec'].shape[0] > 0
+        normally_valid = super().is_valid(obs)
+        if not normally_valid:
+            # shortcut boolean evaluation
+            return normally_valid
+        contains_empties = obs['text_vec'].shape[0] == 0
+        if self.is_training and contains_empties:
+            warn_once(
+                'seq2seq got an empty input sequence (text_vec) during training. '
+                'Skipping this example, but you should check your dataset and '
+                'preprocessing.'
+            )
+        elif not self.is_training and contains_empties:
+            warn_once(
+                'seq2seq got an empty input sequence (text_vec) in an '
+                'evaluation example! This may affect your metrics!'
+            )
+        return not contains_empties
