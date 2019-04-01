@@ -5,12 +5,14 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
+from parlai.core.utils import warn_once
 from .modules import Seq2seq, opt_to_kwargs
 
 import torch
 import torch.nn as nn
 
 import json
+import warnings
 
 
 class Seq2seqAgent(TorchGeneratorAgent):
@@ -201,3 +203,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
         if 'longest_label' in states:
             self.model.longest_label = states['longest_label']
         return states
+
+    def is_valid(self, obs):
+        return super().is_valid(obs) and obs['text_vec'].shape[0] > 0
