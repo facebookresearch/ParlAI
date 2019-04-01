@@ -845,18 +845,12 @@ class TorchAgent(Agent):
                                     'models:glove_vectors'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
-            from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
-            embs = vocab.Vectors(
-                name='crawl-300d-2M.vec',
-                url=fasttext_cc_url,
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_cc_vectors'))
+            from parlai.zoo.fasttext_cc_vectors.build import download
+            embs = download(self.opt.get('datapath'))
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
-            embs = vocab.FastText(
-                language='en',
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_vectors'))
+            from parlai.zoo.fasttext_vectors.build import download
+            embs = download(self.opt.get('datapath'))
         else:
             raise RuntimeError('embedding type {} not implemented. check arg, '
                                'submit PR to this function, or override it.'
