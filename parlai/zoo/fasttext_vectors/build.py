@@ -11,6 +11,7 @@ from parlai.core.build_data import modelzoo_path
 
 URL = 'https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.en.vec'
 
+
 def download(datapath):
     return vocab.Vectors(
         name='wiki.en.vec',
