@@ -222,6 +222,7 @@ def distributed_wrapper(model, gpu=None):
 
     if gpu == -1:
         device_ids = None
+        print("Using all devices")
     elif isinstance(gpu, int):
         device_ids = [gpu]
     else:
@@ -230,5 +231,5 @@ def distributed_wrapper(model, gpu=None):
     return torch.nn.parallel.DistributedDataParallel(
         model,
         device_ids=device_ids,
-        # broadcast_buffers=False,
+        broadcast_buffers=False,
     )

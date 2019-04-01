@@ -90,17 +90,6 @@ class TransformerRankerAgent(TorchRankerAgent):
 
         return agent
 
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel:
-            from parlai.core.distributed_utils import is_distributed
-            if is_distributed():
-                raise ValueError(
-                    'Cannot combine --data-parallel and distributed mode'
-                )
-            self.model = torch.nn.DataParallel(self.model)
-
     def _score(self, output, cands):
         if cands.dim() == 2:
             return torch.matmul(output, cands.t())

@@ -73,7 +73,6 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     # perform distributed setup, ensuring all hosts are ready
     if gpu != -1:
         assert isinstance(gpu, int)
-        import ipdb; ipdb.set_trace()
         torch.cuda.set_device(opt['gpu'])
     dist.init_process_group(
         backend="nccl",

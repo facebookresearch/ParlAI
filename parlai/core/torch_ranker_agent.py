@@ -130,16 +130,18 @@ class TorchRankerAgent(TorchAgent):
             label_vec=torch.ones(batchsize, 2).long().cuda(),
         )
 
-    def _init_cuda_buffer(self, batchsize, maxlen, force=False):
+    def _init_cuda_buffer(self, batchsize, maxlen, cand_dims, force=False):
         """Pre-initialize CUDA buffer by doing fake forward pass."""
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 batch = self._dummy_batch(batchsize, maxlen)
-                cand_vecs = torch.ones(batchsize, 2, 1).long().cuda()
+                cand_vecs_size = [batchsize] + [2 for _ in range(cand_dims - 1)]
+                cand_vecs = torch.ones(*cand_vecs_size).long().cuda()
                 label_inds = torch.zeros(batchsize).long().cuda()
                 scores = self.score_candidates(batch, cand_vecs)
                 loss = self.rank_loss(scores, label_inds)
                 self.backward(loss)
+                self.zero_grad()
                 self.buffer_initialized = True
             except RuntimeError as e:
                 if 'out of memory' in str(e):
@@ -243,7 +245,14 @@ class TorchRankerAgent(TorchAgent):
                 print('| WARNING: ran out of memory, skipping batch. '
                       'if this happens frequently, decrease batchsize or '
                       'truncate the inputs to the model.')
-                self._init_cuda_buffer(batchsize, 4, force=True)
+                if False and is_distributed() and self.opt.get('gpu') == -1:
+                    raise RuntimeError(
+                        'A worker ran out of CUDA memory. Unfortunately, this '
+                        'is an unrecoverable error in distributed data parallel mode. '
+                        'Try lowering your batch size, or using regular distributed '
+                        'training with -cands inline.'
+                    )
+                self._init_cuda_buffer(batchsize, 2, cand_vecs.dim(), True)
                 return Output()
             else:
                 raise e

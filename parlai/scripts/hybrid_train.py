@@ -43,25 +43,26 @@ from parlai.scripts.multiprocessing_train import multiprocess_train
 def main():
     # double check we're using SLURM
     node_list = os.environ.get('SLURM_JOB_NODELIST')
-    if node_list is None:
-        raise RuntimeError(
-            'Does not appear to be in a SLURM environment. '
-            'You should not call this script directly; see launch_distributed.py'
-        )
 
     parser = single_train.setup_args()
     parser.add_distributed_training_args()
     parser.add_argument('--port', type=int, default=61337, help='TCP port number')
-    opt = parser.parse_args(print_args=(os.environ['SLURM_PROCID'] == '0'))
+    parser.set_defaults(distributed_world_size=1, data_parallel=True)
+    opt = parser.parse_args(print_args=(os.environ.get('SLURM_PROCID', '0') == '0'))
 
     # We can determine the init method automatically for Slurm.
     try:
-        # Figure out the main host, and which rank we are.
-        hostnames = subprocess.check_output(
-            ['scontrol', 'show', 'hostnames', node_list]
-        )
-        main_host = hostnames.split()[0].decode('utf-8')
-        distributed_rank = int(os.environ['SLURM_PROCID'])
+        if node_list is not None:
+            # Figure out the main host, and which rank we are.
+            hostnames = subprocess.check_output(
+                ['scontrol', 'show', 'hostnames', node_list]
+            )
+            main_host = hostnames.split()[0].decode('utf-8')
+            distributed_rank = int(os.environ['SLURM_PROCID'])
+        else:
+            main_host = 'localhost'
+            distributed_rank = 0
+
         port = opt['port']
         print(
             'Initializing host {} as rank {}'
