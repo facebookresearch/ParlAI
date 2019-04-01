@@ -248,6 +248,9 @@ class SocketManager():
         except BrokenPipeError:  # noqa F821 we don't support p2
             # The channel died mid-send, wait for it to come back up
             return False
+        except AttributeError:
+            # _ensure_closed was called in parallel, self.ws = None
+            return False
         except Exception as e:
             shared_utils.print_and_log(
                 logging.WARN,
@@ -490,8 +493,8 @@ class SocketManager():
                     )
                     self.ws.on_open = on_socket_open
                     self.ws.run_forever(
-                        ping_interval=8 * self.HEARTBEAT_RATE,
-                        ping_timeout=8 * self.HEARTBEAT_RATE * 0.9)
+                        ping_interval=8 * self.HEARTBEAT_RATE
+                    )
                     self._ensure_closed()
                 except Exception as e:
                     shared_utils.print_and_log(
@@ -541,6 +544,10 @@ class SocketManager():
         """Handler thread for monitoring all channels"""
         # while the thread is still alive
         while not self.is_shutdown:
+            if self.ws is None:
+                # Waiting for websocket to come back alive
+                time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+                continue
             for connection_id in self.run.copy():
                 if not self.run[connection_id]:
                     continue
