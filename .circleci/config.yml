@@ -129,6 +129,41 @@ jobs:
           name: Lint
           command: bash ./tests/lint_changed.sh
 
+  launch_conditional_tests:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - run:
+          name: "Conditionally launching long tests..."
+          working_directory: ~/ParlAI/
+          command: |
+            if python tests/triggers.py mturk ; then
+              curl --user ${CIRCLE_API_USER_TOKEN} \
+                --data build_parameters[CIRCLE_JOB]=mturk_tests \
+                --data revision=$CIRCLE_SHA1 \
+                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+            fi
+            if python tests/triggers.py gpu ; then
+              curl --user ${CIRCLE_API_USER_TOKEN} \
+                --data build_parameters[CIRCLE_JOB]=nightly_gpu_tests \
+                --data revision=$CIRCLE_SHA1 \
+                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+            fi
+            if python tests/triggers.py longcpu ; then
+              curl --user ${CIRCLE_API_USER_TOKEN} \
+                --data build_parameters[CIRCLE_JOB]=nightly_cpu_tests \
+                --data revision=$CIRCLE_SHA1 \
+                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+            fi
+            if python tests/triggers.py data ; then
+              curl --user ${CIRCLE_API_USER_TOKEN} \
+                --data build_parameters[CIRCLE_JOB]=datatests \
+                --data revision=$CIRCLE_SHA1 \
+                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+            fi
+
   nightly_gpu_tests:
     executor: gpu
     working_directory: ~/ParlAI
@@ -154,7 +189,19 @@ jobs:
       - installtorchcpu
       - run:
           name: All nightly CPU tests
+          no_output_timeout: 30m
           command: python setup.py test -s tests.suites.nightly_cpu -v
+
+  mturk_tests:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - run:
+          name: All mturk tests
+          command: python setup.py test -s tests.suites.mturk -v
 
   deploy_website:
     executor: standard_cpu
@@ -183,8 +230,8 @@ workflows:
   commit:
     jobs:
       - lint
-      - datatests
       - unittests
+      - launch_conditional_tests
       - deploy_website:
           filters:
             branches:
@@ -199,5 +246,6 @@ workflows:
                 - master
     jobs:
       - unittests
+      - mturk_tests
       - nightly_cpu_tests
       - nightly_gpu_tests
