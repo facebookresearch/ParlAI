@@ -126,8 +126,11 @@ def git_changed_files(skip_nonexisting=True):
 
 
 class TeeStringIO(io.StringIO):
-    def __init__(self, *args, stream=None):
-        self.stream = stream
+    """
+    StringIO which also prints to stdout.
+    """
+    def __init__(self, *args):
+        self.stream = sys.stdout
         super().__init__(*args)
 
     def write(self, data):
@@ -150,7 +153,7 @@ def capture_output():
     >>> output.getvalue()
     'hello'
     """
-    sio = TeeStringIO(backupstream=sys.stdout)
+    sio = TeeStringIO()
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
 
