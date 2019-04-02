@@ -19,4 +19,3 @@ sphinx
 sphinx_rtd_theme
 tqdm
 websocket-client
-
