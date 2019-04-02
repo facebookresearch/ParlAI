@@ -11,8 +11,6 @@ from .modules import Seq2seq, opt_to_kwargs
 import torch
 import torch.nn as nn
 
-import json
-
 
 class Seq2seqAgent(TorchGeneratorAgent):
     """Agent which takes an input sequence and produces an output sequence.
@@ -170,29 +168,15 @@ class Seq2seqAgent(TorchGeneratorAgent):
         kwargs['sort'] = True  # need sorted for pack_padded
         return super().batchify(*args, **kwargs)
 
-    def save(self, path=None):
-        """Save model parameters if model_file is set."""
-        path = self.opt.get('model_file', None) if path is None else path
+    def state_dict(self):
+        """Get the model states for saving. Overriden to include longest_label"""
+        states = super().state_dict()
+        if hasattr(self.model, 'module'):
+            states['longest_label'] = self.model.module.longest_label
+        else:
+            states['longest_label'] = self.model.longest_label
 
-        if path and hasattr(self, 'model'):
-            model = {}
-            if hasattr(self.model, 'module'):
-                model['model'] = self.model.module.state_dict()
-                model['longest_label'] = self.model.module.longest_label
-            else:
-                model['model'] = self.model.state_dict()
-                model['longest_label'] = self.model.longest_label
-            model['optimizer'] = self.optimizer.state_dict()
-            model['optimizer_type'] = self.opt['optimizer']
-
-            with open(path, 'wb') as write:
-                torch.save(model, write)
-
-            # save opt file
-            with open(path + '.opt', 'w') as handle:
-                # save version string
-                self.opt['model_version'] = self.model_version()
-                json.dump(self.opt, handle)
+        return states
 
     def load(self, path):
         """Return opt and model states."""
