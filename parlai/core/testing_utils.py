@@ -8,6 +8,7 @@
 General utilities for helping writing ParlAI unit and integration tests.
 """
 
+import sys
 import os
 import unittest
 import contextlib
@@ -124,6 +125,20 @@ def git_changed_files(skip_nonexisting=True):
     return filenames
 
 
+class TeeStringIO(io.StringIO):
+    """
+    StringIO which also prints to stdout.
+    """
+    def __init__(self, *args):
+        self.stream = sys.stdout
+        super().__init__(*args)
+
+    def write(self, data):
+        if DEBUG and self.stream:
+            self.stream.write(data)
+        super().write(data)
+
+
 @contextlib.contextmanager
 def capture_output():
     """
@@ -138,12 +153,9 @@ def capture_output():
     >>> output.getvalue()
     'hello'
     """
-    if DEBUG:
-        yield
-    else:
-        sio = io.StringIO()
-        with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
-            yield sio
+    sio = TeeStringIO()
+    with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
+        yield sio
 
 
 @contextlib.contextmanager

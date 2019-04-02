@@ -20,7 +20,7 @@ class TestSeq2Seq(unittest.TestCase):
         stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:candidate',
             model='seq2seq',
-            lr=LR,
+            learningrate=LR,
             batchsize=BATCH_SIZE,
             num_epochs=NUM_EPOCHS,
             numthreads=1,
@@ -45,7 +45,7 @@ class TestSeq2Seq(unittest.TestCase):
         stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:nocandidate',
             model='seq2seq',
-            lr=LR,
+            learningrate=LR,
             batchsize=BATCH_SIZE,
             num_epochs=NUM_EPOCHS,
             numthreads=1,
@@ -74,7 +74,7 @@ class TestSeq2Seq(unittest.TestCase):
         stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:nocandidate',
             model='seq2seq',
-            lr=LR,
+            learningrate=LR,
             batchsize=BATCH_SIZE,
             num_epochs=NUM_EPOCHS,
             numthreads=1,
@@ -111,7 +111,7 @@ class TestSeq2Seq(unittest.TestCase):
         stdout, _, _ = testing_utils.train_model(dict(
             task='integration_tests:bad_example',
             model='seq2seq',
-            lr=LR,
+            learningrate=LR,
             batchsize=10,
             datatype='train:ordered:stream',
             num_epochs=1,
@@ -131,7 +131,7 @@ class TestHogwildSeq2seq(unittest.TestCase):
         stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:multiturn_nocandidate',
             model='seq2seq',
-            lr=LR,
+            learningrate=LR,
             batchsize=BATCH_SIZE,
             num_epochs=NUM_EPOCHS * 2,
             numthreads=2,
