@@ -22,8 +22,8 @@ parser_defaults = {
     'dropout': 0.0,
     'gradient_clip': 1.0,
     'lookuptable': 'all',
-    'num_epochs': 20,
-    'validate_every_n_epochs': 5,
+    'num_epochs': 50,
+    'validation_every_n_epochs': 5,
     'log_every_n_secs': 1,
     'batch_length_range': 5,
 }
