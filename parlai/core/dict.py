@@ -525,7 +525,7 @@ class DictionaryAgent(Agent):
 
         make_dir(os.path.dirname(filename))
         with open(filename, 'a' if append else 'w') as write:
-            for i in range(len(self.ind2tok)):
+            for i in self.ind2tok.keys():
                 tok = self.ind2tok[i]
                 cnt = self.freq[tok]
                 write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
