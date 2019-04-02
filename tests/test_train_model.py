@@ -11,6 +11,7 @@ Basic tests that ensure train_model.py behaves in predictable ways.
 import unittest
 import parlai.core.testing_utils as testing_utils
 
+
 class TestTrainModel(unittest.TestCase):
     def test_fast_final_eval(self):
         stdout, valid, test = testing_utils.train_model({
@@ -22,8 +23,6 @@ class TestTrainModel(unittest.TestCase):
         })
         self.assertEqual(valid['exs'], 10, 'Validation exs is wrong')
         self.assertEqual(test['exs'], 10, 'Test exs is wrong')
-
-
 
 
 if __name__ == '__main__':
