@@ -144,6 +144,7 @@ def check_new_task_filename(filename):
         'task_list.py' not in filename
     )
 
+
 @contextlib.contextmanager
 def capture_output():
     """
