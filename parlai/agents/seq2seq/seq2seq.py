@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
+from parlai.core.utils import warn_once
 from .modules import Seq2seq, opt_to_kwargs
 
 import torch
@@ -201,3 +202,22 @@ class Seq2seqAgent(TorchGeneratorAgent):
         if 'longest_label' in states:
             self.model.longest_label = states['longest_label']
         return states
+
+    def is_valid(self, obs):
+        normally_valid = super().is_valid(obs)
+        if not normally_valid:
+            # shortcut boolean evaluation
+            return normally_valid
+        contains_empties = obs['text_vec'].shape[0] == 0
+        if self.is_training and contains_empties:
+            warn_once(
+                'seq2seq got an empty input sequence (text_vec) during training. '
+                'Skipping this example, but you should check your dataset and '
+                'preprocessing.'
+            )
+        elif not self.is_training and contains_empties:
+            warn_once(
+                'seq2seq got an empty input sequence (text_vec) in an '
+                'evaluation example! This may affect your metrics!'
+            )
+        return not contains_empties

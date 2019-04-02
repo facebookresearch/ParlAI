@@ -13,6 +13,7 @@ The corpora are all randomly, but deterministically generated
 """
 
 from parlai.core.teachers import DialogTeacher
+import copy
 import random
 import itertools
 
@@ -169,6 +170,70 @@ class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):
         raw = super().setup_data(fold)
         for (t, a, _r, _c), e in raw:
             yield (t, a), e
+
+
+class BadExampleTeacher(CandidateTeacher):
+    """
+    Teacher which produces a variety of examples that upset verify_data.py.
+
+    Useful for checking how models respond when the following assumptions are
+    violated:
+
+        0. text is empty string
+        1. missing text
+        2. label is empty string
+        3. missing label
+        4. label candidates is empty
+        5. label candidates contains an empty string
+        6. label isn't in the candidates
+        7. missing label candidates
+
+    Note: this test may come to outlive its purpose in the future. When failing
+    this test, one should consider who is really at fault: the test, or the code.
+    """
+    NUM_CASES = 8
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        # gross hack: override data.get to force things the way we want; otherwise
+        # we can't actually force some of these scenarios.
+        self.data.get = self._wrapperfn(self.data.get)
+
+    def _wrapperfn(self, oldget):
+        def newget(*args):
+            item, eod = oldget(*args)
+            item = copy.deepcopy(item)
+            newget.case = (newget.case + 1) % self.NUM_CASES
+            case = newget.case
+            if case == 0:
+                # empty string input
+                item['text'] = ''
+            elif case == 1:
+                # not text input
+                del item['text']
+            elif case == 2:
+                # empty string label
+                item['labels'] = ['']
+            elif case == 3:
+                # no label
+                del item['labels']
+            elif case == 4:
+                # no label candidates
+                item['label_candidates'] = []
+            elif case == 5:
+                # extra empty string in labels
+                item['label_candidates'] = list(item['label_candidates']) + ['']
+            elif case == 6:
+                # label candidates doesn't have the label
+                item['label_candidates'] = list(item['label_candidates'])
+                item['label_candidates'].remove(item['labels'][0])
+            elif case == 7:
+                # no label candidates field
+                del item['label_candidates']
+            return item, eod
+
+        newget.case = random.randint(0, self.NUM_CASES)
+        return newget
 
 
 class DefaultTeacher(CandidateTeacher):
