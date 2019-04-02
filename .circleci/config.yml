@@ -186,7 +186,6 @@ workflows:
       - lint
       - datatests
       - unittests
-      - nightly_cpu_tests
       - deploy_website:
           filters:
             branches:
