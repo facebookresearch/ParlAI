@@ -13,22 +13,12 @@ parser_defaults = {
     'model': 'seq2seq',
     'pytorch_teacher_task': 'babi:task10k:1',
     'batchsize': 32,
-    'optimizer':  'adam',
-    'embeddingsize': 32,
-    'hiddensize': 256,
-    'learningrate': 1e-3,
-    'gradient_clip': 0.0,
-    'validation_every_n_epochs': 0.5,
-    'num_epochs': 20,
+    'momentum':  0.9,
+    'validation_every_n_secs': 30,
     'batch_length_range': 5,
-    'attention': 'general',
-    'rnn_class': 'gru',
-    'lookuptable': 'all',
-    'no_cuda': True,
 }
 
-
-def solved_task(str_output, valid, test):
+def solved_task(str_output):
     return '[ task solved! stopping. ]' in str_output
 
 

@@ -124,6 +124,17 @@ def git_changed_files(skip_nonexisting=True):
     return filenames
 
 
+class TeeStringIO(io.StringIO):
+    def __init__(self, *args, backupstream=None):
+        self.stream = backupstream
+        super().__init__(*args)
+
+    def write(self, data):
+        if self.stream:
+            self.stream.write(data)
+        super().write(data)
+
+
 @contextlib.contextmanager
 def capture_output():
     """
@@ -141,7 +152,8 @@ def capture_output():
     if DEBUG:
         yield
     else:
-        sio = io.StringIO()
+        import sys
+        sio = TeeStringIO(backupstream=sys.stdout)
         with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
             yield sio
 

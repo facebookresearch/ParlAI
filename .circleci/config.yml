@@ -154,6 +154,7 @@ jobs:
       - installtorchcpu
       - run:
           name: All nightly CPU tests
+          no_output_timeout: 30m
           command: python setup.py test -s tests.suites.nightly_cpu -v
 
   deploy_website:
