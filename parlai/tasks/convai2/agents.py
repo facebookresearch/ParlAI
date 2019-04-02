@@ -69,6 +69,21 @@ class SelfOriginalTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
+class LimitedSelfOriginalTeacher(SelfOriginalTeacher):
+    """
+    SelfOriginal teacher limited to the 20 first dialogs.
+
+    SelfOriginal teacher limited to the 20 first dialogs ( 100 examples)
+    Can be used for debug or testing.
+    """
+
+    def num_episodes(self):
+        return 20
+
+    def num_examples(self):
+        return 100
+
+
 class SelfTeacher(SelfOriginalTeacher):
     pass
 

@@ -23,6 +23,10 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     @staticmethod
     def add_cmdline_args(parser):
         add_common_args(parser)
+        parser.set_defaults(
+            encode_candidate_vecs=True,
+            candidates='inline',
+        )
 
     def __init__(self, opt, shared=None):
         # download pretrained models
