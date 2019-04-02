@@ -15,6 +15,7 @@ parser_defaults = {
     'batchsize': 32,
     'momentum':  0.9,
     'validation_every_n_secs': 30,
+    'log_every_n_secs': 10,
     'batch_length_range': 5,
 }
 
