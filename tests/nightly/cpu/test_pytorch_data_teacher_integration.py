@@ -28,6 +28,7 @@ parser_defaults = {
     'batch_length_range': 5,
 }
 
+
 def solved_task(str_output, valid, test):
     return (
         valid['ppl'] < 1.3 and
