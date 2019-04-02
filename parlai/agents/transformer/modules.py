@@ -10,12 +10,11 @@ import math
 import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
+from parlai.core.utils import neginf
 
 
 def _normalize(tensor, norm_layer):
-    """
-    Broadcast layer norm
-    """
+    """Broadcast layer norm"""
     size = tensor.size()
     return norm_layer(tensor.view(-1, size[-1])).view(size)
 
@@ -144,6 +143,11 @@ class TransformerMemNetModel(nn.Module):
 
     def encode_context_memory(self, context_w, memories_w):
         # [batch, d]
+        if context_w is None:
+            # it's possible that only candidates were passed into the
+            # forward function, return None here for LHS representation
+            return None, None
+
         context_h = self.context_encoder(context_w)
 
         if memories_w is None:
@@ -172,12 +176,12 @@ class TransformerMemNetModel(nn.Module):
 
 def create_position_codes(n_pos, dim, out):
     position_enc = np.array([
-        [pos / np.power(10000, 2 * (j // 2) / dim) for j in range(dim)]
+        [pos / np.power(10000, 2 * j / dim) for j in range(dim // 2)]
         for pos in range(n_pos)
     ])
 
-    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc[:, 0::2]))
-    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc[:, 1::2]))
+    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc)).type_as(out)
+    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc)).type_as(out)
     out.detach_()
     out.requires_grad = False
 
@@ -300,9 +304,7 @@ class TransformerEncoder(nn.Module):
             inside the sequence and 0 outside.
         """
         mask = input != self.padding_idx
-        seq_len = input.size(1)
-        positions = input.new(seq_len).long()
-        positions = torch.arange(seq_len, out=positions).unsqueeze(0)
+        positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
@@ -310,12 +312,12 @@ class TransformerEncoder(nn.Module):
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
 
-        tensor *= mask.unsqueeze(-1).float()
+        tensor *= mask.unsqueeze(-1).type_as(tensor)
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
 
         if self.reduction:
-            divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1e-20)
+            divisor = mask.type_as(tensor).sum(dim=1).unsqueeze(-1).clamp(min=1e-7)
             output = tensor.sum(dim=1) / divisor
             return output
         else:
@@ -350,7 +352,7 @@ class TransformerEncoderLayer(nn.Module):
         tensor = _normalize(tensor, self.norm1)
         tensor = tensor + self.dropout(self.ffn(tensor))
         tensor = _normalize(tensor, self.norm2)
-        tensor *= mask.unsqueeze(-1).float()
+        tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
 
 
@@ -605,9 +607,11 @@ class MultiHeadAttention(nn.Module):
         self.q_lin = nn.Linear(dim, dim)
         self.k_lin = nn.Linear(dim, dim)
         self.v_lin = nn.Linear(dim, dim)
+        # TODO: merge for the initialization step
         nn.init.xavier_normal_(self.q_lin.weight)
         nn.init.xavier_normal_(self.k_lin.weight)
         nn.init.xavier_normal_(self.v_lin.weight)
+        # and set biases to 0
         self.out_lin = nn.Linear(dim, dim)
 
         nn.init.xavier_normal_(self.out_lin.weight)
@@ -618,6 +622,7 @@ class MultiHeadAttention(nn.Module):
         batch_size, query_len, dim = query.size()
         assert dim == self.dim, \
             f'Dimensions do not match: {dim} query vs {self.dim} configured'
+        assert mask is not None, 'Mask is None, please specify a mask'
         n_heads = self.n_heads
         dim_per_head = dim // n_heads
         scale = math.sqrt(dim_per_head)
@@ -648,7 +653,7 @@ class MultiHeadAttention(nn.Module):
         k = prepare_head(self.k_lin(key))
         v = prepare_head(self.v_lin(value))
 
-        dot_prod = q.bmm(k.transpose(1, 2))
+        dot_prod = q.div_(scale).bmm(k.transpose(1, 2))
         # [B * n_heads, query_len, key_len]
         attn_mask = (
             (mask == 0)
@@ -658,14 +663,14 @@ class MultiHeadAttention(nn.Module):
             .view(batch_size * n_heads, query_len, key_len)
         )
         assert attn_mask.shape == dot_prod.shape
-        dot_prod.masked_fill_(attn_mask, -float(1e20))
+        dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(dot_prod / scale, dim=-1)
+        attn_weights = F.softmax(dot_prod, dim=-1).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
         attentioned = (
-            attentioned
+            attentioned.type_as(query)
             .view(batch_size, n_heads, query_len, dim_per_head)
             .transpose(1, 2).contiguous()
             .view(batch_size, query_len, dim)
@@ -684,6 +689,7 @@ class TransformerFFN(nn.Module):
         self.lin2 = nn.Linear(dim_hidden, dim)
         nn.init.xavier_uniform_(self.lin1.weight)
         nn.init.xavier_uniform_(self.lin2.weight)
+        # TODO: initialize biases to 0
 
     def forward(self, x):
         x = F.relu(self.lin1(x))

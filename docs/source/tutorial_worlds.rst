@@ -197,97 +197,6 @@ Next, we'll look at how teachers and models can take advantage of the setup
 above to improve performance.
 
 
-
-Batched Teachers
-~~~~~~~~~~~~~~~~
-**Note: Batched Teachers are deprecated in ParlAI. To make use of batch sorting
-as described here, please use ``-pybsrt`` with the ``PytorchDataTeacher``
-(see the tutorial below on this page)**
-
-Batched teachers need to consider everything that a Hogwild Teacher does (see above)
-except for thread safety--for example, they also need to make sure they sync
-which example index they are on so that they don't repeat or skip valid/test examples.
-
-However, teachers can do some tricks for batching which can help training by
-reducing the amount of zero-padding in tensors constructed from batches of text.
-This technique alone sped up the time to train on a single epoch of WMT De-En
-with a simple convolutional architecture by approximately 4x.
-See `this paper <https://arxiv.org/abs/1706.05765>`__ for an analysis of the
-impact of different strategies on speed and convergence.
-
-As before, the FixedDialogTeacher handles all of this for you.
-
-.. image::  _static/img/world_batchteacher.png
-
-In order to reduce the zero-padding in examples, the FixedDialogTeacher first
-processes the entire base dataset, squashing episodes into a single example
-if there are multiple examples in each episode. For every example
-in an episode, a separate squashed episode will be created from the examples up
-to and including the current example.
-
-The squashing can be controlled by two command-line arguments, which set
-whether the labels are included in the squashing (you want them for dialog,
-but you might not for question-answering),
-as well as how many examples from the past should be included.
-
-:param batch-sort: (bool, default True) whether to do squashing & batch sorting at all
-:param include-labels: (bool, default True) whether to include labels in the context.
-:param context-length: (int, default -1) how many past examples in the episode to
-                       include in the context for the current one. default -1 is all.
-                       note that some datasets have **very** long episodes (e.g.
-                       OpenSubtitles has episodes with hundreds of examples), so
-                       setting context-length to a smaller value can limit the
-                       context to an approachable amount of information for the model
-                       as well as limiting memory usage.
-
-After doing the squashing, the new episodes are sorted by number of spaces
-(which roughly translates into the number of tokens after parsing the text)
-and then split into batches where each batch contains examples of similar size.
-
-The FixedDialogTeacher then implements a ``batch_act()`` method to return batches
-from these batches instead of using the regular ``act()`` method to return single examples.
-
-Let's look at a quick example to make sure the flattening is clear.
-Consider the following "conversation", where the ``x``'s represent 'text' fields
-and the ``y``'s represent labels in a continuous conversation between two agents.
-
-.. code-block:: python
-
-  x1 y1
-  x2 y2
-  x3 y3
-  x4 y4
-
-Without batching, these examples will be presented to the agent over four parleys:
-
-.. code-block:: python
-
-    {'text': x1, 'labels': [y1], 'episode_done': False}
-    {'text': x2, 'labels': [y2], 'episode_done': False}
-    {'text': x3, 'labels': [y3], 'episode_done': False}
-    {'text': x4, 'labels': [y4], 'episode_done': True}
-
-Using the flattening strategy above, with ``context-length`` set to -1 and
-``include-labels`` set to False (not recommended for conversations),
-in separate rows of a batch we'd get:
-
-.. code-block:: python
-
-    {'text': x1,                'labels': [y1], 'episode_done': True}
-    {'text': x1 + x2,           'labels': [y2], 'episode_done': True}
-    {'text': x1 + x2 + x3,      'labels': [y3], 'episode_done': True}
-    {'text': x1 + x2 + x3 + x4, 'labels': [y4], 'episode_done': True}
-
-If we change ``context-length`` to 3 and ``include-labels`` to True:
-
-.. code-block:: python
-
-    {'text': x1,           'labels': [y1], 'episode_done': True}
-    {'text': x1 + y1 + x2, 'labels': [y2], 'episode_done': True}
-    {'text': x2 + y2 + x3, 'labels': [y3], 'episode_done': True}
-    {'text': x3 + y3 + x4, 'labels': [y4], 'episode_done': True}
-
-
 Batched Models
 ~~~~~~~~~~~~~~
 Finally, models need to be able to handle observations arriving in batches.
@@ -511,6 +420,81 @@ return batches with similarly sized 'text' fields.
 a batch; e.g., by how many characters each example in a cache will, at most, deviate.
 A ``--batch-length-range`` of 5 would mean that each example in the batch
 would differ by no more than 5 characters (in a text-based dataset).
+
+Explanation and Benefits of Batch Sorting
++++++++++++++++++++++++++++++++++++++++++
+
+Batch sorting can help training by
+reducing the amount of zero-padding in tensors constructed from batches of text.
+This technique alone sped up the time to train on a single epoch of WMT De-En
+with a simple convolutional architecture by approximately 4x.
+See `this paper <https://arxiv.org/abs/1706.05765>`__ for an analysis of the
+impact of different strategies on speed and convergence.
+
+In order to reduce the zero-padding in examples, the ``PytorchDataTeacher``
+squashes episodes into a single example
+if there are multiple examples in each episode. For every example
+in an episode, a separate squashed episode will be created from the examples up
+to and including the current example.
+
+The squashing can be controlled by two command-line arguments, which set
+whether the labels are included in the squashing (you want them for dialog,
+but you might not for question-answering),
+as well as how many examples from the past should be included.
+
+:param pytorch-include-labels: (bool, default True) whether to include labels in the context.
+:param pytorch-context-length: (int, default -1) how many past examples in the episode to
+                       include in the context for the current one. default -1 is all.
+                       note that some datasets have **very** long episodes (e.g.
+                       OpenSubtitles has episodes with hundreds of examples), so
+                       setting context-length to a smaller value can limit the
+                       context to an approachable amount of information for the model
+                       as well as limiting memory usage.
+
+After doing the squashing, the ``PytorchDataTeacher`` will return
+batches where each batch contains examples of similar size (where size is determined
+by the number of spaces in the example).
+
+Let's look at a quick example to make sure the flattening is clear.
+Consider the following "conversation", where the ``x``'s represent 'text' fields
+and the ``y``'s represent labels in a continuous conversation between two agents.
+
+.. code-block:: python
+
+  x1 y1
+  x2 y2
+  x3 y3
+  x4 y4
+
+Without batching, these examples will be presented to the agent over four parleys:
+
+.. code-block:: python
+
+    {'text': x1, 'labels': [y1], 'episode_done': False}
+    {'text': x2, 'labels': [y2], 'episode_done': False}
+    {'text': x3, 'labels': [y3], 'episode_done': False}
+    {'text': x4, 'labels': [y4], 'episode_done': True}
+
+Using the flattening strategy above, with ``pytorch-context-length`` set to -1 and
+``pytorch-include-labels`` set to False (not recommended for conversations),
+in separate rows of a batch we'd get:
+
+.. code-block:: python
+
+    {'text': x1,                'labels': [y1], 'episode_done': True}
+    {'text': x1 + x2,           'labels': [y2], 'episode_done': True}
+    {'text': x1 + x2 + x3,      'labels': [y3], 'episode_done': True}
+    {'text': x1 + x2 + x3 + x4, 'labels': [y4], 'episode_done': True}
+
+If we change ``pytorch-context-length`` to 3 and ``pytorch-include-labels`` to True:
+
+.. code-block:: python
+
+    {'text': x1,           'labels': [y1], 'episode_done': True}
+    {'text': x1 + y1 + x2, 'labels': [y2], 'episode_done': True}
+    {'text': x2 + y2 + x3, 'labels': [y3], 'episode_done': True}
+    {'text': x3 + y3 + x4, 'labels': [y4], 'episode_done': True}
+
 
 PytorchDataTeacher Multitask Training
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

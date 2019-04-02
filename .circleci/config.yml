@@ -4,8 +4,13 @@ version: 2.1
 executors:
   standard_cpu:
     docker:
-      - image: circleci/python:3.6.4
-
+      - image: circleci/python:3.6.5-node
+  gpu:
+    environment:
+      CUDA_VERSION: "10.0"
+    machine:
+      image: default
+    resource_class: gpu.medium # tesla m60
 
 # commands are nice shorthand
 commands:
@@ -20,33 +25,94 @@ commands:
           name: Sets up the virtual environment
           command: |
             mkdir -p ~/venv
-            virtualenv ~/venv
+            virtualenv --python=python3.6 ~/venv
             echo ". ~/venv/bin/activate" >> $BASH_ENV
             . ~/venv/bin/activate
             pip3 install --upgrade --progress-bar off pip
             pip3 install --progress-bar off flake8 gitpython
-
+            python setup.py develop
 
   installdeps:
     description: "Installs all dependencies"
     steps:
       - run:
-          name: pip3 installs dependencies
+          name: Installs basic dependencies
           command: |
             pip3 install --progress-bar off -r requirements.txt
+
+  installtorchgpu:
+    description: "Install Torch (GPU)"
+    steps:
+      - run:
+          name: Install torch GPU
+          command: |
+            pip3 install --progress-bar off numpy
+            pip3 install --progress-bar off torch
+            pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
+  installtorchcpu:
+    description: "Install Torch (CPU)"
+    steps:
+      - run:
+          name: Install torch CPU
+          command: |
+            pip3 install --progress-bar off numpy
             pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
 
+  setupcuda:
+    description: "Sets up the CUDA environment"
+    steps:
+      - run:
+          name: Setup CUDA
+          working_directory: ~/
+          command: |
+            # download and install nvidia drivers, cuda, etc
+            wget -q 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-410.79.run'
+            sudo /bin/bash ./NVIDIA-Linux-x86_64-410.79.run -s --no-drm
+            wget -q https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+            sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+            sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
+            nvidia-smi
+            pyenv global 3.6.5
+  setupjslinting:
+    description: "Sets up the ability to do js linting for the MTurk webapp"
+    steps:
+      - run:
+          name: Setup JS Linting
+          working_directory: ~/ParlAI/parlai/mturk
+          command: npm install
+
+  installgpudeps:
+    description: "Install Dependencies specific to GPU testing"
+    steps:
+      - run:
+          name: GPU dependencies
+          command: |
+            pip3 install --progress-bar off pytorch-pretrained-bert
+
 jobs:
-  unittest:
+  datatests:
     executor: standard_cpu
     working_directory: ~/ParlAI
     steps:
       - checkout
       - setup
       - installdeps
+      - installtorchcpu
+      - run:
+          name: Data tests
+          command: python setup.py test -s tests.suites.datatests -v
+
+  unittests:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - installtorchcpu
       - run:
           name: Unit tests
-          command: python setup.py test -s tests.suites.oncommit -q
+          command: python setup.py test -s tests.suites.unittests -v
 
   lint:
     executor: standard_cpu
@@ -54,20 +120,62 @@ jobs:
     steps:
       - checkout
       - setup
+      - setupjslinting
+      - run:
+          name: JS Lint
+          working_directory: ~/ParlAI/parlai/mturk
+          command: npm run lint
       - run:
           name: Lint
           command: bash ./tests/lint_changed.sh
 
-  integration_test:
+  nightly_gpu_tests:
+    executor: gpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setupcuda
+      - setup
+      - installtorchgpu
+      - installdeps
+      - installgpudeps
+      - run:
+          name: Nightly GPU tests
+          no_output_timeout: 30m
+          command: python setup.py test -s tests.suites.nightly_gpu -v
+
+  nightly_cpu_tests:
     executor: standard_cpu
     working_directory: ~/ParlAI
     steps:
       - checkout
       - setup
       - installdeps
+      - installtorchcpu
       - run:
-          name: Integration tests
-          command: python setup.py test -s tests.suites.integration -q
+          name: All nightly CPU tests
+          command: python setup.py test -s tests.suites.nightly_cpu -v
+
+  deploy_website:
+    executor: standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - setup
+      - installdeps
+      - installtorchcpu
+      - run:
+          working_directory: ~/ParlAI/website
+          name: Build the website
+          command: make
+      - run:
+          working_directory: ~/ParlAI/
+          name: Upload the website
+          command: |
+            sudo apt-get install s3cmd
+            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
+            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
+            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
 
 
 workflows:
@@ -75,15 +183,21 @@ workflows:
   commit:
     jobs:
       - lint
-      - unittest
+      - datatests
+      - unittests
+      - deploy_website:
+          filters:
+            branches:
+              only: master
   nightly:
     triggers:
       - schedule:
-          cron: "0 0 * * *"
+          cron: "0 10 * * *" # 10am UTC is 5am NYC
           filters:
             branches:
               only:
                 - master
     jobs:
-      - unittest
-      - integration_test
+      - unittests
+      - nightly_cpu_tests
+      - nightly_gpu_tests

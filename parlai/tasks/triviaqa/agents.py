@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
-from parlai.core.agents import MultiTaskTeacher
+import parlai.core.agents as core_agents
 from .build import build
 
 import copy
@@ -122,14 +122,14 @@ class VerifiedWikipediaTeacher(WikipediaTeacher):
         super().__init__(opt, shared)
 
 
-class VerifiedTeacher(MultiTaskTeacher):
+class VerifiedTeacher(core_agents.MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = 'triviaqa:VerifiedWikipedia,triviaqa:VerifiedWeb'
         super().__init__(opt, shared)
 
 
-class DefaultTeacher(MultiTaskTeacher):
+class DefaultTeacher(core_agents.MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = 'triviaqa:wikipedia,triviaqa:web'

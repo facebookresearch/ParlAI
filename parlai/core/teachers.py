@@ -30,13 +30,10 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 
-from .agents import Teacher, create_task_agent_from_taskname
+from .agents import Teacher
 from .image_featurizers import ImageLoader
 from .utils import (
     AttrDict,
-    flatten,
-    sort_data,
-    make_batches,
     no_lock,
     str_to_msg,
 )
@@ -164,44 +161,7 @@ class FixedDialogTeacher(Teacher):
         # set up batching
         self.bsz = opt.get('batchsize', 1)
         self.batchindex = opt.get('batchindex', 0)
-
-        dt = opt.get('datatype', '').split(':')
-        self.use_batch_act = (opt.get('batch_sort', False) and self.bsz > 1 and
-                              'stream' not in dt)
-
-        if self.use_batch_act:
-            if shared:
-                self.lastYs = shared['lastYs']
-                if 'sorted_data' in shared:
-                    self.sorted_data = shared['sorted_data']
-                    self.batches = shared['batches']
-            else:
-                self.lastYs = [None] * self.bsz
-                ordered_opt = opt.copy()
-                ordered_opt['datatype'] = ':'.join((dt[0], 'ordered'))
-                ordered_opt['batchsize'] = 1
-                ordered_opt['numthreads'] = 1
-                ordered_opt['hide_labels'] = False
-                ordered_teacher = create_task_agent_from_taskname(ordered_opt)[0]
-
-                clen = opt.get('context_length', -1)
-                incl = opt.get('include_labels', True)
-
-                if ordered_teacher.num_examples() > 1000000:  # one million
-                    print('WARNING: this dataset is large, and batch sorting '
-                          'may use too much RAM or take too long to set up. '
-                          'Consider disabling batch sorting, setting '
-                          'context-length to a small integer (if this dataset '
-                          'has episodes of multiple examples), or streaming '
-                          'the data using a streamed data mode if supported.')
-
-                flatdata = flatten(ordered_teacher,
-                                   context_length=clen, include_labels=incl)
-                self.sorted_data = sort_data(flatdata)
-                self.batches = make_batches(self.sorted_data, self.bsz)
-                # one fixed-seed shuffle keeps determinism but makes sure that
-                # examples aren't presented in sorted order (bad for `-vme`)
-                random.Random(42).shuffle(self.batches)
+        self.use_batch_act = False  # Batch act disabled by default
 
     def _lock(self):
         if hasattr(self.index, 'get_lock'):
@@ -223,8 +183,6 @@ class FixedDialogTeacher(Teacher):
         self.episode_idx = -1
         with self._lock():
             self.index.value = -1
-        if self.use_batch_act and self.random and hasattr(self, 'batches'):
-            random.shuffle(self.batches)
 
     def submit_load_request(self):
         """An agent should implement this method to submit requests to the
@@ -260,9 +218,6 @@ class FixedDialogTeacher(Teacher):
             if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
                 # for multithreading need to move index into threadsafe memory
                 self.index = Value('l', -1)
-            if hasattr(self, 'sorted_data'):
-                shared['sorted_data'] = self.sorted_data
-                shared['batches'] = self.batches
         else:
             shared['data_loader'] = self.data_loader
         shared['index'] = self.index

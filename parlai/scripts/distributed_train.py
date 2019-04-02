@@ -41,11 +41,6 @@ from parlai.scripts.multiprocessing_train import multiprocess_train
 
 
 def main():
-    parser = single_train.setup_args()
-    parser.add_distributed_training_args()
-    parser.add_argument('--port', type=int, default=61337, help='TCP port number')
-    opt = parser.parse_args()
-
     # double check we're using SLURM
     node_list = os.environ.get('SLURM_JOB_NODELIST')
     if node_list is None:
@@ -53,6 +48,11 @@ def main():
             'Does not appear to be in a SLURM environment. '
             'You should not call this script directly; see launch_distributed.py'
         )
+
+    parser = single_train.setup_args()
+    parser.add_distributed_training_args()
+    parser.add_argument('--port', type=int, default=61337, help='TCP port number')
+    opt = parser.parse_args(print_args=(os.environ['SLURM_PROCID'] == '0'))
 
     # We can determine the init method automatically for Slurm.
     try:

@@ -27,7 +27,8 @@ from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (
-    AttrDict, argsort, padded_tensor, warn_once, round_sigfigs
+    AttrDict, argsort, padded_tensor, warn_once, round_sigfigs,
+    fp16_optimizer_wrapper
 )
 from parlai.core.distributed_utils import is_primary_worker
 
@@ -46,51 +47,41 @@ class Batch(AttrDict):
     with additional fields if they would like, though we recommend calling the
     parent function to set up these fields as a base.
 
-    .. py:attribute:: text_vec
-
+    :param text_vec:
         bsz x seqlen tensor containing the parsed text data.
 
-    .. py:attribute:: text_lengths
-
+    :param text_lengths:
         list of length bsz containing the lengths of the text in same order as
         text_vec; necessary for pack_padded_sequence.
 
-    .. py:attribute:: label_vec
-
+    :param label_vec:
         bsz x seqlen tensor containing the parsed label (one per batch row).
 
-    .. py:attribute:: label_lengths
-
+    :param label_lengths:
         list of length bsz containing the lengths of the labels in same order as
         label_vec.
 
-    .. py:attribute:: labels
-
+    :param labels:
         list of length bsz containing the selected label for each batch row (some
         datasets have multiple labels per input example).
 
-    .. py:attribute:: valid_indices
-
+    :param valid_indices:
         list of length bsz containing the original indices of each example in the
         batch. we use these to map predictions back to their proper row, since e.g.
         we may sort examples by their length or some examples may be invalid.
 
-    .. py:attribute:: candidates
-
+    :param candidates:
         list of lists of text. outer list has size bsz, inner lists vary in size
         based on the number of candidates for each row in the batch.
 
-    .. py:attribute:: candidate_vecs
-
+    :param candidate_vecs:
         list of lists of tensors. outer list has size bsz, inner lists vary in size
         based on the number of candidates for each row in the batch.
 
-    .. py:attribute:: image
-
+    :param image:
         list of image features in the format specified by the --image-mode arg.
 
-    .. py:attribute:: observations
-
+    :param observations:
         the original observations in the batched order
     """
 
@@ -111,17 +102,15 @@ class Batch(AttrDict):
 
 class Output(AttrDict):
     """
-    Output is a namedtuple containing agent predictions.
+    Output is an object containing agent predictions.
 
     This is the expected return type of the train_step and eval_step functions,
     though agents can choose to return None if they do not want to answer.
 
-    .. py:attribute:: text
-
+    :param List[str] text:
         list of strings of length bsz containing the predictions of the model
 
-    .. py:attribute:: text_candidates
-
+    :param List[List[str]] text_candidates:
         list of lists of length bsz containing ranked predictions of the model.
         each sub-list is an ordered ranking of strings, of variable length.
     """
@@ -132,20 +121,31 @@ class Output(AttrDict):
 
 class History(object):
     """
-    History object that tracks the history for a given field over the course
-    of an episode.
+    History handles tracking the dialogue history/state over the course of an
+    episode.
 
-    :param field:        field in the observation to track over the course of
-                         the episode (defaults to 'text')
-    :param vec_type:     specify a 'list' or 'deque' to save the history in
-                         this object
-    :param maxlen:       if `vec_type` is 'deque', this sets the maximum
-                         length of that object
-    :param p1_token:     token indicating 'person 1'; opt must have
-                         'person_tokens' set to True for this to be added
-    :param p1_token:     token indicating 'person 2'; opt must have
-                         'person_tokens' set to True for this to be added
-    :param dict_agent    DictionaryAgent object for tokenizing the history
+    History may also be used to track the history of any field.
+
+    :param field:
+        field in the observation to track over the course of the episode
+        (defaults to 'text')
+
+    :param vec_type:
+        specify a 'list' or 'deque' to save the history in this object
+
+    :param maxlen:
+        if `vec_type` is 'deque', this sets the maximum length of that object
+
+    :param p1_token:
+        token indicating 'person 1'; opt must have 'person_tokens' set to True
+        for this to be added
+
+    :param p1_token:
+        token indicating 'person 2'; opt must have 'person_tokens' set to True
+        for this to be added
+
+    :param dict_agent:
+        DictionaryAgent object for tokenizing the history
     """
     def __init__(self, opt, field='text', vec_type='deque', maxlen=None,
                  size=-1, p1_token='__p1__', p2_token='__p2__',
@@ -199,10 +199,12 @@ class History(object):
         self.history_vecs.append(self.parse(text))
 
     def update_history(self, obs, add_next=None):
-        """Update the history with the given observation.
+        """
+        Update the history with the given observation.
 
-        :param add_next:   string to append to history prior to updating it
-                           with the observation
+        :param add_next:
+            string to append to history prior to updating it with the
+            observation
         """
         if self.reset_on_next_update:
             # this is the first example in a new episode, clear the previous
@@ -278,7 +280,8 @@ class History(object):
 
 
 class TorchAgent(Agent):
-    """A provided base agent for any model that wants to use Torch.
+    """
+    A provided base agent for any model that wants to use Torch.
 
     Exists to make it easier to implement a new agent.
     Not necessary, but reduces duplicated code.
@@ -290,12 +293,6 @@ class TorchAgent(Agent):
 
     This agent serves as a common framework for all ParlAI models which want
     to use PyTorch.
-    """
-
-    """Utility mapping of simple names to optimizers.
-
-    For example:
-    'adagrad': optim.Adagrad, 'adam': optim.Adad, 'sgd': optim.SGD
     """
 
     P1_TOKEN = '__p1__'
@@ -313,6 +310,11 @@ class TorchAgent(Agent):
         # first pull torch.optim in
         optims = {k.lower(): v for k, v in optim.__dict__.items()
                   if not k.startswith('__') and k[0].isupper()}
+        try:
+            import apex.optimizers.fused_adam as fused_adam
+            optims['fused_adam'] = fused_adam.FusedAdam
+        except ImportError:
+            pass
 
         try:
             # https://openreview.net/pdf?id=S1fUpoR5FQ
@@ -327,7 +329,8 @@ class TorchAgent(Agent):
 
     @staticmethod
     def dictionary_class():
-        """Return the dictionary class that this agent expects to use.
+        """
+        Return the dictionary class that this agent expects to use.
 
         Can be overriden if a more complex dictionary is required.
         """
@@ -364,6 +367,8 @@ class TorchAgent(Agent):
                  'ignored unless you append "-force" to your choice.'
         )
         # optimizer arguments
+        agent.add_argument(
+            '--fp16', type='bool', default=False, help='Use fp16 computations.')
         agent.add_argument(
             '-opt', '--optimizer', default='sgd', choices=cls.optim_opts(),
             help='Choose between pytorch optimizers. Any member of torch.optim'
@@ -503,6 +508,14 @@ class TorchAgent(Agent):
             if opt.get('person_tokens'):
                 self.dict[self.P1_TOKEN] = 999999999
                 self.dict[self.P2_TOKEN] = 999999998
+            if opt.get('fp16'):
+                # Volta cores revert to FP32 hardware if tensors are not multiples
+                # of 8 in all dimensions. This INCLUDES the embeddings layer! As
+                # such, we need some extra magic to ensure the dictionary is padded
+                # with extra tokens to make it a multiple of 8.
+                if len(self.dict) % 8 != 0:
+                    for i in range(8 - len(self.dict) % 8):
+                        self.dict['__FP16_PAD_{}__'.format(i)] = 1
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
@@ -524,6 +537,8 @@ class TorchAgent(Agent):
                 print('[ Using CUDA ]')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
+        # indicate whether using fp16
+        self.fp16 = self.opt.get('fp16', False)
 
         # now set up any fields that all instances may need
         self.id = 'TorchAgent'  # child can override
@@ -558,6 +573,7 @@ class TorchAgent(Agent):
             dict_agent=self.dict,
         )
 
+        self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
@@ -591,13 +607,18 @@ class TorchAgent(Agent):
         return init_model, is_finetune
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
-        """Initialize optimizer with model parameters.
-        :param params:       parameters from the model, for example:
-                             [p for p in model.parameters() if p.requires_grad]
-        :param optim_states: optional argument providing states of optimizer
-                             to load
-        :saved_optim_type:   type of optimizer being loaded, if changed will
-                             skip loading optimizer states
+        """
+        Initialize optimizer with model parameters.
+
+        :param params:
+            parameters from the model
+
+        :param optim_states:
+            optional argument providing states of optimizer to load
+
+        :param saved_optim_type:
+            type of optimizer being loaded, if changed will skip loading
+            optimizer states
         """
 
         opt = self.opt
@@ -627,6 +648,9 @@ class TorchAgent(Agent):
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
+        if self.fp16:
+            self.optimizer = fp16_optimizer_wrapper(self.optimizer)
+
         if optim_states:
             if saved_optim_type != opt['optimizer']:
                 print('WARNING: not loading optim state since optim class '
@@ -652,9 +676,15 @@ class TorchAgent(Agent):
 
         :param state_dict states: Possible state_dict provided by model
             checkpoint, for restoring LR state
+
         :param bool hard_reset: If true, the LR scheduler should ignore the
             state dictionary.
         """
+        optimizer = self.optimizer
+        if self.fp16:
+            # lr schedulers don't work with apex, they expect the "real" optimizer
+            optimizer = optimizer.optimizer
+
         if self.opt.get('warmup_updates', -1) > 0:
             def _warmup_lr(step):
                 start = self.opt['warmup_rate']
@@ -664,7 +694,7 @@ class TorchAgent(Agent):
                 return lr_mult
 
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
-                self.optimizer,
+                optimizer,
                 _warmup_lr,
             )
         else:
@@ -684,7 +714,7 @@ class TorchAgent(Agent):
             self.scheduler = None
         elif self.opt.get('lr_scheduler') == 'reduceonplateau':
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer,
+                optimizer,
                 'min',
                 factor=decay,
                 patience=patience,
@@ -692,7 +722,7 @@ class TorchAgent(Agent):
             )
         elif self.opt.get('lr_scheduler') == 'fixed':
             self.scheduler = optim.lr_scheduler.StepLR(
-                self.optimizer,
+                optimizer,
                 patience,
                 gamma=decay,
             )
@@ -708,7 +738,7 @@ class TorchAgent(Agent):
                 return decay_factor / np.sqrt(max(1, step))
 
             self.scheduler = optim.lr_scheduler.LambdaLR(
-                self.optimizer,
+                optimizer,
                 _invsqrt_lr,
             )
         else:
@@ -749,20 +779,20 @@ class TorchAgent(Agent):
         return metrics
 
     def _is_lr_warming_up(self):
-        """
-        Checks if we're warming up the learning rate.
-        """
+        """Checks if we're warming up the learning rate."""
         return (
             self.warmup_scheduler is not None and
             self._number_training_updates <= self.opt['warmup_updates']
         )
 
     def receive_metrics(self, metrics_dict):
-        """Use the metrics to decide when to adjust LR schedule.
+        """
+        Use the metrics to decide when to adjust LR schedule.
 
         This uses the loss as the validation metric if present, if not this
         function does nothing. Note that the model must be reporting loss for
         this to work.
+
         Override this to override the behavior.
         """
         if not hasattr(self, 'scheduler') or self.scheduler is None:
@@ -834,16 +864,22 @@ class TorchAgent(Agent):
         return embs, init
 
     def _project_vec(self, vec, target_dim, method='random'):
-        """If needed, project vector to target dimensionality.
+        """
+        If needed, project vector to target dimensionality.
 
         Projection methods implemented are the following:
 
         random - random gaussian matrix multiplication of input vector
 
-        :param vec:        one-dimensional vector
-        :param target_dim: dimension of returned vector
-        :param method:     projection method. will be used even if the dim is
-                           not changing if method ends in "-force".
+        :param vec:
+            one-dimensional vector
+
+        :param target_dim:
+            dimension of returned vector
+
+        :param method:
+            projection method. will be used even if the dim is not changing if
+            method ends in "-force".
         """
         pre_dim = vec.size(0)
         if pre_dim != target_dim or method.endswith('force'):
@@ -865,10 +901,14 @@ class TorchAgent(Agent):
             return vec
 
     def _copy_embeddings(self, weight, emb_type, log=True):
-        """Copy embeddings from the pretrained embeddings to the lookuptable.
+        """
+        Copy embeddings from the pretrained embeddings to the lookuptable.
 
-        :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
-        :param emb_type: pretrained embedding type
+        :param weight:
+            weights of lookup table (nn.Embedding/nn.EmbeddingBag)
+
+        :param emb_type:
+            pretrained embedding type
         """
         if not is_primary_worker():
             # we're in distributed mode, copying embeddings in the workers
@@ -888,7 +928,8 @@ class TorchAgent(Agent):
                   ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
 
     def share(self):
-        """Share fields from parent as well as useful objects in this class.
+        """
+        Share fields from parent as well as useful objects in this class.
 
         Subclasses will likely want to share their model as well.
         """
@@ -918,15 +959,24 @@ class TorchAgent(Agent):
 
     def _vectorize_text(self, text, add_start=False, add_end=False,
                         truncate=None, truncate_left=True):
-        """Return vector from text.
+        """
+        Return vector from text.
 
-        :param text:          String to vectorize.
-        :param add_start:     Add the start token to the front of the tensor.
-        :param add_end:       Add the end token to the end of the tensor.
-        :param truncate:      Truncate to this many tokens >= 0, or None.
-        :param truncate_left: Truncate from the left side (keep the rightmost
-                              tokens). You probably want this True for inputs,
-                              False for targets.
+        :param text:
+            String to vectorize.
+
+        :param add_start:
+            Add the start token to the front of the tensor.
+
+        :param add_end:
+            Add the end token to the end of the tensor.
+
+        :param truncate:
+            Truncate to this many tokens >= 0, or None.
+
+        :param truncate_left:
+            Truncate from the left side (keep the rightmost tokens). You
+            probably want this True for inputs, False for targets.
         """
         vec = self.dict.txt2vec(text)
         vec = self._add_start_end_tokens(vec, add_start, add_end)
@@ -946,9 +996,11 @@ class TorchAgent(Agent):
             return vec[:truncate]
 
     def _set_text_vec(self, obs, history, truncate):
-        """Sets the 'text_vec' field in the observation.
+        """
+        Sets the 'text_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
+        Useful to override to change vectorization behavior
+        """
         if 'text' not in obs:
             return obs
 
@@ -967,10 +1019,11 @@ class TorchAgent(Agent):
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
-        """Sets the 'labels_vec' field in the observation.
+        """
+        Sets the 'labels_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
-
+        Useful to override to change vectorization behavior
+        """
         # convert 'labels' or 'eval_labels' into vectors
         if 'labels' in obs:
             label_type = 'labels'
@@ -998,7 +1051,8 @@ class TorchAgent(Agent):
         return obs
 
     def _set_label_cands_vec(self, obs, add_start, add_end, truncate):
-        """Sets the 'label_candidates_vec' field in the observation.
+        """
+        Sets the 'label_candidates_vec' field in the observation.
 
         Useful to override to change vectorization behavior
         """
@@ -1017,7 +1071,8 @@ class TorchAgent(Agent):
 
     def vectorize(self, obs, history, add_start=True, add_end=True,
                   text_truncate=None, label_truncate=None):
-        """Make vectors out of observation fields and store in the observation.
+        """
+        Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
         processed and a new field is added to the observation with the suffix
@@ -1027,15 +1082,25 @@ class TorchAgent(Agent):
         this function, call super().vectorize(...) to process the text and
         labels, and then process the other fields in your subclass.
 
-        :param obs:            Single observation from observe function.
-        :param add_start:      default True, adds the start token to each label.
-        :param add_end:        default True, adds the end token to each label.
-        :param text_truncate:  default None, if set truncates text vectors to
-                               the specified length.
-        :param label_truncate: default None, if set truncates label vectors to
-                               the specified length.
+        :param obs:
+            Single observation from observe function.
 
-        :return: the input observation, with 'text_vec', 'label_vec', and
+        :param add_start:
+            default True, adds the start token to each label.
+
+        :param add_end:
+            default True, adds the end token to each label.
+
+        :param text_truncate:
+            default None, if set truncates text vectors to the specified
+            length.
+
+        :param label_truncate:
+            default None, if set truncates label vectors to the specified
+            length.
+
+        :return:
+            the input observation, with 'text_vec', 'label_vec', and
             'cands_vec' fields added.
         """
         self._set_text_vec(obs, history, text_truncate)
@@ -1047,7 +1112,8 @@ class TorchAgent(Agent):
         return 'text_vec' in obs or 'image' in obs
 
     def batchify(self, obs_batch, sort=False):
-        """Create a batch of valid observations from an unchecked batch.
+        """
+        Create a batch of valid observations from an unchecked batch.
 
         A valid observation is one that passes the lambda provided to the
         function, which defaults to checking if the preprocessed 'text_vec'
@@ -1064,12 +1130,13 @@ class TorchAgent(Agent):
         super().batchify(...) to set up the original fields and then set up the
         additional fields in your subclass and return that batch instead.
 
-        :param obs_batch: List of vectorized observations
-        :param sort:      Default False, orders the observations by length of
-                          vectors. Set to true when using
-                          torch.nn.utils.rnn.pack_padded_sequence.
-                          Uses the text vectors if available, otherwise uses
-                          the label vectors if available.
+        :param obs_batch:
+            List of vectorized observations
+
+        :param sort:
+            Default False, orders the observations by length of vectors. Set to
+            true when using torch.nn.utils.rnn.pack_padded_sequence.  Uses the text
+            vectors if available, otherwise uses the label vectors if available.
         """
         if len(obs_batch) == 0:
             return Batch()
@@ -1086,7 +1153,9 @@ class TorchAgent(Agent):
         xs, x_lens = None, None
         if any('text_vec' in ex for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(_xs, self.NULL_IDX, self.use_cuda)
+            xs, x_lens = padded_tensor(
+                _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16'),
+            )
             if sort:
                 sort = False  # now we won't sort on labels
                 xs, x_lens, valid_inds, exs = argsort(
@@ -1106,7 +1175,10 @@ class TorchAgent(Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
-            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda)
+            ys, y_lens = padded_tensor(
+                label_vecs, self.NULL_IDX, self.use_cuda,
+                fp16friendly=self.opt.get('fp16')
+            )
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
                     y_lens, ys, valid_inds, label_vecs, labels, y_lens,
@@ -1131,7 +1203,8 @@ class TorchAgent(Agent):
                      observations=exs)
 
     def match_batch(self, batch_reply, valid_inds, output=None):
-        """Match sub-batch of predictions to the original batch indices.
+        """
+        Match sub-batch of predictions to the original batch indices.
 
         Batches may be only partially filled (i.e when completing the remainder
         at the end of the validation or test set), or we may want to sort by
@@ -1149,13 +1222,16 @@ class TorchAgent(Agent):
         fields into the batch_reply, you can override this method as well as
         providing your own namedtuple with additional fields.
 
-        :param batch_reply: Full-batchsize list of message dictionaries to put
-            responses into.
-        :param valid_inds: Original indices of the predictions.
-        :param output: Output namedtuple which contains sub-batchsize list of
-            text outputs from model. May be None (default) if model chooses not
-            to answer. This method will check for ``text`` and
-            ``text_candidates`` fields.
+        :param batch_reply:
+            Full-batchsize list of message dictionaries to put responses into.
+
+        :param valid_inds:
+            Original indices of the predictions.
+
+        :param output:
+            Output namedtuple which contains sub-batchsize list of text outputs
+            from model. May be None (default) if model chooses not to answer.
+            This method will check for ``text`` and ``text_candidates`` fields.
         """
         if output is None:
             return batch_reply
@@ -1175,8 +1251,9 @@ class TorchAgent(Agent):
         By default, batch_act stores the batch of replies and this method
         will extract the reply of the current instance from the batch.
 
-        :param use_label: default true, use the label when available instead of
-                          the model's generated response.
+        :param use_label:
+            default true, use the label when available instead of the model's
+            generated response.
         """
         # if the last observation was the end of an episode,
         # then we shouldn't use it as history
@@ -1222,15 +1299,16 @@ class TorchAgent(Agent):
             preds[i].append(replies[i].get('text'))
 
     def reply_history(self):
-        """Get the model's predicted reply history within this episode.
+        """
+        Get the model's predicted reply history within this episode.
 
-        :param batch: (default False) return the reply history for every
-                      row in the batch, otherwise will return just for this
-                      example.
+        :param batch:
+            (default False) return the reply history for every row in the
+            batch, otherwise will return just for this example.
 
-        :return: list of lists of strings, each of the past model replies in
-                 in the current episode. will be None wherever model did not
-                 reply.
+        :return:
+            list of lists of strings, each of the past model replies in in the
+            current episode. will be None wherever model did not reply.
         """
         # make sure in batch order
         preds = sorted((b, p) for b, p in self.replies['predictions'].items())
@@ -1249,40 +1327,54 @@ class TorchAgent(Agent):
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
 
-    def save(self, path=None):
-        """Save model parameters to path (or default to model_file arg).
+    def state_dict(self):
+        """
+        Get the state dict for saving
 
         Override this method for more specific saving.
+        """
+        states = {}
+        if hasattr(self, 'model'):  # save model params
+            if hasattr(self.model, 'module'):
+                # did we wrap in a DistributedDataParallel
+                states['model'] = self.model.module.state_dict()
+            else:
+                states['model'] = self.model.state_dict()
+
+        if hasattr(self, 'optimizer'):  # save optimizer params
+            states['optimizer'] = self.optimizer.state_dict()
+            states['optimizer_type'] = self.opt['optimizer']
+
+        # lr scheduler
+        if torch.__version__.startswith('0.'):
+            warn_once(
+                "Must upgrade to Pytorch 1.0 to save the state of your "
+                "LR scheduler."
+            )
+        else:
+            states['number_training_updates'] = self._number_training_updates
+            if getattr(self, 'scheduler'):
+                states['lr_scheduler'] = self.scheduler.state_dict()
+                states['lr_scheduler_type'] = self.opt['lr_scheduler']
+            if getattr(self, 'warmup_scheduler'):
+                states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
+
+        return states
+
+    def save(self, path=None):
+        """
+        Save model parameters to path (or default to model_file arg).
+
+        Please try to refrain from overriding this function, and instead
+        override `state_dict(self)` for more specific saving.
         """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path:
-            states = {}
-            if hasattr(self, 'model'):  # save model params
-                if hasattr(self.model, 'module'):
-                    # did we wrap in a DistributedDataParallel
-                    states['model'] = self.model.module.state_dict()
-                else:
-                    states['model'] = self.model.state_dict()
-
-            if hasattr(self, 'optimizer'):  # save optimizer params
-                states['optimizer'] = self.optimizer.state_dict()
-                states['optimizer_type'] = self.opt['optimizer']
-
-            # lr scheduler
-            if torch.__version__.startswith('0.'):
-                warn_once(
-                    "Must upgrade to Pytorch 1.0 to save the state of your "
-                    "LR scheduler."
-                )
-            else:
-                states['number_training_updates'] = self._number_training_updates
-                if getattr(self, 'scheduler'):
-                    states['lr_scheduler'] = self.scheduler.state_dict()
-                    states['lr_scheduler_type'] = self.opt['lr_scheduler']
-                if getattr(self, 'warmup_scheduler'):
-                    states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
-
+            if hasattr(self, 'dict'):  # force save dictionary
+                # TODO: Look into possibly overriding opt('dict_file') with new path
+                self.dict.save(path + '.dict', sort=False)
+            states = self.state_dict()
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
                     torch.save(states, write)
@@ -1304,7 +1396,8 @@ class TorchAgent(Agent):
         self.model.load_state_dict(state_dict)
 
     def load(self, path):
-        """Return opt and model states.
+        """
+        Return opt and model states.
 
         Override this method for more specific loading.
         """
@@ -1327,7 +1420,8 @@ class TorchAgent(Agent):
         return self.batch_act([self.observation])[0]
 
     def batch_act(self, observations):
-        """Process a batch of observations (batchsize list of message dicts).
+        """
+        Process a batch of observations (batchsize list of message dicts).
 
         These observations have been preprocessed by the observe method.
 
@@ -1341,12 +1435,12 @@ class TorchAgent(Agent):
         batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
 
         # check if there are any labels available, if so we will train on them
-        is_training = any('labels' in obs for obs in observations)
+        self.is_training = any('labels' in obs for obs in observations)
 
         # create a batch from the vectors
         batch = self.batchify(observations)
 
-        if is_training:
+        if self.is_training:
             output = self.train_step(batch)
         else:
             with torch.no_grad():
@@ -1365,16 +1459,27 @@ class TorchAgent(Agent):
         return batch_reply
 
     def train_step(self, batch):
-        """Process one batch with training labels."""
+        """[Abstract] Process one batch with training labels."""
         raise NotImplementedError(
             'Abstract class: user must implement train_step'
         )
 
     def eval_step(self, batch):
-        """Process one batch but do not train on it."""
+        """[Abstract] Process one batch but do not train on it."""
         raise NotImplementedError(
             'Abstract class: user must implement eval_step'
         )
+
+    def backward(self, loss):
+        """
+        Perform a backward pass. It is recommended you use this instead of
+        loss.backward(), for integration with distributed training and FP16
+        training.
+        """
+        if self.fp16:
+            self.optimizer.backward(loss, update_master_grads=False)
+        else:
+            loss.backward()
 
     def update_params(self):
         """
@@ -1408,10 +1513,18 @@ class TorchAgent(Agent):
             # training step scheduler
             self.scheduler.step(self._number_training_updates)
 
+        if self.fp16:
+            # we've been accumulating grads in fp16 and delaying the fp32 copy update.
+            # finally time to perform the update.
+            self.optimizer.update_master_grads()
+
         if self.opt.get('gradient_clip', -1) > 0:
-            torch.nn.utils.clip_grad_norm_(
-                self.model.parameters(), self.opt['gradient_clip']
-            )
+            if self.fp16:
+                self.optimizer.clip_master_grads(self.opt['gradient_clip'])
+            else:
+                torch.nn.utils.clip_grad_norm_(
+                    self.model.parameters(), self.opt['gradient_clip']
+                )
 
         self.optimizer.step()
 

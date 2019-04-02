@@ -15,11 +15,11 @@ module.exports = {
     publicPath: __dirname + '/static/',
   },
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
   },
   node: {
     net: 'empty',
-    dns: 'empty'
+    dns: 'empty',
   },
   module: {
     rules: [
@@ -30,16 +30,16 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: "style-loader!css-loader"
+        loader: 'style-loader!css-loader',
       },
       {
         test: /\.png$/,
-        loader: "url-loader?limit=100000"
+        loader: 'url-loader?limit=100000',
       },
       {
         test: /\.jpg$/,
-        loader: "file-loader"
+        loader: 'file-loader',
       },
-    ]
+    ],
   },
 };

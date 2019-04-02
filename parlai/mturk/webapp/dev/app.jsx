@@ -8,11 +8,26 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {ToggleButtonGroup, ToggleButton, Button, FormControl,
-  ButtonGroup, ButtonToolbar, Panel, Table, Modal, InputGroup,
-  Nav, NavItem} from 'react-bootstrap';
-import {BaseFrontend, getCorrectComponent, setCustomComponents} from './task_components/core_components.jsx';
-import ReactTable from "react-table";
+import {
+  ToggleButtonGroup,
+  ToggleButton,
+  Button,
+  FormControl,
+  ButtonGroup,
+  ButtonToolbar,
+  Panel,
+  Table,
+  Modal,
+  InputGroup,
+  Nav,
+  NavItem,
+} from 'react-bootstrap';
+import {
+  BaseFrontend,
+  getCorrectComponent,
+  setCustomComponents,
+} from './task_components/core_components.jsx';
+import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import 'fetch';
 import $ from 'jquery';
@@ -23,20 +38,26 @@ import $ from 'jquery';
 setCustomComponents({});
 
 var AppURLStates = Object.freeze({
-  init:0, home:1, unsupported:2, runs:3, workers:4, assignments:5, tasks: 6,
+  init: 0,
+  home: 1,
+  unsupported: 2,
+  runs: 3,
+  workers: 4,
+  assignments: 5,
+  tasks: 6,
   review: 7,
 });
 
-function convert_time(timestamp){
+function convert_time(timestamp) {
   var a = new Date(timestamp * 1000);
-  var time = (a.toLocaleDateString("en-US") + ' ' +
-              a.toLocaleTimeString("en-US"));
+  var time =
+    a.toLocaleDateString('en-US') + ' ' + a.toLocaleTimeString('en-US');
   return time;
 }
 
 function resolveState(state_string) {
   if (state_string == '') {
-    return {url_state: AppURLStates.init, args: null};
+    return { url_state: AppURLStates.init, args: null };
   }
   var args = state_string.split('/');
   var state = {
@@ -54,16 +75,16 @@ function resolveState(state_string) {
 
 function postData(url = ``, data = {}) {
   return fetch(url, {
-      method: "POST",
-      mode: "cors",
-      cache: "no-cache",
-      credentials: "same-origin",
-      headers: {
-          "Content-Type": "application/json; charset=utf-8",
-      },
-      redirect: "follow",
-      referrer: "no-referrer",
-      body: JSON.stringify(data),
+    method: 'POST',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    redirect: 'follow',
+    referrer: 'no-referrer',
+    body: JSON.stringify(data),
   });
 }
 
@@ -72,11 +93,13 @@ class ChatMessage extends React.Component {
   render() {
     if (this.props.agent_id == 'persona' || this.props.agent_id == 'setting') {
       return (
-        <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
+        <div className={'row'} style={{ marginLeft: '0', marginRight: '0' }}>
           <div
-            className={"alert " + 'alert-info'} role="alert"
-            style={{'float': 'left', 'display': 'table'}}>
-            <span style={{'fontSize': '16px'}}>
+            className={'alert ' + 'alert-info'}
+            role="alert"
+            style={{ float: 'left', display: 'table' }}
+          >
+            <span style={{ fontSize: '16px' }}>
               <b>{this.props.agent_id}</b>: {this.props.context}
               {context}
             </span>
@@ -93,23 +116,35 @@ class ChatMessage extends React.Component {
     let context = null;
     let duration = null;
     if (this.props.context !== undefined && this.props.context.length > 0) {
-      context = <span><br /><b>Action: </b><i>{this.props.context}</i></span>;
+      context = (
+        <span>
+          <br />
+          <b>Action: </b>
+          <i>{this.props.context}</i>
+        </span>
+      );
     }
     if (this.props.duration !== undefined) {
       let duration_seconds = Math.floor(this.props.duration / 1000) % 60;
       let duration_minutes = Math.floor(this.props.duration / 60000);
       let min_text = duration_minutes > 0 ? duration_minutes + ' min' : '';
       let sec_text = duration_seconds > 0 ? duration_seconds + ' sec' : '';
-      duration = <small>
-        <br /><i>Duration: </i>{min_text + ' ' + sec_text}
-      </small>;
+      duration = (
+        <small>
+          <br />
+          <i>Duration: </i>
+          {min_text + ' ' + sec_text}
+        </small>
+      );
     }
     return (
-      <div className={"row"} style={{'marginLeft': '0', 'marginRight': '0'}}>
+      <div className={'row'} style={{ marginLeft: '0', marginRight: '0' }}>
         <div
-          className={"alert " + alert_class} role="alert"
-          style={{'float': float_loc, 'display': 'table'}}>
-          <span style={{'fontSize': '16px'}}>
+          className={'alert ' + alert_class}
+          role="alert"
+          style={{ float: float_loc, display: 'table' }}
+        >
+          <span style={{ fontSize: '16px' }}>
             <b>{this.props.agent_id}</b>: {this.props.message}
             {context}
             {duration}
@@ -125,17 +160,14 @@ class ChatDisplay extends React.Component {
     var display_text = this.props.is_onboarding ? 'Onboarding' : 'Task';
     let XMessageList = getCorrectComponent('XMessageList', this.props.agent_id);
     return (
-      <Panel
-        id="message_display_div"
-        bsStyle="info"
-        defaultExpanded>
+      <Panel id="message_display_div" bsStyle="info" defaultExpanded>
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             {display_text} Chat Window
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
-          <Panel.Body style={{maxHeight: '600px', overflow: 'scroll'}}>
+          <Panel.Body style={{ maxHeight: '600px', overflow: 'scroll' }}>
             <XMessageList
               v_id={this.props.agent_id}
               messages={this.props.messages}
@@ -158,9 +190,7 @@ class NavLink extends React.Component {
   render() {
     if (this.props.type == 'run') {
       return (
-        <a href={'/app/runs/' + this.props.target}>
-          {this.props.children}
-        </a>
+        <a href={'/app/runs/' + this.props.target}>{this.props.children}</a>
       );
     } else if (this.props.type == 'run_review') {
       return (
@@ -176,9 +206,7 @@ class NavLink extends React.Component {
       );
     } else if (this.props.type == 'worker') {
       return (
-        <a href={'/app/workers/' + this.props.target}>
-          {this.props.children}
-        </a>
+        <a href={'/app/workers/' + this.props.target}>{this.props.children}</a>
       );
     } else if (this.props.type == 'assignment') {
       return (
@@ -188,14 +216,10 @@ class NavLink extends React.Component {
       );
     } else if (this.props.type == 'task') {
       return (
-        <a href={'/app/tasks/' + this.props.target}>
-          {this.props.children}
-        </a>
+        <a href={'/app/tasks/' + this.props.target}>{this.props.children}</a>
       );
     } else {
-      return (
-        <span>{this.props.children}</span>
-      )
+      return <span>{this.props.children}</span>;
     }
   }
 }
@@ -207,18 +231,18 @@ class SharedTable extends React.Component {
 
   render() {
     var used_cols = this.props.used_cols;
-    var row_formatter = (
-      used_cols.map(this.props.getColumnFormatter, this.props));
+    var row_formatter = used_cols.map(
+      this.props.getColumnFormatter,
+      this.props
+    );
     return (
       <Panel id={this.props.title} defaultExpanded>
         <Panel.Heading>
-          <Panel.Title componentClass="h3">
-            {this.props.title}
-          </Panel.Title>
+          <Panel.Title componentClass="h3">{this.props.title}</Panel.Title>
         </Panel.Heading>
-        <Panel.Body style={{padding: '0px'}}>
+        <Panel.Body style={{ padding: '0px' }}>
           <ReactTable
-            className='-striped -highlight'
+            className="-striped -highlight"
             showPagination={this.props.data.length > 20}
             sortable={this.props.data.length > 1}
             filterable={false}
@@ -228,16 +252,23 @@ class SharedTable extends React.Component {
           />
         </Panel.Body>
       </Panel>
-    )
+    );
   }
 }
 
 class RunTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {used_cols: [
-      'run_id', 'run_status', 'created', 'maximum', 'completed', 'failed',
-    ]};
+    this.state = {
+      used_cols: [
+        'run_id',
+        'run_status',
+        'created',
+        'maximum',
+        'completed',
+        'failed',
+      ],
+    };
   }
 
   getColumnFormatter(row_name) {
@@ -250,7 +281,7 @@ class RunTable extends React.Component {
   }
 
   getHeaderValue(header_name) {
-    switch(header_name) {
+    switch (header_name) {
       case 'run_id':
         return <span>Run ID</span>;
       case 'run_status':
@@ -270,11 +301,13 @@ class RunTable extends React.Component {
 
   getColumnCell(header_name, props) {
     // TODO add table row/icon for `notes` that appear on hover
-    switch(header_name) {
+    switch (header_name) {
       case 'run_id':
-        return <NavLink type='run' target={props.row.run_id}>
-          {props.value}
-        </NavLink>;
+        return (
+          <NavLink type="run" target={props.row.run_id}>
+            {props.value}
+          </NavLink>
+        );
       case 'run_status':
       case 'created':
       case 'maximum':
@@ -286,14 +319,21 @@ class RunTable extends React.Component {
   }
 
   getColumnValue(header_name, item) {
-    switch(header_name) {
-      case 'run_id': return item.run_id;
-      case 'run_status': return item.run_status;
-      case 'created': return item.created;
-      case 'maximum': return item.maximum;
-      case 'completed': return item.completed;
-      case 'failed': return item.failed;
-      default: return 'Invalid column ' + header_name;
+    switch (header_name) {
+      case 'run_id':
+        return item.run_id;
+      case 'run_status':
+        return item.run_status;
+      case 'created':
+        return item.created;
+      case 'maximum':
+        return item.maximum;
+      case 'completed':
+        return item.completed;
+      case 'failed':
+        return item.failed;
+      default:
+        return 'Invalid column ' + header_name;
     }
   }
 
@@ -312,10 +352,17 @@ class RunTable extends React.Component {
 class TaskTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {used_cols: [
-      'task_name', 'internal', 'react_frontend', 'has_custom', 'active_runs',
-      'all_runs', 'dir',
-    ]};
+    this.state = {
+      used_cols: [
+        'task_name',
+        'internal',
+        'react_frontend',
+        'has_custom',
+        'active_runs',
+        'all_runs',
+        'dir',
+      ],
+    };
   }
 
   getColumnFormatter(row_name) {
@@ -328,7 +375,7 @@ class TaskTable extends React.Component {
   }
 
   getHeaderValue(header_name) {
-    switch(header_name) {
+    switch (header_name) {
       case 'task_name':
         return <span>Task Name</span>;
       case 'internal':
@@ -350,11 +397,13 @@ class TaskTable extends React.Component {
 
   getColumnCell(header_name, props) {
     // TODO add table row/icon for `notes` that appear on hover
-    switch(header_name) {
+    switch (header_name) {
       case 'task_name':
-        return <NavLink type='task' target={props.row.task_name}>
-          {props.value}
-        </NavLink>;
+        return (
+          <NavLink type="task" target={props.row.task_name}>
+            {props.value}
+          </NavLink>
+        );
       case 'internal':
       case 'react_frontend':
       case 'has_custom':
@@ -368,15 +417,23 @@ class TaskTable extends React.Component {
   }
 
   getColumnValue(header_name, item) {
-    switch(header_name) {
-      case 'task_name': return item.task_name;
-      case 'internal': return item.internal;
-      case 'react_frontend': return item.react_frontend;
-      case 'has_custom': return item.has_custom;
-      case 'active_runs': return item.active_runs;
-      case 'all_runs': return item.all_runs;
-      case 'dir': return item.dir;
-      default: return 'Invalid column ' + header_name;
+    switch (header_name) {
+      case 'task_name':
+        return item.task_name;
+      case 'internal':
+        return item.internal;
+      case 'react_frontend':
+        return item.react_frontend;
+      case 'has_custom':
+        return item.has_custom;
+      case 'active_runs':
+        return item.active_runs;
+      case 'all_runs':
+        return item.all_runs;
+      case 'dir':
+        return item.dir;
+      default:
+        return 'Invalid column ' + header_name;
     }
   }
 
@@ -395,10 +452,16 @@ class TaskTable extends React.Component {
 class HitTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {used_cols: [
-      'hit_id', 'expiration', 'hit_status', 'assignments_pending',
-      'assignments_available', 'assignments_complete',
-    ]};
+    this.state = {
+      used_cols: [
+        'hit_id',
+        'expiration',
+        'hit_status',
+        'assignments_pending',
+        'assignments_available',
+        'assignments_complete',
+      ],
+    };
   }
 
   getColumnFormatter(row_name) {
@@ -411,7 +474,7 @@ class HitTable extends React.Component {
   }
 
   getHeaderValue(header_name) {
-    switch(header_name) {
+    switch (header_name) {
       case 'hit_id':
         return <span>HIT ID</span>;
       case 'expiration':
@@ -431,11 +494,13 @@ class HitTable extends React.Component {
 
   getColumnCell(header_name, props) {
     // TODO add table row/icon for `notes` that appear on hover
-    switch(header_name) {
+    switch (header_name) {
       case 'hit_id':
-        return <NavLink type='hit' target={props.row.hit_id}>
-          {props.value}
-        </NavLink>;
+        return (
+          <NavLink type="hit" target={props.row.hit_id}>
+            {props.value}
+          </NavLink>
+        );
       case 'expiration':
       case 'hit_status':
       case 'assignments_pending':
@@ -447,19 +512,25 @@ class HitTable extends React.Component {
   }
 
   getColumnValue(header_name, item) {
-    switch(header_name) {
-      case 'hit_id': return item.hit_id;
+    switch (header_name) {
+      case 'hit_id':
+        return item.hit_id;
       case 'expiration':
         if (item.expiration > 0) {
           return convert_time(item.expiration);
         } else {
           return 'No expiration recorded';
         }
-      case 'hit_status': return item.hit_status;
-      case 'assignments_pending': return item.assignments_pending;
-      case 'assignments_available': return item.assignments_available;
-      case 'assignments_complete': return item.assignments_complete;
-      default: return 'Invalid column ' + header_name;
+      case 'hit_status':
+        return item.hit_status;
+      case 'assignments_pending':
+        return item.assignments_pending;
+      case 'assignments_available':
+        return item.assignments_available;
+      case 'assignments_complete':
+        return item.assignments_complete;
+      default:
+        return 'Invalid column ' + header_name;
     }
   }
 
@@ -479,11 +550,23 @@ class AssignmentTable extends React.Component {
   constructor(props) {
     super(props);
     // TODO additional rows conversation_id, bonus_text,
-    this.state = {used_cols: [
-      'assignment_id', 'worker_id', 'task_status', 'world_status',
-      'approve_time', 'onboarding_start', 'onboarding_end', 'task_start',
-      'task_end', 'bonus_amount', 'bonus_paid', 'hit_id', 'run_id',
-    ]};
+    this.state = {
+      used_cols: [
+        'assignment_id',
+        'worker_id',
+        'task_status',
+        'world_status',
+        'approve_time',
+        'onboarding_start',
+        'onboarding_end',
+        'task_start',
+        'task_end',
+        'bonus_amount',
+        'bonus_paid',
+        'hit_id',
+        'run_id',
+      ],
+    };
   }
 
   getColumnFormatter(row_name) {
@@ -496,7 +579,7 @@ class AssignmentTable extends React.Component {
   }
 
   getHeaderValue(header_name) {
-    switch(header_name) {
+    switch (header_name) {
       case 'assignment_id':
         return <span>Assignment ID</span>;
       case 'worker_id':
@@ -530,23 +613,31 @@ class AssignmentTable extends React.Component {
 
   getColumnCell(header_name, props) {
     // TODO add table row/icon for `notes` that appear on hover
-    switch(header_name) {
+    switch (header_name) {
       case 'assignment_id':
-        return <NavLink type='assignment' target={props.row.assignment_id}>
-          {props.value}
-        </NavLink>;
+        return (
+          <NavLink type="assignment" target={props.row.assignment_id}>
+            {props.value}
+          </NavLink>
+        );
       case 'worker_id':
-        return <NavLink type='worker' target={props.row.worker_id}>
-          {props.value}
-        </NavLink>;
+        return (
+          <NavLink type="worker" target={props.row.worker_id}>
+            {props.value}
+          </NavLink>
+        );
       case 'hit_id':
-        return <NavLink type='hit' target={props.row.hit_id}>
-          {props.value}
-        </NavLink>;
+        return (
+          <NavLink type="hit" target={props.row.hit_id}>
+            {props.value}
+          </NavLink>
+        );
       case 'run_id':
-        return <NavLink type='run' target={props.row.run_id}>
-          {props.value}
-        </NavLink>;
+        return (
+          <NavLink type="run" target={props.row.run_id}>
+            {props.value}
+          </NavLink>
+        );
       case 'task_status':
       case 'world_status':
       case 'approve_time':
@@ -562,11 +653,15 @@ class AssignmentTable extends React.Component {
   }
 
   getColumnValue(header_name, item) {
-    switch(header_name) {
-      case 'assignment_id': return item.assignment_id;
-      case 'worker_id': return item.worker_id;
-      case 'task_status': return item.status;
-      case 'world_status': return item.world_status;
+    switch (header_name) {
+      case 'assignment_id':
+        return item.assignment_id;
+      case 'worker_id':
+        return item.worker_id;
+      case 'task_status':
+        return item.status;
+      case 'world_status':
+        return item.world_status;
       case 'approve_time':
         if (item.approve_time > 0) {
           return convert_time(item.approve_time);
@@ -583,7 +678,7 @@ class AssignmentTable extends React.Component {
         if (item.onboarding_end > 0) {
           return convert_time(item.onboarding_end);
         } else {
-          return' Never entered task queue';
+          return ' Never entered task queue';
         }
       case 'task_start':
         if (item.task_start > 0) {
@@ -597,11 +692,16 @@ class AssignmentTable extends React.Component {
         } else {
           return 'Never finished task';
         }
-      case 'bonus_amount': return item.bonus_amount;
-      case 'bonus_paid': return item.bonus_paid;
-      case 'hit_id': return item.hit_id;
-      case 'run_id': return item.run_id;
-      default: return 'Invalid column ' + header_name;
+      case 'bonus_amount':
+        return item.bonus_amount;
+      case 'bonus_paid':
+        return item.bonus_paid;
+      case 'hit_id':
+        return item.hit_id;
+      case 'run_id':
+        return item.run_id;
+      default:
+        return 'Invalid column ' + header_name;
     }
   }
 
@@ -621,10 +721,16 @@ class WorkerTable extends React.Component {
   constructor(props) {
     super(props);
     // TODO additional rows conversation_id, bonus_text,
-    this.state = {used_cols: [
-      'worker_id', 'accepted', 'disconnected', 'completed',
-      'approved', 'rejected',
-    ]};
+    this.state = {
+      used_cols: [
+        'worker_id',
+        'accepted',
+        'disconnected',
+        'completed',
+        'approved',
+        'rejected',
+      ],
+    };
   }
 
   getColumnFormatter(row_name) {
@@ -637,7 +743,7 @@ class WorkerTable extends React.Component {
   }
 
   getHeaderValue(header_name) {
-    switch(header_name) {
+    switch (header_name) {
       case 'worker_id':
         return <span>Worker ID</span>;
       case 'accepted':
@@ -656,11 +762,13 @@ class WorkerTable extends React.Component {
   }
 
   getColumnCell(header_name, props) {
-    switch(header_name) {
+    switch (header_name) {
       case 'worker_id':
-        return <NavLink type='worker' target={props.row.worker_id}>
-          {props.value}
-        </NavLink>;
+        return (
+          <NavLink type="worker" target={props.row.worker_id}>
+            {props.value}
+          </NavLink>
+        );
       case 'accepted':
       case 'disconnected':
       case 'completed':
@@ -672,14 +780,21 @@ class WorkerTable extends React.Component {
   }
 
   getColumnValue(header_name, item) {
-    switch(header_name) {
-      case 'worker_id': return item.worker_id;
-      case 'accepted': return item.accepted;
-      case 'disconnected': return item.disconnected;
-      case 'completed': return item.completed;
-      case 'approved': return item.approved;
-      case 'rejected': return item.rejected;
-      default: return 'Invalid column ' + header_name;
+    switch (header_name) {
+      case 'worker_id':
+        return item.worker_id;
+      case 'accepted':
+        return item.accepted;
+      case 'disconnected':
+        return item.disconnected;
+      case 'completed':
+        return item.completed;
+      case 'approved':
+        return item.approved;
+      case 'rejected':
+        return item.rejected;
+      default:
+        return 'Invalid column ' + header_name;
     }
   }
 
@@ -698,46 +813,49 @@ class WorkerTable extends React.Component {
 class RunPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {run_loading: true, items: null, error: false};
+    this.state = { run_loading: true, items: null, error: false };
   }
 
   fetchRunData() {
     fetch('/runs/' + this.props.run_id)
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState({
             run_loading: false,
-            data: result
+            data: result,
           });
         },
-        (error) => {
+        error => {
           this.setState({
             run_loading: false,
-            error: true
+            error: true,
           });
         }
-      )
+      );
   }
 
   componentDidMount() {
-    this.setState({run_loading: true});
+    this.setState({ run_loading: true });
     this.fetchRunData();
   }
 
   renderRunInfo() {
-    let task_id = this.props.run_id.split("_").slice(0, -1).join("_");
+    let task_id = this.props.run_id
+      .split('_')
+      .slice(0, -1)
+      .join('_');
     return (
       <div>
         <RunTable
           data={[this.state.data.run_details]}
-          title={'Baseline info for this run'}/>
+          title={'Baseline info for this run'}
+        />
         <AssignmentTable
           data={this.state.data.assignments}
-          title={'Assignments from this run'}/>
-        <HitTable
-          data={this.state.data.hits}
-          title={'HITs from this run'}/>
+          title={'Assignments from this run'}
+        />
+        <HitTable data={this.state.data.hits} title={'HITs from this run'} />
         <div>
           <NavLink type={'run_review'} target={this.props.run_id}>
             Review work from this run
@@ -748,7 +866,7 @@ class RunPanel extends React.Component {
           </NavLink>
         </div>
       </div>
-    )
+    );
   }
 
   render() {
@@ -768,11 +886,9 @@ class RunPanel extends React.Component {
             Task Details - Run: {this.props.run_id}
           </Panel.Title>
         </Panel.Heading>
-        <Panel.Body>
-          {content}
-        </Panel.Body>
+        <Panel.Body>{content}</Panel.Body>
       </Panel>
-    )
+    );
   }
 }
 
@@ -788,55 +904,56 @@ class AssignmentFeedback extends React.Component {
       received_feedback = review_data.received_feedback;
     }
     if (!given_feedback && !received_feedback) {
-      content = "No feedback is associated with this assignment."
-      bsStyle = "default"
+      content = 'No feedback is associated with this assignment.';
+      bsStyle = 'default';
     } else {
       let XReviewButtons = getCorrectComponent('XReviewButtons', null);
       let given_feedback_content = <span>No provided feedback</span>;
       if (!!given_feedback) {
         let init_state = {
-          'current_rating': given_feedback.rating,
-          'submitting': true,
-          'submitted': true,
-          'text': given_feedback.reason,
-          'dropdown_value': given_feedback.reason_category,
+          current_rating: given_feedback.rating,
+          submitting: true,
+          submitted: true,
+          text: given_feedback.reason,
+          dropdown_value: given_feedback.reason_category,
         };
         given_feedback_content = <XReviewButtons init_state={init_state} />;
       }
       let received_feedback_content = <span>No provided feedback</span>;
       if (!!received_feedback) {
         let init_state = {
-          'current_rating': received_feedback.rating,
-          'submitting': true,
-          'submitted': true,
-          'text': received_feedback.reason,
-          'dropdown_value': received_feedback.reason_category,
+          current_rating: received_feedback.rating,
+          submitting: true,
+          submitted: true,
+          text: received_feedback.reason,
+          dropdown_value: received_feedback.reason_category,
         };
         received_feedback_content = <XReviewButtons init_state={init_state} />;
       }
-      content = <div>
-        <h1>Given feedback</h1>
-        {given_feedback_content}
-        <h1>Received feedback</h1>
-        {received_feedback_content}
-      </div>;
-      bsStyle = "info"
+      content = (
+        <div>
+          <h1>Given feedback</h1>
+          {given_feedback_content}
+          <h1>Received feedback</h1>
+          {received_feedback_content}
+        </div>
+      );
+      bsStyle = 'info';
     }
 
     return (
       <Panel
         id="assignment_instruction_div"
         bsStyle={bsStyle}
-        defaultExpanded={!!(given_feedback || received_feedback)}>
+        defaultExpanded={!!(given_feedback || received_feedback)}
+      >
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Feedback
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
-          <Panel.Body>
-            {content}
-          </Panel.Body>
+          <Panel.Body>{content}</Panel.Body>
         </Panel.Collapse>
       </Panel>
     );
@@ -845,10 +962,12 @@ class AssignmentFeedback extends React.Component {
 
 class AssignmentContext extends React.Component {
   getContext() {
-    if (this.props.data == undefined ||
-        this.props.data.task == undefined ||
-        this.props.data.task.data == undefined ||
-        this.props.data.task.data.messages == undefined) {
+    if (
+      this.props.data == undefined ||
+      this.props.data.task == undefined ||
+      this.props.data.task.data == undefined ||
+      this.props.data.task.data.messages == undefined
+    ) {
       return null;
     }
     let messages = this.props.data.task.data.messages;
@@ -871,30 +990,27 @@ class AssignmentContext extends React.Component {
     let bsStyle = null;
     let expanded = true;
     if (task_data === null) {
-      content = "No relevant context exists for this assignment."
-      bsStyle = "default"
+      content = 'No relevant context exists for this assignment.';
+      bsStyle = 'default';
       expanded = false;
     } else {
       let XTaskDescription = getCorrectComponent(
-        'XContextView', this.props.data.task.data.agent_id);
+        'XContextView',
+        this.props.data.task.data.agent_id
+      );
       content = <XTaskDescription task_data={task_data} />;
-      bsStyle = "info"
+      bsStyle = 'info';
     }
 
     return (
-      <Panel
-        id="task_context_div"
-        bsStyle={bsStyle}
-        defaultExpanded={expanded}>
+      <Panel id="task_context_div" bsStyle={bsStyle} defaultExpanded={expanded}>
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Task Context
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
-          <Panel.Body>
-            {content}
-          </Panel.Body>
+          <Panel.Body>{content}</Panel.Body>
         </Panel.Collapse>
       </Panel>
     );
@@ -907,27 +1023,23 @@ class AssignmentInstructions extends React.Component {
     var content = null;
     var bsStyle = null;
     if (instructions === null) {
-      content = "No task details could be found for this assignment."
-      bsStyle = "default"
+      content = 'No task details could be found for this assignment.';
+      bsStyle = 'default';
     } else {
       let XTaskDescription = getCorrectComponent('XTaskDescription', null);
       content = <XTaskDescription task_description={instructions} />;
-      bsStyle = "info"
+      bsStyle = 'info';
     }
 
     return (
-      <Panel
-        id="assignment_instruction_div"
-        bsStyle={bsStyle}>
+      <Panel id="assignment_instruction_div" bsStyle={bsStyle}>
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Task Instructions
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
-          <Panel.Body>
-            {content}
-          </Panel.Body>
+          <Panel.Body>{content}</Panel.Body>
         </Panel.Collapse>
       </Panel>
     );
@@ -937,31 +1049,32 @@ class AssignmentInstructions extends React.Component {
 class BlockModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {reason: '', submitting: false};
+    this.state = { reason: '', submitting: false };
   }
 
   submitBlock() {
-    this.setState({submitting: true});
-    postData('/block/' + this.props.worker_id,
-          {'reason': this.state.reason,
-           'assignment_id': this.props.assignment_id})
+    this.setState({ submitting: true });
+    postData('/block/' + this.props.worker_id, {
+      reason: this.state.reason,
+      assignment_id: this.props.assignment_id,
+    })
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState({
             submitting: false,
           });
           this.props.onHide();
           this.props.onAssignmentUpdate();
         },
-        (error) => {
+        error => {
           this.setState({
             submitting: false,
           });
           console.log(error);
           window.alert('Submitting block failed. Error logged to console');
         }
-      )
+      );
   }
 
   render() {
@@ -973,16 +1086,15 @@ class BlockModal extends React.Component {
           componentClass="textarea"
           value={this.state.reason}
           placeholder="Enter reason"
-          onChange={(e) => this.setState({reason: e.target.value})}/>
+          onChange={e => this.setState({ reason: e.target.value })}
+        />
       </span>
     );
 
-    var {onAssignmentUpdate, ...others} = this.props;
+    var { onAssignmentUpdate, ...others } = this.props;
 
     return (
-      <Modal
-        {...others}
-        aria-labelledby="block-worker-modal-title-block">
+      <Modal {...others} aria-labelledby="block-worker-modal-title-block">
         <Modal.Header closeButton>
           <Modal.Title id="block-worker-modal-title-block">
             Block Worker
@@ -990,17 +1102,18 @@ class BlockModal extends React.Component {
         </Modal.Header>
         <Modal.Body>
           Are you sure you want to block worker {this.props.worker_id}?
-          <br/>
+          <br />
           {block_reason_input}
         </Modal.Body>
         <Modal.Footer>
           <ButtonToolbar>
             <Button
-              bsStyle='primary'
+              bsStyle="primary"
               onClick={() => this.submitBlock()}
-              disabled={this.state.submitting || this.state.reason == ''}>
-                Block
-              </Button>
+              disabled={this.state.submitting || this.state.reason == ''}
+            >
+              Block
+            </Button>
             <Button onClick={this.props.onHide}>Cancel</Button>
           </ButtonToolbar>
         </Modal.Footer>
@@ -1016,35 +1129,43 @@ class BonusModal extends React.Component {
   }
 
   getClearState() {
-    return {reason: '', dollars: '', cents: '', submitting: false,
-      bonus_token: Math.random().toString(36).substr(2, 9)};
+    return {
+      reason: '',
+      dollars: '',
+      cents: '',
+      submitting: false,
+      bonus_token: Math.random()
+        .toString(36)
+        .substr(2, 9),
+    };
   }
 
   submitBonus() {
-    this.setState({submitting: true});
+    this.setState({ submitting: true });
     var cents = this.state.cents != '' ? this.state.cents : 0;
     var dollars = this.state.dollars != '' ? this.state.dollars : 0;
     var use_amount = dollars * 100 + cents;
-    postData('/bonus/' + this.props.worker_id,
-          {'reason': this.state.reason,
-           'bonus_cents': use_amount,
-           'assignment_id': this.props.assignment_id,
-           'bonus_token': this.state.bonus_token})
+    postData('/bonus/' + this.props.worker_id, {
+      reason: this.state.reason,
+      bonus_cents: use_amount,
+      assignment_id: this.props.assignment_id,
+      bonus_token: this.state.bonus_token,
+    })
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState(this.getClearState());
           this.props.onHide();
           this.props.onAssignmentUpdate();
         },
-        (error) => {
+        error => {
           this.setState({
             submitting: false,
           });
           console.log(error);
           window.alert('Submitting bonus failed. Error logged to console');
         }
-      )
+      );
   }
 
   updateDollars(amount) {
@@ -1052,7 +1173,7 @@ class BonusModal extends React.Component {
       return;
     }
     amount = amount == '' ? 0 : amount;
-    this.setState({dollars: +amount})
+    this.setState({ dollars: +amount });
   }
 
   updateCents(amount) {
@@ -1060,12 +1181,12 @@ class BonusModal extends React.Component {
       return;
     }
     amount = amount == '' ? 0 : amount;
-    this.setState({cents: +amount})
+    this.setState({ cents: +amount });
   }
 
   render() {
     var cents = this.state.cents;
-    var display_cents =  cents < 10 ? '0' + cents : cents;
+    var display_cents = cents < 10 ? '0' + cents : cents;
     var bonus_detail_form = (
       <div>
         How much do you want to bonus?
@@ -1075,42 +1196,44 @@ class BonusModal extends React.Component {
             type="text"
             value={this.state.dollars}
             placeholder="0"
-            onChange={(e) => this.updateDollars(e.target.value)}/>
+            onChange={e => this.updateDollars(e.target.value)}
+          />
           <InputGroup.Addon>.</InputGroup.Addon>
           <FormControl
             type="text"
             value={display_cents}
             placeholder="00"
-            onChange={(e) => this.updateCents(e.target.value)}/>
+            onChange={e => this.updateCents(e.target.value)}
+          />
         </InputGroup>
         Why bonus?
         <FormControl
           type="textarea"
           value={this.state.reason}
           placeholder="Enter Reason"
-          onChange={(e) => this.setState({reason: e.target.value})}/>
+          onChange={e => this.setState({ reason: e.target.value })}
+        />
       </div>
     );
 
-    var {onAssignmentUpdate, ...others} = this.props;
+    var { onAssignmentUpdate, ...others } = this.props;
 
     return (
-      <Modal
-        {...others}
-        aria-labelledby="bonus-modal-title-block">
+      <Modal {...others} aria-labelledby="bonus-modal-title-block">
         <Modal.Header closeButton>
-          <Modal.Title id="bonus-modal-title-block">
-            Bonus Worker
-          </Modal.Title>
+          <Modal.Title id="bonus-modal-title-block">Bonus Worker</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Bonusing worker {this.props.worker_id} for assignment {this.props.assignment_id}.
-          <br/>
+          Bonusing worker {this.props.worker_id} for assignment{' '}
+          {this.props.assignment_id}.
+          <br />
           {bonus_detail_form}
         </Modal.Body>
         <Modal.Footer>
           <ButtonToolbar>
-            <Button bsStyle='primary' onClick={() => this.submitBonus()}>Bonus</Button>
+            <Button bsStyle="primary" onClick={() => this.submitBonus()}>
+              Bonus
+            </Button>
             <Button onClick={this.props.onHide}>Cancel</Button>
           </ButtonToolbar>
         </Modal.Footer>
@@ -1143,78 +1266,80 @@ class ReviewButtonGroup extends React.Component {
   }
 
   handleChange(e) {
-    this.setState({value: e});
+    this.setState({ value: e });
   }
 
   confirmReview() {
-    var endpoint = ['approve','reject'][this.state.value];
-    this.setState({submitting: true});
-    postData('/'+ endpoint + '/' + this.props.assignment_id,
-          {'reason': this.state.reason})
+    var endpoint = ['approve', 'reject'][this.state.value];
+    this.setState({ submitting: true });
+    postData('/' + endpoint + '/' + this.props.assignment_id, {
+      reason: this.state.reason,
+    })
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState({
             submitting: false,
           });
           this.props.onUpdate();
           this.props.onReview(endpoint);
         },
-        (error) => {
+        error => {
           this.setState({
             submitting: false,
           });
           console.log(error);
           window.alert('Submitting review failed. Error logged to console');
         }
-      )
+      );
   }
 
   reverseRejection() {
-    this.setState({submitting: true});
-    fetch('/reverse_rejection/' + this.props.assignment_id, {method: "POST"})
+    this.setState({ submitting: true });
+    fetch('/reverse_rejection/' + this.props.assignment_id, { method: 'POST' })
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState({
             submitting: false,
           });
           this.props.onUpdate();
           this.props.onReview('reverse');
         },
-        (error) => {
+        error => {
           this.setState({
             submitting: false,
           });
           console.log(error);
           window.alert('Submitting review failed. Error logged to console');
         }
-      )
+      );
   }
 
   render() {
     var confirm_seg = null;
     var picker = null;
+    var button_styles = ['default', 'default'];
     if (this.getGivenStateVal() === null) {
-      var button_styles = ['default', 'default'];
+      // var button_styles = ['default', 'default'];
       var reject_reason_input = null;
       if (this.state.value === null) {
         confirm_seg = (
           <ButtonGroup>
-            <Button disabled>
-              Confirm
-            </Button>
+            <Button disabled>Confirm</Button>
           </ButtonGroup>
         );
       } else {
-        var confirm_disabled = this.state.submitting || (
-          this.state.value == 1 && this.state.reason == '');
+        var confirm_disabled =
+          this.state.submitting ||
+          (this.state.value == 1 && this.state.reason == '');
         confirm_seg = (
           <ButtonGroup>
             <Button
-              bsStyle='primary'
+              bsStyle="primary"
               onClick={() => this.confirmReview()}
-              disabled={confirm_disabled}>
+              disabled={confirm_disabled}
+            >
               Confirm
             </Button>
           </ButtonGroup>
@@ -1230,72 +1355,65 @@ class ReviewButtonGroup extends React.Component {
                 type="text"
                 value={this.state.reason}
                 placeholder="Enter text"
-                onChange={(e) => this.setState({reason: e.target.value})}/>
+                onChange={e => this.setState({ reason: e.target.value })}
+              />
             </span>
           );
         }
       }
-      var picker = (
+      picker = (
         <ToggleButtonGroup
           type="radio"
           name="approval_status"
           value={this.state.value}
-          onChange={this.handleChange}>
-          <ToggleButton
-            value={0}
-            bsStyle={button_styles[0]}>
+          onChange={this.handleChange}
+        >
+          <ToggleButton value={0} bsStyle={button_styles[0]}>
             Approve
           </ToggleButton>
-          <ToggleButton
-            value={1}
-            bsStyle={button_styles[1]}>
+          <ToggleButton value={1} bsStyle={button_styles[1]}>
             Reject
           </ToggleButton>
         </ToggleButtonGroup>
       );
     } else if (this.getGivenStateVal() === 1) {
-      var button_styles = ['default', 'default'];
+      button_styles = ['default', 'default'];
       if (this.state.value === 1) {
         confirm_seg = (
           <ButtonGroup>
-            <Button disabled>
-              Confirm
-            </Button>
+            <Button disabled>Confirm</Button>
           </ButtonGroup>
         );
         button_styles[1] = 'danger';
       } else {
         confirm_seg = (
           <ButtonGroup>
-            <Button bsStyle='primary' onClick={() => this.reverseRejection()}>
+            <Button bsStyle="primary" onClick={() => this.reverseRejection()}>
               Confirm Reverse Rejection
             </Button>
           </ButtonGroup>
         );
         button_styles[0] = 'success';
       }
-      var picker = (
+      picker = (
         <ToggleButtonGroup
           type="radio"
           name="approval_status"
           value={this.state.value}
-          onChange={this.handleChange}>
-          <ToggleButton
-            value={0}
-            bsStyle={button_styles[0]}>
+          onChange={this.handleChange}
+        >
+          <ToggleButton value={0} bsStyle={button_styles[0]}>
             Approve
           </ToggleButton>
-          <ToggleButton
-            value={1}
-            bsStyle={button_styles[1]}>
+          <ToggleButton value={1} bsStyle={button_styles[1]}>
             Rejected
           </ToggleButton>
         </ToggleButtonGroup>
       );
     } else {
-      var picker = (
+      picker = (
         <ButtonGroup>
-          <Button bsStyle='success' disabled>
+          <Button bsStyle="success" disabled>
             Approved
           </Button>
         </ButtonGroup>
@@ -1330,7 +1448,7 @@ class AssignmentReviewer extends React.Component {
         status={this.props.data.status}
         onUpdate={this.props.onUpdate}
         assignment_id={this.props.data.assignment_id}
-        onReview={(review) => onReview(review)}
+        onReview={review => onReview(review)}
       />
     );
   }
@@ -1343,12 +1461,14 @@ class AssignmentReviewer extends React.Component {
       <ButtonToolbar>
         <Button
           bsStyle="success"
-          onClick={() => this.setState({ bonus_show: true })}>
+          onClick={() => this.setState({ bonus_show: true })}
+        >
           Bonus
         </Button>
         <Button
           bsStyle="danger"
-          onClick={() => this.setState({ block_show: true })}>
+          onClick={() => this.setState({ block_show: true })}
+        >
           Block
         </Button>
         <BlockModal
@@ -1356,21 +1476,25 @@ class AssignmentReviewer extends React.Component {
           onHide={blockClose}
           assignment_id={this.props.data.assignment_id}
           worker_id={this.props.data.worker_id}
-          onAssignmentUpdate={this.props.onUpdate}/>
+          onAssignmentUpdate={this.props.onUpdate}
+        />
         <BonusModal
           show={this.state.bonus_show}
           onHide={bonusClose}
           worker_id={this.props.data.worker_id}
           assignment_id={this.props.data.assignment_id}
-          onAssignmentUpdate={this.props.onUpdate}/>
+          onAssignmentUpdate={this.props.onUpdate}
+        />
       </ButtonToolbar>
     );
   }
 
   render() {
     var panel_body;
-    if (this.props.data.world_status != 'done' &&
-        this.props.data.world_status != 'partner disconnect') {
+    if (
+      this.props.data.world_status != 'done' &&
+      this.props.data.world_status != 'partner disconnect'
+    ) {
       panel_body = <span>Cannot review until the world is done.</span>;
     } else {
       var review_set = this.getReviewSet();
@@ -1396,17 +1520,16 @@ class AssignmentReviewer extends React.Component {
       <Panel
         id="review_control_div"
         bsStyle="success"
-        style={{clear: 'both'}}
-        defaultExpanded>
+        style={{ clear: 'both' }}
+        defaultExpanded
+      >
         <Panel.Heading>
           <Panel.Title componentClass="h3" toggle>
             Assignment Actions
           </Panel.Title>
         </Panel.Heading>
         <Panel.Collapse>
-          <Panel.Body>
-            {panel_body}
-          </Panel.Body>
+          <Panel.Body>{panel_body}</Panel.Body>
         </Panel.Collapse>
       </Panel>
     );
@@ -1415,23 +1538,23 @@ class AssignmentReviewer extends React.Component {
   // Set default props
   static defaultProps = {
     confirm: true,
-    data: null
-  }
+    data: null,
+  };
 }
 
 class AssignmentView extends React.Component {
   constructor(props) {
     super(props);
     let task_name = props.data.task_name;
-    import(
-      /* webpackMode: "eager" */
-      `./task_components/${task_name}/components/custom.jsx`
-    ).then((custom) => {
-      this.props.setCustomComponents(custom.default);
-    }).catch((error) => {
-      console.log('No custom components found');
-      this.props.setCustomComponents({});
-    });
+    import(/* webpackMode: "eager" */
+    `./task_components/${task_name}/components/custom.jsx`)
+      .then(custom => {
+        this.props.setCustomComponents(custom.default);
+      })
+      .catch(error => {
+        console.log('No custom components found');
+        this.props.setCustomComponents({});
+      });
   }
 
   getOnboardingChat() {
@@ -1461,17 +1584,21 @@ class AssignmentView extends React.Component {
     if (!task_data.had_data_dir) {
       error_message = 'No run_data directory existed in parlai/mturk/core.';
     } else if (!task_data.had_run_dir) {
-      error_message = "The directory for the assignment's specific run didn't"+
-        " exist in the run_data directory";
+      error_message =
+        "The directory for the assignment's specific run didn't" +
+        ' exist in the run_data directory';
     } else if (!task_data.had_conversation_dir) {
-      error_message = "The directory for the assignment's conversation didn't"+
+      error_message =
+        "The directory for the assignment's conversation didn't" +
         " exist in the run's directory";
     } else if (!task_data.had_worker_dir) {
-      error_message = "The directory for the assignment's workers didn't"+
+      error_message =
+        "The directory for the assignment's workers didn't" +
         " exist in the conversation's directory";
     } else if (!task_data.had_worker_file) {
-      error_message = "The file for this assignment's worker didn't"+
-        " exist in the workers directory";
+      error_message =
+        "The file for this assignment's worker didn't" +
+        ' exist in the workers directory';
     } else if (!task_data.data) {
       error_message = "This assignment's chat data file couldn't be read";
     }
@@ -1480,7 +1607,7 @@ class AssignmentView extends React.Component {
       return (
         <div>
           The assignment's chat could not be rendered, reason below.
-          <br/>
+          <br />
           {error_message}
         </div>
       );
@@ -1515,8 +1642,11 @@ class AssignmentPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      assignment_loading: true, items: null, error: false,
-      custom_components: {}, max_idx: null,
+      assignment_loading: true,
+      items: null,
+      error: false,
+      custom_components: {},
+      max_idx: null,
     };
   }
 
@@ -1524,19 +1654,19 @@ class AssignmentPanel extends React.Component {
     fetch('/assignments/' + this.props.assignment_id)
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState({
             assignment_loading: false,
-            data: result
+            data: result,
           });
         },
-        (error) => {
+        error => {
           this.setState({
             assignment_loading: false,
-            error: true
+            error: true,
           });
         }
-      )
+      );
   }
 
   componentDidUpdate(prevProps) {
@@ -1546,7 +1676,7 @@ class AssignmentPanel extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({assignment_loading: true});
+    this.setState({ assignment_loading: true });
     this.fetchRunData();
   }
 
@@ -1557,29 +1687,34 @@ class AssignmentPanel extends React.Component {
       <div>
         <AssignmentTable
           data={[this.state.data.assignment_details]}
-          title={'State info for this assignment'}/>
-        <div id='left-assign-pane' style={{float: 'left', 'width': '40%'}}>
+          title={'State info for this assignment'}
+        />
+        <div id="left-assign-pane" style={{ float: 'left', width: '40%' }}>
           <AssignmentInstructions
             data={this.state.data.assignment_instructions}
-            custom_components={this.state.custom_components}/>
+            custom_components={this.state.custom_components}
+          />
           <AssignmentContext
             data={this.state.data.assignment_content}
             custom_components={this.state.custom_components}
-            max_idx={this.state.max_idx}/>
+            max_idx={this.state.max_idx}
+          />
           <AssignmentFeedback
             data={this.state.data.assignment_content}
-            custom_components={this.state.custom_components}/>
+            custom_components={this.state.custom_components}
+          />
         </div>
-        <div id='right-assign-pane' style={{float: 'right', 'width': '58%'}}>
+        <div id="right-assign-pane" style={{ float: 'right', width: '58%' }}>
           <AssignmentView
             data={this.state.data.assignment_content}
             title={'Assignment Content'}
-            onUpdateContext={(idx) => this.setState({max_idx: idx})}
+            onUpdateContext={idx => this.setState({ max_idx: idx })}
             custom_components={this.state.custom_components}
-            setCustomComponents={(module) => {
+            setCustomComponents={module => {
               setCustomComponents(module);
-              this.setState({custom_components: module});
-            }}/>
+              this.setState({ custom_components: module });
+            }}
+          />
         </div>
         <AssignmentReviewer
           data={this.state.data.assignment_details}
@@ -1587,7 +1722,7 @@ class AssignmentPanel extends React.Component {
           onReview={this.props.onReview}
         />
       </div>
-    )
+    );
   }
 
   render() {
@@ -1611,11 +1746,9 @@ class AssignmentPanel extends React.Component {
             Assignment Details - Assignment: {this.props.assignment_id}
           </Panel.Title>
         </Panel.Heading>
-        <Panel.Body>
-          {content}
-        </Panel.Body>
+        <Panel.Body>{content}</Panel.Body>
       </Panel>
-    )
+    );
   }
 }
 
@@ -1623,22 +1756,29 @@ class ReviewPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      assignments_loading: true, error: false,
-      custom_components: {}, current_worker: null, ordering: 'default',
-      workers_remaining: [], assignments_remaining: 0,
-      assignments_by_worker: {}, current_assignment: null,
-      current_worker_stats: {'approved': 0, 'rejected': 0, 'remain': 0},
+      assignments_loading: true,
+      error: false,
+      custom_components: {},
+      current_worker: null,
+      ordering: 'default',
+      workers_remaining: [],
+      assignments_remaining: 0,
+      assignments_by_worker: {},
+      current_assignment: null,
+      current_worker_stats: { approved: 0, rejected: 0, remain: 0 },
     };
   }
 
   parseRawRuns(run_datas) {
     // Get reviewable assignments
-    let assignments = []
-    let worker_information = {}
+    let assignments = [];
+    let worker_information = {};
     for (const idx in run_datas) {
       assignments = assignments.concat(run_datas[idx].assignments);
       worker_information = Object.assign(
-        worker_information, run_datas[idx].worker_details);
+        worker_information,
+        run_datas[idx].worker_details
+      );
     }
     let assignments_remaining = 0;
     let reviewable_assigns = assignments.filter(
@@ -1650,7 +1790,9 @@ class ReviewPanel extends React.Component {
       let assign = reviewable_assigns[idx];
       if (assignments_by_worker[assign.worker_id] == undefined) {
         assignments_by_worker[assign.worker_id] = {
-          assigns: [], bad_feedback: false, worker_id: assign.worker_id,
+          assigns: [],
+          bad_feedback: false,
+          worker_id: assign.worker_id,
           worker_data: worker_information[assign.worker_id],
         };
       }
@@ -1671,11 +1813,11 @@ class ReviewPanel extends React.Component {
 
     // Sort workers by the current ordering
     let sortByAmount = (w1, w2) => w2.assigns.length - w1.assigns.length;
-    let sortByFeedback = (w1, w2) => (+w2.bad_feedback) - (+w1.bad_feedback);
+    let sortByFeedback = (w1, w2) => +w2.bad_feedback - +w1.bad_feedback;
 
     let sortOrders = {
       default: [sortByFeedback, sortByAmount],
-    }
+    };
     let sortOrder = sortOrders[this.state.ordering];
     let sortFn = (w1, w2) => {
       let res = 0;
@@ -1689,60 +1831,63 @@ class ReviewPanel extends React.Component {
       return 0;
     };
     workers_left_order.sort(sortFn);
-    let workers_remaining = workers_left_order.map((w) => w.worker_id);
+    let workers_remaining = workers_left_order.map(w => w.worker_id);
     let current_worker = workers_remaining.shift();
     let current_worker_stats = {
-      'approved': assignments_by_worker[current_worker].worker_data.approved,
-      'rejected': assignments_by_worker[current_worker].worker_data.rejected,
-      'remain': assignments_by_worker[current_worker].assigns.length
-    }
+      approved: assignments_by_worker[current_worker].worker_data.approved,
+      rejected: assignments_by_worker[current_worker].worker_data.rejected,
+      remain: assignments_by_worker[current_worker].assigns.length,
+    };
     this.setState({
       current_worker: current_worker,
       workers_remaining: workers_remaining,
       assignments_remaining: assignments_remaining,
       assignments_by_worker: assignments_by_worker,
       current_worker_stats: current_worker_stats,
-    })
+    });
   }
 
   fetchDataForRuns(run_ids) {
-    Promise.all(run_ids.map(run_id =>
-      fetch('/runs/' + run_id).then(resp => resp.json())
-    )).then(task_datas => {
+    Promise.all(
+      run_ids.map(run_id => fetch('/runs/' + run_id).then(resp => resp.json()))
+    ).then(
+      task_datas => {
         this.parseRawRuns(task_datas);
         this.setState({
           assignments_loading: false,
-          run_data: task_datas
+          run_data: task_datas,
         });
-    }, (error) => {
-      this.setState({
-        assignments_loading: false,
-        error: error
-      });
-    });
+      },
+      error => {
+        this.setState({
+          assignments_loading: false,
+          error: error,
+        });
+      }
+    );
   }
 
   fetchAllRunData() {
     fetch('/run_list')
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           let task_id = this.props.task_id;
-          let run_ids = result.map((x) => x.run_id);
-          let task_runs = run_ids.filter((run_id) => run_id.startsWith(task_id));
+          let run_ids = result.map(x => x.run_id);
+          let task_runs = run_ids.filter(run_id => run_id.startsWith(task_id));
           this.fetchDataForRuns(task_runs);
         },
-        (error) => {
+        error => {
           this.setState({
             assignments_loading: false,
-            error: error
+            error: error,
           });
         }
-      )
+      );
   }
 
   componentDidMount() {
-    this.setState({assignments_loading: true});
+    this.setState({ assignments_loading: true });
     if (this.props.run_id) {
       this.fetchDataForRuns([this.props.run_id]);
     } else {
@@ -1799,10 +1944,10 @@ class ReviewPanel extends React.Component {
     let current_worker = this.state.workers_remaining.shift();
     let current_worker_state = this.state.assignments_by_worker[current_worker];
     let current_worker_stats = {
-      'approved': current_worker_state.worker_data.approved,
-      'rejected': current_worker_state.worker_data.rejected,
-      'remain': current_worker_state.assigns.length
-    }
+      approved: current_worker_state.worker_data.approved,
+      rejected: current_worker_state.worker_data.rejected,
+      remain: current_worker_state.assigns.length,
+    };
     this.setState({
       current_worker: current_worker,
       current_worker_stats: current_worker_stats,
@@ -1816,15 +1961,17 @@ class ReviewPanel extends React.Component {
     postData('/approve/' + assign_id)
       .then(res => res.json())
       .then(
-        (result) => {console.log(assign_id + ' approved')},
-        (error) => {
+        result => {
+          console.log(assign_id + ' approved');
+        },
+        error => {
           this.setState({
             submitting: false,
           });
           console.log(error);
           window.alert('Submitting review failed. Error logged to console');
         }
-      )
+      );
   }
 
   approveAllForWorker() {
@@ -1834,14 +1981,16 @@ class ReviewPanel extends React.Component {
     this.approveAssignment(current_assignment);
     let total_assigns = 1 + assignments.length;
     while (assignments.length > 0) {
-        current_assignment = assignments.shift();
-        this.approveAssignment(current_assignment.assignment_id);
+      current_assignment = assignments.shift();
+      this.approveAssignment(current_assignment.assignment_id);
     }
     this.setState({
       assignments_by_worker: this.state.assignments_by_worker,
       assignments_remaining: this.state.assignments_remaining - total_assigns,
     });
-    this.state.current_worker_stats.remain = 0;
+    this.setState({
+      current_worker_stats: { ...this.state.current_worker_stats, remain: 0 },
+    });
     this.nextAssignment();
   }
 
@@ -1853,52 +2002,40 @@ class ReviewPanel extends React.Component {
 
     let action_button = null;
     if (this.state.current_assignment == null) {
-      action_button = <Button
-        bsStyle="primary"
-        onClick={() => this.nextAssignment()}>
-        Get Started!
-      </Button>
-    } else if (worker_stats.approved > 0){
-      action_button = <div>
-        <Button
-          bsStyle="primary"
-          onClick={() => this.approveAllForWorker()}>
-          Approve Rest For Worker
+      action_button = (
+        <Button bsStyle="primary" onClick={() => this.nextAssignment()}>
+          Get Started!
         </Button>
-      </div>
+      );
+    } else if (worker_stats.approved > 0) {
+      action_button = (
+        <div>
+          <Button bsStyle="primary" onClick={() => this.approveAllForWorker()}>
+            Approve Rest For Worker
+          </Button>
+        </div>
+      );
     }
 
     let header_text = null;
     if (this.props.run_id) {
-      header_text = "Reviews toolbar for run " + this.props.run_id;
+      header_text = 'Reviews toolbar for run ' + this.props.run_id;
     } else {
-      header_text = "Reviews toolbar for task " + this.props.task_id;
+      header_text = 'Reviews toolbar for task ' + this.props.task_id;
     }
     return (
-      <Panel
-        id="review_overview_panel"
-        bsStyle="primary">
+      <Panel id="review_overview_panel" bsStyle="primary">
         <Panel.Heading>
-          <Panel.Title componentClass="h3">
-            {header_text}
-          </Panel.Title>
+          <Panel.Title componentClass="h3">{header_text}</Panel.Title>
         </Panel.Heading>
         <Panel.Body>
+          <p>Current worker: {current_worker}</p>
           <p>
-            Current worker: {current_worker}
+            Worker stats: Approved - {worker_stats.approved} | Rejected -{' '}
+            {worker_stats.rejected} | Remaining - {worker_stats.remain}
           </p>
-          <p>
-            Worker stats:
-            Approved - {worker_stats.approved} |
-            Rejected - {worker_stats.rejected} |
-            Remaining - {worker_stats.remain}
-          </p>
-          <p>
-            Workers remaining: {workers_remaining.length}
-          </p>
-          <p>
-            Total Assignments remaining: {assignments_remaining}
-          </p>
+          <p>Workers remaining: {workers_remaining.length}</p>
+          <p>Total Assignments remaining: {assignments_remaining}</p>
           {action_button}
         </Panel.Body>
       </Panel>
@@ -1913,7 +2050,7 @@ class ReviewPanel extends React.Component {
         assign_view = (
           <AssignmentPanel
             assignment_id={this.state.current_assignment}
-            onReview={(review) => this.handleReview(review)}
+            onReview={review => this.handleReview(review)}
           />
         );
       }
@@ -1922,43 +2059,39 @@ class ReviewPanel extends React.Component {
           {this.getReviewOverview()}
           {assign_view}
         </div>
-      )
+      );
     }
-    return (
-      <div>
-        {content}
-      </div>
-    );
+    return <div>{content}</div>;
   }
 }
 
 class WorkerPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {worker_loading: true, items: null, error: false};
+    this.state = { worker_loading: true, items: null, error: false };
   }
 
   fetchRunData() {
     fetch('/workers/' + this.props.worker_id)
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState({
             worker_loading: false,
-            data: result
+            data: result,
           });
         },
-        (error) => {
+        error => {
           this.setState({
             worker_loading: false,
-            error: true
+            error: true,
           });
         }
-      )
+      );
   }
 
   componentDidMount() {
-    this.setState({worker_loading: true});
+    this.setState({ worker_loading: true });
     this.fetchRunData();
   }
 
@@ -1967,12 +2100,14 @@ class WorkerPanel extends React.Component {
       <div>
         <WorkerTable
           data={[this.state.data.worker_details]}
-          title={'Worker Stats'}/>
+          title={'Worker Stats'}
+        />
         <AssignmentTable
           data={this.state.data.assignments}
-          title={'Assignments from this Worker'}/>
+          title={'Assignments from this Worker'}
+        />
       </div>
-    )
+    );
   }
 
   render() {
@@ -1992,41 +2127,39 @@ class WorkerPanel extends React.Component {
             Worker Details - Worker: {this.props.worker_id}
           </Panel.Title>
         </Panel.Heading>
-        <Panel.Body>
-          {content}
-        </Panel.Body>
+        <Panel.Body>{content}</Panel.Body>
       </Panel>
-    )
+    );
   }
 }
 
 class RunListPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {tasks_loading: true, items: null, error: false};
+    this.state = { tasks_loading: true, items: null, error: false };
   }
 
   fetchRunData() {
     fetch('/run_list')
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState({
             tasks_loading: false,
-            items: result
+            items: result,
           });
         },
-        (error) => {
+        error => {
           this.setState({
             tasks_loading: false,
-            error: error
+            error: error,
           });
         }
-      )
+      );
   }
 
   componentDidMount() {
-    this.setState({tasks_loading: true});
+    this.setState({ tasks_loading: true });
     this.fetchRunData();
   }
 
@@ -2035,54 +2168,50 @@ class RunListPanel extends React.Component {
     if (this.state.tasks_loading) {
       content = <span>Runs are currently loading...</span>;
     } else if (this.state.error !== false) {
-      console.log(this.state.error)
+      console.log(this.state.error);
       content = <span>Runs loading failed...</span>;
     } else {
-      content = <RunTable data={this.state.items} title={'Local Runs'}/>;
+      content = <RunTable data={this.state.items} title={'Local Runs'} />;
     }
 
     return (
       <Panel>
         <Panel.Heading>
-          <Panel.Title componentClass="h3">
-            Running Task List
-          </Panel.Title>
+          <Panel.Title componentClass="h3">Running Task List</Panel.Title>
         </Panel.Heading>
-        <Panel.Body>
-          {content}
-        </Panel.Body>
+        <Panel.Body>{content}</Panel.Body>
       </Panel>
-    )
+    );
   }
 }
 
 class TaskListPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {tasks_loading: true, items: null, error: false};
+    this.state = { tasks_loading: true, items: null, error: false };
   }
 
   fetchTaskData() {
     fetch('/task_list')
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState({
             tasks_loading: false,
-            items: result
+            items: result,
           });
         },
-        (error) => {
+        error => {
           this.setState({
             tasks_loading: false,
-            error: error
+            error: error,
           });
         }
-      )
+      );
   }
 
   componentDidMount() {
-    this.setState({tasks_loading: true});
+    this.setState({ tasks_loading: true });
     this.fetchTaskData();
   }
 
@@ -2091,54 +2220,52 @@ class TaskListPanel extends React.Component {
     if (this.state.tasks_loading) {
       content = <span>Tasks are currently loading...</span>;
     } else if (this.state.error !== false) {
-      console.log(this.state.error)
+      console.log(this.state.error);
       content = <span>Tasks loading failed...</span>;
     } else {
-      content = <TaskTable data={this.state.items} title={'Discovered Tasks'}/>;
+      content = (
+        <TaskTable data={this.state.items} title={'Discovered Tasks'} />
+      );
     }
 
     return (
       <Panel>
         <Panel.Heading>
-          <Panel.Title componentClass="h3">
-            All Tasks List
-          </Panel.Title>
+          <Panel.Title componentClass="h3">All Tasks List</Panel.Title>
         </Panel.Heading>
-        <Panel.Body>
-          {content}
-        </Panel.Body>
+        <Panel.Body>{content}</Panel.Body>
       </Panel>
-    )
+    );
   }
 }
 
 class WorkerListPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {workers_loading: true, items: null, error: false};
+    this.state = { workers_loading: true, items: null, error: false };
   }
 
   fetchTaskData() {
     fetch('/workers')
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.setState({
             workers_loading: false,
-            items: result
+            items: result,
           });
         },
-        (error) => {
+        error => {
           this.setState({
             workers_loading: false,
-            error: error
+            error: error,
           });
         }
-      )
+      );
   }
 
   componentDidMount() {
-    this.setState({workers_loading: true});
+    this.setState({ workers_loading: true });
     this.fetchTaskData();
   }
 
@@ -2147,28 +2274,20 @@ class WorkerListPanel extends React.Component {
     if (this.state.workers_loading) {
       content = <span>Workers are currently loading...</span>;
     } else if (this.state.error !== false) {
-      console.log(this.state.error)
+      console.log(this.state.error);
       content = <span>Workers loading failed...</span>;
     } else {
-      content = (
-        <WorkerTable
-          data={this.state.items}
-          title={'Workers'}/>
-      );
+      content = <WorkerTable data={this.state.items} title={'Workers'} />;
     }
 
     return (
       <Panel>
         <Panel.Heading>
-          <Panel.Title componentClass="h3">
-            Workers List
-          </Panel.Title>
+          <Panel.Title componentClass="h3">Workers List</Panel.Title>
         </Panel.Heading>
-        <Panel.Body>
-          {content}
-        </Panel.Body>
+        <Panel.Body>{content}</Panel.Body>
       </Panel>
-    )
+    );
   }
 }
 
@@ -2196,10 +2315,13 @@ class DemoTaskPanel extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.state.active_worker != prevState.active_worker) {
-      $('div#message-pane-segment').animate({
-        scrollTop: $('div#message-pane-segment').get(0).scrollHeight
-      }, 500);
-      $("input#id_text_input").focus();
+      $('div#message-pane-segment').animate(
+        {
+          scrollTop: $('div#message-pane-segment').get(0).scrollHeight,
+        },
+        500
+      );
+      $('input#id_text_input').focus();
     }
   }
 
@@ -2216,7 +2338,7 @@ class DemoTaskPanel extends React.Component {
     }
     var url = window.location;
     var ws_protocol = null;
-    if (url.protocol == "https:") {
+    if (url.protocol == 'https:') {
       ws_protocol = 'wss';
     } else {
       ws_protocol = 'ws';
@@ -2224,14 +2346,14 @@ class DemoTaskPanel extends React.Component {
 
     var socket = new WebSocket(ws_protocol + '://' + url.host + '/socket');
 
-    socket.onmessage = (evt) => this._handleMessage(evt);
+    socket.onmessage = evt => this._handleMessage(evt);
 
     socket.onopen = () => {
-      this.setState({connected: true});
+      this.setState({ connected: true });
     };
 
     socket.onerror = socket.onclose = () => {
-      this.setState({connected: false}, function () {
+      this.setState({ connected: false }, function() {
         this._socket = null;
       });
     };
@@ -2242,32 +2364,36 @@ class DemoTaskPanel extends React.Component {
   startTask() {
     // Send a launch task request to the server, unpack the resulting
     // task config and pull the custom frontend for the task.
-    this.setState({submitting: true});
+    this.setState({ submitting: true });
     postData('/run_task/' + this.props.task_id)
       .then(res => res.json())
       .then(
-        (result) => {
+        result => {
           this.handleNewData(result);
-          import(
-            /* webpackMode: "eager" */
-            `./task_components/${this.props.task_id}/components/custom.jsx`
-          ).then((custom) => {
-            setCustomComponents(custom.default);
-            if (result.task_config.frame_height === undefined) {
-              result.task_config.frame_height = 650;
-            }
-            this.setState({
-              task_loading: false, task_config: result.task_config});
-          }).catch((err) => {
-            // Custom react module not found
-            if (result.task_config.frame_height === undefined) {
-              result.task_config.frame_height = 650;
-            }
-            this.setState({
-              task_loading: false, task_config: result.task_config});
-          });
+          import(/* webpackMode: "eager" */
+          `./task_components/${this.props.task_id}/components/custom.jsx`)
+            .then(custom => {
+              setCustomComponents(custom.default);
+              if (result.task_config.frame_height === undefined) {
+                result.task_config.frame_height = 650;
+              }
+              this.setState({
+                task_loading: false,
+                task_config: result.task_config,
+              });
+            })
+            .catch(err => {
+              // Custom react module not found
+              if (result.task_config.frame_height === undefined) {
+                result.task_config.frame_height = 650;
+              }
+              this.setState({
+                task_loading: false,
+                task_config: result.task_config,
+              });
+            });
         },
-        (error) => {
+        error => {
           this.setState({
             task_loading: false,
             error: error,
@@ -2281,9 +2407,9 @@ class DemoTaskPanel extends React.Component {
   handleNewData(result) {
     // Unpack data from an array of the return value of
     // MockTurkAgent.get_update_packet()
-    let worker_names = result.data.map((w) => w.worker_id);
+    let worker_names = result.data.map(w => w.worker_id);
     let curr_worker_data = this.state.worker_data;
-    result.data.map((w) => {
+    result.data.map(w => {
       if (curr_worker_data[w.worker_id] === undefined) {
         curr_worker_data[w.worker_id] = {
           task_done: false,
@@ -2308,9 +2434,11 @@ class DemoTaskPanel extends React.Component {
       for (const idx in w.new_messages) {
         let m = w.new_messages[idx];
         if (m.task_data !== undefined) {
-          m.task_data.last_update = (new Date()).getTime();
+          m.task_data.last_update = new Date().getTime();
           curr_worker.task_data = Object.assign(
-            curr_worker.task_data, m.task_data);
+            curr_worker.task_data,
+            m.task_data
+          );
         }
       }
       curr_worker.task_done = w.task_done;
@@ -2328,31 +2456,36 @@ class DemoTaskPanel extends React.Component {
         for (const idx in w.all_messages) {
           let m = w.all_messages[idx];
           if (m.task_data !== undefined) {
-            m.task_data.last_update = (new Date()).getTime();
+            m.task_data.last_update = new Date().getTime();
             curr_worker.task_data = Object.assign(
-              curr_worker.task_data, m.task_data);
+              curr_worker.task_data,
+              m.task_data
+            );
           }
         }
       }
     });
-    this.setState({workers: worker_names, worker_data: curr_worker_data})
+    this.setState({ workers: worker_names, worker_data: curr_worker_data });
   }
 
   sendMessage(message, task_data, callback, worker) {
-    let msg = JSON.stringify(
-      {'text': message, 'task_data': task_data,
-       'sender': worker.worker_id, 'id': worker.agent_id});
+    let msg = JSON.stringify({
+      text: message,
+      task_data: task_data,
+      sender: worker.worker_id,
+      id: worker.agent_id,
+    });
     this._socket.send(msg);
     worker.messages.push({
       id: worker.agent_id,
       text: message,
       task_data: task_data,
-      message_id: (new Date()).getTime(),
+      message_id: new Date().getTime(),
       is_review: false,
     });
     worker.wants_message = false;
     worker.chat_state = 'waiting';
-    this.setState({worker_data: this.state.worker_data});
+    this.setState({ worker_data: this.state.worker_data });
     callback();
   }
 
@@ -2360,7 +2493,7 @@ class DemoTaskPanel extends React.Component {
     let worker = this.state.worker_data[worker_id];
     let task_config = this.state.task_config;
     return (
-      <div style={{height: task_config.frame_height}}>
+      <div style={{ height: task_config.frame_height }}>
         <BaseFrontend
           task_done={worker.task_done}
           done_text={worker.done_text}
@@ -2378,7 +2511,7 @@ class DemoTaskPanel extends React.Component {
           v_id={worker.agent_id}
           allDoneCallback={() => console.log('all done called')}
           volume={this.state.volume}
-          onVolumeChange={(v) => this.setState({volume: v})}
+          onVolumeChange={v => this.setState({ volume: v })}
         />
       </div>
     );
@@ -2390,24 +2523,25 @@ class DemoTaskPanel extends React.Component {
         <NavItem
           eventKey={idx}
           key={agent_id + '-selector'}
-          title={'View as ' + agent_id}>
+          title={'View as ' + agent_id}
+        >
           {agent_id}
         </NavItem>
-      )
+      );
     });
     let task_panels = this.state.workers.map((agent_id, idx) => {
       let display = null;
       if (idx != this.state.active_worker) {
-        display = {display: 'none'}
+        display = { display: 'none' };
       }
       return (
         <div style={display} key={agent_id + '-task-display'}>
           {this.renderSingleTaskPanel(this.state.workers[idx])}
         </div>
-      )
+      );
     });
     // Active panel must be first in the array for jquery to target properly
-    let front_panel = task_panels.splice(this.state.active_worker, 1)
+    let front_panel = task_panels.splice(this.state.active_worker, 1);
     task_panels.unshift(front_panel);
     return (
       <div>
@@ -2415,7 +2549,7 @@ class DemoTaskPanel extends React.Component {
           bsStyle="tabs"
           justified
           activeKey={this.state.active_worker}
-          onSelect={key => this.setState({active_worker: key})}
+          onSelect={key => this.setState({ active_worker: key })}
         >
           {nav_items}
         </Nav>
@@ -2429,7 +2563,7 @@ class DemoTaskPanel extends React.Component {
     if (this.state.task_loading) {
       content = <span>Task data is currently loading...</span>;
     } else if (this.state.error !== false) {
-      console.log(this.state.error)
+      console.log(this.state.error);
       content = <span>Task loading failed...</span>;
     } else {
       content = this.renderTaskPanel();
@@ -2442,11 +2576,9 @@ class DemoTaskPanel extends React.Component {
             Demo task for {this.props.task_id}
           </Panel.Title>
         </Panel.Heading>
-        <Panel.Body>
-          {content}
-        </Panel.Body>
+        <Panel.Body>{content}</Panel.Body>
       </Panel>
-    )
+    );
   }
 }
 
@@ -2460,10 +2592,8 @@ class MainApp extends React.Component {
     return (
       <div>
         <span>Welcome to the ParlAI-Dashboard. Use the button to begin</span>
-        <Button
-          bsStyle="info"
-          href="/app/home">
-            Click me
+        <Button bsStyle="info" href="/app/home">
+          Click me
         </Button>
       </div>
     );
@@ -2473,10 +2603,8 @@ class MainApp extends React.Component {
     return (
       <div>
         <span>Oops something happened! use this button to return </span>
-        <Button
-          bsStyle="info"
-          href="/app/home">
-            Click me
+        <Button bsStyle="info" href="/app/home">
+          Click me
         </Button>
       </div>
     );
@@ -2487,18 +2615,18 @@ class MainApp extends React.Component {
     // also have a demo of the task at the bottom
     let run_task_list = null;
     return (
-      <div style={{width: '100%'}}>
+      <div style={{ width: '100%' }}>
         {run_task_list}
-        <DemoTaskPanel task_id = {this.state.args[0]} />
+        <DemoTaskPanel task_id={this.state.args[0]} />
       </div>
-    )
+    );
   }
 
   renderHomePage() {
     return (
-      <div style={{width: '900px'}}>
-        <RunListPanel/>
-        <WorkerListPanel/>
+      <div style={{ width: '900px' }}>
+        <RunListPanel />
+        <WorkerListPanel />
         <TaskListPanel />
       </div>
     );
@@ -2510,13 +2638,13 @@ class MainApp extends React.Component {
     if (review_type == 'run') {
       return (
         <div>
-          <ReviewPanel run_id={target}/>
+          <ReviewPanel run_id={target} />
         </div>
       );
     } else if (review_type == 'task') {
       return (
         <div>
-          <ReviewPanel task_id={target}/>
+          <ReviewPanel task_id={target} />
         </div>
       );
     } else {
@@ -2526,8 +2654,8 @@ class MainApp extends React.Component {
 
   renderWorkerPage() {
     return (
-      <div style={{width: '900px'}}>
-        <WorkerPanel worker_id={this.state.args[0]}/>
+      <div style={{ width: '900px' }}>
+        <WorkerPanel worker_id={this.state.args[0]} />
       </div>
     );
   }
@@ -2535,15 +2663,15 @@ class MainApp extends React.Component {
   renderAssignmentPage() {
     return (
       <div>
-        <AssignmentPanel assignment_id={this.state.args[0]}/>
+        <AssignmentPanel assignment_id={this.state.args[0]} />
       </div>
     );
   }
 
   renderRunPage() {
     return (
-      <div style={{width: '900px'}}>
-        <RunPanel run_id={this.state.args[0]}/>
+      <div style={{ width: '900px' }}>
+        <RunPanel run_id={this.state.args[0]} />
       </div>
     );
   }
@@ -2569,7 +2697,6 @@ class MainApp extends React.Component {
   }
 }
 
-
-var main_app = <MainApp/>;
+var main_app = <MainApp />;
 
 ReactDOM.render(main_app, document.getElementById('app'));

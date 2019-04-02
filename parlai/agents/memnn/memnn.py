@@ -83,7 +83,7 @@ class MemnnAgent(TorchRankerAgent):
         self.model = MemNN(len(self.dict), self.opt['embedding_size'],
                            padding_idx=self.NULL_IDX, **kwargs)
 
-    def score_candidates(self, batch, cand_vecs):
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
         mems = self._build_mems(batch.memory_vecs)
         scores = self.model(batch.text_vec, mems, cand_vecs)
         return scores

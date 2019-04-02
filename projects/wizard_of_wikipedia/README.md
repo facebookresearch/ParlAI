@@ -29,6 +29,7 @@ important research direction.
 
 You can train your own ParlAI agent on the Wizard of Wikipedia task with
 `-t wizard_of_wikipedia`.
+See the [ParlAI quickstart for help](http://www.parl.ai/static/docs/tutorial_quick.html).
 
 The ParlAI MTurk collection scripts are also
 [made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/wizard_of_wikipedia),
@@ -56,14 +57,43 @@ Random                               | [Dinan et al. (2019)](https://arxiv.org/a
 
 Model                                | Paper          | Test Seen PPL | Test Unseen PPL
 ------------------------------------ | -------------- | ------------- | ---------------
-Two-Stage Transformer Memnet         | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 46.5 | 84.8
 End-to-end Transformer MemNet        | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 63.5 | 97.3
+Two-Stage Transformer Memnet         | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 46.5 | 84.8
 Vanilla Transformer (no knowledge)   | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 41.8 | 87.0
 
 
-## Pretrained Models
+## Pretrained models
 
-Finalized models are not yet released. Please check back here in the future.
+You can evaluate the pretrained End-to-end generative models via:
+
+    python examples/eval_model.py \
+        -bs 64 -t wizard_of_wikipedia:generator:random_split \
+        -mf models:wizard_of_wikipedia/end2end_generator/model
+
+
+This produces the following metrics:
+
+    {'f1': 0.1717, 'ppl': 61.21, 'know_acc': 0.2201, 'know_chance': 0.02625}
+
+This differs slightly from the results in the paper, as it is a recreation trained
+from scratch for public release.
+
+You can also evaluate the model on the unseen topic split too:
+
+    python examples/eval_model.py \
+        -bs 64 -t wizard_of_wikipedia:generator:topic_split \
+        -mf models:wizard_of_wikipedia/end2end_generator/model
+
+This will produce:
+
+    {'f1': 0.1498, 'ppl': 103.1, 'know_acc': 0.1123, 'know_chance': 0.02496}
+
+You can evaluate a retrieval model on the full dialogue task by running the
+following script:
+
+    python projects/wizard_of_wikipedia/scripts/eval_retrieval_model.py
+
+Check back later for more pretrained models soon!
 
 ## Citation
 
@@ -76,4 +106,3 @@ following BibTex entry:
       booktitle = {Proceedings of the International Conference on Learning Representations (ICLR)},
       year={2019},
     }
-

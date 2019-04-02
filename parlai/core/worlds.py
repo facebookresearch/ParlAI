@@ -425,9 +425,6 @@ class MultiWorld(World):
     """
 
     def __init__(self, opt, agents=None, shared=None, default_world=None):
-        if opt.get('batch_sort'):
-            print('WARNING: batch_sort disabled for multitasking')
-        opt['batch_sort'] = False
         super().__init__(opt)
         self.worlds = []
         for index, k in enumerate(opt['task'].split(',')):

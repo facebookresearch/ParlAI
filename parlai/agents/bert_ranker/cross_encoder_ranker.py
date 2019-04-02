@@ -23,6 +23,10 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     @staticmethod
     def add_cmdline_args(parser):
         add_common_args(parser)
+        parser.set_defaults(
+            encode_candidate_vecs=True,
+            candidates='inline',
+        )
 
     def __init__(self, opt, shared=None):
         # download pretrained models
@@ -47,15 +51,17 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             BertModel.from_pretrained(self.pretrained_path),
             1,
             add_transformer_layer=self.opt['add_transformer_layer'],
-            layer_pulled=self.opt['pull_from_layer']
+            layer_pulled=self.opt['pull_from_layer'],
+            aggregation=self.opt['bert_aggregation']
         )
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         self.optimizer = get_bert_optimizer([self.model],
                                             self.opt['type_optimization'],
-                                            self.opt['learningrate'])
+                                            self.opt['learningrate'],
+                                            fp16=self.opt.get('fp16'))
 
-    def score_candidates(self, batch, cand_vecs):
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
         # concatenate text and candidates (not so easy)
         # unpad and break
         nb_cands = cand_vecs.size()[1]
@@ -70,8 +76,8 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         segments_cands = tokens_cands * 0 + 1
         all_tokens = torch.cat([tokens_context, tokens_cands], 1)
         all_segments = torch.cat([segments_context, segments_cands], 1)
-        all_mask = (all_tokens != self.NULL_IDX).long()
-        all_tokens *= all_mask
+        all_mask = (all_tokens != self.NULL_IDX)
+        all_tokens *= all_mask.long()
         scores = self.model(all_tokens, all_segments, all_mask)
         return scores.view(size_batch, nb_cands)
 

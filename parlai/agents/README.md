@@ -20,6 +20,7 @@ This directory contains a variety of different agents which use ParlAI's interfa
 
 ## Text-based neural networks
 
+- **bert_ranker**: BERT-based bi-ranker and cross-ranker retrieval models
 - **drqa**: context-based question answering system
 - **fairseq**: provides access to models from FAIR's FairSeq library (github.com/facebookresearch/fairseq)
 - **language_model**: simple RNN-based language model
