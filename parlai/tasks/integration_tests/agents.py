@@ -186,13 +186,17 @@ class BadExampleTeacher(CandidateTeacher):
         4. label candidates is empty
         5. label candidates contains an empty string
         6. label isn't in the candidates
-        7. missing label candidates:
+        7. missing label candidates
+
+    Note: this test may come to outlive its purpose in the future. When failing
+    this test, one should consider who is really at fault: the test, or the code.
     """
     NUM_CASES = 8
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        # gross hack: override sub thing to force things the way we want
+        # gross hack: override data.get to force things the way we want; otherwise
+        # we can't actually force some of these scenarios.
         self.data.get = self._wrapperfn(self.data.get)
 
     def _wrapperfn(self, oldget):
@@ -201,24 +205,30 @@ class BadExampleTeacher(CandidateTeacher):
             item = copy.deepcopy(item)
             newget.case = (newget.case + 1) % self.NUM_CASES
             case = newget.case
-            # print(self.case)
             if case == 0:
+                # empty string input
                 item['text'] = ''
             elif case == 1:
+                # not text input
                 del item['text']
             elif case == 2:
+                # empty string label
                 item['labels'] = ['']
             elif case == 3:
+                # no label
                 del item['labels']
             elif case == 4:
+                # no label candidates
                 item['label_candidates'] = []
             elif case == 5:
-                item['label_candidates'] = tuple(list(item['label_candidates']) + [''])
+                # extra empty string in labels
+                item['label_candidates'] = list(item['label_candidates']) + ['']
             elif case == 6:
+                # label candidates doesn't have the label
                 item['label_candidates'] = list(item['label_candidates'])
                 item['label_candidates'].remove(item['labels'][0])
-                item['label_candidates'] = tuple(item['label_candidates'])
             elif case == 7:
+                # no label candidates field
                 del item['label_candidates']
             return item, eod
 
