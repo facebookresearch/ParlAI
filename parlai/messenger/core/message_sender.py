@@ -315,19 +315,20 @@ class MessageSender():
                     }
                 }
             }
-            filedata = {
-                "filedata": (
-                    payload['filename'],
-                    open(payload['filename'], 'rb'),
-                    payload['type'] + '/' + payload['format']
+            with open(payload['filename'], 'rb') as f:
+                filedata = {
+                    "filedata": (
+                        payload['filename'],
+                        f,
+                        payload['type'] + '/' + payload['format']
+                    )
+                }
+                response = requests.post(
+                    api_address,
+                    params=self.auth_args,
+                    data={"message": json.dumps(message)},
+                    files=filedata
                 )
-            }
-            response = requests.post(
-                api_address,
-                params=self.auth_args,
-                data={"message": json.dumps(message)},
-                files=filedata
-            )
         result = response.json()
         shared_utils.print_and_log(
             logging.INFO,

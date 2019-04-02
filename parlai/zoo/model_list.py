@@ -13,6 +13,44 @@ automatically, e.g.:
 
 model_list = [
     {
+        "title": "KVMemNN ConvAI2 model",
+        "id": "convai2",
+        "path": "models:convai2/kvmemnn/model",
+        "agent": "projects.personachat.kvmemnn.kvmemnn:Kvmemnn",
+        "task": "convai2",
+        "description": (
+            "KvMemNN trained on the ConvAI2 task, used as a baseline in the "
+            "competition."
+        ),
+        "example": (
+            "python -m parlai.scripts.interactive -mf models:convai2/kvmemnn/model"
+        ),
+    },
+    {
+        "title": "Seq2Seq ConvAI2 model",
+        "id": "convai2",
+        "path": "models:convai2/seq2seq/convai2_self_seq2seq_model",
+        "agent": "legacy:seq2seq:0",
+        "task": "convai2",
+        "description": (
+            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
+        ),
+        "example": (
+            "python -m parlai.scripts.interactive -mf "
+            "models:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0"
+        ),
+    },
+    {
+        "title": "Seq2Seq Twitter model",
+        "id": "twitter",
+        "path": "models:twitter/seq2seq/twitter_seq2seq_model",
+        "agent": "legacy:seq2seq:0",
+        "task": "twitter",
+        "description": ("Seq2Seq conversational model trained on the Twitter task"),
+        "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
+    },
+    {
+        "title": "DrQA SQuAD model",
         "id": "drqa",
         "path": "models:drqa/squad/model",
         "agent": "drqa",
@@ -23,6 +61,7 @@ model_list = [
         ),
     },
     {
+        "title": "Wikipedia Retriever (used for open SQuAD)",
         "id": "wikipedia_2016-12-21",
         "path": "models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs",
         "agent": "tfidf_retriever",
@@ -46,16 +85,16 @@ model_list = [
             "Retrieval over Wikipedia dump, used for DrQA on the open squad "
             "dataset. This is the dump from the original paper, used for "
             "replicating results."
-        )
+        ),
     },
     {
+        "title": "Wikipedia Retriever (used for Wizard of Wikipedia)",
         "id": "wikipedia_full",
         "path": "models:wikipedia_full/tfidf_retriever/model",
         "agent": "tfidf_retriever",
         "task": "wikipedia:full",
         "description": (
-            "Retrieval over Wikipedia dump, used for DrQA on the open squad "
-            "dataset."
+            "Retrieval over Wikipedia dump, used for DrQA on the open squad " "dataset."
         ),
         "example": "python -m parlai.scripts.interactive --model tfidf_retriever -mf models:wikipedia_full/tfidf_retriever/model",  # noqa: E501
         "result": (
@@ -73,13 +112,93 @@ model_list = [
         ),
     },
     {
+        "title": "Wizard of Wikipedia (End to end Generator)",
+        "id": "wizard_of_wikipedia",
+        "path": "models:wizard_of_wikipedia/end2end_generator/model",
+        "description": ("End2End Generative model for Wizard of Wikipedia"),
+        "task": "wizard_of_wikipedia:generator",
+        "example": (
+            "python examples/display_model.py -t wizard_of_wikipedia:generator "
+            "-mf models:wizard_of_wikipedia/end2end_generator/model -n 1 "
+            "--display-ignore-fields knowledge_parsed"
+        ),
+        "result": (
+            """
+            [chosen_topic]: Gardening
+            [knowledge]: no_passages_used __knowledge__ no_passages_used
+            Gardening __knowledge__ Gardening is the practice of growing and cultivating plants as part of horticulture.
+            Gardening __knowledge__ In gardens, ornamental plants are often grown for their flowers, foliage, or overall appearance; useful plants, such as root vegetables, leaf vegetables, fruits, and herbs, are grown for consumption, for use as dyes, or for medicinal or cosmetic use.
+            Gardening __knowledge__ Gardening is considered by many people to be a relaxing activity.
+            Gardening __knowledge__ Gardening ranges in scale from fruit orchards, to long boulevard plantings with one or more different types of shrubs, trees, and herbaceous plants, to residential yards including lawns and foundation plantings, to plants in large or small containers ...
+            there had been several other notable gardening magazines in circulation, including the "Gardeners' Chronicle" and "Gardens Illustrated", but these were tailored more for the professional gardener.
+
+            [title]: Gardening
+            [checked_sentence]: Gardening is considered by many people to be a relaxing activity.
+            [eval_labels_choice]: I live on a farm, we garden all year long, it is very relaxing.
+            [checked_sentence_parsed]: Gardening __knowledge__ Gardening is considered by many people to be a relaxing activity.
+            [WizTeacher]: Gardening
+            I like Gardening, even when I've only been doing it for a short time.
+            [eval_labels: I live on a farm, we garden all year long, it is very relaxing.]
+            [TorchAgent]: i love gardening , it is considered a relaxing activity .
+            """  # noqa: E501
+        ),
+    },
+    {
+        "title": "Wizard of Wikipedia (Full Dialogue Retrieval Model)",
+        "id": "wizard_of_wikipedia",
+        "path": "models:wizard_of_wikipedia/full_dialogue_retrieval_model/model",
+        "description": ("Full Dialogue Retrieval Model for Wizard of Wikipedia"),
+        "task": "wizard_of_wikipedia",
+        "example": (
+            "python examples/display_model.py -t wizard_of_wikipedia "
+            "-mf models:wizard_of_wikipedia/full_dialogue_retrieval_model/model "
+            "-m projects:wizard_of_wikipedia:wizard_transformer_ranker "
+            "--n-heads 6 --ffn-size 1200 --embeddings-scale False "
+            "--delimiter ' __SOC__ ' --n-positions 1000 --legacy True "
+        ),
+        "result": (
+            """
+            [chosen_topic]: Gardening
+            [knowledge]: Gardening Gardening is the practice of growing and cultivating plants as part of horticulture.
+            Gardening In gardens, ornamental plants are often grown for their flowers, foliage, or overall appearance; useful plants, such as root vegetables, leaf vegetables, fruits, and herbs, are grown for consumption, for use as dyes, or for medicinal or cosmetic use.
+            Gardening Gardening is considered by many people to be a relaxing activity.
+            Gardening Gardening ranges in scale from fruit orchards, to long boulevard plantings with one or more different types of shrubs, trees, and herbaceous plants, to residential yards including lawns and foundation plantings, to plants in large or small containers grown inside or outside.
+            Gardening Gardening may be very specialized, with only one type of plant grown, ...
+            there had been several other notable gardening magazines in circulation, including the "Gardeners' Chronicle" and "Gardens Illustrated", but these were tailored more for the professional gardener.
+
+            [title]: Gardening
+            [checked_sentence]: Gardening is considered by many people to be a relaxing activity.
+            [eval_labels_choice]: I live on a farm, we garden all year long, it is very relaxing.
+            [wizard_of_wikipedia]: Gardening
+            I like Gardening, even when I've only been doing it for a short time.
+            [label_candidates: OK what's the history?|Right, thats cool. I had no idea they still did the DVD thing, What is Netflix's highest rated show? do you know? |I will definitely check his first album out as he sounds interesting.|I don't know a whole lot about it. I was raised Catholic but don't practice anything now.|Well , this was a good conversation. |...and 95 more]
+            [eval_labels: I live on a farm, we garden all year long, it is very relaxing.]
+               [TorchAgent]: I live on a farm, we garden all year long, it is very relaxing.
+            """  # noqa: E501
+        ),
+    },
+    {
+        "title": "LIGHT BERT-Biranker Dialogue model",
+        "id": "light",
+        "path": "models:light/biranker_dialogue/model",
+        "agent": "bert_ranker/bi_encoder_ranker",
+        "task": "light_dialog",
+        "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
+        "example": (
+            "python examples/eval_model.py -t light_dialog "
+            "-mf models:light/biranker_dialogue/model"
+        ),
+        "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"
+        "'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'num_updates': 15050,"
+        "'examples': 6623, 'loss': 5307.0, 'mean_loss': 0.8013, 'mean_rank': 1.599, 'train_accuracy': 0}",
+    },
+    {
+        "title": "Twitter conversational model",
         "id": "twitter",
         "path": "models:twitter/seq2seq/twitter_seq2seq_model",
         "agent": "legacy:seq2seq:0",
         "task": "twitter",
-        "description": (
-            "Generic conversational model trained on the twitter task"
-        ),
+        "description": ("Generic conversational model trained on the twitter task"),
         "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
-    }
+    },
 ]

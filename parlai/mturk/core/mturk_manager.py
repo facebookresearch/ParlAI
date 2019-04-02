@@ -26,8 +26,21 @@ import parlai.mturk.core.shared_utils as shared_utils
 # Timeout before cancelling a world start
 WORLD_START_TIMEOUT = 11
 
-# Multiplier to apply when creating hits to ensure worker availibility
-HIT_MULT = 1.5
+# Multiplier to apply when creating hits to ensure worker availibility. As the
+# number of HITs increases, this decreases
+HIT_MULT_SCALE = [
+    # At more than 1000 HITS, most workers will become 'regulars', and we can
+    # discount the occasional disconnects from being a large portion of workers
+    (1000, 1.05),
+    # Between 1000 and 100 HITs, disconnecting workers take a bit more of an
+    # impact, so we scale a bit higher
+    (100, 1.1),
+    # Under 100 hits, we should prepare for a larger proportion of workers that
+    # try
+    (10, 1.25),
+    # Under 10 hits, we need more to ensure one worker doesn't take all
+    (0, 1.5),
+]
 
 # 6 minute timeout to ensure only one thread updates the time logs.
 # Those update once daily in a 3 minute window
@@ -41,8 +54,8 @@ SNS_ASSIGN_ABANDONDED = 'AssignmentAbandoned'
 SNS_ASSIGN_SUBMITTED = 'AssignmentSubmitted'
 SNS_ASSIGN_RETURNED = 'AssignmentReturned'
 
-PARLAI_MTURK_NOTICE_URL = 'http://www.parl.ai/mturk/mturk_notice/'
-PARLAI_MTURK_UPLOAD_URL = 'http://www.parl.ai/mturk/mturk_stats/'
+PARLAI_MTURK_NOTICE_URL = 'http://mturk.parl.ai/mturk/mturk_notice/'
+PARLAI_MTURK_UPLOAD_URL = 'http://mturk.parl.ai/mturk/mturk_stats/'
 PARLAI_CRED_DIR = os.path.expanduser('~/.parlai')
 PARLAI_MTURK_LOG_PERMISSION_FILE = \
     os.path.join(PARLAI_CRED_DIR, 'mturk_log_permission.pickle')
@@ -114,8 +127,16 @@ class MTurkManager():
         self.agent_pool_change_condition = threading.Condition()
         self.onboard_function = None
         self.num_conversations = opt['num_conversations']
+
+        # Determine the correct number of hits to be launching
+        base_required_hits = self.num_conversations * len(self.mturk_agent_ids)
+        for hit_amount, hit_mult in HIT_MULT_SCALE:
+            if base_required_hits >= hit_amount:
+                self.hit_mult = hit_mult
+                break
+
         self.required_hits = math.ceil(
-            self.num_conversations * len(self.mturk_agent_ids) * HIT_MULT
+            base_required_hits * self.hit_mult
         )
         self.minimum_messages = opt.get('min_messages', 0)
         self.auto_approve_delay = \
@@ -256,7 +277,14 @@ class MTurkManager():
         worker_data = self.worker_manager.get_worker_data_package()
         data = {'worker_data': worker_data}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        requests.post(PARLAI_MTURK_UPLOAD_URL, json=data, headers=headers)
+        try:
+            requests.post(PARLAI_MTURK_UPLOAD_URL, json=data, headers=headers)
+        except Exception:
+            shared_utils.print_and_log(
+                logging.WARNING,
+                'Unable to log worker statistics to parl.ai',
+                should_print=True,
+            )
 
     def _maintain_hit_status(self):
         def update_status():
@@ -613,7 +641,6 @@ class MTurkManager():
             elif agent.get_status() == AssignState.STATUS_WAITING:
                 if self.is_task_world(conversation_id):
                     agent.set_status(AssignState.STATUS_IN_TASK)
-                    agent.clear_messages()
                     return
                 # Reconnecting in waiting is either the first reconnect after
                 # being told to wait or a waiting reconnect. Restore state if
@@ -754,6 +781,7 @@ class MTurkManager():
                     MTurkDataHandler.save_world_data(
                         save_data, self.task_group_id,
                         conversation_id, sandbox=self.is_sandbox)
+                mturk_agent.clear_messages()
 
             # once onboarding is done, move into a waiting world
             self._move_agents_to_waiting([mturk_agent])
@@ -895,7 +923,7 @@ class MTurkManager():
                 'Enough HITs will be created to fulfill {} times the '
                 'number of conversations requested, extra HITs will be expired'
                 ' once the desired conversations {}.'
-                ''.format(HIT_MULT, fin_word),
+                ''.format(self.hit_mult, fin_word),
                 should_print=True,
             )
         else:
@@ -904,7 +932,7 @@ class MTurkManager():
                 'Enough HITs will be launched over time '
                 'up to a max of {} times the amount requested until the '
                 'desired number of conversations {}.'
-                ''.format(HIT_MULT, fin_word),
+                ''.format(self.hit_mult, fin_word),
                 should_print=True,
             )
         input('Please press Enter to continue... ')
@@ -941,7 +969,7 @@ class MTurkManager():
         if ((not self.opt['is_sandbox']) and
                 (total_cost > 100 or self.opt['reward'] > 1)):
             confirm_string = '$%.2f' % total_cost
-            expected_cost = total_cost / HIT_MULT
+            expected_cost = total_cost / self.hit_mult
             expected_string = '$%.2f' % expected_cost
             shared_utils.print_and_log(
                 logging.INFO,
@@ -976,13 +1004,19 @@ class MTurkManager():
             except Exception:
                 # not all users will be drawing configs from internal settings
                 pass
-            resp = requests.post(notice_url)
-            warnings = resp.json()
-            for warn in warnings:
-                print('Notice: ' + warn)
-                accept = input('Continue? (Y/n): ')
+            try:
+                resp = requests.post(notice_url)
+                warnings = resp.json()
+                for warn in warnings:
+                    print('Notice: ' + warn)
+                    accept = input('Continue? (Y/n): ')
+                    if accept == 'n':
+                        raise SystemExit('Additional notice was rejected.')
+            except Exception:
+                print('Unable to query warnings from the parl.ai website.')
+                accept = input('Continue without checking warnings? (Y/n): ')
                 if accept == 'n':
-                    raise SystemExit('Additional notice was rejected.')
+                    raise SystemExit('Aborted.')
 
         self.logging_permitted = self._logging_permission_check()
 

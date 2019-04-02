@@ -204,11 +204,17 @@ class SocketManager():
         self.listen_thread = None
         self.send_thread = None
         self.queues = {}
+        self.blocking_packets = {}  # connection_id to blocking packet map
         self.threads = {}
         self.run = {}
         self.last_sent_heartbeat_time = {}  # time of last heartbeat sent
         self.last_received_heartbeat = {}  # actual last received heartbeat
         self.pongs_without_heartbeat = {}
+        # TODO update processed packets to *ensure* only one execution per
+        # packet, as right now two threads can be spawned to process the
+        # same packet at the same time, as the packet is only added to this
+        # set after processing is complete.
+        self.processed_packets = set()
         self.packet_map = {}
         self.alive = False
         self.is_shutdown = False
@@ -241,6 +247,9 @@ class SocketManager():
             return False
         except BrokenPipeError:  # noqa F821 we don't support p2
             # The channel died mid-send, wait for it to come back up
+            return False
+        except AttributeError:
+            # _ensure_closed was called in parallel, self.ws = None
             return False
         except Exception as e:
             shared_utils.print_and_log(
@@ -322,11 +331,10 @@ class SocketManager():
         if packet.requires_ack:
             if packet.blocking:
                 # Put the packet right back into its place to prevent sending
-                # other packets, then block
+                # other packets, then block that connection
                 self._safe_put(connection_id, (send_time, packet))
                 t = time.time() + self.ACK_TIME[packet.type]
-                while time.time() < t and packet.status != Packet.STATUS_ACK:
-                    time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+                self.blocking_packets[connection_id] = (t, packet)
             else:
                 # non-blocking ack: add ack-check to queue
                 t = time.time() + self.ACK_TIME[packet.type]
@@ -443,7 +451,13 @@ class SocketManager():
                 pong_conn_id = packet.get_receiver_connection_id()
                 if self.last_received_heartbeat[pong_conn_id] is not None:
                     self.pongs_without_heartbeat[pong_conn_id] += 1
+            elif packet_id in self.processed_packets:
+                # We don't want to re-process a packet that has already
+                # been recieved, but we do need to tell the sender it is ack'd
+                # re-acknowledge the packet was recieved and already processed
+                self._send_ack(packet)
             else:
+
                 # Remaining packet types need to be acknowledged
                 shared_utils.print_and_log(
                     logging.DEBUG,
@@ -457,6 +471,10 @@ class SocketManager():
 
                 # acknowledge the packet was recieved and processed
                 self._send_ack(packet)
+
+                # Note to self that this packet has already been processed,
+                # and shouldn't be processed again in the future
+                self.processed_packets.add(packet_id)
 
         def run_socket(*args):
             url_base_name = self.server_url.split('https://')[1]
@@ -475,8 +493,8 @@ class SocketManager():
                     )
                     self.ws.on_open = on_socket_open
                     self.ws.run_forever(
-                        ping_interval=8 * self.HEARTBEAT_RATE,
-                        ping_timeout=8 * self.HEARTBEAT_RATE * 0.9)
+                        ping_interval=8 * self.HEARTBEAT_RATE
+                    )
                     self._ensure_closed()
                 except Exception as e:
                     shared_utils.print_and_log(
@@ -513,10 +531,23 @@ class SocketManager():
         self.send_thread.daemon = True
         self.send_thread.start()
 
+    def packet_should_block(self, packet_item):
+        """Helper function to determine if a packet is still blocking"""
+        t, packet = packet_item
+        if time.time() > t:
+            return False  # Exceeded blocking time
+        if packet.status in [Packet.STATUS_ACK, Packet.STATUS_FAIL]:
+            return False  # No longer in blocking status
+        return True
+
     def channel_thread(self):
         """Handler thread for monitoring all channels"""
         # while the thread is still alive
         while not self.is_shutdown:
+            if self.ws is None:
+                # Waiting for websocket to come back alive
+                time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+                continue
             for connection_id in self.run.copy():
                 if not self.run[connection_id]:
                     continue
@@ -540,6 +571,12 @@ class SocketManager():
                     if connection_id not in self.queues:
                         self.run[connection_id] = False
                         break
+                    if self.blocking_packets.get(connection_id) is not None:
+                        packet_item = self.blocking_packets[connection_id]
+                        if not self.packet_should_block(packet_item):
+                            self.blocking_packets[connection_id] = None
+                        else:
+                            continue
                     try:
                         # Get first item in the queue, check if can send it yet
                         item = self.queues[connection_id].get(block=False)

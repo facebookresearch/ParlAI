@@ -6,11 +6,8 @@
 
 
 """
-**BETA**: This module is in beta. Feedback is most welcome, and the API may change
-underneath you.
-
-Generic Pytorch-based Generator agent. Implements quite a bit of boilerplate,
-including Beam search.
+Generic PyTorch-based Generator agent. Implements quite a bit of boilerplate,
+including forced-decoding loss and beam search.
 
 Contains the following utilities:
 
@@ -29,8 +26,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from parlai.core.torch_agent import TorchAgent, Output
-from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs, warn_once
+from parlai.core.torch_agent import TorchAgent, Batch, Output
+from parlai.core.utils import padded_tensor, round_sigfigs, warn_once, neginf
 from parlai.core.thread_utils import SharedTable
 from parlai.core.distributed_utils import is_distributed
 
@@ -39,9 +36,14 @@ class TorchGeneratorModel(nn.Module):
     """
     This Interface expects you to implement model with the following reqs:
 
-    :field model.encoder: takes input returns tuple (enc_out, enc_hidden, attn_mask)
-    :field model.decoder: takes decoder params and returns decoder outputs after attn
-    :field model.output: takes decoder outputs and returns distr over dictionary
+    :attribute model.encoder:
+        takes input returns tuple (enc_out, enc_hidden, attn_mask)
+
+    :attribute model.decoder:
+        takes decoder params and returns decoder outputs after attn
+
+    :attribute model.output:
+        takes decoder outputs and returns distr over dictionary
     """
     def __init__(
         self,
@@ -65,14 +67,24 @@ class TorchGeneratorModel(nn.Module):
     def decode_greedy(self, encoder_states, bsz, maxlen):
         """Greedy search
 
-        :param int bsz: Batch size. Because encoder_states is model-specific, it
-            cannot infer this automatically.
-        :param encoder_states: Output of the encoder model.
-        :type encoder_states: model specific
-        :param int maxlen: Maximum decoding length
+        :param int bsz:
+            Batch size. Because encoder_states is model-specific, it cannot
+            infer this automatically.
 
-        :return: pair (logits, choices) of the greedy decode
-        :rtype: (FloatTensor[bsz, maxlen, vocab], LongTensor[bsz, maxlen])
+        :param encoder_states:
+            Output of the encoder model.
+
+        :type encoder_states:
+            Model specific
+
+        :param int maxlen:
+            Maximum decoding length
+
+        :return:
+            pair (logits, choices) of the greedy decode
+
+        :rtype:
+            (FloatTensor[bsz, maxlen, vocab], LongTensor[bsz, maxlen])
         """
         xs = self._starts(bsz)
         incr_state = None
@@ -93,17 +105,27 @@ class TorchGeneratorModel(nn.Module):
         return logits, xs
 
     def decode_forced(self, encoder_states, ys):
-        """Decode with a fixed, true sequence, computing loss. Useful for
+        """
+        Decode with a fixed, true sequence, computing loss. Useful for
         training, or ranking fixed candidates.
 
-        :param ys: the prediction targets. Contains both
-            the start and end tokens.
-        :type ys: LongTensor[bsz, time]
-        :param encoder_states: Output of the encoder. Model specific types.
-        :type encoder_states: model specific
+        :param ys:
+            the prediction targets. Contains both the start and end tokens.
 
-        :return: pair (logits, choices) containing the logits and MLE predictions
-        :rtype: (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys])
+        :type ys:
+            LongTensor[bsz, time]
+
+        :param encoder_states:
+            Output of the encoder. Model specific types.
+
+        :type encoder_states:
+            model specific
+
+        :return:
+            pair (logits, choices) containing the logits and MLE predictions
+
+        :rtype:
+            (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys])
         """
         bsz = ys.size(0)
         seqlen = ys.size(1)
@@ -115,7 +137,8 @@ class TorchGeneratorModel(nn.Module):
         return logits, preds
 
     def reorder_encoder_states(self, encoder_states, indices):
-        """Reorder encoder states according to a new set of indices.
+        """
+        Reorder encoder states according to a new set of indices.
 
         This is an abstract method, and *must* be implemented by the user.
 
@@ -140,22 +163,32 @@ class TorchGeneratorModel(nn.Module):
                       [0.3]
                       [0.3]]
 
-        :param encoder_states: output from encoder. type is model specific.
-        :type encoder_states: model specific
-        :param indices: the indices to select over. The user must support
-            non-tensor inputs.
+        :param encoder_states:
+            output from encoder. type is model specific.
+
+        :type encoder_states:
+            model specific
+
+        :param indices:
+            the indices to select over. The user must support non-tensor
+            inputs.
+
         :type indices: list[int]
 
-        :return: The re-ordered encoder states. It should be of the same type as
+        :return:
+            The re-ordered encoder states. It should be of the same type as
             encoder states, and it must be a valid input to the decoder.
-        :rtype: model specific
+
+        :rtype:
+            model specific
         """
         raise NotImplementedError(
             "reorder_encoder_states must be implemented by the model"
         )
 
     def reorder_decoder_incremental_state(self, incremental_state, inds):
-        """Reorder incremental state for the decoder.
+        """
+        Reorder incremental state for the decoder.
 
         Used to expand selected beams in beam_search. Unlike reorder_encoder_states,
         implementing this method is optional. However, without incremental decoding,
@@ -165,37 +198,63 @@ class TorchGeneratorModel(nn.Module):
         In order to fall back to non-incremental decoding, just return None from this
         method.
 
-        :param incremental_state: second output of model.decoder
-        :type incremental_state: model specific
-        :param inds: indices to select and reorder over.
-        :type inds: LongTensor[n]
+        :param incremental_state:
+            second output of model.decoder
 
-        :return: The re-ordered decoder incremental states. It should be the same
-            type as incremental_state, and usable as an input to the decoder. This
-            method should return None if the model does not support incremental
-            decoding.
-        :rtype: model specific
+        :type incremental_state:
+            model specific
+
+        :param inds:
+            indices to select and reorder over.
+
+        :type inds:
+            LongTensor[n]
+
+        :return:
+            The re-ordered decoder incremental states. It should be the same
+            type as incremental_state, and usable as an input to the decoder.
+            This method should return None if the model does not support
+            incremental decoding.
+
+        :rtype:
+            model specific
         """
         raise NotImplementedError(
             "reorder_decoder_incremental_state must be implemented by model"
         )
 
-    def forward(self, xs, ys=None, cand_params=None, prev_enc=None, maxlen=None):
+    def forward(self, *xs, ys=None, cand_params=None, prev_enc=None, maxlen=None,
+                bsz=None):
         """Get output predictions from the model.
 
-        :param xs: input to the encoder
-        :type xs: LongTensor[bsz, seqlen]
-        :param ys: Expected output from the decoder. Used
-            for teacher forcing to calculate loss.
-        :type ys: LongTensor[bsz, outlen]
-        :param prev_enc: if you know you'll pass in the same xs multiple times,
-            you can pass in the encoder output from the last forward pass to skip
-            recalcuating the same encoder output.
-        :param maxlen: max number of tokens to decode. if not set, will use the
-            length of the longest label this model has seen. ignored when ys is not
-            None.
+        :param xs:
+            input to the encoder
 
-        :return: (scores, candidate_scores, encoder_states) tuple
+        :type xs:
+            LongTensor[bsz, seqlen]
+
+        :param ys:
+            Expected output from the decoder. Used
+            for teacher forcing to calculate loss.
+
+        :type ys:
+            LongTensor[bsz, outlen]
+
+        :param prev_enc:
+            if you know you'll pass in the same xs multiple times, you can pass
+            in the encoder output from the last forward pass to skip
+            recalcuating the same encoder output.
+
+        :param maxlen:
+            max number of tokens to decode. if not set, will use the length of
+            the longest label this model has seen. ignored when ys is not None.
+
+        :param bsz:
+            if ys is not provided, then you must specify the bsz for greedy
+            decoding.
+
+        :return:
+            (scores, candidate_scores, encoder_states) tuple
 
             - scores contains the model's predicted token scores.
               (FloatTensor[bsz, seqlen, num_features])
@@ -211,13 +270,12 @@ class TorchGeneratorModel(nn.Module):
             self.longest_label = max(self.longest_label, ys.size(1))
 
         # use cached encoding if available
-        encoder_states = prev_enc if prev_enc is not None else self.encoder(xs)
+        encoder_states = prev_enc if prev_enc is not None else self.encoder(*xs)
 
         if ys is not None:
             # use teacher forcing
             scores, preds = self.decode_forced(encoder_states, ys)
         else:
-            bsz = xs.size(0)
             scores, preds = self.decode_greedy(
                 encoder_states,
                 bsz,
@@ -228,7 +286,8 @@ class TorchGeneratorModel(nn.Module):
 
 
 class TorchGeneratorAgent(TorchAgent):
-    """Abstract Generator agent. Only meant to be extended.
+    """
+    Abstract Generator agent. Only meant to be extended.
 
     TorchGeneratorAgent aims to handle much of the bookkeeping and
     infrastructure work for any generative models, like seq2seq or transformer.
@@ -238,8 +297,6 @@ class TorchGeneratorAgent(TorchAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         agent = argparser.add_argument_group('Torch Generator Agent')
-        agent.add_argument('--init-model', type=str, default=None,
-                           help='load dict/model/opts from this path')
         agent.add_argument('--beam-size', type=int, default=1,
                            help='Beam size, if 1 then greedy search')
         agent.add_argument('--beam-dot-log', type='bool', default=False, hidden=True,
@@ -260,23 +317,7 @@ class TorchGeneratorAgent(TorchAgent):
         return agent
 
     def __init__(self, opt, shared=None):
-        init_model = None
-        is_finetune = False
-        if not shared:  # only do this on first setup
-            # first check load path in case we need to override paths
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
-                # check first for 'init_model' for loading model from file
-                init_model = opt['init_model']
-                is_finetune = True
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
-                # next check for 'model_file', this would override init_model
-                init_model = opt['model_file']
-                is_finetune = False
-
-            if init_model is not None:
-                # if we are loading a model, should load its dict too
-                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
-                    opt['dict_file'] = init_model + '.dict'
+        init_model, is_finetune = self._get_init_model(opt, shared)
         super().__init__(opt, shared)
 
         self.beam_dot_log = opt.get('beam_dot_log', False)
@@ -293,7 +334,10 @@ class TorchGeneratorAgent(TorchAgent):
             self.metrics = shared['metrics']
             states = shared.get('states', {})
         else:
+            # Note: we cannot change the type of metrics ahead of time, so you
+            # should correctly initialize to floats or ints here
             self.metrics = {
+                'nll_loss': 0.0,
                 'loss': 0.0,
                 'num_tokens': 0,
                 'correct_tokens': 0,
@@ -312,6 +356,8 @@ class TorchGeneratorAgent(TorchAgent):
 
             self.build_criterion()
             self.build_model()
+            if self.fp16:
+                self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
@@ -321,14 +367,12 @@ class TorchGeneratorAgent(TorchAgent):
             else:
                 states = {}
 
-        if shared is None and is_distributed():
-            self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model,
-                device_ids=[self.opt['gpu']],
-                broadcast_buffers=False,
-            )
-
-        if 'train' in opt.get('datatype', ''):
+        if (
+            # only build an optimizer if we're training
+            'train' in opt.get('datatype', '') and
+            # and this is the main model, or on every fork if doing hogwild
+            (shared is None or self.opt.get('numthreads', 1) > 1)
+        ):
             # do this regardless of share state, but don't
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
@@ -336,6 +380,13 @@ class TorchGeneratorAgent(TorchAgent):
                 saved_optim_type=states.get('optimizer_type')
             )
             self.build_lr_scheduler(states, hard_reset=is_finetune)
+
+        if shared is None and is_distributed():
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model,
+                device_ids=[self.opt['gpu']],
+                broadcast_buffers=False,
+            )
 
         self.reset()
 
@@ -352,18 +403,23 @@ class TorchGeneratorAgent(TorchAgent):
         return self.dict.vec2txt(new_vec)
 
     def build_model(self):
-        """Construct the model. The model should be set to self.model, and support
-        the TorchGeneratorModel interface."""
+        """
+        Construct the model.
+
+        The model should be set to self.model, and support
+        the TorchGeneratorModel interface.
+        """
         raise NotImplementedError(
             "AbstractClass: build_model must be implemented by the user."
         )
 
     def build_criterion(self):
-        """Constructs the loss function. By default torch.nn.CrossEntropyLoss.
+        """
+        Constructs the loss function. By default torch.nn.CrossEntropyLoss.
         The criterion function should be set to self.criterion.
 
         If overridden, this model should (1) handle calling cuda and (2)
-            produce a sum that can be used for a per-token loss.
+        produce a sum that can be used for a per-token loss.
         """
         self.criterion = nn.CrossEntropyLoss(
             ignore_index=self.NULL_IDX, reduction='sum'
@@ -371,17 +427,22 @@ class TorchGeneratorAgent(TorchAgent):
         if self.use_cuda:
             self.criterion.cuda()
 
+    def _dummy_batch(self, batchsize, maxlen):
+        """
+        Creates a dummy batch. This is used to preinitialize the cuda buffer,
+        or otherwise force a null backward pass after an OOM.
+        """
+        return Batch(
+            text_vec=torch.ones(batchsize, maxlen).long().cuda(),
+            label_vec=torch.ones(batchsize, 2).long().cuda(),
+        )
+
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
         """Pre-initialize CUDA buffer by doing fake forward pass."""
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
-                dummy_xs = torch.ones(batchsize, maxlen).long().cuda()
-                dummy_ys = torch.ones(batchsize, 2).long().cuda()
-                scores, _, _ = self.model(dummy_xs, dummy_ys)
-                loss = self.criterion(
-                    scores.view(-1, scores.size(-1)), dummy_ys.view(-1)
-                )
-                loss.backward()
+                loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
+                self.backward(loss)
                 self.buffer_initialized = True
             except RuntimeError as e:
                 if 'out of memory' in str(e):
@@ -395,7 +456,10 @@ class TorchGeneratorAgent(TorchAgent):
     def reset_metrics(self):
         """Reset metrics for reporting loss and perplexity."""
         super().reset_metrics()
+        # Note: we cannot change the type of metrics ahead of time, so you
+        # should correctly initialize to floats or ints here
         self.metrics['loss'] = 0.0
+        self.metrics['nll_loss'] = 0.0
         self.metrics['num_tokens'] = 0
         self.metrics['correct_tokens'] = 0
 
@@ -419,7 +483,8 @@ class TorchGeneratorAgent(TorchAgent):
         return shared
 
     def report(self):
-        """Report loss and perplexity from model's perspective.
+        """
+        Report loss and perplexity from model's perspective.
 
         Note that this includes predicting __END__ and __UNK__ tokens and may
         differ from a truly independent measurement.
@@ -428,11 +493,12 @@ class TorchGeneratorAgent(TorchAgent):
         m = {}
         num_tok = self.metrics['num_tokens']
         if num_tok > 0:
+            m['loss'] = self.metrics['loss']
             if self.metrics['correct_tokens'] > 0:
                 m['token_acc'] = self.metrics['correct_tokens'] / num_tok
-            m['loss'] = self.metrics['loss'] / num_tok
+            m['nll_loss'] = self.metrics['nll_loss'] / num_tok
             try:
-                m['ppl'] = math.exp(m['loss'])
+                m['ppl'] = math.exp(m['nll_loss'])
             except OverflowError:
                 m['ppl'] = float('inf')
         if self.metrics['total_skipped_batches'] > 0:
@@ -441,6 +507,51 @@ class TorchGeneratorAgent(TorchAgent):
             # clean up: rounds to sigfigs and converts tensors to floats
             base[k] = round_sigfigs(v, 4)
         return base
+
+    def vectorize(self, *args, **kwargs):
+        """Override vectorize for generative models."""
+        kwargs['add_start'] = False  # model does this in module code
+        kwargs['add_end'] = True  # we do want this
+        return super().vectorize(*args, **kwargs)
+
+    def _model_input(self, batch):
+        """
+        Creates the input (x) value for the model. Must return a tuple.
+        This will be passed directly into the model via *args, i.e.,
+
+        >>> model(*_model_input(batch))
+
+        This is intentionally overridable so that richer models can pass the
+        additional inputs.
+        """
+        return (batch.text_vec, )
+
+    def compute_loss(self, batch, return_output=False):
+        """
+        Computes and returns the loss for the given batch. Easily overridable for
+        customized loss functions.
+
+        If return_output is True, the full output from the call to self.model()
+        is also returned, via a (loss, model_output) pair.
+        """
+        if batch.label_vec is None:
+            raise ValueError('Cannot compute loss without a label.')
+        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
+        scores, preds, *_ = model_output
+        score_view = scores.view(-1, scores.size(-1))
+        loss = self.criterion(score_view, batch.label_vec.view(-1))
+        # save loss to metrics
+        notnull = batch.label_vec.ne(self.NULL_IDX)
+        target_tokens = notnull.long().sum().item()
+        correct = ((batch.label_vec == preds) * notnull).sum().item()
+        self.metrics['correct_tokens'] += correct
+        self.metrics['nll_loss'] += loss.item()
+        self.metrics['num_tokens'] += target_tokens
+        loss /= target_tokens  # average loss per token
+        if return_output:
+            return (loss, model_output)
+        else:
+            return loss
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
@@ -451,18 +562,9 @@ class TorchGeneratorAgent(TorchAgent):
         self.zero_grad()
 
         try:
-            scores, preds, _ = self.model(batch.text_vec, batch.label_vec)
-            score_view = scores.view(-1, scores.size(-1))
-            loss = self.criterion(score_view, batch.label_vec.view(-1))
-            # save loss to metrics
-            notnull = batch.label_vec.ne(self.NULL_IDX)
-            target_tokens = notnull.long().sum().item()
-            correct = ((batch.label_vec == preds) * notnull).sum().item()
-            self.metrics['correct_tokens'] += correct
+            loss = self.compute_loss(batch)
             self.metrics['loss'] += loss.item()
-            self.metrics['num_tokens'] += target_tokens
-            loss /= target_tokens  # average loss per token
-            loss.backward()
+            self.backward(loss)
             self.update_params()
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)
@@ -495,15 +597,20 @@ class TorchGeneratorAgent(TorchAgent):
         self.model.eval()
         cand_scores = None
 
+        if batch.label_vec is not None:
+            # calculate loss on targets with teacher forcing
+            loss = self.compute_loss(batch)  # noqa: F841  we need the side effects
+            self.metrics['loss'] += loss.item()
+
+        preds = None
         if self.skip_generation:
             warn_once(
                 "--skip-generation does not produce accurate metrics beyond ppl",
                 RuntimeWarning
             )
-            logits, preds, _ = self.model(batch.text_vec, batch.label_vec)
         elif self.beam_size == 1:
             # greedy decode
-            logits, preds, _ = self.model(batch.text_vec)
+            _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz)
         elif self.beam_size > 1:
             out = self.beam_search(
                 self.model,
@@ -522,25 +629,12 @@ class TorchGeneratorAgent(TorchAgent):
             if self.beam_dot_log is True:
                 self._write_beam_dots(batch.text_vec, beams)
 
-        if batch.label_vec is not None:
-            # calculate loss on targets with teacher forcing
-            f_scores, f_preds, _ = self.model(batch.text_vec, batch.label_vec)
-            score_view = f_scores.view(-1, f_scores.size(-1))
-            loss = self.criterion(score_view, batch.label_vec.view(-1))
-            # save loss to metrics
-            notnull = batch.label_vec.ne(self.NULL_IDX)
-            target_tokens = notnull.long().sum().item()
-            correct = ((batch.label_vec == f_preds) * notnull).sum().item()
-            self.metrics['correct_tokens'] += correct
-            self.metrics['loss'] += loss.item()
-            self.metrics['num_tokens'] += target_tokens
-
         cand_choices = None
         # TODO: abstract out the scoring here
         if self.rank_candidates:
             # compute roughly ppl to rank candidates
             cand_choices = []
-            encoder_states = self.model.encoder(batch.text_vec)
+            encoder_states = self.model.encoder(*self._model_input(batch))
             for i in range(bsz):
                 num_cands = len(batch.candidate_vecs[i])
                 enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
@@ -560,29 +654,38 @@ class TorchGeneratorAgent(TorchAgent):
                 _, ordering = cand_scores.sort()
                 cand_choices.append([batch.candidates[i][o] for o in ordering])
 
-        text = [self._v2t(p) for p in preds]
+        text = [self._v2t(p) for p in preds] if preds is not None else None
         return Output(text, cand_choices)
 
     def beam_search(self, model, batch, beam_size, start=1, end=2,
                     pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0):
-        """Beam search given the model and Batch
-
+        """
+        Beam search given the model and Batch
 
         This function expects to be given a TorchGeneratorModel. Please refer to
         that interface for information.
 
-        :param TorchGeneratorModel model: Implements the above interface
-        :param Batch batch: Batch structure with input and labels
-        :param int beam_size: Size of each beam during the search
-        :param int start: start of sequence token
-        :param int end: end of sequence token
-        :param int pad: padding token
-        :param int min_length: minimum length of the decoded sequence
-        :param int min_n_best: minimum number of completed hypothesis generated
-            from each beam
-        :param int max_ts: the maximum length of the decoded sequence
+        :param TorchGeneratorModel model:
+            Implements the above interface
+        :param Batch batch:
+            Batch structure with input and labels
+        :param int beam_size:
+            Size of each beam during the search
+        :param int start:
+            start of sequence token
+        :param int end:
+            end of sequence token
+        :param int pad:
+            padding token
+        :param int min_length:
+            minimum length of the decoded sequence
+        :param int min_n_best:
+            minimum number of completed hypothesis generated from each beam
+        :param int max_ts:
+            the maximum length of the decoded sequence
 
-        :return: tuple (beam_pred_scores, n_best_pred_scores, beams)
+        :return:
+            tuple (beam_pred_scores, n_best_pred_scores, beams)
 
             - beam_preds_scores: list of (prediction, score) pairs for each sample in
               Batch
@@ -591,7 +694,7 @@ class TorchGeneratorAgent(TorchAgent):
             - beams :list of Beam instances defined in Beam class, can be used for any
               following postprocessing, e.g. dot logging.
         """
-        encoder_states = model.encoder(batch.text_vec)
+        encoder_states = model.encoder(*self._model_input(batch))
         dev = batch.text_vec.device
 
         bsz = len(batch.text_lengths)
@@ -657,13 +760,15 @@ class TorchGeneratorAgent(TorchAgent):
 
 
 class _mydefaultdict(defaultdict):
-    """Get function also uses default_factory for this defaultdict.
+    """
+    Get function also uses default_factory for this defaultdict.
 
     This makes dict.get() behave like dict[] if a default is not provided.
     """
 
     def get(self, key, default=None):
-        """Return value at key or default if key is not in dict.
+        """
+        Return value at key or default if key is not in dict.
 
         If a default is not provided, return the default factory value.
         """
@@ -672,7 +777,8 @@ class _mydefaultdict(defaultdict):
 
 
 class PerplexityEvaluatorAgent(TorchGeneratorAgent):
-    """Subclass for doing standardized perplexity evaluation.
+    """
+    Subclass for doing standardized perplexity evaluation.
 
     This is designed to be used in conjunction with the PerplexityWorld at
     parlai/scripts/eval_ppl.py. It uses the `next_word_probability` function
@@ -695,12 +801,15 @@ class PerplexityEvaluatorAgent(TorchGeneratorAgent):
         This probability is based on both nn input and partial true output.
         This is used to calculate the per-word perplexity.
 
-        :param observation: input observation dict
-        :param partial_out: -- list of previous "true" words
+        :param observation:
+            input observation dict
 
-        :return: a dict, where each key is a word and each value is a
-            probability score for that word.
-            Unset keys will use a probability of 1e-7.
+        :param partial_out:
+            list of previous "true" words
+
+        :return:
+            a dict, where each key is a word and each value is a probability
+            score for that word.  Unset keys will use a probability of 1e-7.
 
             e.g. {'text': 'Run test program.'}, ['hello'] => {'world': 1.0}
         """
@@ -736,16 +845,24 @@ class Beam(object):
 
     def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1,
                  eos_token=2, min_n_best=3, cuda='cpu', block_ngram=0):
-        """Instantiate Beam object.
+        """
+        Instantiate Beam object.
 
-        :param beam_size: number of hypothesis in the beam
-        :param min_length: minimum length of the predicted sequence
-        :param padding_token: Set to 0 as usual in ParlAI
-        :param bos_token: Set to 1 as usual in ParlAI
-        :param eos_token: Set to 2 as usual in ParlAI
-        :param min_n_best: Beam will not be done unless this amount of finished
-                           hypothesis (with EOS) is done
-        :param cuda: What device to use for computations
+        :param beam_size:
+            number of hypothesis in the beam
+        :param min_length:
+            minimum length of the predicted sequence
+        :param padding_token:
+            Set to 0 as usual in ParlAI
+        :param bos_token:
+            Set to 1 as usual in ParlAI
+        :param eos_token:
+            Set to 2 as usual in ParlAI
+        :param min_n_best:
+            Beam will not be done unless this amount of finished hypothesis
+            (with EOS) is done
+        :param cuda:
+            What device to use for computations
         """
         self.beam_size = beam_size
         self.min_length = min_length
@@ -794,7 +911,7 @@ class Beam(object):
         if current_length < self.min_length:
             # penalize all eos probs to make it decode longer
             for hyp_id in range(softmax_probs.size(0)):
-                softmax_probs[hyp_id][self.eos] = -NEAR_INF
+                softmax_probs[hyp_id][self.eos] = neginf(softmax_probs.dtype)
         if len(self.bookkeep) == 0:
             # the first step we take only the first hypo into account since all
             # hypos are the same initially
@@ -815,13 +932,13 @@ class Beam(object):
                     counted_ngrams = Counter(current_ngrams)
                     if any(v > 1 for k, v in counted_ngrams.items()):
                         # block this hypothesis hard
-                        beam_scores[i] = -NEAR_INF
+                        beam_scores[i] = neginf(softmax_probs.dtype)
 
                 #  if previous output hypo token had eos
                 # we penalize those word probs to never be chosen
                 if self.outputs[-1][i] == self.eos:
                     # beam_scores[i] is voc_size array for i-th hypo
-                    beam_scores[i] = -NEAR_INF
+                    beam_scores[i] = neginf(softmax_probs.dtype)
 
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
@@ -861,7 +978,8 @@ class Beam(object):
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
     def get_top_hyp(self):
-        """Get single best hypothesis.
+        """
+        Get single best hypothesis.
 
         :return: hypothesis sequence and the final score
         """
@@ -872,9 +990,14 @@ class Beam(object):
     def get_hyp_from_finished(self, hypothesis_tail):
         """Extract hypothesis ending with EOS at timestep with hyp_id.
 
-        :param timestep: timestep with range up to len(self.outputs)-1
-        :param hyp_id: id with range up to beam_size-1
-        :return: hypothesis sequence
+        :param timestep:
+            timestep with range up to len(self.outputs)-1
+
+        :param hyp_id:
+            id with range up to beam_size-1
+
+        :return:
+            hypothesis sequence
         """
         assert (self.outputs[hypothesis_tail.timestep]
                 [hypothesis_tail.hypid] == self.eos)
@@ -903,8 +1026,11 @@ class Beam(object):
     def get_rescored_finished(self, n_best=None):
         """Return finished hypotheses in rescored order.
 
-        :param n_best: how many n best hypothesis to return
-        :return: list with hypothesis
+        :param n_best:
+            how many n best hypothesis to return
+
+        :return:
+            list with hypothesis
         """
         rescored_finished = []
         for finished_item in self.finished:
@@ -925,11 +1051,10 @@ class Beam(object):
         return srted
 
     def check_finished(self):
-        """Check if self.finished is empty and add hyptail in that case.
+        """
+        Check if self.finished is empty and add hyptail in that case.
 
         This will be suboptimal hypothesis since the model did not get any EOS
-
-        :returns: None
         """
         if len(self.finished) == 0:
             # we change output because we want outputs to have eos
@@ -944,11 +1069,17 @@ class Beam(object):
             self.finished.append(hyptail)
 
     def get_beam_dot(self, dictionary=None, n_best=None):
-        """Create pydot graph representation of the beam.
+        """
+        Create pydot graph representation of the beam.
 
-        :param outputs: self.outputs from the beam
-        :param dictionary: tok 2 word dict to save words in the tree nodes
-        :returns: pydot graph
+        :param outputs:
+            self.outputs from the beam
+
+        :param dictionary:
+            tok 2 word dict to save words in the tree nodes
+
+        :returns:
+            pydot graph
         """
         try:
             import pydot

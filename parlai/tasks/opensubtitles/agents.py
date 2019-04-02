@@ -11,6 +11,8 @@ from .build_2018 import build as build_2018
 import copy
 import os
 
+SILENCE_TOKEN = '__SILENCE__'
+
 
 def _path(opt, version, use_history):
     # Build the data if it doesn't exist.
@@ -36,29 +38,55 @@ class HalfTeacher(FbDialogTeacher):
             opt['cands_datafile'] = opt['datafile']
         super().__init__(opt, shared)
 
+    def setup_data(self, path):
+        for entry, new in super().setup_data(path):
+            # check that the label is present, else skip this example
+            if entry[1]:
+                yield entry, new
 
-class FullTeacher(HalfTeacher):
+
+class FullTeacher(FbDialogTeacher):
     """This version of opensubtitles creates all possible dialog examples."""
+    def __init__(self, opt, shared=None, version='2018', use_history=True):
+        opt = copy.deepcopy(opt)
+        opt['datafile'] = _path(opt, version, use_history)
+        if not opt['datatype'].startswith('train'):
+            opt['cands_datafile'] = opt['datafile']
+        super().__init__(opt, shared)
+
     def setup_data(self, path):
         def rebuild(entries):
-            return [
-                (entries[i][1][0], [entries[i + 1][0]])
+            if len(entries) == 0:
+                return []
+            # flip the first example
+            flipped = [(SILENCE_TOKEN, [entries[0][0]], 0)]
+            # flip the rest
+            flipped += [
+                (entries[i][1][0], [entries[i + 1][0]], 0)
                 for i in range(len(entries) - 1)
             ]
+            return flipped
 
         # this shows conversations in both directions
+        # we skip examples for which no label is present
         alternate = []
         for entry, new in super().setup_data(path):
             if new:
                 for i, e in enumerate(rebuild(alternate)):
-                    yield e, i == 0
+                    if e[1]:
+                        yield e, i == 0
                 alternate.clear()
             else:
                 alternate.append(entry)
-            yield entry, new
+            if entry[1]:
+                yield entry, new
+
+        # flip the last episode
         if alternate:
             for i, e in enumerate(rebuild(alternate)):
-                yield e, i == 0
+                if e[1]:
+                    yield e, i == 0
+            alternate.clear()
 
 
 class Task100kTeacher(HalfTeacher):

@@ -32,7 +32,6 @@ class LanguageModelAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        argparser.set_defaults(batch_sort=False)
         agent = argparser.add_argument_group('Language Model Arguments')
         agent.add_argument('--init-model', type=str, default=None,
                            help='load dict/features/weights/opts from this file')

@@ -11,7 +11,6 @@ import os
 import copy
 import json
 
-
 MULTINLI = 'MultiNLI'
 MULTINLI_VERSION = '1.0'
 MULTINLI_PREFIX = 'multinli_'
@@ -42,7 +41,6 @@ def _path(opt):
                              MULTINLI_PREFIX + MULTINLI_VERSION,
                              MULTINLI_PREFIX + MULTINLI_VERSION +
                              '_' + suffix + '.jsonl')
-
     return data_path
 
 
@@ -56,7 +54,7 @@ def setup_data(path):
             hypo = MULTINLI_HYPO_PREFIX + pair[MULTINLI_HYPO_KEY]
             answer = [pair[MULTINLI_ANSWER_KEY]]
 
-            if answer == '-':
+            if answer == ['-']:
                 continue
 
             question = premise + '\n' + hypo
@@ -70,7 +68,6 @@ class DefaultTeacher(DialogTeacher):
         data_path = _path(opt)
         opt['datafile'] = data_path
         self.id = 'MultiNLI'
-
         super().__init__(opt, shared)
 
     def setup_data(self, path):

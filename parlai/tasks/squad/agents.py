@@ -239,6 +239,7 @@ class SentenceTeacher(IndexTeacher):
     Otherwise, the 'text' field contains <context>\n<question> and there is
     no separate context field.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.sent_tok = get_sentence_tokenizer()
@@ -251,7 +252,7 @@ class SentenceTeacher(IndexTeacher):
         )
         agent.add_argument('--include-context', type='bool', default=False,
                            help='include context within text instead of as a '
-                           'separate field')
+                                'separate field')
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
@@ -318,6 +319,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
     Otherwise, the 'text' field contains <context>\n<question> and there is
     no separate context field.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.sent_tok = get_sentence_tokenizer()
@@ -330,7 +332,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
         )
         agent.add_argument('--include-context', type='bool', default=False,
                            help='include context within text instead of as a '
-                           'separate field')
+                                'separate field')
 
     def get(self, episode_idx, entry_idx=None):
         action = {}

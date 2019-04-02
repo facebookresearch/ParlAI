@@ -1,0 +1,50 @@
+{
+  "extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
+  "plugins": ["ignore-generated-and-nolint"],
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "commonjs": true
+  },
+  "rules": {
+    "react/prop-types": 0,
+    "no-extra-boolean-cast": 0,
+    "react/no-unescaped-entities": 0,
+    "no-console": 0,
+    "no-unused-vars": [
+      0,
+      { "ignoreRestSiblings": true, "argsIgnorePattern": "^_" }
+    ],
+    "max-len": [
+      "error",
+      {
+        "code": 80,
+        "ignoreUrls": true,
+        "ignoreStrings": true
+      }
+    ]
+  },
+  "settings": {
+    "react": {
+      "version": "16.5.2"
+    }
+  },
+  "globals": {
+    "verbosity": "readonly",
+
+    "process": "readonly",
+    "__dirname": "readonly",
+
+    "URL_DESTINATION": "readonly",
+    "IS_COVER_PAGE": "readonly",
+    "WORKER_ID": "readonly",
+    "ASSIGNMENT_ID": "readonly",
+    "HIT_ID": "readonly",
+    "TASK_GROUP_ID": "readonly",
+    "DISPLAY_FEEDBACK": "readonly",
+    "FRAME_HEIGHT": "readonly",
+    "BLOCK_MOBILE": "readonly",
+    "CHAT_TITLE": "readonly"
+  }
+}

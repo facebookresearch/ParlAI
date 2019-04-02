@@ -43,6 +43,7 @@ from parlai.scripts.build_pytorch_data import get_pyt_dict_file
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Train a model')
+    parser.add_pytorch_datateacher_args()
     train = parser.add_argument_group('Training Loop Arguments')
     train.add_argument('-et', '--evaltask',
                        help=('task to use for valid/test (defaults to the '
@@ -50,7 +51,8 @@ def setup_args(parser=None):
     train.add_argument('--eval-batchsize', type=int,
                        hidden=True,
                        help='Eval time batch size (defaults to same as -bs)')
-    train.add_argument('--display-examples', type='bool', default=False)
+    train.add_argument('--display-examples', type='bool', default=False,
+                       hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time',
                        type=float, default=-1)
@@ -58,9 +60,8 @@ def setup_args(parser=None):
                        type=float, default=2)
     train.add_argument('-vtim', '--validation-every-n-secs',
                        type=float, default=-1,
-                       help='Validate every n seconds. Whenever the the best '
-                            'validation metric is found, saves the model to '
-                            'the model_file path if set.')
+                       help='Validate every n seconds. Saves model to model_file '
+                            '(if set) whenever best val metric is found')
     train.add_argument('-stim', '--save-every-n-secs',
                        type=float, default=-1,
                        help='Saves the model to model_file.checkpoint after '
@@ -71,9 +72,8 @@ def setup_args(parser=None):
                             'every validation (default %(default)s).')
     train.add_argument('-veps', '--validation-every-n-epochs',
                        type=float, default=-1,
-                       help='Validate every n epochs. Whenever the the best '
-                            'validation metric is found, saves the model to '
-                            'the model_file path if set.')
+                       help='Validate every n epochs. Saves model to model_file '
+                            '(if set) whenever best val metric is found')
     train.add_argument('-vme', '--validation-max-exs',
                        type=int, default=-1,
                        hidden=True,
@@ -209,6 +209,13 @@ class TrainLoop():
             opt['init_model'] = opt['model_file'] + '.checkpoint'
             trainstats_suffix = '.checkpoint.trainstats'
         # Possibly build a dictionary (not all models do this).
+        if (
+            opt['dict_build_first'] and
+            not (opt.get('dict_file') or opt.get('model_file'))
+        ):
+            raise RuntimeError('WARNING: For train_model, please specify either a '
+                               'model_file or dict_file.'
+                               )
         if opt['dict_build_first'] and 'dict_file' in opt:
             # If data built via pytorch data teacher, we need to load prebuilt dict
             if opt.get('pytorch_teacher_task'):
@@ -252,6 +259,7 @@ class TrainLoop():
 
         self.last_valid_epoch = 0
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
+        self.valid_reports = []
         self.best_valid = None
         if opt.get('model_file') and os.path.isfile(opt['model_file'] + '.best_valid'):
             with open(opt['model_file'] + ".best_valid", 'r') as f:
@@ -276,6 +284,7 @@ class TrainLoop():
                 self._preempted_epochs = obj.get('total_epochs', 0)
                 self.train_time.total = obj.get('train_time', 0)
                 self.impatience = obj.get('impatience', 0)
+                self.valid_reports = obj.get('valid_reports', [])
 
         if opt['tensorboard_log'] is True:
             self.writer = TensorboardLogger(opt)
@@ -313,6 +322,7 @@ class TrainLoop():
                     num_workers() * self.world.get_total_epochs()
                 ),
                 'impatience': self.impatience,
+                'valid_reports': self.valid_reports
             }, f)
 
     def validate(self):
@@ -326,7 +336,9 @@ class TrainLoop():
         valid_report = sync_object(run_eval(
             self.valid_world, opt, 'valid', opt['validation_max_exs'],
         ))
-
+        v = valid_report.copy()
+        v['train_time'] = self.train_time.time()
+        self.valid_reports.append(v)
         # logging
         if opt['tensorboard_log'] is True and is_primary_worker():
             self.writer.add_metrics('valid', int(self.train_time.time()), valid_report)

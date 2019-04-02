@@ -46,6 +46,7 @@ import math
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Evaluate perplexity')
+    parser.add_pytorch_datateacher_args()
     parser.set_defaults(
         datatype='valid',
     )

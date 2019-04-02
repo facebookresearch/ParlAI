@@ -302,12 +302,14 @@ class RunHandler(BaseHandler):
         processed_assignments = merge_assignments_with_pairings(
             assignments, pairings, 'task {}'.format(task_target))
 
+        workers = set()
         # get feedback data and put into assignments if present
         for assignment in processed_assignments:
             assignment['received_feedback'] = None
             run_id = assignment['run_id']
             conversation_id = assignment['conversation_id']
             worker_id = assignment['worker_id']
+            workers.add(worker_id)
             if conversation_id is not None:
                 task_data = MTurkDataHandler.get_conversation_data(
                     run_id, conversation_id, worker_id,
@@ -316,11 +318,17 @@ class RunHandler(BaseHandler):
                     assignment['received_feedback'] = \
                         task_data['data'].get('received_feedback')
 
+        worker_data = {}
+        for worker in workers:
+            worker_data[worker] = \
+                row_to_dict(self.data_handler.get_worker_data(worker))
+
         run_details = row_to_dict(self.data_handler.get_run_data(task_target))
         # TODO implement run status determination
         run_details['run_status'] = 'unimplemented'
         data = {
             'run_details': run_details,
+            'worker_details': worker_data,
             'assignments': processed_assignments,
             'hits': processed_hits,
         }

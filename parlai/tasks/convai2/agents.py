@@ -33,6 +33,18 @@ def _path(opt, persona, use_cands):
     return os.path.join(opt['datapath'], 'ConvAI2', dt + cands + '.txt')
 
 
+class BothTeacher(FbDialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        try:
+            cands = opt['task'].split(":")[2]
+            use_cands = False if cands == 'no_cands' else True
+        except Exception:
+            use_cands = True
+        opt['datafile'] = _path(opt, 'both_original', use_cands)
+        super().__init__(opt, shared)
+
+
 class NoneTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
@@ -55,6 +67,21 @@ class SelfOriginalTeacher(FbDialogTeacher):
             use_cands = True
         opt['datafile'] = _path(opt, 'self_original', use_cands)
         super().__init__(opt, shared)
+
+
+class LimitedSelfOriginalTeacher(SelfOriginalTeacher):
+    """
+    SelfOriginal teacher limited to the 20 first dialogs.
+
+    SelfOriginal teacher limited to the 20 first dialogs ( 100 examples)
+    Can be used for debug or testing.
+    """
+
+    def num_episodes(self):
+        return 20
+
+    def num_examples(self):
+        return 100
 
 
 class SelfTeacher(SelfOriginalTeacher):

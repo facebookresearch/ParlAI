@@ -4,70 +4,80 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-import torch
+from parlai.core.utils import _ellipse, neginf, fp16_optimizer_wrapper
+
 try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig
     from pytorch_pretrained_bert import BertModel  # NOQA
 except ImportError:
-    raise ImportError(("BERT rankers needs pytorch-pretrained-BERT installed. \n "
-                       "pip install pytorch-pretrained-bert"))
-from parlai.core.utils import _ellipse
+    raise ImportError('This model requires that pytorch-pretrained-bert is '
+                      'installed. Install with:\n '
+                      '`pip install pytorchr-pretrained-bert`.')
+
+
+import torch
 from torch.optim import Optimizer
 from torch.optim.optimizer import required
 from torch.nn.utils import clip_grad_norm_
+
+
+MODEL_PATH = 'bert-base-uncased.tar.gz'
+VOCAB_PATH = 'bert-base-uncased-vocab.txt'
 
 
 def add_common_args(parser):
     """Add command line arguments for this agent."""
     TorchRankerAgent.add_cmdline_args(parser)
     parser = parser.add_argument_group('Bert Ranker Arguments')
-    parser.add_argument('--pretrained-bert-path', type=str, default=None,
-                        required="true",
-                        help="path to the tgz of the pretrained model.\n"
-                             "See: https://github.com/huggingface/"
-                             "pytorch-pretrained-BERT")
-    parser.add_argument('--bert-vocabulary-path', type=str, default=None,
-                        required="true",
-                        help="path to the vocabulary file\n"
-                             "See: https://github.com/huggingface/"
-                             "pytorch-pretrained-BERT")
-    parser.add_argument(
-        '--add-transformer-layer',
-        type="bool",
-        default=False,
-        help="Also add a transformer layer on top of Bert")
+    parser.add_argument('--add-transformer-layer', type='bool', default=False,
+                        help='Also add a transformer layer on top of Bert')
     parser.add_argument('--pull-from-layer', type=int, default=-1,
-                        help="Which layer of Bert do we use? Default=-1=last one.")
+                        help='Which layer of Bert do we use? Default=-1=last one.')
     parser.add_argument('--out-dim', type=int, default=768,
-                        help="For biencoder, output dimension")
+                        help='For biencoder, output dimension')
     parser.add_argument('--topn', type=int, default=10,
-                        help="For the biencoder: select how many elements to return")
+                        help='For the biencoder: select how many elements to return')
     parser.add_argument('--data-parallel', type='bool', default=False,
                         help='use model in data parallel, requires '
                         'multiple gpus. NOTE This is incompatible'
                         ' with distributed training')
-    parser.add_argument(
-        '--type-optimization',
-        type=str,
-        default="additional_layers",
-        choices=[
-            "additional_layers",
-            "top_layer",
-            "top4_layers",
-            "all_encoder_layers",
-            "all"],
-        help="Which part of the encoders do we optimize. (Default: the top one.)")
+    parser.add_argument('--type-optimization', type=str,
+                        default='all_encoder_layers',
+                        choices=[
+                            'additional_layers',
+                            'top_layer',
+                            'top4_layers',
+                            'all_encoder_layers',
+                            'all'],
+                        help='Which part of the encoders do we optimize. '
+                             '(Default: all_encoder_layers.)')
+    parser.add_argument('--bert-aggregation', type=str,
+                        default='first',
+                        choices=[
+                            'first',
+                            'max',
+                            'mean'],
+                        help='How do we transform a list of output into one')
+    parser.set_defaults(
+        label_truncate=300,
+        text_truncate=300,
+        learningrate=0.00005,
+        eval_candidates='inline',
+        candidates='batch',
+        dict_maxexs=0,  # skip building dictionary
+    )
 
 
 class BertWrapper(torch.nn.Module):
-    """
-        Adds a optional transformer layer and a linear layer on top of Bert
+    """ Adds a optional transformer layer and a linear layer on top of BERT.
     """
 
     def __init__(self, bert_model, output_dim,
-                 add_transformer_layer=False, layer_pulled=-1):
+                 add_transformer_layer=False, layer_pulled=-1,
+                 aggregation="first"):
         super(BertWrapper, self).__init__()
         self.layer_pulled = layer_pulled
+        self.aggregation = aggregation
         self.add_transformer_layer = add_transformer_layer
         # deduce bert output dim from the size of embeddings
         bert_output_dim = bert_model.embeddings.word_embeddings.weight.size(1)
@@ -75,7 +85,7 @@ class BertWrapper(torch.nn.Module):
         if add_transformer_layer:
             config_for_one_layer = BertConfig(
                 0, hidden_size=bert_output_dim, num_attention_heads=int(
-                    bert_output_dim / 64), intermediate_size=3072, hidden_act="gelu")
+                    bert_output_dim / 64), intermediate_size=3072, hidden_act='gelu')
             self.additional_transformer_layer = BertLayer(config_for_one_layer)
         self.additional_linear_layer = torch.nn.Linear(bert_output_dim, output_dim)
         self.bert_model = bert_model
@@ -85,17 +95,38 @@ class BertWrapper(torch.nn.Module):
             token_ids, segment_ids, attention_mask)
         # output_bert is a list of 12 (for bert base) layers.
         layer_of_interest = output_bert[self.layer_pulled]
+        dtype = next(self.parameters()).dtype
         if self.add_transformer_layer:
             # Follow up by yet another transformer layer
             extended_attention_mask = attention_mask.unsqueeze(1).unsqueeze(2)
-            extended_attention_mask = extended_attention_mask.to(
-                dtype=next(self.parameters()).dtype)  # fp16 compatibility
-            extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
-            embeddings = self.additional_transformer_layer(
-                layer_of_interest, extended_attention_mask)[:, 0, :]
+            extended_attention_mask = (
+                (~extended_attention_mask).to(dtype) * neginf(dtype)
+            )
+            embedding_layer = self.additional_transformer_layer(
+                layer_of_interest, extended_attention_mask)
         else:
-            embeddings = layer_of_interest[:, 0, :]
+            embedding_layer = layer_of_interest
+
+        if self.aggregation == "mean":
+            #  consider the average of all the output except CLS.
+            # obviously ignores masked elements
+            outputs_of_interest = embedding_layer[:, 1:, :]
+            mask = attention_mask[:, 1:].type_as(embedding_layer).unsqueeze(2)
+            sumed_embeddings = torch.sum(outputs_of_interest * mask, dim=1)
+            nb_elems = torch.sum(attention_mask[:, 1:].type(dtype), dim=1).unsqueeze(1)
+            embeddings = sumed_embeddings / nb_elems
+        elif self.aggregation == "max":
+            #  consider the max of all the output except CLS
+            outputs_of_interest = embedding_layer[:, 1:, :]
+            mask = (~attention_mask[:, 1:]).type(dtype).unsqueeze(2) * neginf(dtype)
+            embeddings, _ = torch.max(outputs_of_interest + mask, dim=1)
+        else:
+            # easiest, we consider the output of "CLS" as the embedding
+            embeddings = embedding_layer[:, 0, :]
+
+        # We need this in case of dimensionality reduction
         result = self.additional_linear_layer(embeddings)
+
         # Sort of hack to make it work with distributed: this way the pooler layer
         # is used for grad computation, even though it does not change anything...
         # in practice, it just adds a very (768*768) x (768*batchsize) matmul
@@ -104,7 +135,7 @@ class BertWrapper(torch.nn.Module):
 
 
 def surround(idx_vector, start_idx, end_idx):
-    """ Surround the vector by start_idx and end_idx
+    """ Surround the vector by start_idx and end_idx.
     """
     start_tensor = idx_vector.new_tensor([start_idx])
     end_tensor = idx_vector.new_tensor([end_idx])
@@ -112,31 +143,31 @@ def surround(idx_vector, start_idx, end_idx):
 
 
 patterns_optimizer = {
-    "additional_layers": ["additional"],
-    "top_layer": [
-        "additional",
-        "bert_model.encoder.layer.11."],
-    "top4_layers": [
-        "additional",
-        "bert_model.encoder.layer.11.",
-        "encoder.layer.10.",
-        "encoder.layer.9.",
-        "encoder.layer.8"],
-    "all_encoder_layers": [
-        "additional",
-        "bert_model.encoder.layer"],
-    "all": [
-        "additional",
-        "bert_model.encoder.layer",
-        "bert_model.embeddings"],
+    'additional_layers': ['additional'],
+    'top_layer': [
+        'additional',
+        'bert_model.encoder.layer.11.'],
+    'top4_layers': [
+        'additional',
+        'bert_model.encoder.layer.11.',
+        'encoder.layer.10.',
+        'encoder.layer.9.',
+        'encoder.layer.8'],
+    'all_encoder_layers': [
+        'additional',
+        'bert_model.encoder.layer'],
+    'all': [
+        'additional',
+        'bert_model.encoder.layer',
+        'bert_model.embeddings'],
 }
 
 
-def get_bert_optimizer(models, type_optimization, learning_rate):
+def get_bert_optimizer(models, type_optimization, learning_rate, fp16=False):
     """ Optimizes the network with AdamWithDecay
     """
     if type_optimization not in patterns_optimizer:
-        print("Error. Type optimizer must be one of %s" %
+        print('Error. Type optimizer must be one of %s' %
               (str(patterns_optimizer.keys())))
     parameters_with_decay = []
     parameters_with_decay_names = []
@@ -155,10 +186,10 @@ def get_bert_optimizer(models, type_optimization, learning_rate):
                     parameters_with_decay.append(p)
                     parameters_with_decay_names.append(n)
 
-    print("The following parameters will be optimized WITH decay:")
-    print(_ellipse(parameters_with_decay_names, 5, " , "))
-    print("The following parameters will be optimized WITHOUT decay:")
-    print(_ellipse(parameters_without_decay_names, 5, " , "))
+    print('The following parameters will be optimized WITH decay:')
+    print(_ellipse(parameters_with_decay_names, 5, ' , '))
+    print('The following parameters will be optimized WITHOUT decay:')
+    print(_ellipse(parameters_without_decay_names, 5, ' , '))
 
     optimizer_grouped_parameters = [
         {'params': parameters_with_decay, 'weight_decay': 0.01},
@@ -166,6 +197,10 @@ def get_bert_optimizer(models, type_optimization, learning_rate):
     ]
     optimizer = AdamWithDecay(optimizer_grouped_parameters,
                               lr=learning_rate)
+
+    if fp16:
+        optimizer = fp16_optimizer_wrapper(optimizer)
+
     return optimizer
 
 
@@ -188,15 +223,15 @@ class AdamWithDecay(Optimizer):
                  b1=0.9, b2=0.999, e=1e-6, weight_decay=0.01,
                  max_grad_norm=1.0):
         if lr is not required and lr < 0.0:
-            raise ValueError("Invalid learning rate: {} - should be >= 0.0".format(lr))
+            raise ValueError('Invalid learning rate: {} - should be >= 0.0'.format(lr))
         if not 0.0 <= b1 < 1.0:
             raise ValueError(
-                "Invalid b1 parameter: {} - should be in [0.0, 1.0[".format(b1))
+                'Invalid b1 parameter: {} - should be in [0.0, 1.0['.format(b1))
         if not 0.0 <= b2 < 1.0:
             raise ValueError(
-                "Invalid b2 parameter: {} - should be in [0.0, 1.0[".format(b2))
+                'Invalid b2 parameter: {} - should be in [0.0, 1.0['.format(b2))
         if not e >= 0.0:
-            raise ValueError("Invalid epsilon value: {} - should be >= 0.0".format(e))
+            raise ValueError('Invalid epsilon value: {} - should be >= 0.0'.format(e))
         defaults = dict(lr=lr,
                         b1=b1, b2=b2, e=e, weight_decay=weight_decay,
                         max_grad_norm=max_grad_norm)
