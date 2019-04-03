@@ -240,7 +240,6 @@ class SocketHandler extends React.Component {
         log('Timeout: ' + blocking_id, 1);
         // Send the packet again now
         var m = packet_map[blocking_id];
-        log(m, 1);
         if (m.status != STATUS_ACK) {
           // Ensure that the send retries, we wouldn't be here if the ACK worked
           m.status = STATUS_SENT;

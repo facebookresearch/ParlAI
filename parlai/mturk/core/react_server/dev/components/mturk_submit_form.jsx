@@ -44,14 +44,14 @@ function allDoneCallback() {
 // Callback for static submission
 function staticAllDoneCallback(sender_id, assign_id, worker_id, response_data) {
   if (inMTurkHITPage()) {
-    let server_url = window.location.origin;=
+    let server_url = window.location.origin;
     let post_data = {
       assignment_id: assign_id,
       agent_id: sender_id,
       worker_id: worker_id,
       response_data: response_data,
       task_group_id: TASK_GROUP_ID,
-    }=
+    };
     // We allow workers to submit even if our server goes down.
     // TODO reconcile this data with the fact that we'll likely mark as an
     // abandon on our end and will want to query the data from amazon instead
