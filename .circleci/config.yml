@@ -1,170 +1,178 @@
-version: 2.1
+version: 2
 
-# executors are environments where we run things
-executors:
-  standard_cpu:
-    docker:
-      - image: circleci/python:3.6.5-node
-  gpu:
-    environment:
-      CUDA_VERSION: "10.0"
-    machine:
-      image: default
-    resource_class: gpu.medium # tesla m60
+# -------------------------------------------------------------------------------------
+# environments where we run our jobs
+# -------------------------------------------------------------------------------------
+standard_cpu: &standard_cpu
+  docker:
+    - image: circleci/python:3.6.5-node
 
-# commands are nice shorthand
-commands:
-  setup:
-    description: "Minimal CircleCI setup"
-    steps:
-      - run:
-          name: Fixes git
-          command: |
-            ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
-      - run:
-          name: Sets up the virtual environment
-          command: |
-            mkdir -p ~/venv
-            virtualenv --python=python3.6 ~/venv
-            echo ". ~/venv/bin/activate" >> $BASH_ENV
-            . ~/venv/bin/activate
-            pip3 install --upgrade --progress-bar off pip
-            pip3 install --progress-bar off flake8 gitpython
-            python setup.py develop
+gpu: &gpu
+  environment:
+    CUDA_VERSION: "10.0"
+  machine:
+    image: default
+  resource_class: gpu.medium # tesla m60
+# -------------------------------------------------------------------------------------
 
-  installdeps:
-    description: "Installs all dependencies"
-    steps:
-      - run:
-          name: Installs basic dependencies
-          command: |
-            pip3 install --progress-bar off -r requirements.txt
+# -------------------------------------------------------------------------------------
+# reusable commands
+# -------------------------------------------------------------------------------------
+fixgit: &fixgit
+  # circleci sets master to the tip of the branch, which isn't super useful for us.
+  # better if master looks like it would on our local machines
+  run:
+    name: Fixes git
+    command: |
+      ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
 
-  installtorchgpu:
-    description: "Install Torch (GPU)"
-    steps:
-      - run:
-          name: Install torch GPU
-          command: |
-            pip3 install --progress-bar off numpy
-            pip3 install --progress-bar off torch
-            pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
-  installtorchcpu:
-    description: "Install Torch (CPU)"
-    steps:
-      - run:
-          name: Install torch CPU
-          command: |
-            pip3 install --progress-bar off numpy
-            pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+setup: &setup
+  run:
+    name: Sets up the virtual environment
+    command: |
+      mkdir -p ~/venv
+      virtualenv --python=python3.6 ~/venv
+      echo ". ~/venv/bin/activate" >> $BASH_ENV
+      . ~/venv/bin/activate
+      pip3 install --upgrade --progress-bar off pip
+      pip3 install --progress-bar off flake8 gitpython
+      python setup.py develop --no-deps
 
-  setupcuda:
-    description: "Sets up the CUDA environment"
-    steps:
-      - run:
-          name: Setup CUDA
-          working_directory: ~/
-          command: |
-            # download and install nvidia drivers, cuda, etc
-            wget -q 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-410.79.run'
-            sudo /bin/bash ./NVIDIA-Linux-x86_64-410.79.run -s --no-drm
-            wget -q https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
-            sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
-            sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
-            nvidia-smi
-            pyenv global 3.6.5
-  setupjslinting:
-    description: "Sets up the ability to do js linting for the MTurk webapp"
-    steps:
-      - run:
-          name: Setup JS Linting
-          working_directory: ~/ParlAI/parlai/mturk
-          command: npm install
+installdeps: &installdeps
+  run:
+    name: Installs basic dependencies
+    command: |
+      pip3 install --progress-bar off -r requirements.txt
 
-  installgpudeps:
-    description: "Install Dependencies specific to GPU testing"
-    steps:
-      - run:
-          name: GPU dependencies
-          command: |
-            pip3 install --progress-bar off pytorch-pretrained-bert
+installtorchgpu: &installtorchgpu
+  run:
+    name: Install torch GPU and dependencies
+    command: |
+      pip3 install --progress-bar off numpy
+      pip3 install --progress-bar off torch
+      pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
+      pip3 install --progress-bar off pytorch-pretrained-bert
 
+installtorchcpu: &installtorchcpu
+  run:
+    name: Install torch CPU and dependencies
+    command: |
+      pip3 install --progress-bar off numpy
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+
+setupcuda: &setupcuda
+  run:
+    name: Setup CUDA
+    working_directory: ~/
+    command: |
+      # download and install nvidia drivers, cuda, etc
+      wget -q 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-410.79.run'
+      sudo /bin/bash ./NVIDIA-Linux-x86_64-410.79.run -s --no-drm
+      wget -q https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+      sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
+      sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
+      nvidia-smi
+      pyenv global 3.6.5
+
+
+# -------------------------------------------------------------------------------------
+# Actual jobs
+# -------------------------------------------------------------------------------------
 jobs:
   datatests:
-    executor: standard_cpu
+    <<: *standard_cpu
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - setup
-      - installdeps
-      - installtorchcpu
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu
       - run:
           name: Data tests
           command: python setup.py test -s tests.suites.datatests -v
 
   unittests:
-    executor: standard_cpu
+    <<: *standard_cpu
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - setup
-      - installdeps
-      - installtorchcpu
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu
       - run:
           name: Unit tests
           command: python setup.py test -s tests.suites.unittests -v
 
   lint:
-    executor: standard_cpu
+    <<: *standard_cpu
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - setup
-      - setupjslinting
+      - <<: *fixgit
+      - <<: *setup
       - run:
           name: JS Lint
           working_directory: ~/ParlAI/parlai/mturk
-          command: npm run lint
+          command: |
+            npm install
+            npm run lint
       - run:
           name: Lint
+          working_directory: ~/ParlAI
           command: bash ./tests/lint_changed.sh
 
   nightly_gpu_tests:
-    executor: gpu
+    <<: *gpu
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - setupcuda
-      - setup
-      - installtorchgpu
-      - installdeps
-      - installgpudeps
+      - <<: *fixgit
+      - <<: *setupcuda
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchgpu
       - run:
           name: Nightly GPU tests
           no_output_timeout: 30m
           command: python setup.py test -s tests.suites.nightly_gpu -v
 
   nightly_cpu_tests:
-    executor: standard_cpu
+    <<: *standard_cpu
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - setup
-      - installdeps
-      - installtorchcpu
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu
       - run:
           name: All nightly CPU tests
           no_output_timeout: 30m
           command: python setup.py test -s tests.suites.nightly_cpu -v
 
-  deploy_website:
-    executor: standard_cpu
+  mturk_tests:
+    <<: *standard_cpu
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - setup
-      - installdeps
-      - installtorchcpu
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - run:
+          name: All mturk tests
+          command: python setup.py test -s tests.suites.mturk -v
+
+  deploy_website:
+    <<: *standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu
       - run:
           working_directory: ~/ParlAI/website
           name: Build the website
@@ -178,14 +186,39 @@ jobs:
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
 
+  check_extra_tests:
+    <<: *standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - run:
+          name: "Conditionally launching long tests..."
+          working_directory: ~/ParlAI/
+          command: |
+            python .circleci/triggers.py | while read job; do
+              curl -s \
+                --data "build_parameters[CIRCLE_JOB]=${job}" \
+                --data "build_parameters[CIRCLE_WORKFLOW_ID]=${CIRCLE_WORKFLOW_ID}" \
+                --data "build_parameters[CIRCLE_WORKFLOW_WORKSPACE_ID]=${CIRCLE_WORKFLOW_WORKSPACE_ID}" \
+                --data "build_parameters[CIRCLE_WORKFLOW_UPSTREAM_JOB_IDS]=${CIRCLE_WORKFLOW_JOB_ID}" \
+                --data "revision=$CIRCLE_SHA1" \
+                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH?circle-token=$CIRCLE_API_USER_TOKEN >/dev/null
+                echo "Launching ${job}..."
+            done
 
+
+# -------------------------------------------------------------------------------------
+# Workflows
+# -------------------------------------------------------------------------------------
 workflows:
   version: 2
   commit:
     jobs:
       - lint
-      - datatests
       - unittests
+      - check_extra_tests
       - deploy_website:
           filters:
             branches:
@@ -200,5 +233,6 @@ workflows:
                 - master
     jobs:
       - unittests
+      - mturk_tests
       - nightly_cpu_tests
       - nightly_gpu_tests

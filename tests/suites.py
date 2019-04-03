@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-import parlai.core.testing_utils as testing_utils
 
 
 def _clear_cmdline_args(fn):
@@ -47,7 +46,7 @@ def nightly_gpu():
 
 
 @_clear_cmdline_args
-def short():
+def unittests():
     """Short tests, found in tests root directory."""
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover('tests')
@@ -59,18 +58,6 @@ def mturk():
     """Mechanical Turk tests."""
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover("parlai/mturk/core/test/")
-    return test_suite
-
-
-@_clear_cmdline_args
-def unittests():
-    """Tests needed to pass Continuous Integration."""
-    test_suite = unittest.TestSuite()
-    test_suite.addTests(short())
-    changed_files = testing_utils.git_changed_files(skip_nonexisting=False)
-    if any('parlai/mturk' in fn for fn in changed_files):
-        # if any mturk stuff changed, run those tests too
-        test_suite.addTests(mturk())
     return test_suite
 
 

@@ -125,6 +125,27 @@ def git_changed_files(skip_nonexisting=True):
     return filenames
 
 
+def git_commit_messages():
+    """
+    Outputs each commit message between here and master.
+    """
+    fork_point = git_.merge_base('origin/master', 'HEAD').strip()
+    messages = git_.log(fork_point + '..HEAD')
+    return messages
+
+
+def is_new_task_filename(filename):
+    """
+    Checks if a given filename counts as a new task. Used in tests and
+    test triggers, and only here to avoid redundancy.
+    """
+    return (
+        'parlai/tasks' in filename and
+        'README' not in filename and
+        'task_list.py' not in filename
+    )
+
+
 class TeeStringIO(io.StringIO):
     """
     StringIO which also prints to stdout.
