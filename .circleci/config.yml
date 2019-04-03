@@ -14,13 +14,18 @@ executors:
 
 # commands are nice shorthand
 commands:
-  setup:
-    description: "Minimal CircleCI setup"
+  undomastermerge:
+    # useful for detecting what's changed with head
+    description: "Undo merge with master"
     steps:
       - run:
           name: Fixes git
           command: |
             ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
+
+  setup:
+    description: "Minimal CircleCI setup"
+    steps:
       - run:
           name: Sets up the virtual environment
           command: |
@@ -83,6 +88,7 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
+      - undomastermerge
       - setup
       - installdeps
       - installtorchcpu
@@ -107,6 +113,7 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
+      - undomastermerge
       - setup
       - run:
           name: JS Lint
@@ -187,14 +194,6 @@ workflows:
       - unittests
       - mturk_tests
       - datatests
-      - extratests:
-          type: approval
-      - nightly_gpu_tests:
-          requires:
-            - extratests
-      - nightly_cpu_tests:
-          requires:
-            - extratests
       - deploy_website:
           filters:
             branches:
