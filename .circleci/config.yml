@@ -187,6 +187,14 @@ workflows:
       - unittests
       - mturk_tests
       - datatests
+      - extratests:
+          type: approval
+      - nightly_gpu_tests:
+          requires:
+            - extratests
+      - nightly_cpu_tests:
+          requires:
+            - extratests
       - deploy_website:
           filters:
             branches:
