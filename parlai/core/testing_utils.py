@@ -133,7 +133,7 @@ def git_commit_messages():
     return messages
 
 
-def check_new_task_filename(filename):
+def is_new_task_filename(filename):
     """
     Checks if a given filename counts as a new task. Used in tests and
     test triggers, and only here to avoid redundancy.
