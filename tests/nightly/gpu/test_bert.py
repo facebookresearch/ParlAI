@@ -19,11 +19,13 @@ class TestBertModel(unittest.TestCase):
 
     def test_biencoder(self):
         stdout, valid, test = testing_utils.train_model(dict(
-            task='convai2:LimitedSelfOriginalTeacher',
+            task='convai2',
             model='bert_ranker/bi_encoder_ranker',
-            num_epochs=1.0,
+            num_epochs=0.1,
             batchsize=8,
             text_truncate=32,
+            validation_max_exs=20,
+            short_final_eval=True,
         ))
         # can't conclude much from the biencoder after that little iterations.
         # accuracy should be present and somewhere between 0.01 and 0.2
@@ -39,15 +41,17 @@ class TestBertModel(unittest.TestCase):
 
     def test_crossencoder(self):
         stdout, valid, test = testing_utils.train_model(dict(
-            task='convai2:LimitedSelfOriginalTeacher',
+            task='convai2',
             model='bert_ranker/cross_encoder_ranker',
-            num_epochs=1.0,
+            num_epochs=0.001,
             batchsize=1,
             candidates="inline",
             type_optimization="all_encoder_layers",
             warmup_updates=100,
             text_truncate=32,
             label_truncate=32,
+            validation_max_exs=20,
+            short_final_eval=True,
         ))
         # The cross encoder reaches an interesting state MUCH faster
         # accuracy should be present and somewhere between 0.2 and 0.8
