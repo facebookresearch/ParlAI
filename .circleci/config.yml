@@ -198,7 +198,7 @@ jobs:
           working_directory: ~/ParlAI/
           command: |
             python .circleci/triggers.py | while read job; do
-              curl \
+              curl -s \
                 --data "build_parameters[CIRCLE_JOB]=${job}" \
                 --data "build_parameters[CIRCLE_WORKFLOW_ID]=${CIRCLE_WORKFLOW_ID}" \
                 --data "build_parameters[CIRCLE_WORKFLOW_WORKSPACE_ID]=${CIRCLE_WORKFLOW_WORKSPACE_ID}" \
