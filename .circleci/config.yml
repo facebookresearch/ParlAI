@@ -18,8 +18,9 @@ gpu: &gpu
 # -------------------------------------------------------------------------------------
 # reusable commands
 # -------------------------------------------------------------------------------------
-undomastermerge: &undomastermerge
-  # useful for detecting what's changed with head
+fixgit: &fixgit
+  # circleci sets master to the tip of the branch, which isn't super useful for us.
+  # better if master looks like it would on our local machines
   run:
     name: Fixes git
     command: |
@@ -83,7 +84,7 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - <<: *undomastermerge
+      - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
@@ -96,6 +97,7 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
+      - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
@@ -108,7 +110,7 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
-      - <<: *undomastermerge
+      - <<: *fixgit
       - <<: *setup
       - run:
           name: JS Lint
@@ -126,6 +128,7 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
+      - <<: *fixgit
       - <<: *setupcuda
       - <<: *setup
       - <<: *installdeps
@@ -140,6 +143,7 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
+      - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
@@ -153,6 +157,7 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
+      - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
       - run:
@@ -164,6 +169,7 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
+      - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
@@ -185,23 +191,24 @@ jobs:
     working_directory: ~/ParlAI
     steps:
       - checkout
+      - <<: *fixgit
       - <<: *setup
       - run:
           name: "Conditionally launching long tests..."
           working_directory: ~/ParlAI/
           command: |
             if python tests/triggers.py gpu ; then
-              curl --user ${CIRCLE_API_USER_TOKEN} \
+              curl \
                 --data build_parameters[CIRCLE_JOB]=nightly_gpu_tests \
                 --data revision=$CIRCLE_SHA1 \
-                https://circleci.com/api/v1.1/project/ithub/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH?circle-token=$CIRCLE_API_USER_TOKEN
                 echo "Launching GPU tests..."
             fi
             if python tests/triggers.py longcpu ; then
-              curl --user ${CIRCLE_API_USER_TOKEN} \
+              curl \
                 --data build_parameters[CIRCLE_JOB]=nightly_cpu_tests \
                 --data revision=$CIRCLE_SHA1 \
-                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH
+                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH?circle-token=$CIRCLE_API_USER_TOKEN
                 echo "Launching nightly CPU tests..."
             fi
 
