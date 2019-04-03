@@ -11,6 +11,10 @@ Detects whether specific CircleCI jobs should run.
 import parlai.core.testing_utils as testing_utils
 
 
+def detect_all():
+    return '[long]' in testing_utils.git_commit_messages()
+
+
 def detect_gpu():
     commit_msg = '[gpu]' in testing_utils.git_commit_messages()
     test_changed = any(
@@ -21,7 +25,7 @@ def detect_gpu():
 
 
 def detect_long_cpu():
-    commit_msg = '[long]' in testing_utils.git_commit_messages().lower()
+    commit_msg = '[cpu]' in testing_utils.git_commit_messages().lower()
     test_changed = any(
         'tests/nightly/cpu' in fn
         for fn in testing_utils.git_changed_files()
@@ -50,14 +54,15 @@ def detect_mturk():
 MAPPING = {
     'nightly_gpu_tests': detect_gpu,
     'nightly_cpu_tests': detect_long_cpu,
-    'data_tests': detect_data,
+    'datatests': detect_data,
     'mturk_tests': detect_mturk,
 }
 
 
 def main():
+    run_all = detect_all()
     for testname, detector in MAPPING.items():
-        if detector():
+        if run_all or detector():
             print(testname)
 
 
