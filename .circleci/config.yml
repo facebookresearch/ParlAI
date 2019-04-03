@@ -24,7 +24,16 @@ fixgit: &fixgit
   run:
     name: Fixes git
     command: |
-      ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
+      if [[ "$CIRCLE_BRANCH" != "master" ]]
+      then
+        git config --global user.email "circleci@parl.ai"
+        git config --global user.name "CircleCI"
+
+        git branch -f master origin/master
+        git merge master --commit --no-edit || git checkout -f "$CIRCLE_BRANCH"
+      fi
+      git status
+      git log --oneline HEAD~10..HEAD
 
 setup: &setup
   run:
@@ -48,7 +57,6 @@ installtorchgpu: &installtorchgpu
   run:
     name: Install torch GPU and dependencies
     command: |
-      pip3 install --progress-bar off numpy
       pip3 install --progress-bar off torch
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
@@ -57,7 +65,6 @@ installtorchcpu: &installtorchcpu
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off numpy
       pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
 
 setupcuda: &setupcuda
@@ -74,6 +81,11 @@ setupcuda: &setupcuda
       nvidia-smi
       pyenv global 3.6.5
 
+buildwebsite: &buildwebsite
+  run:
+    working_directory: ~/ParlAI/website
+    name: Build the website
+    command: make
 
 # -------------------------------------------------------------------------------------
 # Actual jobs
@@ -164,6 +176,17 @@ jobs:
           name: All mturk tests
           command: python setup.py test -s tests.suites.mturk -v
 
+  build_website:
+    <<: *standard_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu
+      - <<: *buildwebsite
+
   deploy_website:
     <<: *standard_cpu
     working_directory: ~/ParlAI
@@ -173,10 +196,7 @@ jobs:
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
-      - run:
-          working_directory: ~/ParlAI/website
-          name: Build the website
-          command: make
+      - <<: *buildwebsite
       - run:
           working_directory: ~/ParlAI/
           name: Upload the website
@@ -218,7 +238,18 @@ workflows:
     jobs:
       - lint
       - unittests
-      - check_extra_tests
+      - mturk_tests:
+          filters:
+            branches:
+              only: master
+      - check_extra_tests:
+          filters:
+            branches:
+              ignore: master
+      - build_website:
+          filters:
+            branches:
+              ignore: master
       - deploy_website:
           filters:
             branches:
