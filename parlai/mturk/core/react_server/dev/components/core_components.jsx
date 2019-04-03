@@ -955,6 +955,11 @@ class FormResponse extends React.Component {
         { form_responses: response_data },
         () => this.setState({ sending: false })
       );
+      // clear answers once sent
+      this.setState(prevState => {
+        prevState['responses'].fill('');
+        return { responses: prevState['responses']};
+      });
     }
   }
 

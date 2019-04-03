@@ -7,7 +7,14 @@
 """
 
 import torchtext.vocab as vocab
+from parlai.core.build_data import modelzoo_path
+
+URL = 'https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.en.vec'
 
 
 def download(datapath):
-    vocab.FastText(language='en', cache=datapath + '/models/fasttext_vectors')
+    return vocab.Vectors(
+        name='wiki.en.vec',
+        url=URL,
+        cache=modelzoo_path(datapath, 'models:fasttext_vectors'),
+    )
