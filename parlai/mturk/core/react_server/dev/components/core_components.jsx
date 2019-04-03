@@ -1160,7 +1160,6 @@ class RightPane extends React.Component {
   }
 }
 
-// TODO send refs all the way up to the top level component to handle submitting
 class ContentPane extends React.Component {
   render () {
     // TODO create some templates maybe? We want to be able to attach

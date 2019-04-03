@@ -21,6 +21,7 @@ import SocketHandler from './components/socket_handler.jsx';
 import {
   MTurkSubmitForm,
   allDoneCallback,
+  staticAllDoneCallback,
 } from './components/mturk_submit_form.jsx';
 import 'fetch';
 import $ from 'jquery';
@@ -267,6 +268,7 @@ class StaticApp extends React.Component {
       messages: [],
       agent_id: 'NewWorker',
       task_data: {},
+      response_data: {},
       volume: 1, // min volume is 0, max is 1, TODO pull from local-storage?
     };
   }
@@ -296,6 +298,10 @@ class StaticApp extends React.Component {
       return;
     }
     this.socket_handler.handleQueueMessage(text, data, callback, is_system);
+  }
+
+  onValidData(valid, response_data) {
+    this.setState({task_done: valid, response_data: response_data});
   }
 
   render() {
@@ -328,7 +334,13 @@ class StaticApp extends React.Component {
               done_text: expire_reason,
             })
           }
-          onConversationChange={() => {}}
+          onConversationChange={(world_state, conversation_id, agent_id) => {
+            this.setState({
+              world_state: world_state,
+              conversation_id: conversation_id,
+              agent_id: agent_id,
+            });
+          }}
           onSuccessfulSend={() => {}}
           onConfirmInit={() => this.setState({ initialization_status: 'done' })}
           onFailInit={() => this.setState({ initialization_status: 'failed' })}
@@ -366,15 +378,22 @@ class StaticApp extends React.Component {
           task_data={this.state.task_data}
           world_state={this.state.world_state}
           v_id={this.state.agent_id}
-          allDoneCallback={() => allDoneCallback()}
+          allDoneCallback={() => staticAllDoneCallback(
+            this.state.agent_id,
+            this.state.assignment_id,
+            this.state.worker_id,
+            this.state.response_data,
+          )}
           volume={this.state.volume}
           onVolumeChange={v => this.setState({ volume: v })}
           display_feedback={DISPLAY_FEEDBACK}
+          onValidDataChange={(valid, data) => this.onValidData(valid, data)}
         />
         <MTurkSubmitForm
           assignment_id={this.state.assignment_id}
           hit_id={this.state.hit_id}
           worker_id={this.state.worker_id}
+          response_data={this.state.response_data}
           mturk_submit_url={this.state.mturk_submit_url}
         />
         {socket_handler}
@@ -384,7 +403,5 @@ class StaticApp extends React.Component {
 }
 
 var main_app = (TEMPLATE_TYPE == 'static') ? <StaticApp /> : <MainApp />;
-
-console.log(main_app);
 
 ReactDOM.render(main_app, document.getElementById('app'));

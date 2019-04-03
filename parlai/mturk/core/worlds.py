@@ -148,6 +148,12 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
         agent = self.mturk_agent
         return not (agent.hit_is_abandoned or agent.hit_is_returned)
 
+    def episode_done(self):
+        """A ParlAI-MTurk task ends and allows workers to be marked complete
+        when the world is finished.
+        """
+        return self.episodeDone
+
     def parley(self):
         """A static task parley is simply sending the task data and waiting
         for the response
@@ -179,3 +185,7 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
         }
 
         return save_data
+
+    def shutdown(self):
+        '''Shutdown tracking for the agent'''
+        self.mturk_agent.shutdown()

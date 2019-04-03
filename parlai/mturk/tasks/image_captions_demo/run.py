@@ -64,14 +64,17 @@ def main():
             world = StaticMTurkTaskWorld(
                 opt,
                 mturk_agent=workers[0],
-                task_data={'image': image_data},
+                task_data={'image': image_data, 'word_min': 5, 'word_max': 7},
             )
             while not world.episode_done():
                 world.parley()
-            world.save_data()
+
+            # if world.did_complete():
+            #     mturk_manager.mark_workers_done(workers)
 
             world.shutdown()
-            world.review_work()
+
+            return world.prep_save_data(workers)
 
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,

@@ -1879,6 +1879,10 @@ class StaticMTurkManager(MTurkManager):
         opt['frontend_template_type'] = 'static'
         super().__init__(opt, ['worker'], is_test, True)
         self.hit_mult = 1  # No need to pad HITs if they're static
+        base_required_hits = self.num_conversations * len(self.mturk_agent_ids)
+        self.required_hits = math.ceil(
+            base_required_hits * self.hit_mult
+        )
 
     def _assert_opts(self):
         """Manages ensuring everything about the passed in options make sense
