@@ -200,6 +200,9 @@ jobs:
             python .circleci/triggers.py | while read job; do
               curl \
                 --data "build_parameters[CIRCLE_JOB]=${job}" \
+                --data "build_parameters[CIRCLE_WORKFLOW_ID]=${CIRCLE_WORKFLOW_ID}" \
+                --data "build_parameters[CIRCLE_WORKFLOW_WORKSPACE_ID]=${CIRCLE_WORKFLOW_WORKSPACE_ID}" \
+                --data "build_parameters[CIRCLE_WORKFLOW_UPSTREAM_JOB_IDS]=${CIRCLE_WORKFLOW_JOB_ID}" \
                 --data "revision=$CIRCLE_SHA1" \
                 https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH?circle-token=$CIRCLE_API_USER_TOKEN >/dev/null
                 echo "Launching ${job}..."
