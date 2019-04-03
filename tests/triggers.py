@@ -36,7 +36,7 @@ def detect_long_cpu():
 
 
 def detect_data():
-    commit_msg = '[newtask]' in testing_utils.git_commit_messages().lower()
+    commit_msg = '[data]' in testing_utils.git_commit_messages().lower()
     test_changed = any(
         testing_utils.check_new_task_filename(fn)
         for fn in testing_utils.git_changed_files()
