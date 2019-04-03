@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-import parlai.core.testing_utils as testing_utils
 
 
 def _clear_cmdline_args(fn):
@@ -60,7 +59,6 @@ def mturk():
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover("parlai/mturk/core/test/")
     return test_suite
-
 
 
 if __name__ == '__main__':
