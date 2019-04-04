@@ -63,9 +63,19 @@ class ImageCaptionPane extends React.Component {
       />
     );
     return <div style={{padding: '20px'}}>
-      <img src={image_data} id="comment-image" style={{maxWidth: '100%', maxHeight: '60%'}} />
+      <img
+        src={image_data}
+        id="comment-image"
+        style={{maxWidth: '100%', maxHeight: '60%'}}
+      />
       <br />
-      <p><b>Please caption this image using between {this.props.task_data.word_min} and {this.props.task_data.word_max} words.</b></p>
+      <p>
+        <b>
+          Please caption this image using between
+          {this.props.task_data.word_min} and
+          {this.props.task_data.word_max} words.
+        </b>
+      </p>
       <br />
       {text_input}
     </div>;

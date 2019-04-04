@@ -6,8 +6,6 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-/* global browser */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
@@ -68,6 +66,10 @@ function doesSupportWebsockets() {
     (bowser.opera && bowser.version < 12.1)
   );
 }
+
+/* ================= Application Components ================= */
+
+/* global FRAME_HEIGHT, HIT_ID, ASSIGNMENT_ID, WORKER_ID, TEMPLATE_TYPE, BLOCK_MOBILE, DISPLAY_FEEDBACK, IS_COVER_PAGE */
 
 class MainApp extends React.Component {
   constructor(props) {
