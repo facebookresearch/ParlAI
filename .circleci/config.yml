@@ -24,16 +24,7 @@ fixgit: &fixgit
   run:
     name: Fixes git
     command: |
-      if [[ "$CIRCLE_BRANCH" != "master" ]]
-      then
-        git config --global user.email "circleci@parl.ai"
-        git config --global user.name "CircleCI"
-
-        git branch -f master origin/master
-        git merge master --commit --no-edit || git checkout -f "$CIRCLE_BRANCH"
-      fi
-      git status
-      git --no-pager log --oneline HEAD~10..HEAD | head
+      ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
 
 setup: &setup
   run:
