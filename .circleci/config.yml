@@ -33,7 +33,7 @@ fixgit: &fixgit
         git merge master --commit --no-edit || git checkout -f "$CIRCLE_BRANCH"
       fi
       git status
-      git log --oneline HEAD~10..HEAD
+      git --no-pager log --oneline HEAD~10..HEAD | head
 
 setup: &setup
   run:
