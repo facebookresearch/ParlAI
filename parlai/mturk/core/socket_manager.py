@@ -220,6 +220,7 @@ class SocketManager():
         self.is_shutdown = False
         self.send_lock = threading.Condition()
         self.packet_map_lock = threading.Condition()
+        self.thread_shutdown_lock = threading.Condition()
         self.worker_assign_ids = {}  # mapping from connection id to pair
 
         # setup the socket
@@ -630,30 +631,31 @@ class SocketManager():
             'Closing channel {}'.format(connection_id)
         )
         self.run[connection_id] = False
-        if connection_id in self.queues:
-            while not self.queues[connection_id].empty():  # Empty the queue
-                try:
-                    item = self.queues[connection_id].get(block=False)
-                    t = item[0]
-                    packet = item[1]
-                    if not packet:
-                        continue
-                    packet.requires_ack = False
-                    packet.blocking = False
-                    if packet.status is not Packet.STATUS_ACK:
-                        self._send_packet(packet, connection_id, t)
-                except Empty:
-                    break
-            # Clean up packets
-            with self.packet_map_lock:
-                packet_ids = list(self.packet_map.keys())
-                for packet_id in packet_ids:
-                    packet_conn_id = \
-                        self.packet_map[packet_id].get_receiver_connection_id()
-                    if connection_id == packet_conn_id:
-                        del self.packet_map[packet_id]
-            # Clean up other resources
-            del self.queues[connection_id]
+        with self.thread_shutdown_lock:
+            if connection_id in self.queues:
+                while not self.queues[connection_id].empty():  # Empty queue
+                    try:
+                        item = self.queues[connection_id].get(block=False)
+                        t = item[0]
+                        packet = item[1]
+                        if not packet:
+                            continue
+                        packet.requires_ack = False
+                        packet.blocking = False
+                        if packet.status is not Packet.STATUS_ACK:
+                            self._send_packet(packet, connection_id, t)
+                    except Empty:
+                        break
+                # Clean up packets
+                with self.packet_map_lock:
+                    packet_ids = list(self.packet_map.keys())
+                    for packet_id in packet_ids:
+                        packet = self.packet_map[packet_id]
+                        packet_conn_id = packet.get_receiver_connection_id()
+                        if connection_id == packet_conn_id:
+                            del self.packet_map[packet_id]
+                # Clean up other resources
+                del self.queues[connection_id]
 
     def close_all_channels(self):
         """Closes all channels by clearing the list of channels"""
