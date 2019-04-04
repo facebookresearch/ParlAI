@@ -11,25 +11,31 @@ import parlai.core.testing_utils as testing_utils
 
 parser_defaults = {
     'model': 'seq2seq',
-    'pytorch_teacher_task': 'babi:task10k:1',
-    'batchsize': 32,
-    'optimizer':  'adam',
-    'embeddingsize': 32,
-    'hiddensize': 256,
-    'learningrate': 1e-3,
-    'gradient_clip': 0.0,
-    'validation_every_n_epochs': 0.5,
-    'num_epochs': 20,
-    'batch_length_range': 5,
+    'pytorch_teacher_task': 'integration_tests:nocandidate',
+    'batchsize': 16,
+    'hiddensize': 16,
     'attention': 'general',
     'rnn_class': 'gru',
-    'lookuptable': 'all',
     'no_cuda': True,
+    'learningrate': 1,
+    'embeddingsize': 16,
+    'dropout': 0.0,
+    'gradient_clip': 1.0,
+    'lookuptable': 'all',
+    'num_epochs': 50,
+    'validation_every_n_epochs': 5,
+    'log_every_n_secs': 1,
+    'batch_length_range': 5,
 }
 
 
 def solved_task(str_output, valid, test):
-    return '[ task solved! stopping. ]' in str_output
+    return (
+        valid['ppl'] < 1.3 and
+        test['ppl'] < 1.3 and
+        valid['accuracy'] > 0.95 and
+        test['accuracy'] > 0.95
+    )
 
 
 class TestPytorchDataTeacher(unittest.TestCase):
@@ -57,9 +63,9 @@ class TestPytorchDataTeacher(unittest.TestCase):
             defaults = parser_defaults.copy()
             defaults['datatype'] = dt
             defaults['shuffle'] = True  # for train:stream
-            str_output, _, _ = testing_utils.train_model(defaults)
+            str_output, valid, test = testing_utils.train_model(defaults)
             self.assertTrue(
-                solved_task(str_output),
+                solved_task(str_output, valid, test),
                 'Teacher could not teach seq2seq with args: {}; here is str_output: {}'
                 .format(defaults, str_output)
             )
@@ -76,9 +82,9 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults = parser_defaults.copy()
         defaults['datatype'] = 'train'
         defaults['pytorch_preprocess'] = True
-        str_output, _, _ = testing_utils.train_model(defaults)
+        str_output, valid, test = testing_utils.train_model(defaults)
         self.assertTrue(
-            solved_task(str_output),
+            solved_task(str_output, valid, test),
             'Teacher could not teach seq2seq with preprocessed obs, output: {}'
             .format(str_output)
         )
@@ -106,9 +112,9 @@ class TestPytorchDataTeacher(unittest.TestCase):
             defaults['batchsize'] = 32
             if preprocess:
                 defaults['batch_sort_field'] = 'text_vec'
-            str_output, _, _ = testing_utils.train_model(defaults)
+            str_output, valid, test = testing_utils.train_model(defaults)
             self.assertTrue(
-                solved_task(str_output),
+                solved_task(str_output, valid, test),
                 'Teacher could not teach seq2seq with batch sort '
                 'and args {} and output {}'
                 .format((dt, preprocess), str_output)

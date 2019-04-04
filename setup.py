@@ -31,5 +31,5 @@ setup(
         'data', 'docs', 'downloads', 'examples', 'logs', 'tests')),
     install_requires=reqs.strip().split('\n'),
     include_package_data=True,
-    test_suite='tests.suites.short',
+    test_suite='tests.suites.unittests',
 )

@@ -17,8 +17,12 @@ import heapq
 # some of the utility methods are helpful for Torch
 try:
     import torch
+    # default type in padded3d needs to be protected if torch
+    # isn't installed.
+    TORCH_LONG = torch.long
     __TORCH_AVAILABLE = True
 except ImportError:
+    TORCH_LONG = None
     __TORCH_AVAILABLE = False
 
 
@@ -957,7 +961,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
     return output, lens
 
 
-def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long, fp16friendly=False):
+def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=False):
     """Make 3D padded tensor for list of lists of 1D tensors or lists.
 
     :param tensors:  list of lists of 1D tensors (or lists)

@@ -845,18 +845,12 @@ class TorchAgent(Agent):
                                     'models:glove_vectors'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
-            from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
-            embs = vocab.Vectors(
-                name='crawl-300d-2M.vec',
-                url=fasttext_cc_url,
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_cc_vectors'))
+            from parlai.zoo.fasttext_cc_vectors.build import download
+            embs = download(self.opt.get('datapath'))
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
-            embs = vocab.FastText(
-                language='en',
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_vectors'))
+            from parlai.zoo.fasttext_vectors.build import download
+            embs = download(self.opt.get('datapath'))
         else:
             raise RuntimeError('embedding type {} not implemented. check arg, '
                                'submit PR to this function, or override it.'
@@ -1081,6 +1075,16 @@ class TorchAgent(Agent):
         If you want to use additional fields on your subclass, you can override
         this function, call super().vectorize(...) to process the text and
         labels, and then process the other fields in your subclass.
+
+        Additionally, if you want to override some of these default parameters,
+        then we recommend using a pattern like:
+
+        .. code-block:: python
+
+          def vectorize(self, *args, **kwargs):
+              kwargs['add_start'] = False
+              return super().vectorize(*args, **kwargs)
+
 
         :param obs:
             Single observation from observe function.
@@ -1327,41 +1331,54 @@ class TorchAgent(Agent):
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
 
+    def state_dict(self):
+        """
+        Get the state dict for saving
+
+        Override this method for more specific saving.
+        """
+        states = {}
+        if hasattr(self, 'model'):  # save model params
+            if hasattr(self.model, 'module'):
+                # did we wrap in a DistributedDataParallel
+                states['model'] = self.model.module.state_dict()
+            else:
+                states['model'] = self.model.state_dict()
+
+        if hasattr(self, 'optimizer'):  # save optimizer params
+            states['optimizer'] = self.optimizer.state_dict()
+            states['optimizer_type'] = self.opt['optimizer']
+
+        # lr scheduler
+        if torch.__version__.startswith('0.'):
+            warn_once(
+                "Must upgrade to Pytorch 1.0 to save the state of your "
+                "LR scheduler."
+            )
+        else:
+            states['number_training_updates'] = self._number_training_updates
+            if getattr(self, 'scheduler'):
+                states['lr_scheduler'] = self.scheduler.state_dict()
+                states['lr_scheduler_type'] = self.opt['lr_scheduler']
+            if getattr(self, 'warmup_scheduler'):
+                states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
+
+        return states
+
     def save(self, path=None):
         """
         Save model parameters to path (or default to model_file arg).
 
-        Override this method for more specific saving.
+        Please try to refrain from overriding this function, and instead
+        override `state_dict(self)` for more specific saving.
         """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path:
-            states = {}
-            if hasattr(self, 'model'):  # save model params
-                if hasattr(self.model, 'module'):
-                    # did we wrap in a DistributedDataParallel
-                    states['model'] = self.model.module.state_dict()
-                else:
-                    states['model'] = self.model.state_dict()
-
-            if hasattr(self, 'optimizer'):  # save optimizer params
-                states['optimizer'] = self.optimizer.state_dict()
-                states['optimizer_type'] = self.opt['optimizer']
-
-            # lr scheduler
-            if torch.__version__.startswith('0.'):
-                warn_once(
-                    "Must upgrade to Pytorch 1.0 to save the state of your "
-                    "LR scheduler."
-                )
-            else:
-                states['number_training_updates'] = self._number_training_updates
-                if getattr(self, 'scheduler'):
-                    states['lr_scheduler'] = self.scheduler.state_dict()
-                    states['lr_scheduler_type'] = self.opt['lr_scheduler']
-                if getattr(self, 'warmup_scheduler'):
-                    states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
-
+            if hasattr(self, 'dict'):  # force save dictionary
+                # TODO: Look into possibly overriding opt('dict_file') with new path
+                self.dict.save(path + '.dict', sort=False)
+            states = self.state_dict()
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
                     torch.save(states, write)

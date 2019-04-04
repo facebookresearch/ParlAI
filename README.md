@@ -1,5 +1,7 @@
 <p align="center"><img width="70%" src="docs/source/\_static/img/parlai.png" /></p>
 
+[![CircleCI](https://circleci.com/gh/facebookresearch/ParlAI.svg?style=shield)](https://circleci.com/gh/facebookresearch/ParlAI)
+
 --------------------------------------------------------------------------------
 
 ParlAI (pronounced “par-lay”) is a framework for dialogue AI research, implemented in Python.
