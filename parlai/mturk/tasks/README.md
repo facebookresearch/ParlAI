@@ -11,7 +11,6 @@ No actual tasks have been created on the new frontend yet
 - **multi_agent_dialog/**: Demo task where two agents on MTurk communicate in a world with another agent, in this case a local agent that sends messages from the command line.
 - **qa_data_collection/**: Demo task that replicates the collection process of typical question-answer datasets (such as SQuAD) in the ParlAI-MTurk environment.
 - **react_task_demo/**: Demo task that leverages the custom component development process for the react frontend to create 3 separate roles each with their own components. Comes in two varieties, `react_custom_no_extra_deps` uses the same dependencies that are specified in `parlai/mturk/core/react_server/package.json` and `react_custom_with_deps` specifies its own build process to be able to use custom dependencies. *These are a great starting point for working using the react frontend.*
-- **image_captions_demo/**: Demo task that demonstrates the potential for leveraging the ParlAI-MTurk API to complete tasks that don't actually need the multi-person or server-in-the-loop elements and thus don't necessitate the overhead of setting those up, but do want to leverage ParlAI's task and worker management.
 
 ### Legacy Tasks
 
