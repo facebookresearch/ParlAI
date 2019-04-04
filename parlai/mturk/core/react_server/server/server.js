@@ -213,6 +213,36 @@ app.post('/sns_posts', async function(req, res, next) {
   }
 });
 
+
+app.post('/submit_static', async function(req, res, next) {
+  res.end('Successful static POST');
+  let content = req.body;
+  var task_group_id = content['task_group_id'];
+  var agent_id = content['agent_id'];
+  var assignment_id = content['assignment_id'];
+  var worker_id = content['worker_id'];
+  var response_data = content['response_data'];
+  var world_id = '[World_' + task_group_id + ']';
+  var message_id = assignment_id + '_' + worker_id + '_static_submit';
+
+  var data = {
+    text: '[DATA_SUBMIT]',
+    id: agent_id,
+    message_id: message_id,
+    task_data: response_data,
+  };
+  var msg = {
+    id: message_id,
+    type: 'message',
+    sender_id: worker_id,
+    assignment_id: assignment_id,
+    conversation_id: 'TaskSubmit',
+    receiver_id: world_id,
+    data: data,
+  };
+  _send_message(world_id, 'new packet', msg);
+});
+
 // Renders the chat page by setting up the template_context given the
 // sent params for the request
 app.get('/chat_index', async function(req, res) {
@@ -222,6 +252,7 @@ app.get('/chat_index', async function(req, res) {
   var block_mobile = config_vars.block_mobile;
   var chat_title = config_vars.chat_title || 'Live Chat';
   block_mobile = block_mobile === undefined ? true : block_mobile;
+  var template_type = config_vars.template_type;
 
   var params = req.query;
   var template_context = {
@@ -234,6 +265,7 @@ app.get('/chat_index', async function(req, res) {
     frame_height: frame_height,
     block_mobile: block_mobile,
     chat_title: chat_title,
+    template_type: template_type,
   };
 
   res.render('index.html', template_context);

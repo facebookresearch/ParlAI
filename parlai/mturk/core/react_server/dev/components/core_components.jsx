@@ -1160,6 +1160,44 @@ class RightPane extends React.Component {
   }
 }
 
+class ContentPane extends React.Component {
+  render () {
+    // TODO create some templates maybe? We want to be able to attach
+    // pretty robust validation to components, so maybe the idea is
+    // to provide a base set of useful components people might want to
+    // render or use in their tasks and work from there. We should re-use
+    // anything we can from Halo for this.
+    return <div>
+      If you are seeing this, it is because you haven't defined a custom
+      content pane to render your task, and thus it doesn't work yet. See the
+      image_captions_demo for an example of how to create this.
+    </div>
+  }
+}
+
+class StaticRightPane extends React.Component {
+  render() {
+    let v_id = this.props.v_id;
+    let XContentPane = getCorrectComponent('XContentPane', v_id);
+    let XDoneResponse = getCorrectComponent('XDoneResponse', v_id);
+
+    // TODO move to CSS
+    let right_pane = {
+      minHeight: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'spaceBetween',
+    };
+
+    return (
+      <div id="right-pane" style={right_pane}>
+        <XContentPane {...this.props} />
+        <XDoneResponse {...this.props} onInputResize={() => {}}/>
+      </div>
+    );
+  }
+}
+
 class TaskDescription extends React.Component {
   render() {
     let header_text = CHAT_TITLE;
@@ -1326,6 +1364,21 @@ class ContentLayout extends React.Component {
   }
 }
 
+class StaticContentLayout extends React.Component {
+  render() {
+    let layout_style = '2-PANEL'; // Currently the only layout style is 2 panel
+    let v_id = this.props.v_id;
+    let XLeftPane = getCorrectComponent('XLeftPane', v_id);
+    let XStaticRightPane = getCorrectComponent('XStaticRightPane', v_id);
+    return (
+      <div className="row" id="ui-content">
+        <XLeftPane {...this.props} layout_style={layout_style} />
+        <XStaticRightPane {...this.props} layout_style={layout_style} />
+      </div>
+    );
+  }
+}
+
 class BaseFrontend extends React.Component {
   render() {
     let v_id = this.props.v_id;
@@ -1345,14 +1398,14 @@ class BaseFrontend extends React.Component {
       content = (
         <div id="ui-placeholder">
           Sorry, but we found that your browser does not support WebSockets.
-          Please consider updating your browser to a newer version and check
-          this HIT again.
+          Please consider updating your browser to a newer version or using
+          a different browser and check this HIT again.
         </div>
       );
     } else if (this.props.initialization_status == 'failed') {
       content = (
         <div id="ui-placeholder">
-          Unable to initialize. We may be having issues with our chat servers.
+          Unable to initialize. We may be having issues with our servers.
           Please refresh the page, or if that isn't working return the HIT and
           try again later if you would like to work on this task.
         </div>
@@ -1368,27 +1421,76 @@ class BaseFrontend extends React.Component {
   }
 }
 
+// TODO Require a ContentLayout as a child of BaseFrontend, rather than having
+// the component juggle both sets of props and duplicating code between static
+// and base frontends
+class StaticFrontend extends React.Component {
+  render() {
+    let v_id = this.props.v_id;
+    let XLeftPane = getCorrectComponent('XLeftPane', v_id);
+    let XStaticContentLayout = getCorrectComponent('XStaticContentLayout', v_id);
+
+    let content = null;
+    if (this.props.is_cover_page) {
+      content = (
+        <div className="row" id="ui-content">
+          <XLeftPane {...this.props} />
+        </div>
+      );
+    } else if (this.props.initialization_status == 'initializing') {
+      content = <div id="ui-placeholder">Initializing...</div>;
+    } else if (this.props.initialization_status == 'websockets_failure') {
+      content = (
+        <div id="ui-placeholder">
+          Sorry, but we found that your browser does not support WebSockets.
+          Please consider updating your browser to a newer version or using
+          a different browser and check this HIT again.
+        </div>
+      );
+    } else if (this.props.initialization_status == 'failed') {
+      content = (
+        <div id="ui-placeholder">
+          Unable to initialize. We may be having issues with our servers.
+          Please refresh the page, or if that isn't working return the HIT and
+          try again later if you would like to work on this task.
+        </div>
+      );
+    } else {
+      content = <XStaticContentLayout {...this.props} />;
+    }
+    return (
+      <div className="container-fluid" id="ui-container">
+        {content}
+      </div>
+    );
+  }
+}
+
+
 function setCustomComponents(new_components) {
   CustomComponents = new_components;
 }
 
 component_list = {
-  XContentLayout: ['ContentLayout', ContentLayout],
-  XLeftPane: ['LeftPane', LeftPane],
-  XRightPane: ['RightPane', RightPane],
-  XResponsePane: ['ResponsePane', ResponsePane],
-  XTextResponse: ['TextResponse', TextResponse],
-  XFormResponse: ['FormResponse', FormResponse],
-  XDoneResponse: ['DoneResponse', DoneResponse],
-  XIdleResponse: ['IdleResponse', IdleResponse],
-  XDoneButton: ['DoneButton', DoneButton],
-  XChatPane: ['ChatPane', ChatPane],
-  XWaitingMessage: ['WaitingMessage', WaitingMessage],
-  XMessageList: ['MessageList', MessageList],
-  XChatMessage: ['ChatMessage', ChatMessage],
+  XContentLayout: ['XContentLayout', ContentLayout],
+  XLeftPane: ['XLeftPane', LeftPane],
+  XRightPane: ['XRightPane', RightPane],
+  XResponsePane: ['XResponsePane', ResponsePane],
+  XTextResponse: ['XTextResponse', TextResponse],
+  XFormResponse: ['XFormResponse', FormResponse],
+  XDoneResponse: ['XDoneResponse', DoneResponse],
+  XIdleResponse: ['XIdleResponse', IdleResponse],
+  XDoneButton: ['XDoneButton', DoneButton],
+  XChatPane: ['XChatPane', ChatPane],
+  XWaitingMessage: ['XWaitingMessage', WaitingMessage],
+  XMessageList: ['XMessageList', MessageList],
+  XChatMessage: ['XChatMessage', ChatMessage],
   XTaskDescription: ['XTaskDescription', TaskDescription],
   XReviewButtons: ['XReviewButtons', ReviewButtons],
   XContextView: ['XContextView', ContextView],
+  XStaticRightPane: ['XStaticRightPane', StaticRightPane],
+  XContentPane: ['XContentPane', ContentPane],
+  XStaticContentLayout: ['XStaticContentLayout', StaticContentLayout],
 };
 
 export {
@@ -1408,6 +1510,7 @@ export {
   LeftPane,
   ContentLayout,
   BaseFrontend,
+  StaticFrontend,
   // Functions to update and get current components
   setCustomComponents,
   getCorrectComponent,

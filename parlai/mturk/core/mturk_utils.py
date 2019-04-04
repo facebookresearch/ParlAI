@@ -148,6 +148,7 @@ def create_hit_config(opt, task_description, unique_worker, is_sandbox):
         # Populate the chat pane title from chat_title, defaulting to the
         # hit_title if the task provides no chat_title
         'chat_title': opt.get('chat_title', opt.get('hit_title', 'Live Chat')),
+        'template_type': opt.get('frontend_template_type', 'default'),
     }
     hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
     if os.path.exists(hit_config_file_path):

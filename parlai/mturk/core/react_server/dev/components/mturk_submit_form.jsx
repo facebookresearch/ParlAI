@@ -8,6 +8,7 @@
 
 import React from 'react';
 import $ from 'jquery';
+import 'fetch';
 
 // If we're in the amazon turk HIT page (within an iFrame) return True
 function inMTurkHITPage() {
@@ -18,10 +19,45 @@ function inMTurkHITPage() {
   }
 }
 
+function postData(url = ``, data = {}) {
+  return fetch(url, {
+    method: 'POST',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+    redirect: 'follow',
+    referrer: 'no-referrer',
+    body: JSON.stringify(data),
+  });
+}
+
 // Callback for submission
 function allDoneCallback() {
   if (inMTurkHITPage()) {
     $('input#mturk_submit_button').click();
+  }
+}
+
+// Callback for static submission
+function staticAllDoneCallback(sender_id, assign_id, worker_id, response_data) {
+  if (inMTurkHITPage()) {
+    let server_url = window.location.origin;
+    let post_data = {
+      assignment_id: assign_id,
+      agent_id: sender_id,
+      worker_id: worker_id,
+      response_data: response_data,
+      task_group_id: TASK_GROUP_ID,
+    };
+    // We allow workers to submit even if our server goes down.
+    // TODO reconcile this data with the fact that we'll likely mark as an
+    // abandon on our end and will want to query the data from amazon instead
+    postData(server_url + '/submit_static', post_data).then(
+      res => { $('input#mturk_submit_button').click(); }
+    );
   }
 }
 
@@ -38,6 +74,15 @@ class MTurkSubmitForm extends React.Component {
   }
 
   render() {
+    let response_data_input = null;
+    if (this.props.response_data !== undefined) {
+      response_data_input = <input
+        id="responseData"
+        name="responseData"
+        value={JSON.stringify(this.props.response_data)}
+        readOnly
+      />
+    }
     return (
       <form
         id="mturk_submit_form"
@@ -58,6 +103,7 @@ class MTurkSubmitForm extends React.Component {
           value={this.props.worker_id}
           readOnly
         />
+        {response_data_input}
         <input
           type="submit"
           value="Submit"
@@ -69,4 +115,4 @@ class MTurkSubmitForm extends React.Component {
   }
 }
 
-export { allDoneCallback, MTurkSubmitForm };
+export { allDoneCallback, staticAllDoneCallback, MTurkSubmitForm };

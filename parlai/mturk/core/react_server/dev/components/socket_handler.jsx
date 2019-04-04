@@ -240,9 +240,11 @@ class SocketHandler extends React.Component {
         log('Timeout: ' + blocking_id, 1);
         // Send the packet again now
         var m = packet_map[blocking_id];
-        // Ensure that the send retries, we wouldn't be here if the ACK worked
-        m.status = STATUS_SENT;
-        this.sendHelper(packet_map[blocking_id], blocking_intend_send_time);
+        if (m.status != STATUS_ACK) {
+          // Ensure that the send retries, we wouldn't be here if the ACK worked
+          m.status = STATUS_SENT;
+          this.sendHelper(packet_map[blocking_id], blocking_intend_send_time);
+        }
       }
     }
   }
@@ -405,11 +407,18 @@ class SocketHandler extends React.Component {
     this.props.onNewMessage(message);
     if (message.task_data !== undefined) {
       let has_context = false;
-      for (let key of Object.keys(message.task_data)) {
-        if (key !== 'respond_with_form') {
-          has_context = true;
+      if (!this.props.run_static) {
+        // We expect static tasks to recieve task_data and display in
+        // the main pane, but dynamic tasks have other options.
+        // TODO extract above if block out after separating static and dynamic
+        // Socket managers
+        for (let key of Object.keys(message.task_data)) {
+          if (key !== 'respond_with_form') {
+            has_context = true;
+          }
         }
       }
+
       message.task_data.last_update = new Date().getTime();
       message.task_data.has_context = has_context;
       this.props.onNewTaskData(message.task_data);
@@ -581,7 +590,7 @@ class SocketHandler extends React.Component {
     // TODO fail properly and update state to closed when the host dies for
     // a long enough period. Once this says "disconnected" it should be
     // disconnected
-    if (this.state.socket_closed) {
+    if (this.state.socket_closed || this.props.run_static) {
       // No reason to keep a heartbeat if the socket is closed
       window.clearInterval(this.state.heartbeat_id);
       this.setState({ heartbeat_id: null });
