@@ -845,18 +845,12 @@ class TorchAgent(Agent):
                                     'models:glove_vectors'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
-            from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
-            embs = vocab.Vectors(
-                name='crawl-300d-2M.vec',
-                url=fasttext_cc_url,
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_cc_vectors'))
+            from parlai.zoo.fasttext_cc_vectors.build import download
+            embs = download(self.opt.get('datapath'))
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
-            embs = vocab.FastText(
-                language='en',
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_vectors'))
+            from parlai.zoo.fasttext_vectors.build import download
+            embs = download(self.opt.get('datapath'))
         else:
             raise RuntimeError('embedding type {} not implemented. check arg, '
                                'submit PR to this function, or override it.'
@@ -1081,6 +1075,16 @@ class TorchAgent(Agent):
         If you want to use additional fields on your subclass, you can override
         this function, call super().vectorize(...) to process the text and
         labels, and then process the other fields in your subclass.
+
+        Additionally, if you want to override some of these default parameters,
+        then we recommend using a pattern like:
+
+        .. code-block:: python
+
+          def vectorize(self, *args, **kwargs):
+              kwargs['add_start'] = False
+              return super().vectorize(*args, **kwargs)
+
 
         :param obs:
             Single observation from observe function.

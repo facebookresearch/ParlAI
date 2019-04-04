@@ -22,16 +22,11 @@ class TestNewTasks(unittest.TestCase):
     def test_verify_data(self):
         parser = setup_args()
         opt = parser.parse_args(print_args=False)
-        changed_files = testing_utils.git_changed_files()
-        changed_task_files = []
-        for file in changed_files:
-            if (
-                'parlai/tasks' in file and
-                'README' not in file and
-                'task_list.py' not in file
-            ):
-                changed_task_files.append(file)
-
+        changed_task_files = [
+            fn
+            for fn in testing_utils.git_changed_files()
+            if testing_utils.is_new_task_filename(fn)
+        ]
         if not changed_task_files:
             return
 

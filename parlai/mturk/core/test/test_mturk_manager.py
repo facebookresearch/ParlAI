@@ -18,8 +18,6 @@ from parlai.mturk.core.socket_manager import SocketManager, Packet
 from parlai.core.params import ParlaiParser
 from websocket_server import WebsocketServer
 
-
-import parlai.core.testing_utils as testing_utils
 import parlai.mturk.core.mturk_manager as MTurkManagerFile
 import parlai.mturk.core.data_model as data_model
 
@@ -269,7 +267,6 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager.force_expire_hit.assert_called_once_with(
             self.agent_3.worker_id, self.agent_3.assignment_id)
 
-    @testing_utils.skipIfCircleCI
     def test_socket_setup(self):
         '''Basic socket setup should fail when not in correct state,
         but succeed otherwise
@@ -283,7 +280,6 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         self.mturk_manager._setup_socket()
         self.assertIsInstance(self.mturk_manager.socket_manager, SocketManager)
 
-    @testing_utils.skipIfCircleCI
     def test_worker_alive(self):
         # Setup for test
         manager = self.mturk_manager
@@ -555,7 +551,6 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
             manager.force_expire_hit.assert_not_called()
             manager.send_command.assert_called_once()
 
-    @testing_utils.skipIfCircleCI
     def test_mturk_messages(self):
         '''Ensure incoming messages work as expected'''
         # Setup for test
@@ -1165,7 +1160,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.mturk_manager.shutdown()
         self.fake_socket.close()
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_socket_dead(self):
         '''Test all states of socket dead calls'''
         manager = self.mturk_manager
@@ -1255,7 +1249,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.assertFalse(agent.disconnected)
         manager._handle_agent_disconnect.assert_not_called()
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_send_message_command(self):
         manager = self.mturk_manager
         agent = self.agent_1
@@ -1295,7 +1288,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.assertEqual(packet.data['message_id'], message_id)
         self.assertEqual(packet.data['type'], data_model.MESSAGE_TYPE_MESSAGE)
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_free_workers(self):
         manager = self.mturk_manager
         manager.socket_manager.close_channel = mock.MagicMock()
@@ -1303,7 +1295,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         manager.socket_manager.close_channel.assert_called_once_with(
             self.agent_1.get_connection_id())
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_force_expire_hit(self):
         manager = self.mturk_manager
         agent = self.agent_1
@@ -1362,7 +1353,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
             agent.get_connection_id())
         test_ack_function.assert_called()
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_get_qualifications(self):
         manager = self.mturk_manager
         mturk_utils = MTurkManagerFile.mturk_utils
@@ -1425,7 +1415,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
 
         self.assertListEqual(qualifications, manager.qualifications)
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_create_additional_hits(self):
         manager = self.mturk_manager
         manager.opt['hit_title'] = 'test_hit_title'
@@ -1462,7 +1451,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.assertEqual(len(manager.hit_id_list), 5)
         self.assertEqual(hit_url, 'page_url')
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_expire_all_hits(self):
         manager = self.mturk_manager
         worker_manager = manager.worker_manager
@@ -1486,7 +1474,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
                     break
             self.assertTrue(found)
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_qualification_management(self):
         manager = self.mturk_manager
         test_qual_name = 'test_qual'
@@ -1531,7 +1518,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         result = manager.create_qualification(other_qual_name, '')
         self.assertEqual(result, success_id)
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_partner_disconnect(self):
         manager = self.mturk_manager
         manager.send_command = mock.MagicMock()
@@ -1545,7 +1531,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.assertEqual(assignment_id, self.agent_1.assignment_id)
         self.assertDictEqual(data, self.agent_1.get_inactive_command_data())
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_restore_state(self):
         manager = self.mturk_manager
         worker_manager = manager.worker_manager
@@ -1578,7 +1563,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.assertListEqual(data['messages'], agent.get_messages())
         self.assertEqual(data['text'], data_model.COMMAND_RESTORE_STATE)
 
-    @testing_utils.skipIfCircleCI('CircleCI fails socket setup')
     def test_expire_onboarding(self):
         manager = self.mturk_manager
         manager.force_expire_hit = mock.MagicMock()

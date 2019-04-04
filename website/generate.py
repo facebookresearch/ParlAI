@@ -63,6 +63,11 @@ def make_errorpage():
 def make_aboutpage():
     template = _read_file(os.path.join(TEMPLATES, 'about.html'))
     readme = _read_file(os.path.join(GIT_ROOT_LEVEL, 'README.md'))
+    # filter out the circleci badge from the about page
+    readme = "\n".join([
+        l for l in readme.split("\n")
+        if not l.startswith("[![CircleCI]")
+    ])
     readme_html = ghmarkdown(readme)
     readme_html = readme_html.replace("docs/source/\\", "/docs/")
     content = template.replace('{{{CONTENT}}}', readme_html)
