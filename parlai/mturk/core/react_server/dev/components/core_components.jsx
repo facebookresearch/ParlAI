@@ -1487,6 +1487,7 @@ component_list = {
   XChatMessage: ['XChatMessage', ChatMessage],
   XTaskDescription: ['XTaskDescription', TaskDescription],
   XReviewButtons: ['XReviewButtons', ReviewButtons],
+  XContextView: ['XContextView', ContextView],
   XStaticRightPane: ['XStaticRightPane', StaticRightPane],
   XContentPane: ['XContentPane', ContentPane],
   XStaticContentLayout: ['XStaticContentLayout', StaticContentLayout],
