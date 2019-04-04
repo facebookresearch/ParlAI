@@ -1076,6 +1076,16 @@ class TorchAgent(Agent):
         this function, call super().vectorize(...) to process the text and
         labels, and then process the other fields in your subclass.
 
+        Additionally, if you want to override some of these default parameters,
+        then we recommend using a pattern like:
+
+        .. code-block:: python
+
+          def vectorize(self, *args, **kwargs):
+              kwargs['add_start'] = False
+              return super().vectorize(*args, **kwargs)
+
+
         :param obs:
             Single observation from observe function.
 
