@@ -387,7 +387,7 @@ class SocketManager():
                         'Socket logged error: {}'.format(error),
                     )
                     self._ensure_closed()
-            except BaseException:
+            except Exception:
                 if type(error) is websocket.WebSocketConnectionClosedException:
                     return  # Connection closed is noop
                 shared_utils.print_and_log(
@@ -597,7 +597,7 @@ class SocketManager():
                                 self._send_packet(packet, connection_id, t)
                     except Empty:
                         pass
-                except BaseException as e:
+                except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
                         'Unexpected error occurred in socket handling thread: '
@@ -765,7 +765,7 @@ class StaticSocketManager(SocketManager):
                                 self._send_packet(packet, connection_id, t)
                     except Empty:
                         pass
-                except BaseException as e:
+                except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
                         'Unexpected error occurred in socket handling thread: '

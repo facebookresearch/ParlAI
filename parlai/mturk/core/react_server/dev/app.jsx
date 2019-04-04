@@ -69,7 +69,12 @@ function doesSupportWebsockets() {
 
 /* ================= Application Components ================= */
 
-/* global FRAME_HEIGHT, HIT_ID, ASSIGNMENT_ID, WORKER_ID, TEMPLATE_TYPE, BLOCK_MOBILE, DISPLAY_FEEDBACK, IS_COVER_PAGE */
+/* global
+  FRAME_HEIGHT, HIT_ID, ASSIGNMENT_ID, WORKER_ID, TEMPLATE_TYPE, BLOCK_MOBILE,
+  DISPLAY_FEEDBACK, IS_COVER_PAGE
+*/
+
+const DEFAULT_FRAME_HEIGHT = 650;
 
 class MainApp extends React.Component {
   constructor(props) {
@@ -119,7 +124,7 @@ class MainApp extends React.Component {
 
     this.setState({
       task_description: task_description,
-      frame_height: data['frame_height'] || 650,
+      frame_height: data['frame_height'] || DEFAULT_FRAME_HEIGHT,
       mturk_submit_url: data['mturk_submit_url'],
     });
   }
@@ -286,7 +291,7 @@ class StaticApp extends React.Component {
 
     this.setState({
       task_description: task_description,
-      frame_height: data['frame_height'] || 650,
+      frame_height: data['frame_height'] || DEFAULT_FRAME_HEIGHT,
       mturk_submit_url: data['mturk_submit_url'],
     });
   }
@@ -329,7 +334,7 @@ class StaticApp extends React.Component {
               done_text: inactive_text,
             })
           }
-          onForceDone={allDoneCallback}
+          onForceDone={() => { /* ForceDone never called in static flow */ }}
           onExpire={expire_reason =>
             this.setState({
               chat_state: 'inactive',

@@ -1398,8 +1398,8 @@ class BaseFrontend extends React.Component {
       content = (
         <div id="ui-placeholder">
           Sorry, but we found that your browser does not support WebSockets.
-          Please consider updating your browser to a newer version and check
-          this HIT again.
+          Please consider updating your browser to a newer version or using
+          a different browser and check this HIT again.
         </div>
       );
     } else if (this.props.initialization_status == 'failed') {
@@ -1443,8 +1443,8 @@ class StaticFrontend extends React.Component {
       content = (
         <div id="ui-placeholder">
           Sorry, but we found that your browser does not support WebSockets.
-          Please consider updating your browser to a newer version and check
-          this HIT again.
+          Please consider updating your browser to a newer version or using
+          a different browser and check this HIT again.
         </div>
       );
     } else if (this.props.initialization_status == 'failed') {
