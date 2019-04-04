@@ -69,9 +69,6 @@ def main():
             while not world.episode_done():
                 world.parley()
 
-            # if world.did_complete():
-            #     mturk_manager.mark_workers_done(workers)
-
             world.shutdown()
 
             return world.prep_save_data(workers)
