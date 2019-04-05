@@ -38,6 +38,7 @@ This module also provides a utility method:
 """
 
 from parlai.core.build_data import modelzoo_path
+from parlai.core.utils import warn_once
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
@@ -397,7 +398,7 @@ def load_agent_module(opt):
             old_dict_file = new_opt['dict_file']
             new_opt['dict_file'] = model_file + '.dict'
         if not os.path.isfile(new_opt['dict_file']):
-            raise RuntimeError(
+            warn_once(
                 'WARNING: Neither the specified dict file ({}) nor the '
                 '`model_file`.dict file ({}) exists, check to make sure either '
                 'is correct'.format(old_dict_file, new_opt['dict_file'])
