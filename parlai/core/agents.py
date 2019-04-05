@@ -401,7 +401,8 @@ def load_agent_module(opt):
             warn_once(
                 'WARNING: Neither the specified dict file ({}) nor the '
                 '`model_file`.dict file ({}) exists, check to make sure either '
-                'is correct'.format(old_dict_file, new_opt['dict_file'])
+                'is correct. This may manifest as a shape mismatch later '
+                'on.'.format(old_dict_file, new_opt['dict_file'])
             )
         model_class = get_agent_module(new_opt['model'])
 
