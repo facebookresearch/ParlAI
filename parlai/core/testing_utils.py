@@ -159,6 +159,9 @@ class TeeStringIO(io.StringIO):
             self.stream.write(data)
         super().write(data)
 
+    def __str__(self):
+        return self.getvalue()
+
 
 @contextlib.contextmanager
 def capture_output():
