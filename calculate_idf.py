@@ -60,15 +60,21 @@ def get_stats(filename, df_dict, tot_doc, modelname):
 
     
     
-datasets = ['dailydialog', 'empathetic_dialogues', 'personachat'] 
+datasets = ['cornell_movie', 'dailydialog', 'empathetic_dialogues', 'personachat'] 
   
 modelinfo = [('Seq2Seq', 'seq2seq'), ('Seq2SeqRetriever', 'seq2seq_retriever_idf'), 
-            ('Seq2SeqRetriever', 'seq2seq_retriever_idf_swapping'), ('FACE', 'face')]
+            ('Seq2SeqRetriever', 'seq2seq_retriever_idf_swapping'), ('FACE', 'face'), 
+            ('Seq2SeqWeighted', 'seq2seq_weighted_idf'), 
+            ('Seq2SeqWeighted', 'seq2seq_weighted_swapping'),
+            ('TorchAgent', 'transformergenerator'),
+            ('Seq2SeqWeighted', 'transformer_weighted_idf'),
+#             ('TransformerWeighted', 'transformer_weighted_swapping')
+            ]
             
 
 
 if __name__ == '__main__': 
-    result_lines = []
+    result_lines = ['===================================\n',]
     for dataset in datasets:
         dict_filename = 'tmp/%s/dict_minfreq_2.doc_freq' % dataset
         tot_doc_filename = 'tmp/%s/dict_minfreq_2.tot_doc' % dataset
@@ -78,19 +84,23 @@ if __name__ == '__main__':
             tot_doc = float(f.readline())
         
         for (modelname, modelprefix) in modelinfo: 
-            filename = 'tmp/%s/%s_minfreq_2_test.out' % (dataset, modelprefix)
+            print(dataset, modelname, modelprefix)
+            try: 
+                filename = 'tmp/%s/%s_minfreq_2_test.out' % (dataset, modelprefix)
             
-            outputs = get_stats(filename, df_dict, tot_doc, modelname)
-            stats = '%s, %s, %.3f, %.3f, %.3f, %.3f, %s' % \
-                        tuple([dataset, modelname] + list(outputs) + [filename,])
-            result_lines.append(stats)
-            
-            if modelname=='FACE': 
-                filename = 'tmp/%s/%s_minfreq_2_greedy_test.out' % (dataset, modelprefix)
                 outputs = get_stats(filename, df_dict, tot_doc, modelname)
-                stats = '%s, %s_greedy, %.3f, %.3f, %.3f, %.3f, %s' % \
+                stats = '%s, %s, %.3f, %.3f, %.3f, %.3f, %s' % \
                             tuple([dataset, modelname] + list(outputs) + [filename,])
                 result_lines.append(stats)
+            
+                if modelname=='FACE': 
+                    filename = 'tmp/%s/%s_minfreq_2_greedy_test.out' % (dataset, modelprefix)
+                    outputs = get_stats(filename, df_dict, tot_doc, modelname)
+                    stats = '%s, %s_greedy, %.3f, %.3f, %.3f, %.3f, %s' % \
+                                tuple([dataset, modelname] + list(outputs) + [filename,])
+                    result_lines.append(stats)
+            except FileNotFoundError:
+                result_lines.append('%s, %s,,,,,' % (dataset, modelprefix))
                 
                 
     print('datasetname, modelname, avg_mean_idf, avg_max_idf, avg_length, distinct-unigram-ratio')        
