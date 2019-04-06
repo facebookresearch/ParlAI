@@ -13,7 +13,8 @@ import torch.nn.functional as F
 
 
 class TorchClassifierAgent(TorchAgent):
-    """Abstract Classifier agent. Only meant to be extended.
+    """
+    Abstract Classifier agent. Only meant to be extended.
 
     TorchClassifierAgent aims to handle much of the bookkeeping any
     classification model.
@@ -130,7 +131,8 @@ class TorchClassifierAgent(TorchAgent):
         return shared
 
     def _get_labels(self, batch):
-        """Obtain the correct labels. Raise an exception if one of the labels
+        """
+        Obtain the correct labels. Raise an exception if one of the labels
         is not in the class list.
         """
         try:
@@ -145,7 +147,8 @@ class TorchClassifierAgent(TorchAgent):
         return labels_tensor
 
     def _update_confusion_matrix(self, batch, predictions):
-        """Update the confusion matrix given the batch and predictions.
+        """
+        Update the confusion matrix given the batch and predictions.
 
         :param batch:
             a Batch object (defined in torch_agent.py)
@@ -158,7 +161,8 @@ class TorchClassifierAgent(TorchAgent):
             self.metrics['confusion_matrix'][(label, pred)] += 1
 
     def _format_interactive_output(self, probs, prediction_id):
-        """Nicely format interactive mode output when we want to also
+        """
+        Nicely format interactive mode output when we want to also
         print the scores associated with the predictions.
         """
         preds = []
@@ -231,7 +235,8 @@ class TorchClassifierAgent(TorchAgent):
         self.metrics['loss'] = 0.0
 
     def _report_prec_recall_metrics(self, confmat, class_name, metrics):
-        """Uses the confusion matrix to predict the recall and precision for
+        """
+        Uses the confusion matrix to predict the recall and precision for
         class `class_name`. Returns the number of examples of each class.
         """
         eps = 0.00001  # prevent divide by zero errors
@@ -290,7 +295,8 @@ class TorchClassifierAgent(TorchAgent):
         return m
 
     def score(self, batch):
-        """Given a batch and labels, returns the scores.
+        """
+        Given a batch and labels, returns the scores.
 
         :param batch:
             a Batch object (defined in torch_agent.py)

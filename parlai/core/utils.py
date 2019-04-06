@@ -59,7 +59,8 @@ def maintain_dialog_history(history, observation, reply='',
                             historyLength=1, useReplies='label_else_model',
                             dict=None, useStartEndIndices=True,
                             splitSentences=False):
-    """Keep track of dialog history, up to a truncation length.
+    """
+    Keep track of dialog history, up to a truncation length.
 
     Either includes replies from the labels, model, or not all using param
     'replies'.
@@ -117,7 +118,8 @@ def maintain_dialog_history(history, observation, reply='',
 
 
 def load_cands(path, lines_have_ids=False, cands_are_replies=False):
-    """Load global fixed set of candidate labels that the teacher provides.
+    """
+    Load global fixed set of candidate labels that the teacher provides.
 
     Every example will include these as candidates. The true labels for a
     specific example are also added to this set, so that it's possible to get
@@ -154,7 +156,8 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
 
 
 class Predictor(object):
-    """Wrapper to set up running version of model and request predictions.
+    """
+    Wrapper to set up running version of model and request predictions.
 
     Note that this maintains no World state (does not use a World), merely
     providing the observation directly to the model and getting a response.
@@ -164,7 +167,8 @@ class Predictor(object):
     """
 
     def __init__(self, args=None, **kwargs):
-        """Initialize the predictor, setting up opt automatically if needed.
+        """
+        Initialize the predictor, setting up opt automatically if needed.
 
         Args is expected to be in the same format as sys.argv: e.g. a list in
         the form ['--model', 'seq2seq', '-hs', 128, '-lr', 0.5].
@@ -248,7 +252,8 @@ class TimeLogger():
         return self.timer.time()
 
     def log(self, done, total, report=None):
-        """Log report, time elapsed, and percentage progress towards goal.
+        """
+        Log report, time elapsed, and percentage progress towards goal.
 
         :param done: number of examples completed so far
         :param total: total number of elements to be completed. if total > 0,
@@ -281,7 +286,8 @@ class TimeLogger():
 
 
 class AttrDict(dict):
-    """Helper class to have a dict-like object with dot access.
+    """
+    Helper class to have a dict-like object with dot access.
 
     For example, instead of `d = {'key': 'value'}` use
     `d = AttrDict(key='value')`.
@@ -299,7 +305,8 @@ class AttrDict(dict):
 
 
 def round_sigfigs(x, sigfigs=4):
-    """Round value to specified significant figures.
+    """
+    Round value to specified significant figures.
 
     :param x: input number
     :param sigfigs: number of significant figures to return
@@ -345,16 +352,19 @@ def no_lock():
 
 
 class PaddingUtils(object):
-    """Helps with padding input and target tensors.
+    """
+    Helps with padding input and target tensors.
 
     DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
     """
+    # DEPRECATIONDAY: delete!
 
     @classmethod
     def pad_text(cls, observations, dictionary,
                  end_idx=None, null_idx=0, dq=False, eval_labels=True,
                  truncate=None):
-        """Pad observations to max width.
+        """
+        Pad observations to max width.
 
         We check that examples are valid, pad with zeros, and sort by length
         so that we can use the pack_padded function. The list valid_inds
@@ -459,7 +469,8 @@ class PaddingUtils(object):
     def map_predictions(cls, predictions, valid_inds, batch_reply,
                         observations, dictionary, end_idx, report_freq=0.1,
                         labels=None, answers=None, ys=None):
-        """Match predictions to original index in the batch.
+        """
+        Match predictions to original index in the batch.
 
         Predictions are mapped back to appropriate indices in the batch_reply
         using valid_inds.
@@ -502,7 +513,8 @@ class PaddingUtils(object):
 
 
 class OffensiveLanguageDetector(object):
-    """Tries to detect offensive language in text.
+    """
+    Tries to detect offensive language in text.
 
     Detects offensive language using a list of offensive language and phrases
     from https://github.com/LDNOOBW.
@@ -585,7 +597,8 @@ class OffensiveLanguageDetector(object):
             self.add_phrase(phrase)
 
     def _check_sequence(self, toks, idx, node):
-        """Check if words from the sequence are in the trie.
+        """
+        Check if words from the sequence are in the trie.
 
         This checks phrases made from
         toks[i], toks[i:i+2] ... toks[i:i + self.max_len]
@@ -720,7 +733,8 @@ def clip_text(text, max_len):
 
 
 def _ellipse(lst, max_display=5, sep='|'):
-    """Like join, but possibly inserts an ellipsis.
+    """
+    Like join, but possibly inserts an ellipsis.
 
     :param lst: The list to join on
     :param int max_display: the number of items to display for ellipsing.
@@ -737,7 +751,8 @@ def _ellipse(lst, max_display=5, sep='|'):
 
 
 def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
-    """Return a string describing the set of messages provided.
+    """
+    Return a string describing the set of messages provided.
 
     If prettify is true, candidates are displayed using prettytable.
     ignore_fields provides a list of fields in the msgs which should not be
@@ -784,11 +799,14 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
 
 
 def str_to_msg(txt, ignore_fields=''):
-    """Convert formatted string to ParlAI message dict.
+    """
+    Convert formatted string to ParlAI message dict.
 
-    :param txt: formatted string to convert. String format is tab-separated
-        fields, with colon separating field name and contents.
-    :param ignore_fields: (default '') comma-separated field names to not
+    :param txt:
+        formatted string to convert. String format is tab-separated fields,
+        with colon separating field name and contents.
+    :param ignore_fields:
+        (default '') comma-separated field names to not
         include in the msg dict even if they're in the string.
     """
     def tostr(txt):
@@ -830,11 +848,14 @@ def str_to_msg(txt, ignore_fields=''):
 
 
 def msg_to_str(msg, ignore_fields=''):
-    """Convert ParlAI message dict to string.
+    """
+    Convert ParlAI message dict to string.
 
-    :param msg: dict to convert into a string.
-    :param ignore_fields: (default '') comma-separated field names to not
-        include in the string even if they're in the msg dict.
+    :param msg:
+        dict to convert into a string.
+    :param ignore_fields:
+        (default '') comma-separated field names to not include in the string
+        even if they're in the msg dict.
     """
     def filter(txt):
         txt = str(txt)
@@ -873,7 +894,8 @@ def msg_to_str(msg, ignore_fields=''):
 
 
 def set_namedtuple_defaults(namedtuple, default=None):
-    """Set *all* of the fields for a given nametuple to a singular value.
+    """
+    Set *all* of the fields for a given nametuple to a singular value.
 
     Additionally removes the default docstring for each field.
     Modifies the tuple in place, but returns it anyway.
@@ -894,7 +916,8 @@ def set_namedtuple_defaults(namedtuple, default=None):
 
 def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
                   max_len=None, fp16friendly=False):
-    """Create a right-padded matrix from an uneven list of lists.
+    """
+    Create a right-padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
     is a list containing the lengths of each row.
@@ -962,14 +985,20 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
 
 
 def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=False):
-    """Make 3D padded tensor for list of lists of 1D tensors or lists.
+    """
+    Make 3D padded tensor for list of lists of 1D tensors or lists.
 
-    :param tensors:  list of lists of 1D tensors (or lists)
-    :param pad_idx:  padding to fill tensor with
-    :param use_cuda: whether to call cuda() before returning
-    :param bool fp16friendly: if True, pads the final dimension to be a multiple of 8.
+    :param tensors:
+        list of lists of 1D tensors (or lists)
+    :param pad_idx:
+        padding to fill tensor with
+    :param use_cuda:
+        whether to call cuda() before returning
+    :param bool fp16friendly:
+        if True, pads the final dimension to be a multiple of 8.
 
-    :returns: 3D tensor with the maximum dimensions of the inputs
+    :returns:
+        3D tensor with the maximum dimensions of the inputs
     """
     a = len(tensors)
     b = max(len(row) for row in tensors)
@@ -997,14 +1026,19 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=Fal
 
 
 def argsort(keys, *lists, descending=False):
-    """Reorder each list in lists by the (descending) sorted order of keys.
+    """
+    Reorder each list in lists by the (descending) sorted order of keys.
 
-    :param iter keys: Keys to order by.
-    :param list[list] lists: Lists to reordered by keys's order.
-                             Correctly handles lists and 1-D tensors.
-    :param bool descending: Use descending order if true.
+    :param iter keys:
+        Keys to order by.
+    :param list[list] lists:
+        Lists to reordered by keys's order.  Correctly handles lists and 1-D
+        tensors.
+    :param bool descending:
+        Use descending order if true.
 
-    :returns: The reordered items.
+    :returns:
+        The reordered items.
     """
     ind_sorted = sorted(range(len(keys)), key=lambda k: keys[k])
     if descending:

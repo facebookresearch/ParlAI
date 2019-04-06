@@ -65,7 +65,8 @@ class TorchGeneratorModel(nn.Module):
         return self.START.detach().expand(bsz, 1)
 
     def decode_greedy(self, encoder_states, bsz, maxlen):
-        """Greedy search
+        """
+        Greedy search
 
         :param int bsz:
             Batch size. Because encoder_states is model-specific, it cannot
@@ -200,13 +201,10 @@ class TorchGeneratorModel(nn.Module):
 
         :param incremental_state:
             second output of model.decoder
-
         :type incremental_state:
             model specific
-
         :param inds:
             indices to select and reorder over.
-
         :type inds:
             LongTensor[n]
 
@@ -225,30 +223,25 @@ class TorchGeneratorModel(nn.Module):
 
     def forward(self, *xs, ys=None, cand_params=None, prev_enc=None, maxlen=None,
                 bsz=None):
-        """Get output predictions from the model.
+        """
+        Get output predictions from the model.
 
         :param xs:
             input to the encoder
-
         :type xs:
             LongTensor[bsz, seqlen]
-
         :param ys:
             Expected output from the decoder. Used
             for teacher forcing to calculate loss.
-
         :type ys:
             LongTensor[bsz, outlen]
-
         :param prev_enc:
             if you know you'll pass in the same xs multiple times, you can pass
             in the encoder output from the last forward pass to skip
             recalcuating the same encoder output.
-
         :param maxlen:
             max number of tokens to decode. if not set, will use the length of
             the longest label this model has seen. ignored when ys is not None.
-
         :param bsz:
             if ys is not provided, then you must specify the bsz for greedy
             decoding.
@@ -796,7 +789,8 @@ class PerplexityEvaluatorAgent(TorchGeneratorAgent):
         self.last_xs = None
 
     def next_word_probability(self, partial_out):
-        """Return probability distribution over next words.
+        """
+        Return probability distribution over next words.
 
         This probability is based on both nn input and partial true output.
         This is used to calculate the per-word perplexity.
@@ -988,7 +982,8 @@ class Beam(object):
                 top_hypothesis_tail.score)
 
     def get_hyp_from_finished(self, hypothesis_tail):
-        """Extract hypothesis ending with EOS at timestep with hyp_id.
+        """
+        Extract hypothesis ending with EOS at timestep with hyp_id.
 
         :param timestep:
             timestep with range up to len(self.outputs)-1
@@ -1024,7 +1019,8 @@ class Beam(object):
         return hypothesis
 
     def get_rescored_finished(self, n_best=None):
-        """Return finished hypotheses in rescored order.
+        """
+        Return finished hypotheses in rescored order.
 
         :param n_best:
             how many n best hypothesis to return
