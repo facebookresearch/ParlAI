@@ -88,7 +88,8 @@ def main():
     config = {
         'model': 'projects:wizard_of_wikipedia:interactive_retrieval',
         'retriever_model_file': 'models:wikipedia_full/tfidf_retriever/model',
-        'responder_model_file': 'models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
+        'responder_model_file':
+            'models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
     }
 
     argparser.add_model_subargs(config['model'])  # add model args to opt
