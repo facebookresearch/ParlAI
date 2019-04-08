@@ -242,7 +242,7 @@ class WizardEval(MultiAgentDialogWorld):
             if self.model_agent is not None:
                 # Model has to observe chosen topic
                 chosen_act = {'chosen_topic': self.chosen_topic,
-                              'text': self.chosen_topic,  # something to kick the model off
+                              'text': self.chosen_topic,
                               'episode_done': False}
                 self.model_agent.observe(chosen_act)
                 model_act = self.model_agent.act()
@@ -353,7 +353,8 @@ class WizardEval(MultiAgentDialogWorld):
                         act['text'] in self.ratings:
                     self.gmark_score = int(act['text'])
 
-        Parallel(n_jobs=len(self.agents), backend='threading')(delayed(eval_or_shutdown)(agent) for agent in self.agents)
+        Parallel(n_jobs=len(self.agents), backend='threading')\
+            (delayed(eval_or_shutdown)(agent) for agent in self.agents)
 
     def model_observes_itself(self, txt):
         act = {'text': txt, 'episode_done': False}

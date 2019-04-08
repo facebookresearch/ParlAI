@@ -15,7 +15,8 @@ if __name__ == '__main__':
     parser.set_params(
         model='projects:wizard_of_wikipedia:interactive_retrieval',
         retriever_model_file='models:wikipedia_full/tfidf_retriever/model',
-        responder_model_file='models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
+        responder_model_file='models:wizard_of_wikipedia/'
+                             'full_dialogue_retrieval_model/model',
     )
     opt = parser.parse_args(print_args=False)
     download(opt['datapath'])
