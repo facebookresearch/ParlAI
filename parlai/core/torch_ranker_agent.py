@@ -627,7 +627,7 @@ class TorchRankerAgent(TorchAgent):
     def load_candidates(self, path, cand_type='vectors'):
         print("[ Loading fixed candidate set {} from {} ]".format(cand_type,
                                                                   path))
-        return torch.load(path)
+        return torch.load(path, map_location=lambda cpu, _: cpu)
 
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
