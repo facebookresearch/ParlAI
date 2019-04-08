@@ -29,7 +29,7 @@ def wrap_dp(model):
     return tp.DataParallel(model)
 
 
-def wrap_ddp(model):
+def wrap_ddp_multi(model):
     td.init_process_group(
         backend='nccl',
         init_method='tcp://localhost:61337',
@@ -39,6 +39,21 @@ def wrap_ddp(model):
     model = tp.DistributedDataParallel(
         model,
         device_ids=None,
+        broadcast_buffers=False,
+    )
+    return model
+
+
+def wrap_ddp_single(model):
+    td.init_process_group(
+        backend='nccl',
+        init_method='tcp://localhost:61337',
+        rank=0,
+        world_size=1
+    )
+    model = tp.DistributedDataParallel(
+        model,
+        device_ids=[0],
         broadcast_buffers=False,
     )
     return model
@@ -82,10 +97,11 @@ def run_trial(args):
         model = wrap_dp(model)
     elif args.mode == 'ddp_multi':
         print('Wrapping in DistributedDataParallel (equiv to 1 proc per node)')
-        model = wrap_ddp(model)
+        model = wrap_ddp_multi(model)
     elif args.mode == 'ddp_single':
         print('Using a single GPU in distributed (equiv to 1 proc per gpu)')
         torch.cuda.set_device(0)
+        model = wrap_ddp_single(model)
     elif args.mode == 'single':
         print('Using a single GPU')
         pass

@@ -2,16 +2,6 @@
 
 nvidia-smi
 
-. /public/apps/anaconda3/5.0.1/etc/profile.d/conda.sh
-
-
-echo
-echo "======================================================================="
-echo "Activating pytorch nightly"
-echo "======================================================================="
-conda deactivate
-conda activate nightly
-echo
 echo "Collect env"
 echo "------------------------------------------------------------"
 python collect_env.py
