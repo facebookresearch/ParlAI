@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""This module provides a set of basic agents:
+
+"""
+This module provides a set of basic agents:
 
     ``Agent(object)``
     base class for all other agents, implements the ``observe()`` method
@@ -88,13 +90,15 @@ class Agent(object):
         pass
 
     def save(self, path=None):
-        """If applicable, save any parameters needed to recreate this agent from
+        """
+        If applicable, save any parameters needed to recreate this agent from
         loaded parameters.
         """
         pass
 
     def share(self):
-        """If applicable, share any parameters needed to create a shared version
+        """
+        If applicable, share any parameters needed to create a shared version
         of this agent.
         """
         shared = {}
@@ -108,8 +112,10 @@ class Agent(object):
 
 
 class Teacher(Agent):
-    """Basic Teacher agent which keeps track of how many times it's received
-    messages. Teachers provide the ``report()`` method to get back metrics."""
+    """
+    Basic Teacher agent which keeps track of how many times it's received
+    messages. Teachers provide the ``report()`` method to get back metrics.
+    """
 
     def __init__(self, opt, shared=None):
         if not hasattr(self, 'opt'):
@@ -159,13 +165,14 @@ class Teacher(Agent):
 
 
 class MultiTaskTeacher(Teacher):
-    """Creates a teacher that is actually a set of teachers each based on
-    a task string--each of these teachers will get called in turn,
-    either randomly or in order.
-    They are all in the same world (they are the same agent switching tasks).
+    """
+    Creates a teacher that is actually a set of teachers each based on a task
+    string--each of these teachers will get called in turn,
+    either randomly or in order.  They are all in the same world (they are the
+    same agent switching tasks).
 
-    The task string format is described for the ``create_task_agents()`` function
-    above.
+    The task string format is described for the ``create_task_agents()``
+    function above.
     """
 
     def __init__(self, opt, shared=None):
@@ -281,7 +288,8 @@ class MultiTaskTeacher(Teacher):
 
 
 def name_to_agent_class(name):
-    """Convert agent name to class.
+    """
+    Convert agent name to class.
 
     This adds "Agent" to the end of the name and uppercases the first letter
     and the first letter appearing after each underscore (underscores are
@@ -300,8 +308,10 @@ def name_to_agent_class(name):
 
 
 def compare_init_model_opts(opt, curr_opt):
-    """Prints loud warning when `init_model` opts differ from those that
-    are being loaded."""
+    """
+    Prints loud warning when `init_model` opts differ from those that
+    are being loaded.
+    """
     if opt.get('init_model') is None:
         return
     optfile = opt['init_model'] + '.opt'
@@ -364,7 +374,8 @@ def _load_opt_file(optfile):
 
 
 def load_agent_module(opt):
-    """Load agent options and module from file if opt file exists.
+    """
+    Load agent options and module from file if opt file exists.
 
     Checks to see if file exists opt['model_file'] + ".opt"; if so, load up the
     options from the file and use that to create an agent, loading the model
@@ -434,7 +445,8 @@ def load_agent_module(opt):
 
 
 def get_agent_module(dir_name):
-    """Return the module for an agent specified by ``--model``.
+    """
+    Return the module for an agent specified by ``--model``.
 
     Can be formatted in several different ways:
 
@@ -519,16 +531,20 @@ def get_agent_module(dir_name):
 
 
 def create_agent(opt, requireModelExists=False):
-    """Create an agent from the options ``model``, ``model_params`` and ``model_file``.
-    The input is either of the form ``parlai.agents.ir_baseline.agents:IrBaselineAgent``
-    (i.e. the path followed by the class name) or else just ``ir_baseline`` which
+    """
+    Create an agent from the options ``model``, ``model_params`` and ``model_file``.
+
+    The input is either of the form
+    ``parlai.agents.ir_baseline.agents:IrBaselineAgent`` (i.e. the path
+    followed by the class name) or else just ``ir_baseline`` which
     assumes the path above, and a class name suffixed with 'Agent'.
 
-    If ``model-file`` is available in the options this function can also attempt to load
-    the model from that location instead. This avoids having to specify all the other
-    options necessary to set up the model including its name as they are all loaded from
-    the options file if it exists (the file opt['model_file'] + '.opt' must exist and
-    contain a pickled or json dict containing the model's options).
+    If ``model-file`` is available in the options this function can also
+    attempt to load the model from that location instead. This avoids having to
+    specify all the other options necessary to set up the model including its
+    name as they are all loaded from the options file if it exists (the file
+    opt['model_file'] + '.opt' must exist and contain a pickled or json dict
+    containing the model's options).
     """
     if opt.get('datapath', None) is None:
         # add datapath, it is missing
@@ -574,18 +590,21 @@ def create_agent(opt, requireModelExists=False):
 # Helper functions to create agent/agents given shared parameters
 # returned from agent.share(). Useful for parallelism, sharing params, etc.
 def create_agent_from_shared(shared_agent):
-    """Instantiate an agent from the default `shared` params.
-
-    :param shared_agent: should include an `opt` dictionary and agent `class`,
-        along with whatever other parameters the agent needs to instantiate.
     """
-    opt = copy.deepcopy(shared_agent['opt'])  # TODO: is this slow sometimes?
+    Instantiate an agent from the default `shared` params.
+
+    :param shared_agent:
+        should include an `opt` dictionary and agent `class`, along with
+        whatever other parameters the agent needs to instantiate.
+    """
+    opt = copy.deepcopy(shared_agent['opt'])
     a = shared_agent['class'](opt, shared_agent)
     return a
 
 
 def create_agents_from_shared(shared):
-    """Create agents based on shared data.
+    """
+    Create agents based on shared data.
 
     :param shared: `list` of `dict` objects created by calling e.g.
         [a.share() for a in agents].
@@ -600,7 +619,8 @@ def create_agents_from_shared(shared):
 
 
 def get_task_module(taskname):
-    """Get the module of the task agent specified by `--task`.
+    """
+    Get the module of the task agent specified by `--task`.
 
     Can be formatted in several different ways:
 
@@ -654,8 +674,9 @@ def get_task_module(taskname):
 
 
 def add_task_flags_to_agent_opt(agent, opt, flags):
-    """Allows to insert task flags in the task name itself, they are
-    put inside the opt before the task is created.
+    """
+    Allows to insert task flags in the task name itself, they are put inside
+    the opt before the task is created.
     """
     fl = flags.split(':')
     task = []
@@ -669,7 +690,8 @@ def add_task_flags_to_agent_opt(agent, opt, flags):
 
 
 def create_task_agent_from_taskname(opt):
-    """Create task agent(s) assuming the input ``task_dir:teacher_class``.
+    """
+    Create task agent(s) assuming the input ``task_dir:teacher_class``.
 
     e.g. def_string is a shorthand path like ``babi:Task1k:1`` or ``#babi``
     or a complete path like ``parlai.tasks.babi.agents:Task1kTeacher:1``,
@@ -701,7 +723,8 @@ def create_task_agent_from_taskname(opt):
 
 
 def _create_task_agents(opt):
-    """Create task agent(s) for the given task name.
+    """
+    Create task agent(s) for the given task name.
 
     It does this by calling the create_agent function in agents.py of the
     given task.

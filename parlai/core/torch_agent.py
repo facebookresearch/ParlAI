@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""General utility code for building PyTorch-based agents in ParlAI.
+"""
+General utility code for building PyTorch-based agents in ParlAI.
 
 Contains the following main utilities:
 
@@ -300,7 +301,8 @@ class TorchAgent(Agent):
 
     @classmethod
     def optim_opts(self):
-        """Fetch optimizer selection.
+        """
+        Fetch optimizer selection.
 
         By default, collects everything in torch.optim, as well as importing:
         - qhm / qhmadam if installed from github.com/facebookresearch/qhoptim
@@ -338,7 +340,8 @@ class TorchAgent(Agent):
 
     @classmethod
     def history_class(cls):
-        """Return the history class that this agent expects to use.
+        """
+        Return the history class that this agent expects to use.
 
         Can be overriden if a more complex history is required.
         """
@@ -578,7 +581,8 @@ class TorchAgent(Agent):
         self.add_person_tokens = opt.get('person_tokens', False)
 
     def _get_init_model(self, opt, shared):
-        """Get model file to initialize with. If `init_model` exits, we will
+        """
+        Get model file to initialize with. If `init_model` exits, we will
         return the path to that file and maybe load dict file from that path.
         Otherwise, use `model_file.`
 
@@ -1248,7 +1252,8 @@ class TorchAgent(Agent):
         return batch_reply
 
     def last_reply(self, use_reply='label'):
-        """Retrieve the last reply from the model.
+        """
+        Retrieve the last reply from the model.
 
         If available, we use the true label instead of the model's prediction.
 
@@ -1319,7 +1324,8 @@ class TorchAgent(Agent):
         return [p for b, p in preds]
 
     def observe(self, observation):
-        """Process incoming message in preparation for producing a response.
+        """
+        Process incoming message in preparation for producing a response.
 
         This includes remembering the past history of the conversation.
         """

@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Provides standard metric evaluations for dialog.
+"""
+Provides standard metric evaluations for dialog.
+
 Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 between processes.
 """
