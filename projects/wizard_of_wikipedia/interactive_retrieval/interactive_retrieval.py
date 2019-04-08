@@ -32,16 +32,7 @@ class InteractiveRetrievalAgent(Agent):
 
         if not shared:
             # Create retriever
-            retriever_opt = {'model_file': opt['retriever_model_file'],
-                             'remove_title': False,
-                             'datapath': opt['datapath'],
-                             'override': {'remove_title': False}}
-            self.retriever = create_agent(retriever_opt)
-
-            self._set_up_sent_tok()
-            wiki_map_path = os.path.join(self.model_path,
-                                         'title_to_passage.json')
-            self.wiki_map = json.load(open(wiki_map_path, 'r'))
+            self._set_up_retriever(opt)
         else:
             self.opt = shared['opt']
             self.retriever = shared['retriever']
@@ -68,6 +59,18 @@ class InteractiveRetrievalAgent(Agent):
                                 'category')
         parser.add_argument('--debug', type='bool', default=False)
         return parser
+
+    def _set_up_retriever(self, opt):
+        retriever_opt = {'model_file': opt['retriever_model_file'],
+                         'remove_title': False,
+                         'datapath': opt['datapath'],
+                         'override': {'remove_title': False}}
+        self.retriever = create_agent(retriever_opt)
+
+        self._set_up_sent_tok()
+        wiki_map_path = os.path.join(self.model_path,
+                                     'title_to_passage.json')
+        self.wiki_map = json.load(open(wiki_map_path, 'r'))
 
     def _set_up_responder(self, opt):
         responder_opts = opt.copy()
