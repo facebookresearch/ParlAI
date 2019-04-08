@@ -1,0 +1,246 @@
+{% extends "core.html" %}
+
+{% block left_pane %}
+  <div id="left-pane" class="col-xs-4" style="height: {{frame_height}}px; background-color: #dff0d8;">
+    <h1>Live Chat</h1>
+      <div id="left-top-pane" style="height: 50%; overflow:auto;">
+        <hr style="border-top: 1px solid #555" />
+          <span id="task-description" style="font-size: 14px">
+          </span>
+      </div>
+      <div id="left-bottom-pane" style="min-height: 30%; overflow:auto">
+        <!-- <span id="task-topic" style="font-size: 16px; background-color: #CDA6B8"> -->
+          <span id="task-topic" style="font-size: 16px;">
+          </span>
+      </div>
+  </div>
+{% endblock %}
+{% block right_pane %}
+<div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+    <div id="right-top-pane" style="width: 100%; height: 300px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        <div id="message_thread" style="width: 100%">
+        </div>
+        <div id="waiting-for-message" class="row" style="margin-left: 0; margin-right: 0; display: none">
+            <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
+                <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
+                    <?xml version="1.0" encoding="utf-8"?><svg width='25px' height='25px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-hourglass"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g><path fill="none" stroke="#007282" stroke-width="5" stroke-miterlimit="10" d="M58.4,51.7c-0.9-0.9-1.4-2-1.4-2.3s0.5-0.4,1.4-1.4 C70.8,43.8,79.8,30.5,80,15.5H70H30H20c0.2,15,9.2,28.1,21.6,32.3c0.9,0.9,1.4,1.2,1.4,1.5s-0.5,1.6-1.4,2.5 C29.2,56.1,20.2,69.5,20,85.5h10h40h10C79.8,69.5,70.8,55.9,58.4,51.7z" class="glass"></path><clipPath id="uil-hourglass-clip1"><rect x="15" y="20" width="70" height="25" class="clip"><animate attributeName="height" from="25" to="0" dur="1.5s" repeatCount="indefinite" values="25;0;0" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="20" to="45" dur="1.5s" repeatCount="indefinite" values="20;45;45" keyTimes="0;0.5;1"></animate></rect></clipPath><clipPath id="uil-hourglass-clip2"><rect x="15" y="55" width="70" height="25" class="clip"><animate attributeName="height" from="0" to="25" dur="1.5s" repeatCount="indefinite" values="0;25;25" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="80" to="55" dur="1.5s" repeatCount="indefinite" values="80;55;55" keyTimes="0;0.5;1"></animate></rect></clipPath><path d="M29,23c3.1,11.4,11.3,19.5,21,19.5S67.9,34.4,71,23H29z" clip-path="url(#uil-hourglass-clip1)" fill="#ffab00" class="sand"></path><path d="M71.6,78c-3-11.6-11.5-20-21.5-20s-18.5,8.4-21.5,20H71.6z" clip-path="url(#uil-hourglass-clip2)" fill="#ffab00" class="sand"></path><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="180 50 50" repeatCount="indefinite" dur="1.5s" values="0 50 50;0 50 50;180 50 50" keyTimes="0;0.7;1"></animateTransform></g></svg>
+                </div>
+                <span style="font-size: 16px">Waiting for the next person to speak...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        <div id="response-type-idle" class="response-type-module" style="display:none">
+        </div>
+        <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="height: 50px; width: 100%; display: block; float: left; ">
+                <input id="id_text_input" type="text" style="width: 70%; height: 100%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
+                <button class="btn btn-success" style="width: 88px; height: 100%; font-size: 16px; float: left; margin-left: 15px; padding: 0px; disabled: true; display:none" id="id_done_button">Done</button>
+                <button class="btn btn-primary" style="width: 88px; height: 100%; font-size: 16px; float: left; margin-left: 15px; padding: 0px;" id="id_send_msg_button">Send</button>
+		<div id="genm" class="btn-group" role="group" style="disabled: true; display: none">
+                  <button type="button" class="btn btn-lg btn-primary" id="genm_1" onclick="send_number(1)">1</button>
+                  <button type="button" class="btn btn-lg btn-primary" id="genm_2" onclick="send_number(2)">2</button>
+                  <button type="button" class="btn btn-lg btn-primary" id="genm_3" onclick="send_number(3)">3</button>
+                  <button type="button" class="btn btn-lg btn-primary" id="genm_4" onclick="send_number(4)">4</button>
+                  <button type="button" class="btn btn-lg btn-primary" id="genm_5" onclick="send_number(5)">5</button>
+                </div>
+		<div id="rounds" class="btn-group-vertical" style="disabled: true; display: none">
+                  <label class="btn btn-default" id="round_1">
+                    <input type="checkbox" autocomplete="off" name="1"><br><span id="round_input_1c"> Round 1c</span><br><span id="round_input_1a"> Round 1a</span>
+                  </label>
+                  <label class="btn btn-default" id="round_2">
+                    <input type="checkbox" autocomplete="off" name="2"><br><span id="round_input_2c"> Round 2c</span><br><span id="round_input_2a"> Round 2a</span>
+                  </label>
+                  <label class="btn btn-default" id="round_3">
+                    <input type="checkbox" autocomplete="off" name="3"><br><span id="round_input_3c"> Round 3c</span><br><span id="round_input_3a"> Round 3a</span>
+                  </label>
+                  <label class="btn btn-default" id="round_4">
+                    <input type="checkbox" autocomplete="off" name="4"><br><span id="round_input_4c"> Round 4c</span><br><span id="round_input_4a"> Round 4a</span>
+                  </label>
+                  <label class="btn btn-default" id="round_5">
+                    <input type="checkbox" autocomplete="off" name="5"><br><span id="round_input_5c"> Round 5c</span><br><span id="round_input_5a"> Round 5a</span>
+                  </label>
+                  <label class="btn btn-default" id="round_6">
+                    <input type="checkbox" autocomplete="off" name="6"><br><span id="round_input_6c"> Round 6c</span><br><span id="round_input_6a"> Round 6a</span>
+                  </label>
+                  <label class="btn btn-default" id="round_7">
+                    <input type="checkbox" autocomplete="off" name="7"><br><span id="round_input_7c"> Round 7c</span><br><span id="round_input_7a"> Round 7a</span>
+                  </label>
+                  <label class="btn btn-default" id="round_8">
+                    <input type="checkbox" autocomplete="off" name="8"><br><span id="round_input_8c"> Round 8c</span><br><span id="round_input_8a"> Round 8a</span>
+                  </label>
+                  <label class="btn btn-default" id="round_9">
+                    <input type="checkbox" autocomplete="off" name="9"><br><span id="round_input_9c"> Round 9c</span><br><span id="round_input_9a"> Round 9a</span>
+                  </label>
+                </div>
+		<div id="rounds_done" class="btn-group-vertical btn-groupe-toggle" role="group" style="disabled: true; display: none">
+                  <button type="button" class="btn btn-primary active" aria-pressed="false" data-toggle="button" id="round_done" onclick="send_rounds()">Submit selected</button>
+                </div>
+            </div>
+        </div>
+        <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <span id="inactive" style="font-size: 14pt;margin-right: 15px"></span>
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional_scripts %}
+<script type="text/javascript">
+    function send_rounds() {
+      var idSelector = function() { return this.name; };
+      var rounds_checked = $(":checkbox:checked").map(idSelector).get().join();
+      if (rounds_checked.length == 0) {
+        rounds_checked = '0'
+      }
+      new_message_id = uuidv4();
+      send_packet(
+          TYPE_MESSAGE,
+          {text: rounds_checked,
+           id: cur_agent_id,
+           message_id: new_message_id,
+           episode_done: true},
+          true,
+          true,
+          function(msg) {
+              $("input#id_text_input").val("");
+              $("div#response-type-text-input").css("display", "none");
+              handle_new_message(new_message_id, msg.data);
+          }
+      );
+      $('input:checkbox').removeAttr('checked');
+    }
+    function send_number(number) {
+      new_message_id = uuidv4();
+      send_packet(
+          TYPE_MESSAGE,
+          {text: number.toString(),
+           id: cur_agent_id,
+           message_id: new_message_id,
+           episode_done: true},
+          true,
+          true,
+          function(msg) {
+              $("input#id_text_input").val("");
+              $("div#response-type-text-input").css("display", "none");
+              handle_new_message(new_message_id, msg.data);
+          }
+      );
+    }
+    function handle_new_message(new_message_id, message) {
+      var agent_id = message.id;
+      var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+      if (displayed_messages.indexOf(new_message_id) !== -1) {
+        // This message has already been seen and put up into the chat
+        log(new_message_id + ' was a repeat message', 1);
+        return;
+      }
+      log('New message, ' + new_message_id + ' from agent ' + agent_id, 1);
+      displayed_messages.push(new_message_id);
+      if (agent_id !== cur_agent_id) {
+        add_message_to_conversation(agent_id, message_text, false);
+      } else {
+        add_message_to_conversation(agent_id, message_text, true);
+      }
+      if ("chosen_topic" in message) {
+        console.log(message.chosen_topic);
+        var chosen_topic = message.chosen_topic.replace(/(?:\r\n|\r|\n)/g, '<br />');
+          $("span#task-topic").html('<br><br><b> Your chosen topic is:</b><br><br>' + chosen_topic);
+          log(message.chosen_topic, 1);
+      }
+      if("exceed_min_turns" in message && message.exceed_min_turns){
+        exceed_min_turns = true;
+        $("button#id_done_button").css("disabled", false);
+        $("button#id_done_button").css("display", "");
+        $("input#id_text_input").css("width", "40%");
+        $(window).resize(window_resize);
+      }
+      if ("general_mark_score" in message && message.general_mark_score){
+	$("div#genm").css("disabled", false);
+        $("div#genm").css("display", "");
+        $("input#id_text_input").hide();
+        $("button#id_send_msg_button").hide();
+	$("button#id_done_button").hide();
+        $(window).resize(window_resize);
+      }
+      if ("good_rounds" in message && message.good_rounds){
+	$("button#id_done_button").hide();
+	$("div#genm").hide();
+        $("div#rounds").css("disabled", false);
+        $("div#rounds").css("display", "");
+        $("div#rounds_done").css("disabled", false);
+        $("div#rounds_done").css("display", "");
+        var rounds = message.rounds.split('</ROUND>');
+        for (var i=1; i<=rounds.length; i++) {
+          var ctx_ans = rounds[i - 1].split('\n');
+          $("#round_input_" + i + "c").text("- " + ctx_ans[0]);
+          $("#round_input_" + i + "a").text("- " + ctx_ans[1]);
+        }
+        for (var i=rounds.length + 1; i <= 9; i++) {
+          var dom_button_id = "#round_" + i.toString();
+          $(dom_button_id).hide();
+        }
+        $(window).resize(window_resize);
+      }
+      if ("good_reasons" in message && message.good_reasons){
+	$("button#id_done_button").hide();
+	$("div#genm").hide();
+        $("div#rounds").css("disabled", false);
+        $("div#rounds").css("display", "");
+        $("div#rounds_done").css("disabled", false);
+        $("div#rounds_done").css("display", "");
+        var rounds = message.rounds.split('</ROUND>');
+        for (var i=1; i<=rounds.length; i++) {
+          $("#round_input_" + i + "c").text(rounds[i - 1]);
+          $("#round_input_" + i + "a").text("\n");
+        }
+        for (var i=rounds.length + 1; i <= 9; i++) {
+          var dom_button_id = "#round_" + i.toString();
+          $(dom_button_id).hide();
+        }
+        $(window).resize(window_resize);
+      }
+    }
+    $("button#id_done_button").on('click', function () {
+        var text = "I am done with the chat and clicked the 'Done' button, thank you!";
+        if (!(text == '')) {
+            $("button#id_done_button").css("disabled", true);
+            new_message_id = uuidv4();
+            send_packet(
+                TYPE_MESSAGE,
+                {text: text,
+                 id: cur_agent_id,
+                 message_id: new_message_id,
+                 episode_done: true},
+                true,
+                true,
+                function(msg) {
+                    $("button#id_done_button").css("disabled", false);
+                    $("input#id_text_input").val("");
+                    $("div#response-type-text-input").css("display", "none");
+                    handle_new_message(new_message_id, msg.data);
+                }
+            );
+        }
+    });
+    // On window resize, ensure that the UI is properly displayed
+    function window_resize() {
+      log("The window was resized", 4);
+      // Set the text input width to match the bottom width minus space
+      // for the done button
+      $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
+      if(exceed_min_turns == true) {
+        $("input#id_text_input").width($("input#id_text_input").width() - 100);
+      }
+      // Set the chat window height to be the remainder after removing the
+      // height of the text pane
+      var left_height = $("div#left-pane").height();
+      var text_height = $("div#right-bottom-pane").outerHeight()
+      $("div#right-top-pane").height((left_height - text_height) - 20);
+    }
+</script>
+{% endblock %}
