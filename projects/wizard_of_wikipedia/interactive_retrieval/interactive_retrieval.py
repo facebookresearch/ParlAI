@@ -11,7 +11,7 @@
 NOTE: this model only works for eval, it assumes all training is already done.
 """
 
-from parlai.core.agents import Agent, create_agent, get_agent_module
+from parlai.core.agents import Agent, create_agent
 from projects.wizard_of_wikipedia.wizard_transformer_ranker.\
     wizard_transformer_ranker import WizardTransformerRankerAgent
 
@@ -55,8 +55,8 @@ class InteractiveRetrievalAgent(Agent):
         parser.add_argument('--get-unique', type='bool', default=True,
                             help='get unique responses from the bot')
         parser.add_argument('--num-retrieved', type=int, default=7,
-                           help='how many passages to retrieve for each'
-                                'category')
+                            help='how many passages to retrieve for each'
+                                 'category')
         parser.add_argument('--debug', type='bool', default=False)
         return parser
 

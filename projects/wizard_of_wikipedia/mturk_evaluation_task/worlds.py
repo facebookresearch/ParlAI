@@ -353,8 +353,10 @@ class WizardEval(MultiAgentDialogWorld):
                         act['text'] in self.ratings:
                     self.gmark_score = int(act['text'])
 
-        Parallel(n_jobs=len(self.agents), backend='threading')\
-            (delayed(eval_or_shutdown)(agent) for agent in self.agents)
+        Parallel(
+            n_jobs=len(self.agents),
+            backend='threading'
+        )(delayed(eval_or_shutdown)(agent) for agent in self.agents)
 
     def model_observes_itself(self, txt):
         act = {'text': txt, 'episode_done': False}

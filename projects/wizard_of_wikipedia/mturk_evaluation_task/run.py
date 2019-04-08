@@ -16,7 +16,6 @@ import json
 import logging
 import os
 import sys
-import time
 
 MASTER_QUALIF = {
     'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
