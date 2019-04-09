@@ -33,7 +33,9 @@ See the [ParlAI quickstart for help](http://www.parl.ai/static/docs/tutorial_qui
 
 The ParlAI MTurk collection scripts are also
 [made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/wizard_of_wikipedia),
-for those interested in replication, analysis, or additional data collection
+for those interested in replication, analysis, or additional data collection.
+The MTurk task for evaluating pre-trained models is made available in this
+directory.
 
 ## Leaderboard
 
