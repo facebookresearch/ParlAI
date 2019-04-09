@@ -8,6 +8,7 @@ import numpy as np
 import torch as th
 import torch.nn as nn
 
+from parlai.core.utils import neginf
 from parlai.agents.transformer.modules import TransformerGeneratorModel
 
 
@@ -81,7 +82,7 @@ class ContextKnowledgeEncoder(nn.Module):
 
         ck_attn = th.bmm(know_use, context_use.unsqueeze(-1)).squeeze(-1)
         # fill with near -inf
-        ck_attn.masked_fill_(~ck_mask, -1e20)
+        ck_attn.masked_fill_(~ck_mask, neginf(context_encoded.dtype))
 
         if not use_cs_ids:
             # if we're not given the true chosen_sentence (test time), pick our

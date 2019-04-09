@@ -18,7 +18,9 @@ import tqdm
 
 
 def built(path, version_string=None):
-    """Checks if '.built' flag has been set for that task.
+    """
+    Checks if '.built' flag has been set for that task.
+
     If a version_string is provided, this has to match, or the version
     is regarded as not built.
     """
@@ -35,8 +37,9 @@ def built(path, version_string=None):
 
 
 def mark_done(path, version_string=None):
-    """Marks the path as done by adding a '.built' file with the current
-    timestamp plus a version description string if specified.
+    """
+    Marks the path as done by adding a '.built' file with the current timestamp
+    plus a version description string if specified.
     """
     with open(os.path.join(path, '.built'), 'w') as write:
         write.write(str(datetime.datetime.today()))
@@ -45,8 +48,10 @@ def mark_done(path, version_string=None):
 
 
 def download(url, path, fname, redownload=False):
-    """Downloads file using `requests`. If ``redownload`` is set to false, then
-    will not download tar file again if it is present (default ``True``)."""
+    """
+    Downloads file using `requests`. If ``redownload`` is set to false, then
+    will not download tar file again if it is present (default ``True``).
+    """
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
     print("[ downloading: " + url + " to " + outfile + " ]")
@@ -139,7 +144,8 @@ def remove_dir(path):
 
 
 def untar(path, fname, deleteTar=True):
-    """Unpacks the given archive file to the same directory, then (by default)
+    """
+    Unpacks the given archive file to the same directory, then (by default)
     deletes the archive file.
     """
     print('unpacking ' + fname)
@@ -231,10 +237,10 @@ def download_models(opt, fnames, model_folder, version='v1.0', path='aws',
 
 
 def modelzoo_path(datapath, path):
-    """If path starts with 'models', then we remap it to the model zoo path
+    """
+    If path starts with 'models', then we remap it to the model zoo path
     within the data directory (default is ParlAI/data/models).
     We download models from the model zoo if they are not here yet.
-
     """
     if path is None:
         return None

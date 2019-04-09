@@ -78,9 +78,18 @@ class TorchRankerAgent(TorchAgent):
             self.metrics = shared['metrics']
             states = None
         else:
-            self.metrics = {'loss': 0.0, 'examples': 0, 'rank': 0,
-                            'train_accuracy': 0.0}
+            # Note: we cannot change the type of metrics ahead of time, so you
+            # should correctly initialize to floats or ints here
+            self.metrics = {
+                'loss': 0.0,
+                'examples': 0,
+                'rank': 0.0,
+                'mrr': 0.0,
+                'train_accuracy': 0.0
+            }
             self.build_model()
+            if self.fp16:
+                self.model = self.model.half()
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
                 states = self.load(init_model)
@@ -119,11 +128,14 @@ class TorchRankerAgent(TorchAgent):
         """
         Given a batch and candidate set, return scores (for ranking).
 
-        :param Batch batch: a Batch object (defined in torch_agent.py)
-        :param LongTensor cand_vecs: padded and tokenized candidates
-        :param FloatTensor cand_encs: encoded candidates, if these are passed
-            into the function (in cases where we cache the candidate
-            encodings), you do not need to call self.model on cand_vecs
+        :param Batch batch:
+            a Batch object (defined in torch_agent.py)
+        :param LongTensor cand_vecs:
+            padded and tokenized candidates
+        :param FloatTensor cand_encs:
+            encoded candidates, if these are passed into the function (in cases
+            where we cache the candidate encodings), you do not need to call
+            self.model on cand_vecs
         """
         raise NotImplementedError(
             'Abstract class: user must implement score()')
@@ -140,10 +152,12 @@ class TorchRankerAgent(TorchAgent):
         targets = torch.arange(batchsize, out=targets)
         nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
         self.metrics['train_accuracy'] += nb_ok
-        # calculate mean rank
+        # calculate mean_rank
         above_dot_prods = scores - scores.diag().view(-1, 1)
-        rank = (above_dot_prods > 0).float().sum().item()
-        self.metrics['rank'] += rank
+        ranks = (above_dot_prods > 0).float().sum(dim=1) + 1
+        mrr = 1.0 / (ranks + 0.00001)
+        self.metrics['rank'] += torch.sum(ranks).item()
+        self.metrics['mrr'] += torch.sum(mrr).item()
 
     def get_train_preds(self, scores, label_inds, cands, cand_vecs):
         # TODO: speed these calculations up
@@ -152,6 +166,7 @@ class TorchRankerAgent(TorchAgent):
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
+            self.metrics['mrr'] += 1.0 / (1 + rank)
 
         # Get predictions but not full rankings for the sake of speed
         if cand_vecs.dim() == 2:
@@ -196,7 +211,7 @@ class TorchRankerAgent(TorchAgent):
         try:
             scores = self.score_candidates(batch, cand_vecs)
             loss = self.rank_loss(scores, label_inds)
-            loss.backward()
+            self.backward(loss)
             self.update_params()
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)
@@ -254,6 +269,7 @@ class TorchRankerAgent(TorchAgent):
             for b in range(batchsize):
                 rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['rank'] += 1 + rank
+                self.metrics['mrr'] += 1.0 / (1 + rank)
 
         ranks = ranks.cpu()
         max_preds = self.opt['cap_num_predictions']
@@ -276,26 +292,31 @@ class TorchRankerAgent(TorchAgent):
         return Output(preds, cand_preds)
 
     def _set_label_cands_vec(self, *args, **kwargs):
-        """Sets the 'label_candidates_vec' field in the observation.
+        """
+        Sets the 'label_candidates_vec' field in the observation.
 
         Useful to override to change vectorization behavior"""
         obs = args[0]
         cands_key = ('candidates' if 'labels' in obs else
                      'eval_candidates' if 'eval_labels' in obs else None)
-        if (cands_key is None or
-                self.opt[cands_key] not in ['inline', 'batch-all-cands']):
+        if (cands_key is not None and self.opt[cands_key] not in
+                ['inline', 'batch-all-cands']):
             # vectorize label candidates if and only if we are using inline
             # candidates
             return obs
         return super()._set_label_cands_vec(*args, **kwargs)
 
     def _build_candidates(self, batch, source, mode):
-        """Build a candidate set for this batch
+        """
+        Build a candidate set for this batch
 
-        :param batch: a Batch object (defined in torch_agent.py)
-        :param source: the source from which candidates should be built, one of
+        :param batch:
+            a Batch object (defined in torch_agent.py)
+        :param source:
+            the source from which candidates should be built, one of
             ['batch', 'batch-all-cands', 'inline', 'fixed']
-        :param mode: 'train' or 'eval'
+        :param mode:
+            'train' or 'eval'
 
         :return: tuple of tensors (label_inds, cands, cand_vecs)
             label_inds: A [bsz] LongTensor of the indices of the labels for each
@@ -382,7 +403,8 @@ class TorchRankerAgent(TorchAgent):
                         cands_to_id[cand] = len(cands_to_id)
                         all_cands_vecs.append(batch.candidate_vecs[i][j])
             cand_vecs, _ = padded_tensor(all_cands_vecs, self.NULL_IDX,
-                                         use_cuda=self.use_cuda)
+                                         use_cuda=self.use_cuda,
+                                         fp16friendly=self.fp16)
             label_inds = label_vecs.new_tensor([cands_to_id[label]
                                                 for label in batch.labels])
 
@@ -400,7 +422,7 @@ class TorchRankerAgent(TorchAgent):
 
             cands = batch.candidates
             cand_vecs = padded_3d(batch.candidate_vecs, self.NULL_IDX,
-                                  use_cuda=self.use_cuda)
+                                  use_cuda=self.use_cuda, fp16friendly=self.fp16)
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
@@ -481,9 +503,12 @@ class TorchRankerAgent(TorchAgent):
     def reset_metrics(self):
         """Reset metrics."""
         super().reset_metrics()
+        # Note: we cannot change the type of metrics ahead of time, so you
+        # should correctly initialize to floats or ints here
         self.metrics['examples'] = 0
         self.metrics['loss'] = 0.0
-        self.metrics['rank'] = 0
+        self.metrics['rank'] = 0.0
+        self.metrics['mrr'] = 0.0
         self.metrics['train_accuracy'] = 0.0
 
     def report(self):
@@ -495,8 +520,12 @@ class TorchRankerAgent(TorchAgent):
             m['examples'] = examples
             m['loss'] = self.metrics['loss']
             m['mean_loss'] = self.metrics['loss'] / examples
-            m['mean_rank'] = self.metrics['rank'] / examples
-            if self.opt['candidates'] == 'batch':
+            batch_train = self.opt['candidates'] == 'batch' and self.is_training
+            if (not self.is_training or self.opt.get('train_predict') or
+                    batch_train):
+                m['mean_rank'] = self.metrics['rank'] / examples
+                m['mrr'] = self.metrics['mrr'] / examples
+            if batch_train:
                 m['train_accuracy'] = self.metrics['train_accuracy'] / examples
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
@@ -504,7 +533,8 @@ class TorchRankerAgent(TorchAgent):
         return base
 
     def set_vocab_candidates(self, shared):
-        """Load the tokens from the vocab as candidates
+        """
+        Load the tokens from the vocab as candidates
 
         self.vocab_candidates will contain a [num_cands] list of strings
         self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
@@ -530,7 +560,8 @@ class TorchRankerAgent(TorchAgent):
                 self.vocab_candidate_vecs = None
 
     def set_fixed_candidates(self, shared):
-        """Load a set of fixed candidates and their vectors (or vectorize them here)
+        """
+        Load a set of fixed candidates and their vectors (or vectorize them here)
 
         self.fixed_candidates will contain a [num_cands] list of strings
         self.fixed_candidate_vecs will contain a [num_cands, seq_len] LongTensor
@@ -606,7 +637,7 @@ class TorchRankerAgent(TorchAgent):
     def load_candidates(self, path, cand_type='vectors'):
         print("[ Loading fixed candidate set {} from {} ]".format(cand_type,
                                                                   path))
-        return torch.load(path)
+        return torch.load(path, map_location=lambda cpu, _: cpu)
 
     def make_candidate_vecs(self, cands):
         cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
@@ -638,10 +669,13 @@ class TorchRankerAgent(TorchAgent):
         return torch.cat(cand_encs, 0)
 
     def vectorize_fixed_candidates(self, cands_batch):
-        """Convert a batch of candidates from text to vectors
+        """
+        Convert a batch of candidates from text to vectors
 
-        :param cands_batch: a [batchsize] list of candidates (strings)
-        :returns: a [num_cands] list of candidate vectors
+        :param cands_batch:
+            a [batchsize] list of candidates (strings)
+        :returns:
+            a [num_cands] list of candidate vectors
 
         By default, candidates are simply vectorized (tokens replaced by token ids).
         A child class may choose to overwrite this method to perform vectorization as

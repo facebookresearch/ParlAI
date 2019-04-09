@@ -9,7 +9,8 @@ Pretrained retrieval model on the Wizard of Wikipedia dialogue task.
 from parlai.core.build_data import download_models
 
 
-def download(opt):
-    fnames = ['full_dialogue_retrieval_model.tgz']
+def download(datapath):
+    opt = {'datapath': datapath}
+    fnames = ['wizard_retrieval_2.tgz']
     opt['model_type'] = 'full_dialogue_retrieval_model'
-    download_models(opt, fnames, 'wizard_of_wikipedia')
+    download_models(opt, fnames, 'wizard_of_wikipedia', version='v2.0')

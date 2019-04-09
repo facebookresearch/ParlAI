@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""This class defines the basic environments that define how agents interact
+"""
+This class defines the basic environments that define how agents interact
 with one another.
 
     ``World(object)`` provides a generic parent class, including ``__enter__``
@@ -67,7 +68,8 @@ def validate(observation):
 
 
 class World(object):
-    """Empty parent providing null definitions of API functions for Worlds.
+    """
+    Empty parent providing null definitions of API functions for Worlds.
     All children can override these to provide more detailed functionality."""
 
     def __init__(self, opt, agents=None, shared=None):
@@ -86,7 +88,8 @@ class World(object):
         self.time = Timer()
 
     def parley(self):
-        """The main method, that does one step of actions for the agents
+        """
+        The main method, that does one step of actions for the agents
         in the world. This is empty in the base class.
         """
         pass
@@ -96,7 +99,8 @@ class World(object):
         return self.id
 
     def display(self):
-        """Returns a string describing the current state of the world.
+        """
+        Returns a string describing the current state of the world.
 
         Useful for monitoring and debugging.
         By default, display the messages between the agents."""
@@ -114,7 +118,8 @@ class World(object):
         return False
 
     def epoch_done(self):
-        """Whether the epoch is done or not.
+        """
+        Whether the epoch is done or not.
 
         Not all worlds have the notion of an epoch, but this is useful
         for fixed training, validation or test sets.
@@ -129,7 +134,8 @@ class World(object):
         return shared_data
 
     def _share_agents(self):
-        """Create shared data for agents so other classes can create the same
+        """
+        Create shared data for agents so other classes can create the same
         agents without duplicating the data (i.e. sharing parameters).
         """
         if not hasattr(self, 'agents'):
@@ -158,7 +164,8 @@ class World(object):
         return self.total_epochs
 
     def __enter__(self):
-        """Empty enter provided for use with ``with`` statement.
+        """
+        Empty enter provided for use with ``with`` statement.
 
         e.g:
 
@@ -222,7 +229,8 @@ class World(object):
 
 
 class DialogPartnerWorld(World):
-    """Simple world for two agents communicating synchronously.
+    """
+    Simple world for two agents communicating synchronously.
 
     This basic world switches back and forth between two agents, giving each
     agent one chance to speak per turn and passing that back to the other one.
@@ -307,7 +315,8 @@ class DialogPartnerWorld(World):
 
 
 class MultiAgentDialogWorld(World):
-    """Basic world where each agent gets a turn in a round-robin fashion,
+    """
+    Basic world where each agent gets a turn in a round-robin fashion,
     receiving as input the actions of all other agents since that agent last
     acted.
     """
@@ -323,7 +332,8 @@ class MultiAgentDialogWorld(World):
         self.acts = [None] * len(self.agents)
 
     def parley(self):
-        """For each agent, get an observation of the last action each of the
+        """
+        For each agent, get an observation of the last action each of the
         other agents took. Then take an action yourself.
         """
         acts = self.acts
@@ -369,7 +379,8 @@ class MultiAgentDialogWorld(World):
 
 
 class ExecutableWorld(MultiAgentDialogWorld):
-    """A world where messages from agents can be interpreted as _actions_ in the
+    """
+    A world where messages from agents can be interpreted as _actions_ in the
     world which result in changes in the environment (are executed). Hence a grounded
     simulation can be implemented rather than just dialogue between agents.
     """
@@ -379,19 +390,22 @@ class ExecutableWorld(MultiAgentDialogWorld):
         self.init_world()
 
     def init_world(self):
-        """An executable world class should implement this function, otherwise
+        """
+        An executable world class should implement this function, otherwise
         the actions do not do anything (and it is the same as MultiAgentDialogWorld).
         """
         pass
 
     def execute(self, agent, act):
-        """An executable world class should implement this function, otherwise
+        """
+        An executable world class should implement this function, otherwise
         the actions do not do anything (and it is the same as MultiAgentDialogWorld).
         """
         pass
 
     def observe(self, agent, act):
-        """An executable world class should implement this function, otherwise
+        """
+        An executable world class should implement this function, otherwise
         the observations for each agent are just the messages from other agents
         and not confitioned on the world at all (and it is thus the same as
         MultiAgentDialogWorld). """
@@ -401,7 +415,8 @@ class ExecutableWorld(MultiAgentDialogWorld):
             return act
 
     def parley(self):
-        """For each agent: act, execute and observe actions in world
+        """
+        For each agent: act, execute and observe actions in world
         """
         acts = self.acts
         for index, agent in enumerate(self.agents):
@@ -418,7 +433,8 @@ class ExecutableWorld(MultiAgentDialogWorld):
 
 
 class MultiWorld(World):
-    """Container for a set of worlds where each world gets a turn
+    """
+    Container for a set of worlds where each world gets a turn
     in a round-robin fashion. The same user_agents are placed in each,
     though each world may contain additional agents according to the task
     that world represents.
@@ -552,7 +568,8 @@ class MultiWorld(World):
 
 
 def override_opts_in_shared(table, overrides):
-    """Looks recursively for ``opt`` dictionaries within shared dict and overrides
+    """
+    Looks recursively for ``opt`` dictionaries within shared dict and overrides
     any key-value pairs with pairs from the overrides dict.
     """
     if 'opt' in table:
@@ -575,8 +592,10 @@ def override_opts_in_shared(table, overrides):
 
 
 class BatchWorld(World):
-    """Creates a separate world for each item in the batch, sharing
+    """
+    Creates a separate world for each item in the batch, sharing
     the parameters for each.
+
     The underlying world(s) it is batching can be either
     ``DialogPartnerWorld``, ``MultiAgentWorld``, ``ExecutableWorld`` or
     ``MultiWorld``.
@@ -730,7 +749,9 @@ class BatchWorld(World):
 
 
 class HogwildProcess(Process):
-    """Process child used for ``HogwildWorld``.
+    """
+    Process child used for ``HogwildWorld``.
+
     Each ``HogwildProcess`` contain its own unique ``World``.
     """
 
@@ -748,7 +769,8 @@ class HogwildProcess(Process):
         super().__init__(daemon=True)
 
     def run(self):
-        """Runs normal parley loop for as many examples as this thread can get
+        """
+        Runs normal parley loop for as many examples as this thread can get
         ahold of via the semaphore ``queued_sem``.
         """
         world = self.shared['world_class'](self.opt, None, self.shared)
@@ -800,7 +822,8 @@ class HogwildProcess(Process):
 
 
 class HogwildWorld(World):
-    """Creates a separate world for each thread (process).
+    """
+    Creates a separate world for each thread (process).
 
     Maintains a few shared objects to keep track of state:
 
@@ -991,7 +1014,8 @@ def create_task_world(opt, user_agents, default_world=None):
 
 
 def create_task(opt, user_agents, default_world=None):
-    """Creates a world + task_agents (aka a task)
+    """
+    Creates a world + task_agents (aka a task)
     assuming ``opt['task']="task_dir:teacher_class:options"``
     e.g. ``"babi:Task1k:1"`` or ``"#babi-1k"`` or ``"#QA"``,
     see ``parlai/tasks/tasks.py`` and see ``parlai/tasks/task_list.py``

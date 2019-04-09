@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Provides utilities useful for multiprocessing."""
+"""
+Provides utilities useful for multiprocessing.
+"""
 
 from multiprocessing import Lock, RawArray
 from collections.abc import MutableMapping
@@ -12,7 +14,8 @@ import sys
 
 
 class SharedTable(MutableMapping):
-    """Provides a simple shared-memory table of integers, floats, or strings.
+    """
+    Provides a simple shared-memory table of integers, floats, or strings.
     Use this class as follows:
 
     .. code-block:: python
@@ -32,7 +35,8 @@ class SharedTable(MutableMapping):
     }
 
     def __init__(self, init_dict=None):
-        """Create a shared memory version of each element of the initial
+        """
+        Create a shared memory version of each element of the initial
         dictionary. Creates an empty array otherwise, which will extend
         automatically when keys are added.
 
@@ -98,7 +102,8 @@ class SharedTable(MutableMapping):
             raise KeyError('Key "{}" not found in SharedTable'.format(key))
 
     def __setitem__(self, key, value):
-        """If key is in table, update it. Otherwise, extend the array to make
+        """
+        If key is in table, update it. Otherwise, extend the array to make
         room. This uses additive resizing not multiplicative, since the number
         of keys is not likely to change frequently during a run, so do not abuse
         it.

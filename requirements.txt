@@ -8,6 +8,7 @@ joblib
 nltk
 numpy
 pexpect
+py-gfm
 pyzmq
 regex
 requests
@@ -17,5 +18,5 @@ sh
 sphinx
 sphinx_rtd_theme
 tqdm
-websocket
-websocket_server
+websocket-client
+websocket-server

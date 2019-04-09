@@ -210,11 +210,17 @@ class SocketManager():
         self.last_sent_heartbeat_time = {}  # time of last heartbeat sent
         self.last_received_heartbeat = {}  # actual last received heartbeat
         self.pongs_without_heartbeat = {}
+        # TODO update processed packets to *ensure* only one execution per
+        # packet, as right now two threads can be spawned to process the
+        # same packet at the same time, as the packet is only added to this
+        # set after processing is complete.
+        self.processed_packets = set()
         self.packet_map = {}
         self.alive = False
         self.is_shutdown = False
         self.send_lock = threading.Condition()
         self.packet_map_lock = threading.Condition()
+        self.thread_shutdown_lock = threading.Condition()
         self.worker_assign_ids = {}  # mapping from connection id to pair
 
         # setup the socket
@@ -242,6 +248,9 @@ class SocketManager():
             return False
         except BrokenPipeError:  # noqa F821 we don't support p2
             # The channel died mid-send, wait for it to come back up
+            return False
+        except AttributeError:
+            # _ensure_closed was called in parallel, self.ws = None
             return False
         except Exception as e:
             shared_utils.print_and_log(
@@ -379,7 +388,7 @@ class SocketManager():
                         'Socket logged error: {}'.format(error),
                     )
                     self._ensure_closed()
-            except BaseException:
+            except Exception:
                 if type(error) is websocket.WebSocketConnectionClosedException:
                     return  # Connection closed is noop
                 shared_utils.print_and_log(
@@ -443,7 +452,13 @@ class SocketManager():
                 pong_conn_id = packet.get_receiver_connection_id()
                 if self.last_received_heartbeat[pong_conn_id] is not None:
                     self.pongs_without_heartbeat[pong_conn_id] += 1
+            elif packet_id in self.processed_packets:
+                # We don't want to re-process a packet that has already
+                # been recieved, but we do need to tell the sender it is ack'd
+                # re-acknowledge the packet was recieved and already processed
+                self._send_ack(packet)
             else:
+
                 # Remaining packet types need to be acknowledged
                 shared_utils.print_and_log(
                     logging.DEBUG,
@@ -457,6 +472,10 @@ class SocketManager():
 
                 # acknowledge the packet was recieved and processed
                 self._send_ack(packet)
+
+                # Note to self that this packet has already been processed,
+                # and shouldn't be processed again in the future
+                self.processed_packets.add(packet_id)
 
         def run_socket(*args):
             url_base_name = self.server_url.split('https://')[1]
@@ -475,8 +494,8 @@ class SocketManager():
                     )
                     self.ws.on_open = on_socket_open
                     self.ws.run_forever(
-                        ping_interval=8 * self.HEARTBEAT_RATE,
-                        ping_timeout=8 * self.HEARTBEAT_RATE * 0.9)
+                        ping_interval=8 * self.HEARTBEAT_RATE
+                    )
                     self._ensure_closed()
                 except Exception as e:
                     shared_utils.print_and_log(
@@ -526,6 +545,10 @@ class SocketManager():
         """Handler thread for monitoring all channels"""
         # while the thread is still alive
         while not self.is_shutdown:
+            if self.ws is None:
+                # Waiting for websocket to come back alive
+                time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+                continue
             for connection_id in self.run.copy():
                 if not self.run[connection_id]:
                     continue
@@ -575,7 +598,7 @@ class SocketManager():
                                 self._send_packet(packet, connection_id, t)
                     except Empty:
                         pass
-                except BaseException as e:
+                except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
                         'Unexpected error occurred in socket handling thread: '
@@ -586,8 +609,7 @@ class SocketManager():
 
     def open_channel(self, worker_id, assignment_id):
         """Opens a channel for a worker on a given assignment, doesn't re-open
-        if the channel is already open. Handles creation of the thread that
-        monitors that channel"""
+        if the channel is already open."""
         connection_id = '{}_{}'.format(worker_id, assignment_id)
         if connection_id in self.queues and self.run[connection_id]:
             shared_utils.print_and_log(
@@ -609,30 +631,31 @@ class SocketManager():
             'Closing channel {}'.format(connection_id)
         )
         self.run[connection_id] = False
-        if connection_id in self.queues:
-            while not self.queues[connection_id].empty():  # Empty the queue
-                try:
-                    item = self.queues[connection_id].get(block=False)
-                    t = item[0]
-                    packet = item[1]
-                    if not packet:
-                        continue
-                    packet.requires_ack = False
-                    packet.blocking = False
-                    if packet.status is not Packet.STATUS_ACK:
-                        self._send_packet(packet, connection_id, t)
-                except Empty:
-                    break
-            # Clean up packets
-            with self.packet_map_lock:
-                packet_ids = list(self.packet_map.keys())
-                for packet_id in packet_ids:
-                    packet_conn_id = \
-                        self.packet_map[packet_id].get_receiver_connection_id()
-                    if connection_id == packet_conn_id:
-                        del self.packet_map[packet_id]
-            # Clean up other resources
-            del self.queues[connection_id]
+        with self.thread_shutdown_lock:
+            if connection_id in self.queues:
+                while not self.queues[connection_id].empty():  # Empty queue
+                    try:
+                        item = self.queues[connection_id].get(block=False)
+                        t = item[0]
+                        packet = item[1]
+                        if not packet:
+                            continue
+                        packet.requires_ack = False
+                        packet.blocking = False
+                        if packet.status is not Packet.STATUS_ACK:
+                            self._send_packet(packet, connection_id, t)
+                    except Empty:
+                        break
+                # Clean up packets
+                with self.packet_map_lock:
+                    packet_ids = list(self.packet_map.keys())
+                    for packet_id in packet_ids:
+                        packet = self.packet_map[packet_id]
+                        packet_conn_id = packet.get_receiver_connection_id()
+                        if connection_id == packet_conn_id:
+                            del self.packet_map[packet_id]
+                # Clean up other resources
+                del self.queues[connection_id]
 
     def close_all_channels(self):
         """Closes all channels by clearing the list of channels"""
@@ -696,3 +719,73 @@ class SocketManager():
         self.close_all_channels()
         self.keep_running = False
         self._ensure_closed()
+
+
+# TODO extract common functionality from the above and make both classes extend
+# from the base
+class StaticSocketManager(SocketManager):
+    """Version of SocketManager that communicates consistently with the world,
+    but isn't keeping track of the liveliness of the agents that connect as
+    these are single person tasks. Submissions are handled via post rather
+    than served over socket, so it doesn't make sense to.
+    """
+    def channel_thread(self):
+        """Handler thread for monitoring all channels to send things to"""
+        # while the thread is still alive
+        while not self.is_shutdown:
+            for connection_id in self.run.copy():
+                if not self.run[connection_id]:
+                    continue
+                try:
+                    # Make sure the queue still exists
+                    if connection_id not in self.queues:
+                        self.run[connection_id] = False
+                        break
+                    if self.blocking_packets.get(connection_id) is not None:
+                        packet_item = self.blocking_packets[connection_id]
+                        if not self.packet_should_block(packet_item):
+                            self.blocking_packets[connection_id] = None
+                        else:
+                            continue
+                    try:
+                        # Get first item in the queue, check if can send it yet
+                        item = self.queues[connection_id].get(block=False)
+                        t = item[0]
+                        if time.time() < t:
+                            # Put the item back into the queue,
+                            # it's not time to pop yet
+                            self._safe_put(connection_id, item)
+                        else:
+                            # Try to send the packet
+                            packet = item[1]
+                            if not packet:
+                                # This packet was deleted out from under us
+                                continue
+                            if packet.status is not Packet.STATUS_ACK:
+                                # either need to send initial packet
+                                # or resend not-acked packet
+                                self._send_packet(packet, connection_id, t)
+                    except Empty:
+                        pass
+                except Exception as e:
+                    shared_utils.print_and_log(
+                        logging.WARN,
+                        'Unexpected error occurred in socket handling thread: '
+                        '{}'.format(repr(e)),
+                        should_print=True,
+                    )
+            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+
+    def open_channel(self, worker_id, assignment_id):
+        """Opens a channel for a worker on a given assignment, doesn't re-open
+        if the channel is already open."""
+        connection_id = '{}_{}'.format(worker_id, assignment_id)
+        if connection_id in self.queues and self.run[connection_id]:
+            shared_utils.print_and_log(
+                logging.DEBUG,
+                'Channel ({}) already open'.format(connection_id)
+            )
+            return
+        self.run[connection_id] = True
+        self.queues[connection_id] = PriorityQueue()
+        self.worker_assign_ids[connection_id] = (worker_id, assignment_id)

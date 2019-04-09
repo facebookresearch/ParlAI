@@ -245,6 +245,22 @@ class TestTransformerGenerator(unittest.TestCase):
             'test f1 = {}\nLOG:\n{}'.format(test['f1'], stdout)
         )
 
+    def test_badinput(self):
+        """Ensures model doesn't crash on malformed inputs."""
+        stdout, _, _ = testing_utils.train_model(dict(
+            task='integration_tests:bad_example',
+            model='transformer/generator',
+            batchsize=10,
+            datatype='train:ordered:stream',
+            num_epochs=1,
+            numthreads=1,
+            no_cuda=True,
+            embeddingsize=16,
+            hiddensize=16,
+        ))
+        self.assertIn('valid:{', stdout)
+        self.assertIn('test:{', stdout)
+
 
 class TestLearningRateScheduler(unittest.TestCase):
     def test_resuming(self):

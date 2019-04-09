@@ -13,10 +13,10 @@ module.exports = {
     path: __dirname + '/dist/',
     filename: 'custom.jsx',
     library: 'built_custom_components',
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs2',
   },
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
   },
   module: {
     rules: [
@@ -27,16 +27,16 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: "style-loader!css-loader"
+        loader: 'style-loader!css-loader',
       },
       {
         test: /\.png$/,
-        loader: "url-loader?limit=100000"
+        loader: 'url-loader?limit=100000',
       },
       {
         test: /\.jpg$/,
-        loader: "file-loader"
+        loader: 'file-loader',
       },
-    ]
+    ],
   },
 };

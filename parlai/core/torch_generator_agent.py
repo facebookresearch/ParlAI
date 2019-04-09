@@ -27,7 +27,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.torch_agent import TorchAgent, Batch, Output
-from parlai.core.utils import NEAR_INF, padded_tensor, round_sigfigs, warn_once
+from parlai.core.utils import padded_tensor, round_sigfigs, warn_once, neginf
 from parlai.core.thread_utils import SharedTable
 from parlai.core.distributed_utils import is_distributed
 
@@ -65,7 +65,8 @@ class TorchGeneratorModel(nn.Module):
         return self.START.detach().expand(bsz, 1)
 
     def decode_greedy(self, encoder_states, bsz, maxlen):
-        """Greedy search
+        """
+        Greedy search
 
         :param int bsz:
             Batch size. Because encoder_states is model-specific, it cannot
@@ -200,13 +201,10 @@ class TorchGeneratorModel(nn.Module):
 
         :param incremental_state:
             second output of model.decoder
-
         :type incremental_state:
             model specific
-
         :param inds:
             indices to select and reorder over.
-
         :type inds:
             LongTensor[n]
 
@@ -225,30 +223,25 @@ class TorchGeneratorModel(nn.Module):
 
     def forward(self, *xs, ys=None, cand_params=None, prev_enc=None, maxlen=None,
                 bsz=None):
-        """Get output predictions from the model.
+        """
+        Get output predictions from the model.
 
         :param xs:
             input to the encoder
-
         :type xs:
             LongTensor[bsz, seqlen]
-
         :param ys:
             Expected output from the decoder. Used
             for teacher forcing to calculate loss.
-
         :type ys:
             LongTensor[bsz, outlen]
-
         :param prev_enc:
             if you know you'll pass in the same xs multiple times, you can pass
             in the encoder output from the last forward pass to skip
             recalcuating the same encoder output.
-
         :param maxlen:
             max number of tokens to decode. if not set, will use the length of
             the longest label this model has seen. ignored when ys is not None.
-
         :param bsz:
             if ys is not provided, then you must specify the bsz for greedy
             decoding.
@@ -334,6 +327,8 @@ class TorchGeneratorAgent(TorchAgent):
             self.metrics = shared['metrics']
             states = shared.get('states', {})
         else:
+            # Note: we cannot change the type of metrics ahead of time, so you
+            # should correctly initialize to floats or ints here
             self.metrics = {
                 'nll_loss': 0.0,
                 'loss': 0.0,
@@ -354,6 +349,8 @@ class TorchGeneratorAgent(TorchAgent):
 
             self.build_criterion()
             self.build_model()
+            if self.fp16:
+                self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
@@ -363,14 +360,12 @@ class TorchGeneratorAgent(TorchAgent):
             else:
                 states = {}
 
-        if shared is None and is_distributed():
-            self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model,
-                device_ids=[self.opt['gpu']],
-                broadcast_buffers=False,
-            )
-
-        if 'train' in opt.get('datatype', ''):
+        if (
+            # only build an optimizer if we're training
+            'train' in opt.get('datatype', '') and
+            # and this is the main model, or on every fork if doing hogwild
+            (shared is None or self.opt.get('numthreads', 1) > 1)
+        ):
             # do this regardless of share state, but don't
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
@@ -378,6 +373,13 @@ class TorchGeneratorAgent(TorchAgent):
                 saved_optim_type=states.get('optimizer_type')
             )
             self.build_lr_scheduler(states, hard_reset=is_finetune)
+
+        if shared is None and is_distributed():
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model,
+                device_ids=[self.opt['gpu']],
+                broadcast_buffers=False,
+            )
 
         self.reset()
 
@@ -433,7 +435,7 @@ class TorchGeneratorAgent(TorchAgent):
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
-                loss.backward()
+                self.backward(loss)
                 self.buffer_initialized = True
             except RuntimeError as e:
                 if 'out of memory' in str(e):
@@ -447,6 +449,8 @@ class TorchGeneratorAgent(TorchAgent):
     def reset_metrics(self):
         """Reset metrics for reporting loss and perplexity."""
         super().reset_metrics()
+        # Note: we cannot change the type of metrics ahead of time, so you
+        # should correctly initialize to floats or ints here
         self.metrics['loss'] = 0.0
         self.metrics['nll_loss'] = 0.0
         self.metrics['num_tokens'] = 0
@@ -553,7 +557,7 @@ class TorchGeneratorAgent(TorchAgent):
         try:
             loss = self.compute_loss(batch)
             self.metrics['loss'] += loss.item()
-            loss.backward()
+            self.backward(loss)
             self.update_params()
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)
@@ -785,7 +789,8 @@ class PerplexityEvaluatorAgent(TorchGeneratorAgent):
         self.last_xs = None
 
     def next_word_probability(self, partial_out):
-        """Return probability distribution over next words.
+        """
+        Return probability distribution over next words.
 
         This probability is based on both nn input and partial true output.
         This is used to calculate the per-word perplexity.
@@ -900,7 +905,7 @@ class Beam(object):
         if current_length < self.min_length:
             # penalize all eos probs to make it decode longer
             for hyp_id in range(softmax_probs.size(0)):
-                softmax_probs[hyp_id][self.eos] = -NEAR_INF
+                softmax_probs[hyp_id][self.eos] = neginf(softmax_probs.dtype)
         if len(self.bookkeep) == 0:
             # the first step we take only the first hypo into account since all
             # hypos are the same initially
@@ -921,13 +926,13 @@ class Beam(object):
                     counted_ngrams = Counter(current_ngrams)
                     if any(v > 1 for k, v in counted_ngrams.items()):
                         # block this hypothesis hard
-                        beam_scores[i] = -NEAR_INF
+                        beam_scores[i] = neginf(softmax_probs.dtype)
 
                 #  if previous output hypo token had eos
                 # we penalize those word probs to never be chosen
                 if self.outputs[-1][i] == self.eos:
                     # beam_scores[i] is voc_size array for i-th hypo
-                    beam_scores[i] = -NEAR_INF
+                    beam_scores[i] = neginf(softmax_probs.dtype)
 
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
@@ -977,7 +982,8 @@ class Beam(object):
                 top_hypothesis_tail.score)
 
     def get_hyp_from_finished(self, hypothesis_tail):
-        """Extract hypothesis ending with EOS at timestep with hyp_id.
+        """
+        Extract hypothesis ending with EOS at timestep with hyp_id.
 
         :param timestep:
             timestep with range up to len(self.outputs)-1
@@ -1013,7 +1019,8 @@ class Beam(object):
         return hypothesis
 
     def get_rescored_finished(self, n_best=None):
-        """Return finished hypotheses in rescored order.
+        """
+        Return finished hypotheses in rescored order.
 
         :param n_best:
             how many n best hypothesis to return

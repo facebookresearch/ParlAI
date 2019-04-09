@@ -1,0 +1,141 @@
+{% extends "core.html" %}
+{% block main_pane %}
+<div id="main-pane" style="width: 100%; height: {{frame_height}}px; background-color: #dff0d8; padding: 30px; overflow:scroll;  ">
+<span id="task-description" style="font-size: 16px"></span>
+<hr style="border-top: 1px solid #555" />
+<div id="bottom-pane" style="width: 100%; background-color: #eee;">
+  <div id="relevant-topics" style="font-size: 14px; height: 90%; overflow: auto">
+  </div>
+  <div id="response-type-waiting" class="response-type-module" style="height: 50px; width: 100%; display: block; float: left; ">
+        <span id="waiting" style="font-size: 16pt; padding-top: 30px; padding-left: 30px; margin-right: 15px">Now waiting for another worker to join the chat...</span>
+  </div>
+  <button class="btn btn-primary" type="button" style='font-size: 16px; disabled: true; display: none' id="submit-chosen-topic-button">Pick Topic</button>
+  <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+        <span id="disconnect" style="font-size: 14pt;margin-right: 15px"></span>
+        <button id="id_done_button" type="button" class="btn btn-primary btn-lg">
+            <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional_scripts %}
+<script type="text/javascript">
+  var relevant_topics = [];
+  var chosen_topic = '';
+  var old_msg_function = handle_new_message
+  handle_new_message = function(new_message_id, message) {
+    if(message.text === undefined) {
+      $("div#response-type-waiting").css("display", "");
+      return
+    }
+    old_msg_function.apply(old_msg_function, [new_message_id, message])
+    console.log(message)
+    var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    if ("relevant_topics" in message) {
+      $("button#submit-chosen-topic-button").show();
+      relevant_topics = message.relevant_topics;
+      handle_relevant_topics(message.relevant_topics);
+      $("button#id_send_msg_button").addClass("disabled");
+      $("button#id_send_msg_button").prop("disabled", true);
+    }
+    else{
+      if ("wait_msg" in message) {
+          $("div#response-type-waiting").css("display", "");
+      }
+      $("button#submit-chosen-topic-button").prop("disabled", true);
+      $("button#submit-chosen-topic-button").prop("display", 'none');
+      $("button#id_send_msg_button").removeClass("disabled");
+      $("button#id_send_msg_button").prop("disabled", false);
+    }
+  }
+  function window_resize() {
+  }
+  $(window).resize(window_resize);
+  // function scroll_conversation_to_bottom() {}
+  function scroll_conversation_to_bottom() {
+      $('div#main-pane').animate({
+          scrollTop: $('div#main-pane').get(0).scrollHeight
+      }, 500);
+  }
+  function handle_relevant_topics(topics) {
+    var list = `<h4>Topics</h4><ul id='relevant-topics-list'>`;
+    for (var topic_idx = 0; topic_idx < topics.length; topic_idx++) {
+      var topic = topics[topic_idx];
+      var topic_check = `<div class=\'form-check\'>
+                          <input class="form-check-input topic-checkbox" type="checkbox" value="${topic_idx}" id="${topic_idx}_topic">
+                          <span id="${topic_idx}_label">${topic}</span>
+                        </div>`;
+      var li = `<li id="${topic_idx}_li">${topic_check}</li>`;
+      list += li;
+    }
+    list += '</ul>';
+    $(`div#relevant-topics`).html(`${list}`);
+    //Disable Button if not checked
+    $(".topic-checkbox").change(function() {
+      var any_checked=false;
+      $(".topic-checkbox").each(function(index) {
+        any_checked = any_checked || $(this).is(':checked');
+      });
+      $("button#submit-chosen-topic-button").prop('disabled', !any_checked);
+    });
+    for (var topic_idx = 0; topic_idx < topics.length; topic_idx++) {
+      //Check one, uncheck others
+      $(`input#${topic_idx}_topic`).change(function(t_id, rel_tops) {
+        if($(this).is(':checked')) {
+          chosen_topic = rel_tops[t_id];
+          $("input[type='checkbox']").each(function(index) {
+            if($(this).attr('id') != `${t_id}_topic`){
+              $(this).prop('checked', false);
+            }
+          });
+        }
+      }.bind($(`input#${topic_idx}_topic`), topic_idx, relevant_topics));
+    }
+  }
+  $("button#id_done_button").on('click', function () {
+      var text = "I am done with the chat and clicked the 'Done' button, thank you!";
+      if (!(text == '')) {
+          $("button#id_done_button").css("disabled", true);
+          new_message_id = uuidv4();
+
+          send_packet(
+              TYPE_MESSAGE,
+              {text: text,
+               id: cur_agent_id,
+               message_id: new_message_id,
+               episode_done: true},
+              true,
+              true,
+              function(msg) {
+                  $("button#id_done_button").css("disabled", false);
+                  $("input#id_text_input").val("");
+                  $("div#response-type-text-input").css("display", "none");
+                  handle_new_message(new_message_id, msg.data);
+              }
+          );
+      }
+  });
+  $("button#submit-chosen-topic-button").on('click', function () {
+    new_message_id = uuidv4();
+    send_packet(
+        TYPE_MESSAGE,
+        {text: chosen_topic,
+         id: cur_agent_id,
+         message_id: new_message_id,
+         episode_done: false},
+        true,
+        true,
+        function(msg) {
+          $("button#submit-chosen-topic-button").hide();
+          var topic_span = `<h4>Chosen Topic</h4><span style="color:blue; font-size: 20px">${chosen_topic}</span>`;
+          $(`div#relevant-topics`).html(topic_span);
+          $("button#id_send_msg_button").removeClass("disabled");
+          $("button#id_send_msg_button").prop("disabled", false);
+          after_send_packet();
+        }
+      );
+  });
+
+</script>
+{% endblock %}

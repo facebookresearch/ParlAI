@@ -8,6 +8,7 @@
 General utilities for helping writing ParlAI unit and integration tests.
 """
 
+import sys
 import os
 import unittest
 import contextlib
@@ -124,6 +125,41 @@ def git_changed_files(skip_nonexisting=True):
     return filenames
 
 
+def git_commit_messages():
+    """
+    Outputs each commit message between here and master.
+    """
+    fork_point = git_.merge_base('origin/master', 'HEAD').strip()
+    messages = git_.log(fork_point + '..HEAD')
+    return messages
+
+
+def is_new_task_filename(filename):
+    """
+    Checks if a given filename counts as a new task. Used in tests and
+    test triggers, and only here to avoid redundancy.
+    """
+    return (
+        'parlai/tasks' in filename and
+        'README' not in filename and
+        'task_list.py' not in filename
+    )
+
+
+class TeeStringIO(io.StringIO):
+    """
+    StringIO which also prints to stdout.
+    """
+    def __init__(self, *args):
+        self.stream = sys.stdout
+        super().__init__(*args)
+
+    def write(self, data):
+        if DEBUG and self.stream:
+            self.stream.write(data)
+        super().write(data)
+
+
 @contextlib.contextmanager
 def capture_output():
     """
@@ -138,12 +174,9 @@ def capture_output():
     >>> output.getvalue()
     'hello'
     """
-    if DEBUG:
-        yield
-    else:
-        sio = io.StringIO()
-        with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
-            yield sio
+    sio = TeeStringIO()
+    with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
+        yield sio
 
 
 @contextlib.contextmanager
@@ -178,8 +211,14 @@ def train_model(opt):
             if 'dict_file' not in opt:
                 opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
             parser = tms.setup_args()
+            # needed at the very least to set the overrides.
             parser.set_params(**opt)
             popt = parser.parse_args(print_args=False)
+            # in some rare cases, like for instance if the model class also
+            # overrides its default params, the params override will not
+            # be taken into account.
+            for k, v in opt.items():
+                popt[k] = v
             tl = tms.TrainLoop(popt)
             valid, test = tl.train()
 

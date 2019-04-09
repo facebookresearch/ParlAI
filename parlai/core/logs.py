@@ -16,14 +16,9 @@ Tensorboard:
 import os
 
 
-class Shared(object):
+class TensorboardLogger(object):
     _shared_state = {}
 
-    def __init__(self):
-        self.__dict__ = self._shared_state
-
-
-class TensorboardLogger(Shared):
     @staticmethod
     def add_cmdline_args(argparser):
         logger = argparser.add_argument_group('Tensorboard Arguments')
@@ -50,7 +45,7 @@ class TensorboardLogger(Shared):
         )
 
     def __init__(self, opt):
-        Shared.__init__(self)
+        self.__dict__ = self._shared_state
         try:
             from tensorboardX import SummaryWriter
         except ImportError:
