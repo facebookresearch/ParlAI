@@ -31,7 +31,8 @@ def _create_embeddings(dictionary, embedding_size, padding_idx):
 def _build_encoder(opt, dictionary, embedding=None, padding_idx=None,
                    reduction=True, reduction_type=None,
                    n_positions=1024, gelu_activation=False,
-                   embedding_normalization=False):
+                   embedding_normalization=False,
+                   nb_segments=0):
     return TransformerEncoder(
         n_heads=opt['n_heads'],
         n_layers=opt['n_layers'],
@@ -49,7 +50,8 @@ def _build_encoder(opt, dictionary, embedding=None, padding_idx=None,
         reduction_type=reduction_type,
         n_positions=n_positions,
         gelu_activation=gelu_activation,
-        embedding_normalization=embedding_normalization
+        embedding_normalization=embedding_normalization,
+        nb_segments = nb_segments
     )
 
 
@@ -123,11 +125,17 @@ class TransformerMemNetModel(nn.Module):
         else:
             self.reduction_type = None
 
+        if opt.get('nb_segments'):
+            self.nb_segments = opt['nb_segments']
+        else:
+            self.nb_segments = 0
+
         self.context_encoder = _build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx,
             reduction=True, reduction_type=self.reduction_type,
             n_positions=n_positions, gelu_activation=self.gelu_activation,
-            embedding_normalization=self.embedding_normalization
+            embedding_normalization=self.embedding_normalization,
+            nb_segments = self.nb_segments
         )
 
         if opt.get('share_encoders'):
@@ -140,7 +148,8 @@ class TransformerMemNetModel(nn.Module):
                 n_positions=n_positions,
                 reduction=True, reduction_type=self.reduction_type,
                 gelu_activation=self.gelu_activation,
-                embedding_normalization=self.embedding_normalization
+                embedding_normalization=self.embedding_normalization,
+                nb_segments = self.nb_segments
             )
 
         # build memory encoder
@@ -276,7 +285,8 @@ class TransformerEncoder(nn.Module):
         reduction_type=None,
         n_positions=1024,
         gelu_activation=False,
-        embedding_normalization=False
+        embedding_normalization=False,
+        nb_segments=0
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -292,6 +302,7 @@ class TransformerEncoder(nn.Module):
         # this is --dropout, not --relu-dropout or --attention-dropout
         self.dropout = nn.Dropout(p=dropout)
         self.embedding_normalization = embedding_normalization
+        self.nb_segments = nb_segments
 
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
@@ -326,6 +337,9 @@ class TransformerEncoder(nn.Module):
         if self.embedding_normalization:
             self.layer_norm_emb = nn.LayerNorm(self.dim, eps=1e-12)
 
+        if self.nb_segments > 1:
+            self.lang_embeddings = nn.Embedding(self.nb_segments, self.dim)
+
         # build the model
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
@@ -337,18 +351,26 @@ class TransformerEncoder(nn.Module):
                 gelu_activation=gelu_activation
             ))
 
-    def forward(self, input):
+    def forward(self, input, segments=None, positions=None):
         """
             input data is a FloatTensor of shape [batch, seq_len, dim]
             mask is a ByteTensor of shape [batch, seq_len], filled with 1 when
             inside the sequence and 0 outside.
         """
         mask = input != self.padding_idx
-        positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
+        if positions is None:
+            positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
+
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+
+        if self.nb_segments > 1:
+            if segments is None:
+                segments = input * 0
+            tensor = tensor + self.lang_embeddings(segments)
+
         if self.embedding_normalization:
             tensor = self.layer_norm_emb(tensor)
         # --dropout on the embeddings

@@ -78,6 +78,10 @@ class TorchRankerAgent(TorchAgent):
             choices=[None, 'first', 'max', 'mean'],
             help='Type of reduction at the end of transformer'
         )
+        agent.add_argument(
+            '--nb-segments', type=int, default=0,
+            help='The number of segments that support the model. If zero no segment and no langs_embedding.'
+        )
 
     def __init__(self, opt, shared=None):
         # Must call _get_init_model() first so that paths are updated if necessary
