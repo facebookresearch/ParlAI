@@ -70,6 +70,7 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 --dict-lower $dictlower \\\n\
 --dict-tokenizer $dicttokenizer \\\n\
 --dict-file 'tmp/'$taskname'/dict_minfreq_'$dictminfreq \\\n\
+--tensorboard-log $tensorboardlog \\\n\
 -m $modelname \\\n\
 %s\n\
 -mf 'tmp/'$taskname'/%s_minfreq_'$dictminfreq \\\n\
@@ -102,6 +103,7 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 --dict-lower $dictlower \\\n\
 --dict-tokenizer $dicttokenizer \\\n\
 --dict-file 'tmp/'$taskname'/dict_minfreq_'$dictminfreq \\\n\
+--tensorboard-log $tensorboardlog \\\n\
 -m $modelname \\\n\
 %s\n\
 -mf 'tmp/'$taskname'/%s_minfreq_'$dictminfreq \\\n\
@@ -134,6 +136,7 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 --dict-lower $dictlower \\\n\
 --dict-tokenizer $dicttokenizer \\\n\
 --dict-file 'tmp/'$taskname'/dict_minfreq_'$dictminfreq \\\n\
+--tensorboard-log $tensorboardlog \\\n\
 -m $modelname \\\n\
 %s\n\
 -mf 'tmp/'$taskname'/%s_minfreq_'$dictminfreq \\\n\
@@ -186,7 +189,7 @@ if __name__ == '__main__':
     
     for t, task in enumerate(tasks): 
         
-        GPU_NUM = 1 #t + 3
+        GPU_NUM = 2 #t + 3
         # if GPU_NUM == 5: # HACK, as opensubtitles is currently running on gpu5
 #             GPU_NUM = 1
         
@@ -233,8 +236,9 @@ if __name__ == '__main__':
                 model_prefix = "'%s_idf'" % basemodel
                 if TRAIN:
                     f.write(train_boiler % ('--swap-criterion-train-eval False \\', model_prefix, model_prefix))
-                f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
-                f.write(eval_boiler % ('test', model_prefix, model_prefix, 'test'))
+                if EVAL: 
+                    f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
+                    f.write(eval_boiler % ('test', model_prefix, model_prefix, 'test'))
 
                 model_prefix = "'%s_swapping'" % basemodel
                 if TRAIN:

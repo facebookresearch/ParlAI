@@ -508,6 +508,16 @@ class TrainLoop():
                                             self.agent.model.encoder.rnn.weight_hh_l0[iii,0].data 
                                             for iii in range(10)}, self._total_exs)
                                             
+            elif opt['model'] in ['transformer/generator', 'transformer_weighted']:
+                
+                self.writer.writer.add_scalars('trans_embed_weights', {'embed_weight_%s' % iii: 
+                                            self.agent.model.encoder.embeddings.weight[iii+5,6].data 
+                                            for iii in range(10)}, self._total_exs)
+                                        
+                self.writer.writer.add_scalars('trans_layer_weights', {'layer_weight_%s' % iii: 
+                                            self.agent.model.encoder.layers[1].ffn.lin1.weight[iii,0].data 
+                                            for iii in range(10)}, self._total_exs)
+                
             else: 
                 
                 self.writer.writer.add_scalars('embedding_weights', {'embedding_%s' % iii: 
