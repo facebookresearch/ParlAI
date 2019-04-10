@@ -136,7 +136,7 @@ class TransformerMemNetModel(nn.Module):
             reduction=True, reduction_type=self.reduction_type,
             n_positions=n_positions, gelu_activation=self.gelu_activation,
             embedding_normalization=self.embedding_normalization,
-            n_segments = self.n_segments
+            n_segments=self.n_segments
         )
 
         if opt.get('share_encoders'):
@@ -150,7 +150,7 @@ class TransformerMemNetModel(nn.Module):
                 reduction=True, reduction_type=self.reduction_type,
                 gelu_activation=self.gelu_activation,
                 embedding_normalization=self.embedding_normalization,
-                n_segments = self.n_segments
+                n_segments=self.n_segments
             )
 
         # build memory encoder
@@ -334,7 +334,7 @@ class TransformerEncoder(nn.Module):
         else:
             nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
 
-        #embedding normalization
+        # embedding normalization
         if self.embedding_normalization:
             self.layer_norm_emb = nn.LayerNorm(self.dim, eps=1e-12)
 
