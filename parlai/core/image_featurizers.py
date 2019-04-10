@@ -57,7 +57,8 @@ class CacheMonitor():
 
 
 class ImageLoader():
-    """Extract image feature using pretrained CNN network.
+    """
+    Extract image feature using pretrained CNN network.
     """
     def __init__(self, opt):
         self.opt = opt.copy()
@@ -68,7 +69,8 @@ class ImageLoader():
             self.init_cnn(self.opt)
 
     def init_cnn(self, opt):
-        """Lazy initialization of preprocessor model in case we don't need any
+        """
+        Lazy initialization of preprocessor model in case we don't need any
         image preprocessing.
         """
         try:

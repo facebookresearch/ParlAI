@@ -3,11 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from examples.eval_model import eval_model, setup_args
+from examples.eval_model import setup_args
 
 import ast
 import unittest
-import sys
+import parlai.core.testing_utils as testing_utils
 
 
 class TestEvalModel(unittest.TestCase):
@@ -15,16 +15,6 @@ class TestEvalModel(unittest.TestCase):
 
     def test_output(self):
         """Test output of running eval_model"""
-        class display_output(object):
-            def __init__(self):
-                self.data = []
-
-            def write(self, s):
-                self.data.append(s)
-
-            def __str__(self):
-                return "".join(self.data)
-
         parser = setup_args()
         parser.set_defaults(
             task='tasks.repeat:RepeatTeacher:10',
@@ -34,18 +24,9 @@ class TestEvalModel(unittest.TestCase):
             display_examples=False,
         )
 
-        old_out = sys.stdout
-        output = display_output()
-        try:
-            sys.stdout = output
-            opt = parser.parse_args(print_args=False)
-            eval_model(opt, print_parser=parser)
-        finally:
-            # restore sys.stdout
-            sys.stdout = old_out
-
-        str_output = str(output)
-        self.assertTrue(len(str_output) > 0, "Output is empty")
+        opt = parser.parse_args(print_args=False)
+        str_output, valid, test = testing_utils.eval_model(opt)
+        self.assertGreater(len(str_output), 0, "Output is empty")
 
         # decode the output
         scores = str_output.split("\n---\n")

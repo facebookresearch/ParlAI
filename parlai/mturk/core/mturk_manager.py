@@ -15,7 +15,9 @@ import errno
 import requests
 
 from parlai.mturk.core.agents import AssignState
-from parlai.mturk.core.socket_manager import Packet, SocketManager
+from parlai.mturk.core.socket_manager import (
+    Packet, SocketManager, StaticSocketManager
+)
 from parlai.mturk.core.worker_manager import WorkerManager
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 import parlai.mturk.core.data_model as data_model
@@ -1071,7 +1073,7 @@ class MTurkManager():
                 self.server_url,
                 self.task_group_id
             )
-        except Exception:
+        except Exception as e:
             self.topic_arn = None
             shared_utils.print_and_log(
                 logging.WARN,
@@ -1079,6 +1081,7 @@ class MTurkManager():
                 'perhaps you tried to register to localhost?',
                 should_print=True
             )
+            print(repr(e))
         if self.db_logger is not None:
             self.db_logger.log_new_run(self.required_hits, self.opt['task'])
         self.task_state = self.STATE_INIT_RUN
@@ -1859,3 +1862,183 @@ class MTurkManager():
             return {'failure': failure_message['NotifyWorkersFailureMessage']}
         else:
             return {'success': True}
+
+
+# TODO consolidate base functionality out of this class and above into a
+# base_crowd_manager and then expand out from there.
+class StaticMTurkManager(MTurkManager):
+    """Manages interactions between MTurk agents and tasks, the task launching
+    workflow, and more, but only for tasks that require just 2 connections
+    to the server: an initial task request and the submission of results
+    """
+
+    def __init__(self, opt, is_test=False):
+        """No interaction means only ever one agent, so that's what we get"""
+        opt['max_connections'] = 0  # Max connections doesn't make sense here
+        opt['count_complete'] = True  # No other way to count static HITs
+        opt['frontend_template_type'] = 'static'
+        super().__init__(opt, ['worker'], is_test, use_db=True)
+        self.hit_mult = 1  # No need to pad HITs if they're static
+        self.required_hits = self.num_conversations
+
+    def _assert_opts(self):
+        """Manages ensuring everything about the passed in options make sense
+        in that they don't conflict in some way or another"""
+        if self.opt.get('allow_reviews'):
+            shared_utils.print_and_log(
+                logging.WARN,
+                '[OPT CONFIGURATION ISSUE] '
+                'allow_reviews is not supported on single person tasks.',
+                should_print=True
+            )
+            self.opt['allow_reviews'] = False
+        if self.opt.get('frontend_version', 0) < 1:
+            shared_utils.print_and_log(
+                logging.WARN,
+                '[OPT CONFIGURATION ISSUE] '
+                'Static tasks must use the react version of the frontend.',
+                should_print=True
+            )
+            raise Exception('Invalid mturk manager options')
+
+    def _setup_socket(self, timeout_seconds=None):
+        """Set up a static task socket_manager with defined callbacks"""
+        assert self.task_state >= self.STATE_INIT_RUN, \
+            'socket cannot be set up until run is started'
+        socket_server_url = self.server_url
+        if (self.opt['local']):  # skip some hops for local stuff
+            socket_server_url = "https://localhost"
+        self.socket_manager = StaticSocketManager(
+            socket_server_url,
+            self.port,
+            self._on_alive,
+            self._on_new_message,
+            self._on_socket_dead,
+            self.task_group_id,
+            socket_dead_timeout=timeout_seconds,
+            server_death_callback=self.shutdown,
+        )
+
+    def _on_alive(self, pkt):
+        """Notes a new connection from an agent. In the Static case, this
+        should only be called once per task. If it's called again, the
+        task world will re-send the task details.
+        """
+        shared_utils.print_and_log(
+            logging.DEBUG,
+            'on_agent_alive: {}'.format(pkt)
+        )
+        worker_id = pkt.data['worker_id']
+        hit_id = pkt.data['hit_id']
+        assign_id = pkt.data['assignment_id']
+        conversation_id = pkt.data['conversation_id']
+
+        if not assign_id:
+            # invalid assignment_id is an auto-fail
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Agent ({}) with no assign_id called alive'.format(worker_id)
+            )
+            return
+
+        # Open a channel if it doesn't already exist
+        self.socket_manager.open_channel(worker_id, assign_id)
+
+        # Get a state for this worker, create if non existing
+        worker_state = self.worker_manager.worker_alive(worker_id)
+
+        if self.db_logger is not None:
+            self.db_logger.log_worker_note(
+                worker_id, assign_id,
+                'Reconnected with conversation_id {} at {}'.format(
+                    conversation_id, time.time()))
+
+        if not worker_state.has_assignment(assign_id):
+            # New connection for the worker. First ensure that this connection
+            # isn't violating our uniqueness constraints
+            completed_assignments = worker_state.completed_assignments()
+            max_hits = self.max_hits_per_worker
+            if ((self.is_unique and completed_assignments > 0) or
+                    (max_hits != 0 and completed_assignments > max_hits)):
+                text = (
+                    'You have already participated in this HIT the maximum '
+                    'number of times. This HIT is now expired. '
+                    'Please return the HIT.'
+                )
+                self.force_expire_hit(worker_id, assign_id, text)
+                return
+
+            # Ensure we are still accepting workers
+            if not self.accepting_workers:
+                self.force_expire_hit(worker_id, assign_id)
+                return
+
+            # Ensure worker has not exceeded concurrent convo cap
+            convs = worker_state.active_conversation_count()
+            allowed_convs = self.opt['allowed_conversations']
+            if allowed_convs > 0 and convs >= allowed_convs:
+                text = ('You can participate in only {} of these HITs at '
+                        'once. Please return this HIT and finish your '
+                        'existing HITs before accepting more.'.format(
+                            allowed_convs
+                        ))
+                self.force_expire_hit(worker_id, assign_id, text)
+                return
+
+            # Initialize a new agent for this worker
+            self.worker_manager.assign_task_to_worker(
+                hit_id, assign_id, worker_id
+            )
+            if self.db_logger is not None:
+                self.db_logger.log_worker_accept_assignment(
+                    worker_id, assign_id, hit_id)
+            agent = self.worker_manager._get_agent(worker_id, assign_id)
+            self._add_agent_to_pool(agent)
+            # TODO agents are added directly to the pool, but their liveliness
+            # isn't monitored. Start spawining something to kill a world
+            # thread by marking an agent as disconnected if they've been
+            # on for longer than the task duration.
+        else:
+            # Reconnecting worker
+            agent = self.worker_manager._get_agent(worker_id, assign_id)
+            agent.log_reconnect()
+            agent.alived = True
+            if agent.conversation_id is not None and \
+                    conversation_id is not None:
+                # agent.conversation_id is None is used in testing.
+                # conversation_id is None on a fresh reconnect event, where
+                # we need to restore state somehow and shouldn't just inherit
+                conversation_id = agent.conversation_id
+            if agent.get_status() == AssignState.STATUS_NONE:
+                agent.set_status(AssignState.STATUS_IN_TASK)
+                return
+            elif agent.get_status() == AssignState.STATUS_WAITING:
+                if self.is_task_world(conversation_id):
+                    agent.set_status(AssignState.STATUS_IN_TASK)
+                    return
+                # Reconnecting in waiting is either the first reconnect after
+                # being told to wait or a waiting reconnect. Restore state if
+                # no information is held, and add to the pool if not already in
+                # the pool
+                if not conversation_id:
+                    self._restore_agent_state(worker_id, assign_id)
+            elif agent.get_status() == AssignState.STATUS_IN_TASK:
+                # Reconnecting to the onboarding world or to a task world
+                # should resend the messages already in the conversation
+                if not conversation_id:
+                    self._restore_agent_state(worker_id, assign_id)
+            elif (agent.get_status() == AssignState.STATUS_DISCONNECT or
+                  agent.get_status() == AssignState.STATUS_DONE or
+                  agent.get_status() == AssignState.STATUS_EXPIRED or
+                  agent.get_status() == AssignState.STATUS_RETURNED or
+                  agent.get_status() == AssignState.STATUS_PARTNER_DISCONNECT):
+                # inform the connecting user in all of these cases that the
+                # task is no longer workable, use appropriate message
+                data = agent.get_inactive_command_data()
+
+                def disconnect_agent(*args):
+                    self.socket_manager.close_channel(
+                        agent.get_connection_id())
+
+                self.send_command(worker_id, assign_id, data,
+                                  ack_func=disconnect_agent)

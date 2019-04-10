@@ -31,6 +31,9 @@ class BertClassifierAgent(TorchClassifierAgent):
                                      'all'],
                             help='which part of the encoders do we optimize '
                                  '(defaults to all layers)')
+        parser.set_defaults(
+            dict_maxexs=0,  # skip building dictionary
+        )
 
     @staticmethod
     def dictionary_class():

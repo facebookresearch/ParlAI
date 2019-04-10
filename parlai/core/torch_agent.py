@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""General utility code for building PyTorch-based agents in ParlAI.
+"""
+General utility code for building PyTorch-based agents in ParlAI.
 
 Contains the following main utilities:
 
@@ -27,7 +28,8 @@ from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (
-    AttrDict, argsort, padded_tensor, warn_once, round_sigfigs
+    AttrDict, argsort, padded_tensor, warn_once, round_sigfigs,
+    fp16_optimizer_wrapper
 )
 from parlai.core.distributed_utils import is_primary_worker
 
@@ -299,7 +301,8 @@ class TorchAgent(Agent):
 
     @classmethod
     def optim_opts(self):
-        """Fetch optimizer selection.
+        """
+        Fetch optimizer selection.
 
         By default, collects everything in torch.optim, as well as importing:
         - qhm / qhmadam if installed from github.com/facebookresearch/qhoptim
@@ -309,6 +312,11 @@ class TorchAgent(Agent):
         # first pull torch.optim in
         optims = {k.lower(): v for k, v in optim.__dict__.items()
                   if not k.startswith('__') and k[0].isupper()}
+        try:
+            import apex.optimizers.fused_adam as fused_adam
+            optims['fused_adam'] = fused_adam.FusedAdam
+        except ImportError:
+            pass
 
         try:
             # https://openreview.net/pdf?id=S1fUpoR5FQ
@@ -332,7 +340,8 @@ class TorchAgent(Agent):
 
     @classmethod
     def history_class(cls):
-        """Return the history class that this agent expects to use.
+        """
+        Return the history class that this agent expects to use.
 
         Can be overriden if a more complex history is required.
         """
@@ -361,6 +370,8 @@ class TorchAgent(Agent):
                  'ignored unless you append "-force" to your choice.'
         )
         # optimizer arguments
+        agent.add_argument(
+            '--fp16', type='bool', default=False, help='Use fp16 computations.')
         agent.add_argument(
             '-opt', '--optimizer', default='sgd', choices=cls.optim_opts(),
             help='Choose between pytorch optimizers. Any member of torch.optim'
@@ -500,6 +511,14 @@ class TorchAgent(Agent):
             if opt.get('person_tokens'):
                 self.dict[self.P1_TOKEN] = 999999999
                 self.dict[self.P2_TOKEN] = 999999998
+            if opt.get('fp16'):
+                # Volta cores revert to FP32 hardware if tensors are not multiples
+                # of 8 in all dimensions. This INCLUDES the embeddings layer! As
+                # such, we need some extra magic to ensure the dictionary is padded
+                # with extra tokens to make it a multiple of 8.
+                if len(self.dict) % 8 != 0:
+                    for i in range(8 - len(self.dict) % 8):
+                        self.dict['__FP16_PAD_{}__'.format(i)] = 1
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
@@ -521,6 +540,8 @@ class TorchAgent(Agent):
                 print('[ Using CUDA ]')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
+        # indicate whether using fp16
+        self.fp16 = self.opt.get('fp16', False)
 
         # now set up any fields that all instances may need
         self.id = 'TorchAgent'  # child can override
@@ -555,11 +576,13 @@ class TorchAgent(Agent):
             dict_agent=self.dict,
         )
 
+        self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
     def _get_init_model(self, opt, shared):
-        """Get model file to initialize with. If `init_model` exits, we will
+        """
+        Get model file to initialize with. If `init_model` exits, we will
         return the path to that file and maybe load dict file from that path.
         Otherwise, use `model_file.`
 
@@ -629,6 +652,9 @@ class TorchAgent(Agent):
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
+        if self.fp16:
+            self.optimizer = fp16_optimizer_wrapper(self.optimizer)
+
         if optim_states:
             if saved_optim_type != opt['optimizer']:
                 print('WARNING: not loading optim state since optim class '
@@ -658,6 +684,11 @@ class TorchAgent(Agent):
         :param bool hard_reset: If true, the LR scheduler should ignore the
             state dictionary.
         """
+        optimizer = self.optimizer
+        if self.fp16:
+            # lr schedulers don't work with apex, they expect the "real" optimizer
+            optimizer = optimizer.optimizer
+
         if self.opt.get('warmup_updates', -1) > 0:
             def _warmup_lr(step):
                 start = self.opt['warmup_rate']
@@ -667,7 +698,7 @@ class TorchAgent(Agent):
                 return lr_mult
 
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
-                self.optimizer,
+                optimizer,
                 _warmup_lr,
             )
         else:
@@ -687,7 +718,7 @@ class TorchAgent(Agent):
             self.scheduler = None
         elif self.opt.get('lr_scheduler') == 'reduceonplateau':
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer,
+                optimizer,
                 'min',
                 factor=decay,
                 patience=patience,
@@ -695,7 +726,7 @@ class TorchAgent(Agent):
             )
         elif self.opt.get('lr_scheduler') == 'fixed':
             self.scheduler = optim.lr_scheduler.StepLR(
-                self.optimizer,
+                optimizer,
                 patience,
                 gamma=decay,
             )
@@ -711,7 +742,7 @@ class TorchAgent(Agent):
                 return decay_factor / np.sqrt(max(1, step))
 
             self.scheduler = optim.lr_scheduler.LambdaLR(
-                self.optimizer,
+                optimizer,
                 _invsqrt_lr,
             )
         else:
@@ -818,18 +849,12 @@ class TorchAgent(Agent):
                                     'models:glove_vectors'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
-            from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
-            embs = vocab.Vectors(
-                name='crawl-300d-2M.vec',
-                url=fasttext_cc_url,
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_cc_vectors'))
+            from parlai.zoo.fasttext_cc_vectors.build import download
+            embs = download(self.opt.get('datapath'))
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
-            embs = vocab.FastText(
-                language='en',
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_vectors'))
+            from parlai.zoo.fasttext_vectors.build import download
+            embs = download(self.opt.get('datapath'))
         else:
             raise RuntimeError('embedding type {} not implemented. check arg, '
                                'submit PR to this function, or override it.'
@@ -1055,6 +1080,16 @@ class TorchAgent(Agent):
         this function, call super().vectorize(...) to process the text and
         labels, and then process the other fields in your subclass.
 
+        Additionally, if you want to override some of these default parameters,
+        then we recommend using a pattern like:
+
+        .. code-block:: python
+
+          def vectorize(self, *args, **kwargs):
+              kwargs['add_start'] = False
+              return super().vectorize(*args, **kwargs)
+
+
         :param obs:
             Single observation from observe function.
 
@@ -1126,7 +1161,9 @@ class TorchAgent(Agent):
         xs, x_lens = None, None
         if any('text_vec' in ex for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
-            xs, x_lens = padded_tensor(_xs, self.NULL_IDX, self.use_cuda)
+            xs, x_lens = padded_tensor(
+                _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16'),
+            )
             if sort:
                 sort = False  # now we won't sort on labels
                 xs, x_lens, valid_inds, exs = argsort(
@@ -1146,7 +1183,10 @@ class TorchAgent(Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
-            ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda)
+            ys, y_lens = padded_tensor(
+                label_vecs, self.NULL_IDX, self.use_cuda,
+                fp16friendly=self.opt.get('fp16')
+            )
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
                     y_lens, ys, valid_inds, label_vecs, labels, y_lens,
@@ -1212,7 +1252,8 @@ class TorchAgent(Agent):
         return batch_reply
 
     def last_reply(self, use_reply='label'):
-        """Retrieve the last reply from the model.
+        """
+        Retrieve the last reply from the model.
 
         If available, we use the true label instead of the model's prediction.
 
@@ -1283,7 +1324,8 @@ class TorchAgent(Agent):
         return [p for b, p in preds]
 
     def observe(self, observation):
-        """Process incoming message in preparation for producing a response.
+        """
+        Process incoming message in preparation for producing a response.
 
         This includes remembering the past history of the conversation.
         """
@@ -1295,41 +1337,54 @@ class TorchAgent(Agent):
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
 
+    def state_dict(self):
+        """
+        Get the state dict for saving
+
+        Override this method for more specific saving.
+        """
+        states = {}
+        if hasattr(self, 'model'):  # save model params
+            if hasattr(self.model, 'module'):
+                # did we wrap in a DistributedDataParallel
+                states['model'] = self.model.module.state_dict()
+            else:
+                states['model'] = self.model.state_dict()
+
+        if hasattr(self, 'optimizer'):  # save optimizer params
+            states['optimizer'] = self.optimizer.state_dict()
+            states['optimizer_type'] = self.opt['optimizer']
+
+        # lr scheduler
+        if torch.__version__.startswith('0.'):
+            warn_once(
+                "Must upgrade to Pytorch 1.0 to save the state of your "
+                "LR scheduler."
+            )
+        else:
+            states['number_training_updates'] = self._number_training_updates
+            if getattr(self, 'scheduler'):
+                states['lr_scheduler'] = self.scheduler.state_dict()
+                states['lr_scheduler_type'] = self.opt['lr_scheduler']
+            if getattr(self, 'warmup_scheduler'):
+                states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
+
+        return states
+
     def save(self, path=None):
         """
         Save model parameters to path (or default to model_file arg).
 
-        Override this method for more specific saving.
+        Please try to refrain from overriding this function, and instead
+        override `state_dict(self)` for more specific saving.
         """
         path = self.opt.get('model_file', None) if path is None else path
 
         if path:
-            states = {}
-            if hasattr(self, 'model'):  # save model params
-                if hasattr(self.model, 'module'):
-                    # did we wrap in a DistributedDataParallel
-                    states['model'] = self.model.module.state_dict()
-                else:
-                    states['model'] = self.model.state_dict()
-
-            if hasattr(self, 'optimizer'):  # save optimizer params
-                states['optimizer'] = self.optimizer.state_dict()
-                states['optimizer_type'] = self.opt['optimizer']
-
-            # lr scheduler
-            if torch.__version__.startswith('0.'):
-                warn_once(
-                    "Must upgrade to Pytorch 1.0 to save the state of your "
-                    "LR scheduler."
-                )
-            else:
-                states['number_training_updates'] = self._number_training_updates
-                if getattr(self, 'scheduler'):
-                    states['lr_scheduler'] = self.scheduler.state_dict()
-                    states['lr_scheduler_type'] = self.opt['lr_scheduler']
-                if getattr(self, 'warmup_scheduler'):
-                    states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
-
+            if hasattr(self, 'dict'):  # force save dictionary
+                # TODO: Look into possibly overriding opt('dict_file') with new path
+                self.dict.save(path + '.dict', sort=False)
+            states = self.state_dict()
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
                     torch.save(states, write)
@@ -1390,12 +1445,12 @@ class TorchAgent(Agent):
         batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
 
         # check if there are any labels available, if so we will train on them
-        is_training = any('labels' in obs for obs in observations)
+        self.is_training = any('labels' in obs for obs in observations)
 
         # create a batch from the vectors
         batch = self.batchify(observations)
 
-        if is_training:
+        if self.is_training:
             output = self.train_step(batch)
         else:
             with torch.no_grad():
@@ -1424,6 +1479,17 @@ class TorchAgent(Agent):
         raise NotImplementedError(
             'Abstract class: user must implement eval_step'
         )
+
+    def backward(self, loss):
+        """
+        Perform a backward pass. It is recommended you use this instead of
+        loss.backward(), for integration with distributed training and FP16
+        training.
+        """
+        if self.fp16:
+            self.optimizer.backward(loss, update_master_grads=False)
+        else:
+            loss.backward()
 
     def update_params(self):
         """
@@ -1457,10 +1523,18 @@ class TorchAgent(Agent):
             # training step scheduler
             self.scheduler.step(self._number_training_updates)
 
+        if self.fp16:
+            # we've been accumulating grads in fp16 and delaying the fp32 copy update.
+            # finally time to perform the update.
+            self.optimizer.update_master_grads()
+
         if self.opt.get('gradient_clip', -1) > 0:
-            torch.nn.utils.clip_grad_norm_(
-                self.model.parameters(), self.opt['gradient_clip']
-            )
+            if self.fp16:
+                self.optimizer.clip_master_grads(self.opt['gradient_clip'])
+            else:
+                torch.nn.utils.clip_grad_norm_(
+                    self.model.parameters(), self.opt['gradient_clip']
+                )
 
         self.optimizer.step()
 

@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FbDialogTeacher
-from parlai.core.agents import MultiTaskTeacher
+import parlai.core.agents as core_agents
 from .build import build
 
 import copy
@@ -74,7 +74,7 @@ class SmallTaskTeacher(FbDialogTeacher):
 
 # python <script.py> -t personalized_dialog:AllFull
 # By default train on all tasks at once.
-class AllFullTeacher(MultiTaskTeacher):
+class AllFullTeacher(core_agents.MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join('personalized_dialog:FullTask:%d' % (i + 1)
@@ -88,7 +88,7 @@ class AllFullTeacher(MultiTaskTeacher):
 
 # python <script.py> -t personalized_dialog:AllSmall
 # By default train on all tasks at once.
-class AllSmallTeacher(MultiTaskTeacher):
+class AllSmallTeacher(core_agents.MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join('personalized_dialog:SmallTask:%d' % (i + 1)

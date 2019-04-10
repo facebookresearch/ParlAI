@@ -154,14 +154,14 @@ class ActionInput extends React.Component {
         agent_id={this.props.task_data.agent_id}
         message={this.state.selectval}
         task_data={this.props.task_data.curr_message_context}
-        duration={this.props.is_review ? m.duration : undefined}/>;
+        duration={undefined}/>;
     } else {
       message = <ChatMessage
         is_self={true}
         agent_id={this.props.task_data.agent_id}
         message={this.props.task_data.text}
         task_data={{action: this.state.selectval}}
-        duration={this.props.is_review ? m.duration : undefined}/>;
+        duration={undefined}/>;
     }
 
     let select_label = 'Selection:';

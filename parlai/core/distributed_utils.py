@@ -82,9 +82,10 @@ def override_print(suppress=False, prefix=None):
     Recommended usage is to call this with suppress=True for all non-primary workers,
     or call with with a prefix of rank on all workers.
 
-    :param bool suppress: if true, all future print statements are noops.
-    :param str prefix: if not None, this string is prefixed to all future print
-        statements.
+    :param bool suppress:
+        if true, all future print statements are noops.
+    :param str prefix:
+        if not None, this string is prefixed to all future print statements.
     """
     builtin_print = builtins.print
 
@@ -102,14 +103,19 @@ def override_print(suppress=False, prefix=None):
 
 
 def all_gather_list(data, max_size=16384):
-    """Gathers arbitrary data from all nodes into a list.
+    """
+    Gathers arbitrary data from all nodes into a list.
+
     Similar to :func:`~torch.distributed.all_gather` but for arbitrary Python
     data. Note that *data* must be picklable.
 
-    :param data: data from the local worker to be gathered on other workers
-    :param int max_size: maximum size of the data to be gathered across workers
+    :param data:
+        data from the local worker to be gathered on other workers
+    :param int max_size:
+        maximum size of the data to be gathered across workers
 
-    :returns: a list containing [data1, data2, ...] of all workers
+    :returns:
+        a list containing [data1, data2, ...] of all workers
     """
     if not is_distributed():
         # fall back to just keeping things basic if we're not distributed

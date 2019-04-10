@@ -79,6 +79,10 @@ def setup_args(parser=None):
                        hidden=True,
                        help='max examples to use during validation (default '
                             '-1 uses all)')
+    train.add_argument('--short-final-eval', default=False, hidden=True,
+                       type='bool',
+                       help='If true, obeys --validation-max-exs in the final '
+                            'validation and test evaluations.')
     train.add_argument('-vp', '--validation-patience',
                        type=int, default=10,
                        help=('number of iterations of validation where result'
@@ -168,7 +172,7 @@ def run_eval(valid_world, opt, datatype, max_exs=-1, write_log=False):
             print(valid_world.display() + '\n~~')
             print(valid_world.report())
         cnt += valid_world.opt['batchsize']
-        if max_exs > 0 and cnt > max_exs + opt.get('numthreads', 1):
+        if max_exs > 0 and cnt >= max_exs:
             # note this max_exs is approximate--some batches won't always be
             # full depending on the structure of the data
             break
@@ -566,9 +570,10 @@ class TrainLoop():
             self.agent = create_agent(opt)
 
         valid_world = _maybe_load_eval_world(self.agent, opt, 'valid')
-        v_report = run_eval(valid_world, opt, 'valid', write_log=True)
+        max_exs = opt['validation_max_exs'] if opt.get('short_final_eval') else -1
+        v_report = run_eval(valid_world, opt, 'valid', max_exs, write_log=True)
         test_world = _maybe_load_eval_world(self.agent, opt, 'test')
-        t_report = run_eval(test_world, opt, 'test', write_log=True)
+        t_report = run_eval(test_world, opt, 'test', max_exs, write_log=True)
         if valid_world:
             valid_world.shutdown()
         if test_world:

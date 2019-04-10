@@ -1,0 +1,4 @@
+webapp/dev/task_components/
+dist/
+**/static/main.bundle.js
+node_modules/

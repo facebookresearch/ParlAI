@@ -12,7 +12,7 @@ import numpy as np
 
 from .build import build
 
-from parlai.core.agents import MultiTaskTeacher
+import parlai.core.agents as core_agents
 from parlai.core.teachers import ParlAIDialogTeacher
 from projects.self_feeding.utils import add_person_tokens
 
@@ -156,7 +156,7 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
                 self.episodes.append([episode])
 
 
-class SelfFeedingMTLTeacher(MultiTaskTeacher):
+class SelfFeedingMTLTeacher(core_agents.MultiTaskTeacher):
     """Creates a teacher that is actually a set of teachers each based on
     a task string--each of these teachers will get called in turn,
     either randomly or in order.

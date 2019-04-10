@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.scripts.eval_model import eval_model
-from parlai.zoo.wizard_of_wikipedia.full_dialogue_retrieval import download
+from parlai.zoo.wizard_of_wikipedia\
+    .full_dialogue_retrieval_model import download
 from projects.wizard_of_wikipedia.wizard_transformer_ranker\
     .wizard_transformer_ranker import WizardTransformerRankerAgent
 
@@ -28,10 +29,10 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     WizardTransformerRankerAgent.add_cmdline_args(parser)
-    parser.set_defaults(
+    parser.set_params(
         task='wizard_of_wikipedia',
         model='projects:wizard_of_wikipedia:wizard_transformer_ranker',
-        model_file='models:wizard_of_wikipedia/retrieval_models/model',
+        model_file='models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
         datatype='test',
         n_heads=6,
         ffn_size=1200,
@@ -42,6 +43,6 @@ if __name__ == '__main__':
     )
 
     opt = parser.parse_args()
-    download(opt)  # download pretrained retrieval model
+    download(opt['datapath'])  # download pretrained retrieval model
 
-    eval_model(parser)
+    eval_model(opt)
