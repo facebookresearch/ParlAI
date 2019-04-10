@@ -53,22 +53,28 @@ def get_stats(filename, df_dict, tot_doc, modelname):
                 
                 unigrams += split[start:]
                 
-                
-    return np.mean(mean_response_idf), np.mean(max_response_idf), \
-            np.mean(response_lens), float(len(set(unigrams)))/float(len(unigrams))
-
+    if len(mean_response_idf) > 0:    
+        return np.mean(mean_response_idf), np.mean(max_response_idf), \
+                np.mean(response_lens), float(len(set(unigrams)))/float(len(unigrams))
+    else: 
+        return 0, 0, 0, 0
 
     
+models = ['seq2seq', 'transformer', 'language_model']
+tasks = ['cornell_movie', 'dailydialog', 'empathetic_dialogues', 'personachat']
+
     
 datasets = ['cornell_movie', 'dailydialog', 'empathetic_dialogues', 'personachat'] 
   
-modelinfo = [('Seq2Seq', 'seq2seq'), ('Seq2SeqRetriever', 'seq2seq_retriever_idf'), 
-            ('Seq2SeqRetriever', 'seq2seq_retriever_idf_swapping'), ('FACE', 'face'), 
-            ('Seq2SeqWeighted', 'seq2seq_weighted_idf'), 
-            ('Seq2SeqWeighted', 'seq2seq_weighted_swapping'),
-            ('TorchAgent', 'transformergenerator'),
-            ('Seq2SeqWeighted', 'transformer_weighted_idf'),
-#             ('TransformerWeighted', 'transformer_weighted_swapping')
+modelinfo = [('LanguageModel', 'language_model'), 
+            ('LanguageModelWeighted', 'language_model_idf'), 
+            ('LanguageModelWeighted', 'language_model_swapping'),
+            ('Seq2Seq', 'seq2seq'), 
+            ('Seq2SeqWeighted', 'seq2seq_idf'), 
+            ('Seq2SeqWeighted', 'seq2seq_swapping'), #('FACE', 'face'), 
+            ('TorchAgent', 'transformer'),
+            ('TransformerWeighted', 'transformer_idf'),
+            ('TransformerWeighted', 'transformer_swapping')
             ]
             
 
@@ -89,14 +95,14 @@ if __name__ == '__main__':
                 filename = 'tmp/%s/%s_minfreq_2_test.out' % (dataset, modelprefix)
             
                 outputs = get_stats(filename, df_dict, tot_doc, modelname)
-                stats = '%s, %s, %.3f, %.3f, %.3f, %.3f, %s' % \
+                stats = '%s, %s, %.3f, %.3f, %.3f, %.5f, %s' % \
                             tuple([dataset, modelname] + list(outputs) + [filename,])
                 result_lines.append(stats)
             
                 if modelname=='FACE': 
                     filename = 'tmp/%s/%s_minfreq_2_greedy_test.out' % (dataset, modelprefix)
                     outputs = get_stats(filename, df_dict, tot_doc, modelname)
-                    stats = '%s, %s_greedy, %.3f, %.3f, %.3f, %.3f, %s' % \
+                    stats = '%s, %s_greedy, %.3f, %.3f, %.3f, %.5f, %s' % \
                                 tuple([dataset, modelname] + list(outputs) + [filename,])
                     result_lines.append(stats)
             except FileNotFoundError:

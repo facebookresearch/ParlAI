@@ -498,7 +498,7 @@ class TrainLoop():
             
             self.writer.add_metrics('train', self._total_exs, train_report)
             
-            if opt['model'] in ['face', 'seq2seq', 'seq2seq_retriever']: 
+            if opt['model'] in ['face', 'seq2seq', 'seq2seq_retriever', 'seq2seq_weighted']: 
             
                 self.writer.writer.add_scalars('s2s_embed_weights', {'embed_weight_%s' % iii: 
                                             self.agent.model.encoder.lt.weight[iii+5,6].data 

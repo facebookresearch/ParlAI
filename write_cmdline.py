@@ -13,6 +13,10 @@ beamsize=5\n\
 numlayers=1\n\
 lmlayers=2\n\
 bidirectional=True\n\
+ffnsize=300\n\
+transformerlayers=4 \n\
+transformerdropout=0.2 \n\
+transformerheads=4 \n\
 \n\
 ### optimization ###\n\
 batchsize=32\n\
@@ -20,7 +24,7 @@ learningrate=.001\n\
 sgdlearningrate=10\n\
 sgdminlearningrate=.1\n\
 optimizer=adam\n\
-gradientclip=1.0\n\
+gradientclip=5.0\n\
 lrschedulerdecay=.5\n\
 lrschedulerpatience=3\n\
 validationpatience=10\n\
@@ -35,14 +39,14 @@ dicttokenizer=\'spacy\'\n\
 dictfile=\'tmp/\'$taskname\'/dict_minfreq_$dictminfreq\'\n\
 \n\
 ### logging ###\n\
-tensorboardlog=False\n\
+tensorboardlog=True\n\
 \n\
 gpunum={GPUNUM}'''
 
 
 
 
-lm_boiler = """\n\
+lm_train_boiler = """\n\
 ####################################\n\
 ###########  train model ###########\n\
 ####################################\n\
@@ -75,7 +79,7 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 
 
 
-other_boiler = """\n\
+s2s_train_boiler = """\n\
 CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 -t $taskname \\\n\
 -bs $batchsize \\\n\
@@ -106,11 +110,41 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 
 
 
+transformer_train_boiler = """\n\
+CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
+-t $taskname \\\n\
+-bs $batchsize \\\n\
+--ffn-size $ffnsize \\\n\
+--n-heads $transformerheads \\\n\
+--n-layers $transformerlayers \\\n\
+--history-size $historysize \\\n\
+-emb $embedding \\\n\
+--embedding-size $embeddingsize \\\n\
+--dropout $transformerdropout \\\n\
+--learningrate $learningrate \\\n\
+--optimizer $optimizer \\\n\
+--gradient-clip $gradientclip \\\n\
+--lr-scheduler-decay $lrschedulerdecay \\\n\
+--lr-scheduler-patience $lrschedulerpatience \\\n\
+--validation-patience $validationpatience \\\n\
+--validation-every-n-epochs $validationeverynepochs \\\n\
+--validation-metric $validationmetric \\\n\
+--validation-metric-mode $validationmetricmode \\\n\
+--dict-minfreq $dictminfreq \\\n\
+--dict-lower $dictlower \\\n\
+--dict-tokenizer $dicttokenizer \\\n\
+--dict-file 'tmp/'$taskname'/dict_minfreq_'$dictminfreq \\\n\
+-m $modelname \\\n\
+%s\n\
+-mf 'tmp/'$taskname'/%s_minfreq_'$dictminfreq \\\n\
+> 'tmp/'$taskname'/%s_minfreq_'$dictminfreq'_train.out'\\\n\
+\n\n\n """
 
 
 
 
-eval_model="""\n\
+
+eval_torchgen_model="""\n\
 CUDA_VISIBLE_DEVICES=$gpunum python examples/eval_model.py \\\n\
 --datatype %s \\\n\
 --history-size $historysize \\\n\
@@ -120,91 +154,97 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/eval_model.py \\\n\
 --display-examples 1 \\\n\
 -df 'tmp/'$taskname'/dict_minfreq_'$dictminfreq \\\n\
 -mf 'tmp/'$taskname'/%s_minfreq_'$dictminfreq \\\n\
-> 'tmp/'$taskname'/%s_minfreq_'$dictminfreq'_valid.out'\\\n\
+> 'tmp/'$taskname'/%s_minfreq_'$dictminfreq'_%s.out'\\\n\
+\n\n\n """
+
+
+eval_language_model="""\n\
+CUDA_VISIBLE_DEVICES=$gpunum python examples/eval_model.py \\\n\
+--datatype %s \\\n\
+-m $modelname \\\n\
+-t $taskname \\\n\
+--display-examples 1 \\\n\
+-df 'tmp/'$taskname'/dict_minfreq_'$dictminfreq \\\n\
+-mf 'tmp/'$taskname'/%s_minfreq_'$dictminfreq \\\n\
+> 'tmp/'$taskname'/%s_minfreq_'$dictminfreq'_%s.out'\\\n\
 \n\n\n """
 
 
 
-models = ['seq2seq', 'transformer', 'language_model']
-tasks = ['cornell_movie', 'dailydialog', 'empathetic_dialogues', 'personachat']
+model_boilers = [
+                (transformer_train_boiler, eval_torchgen_model, 'transformer'), 
+#                 (s2s_train_boiler, eval_torchgen_model, 'seq2seq'), 
+#                 (lm_train_boiler, eval_language_model, 'language_model')
+                ]
+# tasks = ['cornell_movie', 'dailydialog', 'empathetic_dialogues', 'personachat']
+tasks = ['personachat',]
+TRAIN = True
+EVAL = False
 
 
 if __name__ == '__main__': 
     
     for t, task in enumerate(tasks): 
         
-        GPU_NUM = t + 3
+        GPU_NUM = 1 #t + 3
+        # if GPU_NUM == 5: # HACK, as opensubtitles is currently running on gpu5
+#             GPU_NUM = 1
         
         cmd_filename = 'cmd_%s.sh' % task
         with open(cmd_filename, 'w') as f: 
+            
+            if task == 'opensubtitles':
+                print('NEED TO IMPLEMENT')
+                import sys; sys.exit()
+            else: 
+                f.write("taskname='%s'" % task)
+                f.write(parameter_definition.format(GPUNUM=str(GPU_NUM)))
+                f.write('\n\n\n\n\n')
+            
         
-            f.write("taskname='%s'" % task)
-            f.write(parameter_definition.format(GPUNUM=str(GPU_NUM)))
-            f.write('\n\n\n\n\n')
         
-        
-            for basemodel in models:
-        
-                if basemodel == 'language_model':
+            for train_boiler, eval_boiler, basemodel in model_boilers:
                 
+                if basemodel == 'transformer':
+                    f.write('\n\n\n\n\n')
+                    f.write("modelname='%s/generator'" % basemodel)
+                    f.write('\n\n\n\n\n')
+                elif basemodel == 'language_model': 
+                    f.write('\n\n\n\n\n')
+                    f.write("modelname='%s_emb'" % basemodel)
+                    f.write('\n\n\n\n\n')
+                else:
                     f.write('\n\n\n\n\n')
                     f.write("modelname='%s'" % basemodel)
                     f.write('\n\n\n\n\n')
                 
-                    model_prefix = "'%s'" % basemodel
-                    f.write(lm_boiler % ('\\', model_prefix, model_prefix))
-                    f.write(eval_model % ('valid', model_prefix, model_prefix))
-                    f.write(eval_model % ('test', model_prefix, model_prefix))
-                
-                
-                    f.write('\n\n\n\n\n')
-                    f.write("modelname='%s_weighted'" % basemodel)
-                    f.write('\n\n\n\n\n')
-                
-                    model_prefix = "'%s_idf'" % basemodel
-                    f.write(lm_boiler % ('--swap-criterion-train-eval False \\', model_prefix, model_prefix))
-                    f.write(eval_model % ('valid', model_prefix, model_prefix))
-                    f.write(eval_model % ('test', model_prefix, model_prefix))
-
-                    model_prefix = "'%s_swapping'" % basemodel
-                    f.write(lm_boiler % ('--swap-criterion-train-eval True \\', model_prefix, model_prefix))
-                    f.write(eval_model % ('valid', model_prefix, model_prefix))
-                    f.write(eval_model % ('test', model_prefix, model_prefix))
+                model_prefix = "'%s'" % basemodel
+                if TRAIN:
+                    f.write(train_boiler % ('\\', model_prefix, model_prefix))
+                if EVAL: 
+                    f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
+                    f.write(eval_boiler % ('test', model_prefix, model_prefix, 'test'))
             
-                else:
             
-                    if basemodel == 'transformer':
-                        f.write('\n\n\n\n\n')
-                        f.write("modelname='%s/generator'" % basemodel)
-                        f.write('\n\n\n\n\n')
-                    else:
-                        f.write('\n\n\n\n\n')
-                        f.write("modelname='%s'" % basemodel)
-                        f.write('\n\n\n\n\n')
-                
-                
-                    model_prefix = "'%s'" % basemodel
-                    f.write(other_boiler % ('\\', model_prefix, model_prefix))
-                    f.write(eval_model % ('valid', model_prefix, model_prefix))
-                    f.write(eval_model % ('test', model_prefix, model_prefix))
+                f.write('\n\n\n\n\n')
+                f.write("modelname='%s_weighted'" % basemodel)
+                f.write('\n\n\n\n\n')
+            
+                model_prefix = "'%s_idf'" % basemodel
+                if TRAIN:
+                    f.write(train_boiler % ('--swap-criterion-train-eval False \\', model_prefix, model_prefix))
+                f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
+                f.write(eval_boiler % ('test', model_prefix, model_prefix, 'test'))
 
-                
-                    f.write('\n\n\n\n\n')
-                    f.write("modelname='%s_weighted'" % basemodel)
-                    f.write('\n\n\n\n\n')
-                
-                    model_prefix = "'%s_idf'" % basemodel
-                    f.write(other_boiler % ('--swap-criterion-train-eval False \\', model_prefix, model_prefix))
-                    f.write(eval_model % ('valid', model_prefix, model_prefix))
-                    f.write(eval_model % ('test', model_prefix, model_prefix))
-
-                    model_prefix = "'%s_swapping'" % basemodel
-                    f.write(other_boiler % ('--swap-criterion-train-eval True \\', model_prefix, model_prefix))
-                    f.write(eval_model % ('valid', model_prefix, model_prefix))
-                    f.write(eval_model % ('test', model_prefix, model_prefix))
-    
-        
-        # Assuming /tmp/foo.txt exists, Set a file execute by the group.
+                model_prefix = "'%s_swapping'" % basemodel
+                if TRAIN:
+                    f.write(train_boiler % ('--swap-criterion-train-eval True \\', model_prefix, model_prefix))
+                if EVAL:
+                    f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
+                    f.write(eval_boiler % ('test', model_prefix, model_prefix, 'test'))
+            
+            
+        # change permissions to allow execute.
         os.chmod(cmd_filename, stat.S_IRWXU)
 
 

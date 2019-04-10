@@ -5,13 +5,11 @@ from parlai.core.dict import DictionaryAgent
 from parlai.agents.language_model.language_model import LanguageModelAgent
 # from parlai.core.utils import PaddingUtils, round_sigfigs
 # from parlai.core.thread_utils import SharedTable
-# from .modules import RNNModel
 
 # for initializing model
 from parlai.agents.language_model.modules import RNNModel
 from parlai.core.build_data import modelzoo_path
 from parlai.core.distributed_utils import is_primary_worker
-
 
 import torch
 from torch.autograd import Variable
@@ -22,7 +20,7 @@ import math
 import json
 
 
-class LanguageModelWeightedAgent(LanguageModelAgent):
+class LanguageModelEmbAgent(LanguageModelAgent):
     """ Agent which trains an RNN on a language modeling task.
     It is adapted from the language model featured in Pytorch's examples repo
     here: <https://github.com/pytorch/examples/tree/master/word_language_model>.
@@ -35,7 +33,7 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
-        agent = argparser.add_argument_group('Language Model Weighted Arguments')
+        agent = argparser.add_argument_group('Language Model Emb Arguments')
         agent.add_argument(
             '-emb', '--embedding-type', default='random',
             choices=['random', 'glove', 'glove-fixed', 'glove-twitter-fixed',
@@ -45,12 +43,6 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
                  'embeddings. Default is random, but can also preinitialize '
                  'from Glove or Fasttext. Preinitialized embeddings can also '
                  'be fixed so they are not updated during training.')
-                 
-        agent.add_argument(
-            '-swap', '--swap-criterion-train-eval', type='bool', default=False,
-            help='Whether to swap the criterion between training and evaluation'
-            'i.e., train with idf weighting, but eval without idf in criterion')
-            
         
         
         """Copied from language_model.py"""
@@ -99,7 +91,7 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
                            help='sample when generating tokens instead of taking \
                            the max and do not produce UNK token (when bs=1)')
         
-        LanguageModelWeightedAgent.dictionary_class().add_cmdline_args(argparser)
+        LanguageModelEmbAgent.dictionary_class().add_cmdline_args(argparser)
         
         return agent
 
@@ -110,12 +102,10 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
 #         """Set up model if shared params not set, otherwise no work to do."""
 #         super().__init__(opt, shared)
 #         
-#         self.id = 'LanguageModelWeighted'
-#         
-#         self.build_criterion()
-    
-    
-    
+#         self.id = 'LanguageModelEmb'
+
+
+
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
@@ -190,7 +180,7 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
 
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
-            self.id = 'LanguageModelWeighted'
+            self.id = 'LanguageModelEmb'
 
             # get NULL token and END token
             self.NULL_IDX = self.dict[self.dict.null_token]
@@ -255,181 +245,7 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
         else:
             self.scheduler = None
 
-        self.reset() 
-        
-        self.build_criterion()
-        
-        
-        
-        
-        
-        
-    
-    def get_target_loss(self, data, hidden, targets, is_training):
-    
-        ''' modified from language_model.py agent'''
-        
-        """Calculates the loss with respect to the targets, token by token,
-           where each output token is conditioned on either the input or the
-           previous target token.
-        """
-        loss = 0.0
-        bsz = data.size(0)
-
-        # during interactive mode, when no targets exist, we return 0
-        if targets is None:
-            return loss
-
-        # feed in inputs without end token
-        output, hidden = self.model(data.transpose(0, 1), hidden)
-        self.hidden = self.repackage_hidden(hidden)
-        # feed in end tokens
-        output, hidden = self.model(Variable(self.ends[:bsz].view(1, bsz)), self.hidden)
-        self.hidden = self.repackage_hidden(hidden)
-        output_flat = output.view(-1, len(self.dict))
-        
-        
-        loss += self.compute_criterion(output_flat, targets.select(1, 0).view(-1), is_training).data
-
-        for i in range(1, targets.size(1)):
-            output, hidden = self.model(
-                targets.select(1, i - 1).view(1, bsz),
-                self.hidden,
-                no_pack=True
-            )
-            self.hidden = self.repackage_hidden(hidden)
-            output_flat = output.view(-1, len(self.dict))
-            loss += self.compute_criterion(output_flat, targets.select(1, i).view(-1), is_training).data
-
-        return loss
-        
-
-
-
-
-        
-    def predict(self, data, hidden, targets=None, is_training=True, y_lens=None):
-    
-        ''' modified from language_model.py agent'''
-        
-        """Produce a prediction from our model."""
-        output = None
-        predictions = None
-        if is_training:
-            self.model.train()
-            self.zero_grad()
-            output, hidden = self.model(data, hidden)
-            loss = self.compute_criterion(output.view(-1, len(self.dict)), targets.view(-1), is_training)
-            # save loss to metrics
-            target_tokens = targets.ne(self.NULL_IDX).float().sum().item()
-            self.metrics['lmloss'] += loss.double().item()
-            self.metrics['lm_num_tokens'] += target_tokens
-            # average loss per token
-            loss /= target_tokens
-            loss.backward(retain_graph=True)
-            self.update_params()
-        else:
-            self.model.eval()
-            predictions = self.get_predictions(data)
-            bsz = data.size(0)
-            if bsz != self.batchsize:
-                self.hidden = self.model.init_hidden(bsz)
-            if targets is not None:
-                loss = self.get_target_loss(data, self.hidden, targets, is_training)
-                self.metrics['loss'] += loss
-                self.metrics['num_tokens'] += sum(y_lens)
-
-        return output, hidden, predictions
-        
-        
-        
-        
-        
-            
-    def build_criterion(self):
-        
-        print('Setting up idf weights!')
-        
-        # Weight token importance with idf, if desired.
-        tot_doc = float(self.dict.tot_doc)
-        # min_idf = torch.log(torch.tensor([ tot_doc/ (tot_doc - 1.)]))
-        
-        special_tokens = [self.dict.null_token, self.dict.start_token,
-                            self.dict.end_token, self.dict.unk_token]
-                            
-        max_doc_freq = sorted([self.dict.doc_freq[t] 
-                                for t in self.dict.doc_freq.keys() 
-                                    if t not in special_tokens])[-1]
-                                    
-        min_idf = torch.log(torch.tensor([ tot_doc/ (max_doc_freq)]))
-        word_weights = min_idf * torch.ones(len(self.dict.freq.keys()))
-        
-        for tok in self.dict.freq.keys(): 
-            if self.dict.freq[tok] > 0: 
-                word_idf = torch.log(
-                                torch.tensor([tot_doc 
-                                                / (1. + float(self.dict.doc_freq[tok]))]
-                                            )
-                                    )
-                word_weights[self.dict.tok2ind[tok]] = torch.max(torch.tensor([word_idf, min_idf])) 
-            else: 
-                print(tok, self.dict.doc_freq[str(tok)], )
-        
-        
-        if self.opt['swap_criterion_train_eval']:
-            
-            print('Setting up two criteria!')
-            
-            # set up train criterion
-            if self.opt.get('numsoftmax', 1) > 1:
-                
-                self.train_criterion = nn.NLLLoss(
-                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
-                self.eval_criterion = nn.NLLLoss(
-                    ignore_index=self.NULL_IDX, size_average=False)
-                    
-            else:
-                self.train_criterion = nn.CrossEntropyLoss(
-                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
-                self.eval_criterion = nn.CrossEntropyLoss(
-                    ignore_index=self.NULL_IDX, size_average=False)
-                    
-                    
-            if self.use_cuda:
-                self.train_criterion.cuda()
-                self.eval_criterion.cuda()
-            
-                    
-        else:
-        
-            # set up universal criterion
-            if self.opt.get('numsoftmax', 1) > 1:
-                self.train_criterion = nn.NLLLoss(
-                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
-            
-            else:
-                self.train_criterion = nn.CrossEntropyLoss(
-                    ignore_index=self.NULL_IDX, size_average=False, weight=word_weights)
-            
-            if self.use_cuda:
-                self.train_criterion.cuda()          
-        
-        self.criterion = 'replaced with dummy for sharing' 
-        
-        
-        
-        
-    def compute_criterion(self, score_view, label_view, is_training):
-        
-        if self.opt['swap_criterion_train_eval'] and not is_training: 
-            loss = self.eval_criterion(score_view, label_view)
-        else: 
-            loss = self.train_criterion(score_view, label_view)
-        
-        return loss
-        
-        
-        
+        self.reset()        
         
         
         
@@ -533,3 +349,7 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
         if log:
             print('Initialized embeddings for {} tokens ({}%) from {}.'
                   ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
+                  
+                  
+                  
+                  
