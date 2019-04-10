@@ -121,15 +121,8 @@ class TransformerMemNetModel(nn.Module):
         else:
             self.embedding_normalization = False
 
-        if opt.get('reduction_type'):
-            self.reduction_type = opt['reduction_type']
-        else:
-            self.reduction_type = None
-
-        if opt.get('n_segments'):
-            self.n_segments = opt['n_segments']
-        else:
-            self.n_segments = 0
+        self.reduction_type = opt.get('reduction_type', 'mean')
+        self.n_segments = opt.get('n_segments', 0)
 
         self.context_encoder = _build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx,
