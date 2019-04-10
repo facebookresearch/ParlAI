@@ -41,6 +41,11 @@ def add_common_cmdline_args(argparser):
     argparser.add_argument('--n-positions', type=int, default=None, hidden=True,
                            help='Number of positional embeddings to learn. Defaults '
                                 'to truncate or 1024 if not provided.')
+    argparser.add_argument(
+        '--n-segments', type=int, default=0,
+        help='The number of segments that support the model. If zero no segment and '
+             'no langs_embedding.'
+    )
 
 
 class Transformer(Agent):
