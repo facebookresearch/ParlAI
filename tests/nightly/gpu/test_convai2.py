@@ -18,14 +18,14 @@ class TestConvai2Seq2Seq(unittest.TestCase):
 
         with testing_utils.capture_output() as stdout:
             report = eval_hits.main()
-        self.assertEqual(report['hits@1'], .1260, str(stdout))
+        self.assertEqual(report['hits@1'], .1250, str(stdout))
 
     def test_seq2seq_f1(self):
         import projects.convai2.baselines.seq2seq.eval_f1 as eval_f1
 
         with testing_utils.capture_output() as stdout:
             report = eval_f1.main()
-        self.assertEqual(report['f1'], .1618, str(stdout))
+        self.assertEqual(report['f1'], .1682, str(stdout))
 
 
 @testing_utils.skipUnlessGPU
@@ -38,14 +38,14 @@ class TestConvai2KVMemnn(unittest.TestCase):
 
         with testing_utils.capture_output() as stdout:
             report = eval_hits.main()
-        self.assertEqual(report['hits@1'], .5520, str(stdout))
+        self.assertEqual(report['hits@1'], .5510, str(stdout))
 
     def test_kvmemnn_f1(self):
         import projects.convai2.baselines.kvmemnn.eval_f1 as eval_f1
 
         with testing_utils.capture_output() as stdout:
             report = eval_f1.main()
-        self.assertEqual(report['f1'], .1190, str(stdout))
+        self.assertEqual(report['f1'], .1172, str(stdout))
 
 
 @testing_utils.skipUnlessGPU
@@ -58,7 +58,7 @@ class TestConvai2LanguageModel(unittest.TestCase):
 
         with testing_utils.capture_output() as stdout:
             report = eval_f1.main()
-        self.assertEqual(report['f1'], .1502, str(stdout))
+        self.assertEqual(report['f1'], .1531, str(stdout))
 
 
 if __name__ == '__main__':
