@@ -153,7 +153,7 @@ class TestTransformerRanker(unittest.TestCase):
         )
 
     @testing_utils.retry(ntries=3)
-    def test_xlm(self):
+    def test_alt_reduction(self):
         stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:candidate',
             model='transformer/ranker',
@@ -171,7 +171,7 @@ class TestTransformerRanker(unittest.TestCase):
             gradient_clip=0.5,
             variant='xlm',
             activation='gelu',
-            reduction_type='first',
+            reduction_type='first',  # this is really what we're trying to test for
         ))
 
         self.assertGreaterEqual(
@@ -364,6 +364,7 @@ class TestTransformerGenerator(unittest.TestCase):
             0.90,
             "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
         )
+
 
 class TestLearningRateScheduler(unittest.TestCase):
     def test_resuming(self):
