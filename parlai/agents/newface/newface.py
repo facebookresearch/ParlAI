@@ -149,15 +149,20 @@ class NewfaceAgent(Seq2seqAgent):
         self.model.eval()
         cand_scores = None
 
+        if batch.label_vec is not None:
+            # calculate loss on targets with teacher forcing
+            loss = self.compute_loss(batch)  # noqa: F841  we need the side effects
+            self.metrics['loss'] += loss.item()
+
+        preds = None
         if self.skip_generation:
             warn_once(
                 "--skip-generation does not produce accurate metrics beyond ppl",
                 RuntimeWarning
             )
-            scores, preds, _ = self.model(batch.text_vec, batch.label_vec)
         elif self.beam_size == 1:
             # greedy decode
-            scores, preds, _ = self.model(batch.text_vec)
+            _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz)
         elif self.beam_size > 1:
             out = self.beam_search(
                 self.model,
@@ -194,7 +199,7 @@ class NewfaceAgent(Seq2seqAgent):
         if self.rank_candidates:
             # compute roughly ppl to rank candidates
             cand_choices = []
-            encoder_states = self.model.encoder(batch.text_vec)
+            encoder_states = self.model.encoder(*self._model_input(batch))
             for i in range(bsz):
                 num_cands = len(batch.candidate_vecs[i])
                 enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
@@ -214,7 +219,7 @@ class NewfaceAgent(Seq2seqAgent):
                 _, ordering = cand_scores.sort()
                 cand_choices.append([batch.candidates[i][o] for o in ordering])
 
-        text = [self._v2t(p) for p in preds]
+        text = [self._v2t(p) for p in preds] if preds is not None else None
         self.metrics['preds'].extend(self.clean_preds(preds))
         return Output(text, cand_choices)
 
