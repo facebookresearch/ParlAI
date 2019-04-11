@@ -12,6 +12,8 @@ import numpy as np
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.core.utils import neginf
 
+LAYER_NORM_EPS = 1e-12  # Epsilon for layer norm.
+
 
 def _normalize(tensor, norm_layer):
     """Broadcast layer norm"""
@@ -322,7 +324,7 @@ class TransformerEncoder(nn.Module):
 
         # embedding normalization
         if self.variant == 'xlm':
-            self.norm_embeddings = nn.LayerNorm(self.dim, eps=1e-12)
+            self.norm_embeddings = nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -411,11 +413,11 @@ class TransformerEncoderLayer(nn.Module):
             n_heads, embedding_size,
             dropout=attention_dropout,  # --attention-dropout
         )
-        self.norm1 = nn.LayerNorm(embedding_size, eps=1e-12)
+        self.norm1 = nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.ffn = TransformerFFN(embedding_size, ffn_size,
                                   relu_dropout=relu_dropout,
                                   activation=self.activation)
-        self.norm2 = nn.LayerNorm(embedding_size, eps=1e-12)
+        self.norm2 = nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
@@ -489,7 +491,7 @@ class TransformerDecoder(nn.Module):
         self.embeddings = embedding
 
         if self.variant == 'xlm':
-            self.norm_embeddings = nn.LayerNorm(self.dim, eps=1e-12)
+            self.norm_embeddings = nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -559,17 +561,17 @@ class TransformerDecoderLayer(nn.Module):
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm1 = nn.LayerNorm(embedding_size)
+        self.norm1 = nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.encoder_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm2 = nn.LayerNorm(embedding_size)
+        self.norm2 = nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.ffn = TransformerFFN(
             embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
         )
-        self.norm3 = nn.LayerNorm(embedding_size)
+        self.norm3 = nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
     def forward(self, x, encoder_output, encoder_mask):
         decoder_mask = self._create_selfattn_mask(x)
