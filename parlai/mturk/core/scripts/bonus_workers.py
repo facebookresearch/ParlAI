@@ -12,6 +12,7 @@ print(
     'Please use the parlai.mturk.scripts directory moving forward. '
 )
 
+
 def main():
     """This script should be used to compensate workers that have not recieved
     proper payment for the completion of tasks due to issues on our end.
