@@ -14,15 +14,6 @@ import uuid
 import errno
 import requests
 
-# TODO uncomment once stable is created.
-# logging.warn(
-#     'Directly importing parlai.mturk.core.<module> is pending deprecation, '
-#     'please update your callsites to use either '
-#     'parlai.mturk.core.stable.<module>  '
-#     'or parlai.mturk.core.legacy_2018.<module>. \n'
-#     'updating to stable may require some migration, as detailed in <link>.'
-# )
-
 from parlai.mturk.core.agents import AssignState
 from parlai.mturk.core.socket_manager import (
     Packet, SocketManager, StaticSocketManager
