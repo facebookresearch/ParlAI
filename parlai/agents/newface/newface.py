@@ -183,7 +183,7 @@ class NewfaceAgent(Seq2seqAgent):
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
-            f_scores, f_preds, _ = self.model(batch.text_vec, batch.label_vec)
+            f_scores, f_preds, _ = self.model(batch.text_vec, ys=batch.label_vec)
             score_view = f_scores.view(-1, f_scores.size(-1))
             self.criterion.reduction = 'sum'
             loss = self.criterion(score_view, batch.label_vec.view(-1))
