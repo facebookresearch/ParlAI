@@ -7,6 +7,11 @@
 import argparse
 import parlai.mturk.core.mturk_utils as mturk_utils
 
+print(
+    'This script will be removed from this location May 1st 2019. '
+    'Please use the parlai.mturk.scripts directory moving forward. '
+)
+
 
 def main():
     """This script should be used to compensate workers that have not recieved
