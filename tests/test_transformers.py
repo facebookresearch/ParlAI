@@ -342,6 +342,7 @@ class TestTransformerGenerator(unittest.TestCase):
             beam_size=1,
             variant='xlm',
             activation='gelu',
+            n_segments=8,  # doesn't do anything but still good to test
         ))
 
         self.assertLessEqual(

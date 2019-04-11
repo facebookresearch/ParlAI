@@ -322,7 +322,7 @@ class TransformerEncoder(nn.Module):
 
         # embedding normalization
         if self.variant == 'xlm':
-            self.layer_norm_emb = nn.LayerNorm(self.dim, eps=1e-12)
+            self.norm_embeddings = nn.LayerNorm(self.dim, eps=1e-12)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -364,7 +364,7 @@ class TransformerEncoder(nn.Module):
             tensor = tensor + self.segment_embeddings(segments)
 
         if self.variant == 'xlm':
-            tensor = self.layer_norm_emb(tensor)
+            tensor = _normalize(tensor, self.norm_embeddings)
 
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
@@ -489,7 +489,7 @@ class TransformerDecoder(nn.Module):
         self.embeddings = embedding
 
         if self.variant == 'xlm':
-            self.layer_norm_emb = nn.LayerNorm(self.dim, eps=1e-12)
+            self.norm_embeddings = nn.LayerNorm(self.dim, eps=1e-12)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -526,7 +526,7 @@ class TransformerDecoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
-            tensor = self.layer_norm_emb(tensor)
+            tensor = _normalize(tensor, self.norm_embeddings)
 
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
         tensor = self.dropout(tensor)  # --dropout
