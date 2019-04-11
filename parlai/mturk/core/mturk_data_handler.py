@@ -29,14 +29,14 @@ new_data_dir = os.path.join(mturk_dir, 'run_data')
 if os.path.exists(data_dir) and not os.path.exists(new_data_dir):
     import shutil
     acknowledge = input(
-        'run_data is being permanently moved from `parlai/mturk/core/run_data`'
-        ' to `parlai/mturk/run_data`. Enter anything to let this script copy '
+        'run_data is being permanently moved from `{}`'
+        ' to `{}`. Enter anything to let this script copy '
         'run_data over. It will leave the old data in case you want to double '
         'check, though you should be able to safely remove '
-        '`parlai/mturk/core/run_data`.'
+        '`{}`.'.format(data_dir, new_data_dir, data_dir)
     )
     shutil.copytree(data_dir, new_data_dir)
-    print('Copied. `parlai/mturk/core/run_data` can now be safely deleted.')
+    print('Copied. `{}` can now be safely deleted.'.format(data_dir))
 else:
     new_data_dir = os.path.join(mturk_dir, 'run_data')
     os.makedirs(new_data_dir, exist_ok=True)
