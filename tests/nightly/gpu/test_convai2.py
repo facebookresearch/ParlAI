@@ -8,6 +8,15 @@ import unittest
 import parlai.core.testing_utils as testing_utils
 
 
+"""
+This module ensures that the baseline models for convai2 produce the
+correct ~~validation~~ results.
+
+You can see the full validation set leaderboard here:
+    https://github.com/DeepPavlov/convai/blob/master/leaderboards.md\
+"""
+
+
 @testing_utils.skipUnlessGPU
 class TestConvai2Seq2Seq(unittest.TestCase):
     """
@@ -28,7 +37,6 @@ class TestConvai2Seq2Seq(unittest.TestCase):
         self.assertEqual(report['f1'], .1682, str(stdout))
 
 
-@testing_utils.skipUnlessGPU
 class TestConvai2KVMemnn(unittest.TestCase):
     """
     Checks that the KV Profile Memory model produces correct results.
