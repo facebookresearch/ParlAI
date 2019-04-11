@@ -1,0 +1,12 @@
+{
+  "name": "custom_built_frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "dev": ""
+  },
+  "main": "./dist/custom.jsx",
+  "keywords": [],
+  "author": ""
+}
