@@ -44,11 +44,11 @@ def add_common_cmdline_args(argparser):
     argparser.add_argument('--n-segments', type=int, default=0,
                            help='The number of segments that support the model. '
                                 'If zero no segment and no langs_embedding.')
-    argparser.add_argument('--embedding-normalization', type='bool', default=False,
-                           help='normalization after embeddings for transformer.')
-    argparser.add_argument('--gelu-activation', type='bool', default=False,
-                           help='If True use gelu instead of Relu in the FFN. '
-                                'If False use relu')
+    argparser.add_argument('--variant', choices={'aiayn', 'xlm'}, default='aiayn',
+                           help='Chooses locations of layer norms, etc.')
+    argparser.add_argument('--activation', choices={'relu', 'gelu'}, default='relu',
+                           help='Nonlinear activation to use. AIAYN uses relu, but '
+                                'more recent papers prefer gelu.')
 
 
 class Transformer(Agent):

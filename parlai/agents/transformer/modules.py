@@ -29,10 +29,7 @@ def _create_embeddings(dictionary, embedding_size, padding_idx):
 
 def _build_encoder(
     opt, dictionary, embedding=None, padding_idx=None,
-    reduction=True, reduction_type=None,
-    n_positions=1024, gelu_activation=False,
-    embedding_normalization=False,
-    n_segments=0
+    reduction_type='mean', n_positions=1024, n_segments=0,
 ):
     return TransformerEncoder(
         n_heads=opt['n_heads'],
@@ -47,17 +44,16 @@ def _build_encoder(
         padding_idx=padding_idx,
         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
         embeddings_scale=opt['embeddings_scale'],
-        reduction=reduction,
         reduction_type=reduction_type,
         n_positions=n_positions,
-        gelu_activation=gelu_activation,
-        embedding_normalization=embedding_normalization,
         n_segments=n_segments,
+        activation=opt['activation'],
+        variant=opt['variant'],
     )
 
 
 def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
-                   n_positions=1024):
+                   n_positions=1024, n_segments=0):
     return TransformerDecoder(
         n_heads=opt['n_heads'],
         n_layers=opt['n_layers'],
@@ -72,6 +68,9 @@ def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
         learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
         embeddings_scale=opt['embeddings_scale'],
         n_positions=n_positions,
+        activation=opt['activation'],
+        variant=opt['variant'],
+        n_segments=n_segments,
     )
 
 
@@ -111,25 +110,15 @@ class TransformerMemNetModel(nn.Module):
         if n_positions < 0:
             raise ValueError('n_positions must be positive')
 
-        if opt.get('gelu_activation'):
-            self.gelu_activation = opt['gelu_activation']
-        else:
-            self.gelu_activation = False
-
-        if opt.get('embedding_normalization'):
-            self.embedding_normalization = opt['embedding_normalization']
-        else:
-            self.embedding_normalization = False
-
+        self.activation = opt.get('activation', 'relu')
+        self.variant = opt.get('variant', 'aiayn')
         self.reduction_type = opt.get('reduction_type', 'mean')
         self.n_segments = opt.get('n_segments', 0)
 
         self.context_encoder = _build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx,
-            reduction=True, reduction_type=self.reduction_type,
-            n_positions=n_positions, gelu_activation=self.gelu_activation,
-            embedding_normalization=self.embedding_normalization,
-            n_segments=self.n_segments
+            reduction_type=self.reduction_type,
+            n_positions=n_positions, n_segments=self.n_segments,
         )
 
         if opt.get('share_encoders'):
@@ -140,10 +129,8 @@ class TransformerMemNetModel(nn.Module):
             self.cand_encoder = _build_encoder(
                 opt, dictionary, self.embeddings, self.pad_idx,
                 n_positions=n_positions,
-                reduction=True, reduction_type=self.reduction_type,
-                gelu_activation=self.gelu_activation,
-                embedding_normalization=self.embedding_normalization,
-                n_segments=self.n_segments
+                reduction_type=self.reduction_type,
+                n_segments=self.n_segments,
             )
 
         # build memory encoder
@@ -227,7 +214,7 @@ class TransformerResponseWrapper(nn.Module):
         self.transformer = transformer
         self.mlp = nn.Sequential(
             nn.Linear(dim, hdim),
-            nn.ReLU(),
+            nn.ReLU(),  # TODO: should this also be gelu?
             nn.Linear(hdim, dim)
         )
 
@@ -259,7 +246,15 @@ class TransformerEncoder(nn.Module):
         Found useful in fairseq.
     :param bool reduction: If true, returns the mean vector for the entire encoding
         sequence.
-    :param int n_positions: Size of the position embeddings matrix.
+    :param int n_positions:
+        Size of the position embeddings matrix.
+    :param int n_segments:
+        Number of segments/lang/sentence embeddings.
+    :param activation:
+        Type of nonlinear activation. Can be relu or gelu.
+    :param variant:
+        Which transformer architecture to use. Could be AIAYN or XLM.
+        Future versions may support things like GPT-2, ...
     """
     def __init__(
         self,
@@ -275,12 +270,11 @@ class TransformerEncoder(nn.Module):
         padding_idx=0,
         learn_positional_embeddings=False,
         embeddings_scale=False,
-        reduction=True,
-        reduction_type=None,
+        reduction_type='mean',
         n_positions=1024,
-        gelu_activation=False,
-        embedding_normalization=False,
-        n_segments=0
+        activation='relu',
+        variant='aiayn',
+        n_segments=0,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -290,12 +284,11 @@ class TransformerEncoder(nn.Module):
         self.n_heads = n_heads
         self.dim = embedding_size
         self.embeddings_scale = embeddings_scale
-        self.reduction = reduction
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
         # this is --dropout, not --relu-dropout or --attention-dropout
         self.dropout = nn.Dropout(p=dropout)
-        self.embedding_normalization = embedding_normalization
+        self.variant = variant
         self.n_segments = n_segments
 
         self.out_dim = embedding_size
@@ -328,11 +321,15 @@ class TransformerEncoder(nn.Module):
             nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
 
         # embedding normalization
-        if self.embedding_normalization:
+        if self.variant == 'xlm':
             self.layer_norm_emb = nn.LayerNorm(self.dim, eps=1e-12)
+        elif self.variant == 'aiayn':
+            pass
+        else:
+            raise ValueError("Can't handle --variant {}".format(self.variant))
 
-        if self.n_segments > 1:
-            self.lang_embeddings = nn.Embedding(self.n_segments, self.dim)
+        if self.n_segments >= 1:
+            self.segment_embeddings = nn.Embedding(self.n_segments, self.dim)
 
         # build the model
         self.layers = nn.ModuleList()
@@ -342,10 +339,11 @@ class TransformerEncoder(nn.Module):
                 attention_dropout=attention_dropout,
                 relu_dropout=relu_dropout,
                 dropout=dropout,
-                gelu_activation=gelu_activation
+                variant=variant,
+                activation=activation,
             ))
 
-    def forward(self, input, segments=None, positions=None):
+    def forward(self, input, positions=None, segments=None):
         """
             input data is a FloatTensor of shape [batch, seq_len, dim]
             mask is a ByteTensor of shape [batch, seq_len], filled with 1 when
@@ -360,31 +358,36 @@ class TransformerEncoder(nn.Module):
 
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
 
-        if self.n_segments > 1:
+        if self.n_segments >= 1:
             if segments is None:
-                segments = input * 0
-            tensor = tensor + self.lang_embeddings(segments)
+                segments = torch.zeros_like(input)
+            tensor = tensor + self.segment_embeddings(segments)
 
-        if self.embedding_normalization:
+        if self.variant == 'xlm':
             tensor = self.layer_norm_emb(tensor)
+
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
 
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
-        if self.reduction:
-            if self.reduction_type == 'first':
-                return tensor[:, 0, :]
-            elif self.reduction_type == 'max':
-                return tensor.max(dim=1)[0]
-            else:
-                divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1e-20)
-                output = tensor.sum(dim=1) / divisor
-                return output
-        else:
+
+        if self.reduction_type == 'first':
+            return tensor[:, 0, :]
+        elif self.reduction_type == 'max':
+            return tensor.max(dim=1)[0]
+        elif self.reduction_type == 'mean':
+            divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1e-20)
+            output = tensor.sum(dim=1) / divisor
+            return output
+        elif self.reduction_type == 'none' or self.reduction_type is None:
             output = tensor
             return output, mask
+        else:
+            raise ValueError(
+                "Can't handle --reduction-type {}".format(self.reduction_type)
+            )
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -396,12 +399,14 @@ class TransformerEncoderLayer(nn.Module):
         attention_dropout=0.0,
         relu_dropout=0.0,
         dropout=0.0,
-        gelu_activation=False
+        activation='relu',
+        variant=None,
     ):
         super().__init__()
         self.dim = embedding_size
         self.ffn_dim = ffn_size
-        self.gelu_activation = gelu_activation
+        self.activation = activation
+        self.variant = variant
         self.attention = MultiHeadAttention(
             n_heads, embedding_size,
             dropout=attention_dropout,  # --attention-dropout
@@ -409,7 +414,7 @@ class TransformerEncoderLayer(nn.Module):
         self.norm1 = nn.LayerNorm(embedding_size, eps=1e-12)
         self.ffn = TransformerFFN(embedding_size, ffn_size,
                                   relu_dropout=relu_dropout,
-                                  gelu_activation=self.gelu_activation)
+                                  activation=self.activation)
         self.norm2 = nn.LayerNorm(embedding_size, eps=1e-12)
         self.dropout = nn.Dropout(p=dropout)
 
@@ -462,6 +467,9 @@ class TransformerDecoder(nn.Module):
         learn_positional_embeddings=False,
         padding_idx=None,
         n_positions=1024,
+        n_segments=0,
+        variant='aiayn',
+        activation='relu',
     ):
         super().__init__()
         self.embedding_size = embedding_size
@@ -469,6 +477,8 @@ class TransformerDecoder(nn.Module):
         self.n_layers = n_layers
         self.n_heads = n_heads
         self.dim = embedding_size
+        self.activation = activation
+        self.variant = variant
         self.embeddings_scale = embeddings_scale
         self.dropout = nn.Dropout(p=dropout)  # --dropout
 
@@ -477,6 +487,13 @@ class TransformerDecoder(nn.Module):
             'Transformer embedding size must be a multiple of n_heads'
 
         self.embeddings = embedding
+
+        if self.variant == 'xlm':
+            self.layer_norm_emb = nn.LayerNorm(self.dim, eps=1e-12)
+        elif self.variant == 'aiayn':
+            pass
+        else:
+            raise ValueError("Can't handle --variant {}".format(self.variant))
 
         # create the positional embeddings
         self.position_embeddings = nn.Embedding(n_positions, embedding_size)
@@ -495,6 +512,8 @@ class TransformerDecoder(nn.Module):
                 attention_dropout=attention_dropout,
                 relu_dropout=relu_dropout,
                 dropout=dropout,
+                activation=activation,
+                variant=variant,
             ))
 
     def forward(self, input, encoder_state, incr_state=None):
@@ -506,6 +525,9 @@ class TransformerDecoder(nn.Module):
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
+        if self.variant == 'xlm':
+            tensor = self.layer_norm_emb(tensor)
+
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
         tensor = self.dropout(tensor)  # --dropout
 
@@ -524,10 +546,14 @@ class TransformerDecoderLayer(nn.Module):
         attention_dropout=0.0,
         relu_dropout=0.0,
         dropout=0.0,
+        activation='relu',
+        variant='aiayn',
     ):
         super().__init__()
         self.dim = embedding_size
         self.ffn_dim = ffn_size
+        self.variant = variant
+        self.activation = activation
         self.dropout = nn.Dropout(p=dropout)
 
         self.self_attention = MultiHeadAttention(
@@ -540,7 +566,9 @@ class TransformerDecoderLayer(nn.Module):
         )
         self.norm2 = nn.LayerNorm(embedding_size)
 
-        self.ffn = TransformerFFN(embedding_size, ffn_size, relu_dropout=relu_dropout)
+        self.ffn = TransformerFFN(
+            embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
+        )
         self.norm3 = nn.LayerNorm(embedding_size)
 
     def forward(self, x, encoder_output, encoder_mask):
@@ -612,7 +640,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             raise ValueError('n_positions must be positive')
 
         self.encoder = _build_encoder(
-            opt, dictionary, self.embeddings, self.pad_idx, reduction=False,
+            opt, dictionary, self.embeddings, self.pad_idx, reduction_type=None,
             n_positions=n_positions,
         )
         self.decoder = _build_decoder(
@@ -748,10 +776,17 @@ class MultiHeadAttention(nn.Module):
 
 
 class TransformerFFN(nn.Module):
-    def __init__(self, dim, dim_hidden, relu_dropout=0, gelu_activation=False):
+    def __init__(self, dim, dim_hidden, relu_dropout=0, activation='relu'):
         super(TransformerFFN, self).__init__()
         self.relu_dropout = nn.Dropout(p=relu_dropout)
-        self.gelu_activation = gelu_activation
+        if activation == 'relu':
+            self.nonlinear = F.relu
+        elif activation == 'gelu':
+            self.nonlinear = gelu
+        else:
+            raise ValueError(
+                "Don't know how to handle --activation {}".format(activation)
+            )
         self.lin1 = nn.Linear(dim, dim_hidden)
         self.lin2 = nn.Linear(dim_hidden, dim)
         nn.init.xavier_uniform_(self.lin1.weight)
@@ -759,10 +794,7 @@ class TransformerFFN(nn.Module):
         # TODO: initialize biases to 0
 
     def forward(self, x):
-        if self.gelu_activation:
-            x = gelu(self.lin1(x))
-        else:
-            x = F.relu(self.lin1(x))
+        x = self.nonlinear(self.lin1(x))
         x = self.relu_dropout(x)  # --relu-dropout
         x = self.lin2(x)
         return x
