@@ -13,7 +13,6 @@ from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.agents import AssignState
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
-import parlai.core.testing_utils as testing_utils
 
 import parlai.mturk.core.mturk_manager as MTurkManagerFile
 import parlai.mturk.core.data_model as data_model
@@ -421,7 +420,8 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
     def onboard_agent(self, worker):
         self.onboarding_agents[worker.worker_id] = False
-        while self.onboarding_agents[worker.worker_id] is False:
+        while ((worker.worker_id in self.onboarding_agents) and
+                (self.onboarding_agents[worker.worker_id] is False)):
             time.sleep(0.05)
         return
 
@@ -568,9 +568,9 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             [x for x in manager.socket_manager.run.values() if not x]
         ), 2, 2)
 
-    @testing_utils.retry(ntries=3)
     def test_expire_onboarding(self):
         manager = self.mturk_manager
+        self.onboarding_agents = {}
 
         # Alive first agent
         agent_1 = self.agent_1
@@ -599,6 +599,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
     def test_reconnect_complete(self):
         manager = self.mturk_manager
+        self.onboarding_agents = {}
 
         # Alive first agent
         agent_1 = self.agent_1
@@ -679,6 +680,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         manager.is_unique = True
         manager.opt['unique_qual_name'] = unique_worker_qual
         manager.unique_qual_name = unique_worker_qual
+        self.onboarding_agents = {}
 
         # Alive first agent
         agent_1 = self.agent_1
@@ -771,6 +773,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
     def test_break_multi_convo(self):
         manager = self.mturk_manager
         manager.opt['allowed_conversations'] = 1
+        self.onboarding_agents = {}
 
         # Alive first agent
         agent_1 = self.agent_1
@@ -878,6 +881,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
     def test_return_to_waiting_on_world_start(self):
         manager = self.mturk_manager
+        self.onboarding_agents = {}
 
         # Alive first agent
         agent_1 = self.agent_1
