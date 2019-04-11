@@ -5,7 +5,6 @@
 ### Folders
 
 - **react_server/**: contains the build files for running a task that uses a react frontend. This folder gets cloned, built, and then pushed to the hosting server (usually heroku).
-- **scripts/**: contains various helpful review and cleanup scripts to manage tasks from the command line (especially after mistakes or major failures).
 - **server_legacy/**: contains the build files for running a task that uses the old templated HTML frontend, and is no longer maintained. This folder gets cloned, built, and then pushed to the hosting server (usually heroku).
 - **tests/**: contains all of the tests for the MTurk functionality, split up by the various stages that they touch.
 
