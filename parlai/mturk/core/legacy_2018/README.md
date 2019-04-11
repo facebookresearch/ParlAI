@@ -30,7 +30,6 @@ parlai/mturk/core on your local machine may also create a few folders and files 
 
 - **heroku_server_.../**: contains the build files for a server that was started using ParlAI. If this remains after no servers are running, it exists because a server failed to cleanup the local files, and the folder can be deleted freely.
 - **heroku-cli-v.../**: contains the bin files required to run heroku. These are stored here where we know where they are so that the server setup scripts don't need to search for existing heroku installations elsewhere.
-- **run_data/**: contains all of the cross-run state in sqlite databases (default `pmt_data.db` and `pmt_sbdata.db`), as well as any world data saved by the default behavior of `MTurkDataWorld` (in `live` and `sandbox` folders, following the behavior specified in `MTurkDataHandler`).
 
 ### Files
 

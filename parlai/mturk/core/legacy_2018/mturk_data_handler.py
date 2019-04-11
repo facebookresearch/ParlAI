@@ -21,7 +21,9 @@ def force_dir(path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
 
-data_dir = os.path.dirname(os.path.abspath(__file__)) + '/run_data'
+core_dir = os.path.dirname(os.path.abspath(__file__))
+mturk_dir = os.path.dirname(core_dir)
+data_dir = os.path.join(mturk_dir, 'run_data')
 os.makedirs(data_dir, exist_ok=True)
 
 # Run data table:
