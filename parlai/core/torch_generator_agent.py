@@ -603,7 +603,10 @@ class TorchGeneratorAgent(TorchAgent):
             )
         elif self.beam_size == 1:
             # greedy decode
-            _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz)
+            maxlen = self.label_truncate or 256
+            _, preds, *_ = self.model(
+                *self._model_input(batch), bsz=bsz, maxlen=maxlen
+            )
         elif self.beam_size > 1:
             out = self.beam_search(
                 self.model,
