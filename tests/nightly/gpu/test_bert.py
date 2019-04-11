@@ -23,6 +23,7 @@ class TestBertModel(unittest.TestCase):
             model='bert_ranker/bi_encoder_ranker',
             num_epochs=0.1,
             batchsize=8,
+            learningrate=3e-4,
             text_truncate=32,
             validation_max_exs=20,
             short_final_eval=True,
@@ -35,7 +36,7 @@ class TestBertModel(unittest.TestCase):
             'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout)
         )
         self.assertLessEqual(
-            test['accuracy'], 0.2,
+            test['accuracy'], 0.5,
             'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout)
         )
 
