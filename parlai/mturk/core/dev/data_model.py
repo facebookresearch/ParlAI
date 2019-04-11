@@ -11,7 +11,7 @@ following describes the intended behavoir of each command
 COMMAND_SEND_MESSAGE ...... / MTurk web client is expected to send new message
                             \\ to the server. Allow the user to send a message
 COMMAND_SHOW_DONE_BUTTON .. / MTurk web client should show the "DONE" button
-                            \  with no special text
+                            \\ with no special text
 COMMAND_EXPIRE_HIT ........ / MTurk web client should expire the hit and update
                             |  the UI, additional text to display is in the
                             \\ 'inactive_text' param
