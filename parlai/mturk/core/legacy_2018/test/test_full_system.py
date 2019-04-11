@@ -570,7 +570,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
     def test_expire_onboarding(self):
         manager = self.mturk_manager
-        self.onboarding_agents = {}
 
         # Alive first agent
         agent_1 = self.agent_1
@@ -585,12 +584,15 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
         manager._expire_onboarding_pool()
 
-        self.onboarding_agents[agent_1.worker_id] = True
-
         assert_equal_by(lambda: len(
             [p for p in agent_1.message_packet
              if p.data['text'] == data_model.COMMAND_EXPIRE_HIT]
         ), 1, 10)
+
+        self.onboarding_agents[agent_1.worker_id] = True
+
+        self.assertEqual(
+            agent_1_object.get_status(), AssignState.STATUS_EXPIRED)
 
         # Assert sockets are closed
         assert_equal_by(lambda: len(
