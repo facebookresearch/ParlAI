@@ -163,6 +163,9 @@ class MTurkManager():
         self.db_logger = None
         self.logging_permitted = False  # Enables logging to parl.ai
         self.task_state = self.STATE_CREATED
+        if opt.get('tmp_dir') is None:
+            opt['tmp_dir'] = shared_utils.get_tmp_dir()
+        self.tmp_dir = opt['tmp_dir']
         self._init_logging_config()
         self._assert_opts()
 
@@ -1055,12 +1058,14 @@ class MTurkManager():
             self.populate_legacy_task_files(task_directory_path)
             self.server_url = server_utils.setup_legacy_server(
                 self.server_task_name, self.task_files_to_copy,
-                self.opt['local'], heroku_team, self.opt['hobby'])
+                self.opt['local'], heroku_team, self.opt['hobby'],
+                tmp_dir=self.opt['tmp_dir'])
         else:
             self.populate_task_files(task_directory_path)
             self.server_url = server_utils.setup_server(
                 self.server_task_name, self.task_files_to_copy,
-                self.opt['local'], heroku_team, self.opt['hobby'])
+                self.opt['local'], heroku_team, self.opt['hobby'],
+                tmp_dir=self.opt['tmp_dir'])
 
         shared_utils.print_and_log(logging.INFO, self.server_url)
 
@@ -1304,7 +1309,8 @@ class MTurkManager():
         finally:
             if self.server_task_name is not None:
                 server_utils.delete_server(self.server_task_name,
-                                           self.opt['local'])
+                                           self.opt['local'],
+                                           tmp_dir=self.opt['tmp_dir'])
             if self.topic_arn is not None:
                 mturk_utils.delete_sns_topic(self.topic_arn)
             if self.opt['unique_worker'] and not self.opt['unique_qual_name']:

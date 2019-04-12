@@ -63,8 +63,16 @@ def get_mturk_dir():
     return os.path.dirname(os.path.abspath(parlai.mturk.__file__))
 
 
+def get_core_dir():
+    import parlai.mturk.core
+    return os.path.dirname(os.path.abspath(parlai.mturk.core.__file__))
+
+
 def get_tmp_dir():
     """Return the location of the temporary directory in which we store
     things related to a run but that can be safely deleted
     """
-    return os.path.join(get_mturk_dir(), 'tmp')
+    tmp_dir = os.path.join(get_mturk_dir(), 'tmp')
+    if not os.path.exists(tmp_dir):
+        os.mkdir(tmp_dir)
+    return tmp_dir

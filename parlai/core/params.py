@@ -279,6 +279,10 @@ class ParlaiParser(argparse.ArgumentParser):
             '--heroku-team', dest='heroku_team', default=None,
             help='Specify Heroku team name to use for launching Dynos.'
         )
+        mturk.add_argument(
+            '--tmp-dir', dest='tmp_dir', default=None,
+            help='Specify location to use for scratch builds and such.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
