@@ -36,7 +36,6 @@ class BertClassifierAgent(TorchClassifierAgent):
     def add_cmdline_args(parser):
         TorchClassifierAgent.add_cmdline_args(parser)
         parser = parser.add_argument_group('BERT Classifier Arguments')
-        parser.add_argument('--bert-id', type=str, default='bert-base-uncased')
         parser.add_argument('--type-optimization', type=str,
                             default='all_encoder_layers',
                             choices=['additional_layers', 'top_layer',
