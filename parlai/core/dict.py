@@ -535,10 +535,18 @@ class DictionaryAgent(Agent):
         filename = self.opt['dict_file'] if filename is None else filename
 
         if self.tokenizer == 'bpe':
-            self.bpehelper.finalize(self.freq, num_symbols=self.maxtokens,
-                                    minfreq=self.minfreq)
-            self._remove_non_bpe()
-            self.sort(trim=False)
+            needs_removal = self.bpehelper.finalize(
+                self.freq,
+                num_symbols=self.maxtokens,
+                minfreq=self.minfreq
+            )
+            if needs_removal:
+                self._remove_non_bpe()
+            elif filename != self.opt['dict_file']:
+                # need to copy over the old codecs file
+                self.bpehelper.copy_codecs_file(filename + '.codecs')
+            if sort:
+                self.sort(trim=False)
         elif sort:
             self.sort(trim=True)
 
@@ -755,3 +763,11 @@ class _BPEHelper(object):
 
         self._load_from_codecs()
         return True
+
+    def copy_codecs_file(self, target_file):
+        """
+        Copy the codecs file to a new location.
+        """
+        with open(target_file, 'w') as wfile, open(self.codecs) as rfile:
+            for line in rfile:
+                wfile.write(line)
