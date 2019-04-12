@@ -13,7 +13,6 @@ from parlai.mturk.core.socket_manager import Packet, SocketManager
 from parlai.mturk.core.agents import AssignState
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
-import parlai.core.testing_utils as testing_utils
 
 import parlai.mturk.core.mturk_manager as MTurkManagerFile
 import parlai.mturk.core.data_model as data_model
@@ -421,7 +420,8 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
     def onboard_agent(self, worker):
         self.onboarding_agents[worker.worker_id] = False
-        while self.onboarding_agents[worker.worker_id] is False:
+        while ((worker.worker_id in self.onboarding_agents) and
+                (self.onboarding_agents[worker.worker_id] is False)):
             time.sleep(0.05)
         return
 
@@ -568,7 +568,6 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             [x for x in manager.socket_manager.run.values() if not x]
         ), 2, 2)
 
-    @testing_utils.retry(ntries=3)
     def test_expire_onboarding(self):
         manager = self.mturk_manager
 
@@ -576,7 +575,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
         assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 5)
+            lambda: agent_1.worker_id in self.onboarding_agents, True, 10)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
             agent_1.assignment_id)
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
@@ -585,17 +584,20 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
         manager._expire_onboarding_pool()
 
-        self.onboarding_agents[agent_1.worker_id] = True
-
         assert_equal_by(lambda: len(
             [p for p in agent_1.message_packet
              if p.data['text'] == data_model.COMMAND_EXPIRE_HIT]
-        ), 1, 5)
+        ), 1, 10)
+
+        self.onboarding_agents[agent_1.worker_id] = True
+
+        self.assertEqual(
+            agent_1_object.get_status(), AssignState.STATUS_EXPIRED)
 
         # Assert sockets are closed
         assert_equal_by(lambda: len(
             [x for x in manager.socket_manager.run.values() if not x]
-        ), 1, 5)
+        ), 1, 10)
 
     def test_reconnect_complete(self):
         manager = self.mturk_manager

@@ -10,7 +10,8 @@ Key-Value Memory Net model trained on convai2:self
 from parlai.core.build_data import download_models
 from projects.convai2.eval_f1 import setup_args, eval_f1
 
-if __name__ == '__main__':
+
+def main():
     parser = setup_args()
     parser.set_defaults(
         model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
@@ -20,6 +21,10 @@ if __name__ == '__main__':
     opt = parser.parse_args(print_args=False)
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
-    opt['model_type'] = 'kvmemnn' # for builder
+    opt['model_type'] = 'kvmemnn'  # for builder
     download_models(opt, fnames, 'convai2')
-    eval_f1(parser, print_parser=parser)
+    return eval_f1(parser, print_parser=parser)
+
+
+if __name__ == '__main__':
+    main()
