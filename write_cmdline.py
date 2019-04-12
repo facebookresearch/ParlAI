@@ -13,18 +13,24 @@ beamsize=5\n\
 numlayers=1\n\
 lmlayers=2\n\
 bidirectional=True\n\
+s2sattn=\'general\'\n\
+\n\
+### transformer architecture ###\n\
 ffnsize=300\n\
-transformerlayers=4 \n\
+transformerlayers=2 \n\
 transformerdropout=0.2 \n\
-transformerheads=4 \n\
+transformerheads=2 \n\
 \n\
 ### optimization ###\n\
 batchsize=32\n\
+transformerbatchsize=512\n\
 learningrate=.001\n\
 sgdlearningrate=10\n\
 sgdminlearningrate=.1\n\
+transformerlearningrate=.0008\n\
+transformeroptimizer=adamax\n\
 optimizer=adam\n\
-gradientclip=5.0\n\
+gradientclip=1.0\n\
 lrschedulerdecay=.5\n\
 lrschedulerpatience=3\n\
 validationpatience=10\n\
@@ -39,7 +45,7 @@ dicttokenizer=\'spacy\'\n\
 dictfile=\'tmp/\'$taskname\'/dict_minfreq_$dictminfreq\'\n\
 \n\
 ### logging ###\n\
-tensorboardlog=True\n\
+tensorboardlog=False\n\
 \n\
 gpunum={GPUNUM}'''
 
@@ -89,6 +95,7 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 -emb $embedding \\\n\
 --numlayers $numlayers \\\n\
 --bidirectional $bidirectional \\\n\
+--attention $s2sattn \\\n\
 --embeddingsize $embeddingsize \\\n\
 --learningrate $learningrate \\\n\
 --optimizer $optimizer \\\n\
@@ -115,7 +122,7 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 transformer_train_boiler = """\n\
 CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 -t $taskname \\\n\
--bs $batchsize \\\n\
+-bs $transformerbatchsize \\\n\
 --ffn-size $ffnsize \\\n\
 --n-heads $transformerheads \\\n\
 --n-layers $transformerlayers \\\n\
@@ -123,8 +130,8 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 -emb $embedding \\\n\
 --embedding-size $embeddingsize \\\n\
 --dropout $transformerdropout \\\n\
---learningrate $learningrate \\\n\
---optimizer $optimizer \\\n\
+--learningrate $transformerlearningrate \\\n\
+--optimizer $transformeroptimizer \\\n\
 --gradient-clip $gradientclip \\\n\
 --lr-scheduler-decay $lrschedulerdecay \\\n\
 --lr-scheduler-patience $lrschedulerpatience \\\n\
@@ -142,7 +149,6 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/train_model.py \\\n\
 -mf 'tmp/'$taskname'/%s_minfreq_'$dictminfreq \\\n\
 > 'tmp/'$taskname'/%s_minfreq_'$dictminfreq'_train.out'\\\n\
 \n\n\n """
-
 
 
 
@@ -176,21 +182,21 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/eval_model.py \\\n\
 
 model_boilers = [
                 (transformer_train_boiler, eval_torchgen_model, 'transformer'), 
-#                 (s2s_train_boiler, eval_torchgen_model, 'seq2seq'), 
-#                 (lm_train_boiler, eval_language_model, 'language_model')
+                (s2s_train_boiler, eval_torchgen_model, 'seq2seq'), 
+                (lm_train_boiler, eval_language_model, 'language_model')
                 ]
-# tasks = ['cornell_movie', 'dailydialog', 'empathetic_dialogues', 'personachat']
-tasks = ['personachat',]
+tasks = ['cornell_movie', 'dailydialog', 'empathetic_dialogues', 'personachat']
+# tasks = ['cornell_movie', ]
 TRAIN = True
-EVAL = False
+EVAL = True
 
 
 if __name__ == '__main__': 
     
     for t, task in enumerate(tasks): 
         
-        GPU_NUM = 2 #t + 3
-        # if GPU_NUM == 5: # HACK, as opensubtitles is currently running on gpu5
+        GPU_NUM = t + 1
+#         if GPU_NUM == 5: # HACK, as opensubtitles is currently running on gpu5
 #             GPU_NUM = 1
         
         cmd_filename = 'cmd_%s.sh' % task
@@ -225,7 +231,7 @@ if __name__ == '__main__':
                 if TRAIN:
                     f.write(train_boiler % ('\\', model_prefix, model_prefix))
                 if EVAL: 
-                    f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
+#                     f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
                     f.write(eval_boiler % ('test', model_prefix, model_prefix, 'test'))
             
             
@@ -237,16 +243,41 @@ if __name__ == '__main__':
                 if TRAIN:
                     f.write(train_boiler % ('--swap-criterion-train-eval False \\', model_prefix, model_prefix))
                 if EVAL: 
-                    f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
+#                     f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
                     f.write(eval_boiler % ('test', model_prefix, model_prefix, 'test'))
 
                 model_prefix = "'%s_swapping'" % basemodel
                 if TRAIN:
                     f.write(train_boiler % ('--swap-criterion-train-eval True \\', model_prefix, model_prefix))
                 if EVAL:
-                    f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
+#                     f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
                     f.write(eval_boiler % ('test', model_prefix, model_prefix, 'test'))
             
+            
+            
+            ##### FOR FACE VERSIONS #####
+            for train_boiler, eval_boiler, basemodel in model_boilers:
+                
+                if basemodel == 'transformer':
+                    f.write('\n\n\n\n\n')
+                    f.write("modelname='newface%s'" % basemodel)
+                    f.write('\n\n\n\n\n')
+                elif basemodel == 'language_model': 
+#                     f.write('\n\n\n\n\n')
+#                     f.write("modelname='%s_emb'" % basemodel)
+#                     f.write('\n\n\n\n\n')
+                    continue
+                else:
+                    f.write('\n\n\n\n\n')
+                    f.write("modelname='newface'")
+                    f.write('\n\n\n\n\n')
+                
+                model_prefix = "'newface%s'" % basemodel
+                if TRAIN:
+                    f.write(train_boiler % ('\\', model_prefix, model_prefix))
+                if EVAL: 
+#                     f.write(eval_boiler % ('valid', model_prefix, model_prefix, 'valid'))
+                    f.write(eval_boiler % ('test', model_prefix, model_prefix, 'test'))
             
         # change permissions to allow execute.
         os.chmod(cmd_filename, stat.S_IRWXU)
