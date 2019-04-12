@@ -538,7 +538,8 @@ class DictionaryAgent(Agent):
             self.bpehelper.finalize(self.freq, num_symbols=self.maxtokens,
                                     minfreq=self.minfreq)
             self._remove_non_bpe()
-            self.sort(trim=False)
+            if sort:
+                self.sort(trim=False)
         elif sort:
             self.sort(trim=True)
 
