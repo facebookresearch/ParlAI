@@ -26,6 +26,8 @@ def get_stats(filename, df_dict, tot_doc, modelname):
     max_response_idf = []
     response_lens = []
     unigrams = []
+    responses = []
+    bigrams = []
     
     with open(filename, 'r') as f:    
         for line in f.readlines():
@@ -38,12 +40,16 @@ def get_stats(filename, df_dict, tot_doc, modelname):
                 print('skipping: ', line)
                 continue
             else:
+                
+                line = line.replace('person1 ', '').replace('person2 ', '')
+                
                 split = line.split(' ')
                 
                 if split[1] == '__start__': 
                     start = 2
                 else:
                     start = 1
+                    
                     
                 response_idfs = [np.log(tot_doc / float(df_dict[split[i]]))
                                             for i in range(start, len(split))]
@@ -52,12 +58,16 @@ def get_stats(filename, df_dict, tot_doc, modelname):
                 response_lens.append(len(split))
                 
                 unigrams += split[start:]
+                bigrams += ['%s %s' % (split[i], split[i+1]) for i in range(start, len(split)-1)]
+                responses.append(' '.join(split[start:]))
                 
     if len(mean_response_idf) > 0:    
         return np.mean(mean_response_idf), np.mean(max_response_idf), \
-                np.mean(response_lens), float(len(set(unigrams)))/float(len(unigrams))
+                np.mean(response_lens), float(len(set(unigrams)))/float(len(unigrams)), \
+                float(len(set(bigrams)))/float(len(bigrams)), \
+                float(len(set(responses)))/float(len(responses))
     else: 
-        return 0, 0, 0, 0
+        return 0, 0, 0, 0, 0, 0
 
     
 models = ['seq2seq', 'transformer', 'language_model']
@@ -78,6 +88,8 @@ modelinfo = [('LanguageModel', 'language_model'),
             ]
             
 
+stats_format = '%s, %s, %.3f, %.3f, %.3f, %.5f, %.5f, %.5f, %s'
+
 
 if __name__ == '__main__': 
     result_lines = ['===================================\n',]
@@ -95,21 +107,21 @@ if __name__ == '__main__':
                 filename = 'tmp/%s/%s_minfreq_2_test.out' % (dataset, modelprefix)
             
                 outputs = get_stats(filename, df_dict, tot_doc, modelname)
-                stats = '%s, %s, %.3f, %.3f, %.3f, %.5f, %s' % \
+                stats = stats_format % \
                             tuple([dataset, modelname] + list(outputs) + [filename,])
                 result_lines.append(stats)
             
                 if modelname=='FACE': 
                     filename = 'tmp/%s/%s_minfreq_2_greedy_test.out' % (dataset, modelprefix)
                     outputs = get_stats(filename, df_dict, tot_doc, modelname)
-                    stats = '%s, %s_greedy, %.3f, %.3f, %.3f, %.5f, %s' % \
-                                tuple([dataset, modelname] + list(outputs) + [filename,])
+                    stats = stats_format % \
+                                tuple([dataset, modelname+'_greedy'] + list(outputs) + [filename,])
                     result_lines.append(stats)
             except FileNotFoundError:
-                result_lines.append('%s, %s,,,,,' % (dataset, modelprefix))
+                result_lines.append('%s, %s,,,,,,,' % (dataset, modelprefix))
                 
                 
-    print('datasetname, modelname, avg_mean_idf, avg_max_idf, avg_length, distinct-unigram-ratio')        
+    print('datasetname, modelname, avg_mean_idf, avg_max_idf, avg_length, distinct-unigram-ratio, distinct-bigram-ratio, unique-response-ratio')        
     print('\n'.join(result_lines))
             
     
