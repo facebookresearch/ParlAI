@@ -528,8 +528,11 @@ class DictionaryAgent(Agent):
                 token = unescape(split[0])
                 if lower_special and token in SPECIAL_TOKENS:
                     token = token.lower()
-                cnt = int(split[1]) if len(split) > 1 else 0
-                self.doc_freq[token] = cnt
+                if len(split) > 1:
+                    cnt = int(split[1])
+                    self.doc_freq[token] = cnt
+                # else: the key was white space, so don't track. 
+                # The idf will be set to min_idf in the agent files. 
                 
         # OAD
         with codecs.open(filename+'.tot_doc', 'r', encoding='utf-8', errors='ignore') as read:
