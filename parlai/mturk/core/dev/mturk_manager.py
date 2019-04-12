@@ -1300,7 +1300,8 @@ class MTurkManager():
         finally:
             if self.server_task_name is not None:
                 server_utils.delete_server(self.server_task_name,
-                                           self.opt['local'])
+                                           self.opt['local'],
+                                           tmp_dir=self.opt['tmp_dir'])
             if self.topic_arn is not None:
                 mturk_utils.delete_sns_topic(self.topic_arn)
             if self.opt['unique_worker'] and not self.opt['unique_qual_name']:
