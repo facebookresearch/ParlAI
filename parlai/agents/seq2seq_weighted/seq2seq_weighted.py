@@ -122,11 +122,11 @@ class Seq2seqWeightedAgent(Seq2seqAgent):
         min_idf = torch.log(torch.tensor([ tot_doc/ (max_doc_freq)]))
         word_weights = min_idf * torch.ones(len(self.dict.freq.keys()))
         
-        for tok in self.dict.freq.keys(): 
-            if self.dict.freq[tok] > 0: 
+        for tok in self.dict.doc_freq.keys(): 
+            if self.dict.doc_freq[tok] > 0: 
                 word_idf = torch.log(
                                 torch.tensor([tot_doc 
-                                                / (1. + float(self.dict.doc_freq[tok]))]
+                                                / float(self.dict.doc_freq[tok])]
                                             )
                                     )
                 word_weights[self.dict.tok2ind[tok]] = torch.max(torch.tensor([word_idf, min_idf])) 

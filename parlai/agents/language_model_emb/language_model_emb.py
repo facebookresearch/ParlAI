@@ -98,154 +98,171 @@ class LanguageModelEmbAgent(LanguageModelAgent):
 
 
 
-#     def __init__(self, opt, shared=None):
-#         """Set up model if shared params not set, otherwise no work to do."""
-#         super().__init__(opt, shared)
-#         
-#         self.id = 'LanguageModelEmb'
-
-
-
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
-        opt = self.opt  # there is a deepcopy in the init
-        self.metrics = {
-            'loss': 0,
-            'num_tokens': 0,
-            'lmloss': 0,
-            'lm_num_tokens': 0
-        }
-        self.states = {}
-        # check for cuda
-        self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
-        self.batchsize = opt.get('batchsize', 1)
-        self.use_person_tokens = opt.get('person_tokens', True)
-        self.sampling_mode = opt.get('sampling_mode', False)
+        
+        self.id = 'LanguageModelEmb'
+        
+        init_model = None
+        # check first for 'init_model' for loading model from file
+        if opt.get('init_model') and os.path.isfile(opt['init_model']):
+            init_model = opt['init_model']
+        # next check for 'model_file', this would override init_model
+        if opt.get('model_file') and os.path.isfile(opt['model_file']):
+            init_model = opt['model_file']
 
-        if shared:
-            # set up shared properties
-            self.opt = shared['opt']
-            opt = self.opt
-            self.dict = shared['dict']
+        # OAD
+        if init_model is None and not shared: 
+            # initialize embedding to chosen: OAD
+            # based on initialization in build_model() 
+            # from parlai/agents/seq2seq/seq2seq.py
+            if opt['embedding_type'] != 'random':
+                # only set up embeddings if not loading model
+                self._copy_embeddings(self.model.encoder.weight,
+                                      opt['embedding_type'])
 
-            self.model = shared['model']
-            self.metrics = shared['metrics']
 
-            # get NULL token and END token
-            self.NULL_IDX = self.dict[self.dict.null_token]
-            self.END_IDX = self.dict[self.dict.end_token]
-
-            if 'states' in shared:
-                self.states = shared['states']
-
-            if self.use_person_tokens:
-                # add person1 and person2 tokens
-                self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
-                self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
-
-        else:
-            # this is not a shared instance of this class, so do full init
-            if self.use_cuda:
-                print('[ Using CUDA ]')
-                torch.cuda.set_device(opt['gpu'])
-
-            init_model = None
-            # check first for 'init_model' for loading model from file
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
-                init_model = opt['init_model']
-            # next check for 'model_file', this would override init_model
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
-                init_model = opt['model_file']
-
-            # for backwards compatibility: will only be called for older models
-            # for which .opt file does not exist
-            if (init_model is not None and
-                    not os.path.isfile(init_model + '.opt')):
-                new_opt = self.load_opt(init_model)
-                # load model parameters if available
-                print('[ Setting opt from {} ]'.format(
-                    init_model
-                ))
-                # since .opt file does not exist, save one for future use
-                print("Saving opt file at:", init_model + ".opt")
-                with open(init_model + '.opt', 'w') as handle:
-                    json.dump(new_opt, handle)
-                opt = self.override_opt(new_opt)
-
-            if ((init_model is not None and
-                    os.path.isfile(init_model + '.dict')) or
-                    opt['dict_file'] is None):
-                opt['dict_file'] = init_model + '.dict'
-
-            # load dictionary and basic tokens & vectors
-            self.dict = DictionaryAgent(opt)
-            self.id = 'LanguageModelEmb'
-
-            # get NULL token and END token
-            self.NULL_IDX = self.dict[self.dict.null_token]
-            self.END_IDX = self.dict[self.dict.end_token]
-
-            if self.use_person_tokens:
-                # add person1 and person2 tokens
-                self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
-                self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
-
-            # set model
-            self.model = RNNModel(opt, len(self.dict))
-            
-
-            if init_model is not None:
-                self.load(init_model)
-                
-            else: # OAD
-                # initialize embedding to chosen: OAD
-                # based on initialization in build_model() 
-                # from parlai/agents/seq2seq/seq2seq.py
-                if opt['embedding_type'] != 'random':
-                    # only set up embeddings if not loading model
-                    self._copy_embeddings(self.model.encoder.weight,
-                                          opt['embedding_type'])
-
-            if self.use_cuda:
-                self.model.cuda()
-
-        self.next_observe = []
-        self.next_batch = []
-
-        self.is_training = True
-
-        self.clip = opt.get('gradient_clip', 0.25)
-        # set up criteria
-        self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
-                                             size_average=False)
-        if self.use_cuda:
-            # push to cuda
-            self.criterion.cuda()
-        # init hidden state
-        self.hidden = self.model.init_hidden(self.batchsize)
-        # init tensor of end tokens
-        self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
-        if self.use_cuda:
-            self.ends = self.ends.cuda()
-        # set up model and learning rate scheduler parameters
-        self.lr = opt['learningrate']
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
-        self.best_val_loss = self.states.get('best_val_loss', None)
-        self.lr_factor = opt['lr_factor']
-        if self.lr_factor < 1.0:
-            self.lr_patience = opt['lr_patience']
-            self.lr_min = opt['lr_minimum']
-            self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer, factor=self.lr_factor, verbose=True,
-                patience=self.lr_patience, min_lr=self.lr_min)
-            # initial step for scheduler if self.best_val_loss is initialized
-            if self.best_val_loss is not None:
-                self.scheduler.step(self.best_val_loss)
-        else:
-            self.scheduler = None
-
-        self.reset()        
+#     def __init__(self, opt, shared=None):
+#         """Set up model if shared params not set, otherwise no work to do."""
+#         super().__init__(opt, shared)
+#         opt = self.opt  # there is a deepcopy in the init
+#         self.metrics = {
+#             'loss': 0,
+#             'num_tokens': 0,
+#             'lmloss': 0,
+#             'lm_num_tokens': 0
+#         }
+#         self.states = {}
+#         # check for cuda
+#         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+#         self.batchsize = opt.get('batchsize', 1)
+#         self.use_person_tokens = opt.get('person_tokens', True)
+#         self.sampling_mode = opt.get('sampling_mode', False)
+# 
+#         if shared:
+#             # set up shared properties
+#             self.opt = shared['opt']
+#             opt = self.opt
+#             self.dict = shared['dict']
+# 
+#             self.model = shared['model']
+#             self.metrics = shared['metrics']
+# 
+#             # get NULL token and END token
+#             self.NULL_IDX = self.dict[self.dict.null_token]
+#             self.END_IDX = self.dict[self.dict.end_token]
+# 
+#             if 'states' in shared:
+#                 self.states = shared['states']
+# 
+#             if self.use_person_tokens:
+#                 # add person1 and person2 tokens
+#                 self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
+#                 self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
+# 
+#         else:
+#             # this is not a shared instance of this class, so do full init
+#             if self.use_cuda:
+#                 print('[ Using CUDA ]')
+#                 torch.cuda.set_device(opt['gpu'])
+# 
+#             init_model = None
+#             # check first for 'init_model' for loading model from file
+#             if opt.get('init_model') and os.path.isfile(opt['init_model']):
+#                 init_model = opt['init_model']
+#             # next check for 'model_file', this would override init_model
+#             if opt.get('model_file') and os.path.isfile(opt['model_file']):
+#                 init_model = opt['model_file']
+# 
+#             # for backwards compatibility: will only be called for older models
+#             # for which .opt file does not exist
+#             if (init_model is not None and
+#                     not os.path.isfile(init_model + '.opt')):
+#                 new_opt = self.load_opt(init_model)
+#                 # load model parameters if available
+#                 print('[ Setting opt from {} ]'.format(
+#                     init_model
+#                 ))
+#                 # since .opt file does not exist, save one for future use
+#                 print("Saving opt file at:", init_model + ".opt")
+#                 with open(init_model + '.opt', 'w') as handle:
+#                     json.dump(new_opt, handle)
+#                 opt = self.override_opt(new_opt)
+# 
+#             if ((init_model is not None and
+#                     os.path.isfile(init_model + '.dict')) or
+#                     opt['dict_file'] is None):
+#                 opt['dict_file'] = init_model + '.dict'
+# 
+#             # load dictionary and basic tokens & vectors
+#             self.dict = DictionaryAgent(opt)
+#             self.id = 'LanguageModelEmb'
+# 
+#             # get NULL token and END token
+#             self.NULL_IDX = self.dict[self.dict.null_token]
+#             self.END_IDX = self.dict[self.dict.end_token]
+# 
+#             if self.use_person_tokens:
+#                 # add person1 and person2 tokens
+#                 self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
+#                 self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
+# 
+#             # set model
+#             self.model = RNNModel(opt, len(self.dict))
+#             
+# 
+#             if init_model is not None:
+#                 self.load(init_model)
+#                 
+#             else: # OAD
+#                 # initialize embedding to chosen: OAD
+#                 # based on initialization in build_model() 
+#                 # from parlai/agents/seq2seq/seq2seq.py
+#                 if opt['embedding_type'] != 'random':
+#                     # only set up embeddings if not loading model
+#                     self._copy_embeddings(self.model.encoder.weight,
+#                                           opt['embedding_type'])
+# 
+#             if self.use_cuda:
+#                 self.model.cuda()
+# 
+#         self.next_observe = []
+#         self.next_batch = []
+# 
+#         self.is_training = True
+# 
+#         self.clip = opt.get('gradient_clip', 0.25)
+#         # set up criteria
+#         self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
+#                                              size_average=False)
+#         if self.use_cuda:
+#             # push to cuda
+#             self.criterion.cuda()
+#         # init hidden state
+#         self.hidden = self.model.init_hidden(self.batchsize)
+#         # init tensor of end tokens
+#         self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
+#         if self.use_cuda:
+#             self.ends = self.ends.cuda()
+#         # set up model and learning rate scheduler parameters
+#         self.lr = opt['learningrate']
+#         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+#         self.best_val_loss = self.states.get('best_val_loss', None)
+#         self.lr_factor = opt['lr_factor']
+#         if self.lr_factor < 1.0:
+#             self.lr_patience = opt['lr_patience']
+#             self.lr_min = opt['lr_minimum']
+#             self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+#                 self.optimizer, factor=self.lr_factor, verbose=True,
+#                 patience=self.lr_patience, min_lr=self.lr_min)
+#             # initial step for scheduler if self.best_val_loss is initialized
+#             if self.best_val_loss is not None:
+#                 self.scheduler.step(self.best_val_loss)
+#         else:
+#             self.scheduler = None
+# 
+#         self.reset()        
         
         
         

@@ -2,7 +2,7 @@ from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 
 
-from parlai.agents.language_model.language_model import LanguageModelAgent
+from parlai.agents.language_model_emb.language_model_emb import LanguageModelEmbAgent
 # from parlai.core.utils import PaddingUtils, round_sigfigs
 # from parlai.core.thread_utils import SharedTable
 # from .modules import RNNModel
@@ -22,7 +22,7 @@ import math
 import json
 
 
-class LanguageModelWeightedAgent(LanguageModelAgent):
+class LanguageModelWeightedAgent(LanguageModelEmbAgent):
     """ Agent which trains an RNN on a language modeling task.
     It is adapted from the language model featured in Pytorch's examples repo
     here: <https://github.com/pytorch/examples/tree/master/word_language_model>.
@@ -106,158 +106,159 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
 
 
 
-#     def __init__(self, opt, shared=None):
-#         """Set up model if shared params not set, otherwise no work to do."""
-#         super().__init__(opt, shared)
-#         
-#         self.id = 'LanguageModelWeighted'
-#         
-#         self.build_criterion()
-    
-    
-    
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
-        opt = self.opt  # there is a deepcopy in the init
-        self.metrics = {
-            'loss': 0,
-            'num_tokens': 0,
-            'lmloss': 0,
-            'lm_num_tokens': 0
-        }
-        self.states = {}
-        # check for cuda
-        self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
-        self.batchsize = opt.get('batchsize', 1)
-        self.use_person_tokens = opt.get('person_tokens', True)
-        self.sampling_mode = opt.get('sampling_mode', False)
-
-        if shared:
-            # set up shared properties
-            self.opt = shared['opt']
-            opt = self.opt
-            self.dict = shared['dict']
-
-            self.model = shared['model']
-            self.metrics = shared['metrics']
-
-            # get NULL token and END token
-            self.NULL_IDX = self.dict[self.dict.null_token]
-            self.END_IDX = self.dict[self.dict.end_token]
-
-            if 'states' in shared:
-                self.states = shared['states']
-
-            if self.use_person_tokens:
-                # add person1 and person2 tokens
-                self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
-                self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
-
-        else:
-            # this is not a shared instance of this class, so do full init
-            if self.use_cuda:
-                print('[ Using CUDA ]')
-                torch.cuda.set_device(opt['gpu'])
-
-            init_model = None
-            # check first for 'init_model' for loading model from file
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
-                init_model = opt['init_model']
-            # next check for 'model_file', this would override init_model
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
-                init_model = opt['model_file']
-
-            # for backwards compatibility: will only be called for older models
-            # for which .opt file does not exist
-            if (init_model is not None and
-                    not os.path.isfile(init_model + '.opt')):
-                new_opt = self.load_opt(init_model)
-                # load model parameters if available
-                print('[ Setting opt from {} ]'.format(
-                    init_model
-                ))
-                # since .opt file does not exist, save one for future use
-                print("Saving opt file at:", init_model + ".opt")
-                with open(init_model + '.opt', 'w') as handle:
-                    json.dump(new_opt, handle)
-                opt = self.override_opt(new_opt)
-
-            if ((init_model is not None and
-                    os.path.isfile(init_model + '.dict')) or
-                    opt['dict_file'] is None):
-                opt['dict_file'] = init_model + '.dict'
-
-            # load dictionary and basic tokens & vectors
-            self.dict = DictionaryAgent(opt)
-            self.id = 'LanguageModelWeighted'
-
-            # get NULL token and END token
-            self.NULL_IDX = self.dict[self.dict.null_token]
-            self.END_IDX = self.dict[self.dict.end_token]
-
-            if self.use_person_tokens:
-                # add person1 and person2 tokens
-                self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
-                self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
-
-            # set model
-            self.model = RNNModel(opt, len(self.dict))
-            
-
-            if init_model is not None:
-                self.load(init_model)
-                
-            else: # OAD
-                # initialize embedding to chosen: OAD
-                # based on initialization in build_model() 
-                # from parlai/agents/seq2seq/seq2seq.py
-                if opt['embedding_type'] != 'random':
-                    # only set up embeddings if not loading model
-                    self._copy_embeddings(self.model.encoder.weight,
-                                          opt['embedding_type'])
-
-            if self.use_cuda:
-                self.model.cuda()
-
-        self.next_observe = []
-        self.next_batch = []
-
-        self.is_training = True
-
-        self.clip = opt.get('gradient_clip', 0.25)
-        # set up criteria
-        self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
-                                             size_average=False)
-        if self.use_cuda:
-            # push to cuda
-            self.criterion.cuda()
-        # init hidden state
-        self.hidden = self.model.init_hidden(self.batchsize)
-        # init tensor of end tokens
-        self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
-        if self.use_cuda:
-            self.ends = self.ends.cuda()
-        # set up model and learning rate scheduler parameters
-        self.lr = opt['learningrate']
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
-        self.best_val_loss = self.states.get('best_val_loss', None)
-        self.lr_factor = opt['lr_factor']
-        if self.lr_factor < 1.0:
-            self.lr_patience = opt['lr_patience']
-            self.lr_min = opt['lr_minimum']
-            self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                self.optimizer, factor=self.lr_factor, verbose=True,
-                patience=self.lr_patience, min_lr=self.lr_min)
-            # initial step for scheduler if self.best_val_loss is initialized
-            if self.best_val_loss is not None:
-                self.scheduler.step(self.best_val_loss)
-        else:
-            self.scheduler = None
-
-        self.reset() 
         
-        self.build_criterion()
+        self.id = 'LanguageModelWeighted'
+        
+        if not shared: 
+            self.build_criterion()
+    
+    
+    
+#     def __init__(self, opt, shared=None):
+#         """Set up model if shared params not set, otherwise no work to do."""
+#         super().__init__(opt, shared)
+#         opt = self.opt  # there is a deepcopy in the init
+#         self.metrics = {
+#             'loss': 0,
+#             'num_tokens': 0,
+#             'lmloss': 0,
+#             'lm_num_tokens': 0
+#         }
+#         self.states = {}
+#         # check for cuda
+#         self.use_cuda = not opt.get('no_cuda') and torch.cuda.is_available()
+#         self.batchsize = opt.get('batchsize', 1)
+#         self.use_person_tokens = opt.get('person_tokens', True)
+#         self.sampling_mode = opt.get('sampling_mode', False)
+# 
+#         if shared:
+#             # set up shared properties
+#             self.opt = shared['opt']
+#             opt = self.opt
+#             self.dict = shared['dict']
+# 
+#             self.model = shared['model']
+#             self.metrics = shared['metrics']
+# 
+#             # get NULL token and END token
+#             self.NULL_IDX = self.dict[self.dict.null_token]
+#             self.END_IDX = self.dict[self.dict.end_token]
+# 
+#             if 'states' in shared:
+#                 self.states = shared['states']
+# 
+#             if self.use_person_tokens:
+#                 # add person1 and person2 tokens
+#                 self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
+#                 self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
+# 
+#         else:
+#             # this is not a shared instance of this class, so do full init
+#             if self.use_cuda:
+#                 print('[ Using CUDA ]')
+#                 torch.cuda.set_device(opt['gpu'])
+# 
+#             init_model = None
+#             # check first for 'init_model' for loading model from file
+#             if opt.get('init_model') and os.path.isfile(opt['init_model']):
+#                 init_model = opt['init_model']
+#             # next check for 'model_file', this would override init_model
+#             if opt.get('model_file') and os.path.isfile(opt['model_file']):
+#                 init_model = opt['model_file']
+# 
+#             # for backwards compatibility: will only be called for older models
+#             # for which .opt file does not exist
+#             if (init_model is not None and
+#                     not os.path.isfile(init_model + '.opt')):
+#                 new_opt = self.load_opt(init_model)
+#                 # load model parameters if available
+#                 print('[ Setting opt from {} ]'.format(
+#                     init_model
+#                 ))
+#                 # since .opt file does not exist, save one for future use
+#                 print("Saving opt file at:", init_model + ".opt")
+#                 with open(init_model + '.opt', 'w') as handle:
+#                     json.dump(new_opt, handle)
+#                 opt = self.override_opt(new_opt)
+# 
+#             if ((init_model is not None and
+#                     os.path.isfile(init_model + '.dict')) or
+#                     opt['dict_file'] is None):
+#                 opt['dict_file'] = init_model + '.dict'
+# 
+#             # load dictionary and basic tokens & vectors
+#             self.dict = DictionaryAgent(opt)
+#             self.id = 'LanguageModelWeighted'
+# 
+#             # get NULL token and END token
+#             self.NULL_IDX = self.dict[self.dict.null_token]
+#             self.END_IDX = self.dict[self.dict.end_token]
+# 
+#             if self.use_person_tokens:
+#                 # add person1 and person2 tokens
+#                 self.dict.add_to_dict(self.dict.tokenize("PERSON1"))
+#                 self.dict.add_to_dict(self.dict.tokenize("PERSON2"))
+# 
+#             # set model
+#             self.model = RNNModel(opt, len(self.dict))
+#             
+# 
+#             if init_model is not None:
+#                 self.load(init_model)
+#                 
+#             else: # OAD
+#                 # initialize embedding to chosen: OAD
+#                 # based on initialization in build_model() 
+#                 # from parlai/agents/seq2seq/seq2seq.py
+#                 if opt['embedding_type'] != 'random':
+#                     # only set up embeddings if not loading model
+#                     self._copy_embeddings(self.model.encoder.weight,
+#                                           opt['embedding_type'])
+# 
+#             if self.use_cuda:
+#                 self.model.cuda()
+# 
+#         self.next_observe = []
+#         self.next_batch = []
+# 
+#         self.is_training = True
+# 
+#         self.clip = opt.get('gradient_clip', 0.25)
+#         # set up criteria
+#         self.criterion = nn.CrossEntropyLoss(ignore_index=self.NULL_IDX,
+#                                              size_average=False)
+#         if self.use_cuda:
+#             # push to cuda
+#             self.criterion.cuda()
+#         # init hidden state
+#         self.hidden = self.model.init_hidden(self.batchsize)
+#         # init tensor of end tokens
+#         self.ends = torch.LongTensor([self.END_IDX for _ in range(self.batchsize)])
+#         if self.use_cuda:
+#             self.ends = self.ends.cuda()
+#         # set up model and learning rate scheduler parameters
+#         self.lr = opt['learningrate']
+#         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
+#         self.best_val_loss = self.states.get('best_val_loss', None)
+#         self.lr_factor = opt['lr_factor']
+#         if self.lr_factor < 1.0:
+#             self.lr_patience = opt['lr_patience']
+#             self.lr_min = opt['lr_minimum']
+#             self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+#                 self.optimizer, factor=self.lr_factor, verbose=True,
+#                 patience=self.lr_patience, min_lr=self.lr_min)
+#             # initial step for scheduler if self.best_val_loss is initialized
+#             if self.best_val_loss is not None:
+#                 self.scheduler.step(self.best_val_loss)
+#         else:
+#             self.scheduler = None
+# 
+#         self.reset() 
+#         
+#         self.build_criterion()
         
         
         
@@ -364,11 +365,11 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
         min_idf = torch.log(torch.tensor([ tot_doc/ (max_doc_freq)]))
         word_weights = min_idf * torch.ones(len(self.dict.freq.keys()))
         
-        for tok in self.dict.freq.keys(): 
-            if self.dict.freq[tok] > 0: 
+        for tok in self.dict.doc_freq.keys(): 
+            if self.dict.doc_freq[tok] > 0: 
                 word_idf = torch.log(
                                 torch.tensor([tot_doc 
-                                                / (1. + float(self.dict.doc_freq[tok]))]
+                                                / float(self.dict.doc_freq[tok])]
                                             )
                                     )
                 word_weights[self.dict.tok2ind[tok]] = torch.max(torch.tensor([word_idf, min_idf])) 
@@ -432,104 +433,104 @@ class LanguageModelWeightedAgent(LanguageModelAgent):
         
         
         
-        
-    def _get_embtype(self, emb_type):
-    
-        ''' copied from torch_agent.py '''
-        
-        # set up preinitialized embeddings
-        try:
-            import torchtext.vocab as vocab
-        except ImportError as ex:
-            print('Please install torch text with `pip install torchtext`')
-            raise ex
-        pretrained_dim = 300
-        if emb_type.startswith('glove'):
-            if 'twitter' in emb_type:
-                init = 'glove-twitter'
-                name = 'twitter.27B'
-                pretrained_dim = 200
-            else:
-                init = 'glove'
-                name = '840B'
-            embs = vocab.GloVe(
-                name=name, dim=pretrained_dim,
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:glove_vectors'))
-        elif emb_type.startswith('fasttext_cc'):
-            init = 'fasttext_cc'
-            from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
-            embs = vocab.Vectors(
-                name='crawl-300d-2M.vec',
-                url=fasttext_cc_url,
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_cc_vectors'))
-        elif emb_type.startswith('fasttext'):
-            init = 'fasttext'
-            embs = vocab.FastText(
-                language='en',
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_vectors'))
-        else:
-            raise RuntimeError('embedding type {} not implemented. check arg, '
-                               'submit PR to this function, or override it.'
-                               ''.format(emb_type))
-        return embs, init
-        
-        
-    def _project_vec(self, vec, target_dim, method='random'):
-    
-        ''' copied from torch_agent.py '''
-        
-        """If needed, project vector to target dimensionality.
-        Projection methods implemented are the following:
-        random - random gaussian matrix multiplication of input vector
-        :param vec:        one-dimensional vector
-        :param target_dim: dimension of returned vector
-        :param method:     projection method. will be used even if the dim is
-                           not changing if method ends in "-force".
-        """
-        pre_dim = vec.size(0)
-        if pre_dim != target_dim or method.endswith('force'):
-            if method.startswith('random'):
-                # random projection
-                if not hasattr(self, 'proj_rp'):
-                    self.proj_rp = torch.Tensor(pre_dim, target_dim).normal_()
-                    # rescale so we're not destroying norms too much
-                    # http://scikit-learn.org/stable/modules/random_projection.html#gaussian-random-projection
-                    self.proj_rp /= target_dim
-                return torch.mm(vec.unsqueeze(0), self.proj_rp)
-            else:
-                # TODO: PCA
-                # TODO: PCA + RP
-                # TODO: copy
-                raise RuntimeError('Projection method not implemented: {}'
-                                   ''.format(method))
-        else:
-            return vec
-            
-                    
-    def _copy_embeddings(self, weight, emb_type, log=True):
-        
-        ''' copied from torch_agent.py '''
-        
-        """Copy embeddings from the pretrained embeddings to the lookuptable.
-        :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
-        :param emb_type: pretrained embedding type
-        """
-        if not is_primary_worker():
-            # we're in distributed mode, copying embeddings in the workers
-            # slows things down considerably
-            return
-        embs, name = self._get_embtype(emb_type)
-        cnt = 0
-        for w, i in self.dict.tok2ind.items():
-            if w in embs.stoi:
-                vec = self._project_vec(embs.vectors[embs.stoi[w]],
-                                        weight.size(1))
-                weight.data[i] = vec
-                cnt += 1
-
-        if log:
-            print('Initialized embeddings for {} tokens ({}%) from {}.'
-                  ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
+#         
+#     def _get_embtype(self, emb_type):
+#     
+#         ''' copied from torch_agent.py '''
+#         
+#         # set up preinitialized embeddings
+#         try:
+#             import torchtext.vocab as vocab
+#         except ImportError as ex:
+#             print('Please install torch text with `pip install torchtext`')
+#             raise ex
+#         pretrained_dim = 300
+#         if emb_type.startswith('glove'):
+#             if 'twitter' in emb_type:
+#                 init = 'glove-twitter'
+#                 name = 'twitter.27B'
+#                 pretrained_dim = 200
+#             else:
+#                 init = 'glove'
+#                 name = '840B'
+#             embs = vocab.GloVe(
+#                 name=name, dim=pretrained_dim,
+#                 cache=modelzoo_path(self.opt.get('datapath'),
+#                                     'models:glove_vectors'))
+#         elif emb_type.startswith('fasttext_cc'):
+#             init = 'fasttext_cc'
+#             from parlai.zoo.fasttext_cc_vectors.build import url as fasttext_cc_url
+#             embs = vocab.Vectors(
+#                 name='crawl-300d-2M.vec',
+#                 url=fasttext_cc_url,
+#                 cache=modelzoo_path(self.opt.get('datapath'),
+#                                     'models:fasttext_cc_vectors'))
+#         elif emb_type.startswith('fasttext'):
+#             init = 'fasttext'
+#             embs = vocab.FastText(
+#                 language='en',
+#                 cache=modelzoo_path(self.opt.get('datapath'),
+#                                     'models:fasttext_vectors'))
+#         else:
+#             raise RuntimeError('embedding type {} not implemented. check arg, '
+#                                'submit PR to this function, or override it.'
+#                                ''.format(emb_type))
+#         return embs, init
+#         
+#         
+#     def _project_vec(self, vec, target_dim, method='random'):
+#     
+#         ''' copied from torch_agent.py '''
+#         
+#         """If needed, project vector to target dimensionality.
+#         Projection methods implemented are the following:
+#         random - random gaussian matrix multiplication of input vector
+#         :param vec:        one-dimensional vector
+#         :param target_dim: dimension of returned vector
+#         :param method:     projection method. will be used even if the dim is
+#                            not changing if method ends in "-force".
+#         """
+#         pre_dim = vec.size(0)
+#         if pre_dim != target_dim or method.endswith('force'):
+#             if method.startswith('random'):
+#                 # random projection
+#                 if not hasattr(self, 'proj_rp'):
+#                     self.proj_rp = torch.Tensor(pre_dim, target_dim).normal_()
+#                     # rescale so we're not destroying norms too much
+#                     # http://scikit-learn.org/stable/modules/random_projection.html#gaussian-random-projection
+#                     self.proj_rp /= target_dim
+#                 return torch.mm(vec.unsqueeze(0), self.proj_rp)
+#             else:
+#                 # TODO: PCA
+#                 # TODO: PCA + RP
+#                 # TODO: copy
+#                 raise RuntimeError('Projection method not implemented: {}'
+#                                    ''.format(method))
+#         else:
+#             return vec
+#             
+#                     
+#     def _copy_embeddings(self, weight, emb_type, log=True):
+#         
+#         ''' copied from torch_agent.py '''
+#         
+#         """Copy embeddings from the pretrained embeddings to the lookuptable.
+#         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
+#         :param emb_type: pretrained embedding type
+#         """
+#         if not is_primary_worker():
+#             # we're in distributed mode, copying embeddings in the workers
+#             # slows things down considerably
+#             return
+#         embs, name = self._get_embtype(emb_type)
+#         cnt = 0
+#         for w, i in self.dict.tok2ind.items():
+#             if w in embs.stoi:
+#                 vec = self._project_vec(embs.vectors[embs.stoi[w]],
+#                                         weight.size(1))
+#                 weight.data[i] = vec
+#                 cnt += 1
+# 
+#         if log:
+#             print('Initialized embeddings for {} tokens ({}%) from {}.'
+#                   ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
