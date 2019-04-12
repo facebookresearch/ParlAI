@@ -15,11 +15,12 @@ import shlex
 import shutil
 import subprocess
 import time
+import parlai.mturk.core.shared_utils as shared_utils
 
 region_name = 'us-east-1'
 user_name = getpass.getuser()
 
-parent_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = shared_utils.get_core_dir()
 legacy_server_source_directory_name = 'server_legacy'
 server_source_directory_name = 'react_server'
 heroku_server_directory_name = 'heroku_server'
@@ -33,7 +34,8 @@ heroku_url = \
 
 
 def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
-                               heroku_team=None, use_hobby=False):
+                               heroku_team=None, use_hobby=False,
+                               tmp_dir=parent_dir):
     print("Heroku: Collecting files...")
     # Install Heroku CLI
     os_name = None
@@ -57,13 +59,13 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
 
     # Remove existing heroku client files
     existing_heroku_directory_names = \
-        glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))
+        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))
     if len(existing_heroku_directory_names) == 0:
-        if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
-            os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
+        if os.path.exists(os.path.join(tmp_dir, 'heroku.tar.gz')):
+            os.remove(os.path.join(tmp_dir, 'heroku.tar.gz'))
 
         # Get the heroku client and unzip
-        os.chdir(parent_dir)
+        os.chdir(tmp_dir)
         sh.wget(shlex.split('{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
             heroku_url,
             os_name,
@@ -72,14 +74,14 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
         sh.tar(shlex.split('-xvzf heroku.tar.gz'))
 
     heroku_directory_name = \
-        glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
-    heroku_directory_path = os.path.join(parent_dir, heroku_directory_name)
+        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))[0]
+    heroku_directory_path = os.path.join(tmp_dir, heroku_directory_name)
     heroku_executable_path = \
         os.path.join(heroku_directory_path, 'bin', 'heroku')
 
     server_source_directory_path = \
         os.path.join(parent_dir, legacy_server_source_directory_name)
-    heroku_server_directory_path = os.path.join(parent_dir, '{}_{}'.format(
+    heroku_server_directory_path = os.path.join(tmp_dir, '{}_{}'.format(
         heroku_server_directory_name,
         task_name
     ))
@@ -98,7 +100,7 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
         task_directory_path
     )
 
-    hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
+    hit_config_file_path = os.path.join(tmp_dir, 'hit_config.json')
     sh.mv(hit_config_file_path, task_directory_path)
 
     for file_path in task_files_to_copy:
@@ -212,8 +214,9 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
 
 
 def setup_heroku_server(task_name, task_files_to_copy=None,
-                        heroku_team=None, use_hobby=False):
-    print("Heroku: Collecting files...")
+                        heroku_team=None, use_hobby=False, tmp_dir=parent_dir):
+
+    print("Heroku: Collecting files... for ", tmp_dir)
     # Install Heroku CLI
     os_name = None
     bit_architecture = None
@@ -236,13 +239,13 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
 
     # Remove existing heroku client files
     existing_heroku_directory_names = \
-        glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))
+        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))
     if len(existing_heroku_directory_names) == 0:
-        if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
-            os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
+        if os.path.exists(os.path.join(tmp_dir, 'heroku.tar.gz')):
+            os.remove(os.path.join(tmp_dir, 'heroku.tar.gz'))
 
         # Get the heroku client and unzip
-        os.chdir(parent_dir)
+        os.chdir(tmp_dir)
         sh.wget(shlex.split('{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
             heroku_url,
             os_name,
@@ -251,14 +254,14 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
         sh.tar(shlex.split('-xvzf heroku.tar.gz'))
 
     heroku_directory_name = \
-        glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
-    heroku_directory_path = os.path.join(parent_dir, heroku_directory_name)
+        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))[0]
+    heroku_directory_path = os.path.join(tmp_dir, heroku_directory_name)
     heroku_executable_path = \
         os.path.join(heroku_directory_path, 'bin', 'heroku')
 
     server_source_directory_path = \
         os.path.join(parent_dir, server_source_directory_name)
-    heroku_server_development_path = os.path.join(parent_dir, '{}_{}'.format(
+    heroku_server_development_path = os.path.join(tmp_dir, '{}_{}'.format(
         heroku_server_directory_name,
         task_name
     ))
@@ -350,7 +353,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
         except FileNotFoundError:  # noqa: F821 we don't support python2
             pass
 
-    hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
+    hit_config_file_path = os.path.join(tmp_dir, 'hit_config.json')
     sh.mv(hit_config_file_path, target_resource_dir)
 
     print("Heroku: Starting server...")
@@ -447,18 +450,18 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
     os.chdir(parent_dir)
 
     # Clean up heroku files
-    if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
-        os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
+    if os.path.exists(os.path.join(tmp_dir, 'heroku.tar.gz')):
+        os.remove(os.path.join(tmp_dir, 'heroku.tar.gz'))
 
     sh.rm(shlex.split('-rf {}'.format(heroku_server_development_path)))
 
     return 'https://{}.herokuapp.com'.format(heroku_app_name)
 
 
-def delete_heroku_server(task_name):
+def delete_heroku_server(task_name, tmp_dir=parent_dir):
     heroku_directory_name = \
-        glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
-    heroku_directory_path = os.path.join(parent_dir, heroku_directory_name)
+        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))[0]
+    heroku_directory_path = os.path.join(tmp_dir, heroku_directory_name)
     heroku_executable_path = \
         os.path.join(heroku_directory_path, 'bin', 'heroku')
 
@@ -556,7 +559,8 @@ def delete_local_server(task_name):
 
 
 def setup_legacy_server(task_name, task_files_to_copy, local=False,
-                        heroku_team=None, use_hobby=False, legacy=True):
+                        heroku_team=None, use_hobby=False, legacy=True,
+                        tmp_dir=parent_dir):
     if local:
         return setup_local_server(
             task_name,
@@ -566,22 +570,24 @@ def setup_legacy_server(task_name, task_files_to_copy, local=False,
         task_name,
         task_files_to_copy=task_files_to_copy,
         heroku_team=heroku_team, use_hobby=use_hobby,
+        tmp_dir=tmp_dir,
     )
 
 
 def setup_server(task_name, task_files_to_copy, local=False, heroku_team=None,
-                 use_hobby=False, legacy=True):
+                 use_hobby=False, legacy=True, tmp_dir=parent_dir):
     if local:
         raise Exception('Local server not yet supported for non-legacy tasks')
     return setup_heroku_server(
         task_name,
         task_files_to_copy=task_files_to_copy,
         heroku_team=heroku_team, use_hobby=use_hobby,
+        tmp_dir=tmp_dir,
     )
 
 
-def delete_server(task_name, local=False):
+def delete_server(task_name, local=False, tmp_dir=parent_dir):
     if local:
         delete_local_server(task_name)
     else:
-        delete_heroku_server(task_name)
+        delete_heroku_server(task_name, tmp_dir)
