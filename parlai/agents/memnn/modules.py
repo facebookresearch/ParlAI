@@ -36,23 +36,10 @@ class MemNN(nn.Module):
         # prepare features
         self.hops = hops
 
-        # time features: we learn an embedding for each memory slot
-        self.extra_features = 0
-        if time_features:
-            self.extra_features += memsize
-            self.time_features = torch.LongTensor(
-                range(num_features, num_features + memsize))
-
         def embedding(use_extra_feats=True):
-            if use_extra_feats:
-                return Embed(num_features + self.extra_features,
-                             embedding_size,
-                             position_encoding=position_encoding,
-                             padding_idx=padding_idx)
-            else:
-                return Embed(num_features, embedding_size,
-                             position_encoding=position_encoding,
-                             padding_idx=padding_idx)
+            return Embed(num_features, embedding_size,
+                         position_encoding=position_encoding,
+                         padding_idx=padding_idx)
 
         # TODO: add token dropout?
         # TODO: add dropout
