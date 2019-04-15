@@ -154,6 +154,7 @@ class TestTransformerRanker(unittest.TestCase):
 
     @testing_utils.retry(ntries=3)
     def test_alt_reduction(self):
+        """Test a transformer ranker reduction method other than `mean`."""
         stdout, valid, test = testing_utils.train_model(dict(
             task='integration_tests:candidate',
             model='transformer/ranker',

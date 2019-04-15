@@ -44,7 +44,7 @@ def _build_encoder(
         attention_dropout=opt['attention_dropout'],
         relu_dropout=opt['relu_dropout'],
         padding_idx=padding_idx,
-        learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
+        learn_positional_embeddings=opt['learn_positional_embeddings'],
         embeddings_scale=opt['embeddings_scale'],
         reduction_type=reduction_type,
         n_positions=n_positions,
@@ -67,7 +67,7 @@ def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
         attention_dropout=opt['attention_dropout'],
         relu_dropout=opt['relu_dropout'],
         padding_idx=padding_idx,
-        learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
+        learn_positional_embeddings=opt['learn_positional_embeddings'],
         embeddings_scale=opt['embeddings_scale'],
         n_positions=n_positions,
         activation=opt['activation'],
@@ -112,8 +112,6 @@ class TransformerMemNetModel(nn.Module):
         if n_positions < 0:
             raise ValueError('n_positions must be positive')
 
-        self.activation = opt.get('activation', 'relu')
-        self.variant = opt.get('variant', 'aiayn')
         self.reduction_type = opt.get('reduction_type', 'mean')
         self.n_segments = opt.get('n_segments', 0)
 
