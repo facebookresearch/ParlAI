@@ -41,6 +41,14 @@ def add_common_cmdline_args(argparser):
     argparser.add_argument('--n-positions', type=int, default=None, hidden=True,
                            help='Number of positional embeddings to learn. Defaults '
                                 'to truncate or 1024 if not provided.')
+    argparser.add_argument('--n-segments', type=int, default=0,
+                           help='The number of segments that support the model. '
+                                'If zero no segment and no langs_embedding.')
+    argparser.add_argument('--variant', choices={'aiayn', 'xlm'}, default='aiayn',
+                           help='Chooses locations of layer norms, etc.')
+    argparser.add_argument('--activation', choices={'relu', 'gelu'}, default='relu',
+                           help='Nonlinear activation to use. AIAYN uses relu, but '
+                                'more recent papers prefer gelu.')
 
 
 class Transformer(Agent):
@@ -81,6 +89,10 @@ class TransformerRankerAgent(TorchRankerAgent):
         agent.add_argument('--data-parallel', type='bool', default=False,
                            help='use model in data parallel, requires '
                                 'multiple gpus')
+        agent.add_argument('--reduction-type', type=str, default='mean',
+                           choices=['first', 'max', 'mean'],
+                           help='Type of reduction at the end of transformer')
+
         argparser.set_defaults(
             learningrate=0.0001,
             optimizer='adamax',
