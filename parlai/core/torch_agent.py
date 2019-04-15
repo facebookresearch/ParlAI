@@ -769,7 +769,14 @@ class TorchAgent(ABC, Agent):
             # first make sure there are no null pointers
             states = {}
 
-        if states and states.get('lr_scheduler_type') != self.opt['lr_scheduler']:
+        if (
+            # there is already an old LR scheduler saved on disk
+            states and
+            # and the old LR scheduler is different
+            states.get('lr_scheduler_type') != self.opt['lr_scheduler'] and
+            # and we're not already using a fresh scheduler
+            not hard_reset
+        ):
             # the LR scheduler changed, start things fresh
             warn_once("LR scheduler is different from saved. Starting fresh!")
             hard_reset = True
