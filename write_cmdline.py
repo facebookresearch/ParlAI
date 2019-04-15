@@ -23,7 +23,7 @@ transformerheads=2 \n\
 \n\
 ### optimization ###\n\
 batchsize=32\n\
-transformerbatchsize=512\n\
+transformerbatchsize=32\n\
 learningrate=.001\n\
 sgdlearningrate=10\n\
 sgdminlearningrate=.1\n\
@@ -182,8 +182,8 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/eval_model.py \\\n\
 
 model_boilers = [
                 (transformer_train_boiler, eval_torchgen_model, 'transformer'), 
-                (s2s_train_boiler, eval_torchgen_model, 'seq2seq'), 
-                (lm_train_boiler, eval_language_model, 'language_model')
+#                 (s2s_train_boiler, eval_torchgen_model, 'seq2seq'), 
+#                 (lm_train_boiler, eval_language_model, 'language_model')
                 ]
 tasks = ['cornell_movie', 'dailydialog', 'empathetic_dialogues', 'personachat']
 # tasks = ['cornell_movie', ]
@@ -195,11 +195,11 @@ if __name__ == '__main__':
     
     for t, task in enumerate(tasks): 
         
-        GPU_NUM = t + 1
+        GPU_NUM = t + 2
 #         if GPU_NUM == 5: # HACK, as opensubtitles is currently running on gpu5
 #             GPU_NUM = 1
         
-        cmd_filename = 'cmd_%s.sh' % task
+        cmd_filename = 'cmd_transformer_only_%s.sh' % task
         with open(cmd_filename, 'w') as f: 
             
             if task == 'opensubtitles':
