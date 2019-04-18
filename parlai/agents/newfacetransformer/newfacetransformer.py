@@ -83,10 +83,11 @@ class NewfacetransformerAgent(TransformerGeneratorAgent):
         """
         if batch.label_vec is None:
             raise ValueError('Cannot compute loss without a label.')
-        scores = batch.text_vec
-        preds = batch.label_vec
+        scores, preds, _ = self.model(batch.text_vec, ys=batch.label_vec)
         score_view = scores.view(-1, scores.size(-1))
         preds_clean = self.clean_preds(preds)
+        #score_view = scores.view(-1, scores.size(-1))
+        #preds_clean = self.clean_preds(preds)
 
         if self.ft == 'gt':
             self.update_frequency(self.clean_preds(batch.label_vec))
@@ -95,10 +96,10 @@ class NewfacetransformerAgent(TransformerGeneratorAgent):
         # calculate loss w/ or w/o pre-/post-weight
         if self.wt == 'pre':
             self.criterion.weight = self.loss_weight()
-            #loss = self.criterion(score_view, batch.label_vec.view(-1))
+            loss = self.criterion(score_view, batch.label_vec.view(-1))
         elif self.wt == 'post':
             self.criterion.reduction = 'none'
-            #loss = self.criterion(score_view, batch.label_vec.view(-1))
+            loss = self.criterion(score_view, batch.label_vec.view(-1))
             device = loss.device
             freq_pred = self.word_freq[preds.view(-1).cpu().numpy()]
             freq_pred = torch.FloatTensor(freq_pred).to(device)
@@ -113,7 +114,7 @@ class NewfacetransformerAgent(TransformerGeneratorAgent):
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
         score_view = scores.view(-1, scores.size(-1))
-        loss = self.criterion(score_view, batch.label_vec.view(-1))
+        #loss = self.criterion(score_view, batch.label_vec.view(-1))
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)
         target_tokens = notnull.long().sum().item()
