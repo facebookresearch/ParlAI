@@ -448,12 +448,15 @@ class DictionaryAgent(Agent):
     def add_to_dict(self, tokens):
         """Build dictionary from the list of provided tokens."""
         self.built = False
-        for token in tokens:
+        
+        # convert to a list in case the tokenizer returns a generator (i.e., nltk)
+        token_list = [token for token in tokens] 
+        for token in token_list:
             self.add_token(token)
             self.freq[token] += 1
         
         # OAD: Add doc frequency so that idf can be calculated. 
-        for token in set(tokens):
+        for token in set(token_list):
             self.doc_freq[token] += 1
         self.tot_doc += 1 
         
@@ -496,6 +499,9 @@ class DictionaryAgent(Agent):
         if maxtokens >= 0 and len(self.tok2ind) > maxtokens:
             for k in range(maxtokens, len(self.ind2tok)):
                 v = self.ind2tok[k]
+                print('##### v: ', v, v == 'total')
+                if v == 'total':
+                    print('######## TOTAL?!')
                 del self.ind2tok[k]
                 del self.tok2ind[v]
                 del self.freq[v]

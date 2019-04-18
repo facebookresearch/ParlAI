@@ -18,11 +18,11 @@ s2sattn=\'general\'\n\
 ffnsize=300\n\
 transformerlayers=4 \n\
 transformerdropout=0.2 \n\
-transformerheads=6 \n\
+transformerheads=8 \n\
 \n\
 ### optimization ###\n\
 batchsize=256\n\
-transformerbatchsize=256\n\
+transformerbatchsize=32\n\
 learningrate=.001\n\
 sgdlearningrate=10\n\
 sgdminlearningrate=.1\n\
@@ -155,8 +155,8 @@ CUDA_VISIBLE_DEVICES=$gpunum python examples/eval_model.py \\\n\
 
 
 model_boilers = [
-                (transformer_train_boiler, eval_torchgen_model, 'transformer'), 
                 (s2s_train_boiler, eval_torchgen_model, 'seq2seq'), 
+                (transformer_train_boiler, eval_torchgen_model, 'transformer'), 
                 (lm_train_boiler, eval_language_model, 'language_model')
                 ]
                 
