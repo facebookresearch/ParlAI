@@ -85,7 +85,7 @@ class MemNN(nn.Module):
 
             for _ in range(self.hops):
                 state = self.memory_hop(state, in_memory_embs, out_memory_embs,
-                    pad_mask)
+                                        pad_mask)
 
         if cands is not None:
             # embed candidates
