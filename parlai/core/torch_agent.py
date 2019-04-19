@@ -508,9 +508,6 @@ class TorchAgent(Agent):
             # intitialize any important structures from scratch
             self.replies = {}  # past replies
             self.dict = self.build_dictionary()
-            if opt.get('person_tokens'):
-                self.dict[self.P1_TOKEN] = 999999999
-                self.dict[self.P2_TOKEN] = 999999998
             if opt.get('fp16'):
                 # Volta cores revert to FP32 hardware if tensors are not multiples
                 # of 8 in all dimensions. This INCLUDES the embeddings layer! As
@@ -587,7 +584,11 @@ class TorchAgent(Agent):
         If you need to add additional tokens to the dictionary, this is likely
         the right place to do it.
         """
-        return self.dictionary_class()(self.opt)
+        d = self.dictionary_class()(self.opt)
+        if self.opt.get('person_tokens'):
+            d[self.P1_TOKEN] = 999999999
+            d[self.P2_TOKEN] = 999999998
+        return d
 
     def _get_init_model(self, opt, shared):
         """
