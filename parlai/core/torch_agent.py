@@ -507,7 +507,7 @@ class TorchAgent(Agent):
         if not shared:
             # intitialize any important structures from scratch
             self.replies = {}  # past replies
-            self.dict = self.dictionary_class()(opt)
+            self.dict = self.build_dictionary()
             if opt.get('person_tokens'):
                 self.dict[self.P1_TOKEN] = 999999999
                 self.dict[self.P2_TOKEN] = 999999998
@@ -579,6 +579,15 @@ class TorchAgent(Agent):
         self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
+
+    def build_dictionary(self):
+        """
+        Return the constructed dictionary, which will be set to self.dict.
+
+        If you need to add additional tokens to the dictionary, this is likely
+        the right place to do it.
+        """
+        return self.dictionary_class()(self.opt)
 
     def _get_init_model(self, opt, shared):
         """
