@@ -87,7 +87,9 @@ class MemnnAgent(TorchRankerAgent):
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         mems = self._build_mems(batch.memory_vecs)
-        scores = self.model(batch.text_vec, mems, cand_vecs)
+        # Check for rows that have no non-null tokens
+        pad_mask = (mems != self.dict.txt2vec(self.dict.null_token)[0]).sum(dim=-1) == 0
+        scores = self.model(batch.text_vec, mems, cand_vecs, pad_mask)
         return scores
 
     @lru_cache(maxsize=None)  # bounded by opt['memsize'], cache string concats
@@ -186,20 +188,20 @@ class MemnnAgent(TorchRankerAgent):
         padded = torch.LongTensor(bsz, num_mems, seqlen).fill_(0)
 
         for i, mem in enumerate(mems):
-            # tf_offset = len(mem) - 1
+            tf_offset = len(mem) - 1
             for j, m in enumerate(mem):
                 padded[i, j, :len(m)] = m
-                # if self.use_time_features:
-                #     padded[i, j, -1] = self.dict[self._time_feature(tf_offset - j)]
+                if self.use_time_features:
+                    padded[i, j, -1] = self.dict[self._time_feature(tf_offset - j)]
 
         # NOTE: currently below we are adding tf's to every memory,
         # including emtpy ones. above commented-out code adds only to filled
         # ones but is significantly slower to run.
-        if self.use_time_features:
-            nm = num_mems - 1
-            for i in range(num_mems):
-                # put lowest time feature in most recent memory
-                padded[:, nm - i, -1] = self.dict[self._time_feature(i)]
+        # if self.use_time_features:
+        #     nm = num_mems - 1
+        #     for i in range(num_mems):
+        #         # put lowest time feature in most recent memory
+        #         padded[:, nm - i, -1] = self.dict[self._time_feature(i)]
 
         if self.use_cuda:
             padded = padded.cuda()

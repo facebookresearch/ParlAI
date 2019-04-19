@@ -61,13 +61,15 @@ class MemNN(nn.Module):
             raise RuntimeError('Unexpected candidate dimensions {}'
                                ''.format(cands.dim()))
 
-    def forward(self, xs, mems, cands=None):
+    def forward(self, xs, mems, cands=None, pad_mask=None):
         """One forward step.
 
-        :param xs:    (bsz x seqlen) LongTensor queries to the model
-        :param mems:  (bsz x num_mems x seqlen) LongTensor memories
-        :param cands: (num_cands x seqlen) or (bsz x num_cands x seqlen)
-                      LongTensor with candidates to rank
+        :param xs:       (bsz x seqlen) LongTensor queries to the model
+        :param mems:     (bsz x num_mems x seqlen) LongTensor memories
+        :param cands:    (num_cands x seqlen) or (bsz x num_cands x seqlen)
+                         LongTensor with candidates to rank
+        :param pad_mask: (bsz x num_mems) optional mask indicating which tokens
+                         correspond to padding
 
         :returns: scores
             scores contains the model's predicted scores.
@@ -82,7 +84,8 @@ class MemNN(nn.Module):
             out_memory_embs = self.out_memory_lt(mems)
 
             for _ in range(self.hops):
-                state = self.memory_hop(state, in_memory_embs, out_memory_embs)
+                state = self.memory_hop(state, in_memory_embs, out_memory_embs,
+                    pad_mask)
 
         if cands is not None:
             # embed candidates
@@ -120,7 +123,7 @@ class Embed(nn.Embedding):
         elif self.reduction == 'mean':
             # this is more fair than mean(-2) since mean includes null tokens
             sum = embs.sum(-2)
-            lens = input.ne(0).sum(-1).unsqueeze(-1).float()
+            lens = input.ne(0).sum(-1).unsqueeze(-1).float().clamp_(min=1)
             return sum / lens
         else:
             raise RuntimeError(
@@ -188,7 +191,7 @@ class Hop(nn.Module):
             self.rotate = lambda x: x
         self.softmax = nn.Softmax(dim=1)
 
-    def forward(self, query_embs, in_mem_embs, out_mem_embs):
+    def forward(self, query_embs, in_mem_embs, out_mem_embs, pad_mask):
         """Compute MemNN Hop step.
 
         :param query_embs:   (bsz x esz) embedding of queries
@@ -196,11 +199,14 @@ class Hop(nn.Module):
                              for activation
         :param out_mem_embs: bsz list of (num_mems x esz) embedding of memories
                              for outputs
-
+        :param pad_mask      (bsz x num_mems) optional mask indicating which tokens
+                             correspond to padding
         :returns: (bsz x esz) output state
         """
         # rotate query embeddings
         attn = torch.bmm(query_embs.unsqueeze(1), in_mem_embs).squeeze(1)
+        if pad_mask is not None:
+            attn[pad_mask] = float('-inf')
         probs = self.softmax(attn)
         memory_output = torch.bmm(probs.unsqueeze(1), out_mem_embs).squeeze(1)
         output = memory_output + self.rotate(query_embs)
