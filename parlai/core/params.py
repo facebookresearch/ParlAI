@@ -650,6 +650,14 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
+            print("\n".join([
+                "",
+                "*" * 80,
+                "Thank you for using ParlAI! We are conducting a user survey.",
+                "Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9",
+                "*" * 80,
+                ""
+            ]))
 
         return self.opt
 
