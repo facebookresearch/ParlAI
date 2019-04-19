@@ -209,7 +209,7 @@ class NewfacelanguagemodelAgent(LanguageModelEmbAgent):
         output, hidden = self.model(Variable(self.ends[:bsz].view(1, bsz)), self.hidden)
         self.hidden = self.repackage_hidden(hidden)
         output_flat = output.view(-1, len(self.dict))
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         scores = output #batch.text_vec
         preds = targets#batch.label_vec
         score_view = scores.view(-1, scores.size(-1))
