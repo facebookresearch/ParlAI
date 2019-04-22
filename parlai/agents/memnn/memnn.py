@@ -52,7 +52,8 @@ class MemnnAgent(TorchRankerAgent):
 
     @staticmethod
     def model_version():
-        """Return current version of this model, counting up from 0.
+        """
+        Return current version of this model, counting up from 0.
 
         Models may not be backwards-compatible with older versions.
         Version 1 split from version 0 on Sep 7, 2018.
@@ -90,8 +91,7 @@ class MemnnAgent(TorchRankerAgent):
         # Check for rows that have no non-null tokens
         pad_mask = None
         if mems is not None:
-            non_null = mems != self.dict.txt2vec(self.dict.null_token)[0]
-            pad_mask = non_null.sum(dim=-1) == 0
+            pad_mask = (mems != self.NULL_IDX).sum(dim=-1) == 0
         scores = self.model(batch.text_vec, mems, cand_vecs, pad_mask)
         return scores
 
@@ -158,14 +158,17 @@ class MemnnAgent(TorchRankerAgent):
         return obs
 
     def _build_mems(self, mems):
-        """Build memory tensors.
+        """
+        Build memory tensors.
 
         During building, will add time features to the memories if enabled.
 
-        :param: list of length batchsize containing inner lists of 1D tensors
-                containing the individual memories for each row in the batch.
+        :param mems:
+            list of length batchsize containing inner lists of 1D tensors
+            containing the individual memories for each row in the batch.
 
-        :returns: 3d padded tensor of memories (bsz x num_mems x seqlen)
+        :returns:
+            3d padded tensor of memories (bsz x num_mems x seqlen)
         """
         if mems is None:
             return None
@@ -196,15 +199,6 @@ class MemnnAgent(TorchRankerAgent):
                 padded[i, j, :len(m)] = m
                 if self.use_time_features:
                     padded[i, j, -1] = self.dict[self._time_feature(tf_offset - j)]
-
-        # NOTE: currently below we are adding tf's to every memory,
-        # including emtpy ones. above commented-out code adds only to filled
-        # ones but is significantly slower to run.
-        # if self.use_time_features:
-        #     nm = num_mems - 1
-        #     for i in range(num_mems):
-        #         # put lowest time feature in most recent memory
-        #         padded[:, nm - i, -1] = self.dict[self._time_feature(i)]
 
         if self.use_cuda:
             padded = padded.cuda()
