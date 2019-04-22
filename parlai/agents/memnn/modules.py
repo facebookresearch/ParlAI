@@ -134,7 +134,8 @@ class Embed(nn.Embedding):
         elif self.reduction == 'mean':
             # this is more fair than mean(-2) since mean includes null tokens
             sum = embs.sum(-2)
-            lens = input.ne(self.padding_idx).sum(-1).unsqueeze(-1).float().clamp_(min=1)
+            lens = input.ne(self.padding_idx).sum(-1).unsqueeze(-1).float()\
+                .clamp_(min=1)
             return sum / lens
         else:
             raise RuntimeError(
