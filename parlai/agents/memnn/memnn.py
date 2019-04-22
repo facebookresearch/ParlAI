@@ -88,7 +88,10 @@ class MemnnAgent(TorchRankerAgent):
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         mems = self._build_mems(batch.memory_vecs)
         # Check for rows that have no non-null tokens
-        pad_mask = (mems != self.dict.txt2vec(self.dict.null_token)[0]).sum(dim=-1) == 0
+        pad_mask = None
+        if mems is not None:
+            non_null = mems != self.dict.txt2vec(self.dict.null_token)[0]
+            pad_mask = non_null.sum(dim=-1) == 0
         scores = self.model(batch.text_vec, mems, cand_vecs, pad_mask)
         return scores
 
