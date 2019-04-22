@@ -701,6 +701,7 @@ class MTurkManager():
             self._on_socket_dead(agent.worker_id, assignment_id)
         elif mturk_event_type == SNS_ASSIGN_ABANDONDED:
             agent.set_hit_is_abandoned()
+            agent.hit_is_returned = True
             # Treat as a socket_dead event
             self._on_socket_dead(agent.worker_id, assignment_id)
         elif mturk_event_type == SNS_ASSIGN_SUBMITTED:
