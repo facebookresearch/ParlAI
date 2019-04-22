@@ -6,7 +6,7 @@
 
 import torch
 import torch.nn as nn
-
+from parlai.core.utils import neginf
 from functools import lru_cache
 
 
@@ -206,7 +206,7 @@ class Hop(nn.Module):
         # rotate query embeddings
         attn = torch.bmm(query_embs.unsqueeze(1), in_mem_embs).squeeze(1)
         if pad_mask is not None:
-            attn[pad_mask] = float('-inf')
+            attn[pad_mask] = neginf(attn.dtype)
         probs = self.softmax(attn)
         memory_output = torch.bmm(probs.unsqueeze(1), out_mem_embs).squeeze(1)
         output = memory_output + self.rotate(query_embs)
