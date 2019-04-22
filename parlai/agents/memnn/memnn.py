@@ -63,19 +63,21 @@ class MemnnAgent(TorchRankerAgent):
         return 2
 
     def __init__(self, opt, shared=None):
-        # all instances may need some params
-        super().__init__(opt, shared)
-
         self.id = 'MemNN'
         self.memsize = opt['memsize']
         if self.memsize < 0:
             self.memsize = 0
         self.use_time_features = opt['time_features']
+        super().__init__(opt, shared)
 
-        if not shared:
-            if opt['time_features']:
-                for i in range(self.memsize):
-                    self.dict[self._time_feature(i)] = 100000000 + i
+    def build_dictionary(self):
+        """Add the time features to the dictionary before building the model."""
+        d = super().build_dictionary()
+        if self.use_time_features:
+            # add time features to dictionary before building the model
+            for i in range(self.memsize):
+                d[self._time_feature(i)] = 100000000 + i
+        return d
 
     def build_model(self):
         """Build MemNN model."""

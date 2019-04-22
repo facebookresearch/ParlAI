@@ -1179,7 +1179,6 @@ class StaticRightPane extends React.Component {
   render() {
     let v_id = this.props.v_id;
     let XContentPane = getCorrectComponent('XContentPane', v_id);
-    let XDoneResponse = getCorrectComponent('XDoneResponse', v_id);
 
     // TODO move to CSS
     let right_pane = {
@@ -1192,7 +1191,6 @@ class StaticRightPane extends React.Component {
     return (
       <div id="right-pane" style={right_pane}>
         <XContentPane {...this.props} />
-        <XDoneResponse {...this.props} onInputResize={() => {}}/>
       </div>
     );
   }
@@ -1278,6 +1276,7 @@ class LeftPane extends React.Component {
       return (
         <div id="left-pane" className={pane_size} style={frame_style}>
           <XTaskDescription {...this.props} />
+          {this.props.children}
         </div>
       );
     } else {
@@ -1343,6 +1342,7 @@ class LeftPane extends React.Component {
             {nav_items}
           </Nav>
           {nav_panels}
+          {this.props.children}
         </div>
       );
     }
@@ -1370,9 +1370,21 @@ class StaticContentLayout extends React.Component {
     let v_id = this.props.v_id;
     let XLeftPane = getCorrectComponent('XLeftPane', v_id);
     let XStaticRightPane = getCorrectComponent('XStaticRightPane', v_id);
+    let XDoneResponse = getCorrectComponent('XDoneResponse', v_id);
+    let {frame_height, ...others} = this.props;
+    let done_button = null;
+    if (this.props.task_done) {
+      done_button = <XDoneResponse {...this.props} onInputResize={() => {}}/>
+    }
     return (
       <div className="row" id="ui-content">
-        <XLeftPane {...this.props} layout_style={layout_style} />
+        <XLeftPane
+          {...others}
+          layout_style={layout_style}
+          frame_height={frame_height}
+        >
+          {done_button}
+        </XLeftPane>
         <XStaticRightPane {...this.props} layout_style={layout_style} />
       </div>
     );
