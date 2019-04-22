@@ -96,8 +96,7 @@ class NoSilenceTeacher(Convai2Teacher):
         super().__init__(opt, shared)
 
         # Calculate the correct number of examples.
-        dialogs = [d['dialogue'] for d in self.data]
-        self.num_exs -= len([0 for d in dialogs if len(d) >= 2])
+        self.num_exs = sum(len(d['dialogue']) - 1 for d in self.data)
 
     def get(self, episode_idx, entry_idx=0):
         # Sometimes we're speaker 1 and sometimes we're speaker 2
