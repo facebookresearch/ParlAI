@@ -4,10 +4,10 @@ about: Reporting problems or unexpected behavior with an Agent or pretrained mod
 
 ---
 
-**Bug Description**
+**Bug description**
 Please enter a clear and concise description of what the bug is.
 
-**Reproduction Steps**
+**Reproduction steps**
 Enter steps to reproduce the behavior.
 
 **Expected behavior**
