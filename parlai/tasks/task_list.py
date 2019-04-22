@@ -890,6 +890,20 @@ task_list = [
         )
     },
     {
+        "id": "DailyDialog-nosilence",
+        "display_name": "Daily Dialog",
+        "task": "dailydialog:NoSilence",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "A dataset of chitchat dialogues with strong annotations for "
+            "topic, emotion and utterance act. This version contains both sides "
+            "of every conversation, and uses the official train/valid/test splits "
+            "from the original authors. See https://arxiv.org/abs/1710.03957 "
+            "for more information. This version doesn't contain __SILENCE__ "
+            "tokens, thus the dialog is shifted when we are the first speaker."
+        )
+    },
+    {
         "id": "EmpatheticDialogues",
         "display_name": "Empathetic Dialogues",
         "task": "empathetic_dialogues",
