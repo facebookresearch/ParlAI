@@ -91,8 +91,9 @@ class Convai2Teacher(FixedDialogTeacher):
 
 
 class NoStartTeacher(Convai2Teacher):
-    """ Same as default teacher, but it doesn't contain __SILENCE__ entries.
-        If we are the first speaker, then the first utterance is skipped.
+    """
+    Same as default teacher, but it doesn't contain __SILENCE__ entries.
+    If we are the first speaker, then the first utterance is skipped.
     """
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -100,7 +101,7 @@ class NoStartTeacher(Convai2Teacher):
         # Calculate the correct number of examples.
         self.num_exs = sum(len(d['dialogue']) - 1 for d in self.data)
 
-        # Store all episodes in self.data
+        # Store all episodes separately, so we can deal with 2-turn dialogs.
         self.all_eps = self.data + [d for d in self.data if len(d['dialogue']) > 2]
         self.num_eps = len(self.all_eps)
 
@@ -110,7 +111,7 @@ class NoStartTeacher(Convai2Teacher):
 
         # Sometimes we're speaker 1 and sometimes we're speaker 2.
         # We can't be speaker 1 if dialog has only 2 turns.
-        speaker_id = episode_idx % 2 if len(entries) > 2 else 0
+        speaker_id = int(episode_idx >= len(self.data))
 
         their_turn = entries[speaker_id + 2 * entry_idx]
         my_turn = entries[1 + speaker_id + 2 * entry_idx]
