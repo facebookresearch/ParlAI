@@ -92,6 +92,13 @@ class Convai2Teacher(FixedDialogTeacher):
 
 class NoSilenceTeacher(Convai2Teacher):
     # Same as the default teacher, but it doesn't contain __SILENCE__ entries.
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+
+        # Calculate the correct number of examples.
+        dialogs = [d['dialogue'] for d in self.data]
+        self.num_exs -= len([0 for d in dialogs if len(d) >= 2])
+
     def get(self, episode_idx, entry_idx=0):
         # Sometimes we're speaker 1 and sometimes we're speaker 2
         speaker_id = episode_idx % 2
