@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Provides an argument parser and a set of default command line options for
+"""
+Provides an argument parser and a set of default command line options for
 using the ParlAI package.
 """
 
@@ -57,9 +58,11 @@ def str2floats(s):
 
 
 def str2class(value):
-    """From import path string, returns the class specified. For example, the
-    string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent' returns
-    <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
+    """
+    From import path string, returns the class specified.
+
+    For example, the string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent'
+    returns <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
     """
     if ':' not in value:
         raise RuntimeError('Use a colon before the name of the class.')
@@ -77,7 +80,8 @@ def class2str(value):
 
 
 def fix_underscores(args):
-    """Converts underscores to hyphens in args.
+    """
+    Converts underscores to hyphens in args.
 
     For example, converts '--gradient_clip' to '--gradient-clip'.
 
@@ -112,7 +116,8 @@ class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
 
 
 class ParlaiParser(argparse.ArgumentParser):
-    """Pseudo-extension of ``argparse`` which sets a number of parameters
+    """
+    Pseudo-extension of ``argparse`` which sets a number of parameters
     for the ParlAI framework. More options can be added specific to other
     modules by passing this object and calling ``add_arg()`` or
     ``add_argument()`` on it.
@@ -126,11 +131,15 @@ class ParlaiParser(argparse.ArgumentParser):
         add_model_args=False,
         description='ParlAI parser',
     ):
-        """Initializes the ParlAI argparser.
-        - add_parlai_args (default True) initializes the default arguments for
-        ParlAI package, including the data download paths and task arguments.
-        - add_model_args (default False) initializes the default arguments for
-        loading models, including initializing arguments from that model.
+        """
+        Initializes the ParlAI argparser.
+
+        :param add_parlai_args:
+            (default True) initializes the default arguments for ParlAI
+            package, including the data download paths and task arguments.
+        :param add_model_args:
+            (default False) initializes the default arguments for loading
+            models, including initializing arguments from that model.
         """
         super().__init__(description=description, allow_abbrev=False,
                          conflict_handler='resolve',
@@ -267,6 +276,10 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.add_argument(
             '--heroku-team', dest='heroku_team', default=None,
             help='Specify Heroku team name to use for launching Dynos.'
+        )
+        mturk.add_argument(
+            '--tmp-dir', dest='tmp_dir', default=None,
+            help='Specify location to use for scratch builds and such.'
         )
 
         mturk.set_defaults(is_sandbox=True)
@@ -639,6 +652,14 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
+            print("\n".join([
+                "",
+                "*" * 80,
+                "Thank you for using ParlAI! We are conducting a user survey.",
+                "Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9",
+                "*" * 80,
+                ""
+            ]))
 
         return self.opt
 
