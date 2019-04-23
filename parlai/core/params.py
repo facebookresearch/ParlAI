@@ -98,7 +98,8 @@ def fix_underscores(args):
 
 
 class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
-    """Produces a custom-formatted `--help` option
+    """
+    Produces a custom-formatted `--help` option
 
     See https://goo.gl/DKtHb5 for details.
     """
@@ -579,8 +580,10 @@ class ParlaiParser(argparse.ArgumentParser):
         return super().parse_known_args(args, namespace)
 
     def parse_args(self, args=None, namespace=None, print_args=True):
-        """Parses the provided arguments and returns a dictionary of the
-        ``args``. We specifically remove items with ``None`` as values in order
+        """
+        Parses the provided arguments and returns a dictionary of the ``args``.
+
+        We specifically remove items with ``None`` as values in order
         to support the style ``opt.get(key, default)``, which would otherwise
         return ``None``.
         """
