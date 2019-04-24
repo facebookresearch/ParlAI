@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Provides an argument parser and a set of default command line options for
+"""
+Provides an argument parser and a set of default command line options for
 using the ParlAI package.
 """
 
@@ -57,9 +58,11 @@ def str2floats(s):
 
 
 def str2class(value):
-    """From import path string, returns the class specified. For example, the
-    string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent' returns
-    <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
+    """
+    From import path string, returns the class specified.
+
+    For example, the string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent'
+    returns <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
     """
     if ':' not in value:
         raise RuntimeError('Use a colon before the name of the class.')
@@ -77,7 +80,8 @@ def class2str(value):
 
 
 def fix_underscores(args):
-    """Converts underscores to hyphens in args.
+    """
+    Converts underscores to hyphens in args.
 
     For example, converts '--gradient_clip' to '--gradient-clip'.
 
@@ -94,7 +98,8 @@ def fix_underscores(args):
 
 
 class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
-    """Produces a custom-formatted `--help` option
+    """
+    Produces a custom-formatted `--help` option
 
     See https://goo.gl/DKtHb5 for details.
     """
@@ -112,7 +117,8 @@ class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
 
 
 class ParlaiParser(argparse.ArgumentParser):
-    """Pseudo-extension of ``argparse`` which sets a number of parameters
+    """
+    Pseudo-extension of ``argparse`` which sets a number of parameters
     for the ParlAI framework. More options can be added specific to other
     modules by passing this object and calling ``add_arg()`` or
     ``add_argument()`` on it.
@@ -126,11 +132,15 @@ class ParlaiParser(argparse.ArgumentParser):
         add_model_args=False,
         description='ParlAI parser',
     ):
-        """Initializes the ParlAI argparser.
-        - add_parlai_args (default True) initializes the default arguments for
-        ParlAI package, including the data download paths and task arguments.
-        - add_model_args (default False) initializes the default arguments for
-        loading models, including initializing arguments from that model.
+        """
+        Initializes the ParlAI argparser.
+
+        :param add_parlai_args:
+            (default True) initializes the default arguments for ParlAI
+            package, including the data download paths and task arguments.
+        :param add_model_args:
+            (default False) initializes the default arguments for loading
+            models, including initializing arguments from that model.
         """
         super().__init__(description=description, allow_abbrev=False,
                          conflict_handler='resolve',
@@ -156,9 +166,8 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_parlai_data_path(self, argument_group=None):
         if argument_group is None:
             argument_group = self
-        default_data_path = os.path.join(self.parlai_home, 'data')
         argument_group.add_argument(
-            '-dp', '--datapath', default=default_data_path,
+            '-dp', '--datapath', default=None,
             help='path to datasets, defaults to {parlai_dir}/data')
 
     def add_mturk_args(self):
@@ -269,6 +278,10 @@ class ParlaiParser(argparse.ArgumentParser):
             '--heroku-team', dest='heroku_team', default=None,
             help='Specify Heroku team name to use for launching Dynos.'
         )
+        mturk.add_argument(
+            '--tmp-dir', dest='tmp_dir', default=None,
+            help='Specify location to use for scratch builds and such.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
@@ -306,7 +319,6 @@ class ParlaiParser(argparse.ArgumentParser):
         messenger.set_defaults(verbose=False)
 
     def add_parlai_args(self, args=None):
-        default_downloads_path = os.path.join(self.parlai_home, 'downloads')
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
             '-v', '--show-advanced-args', action='store_true',
@@ -316,7 +328,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         parlai.add_argument(
-            '--download-path', default=default_downloads_path,
+            '--download-path', default=None,
             hidden=True,
             help='path for non-data dependencies to store any needed files.'
                  'defaults to {parlai_dir}/downloads')
@@ -568,8 +580,10 @@ class ParlaiParser(argparse.ArgumentParser):
         return super().parse_known_args(args, namespace)
 
     def parse_args(self, args=None, namespace=None, print_args=True):
-        """Parses the provided arguments and returns a dictionary of the
-        ``args``. We specifically remove items with ``None`` as values in order
+        """
+        Parses the provided arguments and returns a dictionary of the ``args``.
+
+        We specifically remove items with ``None`` as values in order
         to support the style ``opt.get(key, default)``, which would otherwise
         return ``None``.
         """
@@ -581,10 +595,19 @@ class ParlaiParser(argparse.ArgumentParser):
         self.opt['parlai_home'] = self.parlai_home
 
         # set environment variables
+        # Priority for setting the datapath (same applies for download_path):
+        # --datapath -> os.environ['PARLAI_DATAPATH'] -> <self.parlai_home>/data
         if self.opt.get('download_path'):
             os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
+        elif os.environ.get('PARLAI_DOWNPATH') is None:
+            os.environ['PARLAI_DOWNPATH'] = os.path.join(self.parlai_home, 'downloads')
         if self.opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
+        elif os.environ.get('PARLAI_DATAPATH') is None:
+            os.environ['PARLAI_DATAPATH'] = os.path.join(self.parlai_home, 'data')
+
+        self.opt['download_path'] = os.environ['PARLAI_DOWNPATH']
+        self.opt['datapath'] = os.environ['PARLAI_DATAPATH']
 
         # set all arguments specified in commandline as overridable
         option_strings_dict = {}
@@ -634,6 +657,14 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
+            print("\n".join([
+                "",
+                "*" * 80,
+                "Thank you for using ParlAI! We are conducting a user survey.",
+                "Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9",
+                "*" * 80,
+                ""
+            ]))
 
         return self.opt
 

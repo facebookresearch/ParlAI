@@ -120,6 +120,72 @@ class TestTransformerRanker(unittest.TestCase):
             'test f1 = {}\nLOG:\n{}'.format(test['f1'], stdout)
         )
 
+    @testing_utils.retry(ntries=3)
+    def test_xlm(self):
+        stdout, valid, test = testing_utils.train_model(dict(
+            task='integration_tests:candidate',
+            model='transformer/ranker',
+            optimizer='adamax',
+            learningrate=7e-3,
+            batchsize=16,
+            validation_every_n_epochs=5,
+            validation_patience=2,
+            n_layers=1,
+            n_heads=4,
+            ffn_size=64,
+            embedding_size=32,
+            candidates='batch',
+            eval_candidates='inline',
+            gradient_clip=0.5,
+            variant='xlm',
+            activation='gelu',
+        ))
+
+        self.assertGreaterEqual(
+            valid['hits@1'],
+            0.90,
+            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout)
+        )
+        self.assertGreaterEqual(
+            test['hits@1'],
+            0.90,
+            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
+        )
+
+    @testing_utils.retry(ntries=3)
+    def test_alt_reduction(self):
+        """Test a transformer ranker reduction method other than `mean`."""
+        stdout, valid, test = testing_utils.train_model(dict(
+            task='integration_tests:candidate',
+            model='transformer/ranker',
+            optimizer='adamax',
+            learningrate=7e-3,
+            batchsize=16,
+            validation_every_n_epochs=5,
+            validation_patience=2,
+            n_layers=1,
+            n_heads=4,
+            ffn_size=64,
+            embedding_size=32,
+            candidates='batch',
+            eval_candidates='inline',
+            gradient_clip=0.5,
+            variant='xlm',
+            activation='gelu',
+            reduction_type='first',  # this is really what we're trying to test for
+        ))
+
+        self.assertGreaterEqual(
+            valid['hits@1'],
+            0.90,
+            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout)
+        )
+        self.assertGreaterEqual(
+            test['hits@1'],
+            0.90,
+            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
+        )
+
 
 class TestTransformerGenerator(unittest.TestCase):
     """Checks that the generative transformer can learn basic tasks."""
@@ -260,6 +326,46 @@ class TestTransformerGenerator(unittest.TestCase):
         ))
         self.assertIn('valid:{', stdout)
         self.assertIn('test:{', stdout)
+
+    @testing_utils.retry(ntries=3)
+    def test_xlm(self):
+        stdout, valid, test = testing_utils.train_model(dict(
+            task='integration_tests:nocandidate',
+            model='transformer/generator',
+            optimizer='adamax',
+            learningrate=7e-3,
+            batchsize=32,
+            num_epochs=20,
+            n_layers=1,
+            n_heads=1,
+            ffn_size=32,
+            embedding_size=32,
+            beam_size=1,
+            variant='xlm',
+            activation='gelu',
+            n_segments=8,  # doesn't do anything but still good to test
+        ))
+
+        self.assertLessEqual(
+            valid['ppl'],
+            1.30,
+            "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+        )
+        self.assertGreaterEqual(
+            valid['bleu'],
+            0.90,
+            "valid blue = {}\nLOG:\n{}".format(valid['bleu'], stdout)
+        )
+        self.assertLessEqual(
+            test['ppl'],
+            1.30,
+            "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+        )
+        self.assertGreaterEqual(
+            test['bleu'],
+            0.90,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+        )
 
 
 class TestLearningRateScheduler(unittest.TestCase):
