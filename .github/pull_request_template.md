@@ -1,9 +1,3 @@
----
-name: "[Pull Request]"
-about: Submitting a pull request
-
----
-
 **Patch description**
 Please enter a clear and concise description of what your pull request does, and why
 it is necessary. If your patch fixes an issue, please reference that issue here.
