@@ -595,6 +595,8 @@ class ParlaiParser(argparse.ArgumentParser):
         self.opt['parlai_home'] = self.parlai_home
 
         # set environment variables
+        # Priority for setting the datapath (same applies for download_path):
+        # --datapath -> os.environ['PARLAI_DATAPATH'] -> <self.parlai_home>/data
         if self.opt.get('download_path'):
             os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
         elif os.environ.get('PARLAI_DOWNPATH') is None:
