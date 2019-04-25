@@ -275,7 +275,8 @@ class StaticApp extends React.Component {
       messages: [],
       agent_id: 'NewWorker',
       task_data: {},
-      response_data: {},
+      response_data: [],
+      current_subtask_index: null,
       volume: 1, // min volume is 0, max is 1, TODO pull from local-storage?
     };
   }
@@ -308,7 +309,21 @@ class StaticApp extends React.Component {
   }
 
   onValidData(valid, response_data) {
-    this.setState({task_done: valid, response_data: response_data});
+    all_response_data = this.state.response_data;
+    show_next_task_button = false;
+    all_response_data[this.state.current_subtask_index] = response_data;
+    if (this.state.current_subtask_index < len(this.state.task_data) - 1) {
+      show_next_task_button = true;
+    }
+    this.setState(
+      {show_next_task_button: show_next_task_button, task_done: valid, response_data: response_data}
+    );
+  }
+
+  //DOES THIS NEED TO BE OUTSIDE THE CLASS?
+  nextButtonCallback() {
+    next_subtask_index = this.state.current_subtask_index + 1;
+    this.setState({current_subtask_index: next_subtask_index});
   }
 
   render() {
@@ -323,6 +338,7 @@ class StaticApp extends React.Component {
           onNewTaskData={new_task_data =>
             this.setState({
               task_data: Object.assign(this.state.task_data, new_task_data),
+              current_subtask_index: 0,
             })
           }
           onRequestMessage={() => {}}
@@ -382,7 +398,7 @@ class StaticApp extends React.Component {
           initialization_status={this.state.initialization_status}
           is_cover_page={this.state.is_cover_page}
           frame_height={this.state.frame_height}
-          task_data={this.state.task_data}
+          task_data={this.state.task_data[this.state.current_subtask_index]}
           world_state={this.state.world_state}
           v_id={this.state.agent_id}
           allDoneCallback={() => staticAllDoneCallback(
@@ -391,6 +407,7 @@ class StaticApp extends React.Component {
             this.state.worker_id,
             this.state.response_data,
           )}
+          nextButtonCallback={this.nextButtonCallback}
           volume={this.state.volume}
           onVolumeChange={v => this.setState({ volume: v })}
           display_feedback={DISPLAY_FEEDBACK}

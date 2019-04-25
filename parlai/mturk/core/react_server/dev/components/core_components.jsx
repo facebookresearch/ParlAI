@@ -707,6 +707,68 @@ class ReviewButtons extends React.Component {
   }
 }
 
+class NextButton extends React.Component {
+  // This component is responsible for initiating the click
+  // on the mturk form's submit button.
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      feedback_shown: this.props.display_feedback,
+      feedback_given: null,
+    };
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.onInputResize !== undefined) {
+      this.props.onInputResize();
+    }
+  }
+
+  render() {
+    let review_flow = null;
+    let next_button = (
+      <button
+        id="next-button"
+        type="button"
+        className="btn btn-primary btn-lg"
+        onClick={() => this.props.nextButtonCallback()}
+      >
+        <span className="glyphicon glyphicon-ok-circle" aria-hidden="true" />{' '}
+        Next
+      </button>
+    );
+    if (this.props.display_feedback) {
+      if (this.state.feedback_shown) {
+        let XReviewButtons = getCorrectComponent(
+          'XReviewButtons',
+          this.props.v_id
+        );
+        review_flow = (
+          <XReviewButtons
+            {...this.props}
+            onChoice={did_give =>
+              this.setState({
+                feedback_shown: false,
+                feedback_given: did_give,
+              })
+            }
+          />
+        );
+        next_button = null;
+      } else if (this.state.feedback_given) {
+        review_flow = <span>Thanks for the feedback!</span>;
+      }
+    }
+    return (
+      <div>
+        {review_flow}
+        <div>{next_button}</div>
+      </div>
+    );
+  }
+}
+
 class DoneButton extends React.Component {
   // This component is responsible for initiating the click
   // on the mturk form's submit button.
@@ -794,9 +856,13 @@ class DoneResponse extends React.Component {
       paddingRight: '25px',
       float: 'left',
     };
-    let done_button = <XDoneButton {...this.props} />;
-    if (!this.props.task_done) {
-      done_button = null;
+    let button = null;
+    if (this.props.task_done) {
+      if (this.props.show_next_task_button === null || !this.props.show_next_task_button) {
+        button = <XDoneButton {...this.props} />;
+      } else {
+        button = <XNextButton {...this.props} />;
+      }
     }
     return (
       <div
@@ -805,7 +871,7 @@ class DoneResponse extends React.Component {
         style={pane_style}
       >
         {inactive_pane}
-        {done_button}
+        {button}
       </div>
     );
   }
@@ -1250,6 +1316,7 @@ class LeftPane extends React.Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (
+      nextProps.task_data !== undefined &&
       nextProps.task_data.last_update !== undefined &&
       nextProps.task_data.last_update > prevState.last_update
     ) {
@@ -1372,9 +1439,9 @@ class StaticContentLayout extends React.Component {
     let XStaticRightPane = getCorrectComponent('XStaticRightPane', v_id);
     let XDoneResponse = getCorrectComponent('XDoneResponse', v_id);
     let {frame_height, ...others} = this.props;
-    let done_button = null;
+    let next_or_done_button = null;
     if (this.props.task_done) {
-      done_button = <XDoneResponse {...this.props} onInputResize={() => {}}/>
+        next_or_done_button = <XDoneResponse {...this.props} onInputResize={() => {}}/>
     }
     return (
       <div className="row" id="ui-content">
@@ -1383,7 +1450,7 @@ class StaticContentLayout extends React.Component {
           layout_style={layout_style}
           frame_height={frame_height}
         >
-          {done_button}
+          {next_or_done_button}
         </XLeftPane>
         <XStaticRightPane {...this.props} layout_style={layout_style} />
       </div>
