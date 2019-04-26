@@ -23,7 +23,7 @@ def make_parlai_format(outpath, dtype, data):
             s += "labels:" + ans['input_text']
             if question['turn_id'] < len(each['questions']):
                 s += '\n'
-            s += '\t\t' + "episode_done:True" + '\n'
+        s += '\t\t' + "episode_done:True" + '\n'
         fout.write(s)
     fout.close()
 
