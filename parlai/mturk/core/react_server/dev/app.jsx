@@ -324,7 +324,7 @@ class StaticApp extends React.Component {
       {
         show_next_task_button: show_next_task_button,
         subtask_done: valid,
-        task_done: task_done;
+        task_done: task_done,
         response_data: all_response_data,
       },
       this.render
@@ -430,6 +430,7 @@ class StaticApp extends React.Component {
           )}
           nextButtonCallback={() => this.nextButtonCallback()}
           show_next_task_button={this.state.show_next_task_button}
+          current_subtask_index={this.state.current_subtask_index}
           volume={this.state.volume}
           onVolumeChange={v => this.setState({ volume: v })}
           display_feedback={DISPLAY_FEEDBACK}

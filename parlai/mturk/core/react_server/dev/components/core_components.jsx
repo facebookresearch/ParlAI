@@ -860,7 +860,7 @@ class DoneResponse extends React.Component {
     let button = null;
     if (this.props.task_done) {
       button = <XDoneButton {...this.props} />;
-    } else if (this.props.show_next_task_button !== null && this.props.show_next_task_button) {
+    } else if (this.props.subtask_done && this.props.show_next_task_button !== null && this.props.show_next_task_button) {
       button = <XNextButton {...this.props} />;
     }
     return (
@@ -1439,7 +1439,7 @@ class StaticContentLayout extends React.Component {
     let XDoneResponse = getCorrectComponent('XDoneResponse', v_id);
     let {frame_height, ...others} = this.props;
     let next_or_done_button = null;
-    if (this.props.task_done) {
+    if (this.props.subtask_done) {
         next_or_done_button = <XDoneResponse {...this.props} onInputResize={() => {}}/>
     }
     return (
