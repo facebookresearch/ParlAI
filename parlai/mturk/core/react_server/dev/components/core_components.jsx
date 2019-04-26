@@ -839,6 +839,7 @@ class DoneResponse extends React.Component {
   render() {
     let v_id = this.props.v_id;
     let XDoneButton = getCorrectComponent('XDoneButton', v_id);
+    let XNextButton = getCorrectComponent('XNextButton', v_id);
 
     let inactive_pane = null;
     if (this.props.done_text) {
@@ -858,11 +859,9 @@ class DoneResponse extends React.Component {
     };
     let button = null;
     if (this.props.task_done) {
-      if (this.props.show_next_task_button === null || !this.props.show_next_task_button) {
-        button = <XDoneButton {...this.props} />;
-      } else {
-        button = <XNextButton {...this.props} />;
-      }
+      button = <XDoneButton {...this.props} />;
+    } else if (this.props.show_next_task_button !== null && this.props.show_next_task_button) {
+      button = <XNextButton {...this.props} />;
     }
     return (
       <div
@@ -1560,6 +1559,7 @@ component_list = {
   XDoneResponse: ['XDoneResponse', DoneResponse],
   XIdleResponse: ['XIdleResponse', IdleResponse],
   XDoneButton: ['XDoneButton', DoneButton],
+  XNextButton: ['XNextButton', NextButton],
   XChatPane: ['XChatPane', ChatPane],
   XWaitingMessage: ['XWaitingMessage', WaitingMessage],
   XMessageList: ['XMessageList', MessageList],
@@ -1582,6 +1582,7 @@ export {
   ChatPane,
   IdleResponse,
   DoneButton,
+  NextButton,
   DoneResponse,
   TextResponse,
   ResponsePane,
