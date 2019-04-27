@@ -617,7 +617,7 @@ class ParlaiParser(argparse.ArgumentParser):
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
 
-        self._infer_datapath(self.opt)
+        self.opt = self._infer_datapath(self.opt)
 
         # set all arguments specified in commandline as overridable
         option_strings_dict = {}
