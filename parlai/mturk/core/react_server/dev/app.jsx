@@ -331,7 +331,6 @@ class StaticApp extends React.Component {
     );
   }
 
-  //DOES THIS NEED TO BE OUTSIDE THE CLASS?
   nextButtonCallback() {
     let next_subtask_index = this.state.current_subtask_index + 1;
     this.setState(
