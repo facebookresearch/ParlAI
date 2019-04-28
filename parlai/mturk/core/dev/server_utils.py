@@ -130,6 +130,7 @@ def compile_server(task_files_to_copy, task_name, tmp_dir):
 
     hit_config_file_path = os.path.join(tmp_dir, 'hit_config.json')
     sh.mv(hit_config_file_path, target_resource_dir)
+    return heroku_server_development_path
 
 
 def setup_heroku_server(task_name, task_files_to_copy=None,
