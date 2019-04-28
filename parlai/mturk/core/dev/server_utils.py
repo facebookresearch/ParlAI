@@ -15,7 +15,7 @@ import shlex
 import shutil
 import subprocess
 import time
-import parlai.mturk.core.shared_utils as shared_utils
+import parlai.mturk.core.dev.shared_utils as shared_utils
 
 region_name = 'us-east-1'
 user_name = getpass.getuser()
