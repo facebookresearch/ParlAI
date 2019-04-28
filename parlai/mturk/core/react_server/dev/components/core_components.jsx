@@ -709,60 +709,29 @@ class ReviewButtons extends React.Component {
 
 class NextButton extends React.Component {
   // This component is responsible for initiating the click
-  // on the mturk form's submit button.
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      feedback_shown: this.props.display_feedback,
-      feedback_given: null,
-    };
-  }
+  // on the next button to get the next subtask from the app
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.onInputResize !== undefined) {
       this.props.onInputResize();
     }
   }
-
   render() {
-    let review_flow = null;
     let next_button = (
       <button
         id="next-button"
         type="button"
-        className="btn btn-primary btn-lg"
+        className="btn btn-default btn-lg"
         onClick={() => this.props.nextButtonCallback()}
       >
-        <span className="glyphicon glyphicon-ok-circle" aria-hidden="true" />{' '}
+        <span
+          className="glyphicon glyphicon-chevron-right" aria-hidden="true" />{' '}
         Next
       </button>
     );
-    if (this.props.display_feedback) {
-      if (this.state.feedback_shown) {
-        let XReviewButtons = getCorrectComponent(
-          'XReviewButtons',
-          this.props.v_id
-        );
-        review_flow = (
-          <XReviewButtons
-            {...this.props}
-            onChoice={did_give =>
-              this.setState({
-                feedback_shown: false,
-                feedback_given: did_give,
-              })
-            }
-          />
-        );
-        next_button = null;
-      } else if (this.state.feedback_given) {
-        review_flow = <span>Thanks for the feedback!</span>;
-      }
-    }
+
     return (
       <div>
-        {review_flow}
         <div>{next_button}</div>
       </div>
     );
@@ -860,7 +829,7 @@ class DoneResponse extends React.Component {
     let button = null;
     if (this.props.task_done) {
       button = <XDoneButton {...this.props} />;
-    } else if (this.props.subtask_done && this.props.show_next_task_button !== null && this.props.show_next_task_button) {
+    } else if (this.props.subtask_done && this.props.show_next_task_button) {
       button = <XNextButton {...this.props} />;
     }
     return (
@@ -1440,7 +1409,9 @@ class StaticContentLayout extends React.Component {
     let {frame_height, ...others} = this.props;
     let next_or_done_button = null;
     if (this.props.subtask_done) {
-        next_or_done_button = <XDoneResponse {...this.props} onInputResize={() => {}}/>
+        next_or_done_button = (
+          <XDoneResponse {...this.props} onInputResize={() => {}}/>
+        )
     }
     return (
       <div className="row" id="ui-content">
