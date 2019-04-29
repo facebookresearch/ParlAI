@@ -81,9 +81,8 @@ class TopicsGenerator(object):
             build(self.opt)
         with open(self.topics_path) as f:
             self.data = json.load(f)
-        self.seen_topics = self.data['train']['train_mtdo_topics']
-        self.unseen_topics = self.data['valid']['valid_mtdo_topics'] + \
-            self.data['test']['test_mtdo_topics']
+        self.seen_topics = self.data['train']
+        self.unseen_topics = self.data['valid'] + self.data['test']
 
     def get_topics(self, seen=True, num=3):
         if seen:
