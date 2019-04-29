@@ -724,9 +724,9 @@ class NextButton extends React.Component {
         className="btn btn-default btn-lg"
         onClick={() => this.props.nextButtonCallback()}
       >
+        Next
         <span
           className="glyphicon glyphicon-chevron-right" aria-hidden="true" />{' '}
-        Next
       </button>
     );
 

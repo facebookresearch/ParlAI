@@ -336,7 +336,7 @@ class StaticApp extends React.Component {
       {
         current_subtask_index: next_subtask_index,
         task_data: Object.assign(
-          this.state.task_data, this.state.all_tasks_data[next_subtask_index]),
+          {}, this.state.task_data, this.state.all_tasks_data[next_subtask_index]),
         subtask_done: false,
       },
     );
@@ -354,8 +354,8 @@ class StaticApp extends React.Component {
           onNewTaskData={new_task_data =>
             this.setState({
               all_tasks_data: Object.assign(
-                this.state.all_tasks_data, new_task_data),
-              task_data: Object.assign(this.state.task_data, new_task_data[0]),
+                {}, this.state.all_tasks_data, new_task_data),
+              task_data: Object.assign({}, this.state.task_data, new_task_data[0]),
               current_subtask_index: 0,
               num_subtasks: new_task_data.length,
             })
