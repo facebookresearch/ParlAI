@@ -166,9 +166,8 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_parlai_data_path(self, argument_group=None):
         if argument_group is None:
             argument_group = self
-        default_data_path = os.path.join(self.parlai_home, 'data')
         argument_group.add_argument(
-            '-dp', '--datapath', default=default_data_path,
+            '-dp', '--datapath', default=None,
             help='path to datasets, defaults to {parlai_dir}/data')
 
     def add_mturk_args(self):
@@ -320,7 +319,6 @@ class ParlaiParser(argparse.ArgumentParser):
         messenger.set_defaults(verbose=False)
 
     def add_parlai_args(self, args=None):
-        default_downloads_path = os.path.join(self.parlai_home, 'downloads')
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
             '-v', '--show-advanced-args', action='store_true',
@@ -330,7 +328,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         parlai.add_argument(
-            '--download-path', default=default_downloads_path,
+            '--download-path', default=None,
             hidden=True,
             help='path for non-data dependencies to store any needed files.'
                  'defaults to {parlai_dir}/downloads')
@@ -533,6 +531,7 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
+        parsed = self._infer_datapath(parsed)
 
         # find which image mode specified if any, and add additional arguments
         image_mode = parsed.get('image_mode', None)
@@ -581,6 +580,28 @@ class ParlaiParser(argparse.ArgumentParser):
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
 
+    def _infer_datapath(self, opt):
+        """
+        Sets the value for opt['datapath'] and opt['download_path'], correctly
+        respecting environmental variables and the default.
+        """
+        # set environment variables
+        # Priority for setting the datapath (same applies for download_path):
+        # --datapath -> os.environ['PARLAI_DATAPATH'] -> <self.parlai_home>/data
+        if opt.get('download_path'):
+            os.environ['PARLAI_DOWNPATH'] = opt['download_path']
+        elif os.environ.get('PARLAI_DOWNPATH') is None:
+            os.environ['PARLAI_DOWNPATH'] = os.path.join(self.parlai_home, 'downloads')
+        if opt.get('datapath'):
+            os.environ['PARLAI_DATAPATH'] = opt['datapath']
+        elif os.environ.get('PARLAI_DATAPATH') is None:
+            os.environ['PARLAI_DATAPATH'] = os.path.join(self.parlai_home, 'data')
+
+        opt['download_path'] = os.environ['PARLAI_DOWNPATH']
+        opt['datapath'] = os.environ['PARLAI_DATAPATH']
+
+        return opt
+
     def parse_args(self, args=None, namespace=None, print_args=True):
         """
         Parses the provided arguments and returns a dictionary of the ``args``.
@@ -596,11 +617,7 @@ class ParlaiParser(argparse.ArgumentParser):
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
 
-        # set environment variables
-        if self.opt.get('download_path'):
-            os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
-        if self.opt.get('datapath'):
-            os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
+        self.opt = self._infer_datapath(self.opt)
 
         # set all arguments specified in commandline as overridable
         option_strings_dict = {}
@@ -650,6 +667,14 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
+            print("\n".join([
+                "",
+                "*" * 80,
+                "Thank you for using ParlAI! We are conducting a user survey.",
+                "Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9",
+                "*" * 80,
+                ""
+            ]))
 
         return self.opt
 
