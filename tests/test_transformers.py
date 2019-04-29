@@ -321,7 +321,7 @@ class TestTransformerGenerator(unittest.TestCase):
             num_epochs=1,
             numthreads=1,
             no_cuda=True,
-            embeddingsize=16,
+            embedding_size=16,
             hiddensize=16,
         ))
         self.assertIn('valid:{', stdout)
