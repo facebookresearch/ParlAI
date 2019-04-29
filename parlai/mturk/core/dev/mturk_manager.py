@@ -14,16 +14,16 @@ import uuid
 import errno
 import requests
 
-from parlai.mturk.core.agents import AssignState
-from parlai.mturk.core.socket_manager import (
+from parlai.mturk.core.dev.agents import AssignState
+from parlai.mturk.core.dev.socket_manager import (
     Packet, SocketManager, StaticSocketManager
 )
-from parlai.mturk.core.worker_manager import WorkerManager
-from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
-import parlai.mturk.core.data_model as data_model
-import parlai.mturk.core.mturk_utils as mturk_utils
-import parlai.mturk.core.server_utils as server_utils
-import parlai.mturk.core.shared_utils as shared_utils
+from parlai.mturk.core.dev.worker_manager import WorkerManager
+from parlai.mturk.core.dev.mturk_data_handler import MTurkDataHandler
+import parlai.mturk.core.dev.data_model as data_model
+import parlai.mturk.core.dev.mturk_utils as mturk_utils
+import parlai.mturk.core.dev.server_utils as server_utils
+import parlai.mturk.core.dev.shared_utils as shared_utils
 
 # Timeout before cancelling a world start
 WORLD_START_TIMEOUT = 11
@@ -841,36 +841,6 @@ class MTurkManager():
 
     # Manager Lifecycle Functions #
 
-    def populate_legacy_task_files(self, task_directory_path):
-        # Poplulate files to copy over to the server
-        if not self.task_files_to_copy:
-            self.task_files_to_copy = []
-        if not task_directory_path:
-            task_directory_path = os.path.join(
-                self.opt['parlai_home'],
-                'parlai',
-                'mturk',
-                'tasks',
-                self.opt['task']
-            )
-        self.task_files_to_copy.append(
-            os.path.join(task_directory_path, 'html', 'cover_page.html'))
-        try:
-            for file_name in os.listdir(os.path.join(
-                    task_directory_path, 'html')):
-                self.task_files_to_copy.append(os.path.join(
-                    task_directory_path, 'html', file_name
-                ))
-        except FileNotFoundError:  # noqa F821 we don't support python2
-            # No html dir exists
-            pass
-        for mturk_agent_id in self.mturk_agent_ids + ['onboarding']:
-            self.task_files_to_copy.append(os.path.join(
-                task_directory_path,
-                'html',
-                '{}_index.html'.format(mturk_agent_id)
-            ))
-
     def populate_task_files(self, task_directory_path):
         # Poplulate files to copy over to the server
         if not self.task_files_to_copy:
@@ -1046,18 +1016,16 @@ class MTurkManager():
         else:
             heroku_team = None
 
-        if self.opt.get('frontend_version', 0) < 1:
-            self.populate_legacy_task_files(task_directory_path)
-            self.server_url = server_utils.setup_legacy_server(
-                self.server_task_name, self.task_files_to_copy,
-                self.opt['local'], heroku_team, self.opt['hobby'],
-                tmp_dir=self.opt['tmp_dir'])
-        else:
-            self.populate_task_files(task_directory_path)
-            self.server_url = server_utils.setup_server(
-                self.server_task_name, self.task_files_to_copy,
-                self.opt['local'], heroku_team, self.opt['hobby'],
-                tmp_dir=self.opt['tmp_dir'])
+        assert self.opt.get('frontend_version', 0) > 0, (
+            'Tasks requiring the legacy frontend have to use the legacy '
+            'infrastructure. This can be done by importing from '
+            'parlai.mturk.core.legacy_2018.mturk_manager in your run code.'
+        )
+        self.populate_task_files(task_directory_path)
+        self.server_url = server_utils.setup_server(
+            self.server_task_name, self.task_files_to_copy,
+            self.opt['local'], heroku_team, self.opt['hobby'],
+            tmp_dir=self.opt['tmp_dir'])
 
         shared_utils.print_and_log(logging.INFO, self.server_url)
 

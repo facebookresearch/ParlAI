@@ -12,8 +12,8 @@ import sqlite3
 import time
 import threading
 
-import parlai.mturk.core.shared_utils as shared_utils
-from parlai.mturk.core.agents import AssignState
+import parlai.mturk.core.dev.shared_utils as shared_utils
+from parlai.mturk.core.dev.agents import AssignState
 
 
 def force_dir(path):
