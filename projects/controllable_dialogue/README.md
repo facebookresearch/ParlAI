@@ -97,9 +97,9 @@ Next, create `ConvAI2_controllable/train.txt` and `valid.txt`:
       --outfile data/ConvAI2_controllable/train.txt \
       --controls question,lastuttsim,avg_nidf
 
-    python $CD/make_control_dataset.py \
-      --fromfile_datapath $PA/data/ConvAI2_parlaiformat/valid.txt \
-      --outfile $PA/data/ConvAI2_controllable/valid.txt \
+    python projects/controllable_dialogue/make_control_dataset.py \
+      --fromfile_datapath data/ConvAI2_parlaiformat/valid.txt \
+      --outfile data/ConvAI2_controllable/valid.txt \
       --controls question,lastuttsim,avg_nidf
 
 This will create files called `train.txt` and `valid.txt` in your `ConvAI2_controllable` directory.
