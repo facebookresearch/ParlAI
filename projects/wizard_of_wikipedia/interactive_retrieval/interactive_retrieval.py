@@ -69,7 +69,7 @@ class InteractiveRetrievalAgent(Agent):
 
         self._set_up_sent_tok()
         wiki_map_path = os.path.join(self.model_path,
-                                     'title_to_passage.json')
+                                     'chosen_topic_to_passage.json')
         self.wiki_map = json.load(open(wiki_map_path, 'r'))
 
     def _set_up_responder(self, opt):
