@@ -50,7 +50,8 @@ def setup_args(parser=None):
     parser.set_params(
         task="fromfile:parlaiformat",
         datatype='valid',
-        model="projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",
+        model="projects.controllable_dialogue.controllable_seq2seq."
+              "controllable_seq2seq:ControllableSeq2seqAgent",
         batchsize=64,
         beam_size=20,
         beam_min_n_best=10,
@@ -219,7 +220,7 @@ def eval_wordstat(opt, print_parser=None):
             word_statistics = process_prediction(prediction, word_statistics)
 
             # Compute and record sentence-level attributes
-            history = ConvAI2History(w.acts[0]['text'])  # needed to compute sentence attrs
+            history = ConvAI2History(w.acts[0]['text'])
             histories.append(history)
             sent_attrs = update_sent_attr_stats(sent_attrs, history, prediction)
 

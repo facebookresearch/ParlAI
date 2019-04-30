@@ -12,7 +12,7 @@ import math
 import pickle
 
 # Once you've downloaded or created your word2count.pkl file, enter the filepath below
-WORD2COUNT_FP = '/u/scr/abisee/ParlAI/data/ConvAI2_controllable/word2count.pkl'  # e.g. '~/ParlAI/data/ConvAI2_controllable/word2count.pkl'
+WORD2COUNT_FP = None  # e.g. '~/ParlAI/data/ConvAI2_controllable/word2count.pkl'
 
 
 def get_word_counts(opt, count_inputs):

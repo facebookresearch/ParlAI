@@ -15,10 +15,10 @@ import pickle
 import torch
 
 # Once you've downloaded or created your arora.pkl file, enter the filepath below
-ARORA_FP = '/u/scr/abisee/ParlAI/data/ConvAI2_controllable/arora.pkl'  # e.g. '~/ParlAI/data/ConvAI2_controllable/arora.pkl'
+ARORA_FP = None  # e.g. '~/ParlAI/data/ConvAI2_controllable/arora.pkl'
 
 # Once you've downloaded glove_vectors directory, enter the filepath below
-GLOVE_FP = '/u/scr/abisee/ParlAI/data/ConvAI2_controllable/glove_vectors'  # e.g. '~/ParlAI/data/ConvAI2_controllable/glove_vectors'
+GLOVE_FP = None  # e.g. '~/ParlAI/data/ConvAI2_controllable/glove_vectors'
 
 
 class SentenceEmbedder(object):

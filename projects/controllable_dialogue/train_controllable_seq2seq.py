@@ -9,6 +9,7 @@ Train ControllableSeq2seq model.
 
 from parlai.scripts.train_model import setup_args, TrainLoop
 
+
 def set_defaults(parser):
     """Defaults for baseline model"""
 
@@ -17,7 +18,8 @@ def set_defaults(parser):
         evaltask='fromfile:parlaiformat2',
         # fromfile_datapath='~/ParlAI/data/ConvAI2_controllable/train.txt',
         # fromfile_datapath2='~/ParlAI/data/ConvAI2_controllable/valid.txt',
-        model='projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent',
+        model='projects.controllable_dialogue.controllable_seq2seq.'
+              'controllable_seq2seq:ControllableSeq2seqAgent',
         model_file='/tmp/control_model',
         # dict_file='~/ParlAI/data/ConvAI2_controllable//dict_twit30k_train_split',
         dict_lower=True,
