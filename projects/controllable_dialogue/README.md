@@ -243,7 +243,7 @@ You should see your new CT model training. Note: this is how the models in the p
 
 ## Look at output and automatic metrics
 
-First, download and extract [this file](https://drive.google.com/open?id=1jtO0Q4wEUv7Zgl4iHIGzJbcxASnkH-tP) to obtain a directory called `wordstat_files`. The directory contains json files with the generated output and the automatic metrics computed for the pretrained models.
+First, download and extract [this file](https://drive.google.com/open?id=16kXJXJ8WiSrUpAsShYcuzJhToVBrnf30) to obtain a directory called `wordstat_files`. The directory contains json files with the generated output and the automatic metrics computed for the pretrained models.
 
 Run the following:
 
