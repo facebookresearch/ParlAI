@@ -3,9 +3,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
-"""Train model for ppl metric with pre-selected parameters.
-These parameters have some variance in their final perplexity, but they were
-used to achieve the pre-trained model.
+"""
+Train ControllableSeq2seq model.
 """
 
 from parlai.scripts.train_model import setup_args, TrainLoop
@@ -16,11 +15,11 @@ def set_defaults(parser):
     parser.set_defaults(
         task='fromfile:parlaiformat',
         evaltask='fromfile:parlaiformat2',
-        fromfile_datapath='/u/scr/abisee/ParlAI/data/ConvAI2_controllable/train.txt',
-        fromfile_datapath2='/u/scr/abisee/ParlAI/data/ConvAI2_controllable/valid.txt',
-        model='parlai_internal.projects.controllable_dialog.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent',
-        model_file='/tmp/throwaway',
-        dict_file="/u/scr/abisee/control_dialogue_stuff/models/models_public_version/dict_twit30k_train_split",
+        # fromfile_datapath='~/ParlAI/data/ConvAI2_controllable/train.txt',
+        # fromfile_datapath2='~/ParlAI/data/ConvAI2_controllable/valid.txt',
+        model='projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent',
+        model_file='/tmp/control_model',
+        # dict_file='~/ParlAI/data/ConvAI2_controllable//dict_twit30k_train_split',
         dict_lower=True,
         dict_include_valid=True,
         dict_maxexs=-1,

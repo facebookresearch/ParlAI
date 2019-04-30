@@ -1,3 +1,7 @@
+"""
+This file contains code to compute NIDF measures, used for specificity control.
+"""
+
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
@@ -7,8 +11,8 @@ import os
 import math
 import pickle
 
-# Put the path to your word2count.pkl file below, so it can be loaded
-WORD2COUNT_FP = '/u/scr/abisee/ParlAI/data/ConvAI2_controllable/word2count.pkl'
+# Once you've downloaded or created your word2count.pkl file, enter the filepath below
+WORD2COUNT_FP = '/u/scr/abisee/ParlAI/data/ConvAI2_controllable/word2count.pkl'  # e.g. '~/ParlAI/data/ConvAI2_controllable/word2count.pkl'
 
 
 def get_word_counts(opt, count_inputs):
@@ -125,7 +129,7 @@ def load_word2nidf():
       word2nidf: dict mapping words to their NIDF score (float between 0 and 1)
     """
     if WORD2COUNT_FP is None:
-        raise Exception('Please enter the filepath to your word2count.pkl file'
+        raise Exception('Please enter the filepath to your word2count.pkl file '
                         'at the top of nidf.py')
     print("Loading word count stats from %s..." % WORD2COUNT_FP)
     with open(WORD2COUNT_FP, "rb") as f:

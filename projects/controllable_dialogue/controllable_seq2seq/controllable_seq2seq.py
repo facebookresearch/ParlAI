@@ -245,6 +245,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         # If we are adding parameters for new CT controls, save and exit
         if self.opt['add_control']:
             self.save()
+            print('Finished adding CT control parameters. Saved model. Quitting.')
             exit()
 
     def _add_control(self, states):

@@ -6,22 +6,17 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """
-For a given (continuous) control variable in the dataset, bucket the data and return the lower bounds for those buckets.
-
-python get_bucket_lowerbounds.py \
-    --fromfile_datapath ~/ParlAI/data/ConvAI2_controllable/train.txt \
-    --num_buckets 10 \
-    --control avg_nidf
+For a given (continuous) control variable in the dataset, bucket the data and return
+the lower bounds for those buckets.
 """
 
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import msg_to_str, TimeLogger
-from controllable_seq2seq.controls import get_bucket
+from parlai.core.utils import TimeLogger
+from controllable_seq2seq.controls import sort_into_bucket
 from collections import Counter
 import random
-import tempfile
 
 
 def bucket_data(opt):
@@ -40,7 +35,7 @@ def bucket_data(opt):
 
     num_buckets = opt['num_buckets']
 
-    ctrl_vals = [] # list of floats
+    ctrl_vals = []  # list of floats
 
     for _ in range(num_examples):
         world.parley()
@@ -48,24 +43,25 @@ def bucket_data(opt):
             'labels', world.acts[0].pop('eval_labels', None))
 
         if ctrl not in world.acts[0].keys():
-            raise Exception('Error: control %s isn\'t in the data. available keys: %s' % (ctrl, ', '.join(world.acts[0].keys())))
+            raise Exception('Error: control %s isn\'t in the data. available keys: %s'
+                            % (ctrl, ', '.join(world.acts[0].keys())))
         ctrl_val = world.acts[0][ctrl]
         if ctrl_val == "None":
             assert ctrl == 'lastuttsim'
             ctrl_val = None
         else:
             ctrl_val = float(ctrl_val)
-        if 'niwf' in ctrl or ctrl=='avg_nidf':
+        if ctrl == 'avg_nidf':
             assert ctrl_val >= 0
             assert ctrl_val <= 1
         elif ctrl == 'question':
-            assert ctrl_val in [0,1]
+            assert ctrl_val in [0, 1]
         elif ctrl == 'lastuttsim':
             if ctrl_val is not None:
                 assert ctrl_val >= -1
                 assert ctrl_val <= 1
         else:
-            raise Exception('unexpected ctrl name: %s' % ctrl)
+            raise Exception('Unexpected ctrl name: %s' % ctrl)
         ctrl_vals.append(ctrl_val)
 
         if log_timer.time() > opt['log_every_n_secs']:
@@ -79,11 +75,13 @@ def bucket_data(opt):
     if ctrl == 'lastuttsim':
         num_nones = len([v for v in ctrl_vals if v is None])
         ctrl_vals = [v for v in ctrl_vals if v is not None]
-        print("Have %i Nones for lastuttsim; these have been removed for bucket calculation" % num_nones)
+        print("Have %i Nones for lastuttsim; these have been removed "
+              "for bucket calculation" % num_nones)
 
-    print('Collected %i control vals between %.6f and %.6f' % (len(ctrl_vals), min(ctrl_vals), max(ctrl_vals)))
+    print('Collected %i control vals between %.6f and %.6f'
+          % (len(ctrl_vals), min(ctrl_vals), max(ctrl_vals)))
 
-    # calculate bucket lower bounds
+    # Calculate bucket lower bounds
     print('Calculating lowerbounds for %i buckets...' % num_buckets)
     ctrl_vals = sorted(ctrl_vals)
     lb_indices = [int(len(ctrl_vals)*i/num_buckets) for i in range(num_buckets)]
@@ -93,7 +91,7 @@ def bucket_data(opt):
 
     # Calculate the actual bucket sizes
     bucket_sizes = Counter()
-    bucket_ids = [get_bucket(ctrl_val, lbs, ctrl) for ctrl_val in ctrl_vals]
+    bucket_ids = [sort_into_bucket(ctrl_val, lbs) for ctrl_val in ctrl_vals]
     bucket_sizes.update(bucket_ids)
     print('\nBucket sizes: ')
     for bucket_id in sorted(bucket_sizes.keys()):
@@ -108,9 +106,10 @@ def main():
                         help='Total number of exs to convert, -1 to convert \
                                 all examples')
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-
-    parser.add_argument('--control', type=str, default='', help='the control for which we want to calculate the buckets')
-    parser.add_argument('--num-buckets', type=int, default=10, help='the number of buckets we want to calculate')
+    parser.add_argument('--control', type=str, default='',
+                        help='the control for which we want to calculate the buckets')
+    parser.add_argument('--num-buckets', type=int, default=10,
+                        help='the number of buckets we want to calculate')
 
     parser.set_defaults(task="fromfile:parlaiformat")
     parser.set_defaults(datatype="train:stream")

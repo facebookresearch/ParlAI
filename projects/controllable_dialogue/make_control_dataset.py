@@ -6,17 +6,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """
-Make a copy of the ConvAI2 dataset with control variables
-
-python make_control_dataset.py \
-    --fromfile_datapath ~/ParlAI/data/ConvAI2_parlaiformat/train.txt \
-    --outfile ~/ParlAI/data/ConvAI2_controllable/train.txt \
-    --controls question,lastuttsim,avg_nidf
-
-python make_control_dataset.py \
-    --fromfile_datapath ~/ParlAI/data/ConvAI2_parlaiformat/valid.txt \
-    --outfile ~/ParlAI/data/ConvAI2_controllable/valid.txt \
-    --controls question,lastuttsim,avg_nidf
+Make a copy of the ConvAI2 dataset with CT control variables annotated.
 """
 
 from parlai.core.params import ParlaiParser
@@ -56,7 +46,7 @@ def make_dataset(opt):
             'labels', world.acts[0].pop('eval_labels', None))
 
         # Need to get history in order to compute control values
-        hist = ConvAI2History(world.acts[0], assume_persontokens=False)
+        hist = ConvAI2History(world.acts[0]['text'], assume_persontokens=False)
         response = world.acts[0]['labels'][0]
 
         # Compute control values

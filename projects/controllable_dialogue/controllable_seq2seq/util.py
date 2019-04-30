@@ -1,3 +1,8 @@
+"""
+This file contains some useful code for handling history in ConvAI2 dialogues,
+and for inspecting and reordering the n-best candidates after beam search.
+"""
+
 from parlai.core.torch_agent import TorchAgent
 from .controls import eval_attr
 

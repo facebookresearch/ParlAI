@@ -1,3 +1,7 @@
+"""
+This file contains the main code for running CT and WD controlled models.
+"""
+
 import torch
 import numpy as np
 from .stopwords import STOPWORDS
@@ -65,7 +69,7 @@ nidf_feats = NIDFFeats()  # init the NIDFFeats object
 arora_data = load_arora()
 sent_embedder = SentenceEmbedder(arora_data['word2prob'], arora_data['arora_a'],
                                  arora_data['glove_name'], arora_data['glove_dim'],
-                                 arora_data['glove_cache'], arora_data['first_sv'])
+                                 arora_data['first_sv'])
 
 
 # ========================================
@@ -797,7 +801,7 @@ def bucket_contvar(ex, ctrl, num_buckets):
         assert len(bucket_lbs) == num_buckets
 
     # Determine the correct bucket and return the bucket id
-    return sort_into_bucket(ctrl_val, bucket_lbs, ctrl)
+    return sort_into_bucket(ctrl_val, bucket_lbs)
 
 
 # The default embedding size for CT control variable embeddings

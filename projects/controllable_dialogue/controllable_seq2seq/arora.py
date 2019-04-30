@@ -1,3 +1,8 @@
+"""
+This file contains code for computing Arora-style sentence embeddings, for
+response-relatedness control.
+"""
+
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
@@ -9,8 +14,12 @@ import os
 import pickle
 import torch
 
-# Put the path to your arora.pkl file below, so it can be loaded
-ARORA_FP = '/u/scr/abisee/ParlAI/data/ConvAI2_controllable/arora.pkl'
+# Once you've downloaded or created your arora.pkl file, enter the filepath below
+ARORA_FP = '/u/scr/abisee/ParlAI/data/ConvAI2_controllable/arora.pkl'  # e.g. '~/ParlAI/data/ConvAI2_controllable/arora.pkl'
+
+# Once you've downloaded glove_vectors directory, enter the filepath below
+GLOVE_FP = '/u/scr/abisee/ParlAI/data/ConvAI2_controllable/glove_vectors'  # e.g. '~/ParlAI/data/ConvAI2_controllable/glove_vectors'
+
 
 class SentenceEmbedder(object):
     """
@@ -24,7 +33,8 @@ class SentenceEmbedder(object):
     Arora et al, 2017, https://openreview.net/pdf?id=SyK00v5xx
     """
 
-    def __init__(self, word2prob, arora_a, glove_name, glove_dim, glove_cache, first_sv):
+    def __init__(self, word2prob, arora_a, glove_name, glove_dim, first_sv,
+                 glove_cache=None):
         """
           Inputs:
             word2prob: dict mapping words to their unigram probs
@@ -32,15 +42,23 @@ class SentenceEmbedder(object):
               used to compute Arora sentence embeddings.
             glove_name: the version of GloVe to use, e.g. '840B'
             glove_dim: the dimension of the GloVe embeddings to use, e.g. 300
-            glove_cache: the path to where the torchtext GloVe vectors are stored
             first_sv: np array shape (glove_dim). The first singular value,
               used to compute Arora sentence embeddings. Can be None.
+            glove_cache: If provided, the path to where the glove vectors are stored.
+              If None, then will use GLOVE_FP given at the top of this file.
         """
         self.word2prob = word2prob
         self.arora_a = arora_a
         self.glove_name = glove_name
         self.glove_dim = glove_dim
-        self.glove_cache = glove_cache
+        if glove_cache is None:
+            if GLOVE_FP is None:
+                raise Exception('Please enter the filepath to your glove_vectors file '
+                                'at the top of arora.py')
+            else:
+                self.glove_cache = GLOVE_FP
+        else:
+            self.glove_cache = glove_cache
         self.first_sv = first_sv
         if self.first_sv is not None:
             self.first_sv = torch.tensor(self.first_sv)  # convert to torch tensor
@@ -273,7 +291,7 @@ def learn_arora(opt):
     Save all info to arora.pkl file.
     """
     arora_file = os.path.join(opt['datapath'], 'ConvAI2_controllable', 'arora.pkl')
-    glove_cache = os.path.join(opt['datapath'], 'ConvAI2_controllable', 'glove_cache')
+    glove_cache = os.path.join(opt['datapath'], 'ConvAI2_controllable', 'glove_vectors')
 
     opt['task'] = 'fromfile:parlaiformat'
     opt['log_every_n_secs'] = 2
@@ -315,7 +333,7 @@ def learn_arora(opt):
     # Embed every sentence, without removing first singular value
     print('Embedding all sentences...')
     sent_embedder = SentenceEmbedder(word2prob, arora_a, glove_name, glove_dim,
-                                     glove_cache, first_sv=None)
+                                     first_sv=None, glove_cache=glove_cache)
     utt_embs = []
     log_timer = TimeLogger()
     for n, utt in enumerate(all_utts):
@@ -351,7 +369,6 @@ def learn_arora(opt):
             'arora_a': arora_a,  # float, 0.0001
             'glove_name': glove_name,  # string, '840B'
             'glove_dim': glove_dim,  # int, 300
-            'glove_cache': glove_cache,  # string, the path to the glove vectors
             'utt2emb': utt2emb,  # dict: string to np array shape (glove_dim)
         }, f)
 
@@ -363,7 +380,7 @@ def load_arora():
     if ARORA_FP is None:
         raise Exception('Please enter the filepath to your arora.pkl file '
                         'at the top of arora.py')
-    print("Loading arora embedding info from %s..." % ARORA_FP)
+    print("Loading Arora embedding info from %s..." % ARORA_FP)
     with open(ARORA_FP, "rb") as f:
         data = pickle.load(f)
     print("Done loading arora info.")

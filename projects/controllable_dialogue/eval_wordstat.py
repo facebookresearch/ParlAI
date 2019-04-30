@@ -28,6 +28,7 @@ import copy
 import random
 import json
 import time
+import os
 
 
 def setup_args(parser=None):
@@ -48,9 +49,8 @@ def setup_args(parser=None):
     # These settings override .opt file but not user's command line flags
     parser.set_params(
         task="fromfile:parlaiformat",
-        fromfile_datapath="/u/scr/abisee/ParlAI/data/ConvAI2_controllable/valid.txt",
         datatype='valid',
-        model="parlai_internal.projects.controllable_dialog.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",
+        model="projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",
         batchsize=64,
         beam_size=20,
         beam_min_n_best=10,
@@ -138,7 +138,8 @@ def eval_wordstat(opt, print_parser=None):
 
     # Determine the output filename
     if opt['gold_response']:  # Special output file for gold response
-        outfile = "/private/home/abisee/models/goldresponse"
+        model_dir, _ = os.path.split(opt.get('model_file'))
+        outfile = os.path.join(model_dir, 'goldresponse')
     else:
         outfile = "%s.%s.%s.%s" % (
             opt.get('model_file'),
@@ -154,10 +155,10 @@ def eval_wordstat(opt, print_parser=None):
                for c in sorted(agent.control_settings.keys())])
         if agent.opt['beam_reorder'] not in ['none', False]:
             outfile += ".beamreorder_%s" % agent.opt['beam_reorder']
-        if len(agent.beam_features) > 0:
-            sorted_bfw = sorted(list(zip(agent.beam_features, agent.beam_feature_wts)),
+        if len(agent.wd_features) > 0:
+            sorted_bfw = sorted(list(zip(agent.wd_features, agent.wd_wts)),
                                 key=lambda x: x[0])
-            outfile += ".beamfeatures:" + "_".join(
+            outfile += ".WDfeatures:" + "_".join(
               ["%s%s" % (f, str(w)) for f, w in sorted_bfw])
     if opt['num_examples'] != -1:
         outfile += ".numex%i" % opt['num_examples']
@@ -218,7 +219,7 @@ def eval_wordstat(opt, print_parser=None):
             word_statistics = process_prediction(prediction, word_statistics)
 
             # Compute and record sentence-level attributes
-            history = ConvAI2History(w.acts[0])  # needed to compute sentence attrs
+            history = ConvAI2History(w.acts[0]['text'])  # needed to compute sentence attrs
             histories.append(history)
             sent_attrs = update_sent_attr_stats(sent_attrs, history, prediction)
 
@@ -253,7 +254,7 @@ def eval_wordstat(opt, print_parser=None):
     data['unique_percent'] = unique_percent  # percent of all responses that are unique
     data['word_statistics'] = word_statistics  # word stats, as in orig eval_wordstat
     data['report'] = report  # the final report
-    data['histories'] = [(hist.persona_lines, hist.partner_utts, hist.self_utts)
+    data['histories'] = [(hist.persona_lines, hist.partner_utts, hist.own_utts)
                          for hist in histories]  # history for each example
     data['sent_attrs'] = sent_attrs  # all sentence attribute values for responses
 

@@ -6,7 +6,8 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 """
-This file is derived from parlai/core/seq2seq/modules.py.
+This file is derived from parlai/core/seq2seq/modules.py, and adapted to handle
+CT controlled models.
 """
 
 import math

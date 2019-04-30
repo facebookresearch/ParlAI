@@ -10,7 +10,6 @@ if __name__ == '__main__':
         batchsize=1,
         beam_size=20,
         beam_min_n_best=10,
-        display_ignore_fields='used_ctrl_vals'
     )
 
     interactive(parser.parse_args(print_args=False), print_parser=parser)
