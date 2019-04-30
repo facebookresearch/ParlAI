@@ -33,16 +33,17 @@ nunjucks.configure(task_directory_name, {
 
 // ===================== <Agent state> ====================
 
-const STATUS_NONE = 'none'
-const STATUS_ONBOARDING = 'onboarding'
-const STATUS_WAITING = 'waiting'
-const STATUS_IN_TASK = 'in task'
-const STATUS_DONE = 'done'
-const STATUS_DISCONNECT = 'disconnect'
-const STATUS_PARTNER_DISCONNECT = 'partner disconnect'
-const STATUS_PARTNER_DISCONNECT_EARLY = 'partner disconnect early'
-const STATUS_EXPIRED = 'expired'
-const STATUS_RETURNED = 'returned'
+const STATUS_NONE = 'none';
+const STATUS_ONBOARDING = 'onboarding';
+const STATUS_WAITING = 'waiting';
+const STATUS_IN_TASK = 'in task';
+const STATUS_DONE = 'done';
+const STATUS_DISCONNECT = 'disconnect';
+const STATUS_PARTNER_DISCONNECT = 'partner disconnect';
+const STATUS_STATIC = 'static';
+const STATUS_EXPIRED = 'expired';
+const STATUS_RETURNED = 'returned';
+const AGENT_TIMEOUT_TIME = 12;
 
 function is_final_status(status) {
   return [STATUS_DONE, STATUS_DISCONNECT, STATUS_PARTNER_DISCONNECT,
@@ -61,11 +62,12 @@ function is_final_status(status) {
 class LocalAgentState {
   constructor(connection_id) {
     this.status = STATUS_NONE;
-    this.current_conversation_id = null;
+    this.conversation_id = null;
     this.unsent_messages = {};
     this.previous_messages = {};
     this.received_message_ids = new Set([]);
     this.connection_id = connection_id;
+    this.last_heartbeat = Date.now();
     this.done_text = null;
   }
 
@@ -81,12 +83,62 @@ class LocalAgentState {
     this.unsent_messages = {};
     this.previous_messages = {};
     this.received_message_ids = new Set([]);
+
+    // Remove self from active connections
+    active_connections.remove(this.connection_id);
+  }
+
+  get_reconnect_packet() {
+    return {
+      conversation_id: this.conversation_id,
+      messages: this.previous_messages[this.conversation_id] || [],
+      agent_status: this.status,
+      done_text: this.done_text,
+    }
+  }
+
+  get_update_from_state_change(state_change) {
+    // Updates this state based on the state change, and provides an
+    // update packet to send forward to the client as well
+    new_conversation_id = state_change['conversation_id'];
+    new_status = state_change['agent_status'];
+    done_text = state_change['done_text'];
+
+    let update_packet = {};
+    let needs_update = false;
+    if (new_conversation_id != this.conversation_id) {
+      needs_update = true;
+      update_packet['conversation_id'] = new_conversation_id;
+      this.conversation_id = new_conversation_id;
+    }
+
+    if (new_status != this.status) {
+      needs_update = true;
+      update_packet['status'] = new_status;
+      this.status = new_status;
+
+      if (is_final_status(status)) {
+        this._cleanup_state();
+      }
+    }
+
+    if (done_text != this.done_text) {
+      needs_update = true;
+      update_packet['done_text'] = done_text;
+      this.done_text = done_text;
+    }
+
+    if (needs_update) {
+      return update_packet;
+    } else {
+      return null;
+    }
   }
 
   set_status(status, new_conversation_id = null) {
     if (new_conversation_id !== null) {
       this._init_conversation(new_conversation_id);
-      this.current_conversation_id = new_conversation_id;
+      this.conversation_id = new_conversation_id;
     }
 
     this.status = status;
@@ -100,6 +152,13 @@ class LocalAgentState {
       return;  // This message has already been added
     }
 
+    if (is_final_status(this.status)) {
+      // There's no message queue to deliver this message to anymore
+      console.log("msg queue was already cleaned up" + out_connection_id);
+      console.log(message);
+      return;
+    }
+
     // rare new_message called before set_status race condition
     if (this.previous_messages[msg['conversation_id']] === undefined) {
       this._init_conversation(msg['conversation_id']);
@@ -107,6 +166,68 @@ class LocalAgentState {
 
     this.unsent_messages[msg['conversation_id']].push(msg);
     this.previous_messages[msg['conversation_id']].push(msg);
+  }
+
+  get_sendable_messages() {
+    let unsent_messages = this.unsent_messages[this.conversation_id];
+    let return_messages = [];
+    while (unsent_messages.length > 0) {
+      return_messages.push(unsent_messages.shift())
+    }
+    return return_messages;
+  }
+
+  add_sent_message(sent_message) {
+    this.previous_messages[msg['conversation_id']].push(sent_message);
+  }
+
+  get_update_from_heartbeat(heartbeat) {
+    // Handle creating an update packet for a given heartbeat if data doesn't
+    // align. Returns null if everything is in order.
+    var client_message_count = heartbeat['received_message_count'];
+    var client_status = heartbeat['agent_status']
+    var client_conversation_id = heartbeat['conversation_id']
+    var client_done_text = heartbeat['done_text']
+
+    if (client_conversation_id != this.conversation_id) {
+      // Make a new packet with all the missing information
+      return {
+        conversation_id: this.conversation_id,
+        messages: this.previous_messages[this.conversation_id] || [],
+        agent_status: this.status,
+        done_text: this.done_text,
+      }
+    }
+
+    // Updating remaining fields if needed
+    let update_packet = {};
+    let needs_update = false;
+    let previous_messages = this.previous_messages[this.conversation_id];
+    if (client_message_count < previous_messages.length) {
+      needs_update = true;
+      let missing_messages = previous_messages.slice(client_message_count);
+      update_packet['messages'] = missing_messages;
+    }
+
+    if (client_status != this.status) {
+      needs_update = true;
+      update_packet['status'] = this.status;
+    }
+
+    if (client_done_text != this.done_text) {
+      needs_update = true;
+      update_packet['done_text'] = this.done_text;
+    }
+
+    if (needs_update) {
+      return update_packet;
+    } else {
+      return null;
+    }
+  }
+
+  mark_heartbeat() {
+    this.last_heartbeat = Date.now();
   }
 }
 
@@ -128,6 +249,10 @@ const wss = new WebSocket.Server({ server });
 // Track connections
 var connection_id_to_socket = {};
 var socket_id_to_connection_id = {};
+var world_message_queue = [];
+var world_last_ping = 0;
+var world_id = null;
+var main_thread_timeout = null;
 
 // This is a mapping of connection id -> state for an MTurk agent
 var connection_id_to_agent_state = {};
@@ -195,51 +320,116 @@ function handle_route(data) {
 }
 
 function handle_pong(data) {
+  // Return a pong which is used to ensure that the heroku server is still live
   data['type'] = 'pong';
   var out_connection_id = _get_from_conn_id(data);
 
+  world_last_ping = Date.now();
   _send_message(out_connection_id, 'new packet', data);
 }
 
 // Agent alive events are handled by registering the agent to a connection_id
-// and then forwarding the alive to the world if it came from a client
+// and then forwarding the alive to the world if it came from a client. If
+// there is already an agent state for this agent, we handle the reconnection
+// event ourselves.
 function handle_alive(socket, data) {
   var sender_id = data['sender_id'];
   var in_connection_id = _get_from_conn_id(data);
-  var out_connection_id = _get_to_conn_id(data);
   connection_id_to_socket[in_connection_id] = socket;
   socket_id_to_connection_id[socket.id] = in_connection_id;
 
-  // Send alive packets to the world, but not from the world
   if (!(sender_id && sender_id.startsWith('[World'))) {
-    _send_message(out_connection_id, 'new packet', data);
+    // Worker has connected, check to see if the connection exists
+    let agent_state = connection_id_to_agent_state[in_connection_id];
+    if (agent_state === undefined) {
+      // Worker is connecting for the first time, init state and forward alive
+      _send_message(world_id, 'new packet', data);
+      let new_state = new LocalAgentState(in_connection_id);
+      connection_id_to_agent_state[in_connection_id] = new_state;
+      _send_message(in_connection_id, 'alive ack', {});
+      active_connections.add(in_connection_id)
+    } else {
+      // Agent is reconnecting, and needs to be updated in full
+      let update_packet = agent_state.get_reconnect_packet;
+      _send_message(in_connection_id, 'alive ack', update_packet);
+    }
   } else {
+    world_id = in_connection_id;
+    // Send alive packets to the world, but not from the world
     socket.send(
       JSON.stringify({ type: 'conn_success', content: 'Socket is open!' })
     );
+    if (main_thread_timeout === null) {
+      main_thread_timeout = setTimeout(main_thread, 50);
+    }
   }
 }
 
 function handle_agent_heartbeat(hb) {
-  // TODO check the heartbeat data against the local state, queue some
-  // messages if anything is missing for a live agent, directly send a final
-  // state if the agent state is final.
-  // TODO increment the timeout time for the connection this comes from
+  // Check heartbeat data against the expected state, create update packets if
+  // something is wrong.
+  var in_connection_id = _get_from_conn_id(hb);
+  var agent_state = connection_id_to_agent_state[in_connection_id];
+  if (agent_state === undefined) {
+    // Hasn't alived yet, just return, no state to handle
+    return;
+  }
+  var update_packet = agent_state.get_update_from_heartbeat(hb);
+  if (update_packet !== null) {
+    _send_message(in_connection_id, "update state", update_packet);
+  }
+
+  agent_state.mark_heartbeat();
 }
 
 function handle_batch_to_agents(incoming_messages) {
-  // TODO process individual messages and add them to the correct agent
-  // queues. Doesn't actually send the messages
+  // Process individual messages and add them to the correct agent
+  // queues. Doesn't actually forward the messages
+  for (let i in incoming_messages) {
+    let message = incoming_messages[i];
+    var out_connection_id = _get_to_conn_id(message);
+    let agent_state = connection_id_to_agent_state[out_connection_id];
+    if (agent_state === undefined) {
+      // sending message to an agent that doesn't exist?
+      console.log("msg was sent to non-existent" + out_connection_id);
+      console.log(message);
+    } else {
+      agent_state.new_message(message);
+    }
+  }
 }
 
 function handle_batch_to_world(agent_message) {
-  // TODO process single message and add it to the batch for the world
+  // Process single message and add it to the batch for the world while
+  // updating the local state of an agent to have the new message
+  let in_connection_id = _get_from_conn_id(agent_message);
+  let agent_state = connection_id_to_agent_state[in_connection_id];
+  if (agent_state === undefined) {
+    // sending message to an agent that doesn't exist?
+    console.log("msg was recieved from non-existent" + in_connection_id);
+    console.log(agent_message);
+  } else {
+    agent_state.add_sent_message(agent_message);
+  }
+
+  // Simply adds message to the end, will be shifted from front
+  world_message_queue.push(agent_message);
 }
 
 function handle_agent_state_update(state_change) {
-  // TODO process this event properly, generate any required update commands
+  // Process this event properly, generate any required update commands
   // for the frontend agent. Generally this should just involve sending a
   // json of the given state for the current conversation.
+  let out_connection_id = _get_to_conn_id(state_change);
+  let agent_state = connection_id_to_agent_state[out_connection_id];
+  if (agent_state === undefined) {
+    // sending state update to an agent that doesn't exist?
+    console.log("msg was sent to non-existent" + out_connection_id);
+    console.log(state_change);
+  } else {
+    let update_packet = agent_state.get_update_from_state_change(state_change);
+    _send_message(out_connection_id, "update state", update_packet);
+  }
 }
 
 // Register handlers
@@ -270,7 +460,7 @@ wss.on('connection', function(socket) {
       } else if (data['type'] == 'world packet') {
         handle_batch_to_agents(data['content']);
       } else if (data['type'] == 'heartbeat') {
-        handle_agent_heartbeat(hb);
+        handle_agent_heartbeat(data['content']);
       } else if (data['type'] == 'world ping') {
         handle_pong(data['content']);
       }
@@ -289,7 +479,47 @@ server.listen(PORT, function() {
 
 // ======================= <Threads> =======================
 
-// TODO: Create a handler thread to check required timeouts for agents
+var active_connections = new Set([]);
+
+// TODO iterate through all alive agents, send messages to everyone or handle disconnects, then send to world, then repeat.
+
+function main_thread() {
+  // Handle active connections message sends
+  for (const connection_id of active_connections) {
+    let agent_state = connection_id_to_agent_state[connection_id];
+    let sendable_messages = agent_state.get_sendable_messages();
+    if (sendable_messages.length > 0) {
+      let packet = {'messages': sendable_messages};
+      _send_message(connection_id, "message batch", packet);
+    }
+  }
+
+  // Handle sending batches to the world
+  let world_messages = []
+  while (world_message_queue.length > 0) {
+    world_messages.push(world_message_queue.shift());
+  }
+  let packet = {'messages': world_messages};
+  _send_message(world_id, "message batch", packet);
+
+  // Handle submitting disconnect events
+  for (const connection_id of active_connections) {
+    let agent_state = connection_id_to_agent_state[connection_id];
+    let now = Date.now();
+    if (now - agent_state.last_heartbeat > AGENT_TIMEOUT_TIME) {
+      _send_message(
+        world_id,
+        'agent disconnect',
+        {connection_id: connection_id}
+      );
+    }
+  }
+
+  // Re-call this thead, as it should run forever
+  main_thread_timeout = setTimeout(main_thread, 50);
+}
+
+
 // TODO: create a thread for sending messages to any live agents
 
 // ======================= </Threads> ======================
@@ -315,7 +545,6 @@ app.post('/sns_posts', async function(req, res, next) {
     });
   } else {
     var task_group_id = req.query['task_group_id'];
-    var world_id = '[World_' + task_group_id + ']';
     content = JSON.parse(req.body);
     if (content['MessageId'] != '') {
       var message_id = content['MessageId'];
@@ -351,7 +580,6 @@ app.post('/submit_static', async function(req, res, next) {
   var assignment_id = content['assignment_id'];
   var worker_id = content['worker_id'];
   var response_data = content['response_data'];
-  var world_id = '[World_' + task_group_id + ']';
   var message_id = assignment_id + '_' + worker_id + '_static_submit';
 
   var data = {
