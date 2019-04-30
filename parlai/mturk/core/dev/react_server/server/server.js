@@ -200,30 +200,22 @@ class LocalAgentState {
     }
 
     // Updating remaining fields if needed
-    let update_packet = {};
-    let needs_update = false;
+    let update_packet = {last_parlai_ping: world_last_ping};
     let previous_messages = this.previous_messages[this.conversation_id];
     if (client_message_count < previous_messages.length) {
-      needs_update = true;
       let missing_messages = previous_messages.slice(client_message_count);
       update_packet['messages'] = missing_messages;
     }
 
     if (client_status != this.status) {
-      needs_update = true;
       update_packet['status'] = this.status;
     }
 
     if (client_done_text != this.done_text) {
-      needs_update = true;
       update_packet['done_text'] = this.done_text;
     }
 
-    if (needs_update) {
-      return update_packet;
-    } else {
-      return null;
-    }
+    return update_packet;
   }
 
   mark_heartbeat() {
@@ -232,6 +224,21 @@ class LocalAgentState {
 }
 
 // ======================= <Socket> =======================
+
+// Socket function types
+const AGENT_MESSAGE = 'agent message'  // Message from an agent
+const WORLD_MESSAGE = 'world message'  // Message from world to agent
+const HEARTBEAT = 'heartbeat'   // Heartbeat from agent, carries current state
+const WORLD_PING = 'world ping'  // Ping from the world for this server uptime
+const SERVER_PONG = 'server pong'  // pong to confirm uptime
+const MESSAGE_BATCH = 'message batch' // packet containing batch of messages
+const AGENT_DISCONNECT = 'agent disconnect'  // Notes an agent disconnecting
+const SNS_MESSAGE = 'sns message'   // packet from an SNS message
+const STATIC_MESSAGE = 'static message'  // packet from static done POST
+const AGENT_STATE_CHANGE = 'agent state change'  // state change from parlai
+const AGENT_ALIVE = 'agent alive'  // packet from an agent alive event
+const ALIVE_ACK = 'alive ack'  // Acknowledgement of alive arrival
+const UPDATE_STATE = 'update state'  // packet for updating agent client state
 
 // The state gets passed forward to the server whenever anyone connects
 // Messages and a history are kept until an agent hits a final state
@@ -313,19 +320,13 @@ function _get_from_conn_id(data) {
   }
 }
 
-function handle_route(data) {
-  var out_connection_id = _get_to_conn_id(data);
-
-  _send_message(out_connection_id, 'new packet', data);
-}
-
 function handle_pong(data) {
   // Return a pong which is used to ensure that the heroku server is still live
   data['type'] = 'pong';
   var out_connection_id = _get_from_conn_id(data);
 
   world_last_ping = Date.now();
-  _send_message(out_connection_id, 'new packet', data);
+  _send_message(out_connection_id, SERVER_PONG, data);
 }
 
 // Agent alive events are handled by registering the agent to a connection_id
@@ -343,15 +344,15 @@ function handle_alive(socket, data) {
     let agent_state = connection_id_to_agent_state[in_connection_id];
     if (agent_state === undefined) {
       // Worker is connecting for the first time, init state and forward alive
-      _send_message(world_id, 'new packet', data);
+      _send_message(world_id, AGENT_ALIVE, data);
       let new_state = new LocalAgentState(in_connection_id);
       connection_id_to_agent_state[in_connection_id] = new_state;
-      _send_message(in_connection_id, 'alive ack', {});
+      _send_message(in_connection_id, ALIVE_ACK, {});
       active_connections.add(in_connection_id)
     } else {
       // Agent is reconnecting, and needs to be updated in full
       let update_packet = agent_state.get_reconnect_packet;
-      _send_message(in_connection_id, 'alive ack', update_packet);
+      _send_message(in_connection_id, ALIVE_ACK, update_packet);
     }
   } else {
     world_id = in_connection_id;
@@ -375,9 +376,7 @@ function handle_agent_heartbeat(hb) {
     return;
   }
   var update_packet = agent_state.get_update_from_heartbeat(hb);
-  if (update_packet !== null) {
-    _send_message(in_connection_id, "update state", update_packet);
-  }
+  _send_message(in_connection_id, UPDATE_STATE, update_packet);
 
   agent_state.mark_heartbeat();
 }
@@ -428,7 +427,7 @@ function handle_agent_state_update(state_change) {
     console.log(state_change);
   } else {
     let update_packet = agent_state.get_update_from_state_change(state_change);
-    _send_message(out_connection_id, "update state", update_packet);
+    _send_message(out_connection_id, UPDATE_STATE, update_packet);
   }
 }
 
@@ -451,17 +450,17 @@ wss.on('connection', function(socket) {
     try {
       // TODO add all of these to the data model, create them in SocketManager
       data = JSON.parse(data);
-      if (data['type'] == 'agent alive') {
+      if (data['type'] == AGENT_ALIVE) {
         handle_alive(socket, data['content']);
-      } else if (data['type'] == 'agent packet') {
+      } else if (data['type'] == AGENT_MESSAGE) {
         handle_batch_to_world(data['content']);
-      } else if (data['type'] == 'agent state change') {
+      } else if (data['type'] == AGENT_STATE_CHANGE) {
         handle_agent_state_update(data['content']);
-      } else if (data['type'] == 'world packet') {
+      } else if (data['type'] == WORLD_MESSAGE) {
         handle_batch_to_agents(data['content']);
-      } else if (data['type'] == 'heartbeat') {
+      } else if (data['type'] == HEARTBEAT) {
         handle_agent_heartbeat(data['content']);
-      } else if (data['type'] == 'world ping') {
+      } else if (data['type'] == WORLD_PING) {
         handle_pong(data['content']);
       }
     } catch (error) {
@@ -488,7 +487,7 @@ function main_thread() {
     let sendable_messages = agent_state.get_sendable_messages();
     if (sendable_messages.length > 0) {
       let packet = {'messages': sendable_messages};
-      _send_message(connection_id, "message batch", packet);
+      _send_message(connection_id, MESSAGE_BATCH, packet);
     }
   }
 
@@ -498,7 +497,7 @@ function main_thread() {
     world_messages.push(world_message_queue.shift());
   }
   let packet = {'messages': world_messages};
-  _send_message(world_id, "message batch", packet);
+  _send_message(world_id, MESSAGE_BATCH, packet);
 
   // Handle submitting disconnect events
   for (const connection_id of active_connections) {
@@ -507,8 +506,8 @@ function main_thread() {
     if (now - agent_state.last_heartbeat > AGENT_TIMEOUT_TIME) {
       _send_message(
         world_id,
-        'agent disconnect',
-        {connection_id: connection_id}
+        AGENT_DISCONNECT,
+        {connection_id: connection_id},
       );
     }
   }
@@ -561,11 +560,10 @@ app.post('/sns_posts', async function(req, res, next) {
         receiver_id: world_id,
         data: data,
       };
-      _send_message(world_id, 'new packet', msg);
+      _send_message(world_id, SNS_MESSAGE, msg);
     }
   }
 });
-
 
 app.post('/submit_static', async function(req, res, next) {
   res.end('Successful static POST');
@@ -592,7 +590,7 @@ app.post('/submit_static', async function(req, res, next) {
     receiver_id: world_id,
     data: data,
   };
-  _send_message(world_id, 'new packet', msg);
+  _send_message(world_id, STATIC_MESSAGE, msg);
 });
 
 // Renders the chat page by setting up the template_context given the
