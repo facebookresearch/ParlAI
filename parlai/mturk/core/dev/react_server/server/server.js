@@ -481,8 +481,6 @@ server.listen(PORT, function() {
 
 var active_connections = new Set([]);
 
-// TODO iterate through all alive agents, send messages to everyone or handle disconnects, then send to world, then repeat.
-
 function main_thread() {
   // Handle active connections message sends
   for (const connection_id of active_connections) {
@@ -518,9 +516,6 @@ function main_thread() {
   // Re-call this thead, as it should run forever
   main_thread_timeout = setTimeout(main_thread, 50);
 }
-
-
-// TODO: create a thread for sending messages to any live agents
 
 // ======================= </Threads> ======================
 
