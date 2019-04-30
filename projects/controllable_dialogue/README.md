@@ -26,11 +26,13 @@ improvements in human quality judgments.
 ## Citation
 
 If you use the dataset or models in your own work, please cite with the
-following BibTex entry:
+following BibTex entry: 
 
     @inproceedings{see2019what,
       author={Abigail See and Stephen Roller and Douwe Kiela and Jason Weston},
+      booktitle={North American Chapter of the Association for Computational Linguistics (NAACL)},
       title={What makes a good conversation? How controllable attributes affect human judgments},
+      url={https://arxiv.org/abs/1902.08654},
       year={2019},
     }
 
