@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 # From here https://www.ranks.nl/stopwords
 sw = [
   'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any',

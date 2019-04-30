@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 """
 This file contains some useful code for handling history in ConvAI2 dialogues,
 and for inspecting and reordering the n-best candidates after beam search.
