@@ -1324,6 +1324,15 @@ class MTurkManager():
                 self._upload_worker_data()
             if self.worker_manager is not None:
                 self.worker_manager.shutdown()
+            print("\n".join([
+                "",
+                "*" * 80,
+                "Thank you for using ParlAI! We are conducting a user survey.",
+                "Please consider filling it out at "
+                "https://forms.gle/uEFbYGP7w6hiuGQT9",
+                "*" * 80,
+                ""
+            ]))
 
     # MTurk Agent Interaction Functions #
 
