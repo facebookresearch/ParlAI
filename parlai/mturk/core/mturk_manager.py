@@ -1334,7 +1334,6 @@ class MTurkManager():
                 ""
             ]))
 
-
     # MTurk Agent Interaction Functions #
 
     def force_expire_hit(self, worker_id, assign_id, text=None, ack_func=None):
