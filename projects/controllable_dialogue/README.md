@@ -182,7 +182,7 @@ Talk to the response-relatedness WD model (with WD repetition control):
 
 Note: If you want the bot to have a persona when you talk to it, select one of the lines in `personas_validation.txt` and prepend it to your first utterance.
 
-Note: If you want to see the top 10 candidates produced by beam search (rather than just the top 1), add the flag `--verbose`.
+Note: If you want to see the top 10 candidates produced by beam search (rather than just the top 1), add the flag `--verbose True`.
 
 ## Train a CT model
 
@@ -270,7 +270,10 @@ This will create a json file containing the output and other automatic metrics f
 Note: Due to changes in ParlAI, there might be some small differences between the json file created via this method, and the json files downloadable in the previous section.
 
 ## Mechanical Turk code
+TODO
 
 ## Human eval logs
+TODO
 
 ## Bayesian calibration code
+TODO
