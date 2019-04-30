@@ -9,22 +9,28 @@ import parlai.core.build_data as build_data
 import os
 import json
 
+tfname = 'coqa-train-v1.0.json'
+dfname = 'coqa-dev-v1.0.json'
+url = 'https://nlp.stanford.edu/data/coqa/'
+
 
 def make_parlai_format(outpath, dtype, data):
     print('building parlai:' + dtype)
     fout = open(os.path.join(outpath, dtype + '.txt'), 'w')
     for each in data:
-        s = ""
+        output = ""
+        story = each['story'].replace('\n', '\\n')
         for question, ans in zip(each['questions'], each['answers']):
-            s += "text:"
-            if question['turn_id'] == 1:
-                s += each['story'] + '\n'
-            s += question['input_text'] + '\t\t'
-            s += "labels:" + ans['input_text']
+            question_txt = story + '\\n' + question['input_text'] \
+                if question['turn_id'] == 1 else question['input_text']
+            output += "text:{question}\tlabels:{labels}".format(
+                question=question_txt,
+                labels=ans['input_text'].replace("|", " __PIPE__ ")
+            )
             if question['turn_id'] < len(each['questions']):
-                s += '\n'
-        s += '\t\t' + "episode_done:True" + '\n'
-        fout.write(s)
+                output += '\n'
+        output += "\t\tepisode_done:True\n"
+        fout.write(output)
     fout.close()
 
 
@@ -40,25 +46,15 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        tfname = 'coqa-train-v1.0.json'
-        dfname = 'coqa-dev-v1.0.json'
-        url = 'https://nlp.stanford.edu/data/coqa/'
         build_data.download(url + tfname, dpath, tfname)
         build_data.download(url + dfname, dpath, dfname)
         with open(os.path.join(dpath, tfname)) as f:
             data = json.load(f)['data']
-        train_p = 0.8
-        valid_p = 0.2
-        assert train_p > 0
-        assert valid_p > 0
+        make_parlai_format(dpath, 'train', data)
 
-        data_len = len(data)
-        first_valid = int(data_len * train_p)
-        make_parlai_format(dpath, 'train', data[:first_valid])
-        make_parlai_format(dpath, 'valid', data[first_valid:])
         with open(os.path.join(dpath, dfname)) as f:
             data = json.load(f)['data']
-        make_parlai_format(dpath, 'test', data)
+        make_parlai_format(dpath, 'dev', data)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
