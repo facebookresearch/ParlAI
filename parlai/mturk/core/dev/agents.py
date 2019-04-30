@@ -10,8 +10,8 @@ from queue import Queue
 import uuid
 
 from parlai.core.agents import Agent
-import parlai.mturk.core.data_model as data_model
-import parlai.mturk.core.shared_utils as shared_utils
+import parlai.mturk.core.dev.data_model as data_model
+import parlai.mturk.core.dev.shared_utils as shared_utils
 
 # Special act messages for failure states
 MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]'  # Turker disconnected from conv

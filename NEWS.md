@@ -1,3 +1,8 @@
+## User Survey
+
+We are currently conducting a user survey! If you are a ParlAI user or interested in being one,
+please consider filling out the survey at [https://forms.gle/uEFbYGP7w6hiuGQT9](https://forms.gle/uEFbYGP7w6hiuGQT9).
+
 ## News
 
 2019-03-15: The [Wizard of Wikipedia project page](http://parl.ai/projects/wizard_of_wikipedia/) is updated with pretrained models and specialized model code.
