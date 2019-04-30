@@ -31,14 +31,108 @@ nunjucks.configure(task_directory_name, {
   express: app,
 });
 
+// ===================== <Agent state> ====================
+
+const STATUS_NONE = 'none'
+const STATUS_ONBOARDING = 'onboarding'
+const STATUS_WAITING = 'waiting'
+const STATUS_IN_TASK = 'in task'
+const STATUS_DONE = 'done'
+const STATUS_DISCONNECT = 'disconnect'
+const STATUS_PARTNER_DISCONNECT = 'partner disconnect'
+const STATUS_PARTNER_DISCONNECT_EARLY = 'partner disconnect early'
+const STATUS_EXPIRED = 'expired'
+const STATUS_RETURNED = 'returned'
+
+function is_final_status(status) {
+  return [STATUS_DONE, STATUS_DISCONNECT, STATUS_PARTNER_DISCONNECT,
+          STATUS_EXPIRED, STATUS_RETURNED].includes(status);
+}
+
+// This is used to track the local state of an MTurk agent as determined by
+// the python backend. It contains the current conversation id,
+// the current task status, a mapping from conversation id to
+// incoming messages, another to message history, and a repeat message set.
+//
+// Utility functions exist to process an incoming message (which puts it
+// into the correct data structures after ensuring it is new), and to update
+// the agent status (as this has impact on the conversation_id, and memory
+// cleanup)
+class LocalAgentState {
+  constructor(connection_id) {
+    this.status = STATUS_NONE;
+    this.current_conversation_id = null;
+    this.unsent_messages = {};
+    this.previous_messages = {};
+    this.received_message_ids = new Set([]);
+    this.connection_id = connection_id;
+    this.done_text = null;
+  }
+
+  _init_conversation(conversation_id) {
+    this.previous_messages[conversation_id] =
+      this.previous_messages[conversation_id] || [];
+    this.unsent_messages[conversation_id] =
+      this.unsent_messages[conversation_id] || [];
+  }
+
+  _cleanup_state() {
+    // When a task is 'done', we can clean up the state.
+    this.unsent_messages = {};
+    this.previous_messages = {};
+    this.received_message_ids = new Set([]);
+  }
+
+  set_status(status, new_conversation_id = null) {
+    if (new_conversation_id !== null) {
+      this._init_conversation(new_conversation_id);
+      this.current_conversation_id = new_conversation_id;
+    }
+
+    this.status = status;
+    if (is_final_status(status)) {
+      this._cleanup_state();
+    }
+  }
+
+  new_message(msg) {
+    if (this.received_message_ids.has(msg['id'])) {
+      return;  // This message has already been added
+    }
+
+    // rare new_message called before set_status race condition
+    if (this.previous_messages[msg['conversation_id']] === undefined) {
+      this._init_conversation(msg['conversation_id']);
+    }
+
+    this.unsent_messages[msg['conversation_id']].push(msg);
+    this.previous_messages[msg['conversation_id']].push(msg);
+  }
+}
+
 // ======================= <Socket> =======================
+
+// The state gets passed forward to the server whenever anyone connects
+// Messages and a history are kept until an agent hits a final state
+//
+// Incoming messages get organized into the intended conversation id
+// for an agent. This means we can restore the state depending on the
+// current conversation.
+//
+// Only backwards messages are initial alives, message sends,
+// and disconnects.
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 // Track connections
 var connection_id_to_socket = {};
-var room_id_to_connection_id = {};
+var socket_id_to_connection_id = {};
+
+// This is a mapping of connection id -> state for an MTurk agent
+var connection_id_to_agent_state = {};
+
+
 var NOTIF_ID = 'MTURK_NOTIFICATIONS';
 
 // Handles sending a message through the socket
@@ -114,7 +208,7 @@ function handle_alive(socket, data) {
   var in_connection_id = _get_from_conn_id(data);
   var out_connection_id = _get_to_conn_id(data);
   connection_id_to_socket[in_connection_id] = socket;
-  room_id_to_connection_id[socket.id] = in_connection_id;
+  socket_id_to_connection_id[socket.id] = in_connection_id;
 
   // Send alive packets to the world, but not from the world
   if (!(sender_id && sender_id.startsWith('[World'))) {
@@ -126,12 +220,34 @@ function handle_alive(socket, data) {
   }
 }
 
+function handle_agent_heartbeat(hb) {
+  // TODO check the heartbeat data against the local state, queue some
+  // messages if anything is missing for a live agent, directly send a final
+  // state if the agent state is final.
+  // TODO increment the timeout time for the connection this comes from
+}
+
+function handle_batch_to_agents(incoming_messages) {
+  // TODO process individual messages and add them to the correct agent
+  // queues. Doesn't actually send the messages
+}
+
+function handle_batch_to_world(agent_message) {
+  // TODO process single message and add it to the batch for the world
+}
+
+function handle_agent_state_update(state_change) {
+  // TODO process this event properly, generate any required update commands
+  // for the frontend agent. Generally this should just involve sending a
+  // json of the given state for the current conversation.
+}
+
 // Register handlers
 wss.on('connection', function(socket) {
   console.log('Client connected');
   // Disconnects are logged
   socket.on('disconnect', function() {
-    var connection_id = room_id_to_connection_id[socket.id];
+    var connection_id = socket_id_to_connection_id[socket.id];
     console.log('Client disconnected: ' + connection_id);
   });
 
@@ -143,14 +259,20 @@ wss.on('connection', function(socket) {
   // handles routing a packet to the desired recipient
   socket.on('message', function(data) {
     try {
+      // TODO add all of these to the data model, create them in SocketManager
       data = JSON.parse(data);
       if (data['type'] == 'agent alive') {
         handle_alive(socket, data['content']);
-      } else if (data['type'] == 'route packet') {
-        handle_route(data['content']);
-        if (data['content']['type'] == 'heartbeat') {
-          handle_pong(data['content']);
-        }
+      } else if (data['type'] == 'agent packet') {
+        handle_batch_to_world(data['content']);
+      } else if (data['type'] == 'agent state change') {
+        handle_agent_state_update(data['content']);
+      } else if (data['type'] == 'world packet') {
+        handle_batch_to_agents(data['content']);
+      } else if (data['type'] == 'heartbeat') {
+        handle_agent_heartbeat(hb);
+      } else if (data['type'] == 'world ping') {
+        handle_pong(data['content']);
       }
     } catch (error) {
       console.log('Transient error on message');
@@ -164,6 +286,13 @@ server.listen(PORT, function() {
 });
 
 // ======================= </Socket> =======================
+
+// ======================= <Threads> =======================
+
+// TODO: Create a handler thread to check required timeouts for agents
+// TODO: create a thread for sending messages to any live agents
+
+// ======================= </Threads> ======================
 
 // ======================= <Routing> =======================
 
