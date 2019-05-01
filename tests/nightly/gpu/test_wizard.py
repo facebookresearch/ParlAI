@@ -32,6 +32,7 @@ RETRIEVAL_OPTIONS = {
 }
 
 
+@unittest.skip
 @testing_utils.skipUnlessGPU
 class TestWizardModel(unittest.TestCase):
     """Checks that pre-trained Wizard models give the correct results"""
