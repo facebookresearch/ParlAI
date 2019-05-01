@@ -9,6 +9,7 @@ Integration tests for the Controllable Dialogue project.
 See projects/controllable_dialogue.
 """
 
+
 @testing_utils.skipUnlessGPU
 class TestControllableDialogue(unittest.TestCase):
     def test_dataset_integrity(self):
