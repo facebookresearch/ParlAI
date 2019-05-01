@@ -67,6 +67,21 @@ function doesSupportWebsockets() {
   );
 }
 
+/* ================= Agent State Constants ================= */
+
+// TODO move to shared file
+const STATUS_NONE = 'none';
+const STATUS_ONBOARDING = 'onboarding';
+const STATUS_WAITING = 'waiting';
+const STATUS_IN_TASK = 'in task';
+const STATUS_DONE = 'done';
+const STATUS_DISCONNECT = 'disconnect';
+const STATUS_PARTNER_DISCONNECT = 'partner disconnect';
+const STATUS_STATIC = 'static';
+const STATUS_EXPIRED = 'expired';
+const STATUS_RETURNED = 'returned';
+const STATUS_PARLAI_DISCONNECT = 'parlai_disconnect';
+
 /* ================= Application Components ================= */
 
 /* global
@@ -74,6 +89,7 @@ function doesSupportWebsockets() {
   DISPLAY_FEEDBACK, IS_COVER_PAGE
 */
 
+// TODO move this magic constant somewhere
 const DEFAULT_FRAME_HEIGHT = 650;
 
 class MainApp extends React.Component {
@@ -95,7 +111,7 @@ class MainApp extends React.Component {
       worker_id: WORKER_ID, // gotten from template
       conversation_id: null,
       initialization_status: initialization_status,
-      world_state: null, // TODO cover onboarding and waiting separately
+      agent_state: STATUS_NONE,
       is_cover_page: IS_COVER_PAGE, // gotten from template
       done_text: null,
       chat_state: 'idle', // idle, text_input, inactive, done
@@ -107,32 +123,30 @@ class MainApp extends React.Component {
     };
   }
 
+  handleAgentStatusChange(agent_status, conversation_id, done_text, agent_id) {
+    // Covers conversation changes and state restores in-conversation
+    if (conversation_id != this.state.conversation_id) {
+      this.setState({
+          agent_status: agent_status,
+          conversation_id: conversation_id,
+          agent_id: agent_id,
+        });
+      if (conversation_id == 'waiting') {
+        this.setState({ messages: [], chat_state: 'waiting' });
+      }
+    }
 
-  // handleAgentStatusChange(agent_status, conversation_id, done_text) {
-  //   // TODO reimplement this, pass agent_status and done_text down
-  //   // fulfill onConversationChange(world_state, conversation_id, agent_id);
-  //   else if (command === COMMAND_SHOW_DONE_BUTTON) {
-  //     // Update the UI to show the done button
-  //     this.props.onTaskDone();
-  //   } else if (command === COMMAND_INACTIVE_DONE) {
-  //     // Update the UI to show done with additional inactive text
-  //     this.closeSocket();
-  //     // Call correct UI renderers
-  //     this.props.onInactiveDone(msg['inactive_text']);
-  //   }  else if (command === COMMAND_EXPIRE_HIT) {
-  //     // Expire the hit unless it has already been marked as done
-  //     if (!this.props.task_done) {
-  //       this.props.onExpire(msg['inactive_text']);
-  //       this.closeSocket();
-  //     }
-  //   } else if (command === COMMAND_INACTIVE_HIT) {
-  //     // Disable the hit, show the correct message
-  //     this.props.onExpire(msg['inactive_text']);
-  //     this.closeSocket();
-  //   }
-  // }
-
-  // TODO implement onDisconnect for socket manager
+    if (agent_status != this.state.agent_status) {
+      // Handle required state changes on a case-by-case basis.
+      if ([STATUS_DONE, STATUS_PARTNER_DISCONNECT].includes(agent_status)) {
+        this.setState({ task_done: true, chat_state: 'done' });
+      } else if ([STATUS_DISCONNECT, STATUS_RETURNED, STATUS_EXPIRED]
+                 .includes(agent_status)) {
+        this.setState({ chat_state: 'inactive' });
+      }
+      this.setState({ agent_status: agent_status, done_text: done_text});
+    }
+  }
 
   playNotifSound() {
     let audio = new Audio('./notif.mp3');
@@ -182,42 +196,17 @@ class MainApp extends React.Component {
             })
           }
           onRequestMessage={() => this.setState({ chat_state: 'text_input' })}
-          onTaskDone={() =>
-            this.setState({
-              task_done: true,
-              chat_state: 'done',
-              done_text: '',
-            })
-          }
-          onInactiveDone={inactive_text =>
-            this.setState({
-              task_done: true,
-              chat_state: 'done',
-              done_text: inactive_text,
-            })
-          }
           onForceDone={allDoneCallback}
-          onExpire={expire_reason =>
-            this.setState({
-              chat_state: 'inactive',
-              done_text: expire_reason,
-            })
-          }
-          onConversationChange={(world_state, conversation_id, agent_id) => {
-            this.setState({
-              world_state: world_state,
-              conversation_id: conversation_id,
-              agent_id: agent_id,
-            });
-            if (world_state == 'waiting') {
-              this.setState({ messages: [], chat_state: 'waiting' });
-            }
-          }}
           onSuccessfulSend={() =>
             this.setState({
               chat_state: 'waiting',
               messages: this.state.messages,
             })
+          }
+          onAgentStatusChange={
+            (agent_status, conversation_id, done_text, agent_id) =>
+              this.handleAgentStatusChange(
+                agent_status, conversation_id, done_text, agent_id)
           }
           onConfirmInit={() => this.setState({ initialization_status: 'done' })}
           onFailInit={() => this.setState({ initialization_status: 'failed' })}
@@ -228,6 +217,7 @@ class MainApp extends React.Component {
           agent_id={this.state.agent_id}
           hit_id={this.state.hit_id}
           initialization_status={this.state.initialization_status}
+          agent_state={this.state.agent_state}
           messages={this.state.messages}
           task_done={this.state.task_done}
           ref={m => {
@@ -253,7 +243,7 @@ class MainApp extends React.Component {
           is_cover_page={this.state.is_cover_page}
           frame_height={this.state.frame_height}
           task_data={this.state.task_data}
-          world_state={this.state.world_state}
+          world_state={this.state.agent_state}
           v_id={this.state.agent_id}
           allDoneCallback={() => allDoneCallback()}
           volume={this.state.volume}
@@ -275,6 +265,7 @@ class MainApp extends React.Component {
 
 // TODO consolidate shared functionality from SocketManager in a way that
 // prevents this class from setting a whole lot of dummy methods
+// TODO update static functionality to cover socket changes
 class StaticApp extends React.Component {
   constructor(props) {
     super(props);

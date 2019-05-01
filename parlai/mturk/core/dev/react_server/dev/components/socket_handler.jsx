@@ -20,7 +20,7 @@ const COMMAND_USER_DEFINED = 'COMMAND_USER_DEFINED';
 
 // TODO figure out how to catch this state in the server and save it
 // so that we can update the parlai local state to acknowledge the occurrence
-const PARLAI_DISCONNECT = 'PARLAI_DISCONNECT'  // No feedback from ParlAI host
+const STATUS_PARLAI_DISCONNECT = 'parlai_disconnect';
 
 // Socket function types
 const AGENT_MESSAGE = 'agent message'  // Message from an agent
@@ -383,7 +383,8 @@ class SocketHandler extends React.Component {
       // Force the hit to submit as done
       this.props.onForceDone();
     } else if (command === COMMAND_USER_DEFINED) {
-      this.props.onUserDefinedCommand(msg);
+      // TODO implement ability for user defined commands
+      // this.props.onUserDefinedCommand(msg);
     }
   }
 
@@ -404,14 +405,19 @@ class SocketHandler extends React.Component {
     }
 
     let agent_status = update_packet['status'];
+    let agent_id = update_packet['agent_id'];
     let conversation_id = update_packet['conversation_id'];
     if (agent_status != this.props.agent_status ||
         conversation_id != this.props.conversation_id) {
-      this.props.handleAgentStatusChange(
+      this.props.onAgentStatusChange(
         agent_status,
         conversation_id,
         update_packet['done_text'],
+        agent_id,
       );
+    }
+    if (update_packet['is_final']) {
+      this.closeSocket();
     }
     this.set_state(state_update);
   }
@@ -489,7 +495,7 @@ class SocketHandler extends React.Component {
 
     this.socket.onclose = () => {
       log('Server closing.', 3);
-      this.props.onDisconnect('disconnected');
+      this.props.onStatusChange('disconnected');
     };
   }
 
@@ -552,10 +558,11 @@ class SocketHandler extends React.Component {
         compensate.";
       window.clearInterval(this.state.heartbeat_id);
       this.setState({ heartbeat_id: null });
-      this.props.handleAgentStatusChange(
+      this.props.onAgentStatusChange(
         PARLAI_DISCONNECT,
         this.props.conversation_id,
         done_text,
+        this.props.agent_id,
       );
     }
 

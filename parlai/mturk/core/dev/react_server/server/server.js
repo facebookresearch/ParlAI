@@ -43,11 +43,14 @@ const STATUS_PARTNER_DISCONNECT = 'partner disconnect';
 const STATUS_STATIC = 'static';
 const STATUS_EXPIRED = 'expired';
 const STATUS_RETURNED = 'returned';
-const AGENT_TIMEOUT_TIME = 12;
+const STATUS_PARLAI_DISCONNECT = 'parlai_disconnect';
+const AGENT_TIMEOUT_TIME = 20;
 
 function is_final_status(status) {
-  return [STATUS_DONE, STATUS_DISCONNECT, STATUS_PARTNER_DISCONNECT,
-          STATUS_EXPIRED, STATUS_RETURNED].includes(status);
+  return [
+    STATUS_DONE, STATUS_DISCONNECT, STATUS_PARTNER_DISCONNECT, STATUS_STATIC,
+    STATUS_EXPIRED, STATUS_RETURNED, STATUS_PARLAI_DISCONNECT,
+  ].includes(status);
 }
 
 // This is used to track the local state of an MTurk agent as determined by
@@ -62,6 +65,7 @@ function is_final_status(status) {
 class LocalAgentState {
   constructor(connection_id) {
     this.status = STATUS_NONE;
+    this.agent_id = null;
     this.conversation_id = null;
     this.unsent_messages = {};
     this.previous_messages = {};
@@ -94,15 +98,17 @@ class LocalAgentState {
       messages: this.previous_messages[this.conversation_id] || [],
       agent_status: this.status,
       done_text: this.done_text,
+      agent_id: this.agent_id,
     }
   }
 
   get_update_from_state_change(state_change) {
     // Updates this state based on the state change, and provides an
     // update packet to send forward to the client as well
-    new_conversation_id = state_change['conversation_id'];
-    new_status = state_change['agent_status'];
-    done_text = state_change['done_text'];
+    let new_conversation_id = state_change['conversation_id'];
+    let new_status = state_change['agent_status'];
+    let done_text = state_change['done_text'];
+    let agent_id = state_change['agent_id'];
 
     let update_packet = {};
     let needs_update = false;
@@ -118,6 +124,7 @@ class LocalAgentState {
       this.status = new_status;
 
       if (is_final_status(status)) {
+        update_packet['final'] = true;
         this._cleanup_state();
       }
     }
@@ -126,6 +133,12 @@ class LocalAgentState {
       needs_update = true;
       update_packet['done_text'] = done_text;
       this.done_text = done_text;
+    }
+
+    if (agent_id != this.agent_id) {
+      needs_update = true;
+      update_packet['agent_id'] = agent_id;
+      this.agent_id = agent_id;
     }
 
     if (needs_update) {
@@ -196,6 +209,7 @@ class LocalAgentState {
         messages: this.previous_messages[this.conversation_id] || [],
         agent_status: this.status,
         done_text: this.done_text,
+        agent_id: this.agent_id,
       }
     }
 
@@ -332,6 +346,8 @@ function handle_pong(data) {
 // and then forwarding the alive to the world if it came from a client. If
 // there is already an agent state for this agent, we handle the reconnection
 // event ourselves.
+// TODO handle specific agent alive messages sent after a task is already
+// completed
 function handle_alive(socket, data) {
   var sender_id = data['sender_id'];
   var in_connection_id = _get_from_conn_id(data);
@@ -423,9 +439,12 @@ function handle_agent_state_update(state_change) {
     // sending state update to an agent that doesn't exist?
     console.log("msg was sent to non-existent" + out_connection_id);
     console.log(state_change);
-  } else {
+  } else if (!is_final_status(agent_state.status)) {
     let update_packet = agent_state.get_update_from_state_change(state_change);
-    _send_message(out_connection_id, UPDATE_STATE, update_packet);
+    // Only state updates to agents that are still alive
+    if (active_connections.has(out_connection_id)) {
+      _send_message(out_connection_id, UPDATE_STATE, update_packet);
+    }
   }
 }
 
