@@ -28,6 +28,7 @@ from .controls import (
     CONTROL2DEFAULTNUMBUCKETS,
     CONTROL2DEFAULTEMBSIZE,
     ATTR2SENTSCOREFN,
+    WDFEATURE2UPDATEFN,
     get_ctrl_vec,
     get_wd_features,
     initialize_control_information,
@@ -346,7 +347,11 @@ class ControllableSeq2seqAgent(TorchAgent):
           self.wd_wts: list of floats, the WD weights to use.
         """
 
-        # Get any overrides for CT num_buckets
+        # Set self.control_vars, a list of the CT control vars in alphabetical order
+        self.control_vars = (sorted(self.opt['control_vars'].split(','))
+                             if self.opt['control_vars'] != '' else [])
+
+        # Process the control_num_buckets flag (for CT)
         ctrl_numbucket_override = {}
         if self.opt['control_num_buckets'] != "":
             ctrl_numbucket_override = {
@@ -354,7 +359,7 @@ class ControllableSeq2seqAgent(TorchAgent):
                 for s in self.opt['control_num_buckets'].split(',')
                 }  # string to int
 
-        # Get any overrides for CT embsize
+        # Process the control_embeddingsize flag (for CT)
         ctrl_esz_override = {}
         if self.opt['control_embeddingsize'] != "":
             ctrl_esz_override = {
@@ -362,31 +367,41 @@ class ControllableSeq2seqAgent(TorchAgent):
                 for s in self.opt['control_embeddingsize'].split(',')
                 }  # string to int
 
-        # Get any user-supplied settings for the controls
+        # Process the set_controls flag, which gives user-supplied settings for CT
         set_controls = {}
         if self.opt['set_controls'] != "":
             set_controls = {}  # string to (int or string)
             for s in self.opt['set_controls'].split(','):
                 control, set_val = s.split(':')[0], s.split(':')[1]
-                # set_val should be a string of an int
+                if control not in self.control_vars:
+                    raise Exception("Received --set-controls for control '%s', but "
+                                    "that is not one of the existing CT controls for "
+                                    "this model, which are: %s"
+                                    % (control, ', '.join(self.control_vars)))
+                try:
+                    set_val = int(set_val)  # set_val should be a string of an int
+                except ValueError:
+                    raise Exception("Received --set-controls '%s' for CT "
+                                    "control '%s'. The set value must be an integer."
+                                    % (set_val, control))
                 set_controls[control] = int(set_val)
 
-        # Set self.control_vars, a list of the control vars in alphabetical order
-        self.control_vars = (sorted(self.opt['control_vars'].split(','))
-                             if self.opt['control_vars'] != '' else [])
-
-        # Set self.control_settings
+        # Set self.control_settings for the CT controls
         self.control_settings = {}
         for idx, c in enumerate(self.control_vars):
-            if c not in ATTR2SENTSCOREFN.keys():
-                raise Exception("ERROR: %s is not an available CT control. Available "
-                                "ctrls: %s" % (c, ', '.join(ATTR2SENTSCOREFN.keys())))
             d = {}
             d['embsize'] = (ctrl_esz_override[c] if c in ctrl_esz_override
                             else CONTROL2DEFAULTEMBSIZE[c])
             d['num_buckets'] = (ctrl_numbucket_override[c]
                                 if c in ctrl_numbucket_override
                                 else CONTROL2DEFAULTNUMBUCKETS[c])
+            if c in set_controls:
+                set_val = set_controls[c]
+                if set_val not in range(d['num_buckets']):
+                    raise Exception("Received --set-controls '%s' for CT control '%s', "
+                                    "which has num_buckets=%i. The set value must be "
+                                    "between 0 and %i." %
+                                    (set_val, c, d['num_buckets'], d['num_buckets']-1))
             d['set_value'] = set_controls[c] if c in set_controls else None
             d['idx'] = idx
             self.control_settings[c] = d
@@ -394,14 +409,19 @@ class ControllableSeq2seqAgent(TorchAgent):
         # Get list of WD features and weights, self.wd_features and self.wd_weights
         if self.opt['weighted_decoding'] != "":
             if self.beam_size == 1:
-                raise Exception("WD controls are not implemented for greedy search. "
-                                "Either increase --beam-size to be greater than 1, or "
-                                "do not enter --weighted-decoding (-wd).")
+                raise Exception("WD control is not currently implemented for greedy "
+                                "search. Either increase --beam-size to be greater "
+                                "than 1, or do not enter --weighted-decoding (-wd).")
 
             # Get a list of (feature, weight) i.e. (string, float) pairs
             wd_feats_wts = [(s.split(':')[0], float(s.split(':')[1]))
                             for s in self.opt['weighted_decoding'].split(',')]
             self.wd_features = [f for (f, w) in wd_feats_wts]  # list of strings
+            for wd_feat in self.wd_features:
+                if wd_feat not in WDFEATURE2UPDATEFN:
+                    raise Exception("'%s' is not an existing WD feature. Available WD "
+                                    "features: %s"
+                                    % (wd_feat, ', '.join(WDFEATURE2UPDATEFN.keys())))
             self.wd_wts = [w for (f, w) in wd_feats_wts]  # list of floats
         else:
             self.wd_features, self.wd_wts = [], []

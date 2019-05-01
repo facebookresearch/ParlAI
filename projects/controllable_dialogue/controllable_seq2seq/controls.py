@@ -54,7 +54,7 @@ class NIDFFeats(object):
             else:
                 # print("WARNING: word %s has no NIDF; marking it as NIDF=0" % word)
                 num_oovs += 1  # If we don't have NIDF for this word, set as 0
-        print('Done constructing NIDF feature matrix; of %i words in dict there '
+        print('Done constructing NIDF feature vector; of %i words in dict there '
               'were %i words with unknown NIDF; they were marked as NIDF=0.'
               % (len(dict), num_oovs))
 
@@ -743,14 +743,14 @@ def get_qn_bucket_probs():
 PROB_BUCKET_GIVEN_QN, PROB_BUCKET_GIVEN_NOTQN = get_qn_bucket_probs()
 
 
-def bucket_question(ex, history, num_buckets):
+def bucket_question(ex, ctrl, num_buckets):
     """
     Given an example (where the target response may or may not be a question) and its
     history, probabilistically determine what question-asking CT bucket to use.
 
     Inputs:
       ex: message dictionary containing a bool field 'question'
-      history: a ConvAI2History. This represents the conversation history.
+      ctrl: string. The name of the CT control. Should be 'question'.
       num_buckets: int. The number of question-asking CT buckets. Assumed to be 11.
     Returns:
       out: int. bucket number.
@@ -802,7 +802,7 @@ def bucket_contvar(ex, ctrl, num_buckets):
 
     # Get the control variable value
     ctrl_val = ex[ctrl]  # string. the value of the control variable for this example
-    if ctrl in ['question', 'avg_nidf']:
+    if ctrl == 'avg_nidf':
         ctrl_val = float(ctrl_val)
         assert ctrl_val >= 0
         assert ctrl_val <= 1
@@ -840,16 +840,16 @@ CONTROL2DEFAULTEMBSIZE = {
 CONTROL2DEFAULTNUMBUCKETS = {
     'question': 11,
     'avg_nidf': 10,
-    'lastuttsim': 11,
+    'lastuttsim': 11,  # 11th bucket is for when the bot goes first in the conversation
 }
 
 # This dictionary maps from the name of a CT control variable, to a function that
-# takes (ex, history, ctrl, num_buckets) as input, and returns the correct bucket_id
+# takes (ex, ctrl, num_buckets) as input, and returns the correct bucket_id
 # for that control and this example.
 CONTROL2BUCKETINGFN = {
-    'question': (lambda x: bucket_question(x[0], x[1], x[3])),
-    'avg_nidf': (lambda x: bucket_contvar(x[0], x[2], x[3])),
-    'lastuttsim': (lambda x: bucket_contvar(x[0], x[2], x[3])),
+    'question': bucket_question,
+    'avg_nidf': bucket_contvar,
+    'lastuttsim': bucket_contvar,
 }
 
 # Bucket lowerbounds. These are produced using the get_bucket_lowerbounds.py script.
@@ -900,6 +900,12 @@ def get_ctrl_vec(exs, history, control_settings):
 
     for batch_idx, (ex, hist) in enumerate(zip(exs, history)):
         for ctrl, ctrl_info in control_settings.items():
+            if ctrl not in ex:
+                raise Exception("The CT control '%s' is not present as a key in the "
+                                "message dictionary:\n%s\nIf training a CT model, "
+                                "perhaps your training data is missing the "
+                                "annotations. If talking interactively, perhaps you "
+                                "forgot to set --set-controls." % (ctrl, str(ex)))
             set_val = ctrl_info['set_value']  # is either int or None
             if set_val is not None:  # if we're using some preset bucket for this ctrl
                 bucket = set_val  # override with set_val, an int
