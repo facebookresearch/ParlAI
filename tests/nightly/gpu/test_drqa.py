@@ -8,6 +8,7 @@ import unittest
 import parlai.core.testing_utils as testing_utils
 
 
+@unittest.skip
 @testing_utils.skipUnlessGPU
 class TestDrQAModel(unittest.TestCase):
     """Checks that DrQA Model can be downloaded and achieve appropriate results"""

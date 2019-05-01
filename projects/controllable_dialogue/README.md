@@ -40,36 +40,38 @@ following BibTex entry:
 
 ## Download the data
 
-Running the train scripts will also automatically download all the data for
-you. You can also manually download all the training data by running
-`projects/controllable_dialogue/tasks/build.py`. This will download the
-following files to `data/controllable_dialogue`:
+Running the commands to train or chat with the models will automatically download 
+all the data for you. Alternatively, you can manually download all the data by 
+running `python projects/controllable_dialogue/tasks/build.py`. This will download 
+the following files to `data/controllable_dialogue`:
 
 - `train.txt`: This is Convai2 training data, with extra annotations for three
   CT controllable attributes (`question`, `lastuttsim`, `avg_nidf`). It is in
   parlai format.
-- `valid.txt`: Similarly to train.txt
+- `valid.txt`: Similarly to train.txt.
 - `arora.pkl`: This is a pickle file containing information necessary to
   compute Arora-style sentence embeddings, needed for the response-relatedness
-  control methods
+  control methods.
 - `word2count.pkl`: This is a pickle file containing information necessary to
-  compute NIDF measures, needed for the specificity control methods
-
-In `ConvAI2_parlaiformat`, which is used if you want to generate the training
-data yourself:
-- `train.txt`: This is the ConvAI2 training set
-  (`data/ConvAI2/train_self_original_no_cands.txt`) converted to parlai
-  format
-- `valid.txt`: This is the ConvAI2 validation set
-  (`data/ConvAI2/valid_self_original_no_cands.txt`) converted to parlai
-  format
+  compute NIDF measures, needed for the specificity control methods.
+- `personas_validation.txt`: This file contains all the ConvAI2 validation set 
+personas, provided for convenience (useful for talking to the model interactively).
+- `ConvAI2_parlaiformat/`:
+    - `train.txt`: This is the ConvAI2 training set
+      (`data/ConvAI2/train_self_original_no_cands.txt`) converted to parlai
+      format.  
+    - `valid.txt`: This is the ConvAI2 validation set
+      (`data/ConvAI2/valid_self_original_no_cands.txt`) converted to parlai
+      format.
+- `wordstat_files/`:
+    - This directory contains json files with generated output and automatic metrics
+    computed for the various pretrained models. 
 
 ### (Alternatively) Make the data yourself
 
-Here are the commands to create ConvAI2\_parlaiformat and
-controllable\_dialogue yourself:
+Here are the commands to create the data yourself:
 
-First, convert the convai2 data to ParlAI format:
+First, convert the ConvAI2 data to ParlAI format:
 
     mkdir -p data/controllable_dialogue/ConvAI2_parlaiformat
 
@@ -121,66 +123,90 @@ previous section.
 
 ## Chat with the pretrained models
 
-In this section are the commands to talk to the models (as described in Table 5
-of the paper).
+In this section are the commands to talk to the models described in the paper.
+You can refer to Table 5 in the paper to see how these commands correspond to 
+the configurations described there.
 
-Running any of these commands will download the pretrained models automatically.
+Running any of these commands will also download the pretrained models, if necessary.
 
-Talk to the greedy search baseline model:
+**Talk to the greedy search baseline model:**
 
     python projects/controllable_dialogue/interactive.py \
     -mf models:controllable_dialogue/convai2_finetuned_baseline \
     --beam-size 1
 
-Talk to the beam search baseline model:
+**Talk to the beam search baseline model:**
 
     python projects/controllable_dialogue/interactive.py \
     -mf models:controllable_dialogue/convai2_finetuned_baseline
 
-Talk to the repetition-controlled (WD) baseline:
+**Talk to the repetition-controlled (WD) baseline:**
 
     python projects/controllable_dialogue/interactive.py \
     -mf models:controllable_dialogue/convai2_finetuned_baseline \
     -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20
 
-Talk to the question-controlled CT model (with WD repetition control):
+You can change the weights for these three WD repetition features to be any real 
+number (positive or negative). Here `-1e20` represents -infinity. 
+In addition, there are other repetition WD features you can use if you wish: 
+see the keys of `WDFEATURE2UPDATEFN` in `controllable_seq2seq/controls.py`.
+
+**Talk to the question-controlled CT model (with WD repetition control):**
 
     python projects/controllable_dialogue/interactive.py \
     -mf models:controllable_dialogue/control_questionb11e10 \
     -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
-    --set-controls question:7 # 70% questions. You can set this between 0 and 10.
+    --set-controls question:7
 
-Here's the "z=10 (boost)" version mentioned in the paper:
+Here `question:7` means the '70% questions' bucket. 
+You can set this anywhere between 0 and 10.
+
+To talk to the "z=10 (boost)" version mentioned in the paper:
 
     python projects/controllable_dialogue/interactive.py \
     -mf models:controllable_dialogue/control_questionb11e10 \
     -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
     --set-controls question:10 --beam-reorder best_extrep2gram_qn
 
-Talk to the specificity-controlled CT model (with WD repetition control):
+**Talk to the specificity-controlled CT model (with WD repetition control):**
 
     python projects/controllable_dialogue/interactive.py \
     -mf models:controllable_dialogue/control_avgnidf10b10e \
     -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
-    --set-controls avg_nidf:7 # You can set this between 0 and 9.
+    --set-controls avg_nidf:7
+    
+Here `avg_nidf:7` means the 7th specificity bucket (where higher is more specific). 
+You can set this anywhere between 0 and 9.
 
-Talk to the specificity-controlled WD model (with WD repetition control):
-
-    python projects/controllable_dialogue/interactive.py \
-    -mf models:controllable_dialogue/convai2_finetuned_baseline \
-    -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,nidf:4 # You can set the nidf weight to be any real number, positive or negative
-
-Talk to the response-relatedness WD model (with WD repetition control):
+**Talk to the specificity-controlled WD model (with WD repetition control):**
 
     python projects/controllable_dialogue/interactive.py \
     -mf models:controllable_dialogue/convai2_finetuned_baseline \
-    -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_2gram:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,lastuttsim:5 # You can set the lastuttsim weight to be any real number, positive or negative
+    -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,nidf:4
 
-Note: If you want the bot to have a persona when you talk to it, select one of
+Here `nidf:4` means using the NIDF WD feature with weight 4.
+You can use any real number as a weight (positive or negative).
+
+**Talk to the response-relatedness WD model (with WD repetition control):**
+
+    python projects/controllable_dialogue/interactive.py \
+    -mf models:controllable_dialogue/convai2_finetuned_baseline \
+    -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_2gram:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,lastuttsim:5
+
+Here `lastuttsim:5` means using the response-relatedness WD feature with weight 5.
+You can use any real number as a weight (positive or negative).
+
+Note that this this feature can take a while to load, especially the first time you run it. 
+This is because we have to load the GloVe vectors from file.
+
+**Giving the bot a persona**: 
+If you want the bot to have a persona when you talk to it, select one of
 the lines in `data/controllable_dialogue/personas_validation.txt` and prepend
-it to your first utterance.
+it to your first utterance. Alternatively you can write the persona yourself - 
+but make sure to use the same format.
 
-Note: If you want to see the top 10 candidates produced by beam search (rather
+**Viewing top 10 beam search candidates:** 
+If you want to see the top 10 candidates produced by beam search (rather
 than just the top 1), add the flag `--verbose True`.
 
 ## Train a CT model

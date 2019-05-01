@@ -34,7 +34,7 @@ except ImportError:
     GIT_AVAILABLE = False
 
 
-DEBUG = False  # change this to true to print to stdout anyway
+DEBUG = True  # change this to true to print to stdout anyway
 
 
 def is_this_circleci():
@@ -202,8 +202,8 @@ def train_model(opt):
     If model_file is not in opt, then this helper will create a temporary
     directory to store the model, dict, etc.
 
-    :return: (stdout, stderr, valid_results, test_results)
-    :rtype: (str, str, dict, dict)
+    :return: (stdout, valid_results, test_results)
+    :rtype: (str, dict, dict)
     """
     import parlai.scripts.train_model as tms
 
@@ -216,6 +216,7 @@ def train_model(opt):
             parser = tms.setup_args()
             # needed at the very least to set the overrides.
             parser.set_params(**opt)
+            parser.set_params(log_every_n_secs=10)
             popt = parser.parse_args(print_args=False)
             # in some rare cases, like for instance if the model class also
             # overrides its default params, the params override will not
@@ -232,12 +233,17 @@ def train_model(opt):
     )
 
 
-def eval_model(opt):
+def eval_model(opt, skip_test=False):
     """
     Runs through an evaluation loop.
 
-    :return: (stdout, stderr, valid_results, test_results)
-    :rtype: (str, str, dict, dict)
+    :param opt:
+        Any non-default options you wish to set.
+    :param bool skip_test:
+        If true skips the test evaluation, and the third return value will be None.
+
+    :return: (stdout, valid_results, test_results)
+    :rtype: (str, dict, dict)
 
     If model_file is not in opt, then this helper will create a temporary directory
     to store the model files, and clean up afterwards. You can keep the directory
@@ -247,6 +253,7 @@ def eval_model(opt):
     import parlai.scripts.eval_model as ems
     parser = ems.setup_args()
     parser.set_params(**opt)
+    parser.set_params(log_every_n_secs=10)
     popt = parser.parse_args(print_args=False)
 
     if popt.get('model_file') and not popt.get('dict_file'):
@@ -256,12 +263,41 @@ def eval_model(opt):
         popt['datatype'] = 'valid'
         valid = ems.eval_model(popt)
         popt['datatype'] = 'test'
-        test = ems.eval_model(popt)
+        test = None if skip_test else ems.eval_model(popt)
 
     return (
         output.getvalue(),
         valid,
         test,
+    )
+
+
+def display_data(opt):
+    """
+    Runs through a display data run.
+
+    :return: (stdout_train, stdout_valid, stdout_test)
+    :rtype (str, str, str)
+    """
+    import parlai.scripts.display_data as dd
+    parser = dd.setup_args()
+    parser.set_params(**opt)
+    popt = parser.parse_args(print_args=False)
+
+    with capture_output() as train_output:
+        popt['datatype'] = 'train:stream'
+        dd.display_data(popt)
+    with capture_output() as valid_output:
+        popt['datatype'] = 'valid:stream'
+        dd.display_data(popt)
+    with capture_output() as test_output:
+        popt['datatype'] = 'test:stream'
+        dd.display_data(popt)
+
+    return (
+        train_output.getvalue(),
+        valid_output.getvalue(),
+        test_output.getvalue(),
     )
 
 
