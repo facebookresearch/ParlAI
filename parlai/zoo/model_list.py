@@ -205,8 +205,8 @@ model_list = [
     },
     {
         "title": "Controllable Dialogue pretrained models",
-        "id": "twitter",
-        "path": "models:controllable_dialogue/",
+        "id": "controllable_dialogue",
+        "path": "models:controllable_dialogue/convai2_finetuned_baseline",
         "agent": "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",  # noqa: E501
         "task": "projects.controllable_dialogue.tasks.agents",
         "description": ("Generic conversational model trained on the twitter task"),

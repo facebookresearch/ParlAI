@@ -51,6 +51,7 @@ installtorchgpu: &installtorchgpu
       pip3 install --progress-bar off torch
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
+      pip3 install --progress-bar off torchtext
 
 installtorchcpu: &installtorchcpu
   run:
