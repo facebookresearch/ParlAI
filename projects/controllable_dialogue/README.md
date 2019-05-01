@@ -179,6 +179,7 @@ Note: If you want to see the top 10 candidates produced by beam search (rather t
 
 To train a CT model (conditioned on mean NIDF) from scratch:
 
+    # TODO update task
     cd ParlAI
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
     --fromfile-datapath data/controllable_dialogue/train.txt \
@@ -193,6 +194,7 @@ This will default to embedding size 10, but you could include e.g. `--control-em
 
 This code will also default to 10 NIDF buckets. If you want to use a different number of buckets, first you need to figure out what the NIDF lower bound should be for each bucket. Suppose you want 8 buckets. First run:
 
+    #TODO: update task
     python projects/controllable_dialogue/get_bucket_lowerbounds.py \
       --fromfile_datapath data/controllable_dialogue/train.txt \
       --num_buckets 8 \

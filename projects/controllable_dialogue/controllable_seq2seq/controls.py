@@ -10,6 +10,7 @@ This file contains the main code for running CT and WD controlled models.
 
 import torch
 import numpy as np
+from parlai.core.build_data import modelzoo_path
 from .stopwords import STOPWORDS
 from .nidf import load_word2nidf
 from .arora import SentenceEmbedder, load_arora
@@ -65,17 +66,32 @@ class NIDFFeats(object):
         return self.NIDF_FEATS
 
 
-word2nidf = load_word2nidf()  # get word2nidf dict
-nidf_feats = NIDFFeats()  # init the NIDFFeats object
+word2nidf = None
+nidf_feats = None
+arora_data = None
+sent_embedder = None
 
-# ========================================
-# LOAD INFO FOR ARORA SENTENCE EMBEDDINGS
-# ========================================
 
-arora_data = load_arora()
-sent_embedder = SentenceEmbedder(arora_data['word2prob'], arora_data['arora_a'],
-                                 arora_data['glove_name'], arora_data['glove_dim'],
-                                 arora_data['first_sv'])
+def initialize_control_information(opt):
+    global word2nidf, nidf_feats, arora_data, sent_embedder
+
+    if word2nidf is not None:
+        # already loaded, no need to do anything
+        return
+
+    print("Loading up controllable features...")
+    word2nidf = load_word2nidf(opt)  # get word2nidf dict
+    nidf_feats = NIDFFeats()  # init the NIDFFeats object
+    # load info for arora sentence embeddings
+    arora_data = load_arora(opt)
+    sent_embedder = SentenceEmbedder(
+        arora_data['word2prob'],
+        arora_data['arora_a'],
+        arora_data['glove_name'],
+        arora_data['glove_dim'],
+        arora_data['first_sv'],
+        glove_cache=modelzoo_path(opt['datapath'], 'models:glove_vectors'),
+    )
 
 
 # ========================================

@@ -130,7 +130,7 @@ def learn_nidf(opt):
         pickle.dump(data, f)
 
 
-def load_word2nidf():
+def load_word2nidf(opt):
     """
     Loads word count stats from word2count.pkl file specified in WORD2COUNT_FP,
     computes NIDF for all words, and returns the word2nidf dictionary.
@@ -138,9 +138,11 @@ def load_word2nidf():
     Returns:
       word2nidf: dict mapping words to their NIDF score (float between 0 and 1)
     """
+    global WORD2COUNT_FP
     if WORD2COUNT_FP is None:
-        raise Exception('Please enter the filepath to your word2count.pkl file '
-                        'at the top of nidf.py')
+        WORD2COUNT_FP = os.path.join(
+            opt['datapath'], CONTROLLABLE_DIR, 'word2count.pkl'
+        )
     print("Loading word count stats from %s..." % WORD2COUNT_FP)
     with open(WORD2COUNT_FP, "rb") as f:
         data = pickle.load(f)

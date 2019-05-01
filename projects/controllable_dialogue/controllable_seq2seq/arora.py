@@ -12,6 +12,7 @@ response-relatedness control.
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
+from parlai.core.build_data import modelzoo_path
 import torchtext.vocab as vocab
 from parlai.core.utils import TimeLogger
 from collections import Counter, deque
@@ -24,9 +25,6 @@ FOLDER = 'controllable_dialogue'
 
 # Once you've downloaded or created your arora.pkl file, enter the filepath below
 ARORA_FP = None  # e.g. '~/ParlAI/data/controllable_dialogue/arora.pkl'
-
-# Once you've downloaded glove_vectors directory, enter the filepath below
-GLOVE_FP = None  # e.g. '~/ParlAI/data/controllable_dialogue/glove_vectors'
 
 
 class SentenceEmbedder(object):
@@ -42,7 +40,7 @@ class SentenceEmbedder(object):
     """
 
     def __init__(self, word2prob, arora_a, glove_name, glove_dim, first_sv,
-                 glove_cache=None):
+                 glove_cache):
         """
           Inputs:
             word2prob: dict mapping words to their unigram probs
@@ -52,21 +50,13 @@ class SentenceEmbedder(object):
             glove_dim: the dimension of the GloVe embeddings to use, e.g. 300
             first_sv: np array shape (glove_dim). The first singular value,
               used to compute Arora sentence embeddings. Can be None.
-            glove_cache: If provided, the path to where the glove vectors are stored.
-              If None, then will use GLOVE_FP given at the top of this file.
+            glove_cache: The path to where the glove vectors are stored.
         """
         self.word2prob = word2prob
         self.arora_a = arora_a
         self.glove_name = glove_name
         self.glove_dim = glove_dim
-        if glove_cache is None:
-            if GLOVE_FP is None:
-                raise Exception('Please enter the filepath to your glove_vectors file '
-                                'at the top of arora.py')
-            else:
-                self.glove_cache = GLOVE_FP
-        else:
-            self.glove_cache = glove_cache
+        self.glove_cache = glove_cache
         self.first_sv = first_sv
         if self.first_sv is not None:
             self.first_sv = torch.tensor(self.first_sv)  # convert to torch tensor
@@ -299,23 +289,24 @@ def learn_arora(opt):
     Save all info to arora.pkl file.
     """
     arora_file = os.path.join(opt['datapath'], 'controllable_dialogue', 'arora.pkl')
-    glove_cache = os.path.join(opt['datapath'], 'controllable_dialogue', 'glove_vectors')
 
     opt['task'] = 'fromfile:parlaiformat'
     opt['log_every_n_secs'] = 2
 
     print('Getting word counts from ConvAI2 train set...')
     opt['datatype'] = 'train:ordered'
-    opt['fromfile_datapath'] = os.path.join(opt['datapath'], 'ConvAI2_parlaiformat',
-                                            'train.txt')
+    opt['fromfile_datapath'] = os.path.join(
+        opt['datapath'], 'controllable_dialogue', 'ConvAI2_parlaiformat', 'train.txt'
+    )
     # Do include inputs because ConvAI2 train set reverses every convo:
     word_counter_train, total_count_train, all_utts_train = get_word_counts(
       opt, count_inputs=False)
 
     print('Getting word counts from ConvAI2 val set...')
     opt['datatype'] = 'valid'
-    opt['fromfile_datapath'] = os.path.join(opt['datapath'], 'ConvAI2_parlaiformat',
-                                            'valid.txt')
+    opt['fromfile_datapath'] = os.path.join(
+        opt['datapath'], 'controllable_dialogue', 'ConvAI2_parlaiformat', 'valid.txt'
+    )
     # Don't include inputs because ConvAI2 val set doesn't reverses convos:
     word_counter_valid, total_count_valid, all_utts_valid = get_word_counts(
       opt, count_inputs=True)
@@ -337,6 +328,7 @@ def learn_arora(opt):
     arora_a = 0.0001
     glove_name = '840B'
     glove_dim = 300
+    glove_cache = modelzoo_path(self.opt['datapath'], 'models:glove_vectors')
 
     # Embed every sentence, without removing first singular value
     print('Embedding all sentences...')
@@ -381,13 +373,13 @@ def learn_arora(opt):
         }, f)
 
 
-def load_arora():
+def load_arora(opt):
     """
     Load the data in the arora.pkl file given by ARORA_FP.
     """
+    global ARORA_FP
     if ARORA_FP is None:
-        raise Exception('Please enter the filepath to your arora.pkl file '
-                        'at the top of arora.py')
+        ARORA_FP = os.path.join(opt['datapath'], FOLDER, 'arora.pkl')
     print("Loading Arora embedding info from %s..." % ARORA_FP)
     with open(ARORA_FP, "rb") as f:
         data = pickle.load(f)

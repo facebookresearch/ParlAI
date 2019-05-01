@@ -24,8 +24,14 @@ from parlai.core.utils import padded_tensor, round_sigfigs, argsort
 from parlai.core.thread_utils import SharedTable
 from .modules import Seq2seq, opt_to_kwargs
 from .util import ConvAI2History, show_beam_cands, reorder_extrep2gram_qn
-from .controls import CONTROL2DEFAULTNUMBUCKETS, CONTROL2DEFAULTEMBSIZE, \
-  ATTR2SENTSCOREFN, get_ctrl_vec, get_wd_features
+from .controls import (
+    CONTROL2DEFAULTNUMBUCKETS,
+    CONTROL2DEFAULTEMBSIZE,
+    ATTR2SENTSCOREFN,
+    get_ctrl_vec,
+    get_wd_features,
+    initialize_control_information,
+)
 
 import torch
 import torch.nn as nn
@@ -163,6 +169,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         """Set up model."""
         init_model = None
         if not shared:  # only do this on first setup
+            initialize_control_information(opt)
             # first check load path in case we need to override paths
             if opt.get('init_model') and os.path.isfile(opt['init_model']):
                 # check first for 'init_model' for loading model from file
