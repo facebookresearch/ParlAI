@@ -41,34 +41,32 @@ def solved_task(str_output, valid, test):
 class TestPytorchDataTeacher(unittest.TestCase):
     """Various Integration tests for PytorchDataTeacher"""
 
-    def test_pyt_train(self):
+    def _pyt_train(self, datatype):
         """
         Integration test: ensure that pytorch data teacher can successfully
         teach Seq2Seq model to fully solve the babi:task10k:1 task.
 
         The Seq2Seq model can solve the babi:task10k:1 task with the normal
         ParlAI setup, and thus should be able to with a PytorchDataTeacher
-
-        This tests the following setups:
-            1. -dt train
-            2. -dt train:stream
-            3. -dt train:stream:ordered
         """
-        dts = [
-            'train',
-            'train:stream',
-            'train:stream:ordered'
-        ]
-        for dt in dts:
-            defaults = parser_defaults.copy()
-            defaults['datatype'] = dt
-            defaults['shuffle'] = True  # for train:stream
-            str_output, valid, test = testing_utils.train_model(defaults)
-            self.assertTrue(
-                solved_task(str_output, valid, test),
-                'Teacher could not teach seq2seq with args: {}; here is str_output: {}'
-                .format(defaults, str_output)
-            )
+        defaults = parser_defaults.copy()
+        defaults['datatype'] = datatype
+        defaults['shuffle'] = True  # for train:stream
+        str_output, valid, test = testing_utils.train_model(defaults)
+        self.assertTrue(
+            solved_task(str_output, valid, test),
+            'Teacher could not teach seq2seq with args: {}; here is str_output: {}'
+            .format(defaults, str_output)
+        )
+
+    def test_pyt_train(self):
+        self._pyt_train('train')
+
+    def test_pyt_train_stream(self):
+        self._pyt_train('train:stream')
+
+    def test_pyt_train_stream_ordered(self):
+        self._pyt_train('train:stream:ordered')
 
     def test_pyt_preprocess_train(self):
         """
@@ -78,7 +76,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
         This tests whether an agent can train to completion with
         these preprocessed examples
         """
-        # Second, check that the model will train
         defaults = parser_defaults.copy()
         defaults['datatype'] = 'train'
         defaults['pytorch_preprocess'] = True
@@ -89,44 +86,43 @@ class TestPytorchDataTeacher(unittest.TestCase):
             .format(str_output)
         )
 
-    def test_pyt_batchsort_train(self):
+    def _pyt_batchsort_train(self, datatype, preprocess):
         """
         Tests the functionality of training with batchsort
-        under the following conditions:
 
-        1. -dt train --pytorch_preprocess False
-        2. -dt train:stream --pytorch_preprocess False
-        3. -dt train --pytorch_preprocess True --batch_sort_field text_vec
+        :param datatype:
+            (string) datatype to train with
+        :param preprocess:
+            (bool) whether to preprocess the data
         """
-        # Next, check that training works
-        dt_and_preprocess = [
-            ('train', False),
-            ('train:stream', False),
-            ('train', True)
-        ]
-        for dt, preprocess in dt_and_preprocess:
-            defaults = parser_defaults.copy()
-            defaults['datatype'] = dt
-            defaults['pytorch_preprocess'] = preprocess
-            defaults['pytorch_teacher_batch_sort'] = True
-            defaults['batchsize'] = 32
-            if preprocess:
-                defaults['batch_sort_field'] = 'text_vec'
-            str_output, valid, test = testing_utils.train_model(defaults)
-            self.assertTrue(
-                solved_task(str_output, valid, test),
-                'Teacher could not teach seq2seq with batch sort '
-                'and args {} and output {}'
-                .format((dt, preprocess), str_output)
-            )
+        defaults = parser_defaults.copy()
+        defaults['datatype'] = datatype
+        defaults['pytorch_preprocess'] = preprocess
+        defaults['pytorch_teacher_batch_sort'] = True
+        defaults['batchsize'] = 32
+        if preprocess:
+            defaults['batch_sort_field'] = 'text_vec'
+        str_output, valid, test = testing_utils.train_model(defaults)
+        self.assertTrue(
+            solved_task(str_output, valid, test),
+            'Teacher could not teach seq2seq with batch sort '
+            'and args {} and output {}'
+            .format((datatype, preprocess), str_output)
+        )
+
+    def test_pyt_batchsort_train(self):
+        self._pyt_batchsort_train('train', False)
+
+    def test_pyt_batchsort_train_stream(self):
+        self._pyt_batchsort_train('train:stream', False)
+
+    def test_pyt_batchsort_train_preprocess(self):
+        self._pyt_batchsort_train('train', True)
 
     def test_pytd_teacher(self):
         """
         Test that the pytorch teacher works with given Pytorch Datasets
         as well
-
-        I'll be using the Flickr30k dataset to ensure that the observations
-        are the same.
         """
         defaults = parser_defaults.copy()
         defaults['datatype'] = 'train:stream'
@@ -135,7 +131,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
         with testing_utils.capture_output():
             # Get processed act from agent
             parser = display_setup_args()
-            defaults['pytorch_teacher_dataset'] = 'flickr30k'
+            defaults['pytorch_teacher_dataset'] = 'integration_tests'
             del defaults['pytorch_teacher_task']
             parser.set_defaults(**defaults)
             opt = parser.parse_args()
@@ -143,7 +139,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
             pytorch_teacher_act = teacher.act()
 
             parser = display_setup_args()
-            defaults['task'] = 'flickr30k'
+            defaults['task'] = 'integration_tests'
             del defaults['pytorch_teacher_dataset']
             parser.set_defaults(**defaults)
             opt = parser.parse_args()
@@ -156,9 +152,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
         for key in keys:
             self.assertTrue(pytorch_teacher_act[key] == regular_teacher_act[key],
                             'PytorchDataTeacher does not have the same value '
-                            'as regular teacher for act key: {}'.format(key))
+                            'as regular teacher for act key: {}. '
+                            'Values: {}; {}'.format(
+                                key, pytorch_teacher_act[key], regular_teacher_act[key])
+                            )
 
-    @unittest.skip("This test needs to be updated to something smaller.")
     def test_pyt_multitask(self):
         """
             Unit test for ensuring that PytorchDataTeacher correctly handles
@@ -188,18 +186,19 @@ class TestPytorchDataTeacher(unittest.TestCase):
                 'following args: {}'.format(opt)
             )
 
-        task1 = 'babi:task1k:1'
-        task2 = 'babi:task1k:2'
-        dataset1 = 'flickr30k'
-        dataset2 = 'vqa_v1'
+        # task; num eps; num exs
+        task1 = 'babi:task1k:1'  # 180, 900
+        task2 = 'babi:task1k:2'  # 180, 900
+        dataset1 = 'integration_tests'  # 500, 500
+        dataset2 = 'integration_tests:NoCandidateTeacherDataset'  # 500, 500
 
         # Expected example and episode counts
         eps_and_exs_counts = [
             (1800, 1800),
             (1080, 1800),
-            (29900, 29900),
-            (29180, 29900),
-            (277349, 277349)
+            (1400, 1400),
+            (680, 1400),
+            (1000, 1000)
         ]
         defaults = parser_defaults.copy()
 
