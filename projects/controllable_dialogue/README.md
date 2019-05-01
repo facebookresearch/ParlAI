@@ -105,14 +105,14 @@ filepath to your `arora.pkl` file and your `glove_vectors` directory.
 Next, create `controllable_dialogue/train.txt` and `valid.txt`:
 
     python projects/controllable_dialogue/make_control_dataset.py \
-      --fromfile_datapath data/ConvAI2_parlaiformat/train.txt \
-      --outfile data/controllable_dialogue/train.txt \
-      --controls question,lastuttsim,avg_nidf
+    --fromfile_datapath data/ConvAI2_parlaiformat/train.txt \
+    --outfile data/controllable_dialogue/train.txt \
+    --controls question,lastuttsim,avg_nidf
 
     python projects/controllable_dialogue/make_control_dataset.py \
-      --fromfile_datapath data/ConvAI2_parlaiformat/valid.txt \
-      --outfile data/controllable_dialogue/valid.txt \
-      --controls question,lastuttsim,avg_nidf
+    --fromfile_datapath data/ConvAI2_parlaiformat/valid.txt \
+    --outfile data/controllable_dialogue/valid.txt \
+    --controls question,lastuttsim,avg_nidf
 
 This will create files called `train.txt` and `valid.txt` in your
 `controllable_dialogue` directory.
@@ -214,7 +214,8 @@ than just the top 1), add the flag `--verbose True`.
 To train a CT model (conditioned on mean NIDF) from scratch:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
-    -mf /path/to/your/modelfile --control-vars avg_nidf
+    -mf /path/to/your/modelfile \
+    --control-vars avg_nidf
 
 Note: if you add your paths for `train.txt`, `valid.txt` and
 `dict_twit30k_train_split` to `train_controllable_seq2seq.py` then you won't
@@ -228,8 +229,8 @@ number of buckets, first you need to figure out what the NIDF lower bound
 should be for each bucket. Suppose you want 8 buckets. First run:
 
     python projects/controllable_dialogue/get_bucket_lowerbounds.py \
-      --num_buckets 8 \
-      --control avg_nidf
+    --num_buckets 8 \
+    --control-vars avg_nidf
 
 and then copy and paste the provided lower bounds into
 `controllable_dialogue/controllable_seq2seq/controls.py`, similarly to the
@@ -239,17 +240,17 @@ existing `AVG_NIDF_10BUCKET_LBS`. Then you can train a model with
 You can train a CT model conditioned on multiple controls:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
-      -mf /path/to/your/modelfile \
-      --control-vars avg_nidf,question
+    -mf /path/to/your/modelfile \
+    --control-vars avg_nidf,question
 
 To take an existing non-CT model (e.g. the baseline) and the finetune it as a
 CT model do this:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
-      -mf /path/to/your/modelfile \
-      --init-model models:controllable_dialogue/convai2_finetuned_baseline \
-      --add-control True \
-      -cv avg_nidf
+    -mf /path/to/your/modelfile \
+    --init-model models:controllable_dialogue/convai2_finetuned_baseline \
+    --add-control True \
+    --control-vars avg_nidf
 
 This command will take the parameters saved in `--init-model`, load them in the
 new model (which has randomly initialized weights for the new CT parameters),
@@ -257,9 +258,9 @@ and then save that model to the given modelfile (`-mf`). It should be quick.
 Once that's done, run this command:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
-      -mf /path/to/your/modelfile \
-      --add-control False \
-      -cv avg_nidf
+    -mf /path/to/your/modelfile \
+    --add-control False \
+    --control-vars avg_nidf
 
 You should see your new CT model training. Note: this is how the models in the
 paper were trained.
@@ -289,10 +290,10 @@ TODO: screenshot
 If you want to generate json files like those in the previous section, do this:
 
     python projects/controllable_dialogue/eval_wordstat.py \
-      --fromfile_datapath data/controllable_dialogue/valid.txt \
-      -mf models:controllable_dialogue/control_questionb11e10 \
-      -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
-      --set-controls question:7
+    --fromfile_datapath data/controllable_dialogue/valid.txt \
+    -mf models:controllable_dialogue/control_questionb11e10 \
+    -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
+    --set-controls question:7
 
 This will create a json file containing the output and other automatic metrics
 for the question-controlled CT model with z=7. The script `eval_wordstat.py`

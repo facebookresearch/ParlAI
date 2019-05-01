@@ -47,9 +47,12 @@ class TestControllableDialogue(unittest.TestCase):
         """
         import projects.controllable_dialogue.train_controllable_seq2seq as tcs2s
         parser = tcs2s.setup_args()
+        # make it much smaller just for testing
         parser.set_params(
             max_train_time=120,
             validation_max_exs=128,
+            batchsize=16,
+            truncate=32,
             short_final_eval=True,
         )
         with testing_utils.capture_output():
