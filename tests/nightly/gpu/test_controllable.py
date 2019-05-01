@@ -52,7 +52,7 @@ class TestControllableDialogue(unittest.TestCase):
             max_train_time=120,
             validation_max_exs=128,
             batchsize=16,
-            truncate=32
+            truncate=32,
             short_final_eval=True,
         )
         with testing_utils.capture_output():
