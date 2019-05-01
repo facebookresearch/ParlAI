@@ -18,7 +18,11 @@ from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
 from parlai.core.metrics import normalize_answer
 from parlai.core.logs import TensorboardLogger
-from controllable_seq2seq.controls import ATTR2SENTSCOREFN, eval_attr
+from controllable_seq2seq.controls import (
+    ATTR2SENTSCOREFN,
+    eval_attr,
+    initialize_control_information,
+)
 from controllable_seq2seq.util import ConvAI2History
 from collections import Counter
 
@@ -46,10 +50,9 @@ def setup_args(parser=None):
 
     # These settings override .opt file but not user's command line flags
     parser.set_params(
-        task="fromfile:parlaiformat",
         datatype='valid',
-        model="projects.controllable_dialogue.controllable_seq2seq."
-              "controllable_seq2seq:ControllableSeq2seqAgent",
+        task='projects.controllable_dialogue.tasks.agents',
+        model='projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent',  # noqa: E501
         batchsize=64,
         beam_size=20,
         beam_min_n_best=10,
@@ -106,6 +109,9 @@ def eval_wordstat(opt, print_parser=None):
         model after loading the model
     """
     random.seed(42)
+
+    # Setup control information
+    initialize_control_information(opt)
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
