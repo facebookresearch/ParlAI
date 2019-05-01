@@ -27,7 +27,6 @@ from .util import ConvAI2History, show_beam_cands, reorder_extrep2gram_qn
 from .controls import (
     CONTROL2DEFAULTNUMBUCKETS,
     CONTROL2DEFAULTEMBSIZE,
-    ATTR2SENTSCOREFN,
     WDFEATURE2UPDATEFN,
     get_ctrl_vec,
     get_wd_features,
