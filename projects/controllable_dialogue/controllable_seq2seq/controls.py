@@ -11,6 +11,7 @@ This file contains the main code for running CT and WD controlled models.
 import torch
 import numpy as np
 from parlai.core.build_data import modelzoo_path
+from projects.controllable_dialogue.tasks.build import build
 from .stopwords import STOPWORDS
 from .nidf import load_word2nidf
 from .arora import SentenceEmbedder, load_arora
@@ -78,6 +79,8 @@ def initialize_control_information(opt):
     if word2nidf is not None:
         # already loaded, no need to do anything
         return
+
+    build(opt)
 
     print("Loading up controllable features...")
     word2nidf = load_word2nidf(opt)  # get word2nidf dict

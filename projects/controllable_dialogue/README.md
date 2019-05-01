@@ -39,10 +39,11 @@ following BibTex entry:
 # Code Instructions
 
 ## Download the data
-You can download all the training data by running
-`projects/controllable_dialogue/tasks/build.py`.
 
-This will download the following files to `data/controllable_dialogue`:
+Running the train scripts will also automatically download all the data for
+you. You can also manually download all the training data by running
+`projects/controllable_dialogue/tasks/build.py`. This will download the
+following files to `data/controllable_dialogue`:
 
 - `train.txt`: This is Convai2 training data, with extra annotations for three
   CT controllable attributes (`question`, `lastuttsim`, `avg_nidf`). It is in
@@ -70,7 +71,6 @@ controllable\_dialogue yourself:
 
 First, convert the convai2 data to ParlAI format:
 
-    cd ~/ParlAI
     mkdir -p data/controllable_dialogue/ConvAI2_parlaiformat
 
     python parlai/scripts/convert_data_to_parlai_format.py \
@@ -119,39 +119,12 @@ Note: Due to changes in ParlAI, there might be some small differences between
 the generated files obtained in this section, and the downloaded files in the
 previous section.
 
-## Download the pretrained models
-
-Download the models and place them in `ParlAI/data/models/controllable_dialogue`.
-
-TODO: update these instructions for downloading via ParlAI.
-
-The directory `controllable_dialogue` contains the following models:
-
-- `twitter_pretrained_baseline`: a seq2seq model trained on the Twitter
-  dataset. TODO: is there a reference for where else this model can be
-  downloaded?
-- `convai2_finetuned_baseline`: the `twitter_pretrained_baseline` model, after
-  fine-tuning on the ConvAI2 dataset.
-- `control_avgnidf10b10e`: the `convai2_finetuned_baseline` model, after adding
-  parameters for CT specificity control (10 buckets, embedding size 10), and
-  fine-tuned on the ConvAI2 dataset with loss\_CT as described in Section 5.1 of
-  the paper.
-- `control_questionb11e10`: similarly to `control_avgnidf10b10e`, except this
-  is CT question-asking control (11 buckets, embedding size 10).
-
-The directory also contains a dictionary file:
-
-- `dict_twit30k_train_split`: this is the dictionary used for all models. TODO:
-  is there a reference for where else this dict can be downloaded?
-
-
 ## Chat with the pretrained models
 
 In this section are the commands to talk to the models (as described in Table 5
 of the paper).
 
-Make sure you have downloaded the pretrained models as instructed in the
-previous section.
+Running any of these commands will download the pretrained models automatically.
 
 Talk to the greedy search baseline model:
 
@@ -214,14 +187,8 @@ than just the top 1), add the flag `--verbose True`.
 
 To train a CT model (conditioned on mean NIDF) from scratch:
 
-    # TODO update task
-    cd ParlAI
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
-    --fromfile-datapath data/controllable_dialogue/train.txt \
-    --fromfile-datapath2 data/controllable_dialogue/valid.txt \
-    --dict-file models:controllable_dialogue/dict_twit30k_train_split \
-    -mf /path/to/your/modelfile \
-    --control-vars avg_nidf
+    -mf /path/to/your/modelfile --control-vars avg_nidf
 
 Note: if you add your paths for `train.txt`, `valid.txt` and
 `dict_twit30k_train_split` to `train_controllable_seq2seq.py` then you won't
@@ -234,9 +201,7 @@ This code will also default to 10 NIDF buckets. If you want to use a different
 number of buckets, first you need to figure out what the NIDF lower bound
 should be for each bucket. Suppose you want 8 buckets. First run:
 
-    #TODO: update task
     python projects/controllable_dialogue/get_bucket_lowerbounds.py \
-      --fromfile_datapath data/controllable_dialogue/train.txt \
       --num_buckets 8 \
       --control avg_nidf
 
@@ -248,9 +213,6 @@ existing `AVG_NIDF_10BUCKET_LBS`. Then you can train a model with
 You can train a CT model conditioned on multiple controls:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
-      --fromfile-datapath data/controllable_dialogue/train.txt \
-      --fromfile-datapath2 data/controllable_dialogue/valid.txt \
-      --dict-file models:controllable_dialogue/dict_twit30k_train_split \
       -mf /path/to/your/modelfile \
       --control-vars avg_nidf,question
 
@@ -258,13 +220,10 @@ To take an existing non-CT model (e.g. the baseline) and the finetune it as a
 CT model do this:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
-    --fromfile-datapath data/controllable_dialogue/train.txt \
-    --fromfile-datapath2 data/controllable_dialogue/valid.txt \
-    --dict-file models:controllable_dialogue/dict_twit30k_train_split \
-    -mf /path/to/your/modelfile \
-    --init-model models:controllable_dialogue/convai2_finetuned_baseline \
-    --add-control True \
-    -cv avg_nidf
+      -mf /path/to/your/modelfile \
+      --init-model models:controllable_dialogue/convai2_finetuned_baseline \
+      --add-control True \
+      -cv avg_nidf
 
 This command will take the parameters saved in `--init-model`, load them in the
 new model (which has randomly initialized weights for the new CT parameters),
@@ -272,12 +231,9 @@ and then save that model to the given modelfile (`-mf`). It should be quick.
 Once that's done, run this command:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
-    --fromfile-datapath data/controllable_dialogue/train.txt \
-    --fromfile-datapath2 data/controllable_dialogue/valid.txt \
-    --dict-file models:controllable_dialogue/dict_twit30k_train_split \
-    -mf /path/to/your/modelfile \
-    --add-control False \
-    -cv avg_nidf
+      -mf /path/to/your/modelfile \
+      --add-control False \
+      -cv avg_nidf
 
 You should see your new CT model training. Note: this is how the models in the
 paper were trained.
@@ -307,10 +263,10 @@ TODO: <screenshot>
 If you want to generate json files like those in the previous section, do this:
 
     python projects/controllable_dialogue/eval_wordstat.py \
-    --fromfile_datapath data/controllable_dialogue/valid.txt \
-    -mf models:controllable_dialogue/control_questionb11e10 \
-    -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
-    --set-controls question:7
+      --fromfile_datapath data/controllable_dialogue/valid.txt \
+      -mf models:controllable_dialogue/control_questionb11e10 \
+      -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
+      --set-controls question:7
 
 This will create a json file containing the output and other automatic metrics
 for the question-controlled CT model with z=7. The script `eval_wordstat.py`

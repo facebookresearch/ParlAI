@@ -10,19 +10,15 @@ Train ControllableSeq2seq model.
 
 from parlai.scripts.train_model import setup_args, TrainLoop
 
-# TODO: update with task
+
 def set_defaults(parser):
     """Defaults for baseline model"""
 
     parser.set_defaults(
-        task='fromfile:parlaiformat',
-        evaltask='fromfile:parlaiformat2',
-        # fromfile_datapath='~/ParlAI/data/ConvAI2_controllable/train.txt',
-        # fromfile_datapath2='~/ParlAI/data/ConvAI2_controllable/valid.txt',
-        model='projects.controllable_dialogue.controllable_seq2seq.'
-              'controllable_seq2seq:ControllableSeq2seqAgent',
+        task='projects.controllable_dialogue.tasks.agents',
+        model='projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent',  # noqa: E501
         model_file='/tmp/control_model',
-        # dict_file='~/ParlAI/data/ConvAI2_controllable//dict_twit30k_train_split',
+        dict_file='models:controllable_dialogue/dict_twit30k_train_split',
         dict_lower=True,
         dict_include_valid=True,
         dict_maxexs=-1,
@@ -51,8 +47,6 @@ def set_defaults(parser):
         validation_patience=12,
         log_every_n_secs=10,
         dict_tokenizer='split',
-        tensorboard_log=True,
-        tensorboard_metrics='loss,ppl',
     )
     return parser
 

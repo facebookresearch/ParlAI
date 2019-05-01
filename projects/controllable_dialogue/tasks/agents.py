@@ -6,18 +6,21 @@
 
 import copy
 from .build import build, make_path
+from parlai.core.utils import warn_once
 from parlai.core.teachers import ParlAIDialogTeacher
 
 
-def _path(opt, filtered):
+def _path(opt):
     build(opt)
-    dt = opt['datatype'].split(':')[0]
-    return make_path(opt, dt + '.txt')
+    datatype = opt['datatype'].split(':')[0]
+    if datatype == 'test':
+        warn_once("WARNING: Test set not included. Setting datatype to valid.")
+        datatype = 'valid'
+    return make_path(opt, datatype + '.txt')
 
 
 class DefaultTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
         opt = copy.deepcopy(opt)
-        # get datafile
-        opt['datafile'] = _path(opt, '')
+        opt['parlaidialogteacher_datafile'] = _path(opt)
+        super().__init__(opt, shared)

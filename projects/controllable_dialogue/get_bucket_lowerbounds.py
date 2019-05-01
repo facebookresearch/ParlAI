@@ -110,7 +110,7 @@ def main():
     parser.add_argument('--num-buckets', type=int, default=10,
                         help='the number of buckets we want to calculate')
 
-    parser.set_defaults(task="fromfile:parlaiformat")
+    parser.set_defaults(task="projects.controllable_dialogue.tasks.agents")
     parser.set_defaults(datatype="train:stream")
 
     opt = parser.parse_args()
