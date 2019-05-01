@@ -31,6 +31,16 @@ nunjucks.configure(task_directory_name, {
   express: app,
 });
 
+// Generate a random id
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+
 // ===================== <Agent state> ====================
 
 const STATUS_NONE = 'none';
@@ -281,6 +291,7 @@ var connection_id_to_agent_state = {};
 var NOTIF_ID = 'MTURK_NOTIFICATIONS';
 
 // Handles sending a message through the socket
+// TODO create a version that handles wrapping into a packet?
 function _send_message(connection_id, event_name, event_data) {
   // Find the connection's socket
   var socket = connection_id_to_socket[connection_id];
@@ -513,18 +524,37 @@ function main_thread() {
   while (world_message_queue.length > 0) {
     world_messages.push(world_message_queue.shift());
   }
-  let packet = {'messages': world_messages};
-  _send_message(world_id, MESSAGE_BATCH, packet);
+  if (world_messages.length > 0) {
+    var msg = {
+      id: uuidv4(),
+      type: 'message',
+      sender_id: null,
+      assignment_id: null,
+      conversation_id: 'ServerDisconnects',
+      receiver_id: world_id,
+      data: {'messages': world_messages},
+    };
+    _send_message(world_id, MESSAGE_BATCH, msg);
+  }
 
   // Handle submitting disconnect events
   for (const connection_id of active_connections) {
     let agent_state = connection_id_to_agent_state[connection_id];
     let now = Date.now();
     if (now - agent_state.last_heartbeat > AGENT_TIMEOUT_TIME) {
+      var msg = {
+        id: uuidv4(),
+        type: 'message',
+        sender_id: null,
+        assignment_id: null,
+        conversation_id: 'ServerDisconnects',
+        receiver_id: world_id,
+        data: {connection_id: connection_id},
+      };
       _send_message(
         world_id,
         AGENT_DISCONNECT,
-        {connection_id: connection_id},
+        msg,
       );
     }
   }
