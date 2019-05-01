@@ -18,7 +18,10 @@ import math
 import pickle
 
 # Once you've downloaded or created your word2count.pkl file, enter the filepath below
-WORD2COUNT_FP = None  # e.g. '~/ParlAI/data/ConvAI2_controllable/word2count.pkl'
+WORD2COUNT_FP = None  # e.g. '~/ParlAI/data/controllable_dialogue/word2count.pkl'
+
+CONTROLLABLE_DIR = 'controllable_dialogue'
+PARLAI_FORMAT_DIR = 'controllable_dialogue/ConvAI2_parlaiformat'
 
 
 def get_word_counts(opt, count_inputs):
@@ -96,15 +99,17 @@ def learn_nidf(opt):
 
     print('Counting words in ConvAI2 train set...')
     opt['datatype'] = 'train:ordered'
-    opt['fromfile_datapath'] = os.path.join(opt['datapath'],
-                                            'ConvAI2_parlaiformat', 'train.txt')
+    opt['fromfile_datapath'] = os.path.join(
+        opt['datapath'], PARLAI_FORMAT_DIR, 'train.txt'
+    )
     # Don't include inputs because ConvAI2 train set reverses every conversation
     wc3, ns3 = get_word_counts(opt, count_inputs=False)
 
     print('Counting words in ConvAI2 val set...')
     opt['datatype'] = 'valid'
-    opt['fromfile_datapath'] = os.path.join(opt['datapath'],
-                                            'ConvAI2_parlaiformat', 'valid.txt')
+    opt['fromfile_datapath'] = os.path.join(
+        opt['datapath'], PARLAI_FORMAT_DIR, 'valid.txt'
+    )
     wc4, ns4 = get_word_counts(opt, count_inputs=True)
 
     # Merge word counts
@@ -115,8 +120,7 @@ def learn_nidf(opt):
     num_sents = ns1 + ns2 + ns3 + ns4
 
     # Write word2count and num_sents to file
-    word2count_file = os.path.join(opt['datapath'], 'ConvAI2_controllable',
-                                   'word2count.pkl')
+    word2count_file = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'word2count.pkl')
     print("Saving word count stats to %s..." % word2count_file)
     data = {
         "word2count": word_counter,

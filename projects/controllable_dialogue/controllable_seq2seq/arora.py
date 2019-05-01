@@ -20,11 +20,13 @@ import os
 import pickle
 import torch
 
+FOLDER = 'controllable_dialogue'
+
 # Once you've downloaded or created your arora.pkl file, enter the filepath below
-ARORA_FP = None  # e.g. '~/ParlAI/data/ConvAI2_controllable/arora.pkl'
+ARORA_FP = None  # e.g. '~/ParlAI/data/controllable_dialogue/arora.pkl'
 
 # Once you've downloaded glove_vectors directory, enter the filepath below
-GLOVE_FP = None  # e.g. '~/ParlAI/data/ConvAI2_controllable/glove_vectors'
+GLOVE_FP = None  # e.g. '~/ParlAI/data/controllable_dialogue/glove_vectors'
 
 
 class SentenceEmbedder(object):
@@ -296,8 +298,8 @@ def learn_arora(opt):
 
     Save all info to arora.pkl file.
     """
-    arora_file = os.path.join(opt['datapath'], 'ConvAI2_controllable', 'arora.pkl')
-    glove_cache = os.path.join(opt['datapath'], 'ConvAI2_controllable', 'glove_vectors')
+    arora_file = os.path.join(opt['datapath'], 'controllable_dialogue', 'arora.pkl')
+    glove_cache = os.path.join(opt['datapath'], 'controllable_dialogue', 'glove_vectors')
 
     opt['task'] = 'fromfile:parlaiformat'
     opt['log_every_n_secs'] = 2
