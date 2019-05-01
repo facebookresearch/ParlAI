@@ -79,6 +79,27 @@ class BatchSortCache(object):
             cls.cache_filled_cv = Condition(lock=cls.fill_cache_lock)
 
     @classmethod
+    def destroy(cls):
+        if hasattr(cls, 'length_to_eps'):
+            del cls.length_to_eps
+        if hasattr(cls, 'ep_indices'):
+            del cls.ep_indices
+        if hasattr(cls, 'batches'):
+            del cls.batches
+        if hasattr(cls, 'load_complete'):
+            del cls.load_complete
+        if hasattr(cls, 'batches_lock'):
+            del cls.batches_lock
+        if hasattr(cls, 'cache_lock'):
+            del cls.cache_lock
+        if hasattr(cls, 'fill_cache_lock'):
+            del cls.fill_cache_lock
+        if hasattr(cls, 'add_to_cache_cv'):
+            del cls.add_to_cache_cv
+        if hasattr(cls, 'cache_filled_cv'):
+            del cls.cache_filled_cv
+
+    @classmethod
     def batch_cache(cls, function):
         max_cache_size = 10000  # Max unseen eps
         min_cache_size = 1000  # Min unseen eps
@@ -738,6 +759,10 @@ class PytorchDataTeacher(FixedDialogTeacher):
         action = super().act()
         self.lastY = action.get('labels', action.get('eval_labels', None))
         return action
+
+    def shutdown(self):
+        super().shutdown()
+        BatchSortCache.destroy()
 
 
 class DefaultTeacher(PytorchDataTeacher):
