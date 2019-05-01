@@ -49,7 +49,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
         The Seq2Seq model can solve the babi:task10k:1 task with the normal
         ParlAI setup, and thus should be able to with a PytorchDataTeacher
         """
-        print('Testing pyt_train with datatype {}'.format(datatype))
         defaults = parser_defaults.copy()
         defaults['datatype'] = datatype
         defaults['shuffle'] = True  # for train:stream
@@ -77,7 +76,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
         This tests whether an agent can train to completion with
         these preprocessed examples
         """
-        print('Testing pyt_preprocess_train')
         defaults = parser_defaults.copy()
         defaults['datatype'] = 'train'
         defaults['pytorch_preprocess'] = True
@@ -97,9 +95,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
         :param preprocess:
             (bool) whether to preprocess the data
         """
-        print('Testing pyt_batchsort_train with datatype {} and preprocess {}'.format(
-            datatype, preprocess
-        ))
         defaults = parser_defaults.copy()
         defaults['datatype'] = datatype
         defaults['pytorch_preprocess'] = preprocess
@@ -129,7 +124,6 @@ class TestPytorchDataTeacher(unittest.TestCase):
         Test that the pytorch teacher works with given Pytorch Datasets
         as well
         """
-        print('Testing ptyd teacher')
         defaults = parser_defaults.copy()
         defaults['datatype'] = 'train:stream'
         defaults['image_mode'] = 'ascii'

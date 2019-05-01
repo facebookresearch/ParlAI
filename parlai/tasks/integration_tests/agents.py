@@ -109,20 +109,18 @@ class CandidateTeacher(DialogTeacher):
 
 
 class CandidateTeacherDataset(Dataset):
-    """Candidate Teacher, in Pytorch Dataset form"""
+    """
+    Candidate Teacher, in Pytorch Dataset form
+
+    Identical setup. Only difference is a `self.data` object, which contains
+    all the episodes in the task.
+    """
     def __init__(self, opt, shared=None,
                  vocab_size=VOCAB_SIZE,
                  example_size=EXAMPLE_SIZE,
                  num_candidates=NUM_CANDIDATES,
                  num_train=NUM_TRAIN,
                  num_test=NUM_TEST):
-        """
-        :param int vocab_size: size of the vocabulary
-        :param int example_size: length of each example
-        :param int num_candidates: number of label_candidates generated
-        :param int num_train: size of the training set
-        :param int num_test: size of the valid/test sets
-        """
         self.opt = opt
         opt['datafile'] = opt['datatype'].split(':')[0]
         self.datafile = opt['datafile']
