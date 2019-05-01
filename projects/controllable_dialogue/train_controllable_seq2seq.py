@@ -8,11 +8,13 @@
 Train ControllableSeq2seq model.
 """
 
-from parlai.scripts.train_model import setup_args, TrainLoop
+from parlai.scripts.train_model import TrainLoop
+from parlai.scripts.train_model import setup_args as tm_setupargs
 
 
-def set_defaults(parser):
+def setup_args():
     """Defaults for baseline model"""
+    parser = tm_setupargs()
 
     parser.set_defaults(
         task='projects.controllable_dialogue.tasks.agents',
@@ -53,6 +55,5 @@ def set_defaults(parser):
 
 if __name__ == '__main__':
     parser = setup_args()
-    parser = set_defaults(parser)
     opt = parser.parse_args()
     TrainLoop(opt).train()
