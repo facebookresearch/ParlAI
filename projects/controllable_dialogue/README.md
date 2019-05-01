@@ -39,22 +39,34 @@ following BibTex entry:
 # Code Instructions
 
 ## Download the data
-You can download all the training data by running `projects/controllable_dialogue/tasks/build.py`.
+You can download all the training data by running
+`projects/controllable_dialogue/tasks/build.py`.
 
 This will download the following files to `data/controllable_dialogue`:
 
-- `train.txt`: This is Convai2 training data, with extra annotations for three CT controllable attributes (`question`, `lastuttsim`, `avg_nidf`). It is in parlai format.
+- `train.txt`: This is Convai2 training data, with extra annotations for three
+  CT controllable attributes (`question`, `lastuttsim`, `avg_nidf`). It is in
+  parlai format.
 - `valid.txt`: Similarly to train.txt
-- `arora.pkl`: This is a pickle file containing information necessary to compute Arora-style sentence embeddings, needed for the response-relatedness control methods
-- `word2count.pkl`: This is a pickle file containing information necessary to compute NIDF measures, needed for the specificity control methods
+- `arora.pkl`: This is a pickle file containing information necessary to
+  compute Arora-style sentence embeddings, needed for the response-relatedness
+  control methods
+- `word2count.pkl`: This is a pickle file containing information necessary to
+  compute NIDF measures, needed for the specificity control methods
 
-In `ConvAI2_parlaiformat`, which is used if you want to generate the training data yourself:
-- `train.txt`: This is the ConvAI2 training set (`ParlAI/data/ConvAI2/train_self_original_no_cands.txt`) converted to parlai format
-- `valid.txt`: This is the ConvAI2 validation set (`ParlAI/data/ConvAI2/valid_self_original_no_cands.txt`) converted to parlai format
+In `ConvAI2_parlaiformat`, which is used if you want to generate the training
+data yourself:
+- `train.txt`: This is the ConvAI2 training set
+  (`data/ConvAI2/train_self_original_no_cands.txt`) converted to parlai
+  format
+- `valid.txt`: This is the ConvAI2 validation set
+  (`data/ConvAI2/valid_self_original_no_cands.txt`) converted to parlai
+  format
 
 ### (Alternatively) Make the data yourself
 
-Here are the commands to create ConvAI2_parlaiformat and controllable_dialogue yourself:
+Here are the commands to create ConvAI2\_parlaiformat and
+controllable\_dialogue yourself:
 
 First, convert the convai2 data to ParlAI format:
 
@@ -73,13 +85,20 @@ Next, create `word2count.pkl`:
 
     python projects/controllable_dialogue/controllable_seq2seq/nidf.py
 
-This will create a file called `word2count.pkl` in your `controllable_dialogue` directory. It might take a while, especially the part when it goes through the Twitter dataset counting words. Once it's done, go to `nidf.py` and enter the filepath to your `word2count.pkl` file.
+This will create a file called `word2count.pkl` in your `controllable_dialogue`
+directory. It might take a while, especially the part when it goes through the
+Twitter dataset counting words. Once it's done, go to `nidf.py` and enter the
+filepath to your `word2count.pkl` file.
 
 Next, create `arora.pkl`:
 
     python projects/controllable_dialogue/controllable_seq2seq/arora.py
 
-This will create a file called `arora.pkl` in your `controllable_dialogue` directory. It might take a while -- in particular, it will download GloVe vectors and store them in `ParlAI/data/controllable_dialogue/glove_vectors`, which usually takes some time. Once it's done, go to `arora.py` and enter the filepath to your `arora.pkl` file and your `glove_vectors` directory.
+This will create a file called `arora.pkl` in your `controllable_dialogue`
+directory. It might take a while -- in particular, it will download GloVe
+vectors and store them in `ParlAI/data/controllable_dialogue/glove_vectors`,
+which usually takes some time. Once it's done, go to `arora.py` and enter the
+filepath to your `arora.pkl` file and your `glove_vectors` directory.
 
 Next, create `controllable_dialogue/train.txt` and `valid.txt`:
 
@@ -93,9 +112,12 @@ Next, create `controllable_dialogue/train.txt` and `valid.txt`:
       --outfile data/controllable_dialogue/valid.txt \
       --controls question,lastuttsim,avg_nidf
 
-This will create files called `train.txt` and `valid.txt` in your `controllable_dialogue` directory.
+This will create files called `train.txt` and `valid.txt` in your
+`controllable_dialogue` directory.
 
-Note: Due to changes in ParlAI, there might be some small differences between the generated files obtained in this section, and the downloaded files in the previous section.
+Note: Due to changes in ParlAI, there might be some small differences between
+the generated files obtained in this section, and the downloaded files in the
+previous section.
 
 ## Download the pretrained models
 
@@ -105,21 +127,31 @@ TODO: update these instructions for downloading via ParlAI.
 
 The directory `controllable_dialogue` contains the following models:
 
-- `twitter_pretrained_baseline`: a seq2seq model trained on the Twitter dataset. TODO: is there a reference for where else this model can be downloaded?
-- `convai2_finetuned_baseline`: the `twitter_pretrained_baseline` model, after fine-tuning on the ConvAI2 dataset.
-- `control_avgnidf10b10e`: the `convai2_finetuned_baseline` model, after adding parameters for CT specificity control (10 buckets, embedding size 10), and fine-tuned on the ConvAI2 dataset with loss_CT as described in Section 5.1 of the paper.
-- `control_questionb11e10`: similarly to `control_avgnidf10b10e`, except this is CT question-asking control (11 buckets, embedding size 10).
+- `twitter_pretrained_baseline`: a seq2seq model trained on the Twitter
+  dataset. TODO: is there a reference for where else this model can be
+  downloaded?
+- `convai2_finetuned_baseline`: the `twitter_pretrained_baseline` model, after
+  fine-tuning on the ConvAI2 dataset.
+- `control_avgnidf10b10e`: the `convai2_finetuned_baseline` model, after adding
+  parameters for CT specificity control (10 buckets, embedding size 10), and
+  fine-tuned on the ConvAI2 dataset with loss\_CT as described in Section 5.1 of
+  the paper.
+- `control_questionb11e10`: similarly to `control_avgnidf10b10e`, except this
+  is CT question-asking control (11 buckets, embedding size 10).
 
 The directory also contains a dictionary file:
 
-- `dict_twit30k_train_split`: this is the dictionary used for all models. TODO: is there a reference for where else this dict can be downloaded?
+- `dict_twit30k_train_split`: this is the dictionary used for all models. TODO:
+  is there a reference for where else this dict can be downloaded?
 
 
 ## Chat with the pretrained models
 
-In this section are the commands to talk to the models (as described in Table 5 of the paper).
+In this section are the commands to talk to the models (as described in Table 5
+of the paper).
 
-Make sure you have downloaded the pretrained models as instructed in the previous section.
+Make sure you have downloaded the pretrained models as instructed in the
+previous section.
 
 Talk to the greedy search baseline model:
 
@@ -171,9 +203,12 @@ Talk to the response-relatedness WD model (with WD repetition control):
     -mf models:controllable_dialogue/convai2_finetuned_baseline \
     -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_2gram:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,lastuttsim:5 # You can set the lastuttsim weight to be any real number, positive or negative
 
-Note: If you want the bot to have a persona when you talk to it, select one of the lines in `data/controllable_dialogue/personas_validation.txt` and prepend it to your first utterance.
+Note: If you want the bot to have a persona when you talk to it, select one of
+the lines in `data/controllable_dialogue/personas_validation.txt` and prepend
+it to your first utterance.
 
-Note: If you want to see the top 10 candidates produced by beam search (rather than just the top 1), add the flag `--verbose True`.
+Note: If you want to see the top 10 candidates produced by beam search (rather
+than just the top 1), add the flag `--verbose True`.
 
 ## Train a CT model
 
@@ -188,11 +223,16 @@ To train a CT model (conditioned on mean NIDF) from scratch:
     -mf /path/to/your/modelfile \
     --control-vars avg_nidf
 
-Note: if you add your paths for `train.txt`, `valid.txt` and `dict_twit30k_train_split` to `train_controllable_seq2seq.py` then you won't need to enter them via command line.
+Note: if you add your paths for `train.txt`, `valid.txt` and
+`dict_twit30k_train_split` to `train_controllable_seq2seq.py` then you won't
+need to enter them via command line.
 
-This will default to embedding size 10, but you could include e.g. `--control-embeddingsize 15` if you wanted to change it.
+This will default to embedding size 10, but you could include e.g.
+`--control-embeddingsize 15` if you wanted to change it.
 
-This code will also default to 10 NIDF buckets. If you want to use a different number of buckets, first you need to figure out what the NIDF lower bound should be for each bucket. Suppose you want 8 buckets. First run:
+This code will also default to 10 NIDF buckets. If you want to use a different
+number of buckets, first you need to figure out what the NIDF lower bound
+should be for each bucket. Suppose you want 8 buckets. First run:
 
     #TODO: update task
     python projects/controllable_dialogue/get_bucket_lowerbounds.py \
@@ -200,7 +240,10 @@ This code will also default to 10 NIDF buckets. If you want to use a different n
       --num_buckets 8 \
       --control avg_nidf
 
-and then copy and paste the provided lower bounds into `controllable_dialogue/controllable_seq2seq/controls.py`, similarly to the existing `AVG_NIDF_10BUCKET_LBS`. Then you can train a model with `--control-num-buckets 8`.
+and then copy and paste the provided lower bounds into
+`controllable_dialogue/controllable_seq2seq/controls.py`, similarly to the
+existing `AVG_NIDF_10BUCKET_LBS`. Then you can train a model with
+`--control-num-buckets 8`.
 
 You can train a CT model conditioned on multiple controls:
 
@@ -211,7 +254,8 @@ You can train a CT model conditioned on multiple controls:
       -mf /path/to/your/modelfile \
       --control-vars avg_nidf,question
 
-To take an existing non-CT model (e.g. the baseline) and the finetune it as a CT model do this:
+To take an existing non-CT model (e.g. the baseline) and the finetune it as a
+CT model do this:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
     --fromfile-datapath data/controllable_dialogue/train.txt \
@@ -222,7 +266,10 @@ To take an existing non-CT model (e.g. the baseline) and the finetune it as a CT
     --add-control True \
     -cv avg_nidf
 
-This command will take the parameters saved in `--init-model`, load them in the new model (which has randomly initialized weights for the new CT parameters), and then save that model to the given modelfile (`-mf`). It should be quick. Once that's done, run this command:
+This command will take the parameters saved in `--init-model`, load them in the
+new model (which has randomly initialized weights for the new CT parameters),
+and then save that model to the given modelfile (`-mf`). It should be quick.
+Once that's done, run this command:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
     --fromfile-datapath data/controllable_dialogue/train.txt \
@@ -232,18 +279,26 @@ This command will take the parameters saved in `--init-model`, load them in the 
     --add-control False \
     -cv avg_nidf
 
-You should see your new CT model training. Note: this is how the models in the paper were trained.
+You should see your new CT model training. Note: this is how the models in the
+paper were trained.
 
 ## Look at output and automatic metrics
 
-First, download and extract [this file](https://drive.google.com/open?id=16kXJXJ8WiSrUpAsShYcuzJhToVBrnf30) to obtain a directory called `wordstat_files`. The directory contains json files with the generated output and the automatic metrics computed for the pretrained models.
+First, download and extract [this
+file](https://drive.google.com/open?id=16kXJXJ8WiSrUpAsShYcuzJhToVBrnf30) to
+obtain a directory called `wordstat_files`. The directory contains json files
+with the generated output and the automatic metrics computed for the pretrained
+models.
 
 Run the following:
 
     cd projects/controllable_dialogue
     jupyter notebook
 
-and then open up `inspect_wordstats.ipynb`. Where it says `models_dir`, enter the path to your `wordstat_files` directory. You will be able to recreate the table of automatic metrics from the paper (Table 6), and you can explore the output of the models.
+and then open up `inspect_wordstats.ipynb`. Where it says `models_dir`, enter
+the path to your `wordstat_files` directory. You will be able to recreate the
+table of automatic metrics from the paper (Table 6), and you can explore the
+output of the models.
 
 TODO: <screenshot>
 
@@ -251,18 +306,22 @@ TODO: <screenshot>
 
 If you want to generate json files like those in the previous section, do this:
 
-    cd ParlAI
     python projects/controllable_dialogue/eval_wordstat.py \
     --fromfile_datapath data/controllable_dialogue/valid.txt \
     -mf models:controllable_dialogue/control_questionb11e10 \
     -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
     --set-controls question:7
 
-This will create a json file containing the output and other automatic metrics for the question-controlled CT model with z=7. The script `eval_wordstat.py` always places the json file in the same place as the model file. The script can take a while to complete.
+This will create a json file containing the output and other automatic metrics
+for the question-controlled CT model with z=7. The script `eval_wordstat.py`
+always places the json file in the same place as the model file. The script can
+take a while to complete.
 
-Note: Due to changes in ParlAI, there might be some small differences between the json file created via this method, and the json files downloadable in the previous section.
+Note: Due to changes in ParlAI, there might be some small differences between
+the json file created via this method, and the json files downloadable in the
+previous section.
 
-## Mechanical Turk code
+## Human Evaluation Logs
 TODO
 
 ## Human eval logs
