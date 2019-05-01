@@ -256,7 +256,7 @@ the path to your `wordstat_files` directory. You will be able to recreate the
 table of automatic metrics from the paper (Table 6), and you can explore the
 output of the models.
 
-TODO: <screenshot>
+TODO: screenshot
 
 ## Measure automatic metrics
 
