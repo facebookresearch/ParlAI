@@ -290,7 +290,6 @@ TODO: screenshot
 If you want to generate json files like those in the previous section, do this:
 
     python projects/controllable_dialogue/eval_wordstat.py \
-    --fromfile_datapath data/controllable_dialogue/valid.txt \
     -mf models:controllable_dialogue/control_questionb11e10 \
     -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
     --set-controls question:7
