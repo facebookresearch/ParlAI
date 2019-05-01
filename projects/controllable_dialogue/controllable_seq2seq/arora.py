@@ -328,7 +328,7 @@ def learn_arora(opt):
     arora_a = 0.0001
     glove_name = '840B'
     glove_dim = 300
-    glove_cache = modelzoo_path(self.opt['datapath'], 'models:glove_vectors')
+    glove_cache = modelzoo_path(opt['datapath'], 'models:glove_vectors')
 
     # Embed every sentence, without removing first singular value
     print('Embedding all sentences...')

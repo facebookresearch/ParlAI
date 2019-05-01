@@ -9,8 +9,7 @@ import parlai.core.params as params
 import parlai.core.build_data as build_data
 
 
-#URL_ROOT = 'https://parl.ai/downloads/controllable_dialogue/'
-URL_ROOT = 'http://localhost:8000/'
+URL_ROOT = 'https://parl.ai/downloads/controllable_dialogue/'
 FOLDER_NAME = 'controllable_dialogue'
 
 

@@ -17,5 +17,4 @@ def download(datapath):
     fnames = ['models_v1.tar.gz']
     download_models(
         opt, fnames, 'controllable_dialogue', version='v1.0', use_model_type=False,
-        path='http://localhost:8000/',
     )
