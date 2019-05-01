@@ -202,8 +202,8 @@ This is because we have to load the GloVe vectors from file.
 **Giving the bot a persona**: 
 If you want the bot to have a persona when you talk to it, select one of
 the lines in `data/controllable_dialogue/personas_validation.txt` and prepend
-it to your first utterance. Alternatively you can write the persona yourself 
--- but make sure to use the same format.
+it to your first utterance. Alternatively you can write the persona yourself - 
+but make sure to use the same format.
 
 **Viewing top 10 beam search candidates:** 
 If you want to see the top 10 candidates produced by beam search (rather
