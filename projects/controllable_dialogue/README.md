@@ -42,7 +42,7 @@ following BibTex entry:
 
 Running the train scripts will also automatically download all the data for
 you. You can also manually download all the training data by running
-`projects/controllable_dialogue/tasks/build.py`. This will download the
+`python projects/controllable_dialogue/tasks/build.py`. This will download the
 following files to `data/controllable_dialogue`:
 
 - `train.txt`: This is Convai2 training data, with extra annotations for three
