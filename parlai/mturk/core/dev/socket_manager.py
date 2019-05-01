@@ -140,7 +140,7 @@ class SocketManager():
     """SocketManager is a wrapper around websocket to conform to the API
     allowing the remote state to sync up with our local state.
     """
-    # Default pongs without heartbeat before socket considered dead
+    # Default pings without pong before socket considered dead
     DEF_MISSED_PONGS = 20
     PING_RATE = 4
     DEF_DEAD_TIME = 30
@@ -286,7 +286,7 @@ class SocketManager():
     def _spawn_reaper_thread(self):
         def _reaper_thread(*args):
             start_time = time.time()
-            wait_time = self.DEF_MISSED_PONGS * self.HEARTBEAT_RATE
+            wait_time = self.DEF_MISSED_PONGS * self.PING_RATE
             while time.time() - start_time < wait_time:
                 if self.is_shutdown:
                     return
@@ -417,7 +417,7 @@ class SocketManager():
                     )
                     self.ws.on_open = on_socket_open
                     self.ws.run_forever(
-                        ping_interval=8 * self.HEARTBEAT_RATE
+                        ping_interval=8 * self.PING_RATE
                     )
                     self._ensure_closed()
                 except Exception as e:
@@ -445,7 +445,7 @@ class SocketManager():
                 self._send_world_alive()
             except Exception:
                 pass
-            time.sleep(self.HEARTBEAT_RATE / 2)
+            time.sleep(self.PING_RATE / 2)
 
         # Start sending thread
         self.send_thread = threading.Thread(
