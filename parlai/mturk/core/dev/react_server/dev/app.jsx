@@ -107,6 +107,33 @@ class MainApp extends React.Component {
     };
   }
 
+
+  // handleAgentStatusChange(agent_status, conversation_id, done_text) {
+  //   // TODO reimplement this, pass agent_status and done_text down
+  //   // fulfill onConversationChange(world_state, conversation_id, agent_id);
+  //   else if (command === COMMAND_SHOW_DONE_BUTTON) {
+  //     // Update the UI to show the done button
+  //     this.props.onTaskDone();
+  //   } else if (command === COMMAND_INACTIVE_DONE) {
+  //     // Update the UI to show done with additional inactive text
+  //     this.closeSocket();
+  //     // Call correct UI renderers
+  //     this.props.onInactiveDone(msg['inactive_text']);
+  //   }  else if (command === COMMAND_EXPIRE_HIT) {
+  //     // Expire the hit unless it has already been marked as done
+  //     if (!this.props.task_done) {
+  //       this.props.onExpire(msg['inactive_text']);
+  //       this.closeSocket();
+  //     }
+  //   } else if (command === COMMAND_INACTIVE_HIT) {
+  //     // Disable the hit, show the correct message
+  //     this.props.onExpire(msg['inactive_text']);
+  //     this.closeSocket();
+  //   }
+  // }
+
+  // TODO implement onDisconnect for socket manager
+
   playNotifSound() {
     let audio = new Audio('./notif.mp3');
     audio.volume = this.state.volume;

@@ -237,7 +237,6 @@ const SNS_MESSAGE = 'sns message'   // packet from an SNS message
 const STATIC_MESSAGE = 'static message'  // packet from static done POST
 const AGENT_STATE_CHANGE = 'agent state change'  // state change from parlai
 const AGENT_ALIVE = 'agent alive'  // packet from an agent alive event
-const ALIVE_ACK = 'alive ack'  // Acknowledgement of alive arrival
 const UPDATE_STATE = 'update state'  // packet for updating agent client state
 
 // The state gets passed forward to the server whenever anyone connects
@@ -347,12 +346,11 @@ function handle_alive(socket, data) {
       _send_message(world_id, AGENT_ALIVE, data);
       let new_state = new LocalAgentState(in_connection_id);
       connection_id_to_agent_state[in_connection_id] = new_state;
-      _send_message(in_connection_id, ALIVE_ACK, {});
       active_connections.add(in_connection_id)
-    } else {
+    } else if (agent_state.conversation_id != data['conversation_id']) {
       // Agent is reconnecting, and needs to be updated in full
       let update_packet = agent_state.get_reconnect_packet;
-      _send_message(in_connection_id, ALIVE_ACK, update_packet);
+      _send_message(in_connection_id, UPDATE_STATE, update_packet);
     }
   } else {
     world_id = in_connection_id;
@@ -412,7 +410,7 @@ function handle_batch_to_world(agent_message) {
   }
 
   // Simply adds message to the end, will be shifted from front
-  world_message_queue.push(agent_message);
+  world_message_queue.push(agent_messaged);
 }
 
 function handle_agent_state_update(state_change) {
