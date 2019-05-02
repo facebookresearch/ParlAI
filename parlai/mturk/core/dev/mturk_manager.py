@@ -345,6 +345,7 @@ class MTurkManager():
                 pickle.dump(time_logs, time_log_file,
                             pickle.HIGHEST_PROTOCOL)
 
+    # TODO move working times into the DB
     def _log_working_time(self, mturk_agent):
         if not self._should_use_time_logs():
             return  # sandbox does not log working time
@@ -464,53 +465,27 @@ class MTurkManager():
             agent_messages = [m for m in agent.get_messages()
                               if 'id' in m and m['id'] == agent.id]
             if len(agent_messages) < self.minimum_messages:
+                # TODO move worker back to pool if hasn't sent message yet,
+                # remove disconnect_early
                 agent.set_status(AssignState.STATUS_PARTNER_DISCONNECT_EARLY)
             else:
                 agent.set_status(AssignState.STATUS_PARTNER_DISCONNECT)
 
             # Create and send the command
-            data = agent.get_inactive_command_data()
+            data = {
+                'status': AssignState.STATUS_PARTNER_DISCONNECT,
+                'done_text':
+                    'One of your partners disconnected in the middle of the '
+                    'HIT. We won\'t penalize you for their disconnect, so '
+                    'please use the button below to mark the HIT as complete.',
+            }
 
             def disconnect_agent(*args):
                 self.socket_manager.close_channel(
                     agent.get_connection_id())
 
-            self.send_command(agent.worker_id, agent.assignment_id, data,
-                              ack_func=disconnect_agent)
-
-    def _restore_agent_state(self, worker_id, assignment_id):
-        """Send a command to restore the state of an agent who reconnected"""
-        agent = self.worker_manager._get_agent(worker_id, assignment_id)
-
-        if agent is not None:
-            agent.alived = False
-
-            def send_state_data():
-                while not agent.alived and not agent.hit_is_expired:
-                    time.sleep(shared_utils.THREAD_SHORT_SLEEP)
-
-                data = {
-                    'text': data_model.COMMAND_RESTORE_STATE,
-                    'messages': agent.get_messages(),
-                    'last_command': agent.get_last_command(),
-                }
-                self.send_command(worker_id, assignment_id, data)
-
-                if agent.message_request_time is not None:
-                    agent.request_message()
-
-            state_thread = threading.Thread(
-                name='restore-agent-{}'.format(agent.worker_id),
-                target=send_state_data)
-            state_thread.daemon = True
-            state_thread.start()
-
-            # Return an agent to their conversation, then restore the state
-            self.worker_manager.change_agent_conversation(
-                agent=agent,
-                conversation_id=agent.conversation_id,
-                new_agent_id=agent.id,
-            )
+            self.send_state_change(agent.worker_id, agent.assignment_id, data,
+                                   ack_func=disconnect_agent)
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
@@ -606,78 +581,13 @@ class MTurkManager():
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             self._onboard_new_agent(agent)
         else:
-            # Reconnecting worker
-            agent = self.worker_manager._get_agent(worker_id, assign_id)
-            agent.log_reconnect()
-            agent.alived = True
-            if agent.conversation_id is not None and \
-                    conversation_id is not None:
-                # agent.conversation_id is None is used in testing.
-                # conversation_id is None on a fresh reconnect event, where
-                # we need to restore state somehow and shouldn't just inherit
-                conversation_id = agent.conversation_id
-            if agent.get_status() == AssignState.STATUS_NONE:
-                # See if assigned an onboarding world, update state if so
-                if self.is_onboarding_world(conversation_id):
-                    agent.set_status(AssignState.STATUS_ONBOARDING)
-                    return
-                if self.is_waiting_world(conversation_id):
-                    agent.set_status(AssignState.STATUS_WAITING)
-                    self._add_agent_to_pool(agent)
-                    return
-                # Reconnecting before even being given a world. Kill the hit
-                # so that on a reconnect they can get a new one assigned and
-                # the resources of the first one are cleaned.
-                self.force_expire_hit(worker_id, assign_id)
-                return
-            elif agent.get_status() == AssignState.STATUS_ONBOARDING:
-                # See if moved to a waiting world, update state if so
-                if self.is_waiting_world(conversation_id):
-                    agent.set_status(AssignState.STATUS_WAITING)
-                    self._add_agent_to_pool(agent)
-                    return
-                # Reconnecting to the onboarding world should either restore
-                # state or expire (if workers are no longer being accepted
-                # for this task)
-                if not self.accepting_workers:
-                    self.force_expire_hit(worker_id, assign_id)
-                elif not conversation_id:
-                    self._restore_agent_state(worker_id, assign_id)
-            elif agent.get_status() == AssignState.STATUS_WAITING:
-                if self.is_task_world(conversation_id):
-                    agent.set_status(AssignState.STATUS_IN_TASK)
-                    return
-                # Reconnecting in waiting is either the first reconnect after
-                # being told to wait or a waiting reconnect. Restore state if
-                # no information is held, and add to the pool if not already in
-                # the pool
-                if not conversation_id:
-                    self._restore_agent_state(worker_id, assign_id)
-                self._add_agent_to_pool(agent)
-            elif agent.get_status() == AssignState.STATUS_IN_TASK:
-                if self.is_waiting_world(conversation_id):
-                    agent.set_status(AssignState.STATUS_WAITING)
-                    self._add_agent_to_pool(agent)
-                    return
-                # Reconnecting to the onboarding world or to a task world
-                # should resend the messages already in the conversation
-                if not conversation_id:
-                    self._restore_agent_state(worker_id, assign_id)
-            elif (agent.get_status() == AssignState.STATUS_DISCONNECT or
-                  agent.get_status() == AssignState.STATUS_DONE or
-                  agent.get_status() == AssignState.STATUS_EXPIRED or
-                  agent.get_status() == AssignState.STATUS_RETURNED or
-                  agent.get_status() == AssignState.STATUS_PARTNER_DISCONNECT):
-                # inform the connecting user in all of these cases that the
-                # task is no longer workable, use appropriate message
-                data = agent.get_inactive_command_data()
-
-                def disconnect_agent(*args):
-                    self.socket_manager.close_channel(
-                        agent.get_connection_id())
-
-                self.send_command(worker_id, assign_id, data,
-                                  ack_func=disconnect_agent)
+            # Reconnecting worker should no longer happen
+            # TODO clean up code that was required to track whether a
+            # worker was reconnecting or not.
+            shared_utils.print_and_log(
+                logging.WARN,
+                'Agent ({}) is reconnecting to {}'.format(worker_id, assign_id)
+            )
 
     def _handle_mturk_message(self, pkt):
         assignment_id = pkt.assignment_id
@@ -1312,8 +1222,12 @@ class MTurkManager():
         if text is None:
             text = ('This HIT is expired, please return and take a new '
                     'one if you\'d want to work on this task.')
-        data = {'text': data_model.COMMAND_EXPIRE_HIT, 'inactive_text': text}
-        self.send_command(worker_id, assign_id, data, ack_func=use_ack_func)
+        data = {
+            'status': AssignState.STATUS_EXPIRED,
+            'done_text': text,
+        }
+        self.send_state_change(worker_id, assign_id, data,
+                               ack_func=use_ack_func)
 
     def handle_turker_timeout(self, worker_id, assign_id):
         """To be used by the MTurk agent when the worker doesn't send a message
@@ -1336,7 +1250,7 @@ class MTurkManager():
         update conversation state
         """
         data = data.copy()  # Ensure data packet is sent in current state
-        data['type'] = data_model.MESSAGE_TYPE_MESSAGE
+        data['type'] = data_model.MESSAGE_TYPE_ACT
         # Force messages to have a unique ID
         if 'message_id' not in data:
             data['message_id'] = str(uuid.uuid4())
@@ -1347,14 +1261,13 @@ class MTurkManager():
         event_id = shared_utils.generate_event_id(receiver_id)
         packet = Packet(
             event_id,
-            Packet.TYPE_MESSAGE,
+            data_model.WORLD_MESSAGE,
             self.socket_manager.get_my_sender_id(),
             receiver_id,
             assignment_id,
             data,
             conversation_id=conversation_id,
-            blocking=blocking,
-            ack_func=ack_func
+            ack_func=ack_func,
         )
 
         shared_utils.print_and_log(
@@ -1378,21 +1291,29 @@ class MTurkManager():
         event_id = shared_utils.generate_event_id(receiver_id)
         packet = Packet(
             event_id,
-            Packet.TYPE_MESSAGE,
+            data_model.WORLD_MESSAGE,
             self.socket_manager.get_my_sender_id(),
             receiver_id,
             assignment_id,
             data,
-            blocking=blocking,
-            ack_func=ack_func
+            ack_func=ack_func,
         )
 
-        agent = self.worker_manager._get_agent(receiver_id, assignment_id)
-        if (data['text'] != data_model.COMMAND_CHANGE_CONVERSATION and
-                data['text'] != data_model.COMMAND_RESTORE_STATE and
-                agent is not None):
-            # Append last command, as it might be necessary to restore state
-            agent.set_last_command(packet.data)
+        self.socket_manager.queue_packet(packet)
+
+    def send_state_change(self, receiver_id, assignment_id, data,
+                          ack_func=None):
+        """Send an updated state to the server to push to the agent"""
+        event_id = shared_utils.generate_event_id(receiver_id)
+        packet = Packet(
+            event_id,
+            data_model.AGENT_STATE_CHANGE,
+            self.socket_manager.get_my_sender_id(),
+            receiver_id,
+            assignment_id,
+            data,
+            ack_func=ack_func
+        )
 
         self.socket_manager.queue_packet(packet)
 

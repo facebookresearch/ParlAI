@@ -259,7 +259,7 @@ class SocketManager():
             }), force=True)
             self.last_sent_ping_time = time.time()
 
-    # TODO WORLD_MESSAGE, AGENT_STATE_CHANGE
+    # TODO AGENT_STATE_CHANGE
 
     def _send_packet(self, packet, send_time):
         """Sends a packet, blocks if the packet is blocking"""
@@ -282,6 +282,8 @@ class SocketManager():
             return
 
         packet.status = Packet.STATUS_SENT
+        if packet.ack_func != None:
+            packet.ack_func(packet)
 
     def _spawn_reaper_thread(self):
         def _reaper_thread(*args):
@@ -526,7 +528,6 @@ class SocketManager():
     def socket_is_open(self, connection_id):
         return connection_id in self.open_channels
 
-    # TODO no longer returns True
     def queue_packet(self, packet):
         """Queues sending a packet to its intended owner"""
         shared_utils.print_and_log(
