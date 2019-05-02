@@ -53,30 +53,35 @@ class BatchSortCache(object):
         if not hasattr(cls, 'length_to_eps'):
             # Maps episode length to list of episodes
             cls.length_to_eps = {}
-        if not hasattr(cls, 'ep_indices'):
             # Set of episode indices already in the cache
             cls.ep_indices = set()
-        if not hasattr(cls, 'batches'):
             # List of batches if popping batches
             cls.batches = []
-        if not hasattr(cls, 'load_complete'):
             # If all episodes have been loaded into memory
             cls.load_complete = Value(ctypes.c_bool, False)
-        if not hasattr(cls, 'batches_lock'):
             # Lock to access batches
             cls.batches_lock = Lock()
-        if not hasattr(cls, 'cache_lock'):
             # Lock to access length_to_eps
             cls.cache_lock = Lock()
-        if not hasattr(cls, 'fill_cache_lock'):
             # Lock for condition variables
             cls.fill_cache_lock = RLock()
-        if not hasattr(cls, 'add_to_cache_cv'):
             # Condition notifying Loader to add to cache
             cls.add_to_cache_cv = Condition(lock=cls.fill_cache_lock)
-        if not hasattr(cls, 'cache_filled_cv'):
             # Condition notifying teacher that cache has episodes
             cls.cache_filled_cv = Condition(lock=cls.fill_cache_lock)
+
+    @classmethod
+    def destroy(cls):
+        if hasattr(cls, 'length_to_eps'):
+            del cls.length_to_eps
+            del cls.ep_indices
+            del cls.batches
+            del cls.load_complete
+            del cls.batches_lock
+            del cls.cache_lock
+            del cls.fill_cache_lock
+            del cls.add_to_cache_cv
+            del cls.cache_filled_cv
 
     @classmethod
     def batch_cache(cls, function):
@@ -738,6 +743,10 @@ class PytorchDataTeacher(FixedDialogTeacher):
         action = super().act()
         self.lastY = action.get('labels', action.get('eval_labels', None))
         return action
+
+    def shutdown(self):
+        super().shutdown()
+        BatchSortCache.destroy()
 
 
 class DefaultTeacher(PytorchDataTeacher):
