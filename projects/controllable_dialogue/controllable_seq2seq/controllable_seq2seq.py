@@ -373,16 +373,16 @@ class ControllableSeq2seqAgent(TorchAgent):
             for s in self.opt['set_controls'].split(','):
                 control, set_val = s.split(':')[0], s.split(':')[1]
                 if control not in self.control_vars:
-                    raise Exception("Received --set-controls for control '%s', but "
-                                    "that is not one of the existing CT controls for "
-                                    "this model, which are: %s"
-                                    % (control, ', '.join(self.control_vars)))
+                    raise ValueError("Received --set-controls for control '%s', but "
+                                     "that is not one of the existing CT controls for "
+                                     "this model, which are: %s"
+                                     % (control, ', '.join(self.control_vars)))
                 try:
                     set_val = int(set_val)  # set_val should be a string of an int
                 except ValueError:
-                    raise Exception("Received --set-controls '%s' for CT "
-                                    "control '%s'. The set value must be an integer."
-                                    % (set_val, control))
+                    raise ValueError("Received --set-controls '%s' for CT "
+                                     "control '%s'. The set value must be an integer."
+                                     % (set_val, control))
                 set_controls[control] = int(set_val)
 
         # Set self.control_settings for the CT controls
@@ -397,10 +397,10 @@ class ControllableSeq2seqAgent(TorchAgent):
             if c in set_controls:
                 set_val = set_controls[c]
                 if set_val not in range(d['num_buckets']):
-                    raise Exception("Received --set-controls '%s' for CT control '%s', "
-                                    "which has num_buckets=%i. The set value must be "
-                                    "between 0 and %i." %
-                                    (set_val, c, d['num_buckets'], d['num_buckets']-1))
+                    raise ValueError("Received --set-controls '%s' for CT control "
+                                     "'%s', which has num_buckets=%i. The set value "
+                                     "must be between 0 and %i." %
+                                     (set_val, c, d['num_buckets'], d['num_buckets']-1))
             d['set_value'] = set_controls[c] if c in set_controls else None
             d['idx'] = idx
             self.control_settings[c] = d
@@ -408,9 +408,9 @@ class ControllableSeq2seqAgent(TorchAgent):
         # Get list of WD features and weights, self.wd_features and self.wd_weights
         if self.opt['weighted_decoding'] != "":
             if self.beam_size == 1:
-                raise Exception("WD control is not currently implemented for greedy "
-                                "search. Either increase --beam-size to be greater "
-                                "than 1, or do not enter --weighted-decoding (-wd).")
+                raise ValueError("WD control is not currently implemented for greedy "
+                                 "search. Either increase --beam-size to be greater "
+                                 "than 1, or do not enter --weighted-decoding (-wd).")
 
             # Get a list of (feature, weight) i.e. (string, float) pairs
             wd_feats_wts = [(s.split(':')[0], float(s.split(':')[1]))
@@ -418,9 +418,9 @@ class ControllableSeq2seqAgent(TorchAgent):
             self.wd_features = [f for (f, w) in wd_feats_wts]  # list of strings
             for wd_feat in self.wd_features:
                 if wd_feat not in WDFEATURE2UPDATEFN:
-                    raise Exception("'%s' is not an existing WD feature. Available WD "
-                                    "features: %s"
-                                    % (wd_feat, ', '.join(WDFEATURE2UPDATEFN.keys())))
+                    raise ValueError("'%s' is not an existing WD feature. Available WD "
+                                     "features: %s"
+                                     % (wd_feat, ', '.join(WDFEATURE2UPDATEFN.keys())))
             self.wd_wts = [w for (f, w) in wd_feats_wts]  # list of floats
         else:
             self.wd_features, self.wd_wts = [], []

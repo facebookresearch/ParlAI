@@ -236,7 +236,7 @@ def extrep_word_used_before(dict, hypothesis, history, wt, feat, remove_stopword
     elif person == 'partner':
         prev_utts = history.partner_utts
     else:
-        raise Exception("person must be 'self' or 'partner', but it is: ", person)
+        raise ValueError("person must be 'self' or 'partner', but it is: ", person)
     if len(prev_utts) == 0:
         return feat
     prev_words = [dict.txt2vec(utt) for utt in prev_utts]  # list of list of ints
@@ -264,7 +264,7 @@ def extrep_ngram_used_before(dict, hypothesis, history, wt, feat, n, person):
     elif person == 'partner':
         prev_utts = history.partner_utts
     else:
-        raise Exception("person must be 'self' or 'partner', but it is: ", person)
+        raise ValueError("person must be 'self' or 'partner', but it is: ", person)
     if len(prev_utts) == 0:
         return feat
     if hypothesis is None:
@@ -491,7 +491,7 @@ def extrep_repeated_word_frac(utt, history, remove_stopwords, person):
     elif person == 'partner':
         prev_utts = history.partner_utts  # should already be tokenized
     else:
-        raise Exception("person must be 'self' or 'partner', but it is: ", person)
+        raise ValueError("person must be 'self' or 'partner', but it is: ", person)
     if len(prev_utts) == 0:
         return 0
     tokens = utt.split()  # list of strings
@@ -517,7 +517,7 @@ def extrep_repeated_ngram_frac(utt, history, n, person):
     elif person == 'partner':
         prev_utts = history.partner_utts  # should already be tokenized
     else:
-        raise Exception("person must be 'self' or 'partner', but it is: ", person)
+        raise ValueError("person must be 'self' or 'partner', but it is: ", person)
     if len(prev_utts) == 0:
         return 0
     utt_ngrams = get_ngrams(utt, n)
@@ -783,7 +783,7 @@ def sort_into_bucket(val, bucket_lbs):
         lb = bucket_lbs[bucket_id]
         if val >= lb:
             return bucket_id
-    raise Exception('val %f is not >= any of the lower bounds: %s' % (val, bucket_lbs))
+    raise ValueError('val %f is not >= any of the lower bounds: %s' % (val, bucket_lbs))
 
 
 def bucket_contvar(ex, ctrl, num_buckets):
@@ -797,8 +797,8 @@ def bucket_contvar(ex, ctrl, num_buckets):
       num_buckets: int. The number of buckets for this control variable.
     """
     if ctrl not in ex.keys():
-        raise Exception("Error: control %s not found in example. Available keys in "
-                        "this example: %s" % (ctrl, ', '.join(ex.keys())))
+        raise ValueError("Control %s not found in example. Available keys in "
+                         "this example: %s" % (ctrl, ', '.join(ex.keys())))
 
     # Get the control variable value
     ctrl_val = ex[ctrl]  # string. the value of the control variable for this example
@@ -815,7 +815,7 @@ def bucket_contvar(ex, ctrl, num_buckets):
             assert ctrl_val >= -1
             assert ctrl_val <= 1
     else:
-        raise Exception('Unexpected CT ctrl: %s' % ctrl)
+        raise ValueError('Unexpected CT ctrl: %s' % ctrl)
 
     # Get the bucket lowerbounds
     bucket_lbs = CONTROL2BUCKETLBS[(ctrl, num_buckets)]  # lst len num_buckets of floats
@@ -901,18 +901,18 @@ def get_ctrl_vec(exs, history, control_settings):
     for batch_idx, (ex, hist) in enumerate(zip(exs, history)):
         for ctrl, ctrl_info in control_settings.items():
             if ctrl not in ex:
-                raise Exception("The CT control '%s' is not present as a key in the "
-                                "message dictionary:\n%s\nIf training a CT model, "
-                                "perhaps your training data is missing the "
-                                "annotations. If talking interactively, perhaps you "
-                                "forgot to set --set-controls." % (ctrl, str(ex)))
+                raise ValueError("The CT control '%s' is not present as a key in the "
+                                 "message dictionary:\n%s\nIf training a CT model, "
+                                 "perhaps your training data is missing the "
+                                 "annotations. If talking interactively, perhaps you "
+                                 "forgot to set --set-controls." % (ctrl, str(ex)))
             set_val = ctrl_info['set_value']  # is either int or None
             if set_val is not None:  # if we're using some preset bucket for this ctrl
                 bucket = set_val  # override with set_val, an int
             else:  # bucket the control val given in ex
                 num_buckets = ctrl_info['num_buckets']
                 bucketing_fn = CONTROL2BUCKETINGFN[ctrl]  # bucketing fn for this ctrl
-                bucket = bucketing_fn((ex, ctrl, num_buckets))  # int
+                bucket = bucketing_fn(ex, ctrl, num_buckets)  # int
 
             # If we have multiple CT controls, ctrl_idx tells us which order they go in
             ctrl_idx = ctrl_info['idx']  # int
