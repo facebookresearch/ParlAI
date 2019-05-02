@@ -355,12 +355,14 @@ class TransformerEncoder(nn.Module):
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
+
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
 
         if self.n_segments >= 1:
             if segments is None:
                 segments = torch.zeros_like(input)
             tensor = tensor + self.segment_embeddings(segments)
+
         if self.variant == 'xlm':
             tensor = _normalize(tensor, self.norm_embeddings)
 
