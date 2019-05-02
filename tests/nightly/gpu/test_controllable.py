@@ -13,6 +13,8 @@ Integration tests for the Controllable Dialogue project.
 See projects/controllable_dialogue.
 """
 
+NO_REPETITION = 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20'
+
 
 @testing_utils.skipUnlessGPU
 class TestControllableDialogue(unittest.TestCase):
@@ -107,31 +109,126 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the finetuned model with repetition blocking produces correct results.
         """
-        pass
+        _, valid, _ = testing_utils.eval_model({
+            'model_file': 'models:controllable_dialogue/convai2_finetuned_baseline',
+            'task': 'projects.controllable_dialogue.tasks.agents',
+            'beam_size': 20,
+            'beam_min_n_best': 10,
+            'batchsize': 64,
+            'num_examples': 512,  # don't run on the full dataset
+            'weighted_decoding': NO_REPETITION,
+        }, skip_test=True)
+        self.assertAlmostEqual(
+            valid['ppl'],
+            23.54,  # 22.86 on the full dataset
+            delta=0.1,
+        )
+        self.assertAlmostEqual(
+            valid['f1'],
+            0.144,  # 0.1438 on the full dataset
+            delta=0.0002,
+        )
 
     def test_ct_questionb11e10(self):
         """
         Checks the question-controlled model produces correct results.
         """
-        pass
+        _, valid, _ = testing_utils.eval_model({
+            'model_file': 'models:controllable_dialogue/control_questionb11e10',
+            'task': 'projects.controllable_dialogue.tasks.agents',
+            'beam_size': 20,
+            'beam_min_n_best': 10,
+            'batchsize': 64,
+            'num_examples': 512,  # don't run on the full dataset
+            'weighted_decoding': NO_REPETITION,
+            'set_controls': 'question:10',
+            'beam_reorder': 'best_extrep2gram_qn',
+        }, skip_test=True)
+        self.assertAlmostEqual(
+            valid['ppl'],
+            28.04,  # 26.78 on the full dataset
+            delta=0.1,
+        )
+        self.assertAlmostEqual(
+            valid['f1'],
+            0.1351,  # 0.1326 on the full dataset
+            delta=0.0002,
+        )
 
     def test_ct_avgnidf10b10e(self):
         """
         Checks the specificity-CT model produces correct results.
         """
-        pass
+        _, valid, _ = testing_utils.eval_model({
+            'model_file': 'models:controllable_dialogue/control_avgnidf10b10e',
+            'task': 'projects.controllable_dialogue.tasks.agents',
+            'beam_size': 20,
+            'beam_min_n_best': 10,
+            'batchsize': 64,
+            'num_examples': 512,  # don't run on the full dataset
+            'weighted_decoding': NO_REPETITION,
+            'set_controls': 'avg_nidf:7',
+        }, skip_test=True)
+        self.assertAlmostEqual(
+            valid['ppl'],
+            32.94,  # 31.02 on the full dataset
+            delta=0.1,
+        )
+        self.assertAlmostEqual(
+            valid['f1'],
+            0.1373,  # 0.1432 on the full dataset
+            delta=0.0002,
+        )
 
-    def test_bfw_specificity(self):
+    def test_wd_specificity(self):
         """
-        Checks the specificity-BFW model produces correct results.
+        Checks the specificity-weighted decoding model produces correct results.
         """
-        pass
+        _, valid, _ = testing_utils.eval_model({
+            'model_file': 'models:controllable_dialogue/convai2_finetuned_baseline',
+            'task': 'projects.controllable_dialogue.tasks.agents',
+            'beam_size': 20,
+            'beam_min_n_best': 10,
+            'batchsize': 64,
+            'num_examples': 512,  # don't run on the full dataset
+            'weighted_decoding': NO_REPETITION + ',nidf:4',
+        }, skip_test=True)
+        self.fail(valid)
+        self.assertAlmostEqual(
+            valid['ppl'],
+            23.54,  # 22.86 on the full dataset
+            delta=0.1,
+        )
+        self.assertAlmostEqual(
+            valid['f1'],
+            0.1433,  # 0.1460 on the full dataset
+            delta=0.0002,
+        )
 
     def test_bfw_responsiveness(self):
         """
         Checks the responsiveness-BFW model produces correct results.
         """
-        pass
+        _, valid, _ = testing_utils.eval_model({
+            'model_file': 'models:controllable_dialogue/convai2_finetuned_baseline',
+            'task': 'projects.controllable_dialogue.tasks.agents',
+            'beam_size': 20,
+            'beam_min_n_best': 10,
+            'batchsize': 64,
+            'num_examples': 512,  # don't run on the full dataset
+            'weighted_decoding': NO_REPETITION + ',intrep_2gram:-1e20,partnerrep_2gram:-1e20,lastuttsim:5'  # noqa: E501
+        }, skip_test=True)
+        self.fail(valid)
+        self.assertAlmostEqual(
+            valid['ppl'],
+            23.54,  # 22.86 on the full dataset
+            delta=0.1,
+        )
+        self.assertAlmostEqual(
+            valid['f1'],
+            0.1373,  # 0.1397 on the full dataset
+            delta=0.0002,
+        )
 
 
 if __name__ == '__main__':

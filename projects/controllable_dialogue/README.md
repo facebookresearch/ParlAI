@@ -174,7 +174,7 @@ To talk to the "z=10 (boost)" version mentioned in the paper:
     -mf models:controllable_dialogue/control_avgnidf10b10e \
     -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
     --set-controls avg_nidf:7
-    
+
 Here `avg_nidf:7` means the 7th specificity bucket (where higher is more specific). 
 You can set this anywhere between 0 and 9.
 
