@@ -912,7 +912,7 @@ def get_ctrl_vec(exs, history, control_settings):
             else:  # bucket the control val given in ex
                 num_buckets = ctrl_info['num_buckets']
                 bucketing_fn = CONTROL2BUCKETINGFN[ctrl]  # bucketing fn for this ctrl
-                bucket = bucketing_fn((ex, hist, ctrl, num_buckets))  # int
+                bucket = bucketing_fn((ex, ctrl, num_buckets))  # int
 
             # If we have multiple CT controls, ctrl_idx tells us which order they go in
             ctrl_idx = ctrl_info['idx']  # int
