@@ -340,8 +340,8 @@ _Note: Due to changes in ParlAI, there might be some small differences between
 the json file created via this method, and the json files downloadable in the
 previous section._
 
-## Human evaluation logs
-TODO
+## Human Evaluation code, logs, and analysis
 
-## Bayesian calibration code
-TODO
+Will all be released at a later date. Check back here soon, or
+[track the issue](https://github.com/facebookresearch/ParlAI/issues/1690) on
+GitHub.

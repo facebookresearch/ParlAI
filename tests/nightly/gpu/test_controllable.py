@@ -118,7 +118,7 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.1389, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 25.83, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 13.75, delta=0.0002)
+            self.assertAlmostEqual(valid['f1'], .1375, delta=0.0002)
 
     def test_ct_question_bucket7(self):
         """
@@ -202,7 +202,7 @@ class TestControllableDialogue(unittest.TestCase):
             'beam_min_n_best': 10,
             'use_reply': 'model',
             'batchsize': 64,
-            'num_examples': 512,  # don't run on the full dataset
+            'num_examples': NUM_EXAMPLES,
             'weighted_decoding': NO_REPETITION + ',nidf:4',
         }, skip_test=True)
 
@@ -224,7 +224,7 @@ class TestControllableDialogue(unittest.TestCase):
             'beam_min_n_best': 10,
             'use_reply': 'model',
             'batchsize': 64,
-            'num_examples': 512,  # don't run on the full dataset
+            'num_examples': NUM_EXAMPLES,
             'weighted_decoding': NO_REPETITION + ',intrep_2gram:-1e20,partnerrep_2gram:-1e20,lastuttsim:5'  # noqa: E501
         }, skip_test=True)
 

@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Pretrained wizard of wikipedia end2end generative model
+Pretrained models from the "What makes a good conversation?" paper.
+
+See https://parl.ai/projects/controllable_dialogue/.
 """
 
 from parlai.core.build_data import download_models
