@@ -165,7 +165,7 @@ To talk to the "z=10 (boost)" version mentioned in the paper:
 
     python projects/controllable_dialogue/interactive.py \
     -mf models:controllable_dialogue/control_questionb11e10 \
-    -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
+    -wd extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
     --set-controls question:10 --beam-reorder best_extrep2gram_qn
 
 **Talk to the specificity-controlled CT model (with WD repetition control):**
