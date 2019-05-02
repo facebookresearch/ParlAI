@@ -13,6 +13,9 @@ Integration tests for the Controllable Dialogue project.
 See projects/controllable_dialogue.
 """
 
+
+FAST_MODE = True
+NUM_EXAMPLES = 512 if FAST_MODE else -1
 NO_REPETITION = 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20'
 
 
@@ -71,16 +74,9 @@ class TestControllableDialogue(unittest.TestCase):
             'beam_size': 1,
             'batchsize': 64,
         }, skip_test=True)
-        self.assertAlmostEqual(
-            valid['ppl'],
-            22.86,
-            delta=0.1,
-        )
-        self.assertAlmostEqual(
-            valid['f1'],
-            0.1702,
-            delta=0.0002,
-        )
+
+        self.assertAlmostEqual(valid['ppl'], 22.86, delta=0.1)
+        self.assertAlmostEqual(valid['f1'], 0.1702, delta=0.0002)
 
     def test_convai2_finetuned_beamsearch(self):
         """
@@ -92,18 +88,15 @@ class TestControllableDialogue(unittest.TestCase):
             'beam_size': 20,
             'beam_min_n_best': 10,
             'batchsize': 64,
-            'num_examples': 512,  # don't run on the full dataset
+            'num_examples': NUM_EXAMPLES,
         }, skip_test=True)
-        self.assertAlmostEqual(
-            valid['ppl'],
-            23.54,  # 22.86 on the full dataset
-            delta=0.1,
-        )
-        self.assertAlmostEqual(
-            valid['f1'],
-            0.1575,  # 0.1516 on the full dataset
-            delta=0.0002,
-        )
+
+        if FAST_MODE:
+            self.assertAlmostEqual(valid['ppl'], 23.54, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1575, delta=0.0002)
+        else:
+            self.assertAlmostEqual(valid['ppl'], 22.86, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1516, delta=0.0002)
 
     def test_convai2_finetuned_norepetition(self):
         """
@@ -114,20 +107,19 @@ class TestControllableDialogue(unittest.TestCase):
             'task': 'projects.controllable_dialogue.tasks.agents',
             'beam_size': 20,
             'beam_min_n_best': 10,
+            'use_reply': 'model',
             'batchsize': 64,
-            'num_examples': 512,  # don't run on the full dataset
+            'num_examples': NUM_EXAMPLES,
             'weighted_decoding': NO_REPETITION,
         }, skip_test=True)
-        self.assertAlmostEqual(
-            valid['ppl'],
-            23.54,  # 22.86 on the full dataset
-            delta=0.1,
-        )
-        self.assertAlmostEqual(
-            valid['f1'],
-            0.144,  # 0.1438 on the full dataset
-            delta=0.0002,
-        )
+
+        if FAST_MODE:
+            self.assertAlmostEqual(valid['ppl'], 26.66, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1389, delta=0.0002)
+        else:
+            self.fail(valid)
+            self.assertAlmostEqual(valid['ppl'], -1, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], -1, delta=0.0002)
 
     def test_ct_questionb11e10(self):
         """
@@ -139,21 +131,20 @@ class TestControllableDialogue(unittest.TestCase):
             'beam_size': 20,
             'beam_min_n_best': 10,
             'batchsize': 64,
-            'num_examples': 512,  # don't run on the full dataset
+            'use_reply': 'model',
+            'num_examples': NUM_EXAMPLES,
             'weighted_decoding': NO_REPETITION,
             'set_controls': 'question:10',
             'beam_reorder': 'best_extrep2gram_qn',
         }, skip_test=True)
-        self.assertAlmostEqual(
-            valid['ppl'],
-            28.04,  # 26.78 on the full dataset
-            delta=0.1,
-        )
-        self.assertAlmostEqual(
-            valid['f1'],
-            0.1351,  # 0.1326 on the full dataset
-            delta=0.0002,
-        )
+
+        if FAST_MODE:
+            self.assertAlmostEqual(valid['ppl'], 31.39, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1253, delta=0.0002)
+        else:
+            self.fail(valid)
+            self.assertAlmostEqual(valid['ppl'], -1, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], -1, delta=0.0002)
 
     def test_ct_avgnidf10b10e(self):
         """
@@ -164,21 +155,20 @@ class TestControllableDialogue(unittest.TestCase):
             'task': 'projects.controllable_dialogue.tasks.agents',
             'beam_size': 20,
             'beam_min_n_best': 10,
+            'use_reply': 'model',
             'batchsize': 64,
-            'num_examples': 512,  # don't run on the full dataset
+            'num_examples': NUM_EXAMPLES,
             'weighted_decoding': NO_REPETITION,
             'set_controls': 'avg_nidf:7',
         }, skip_test=True)
-        self.assertAlmostEqual(
-            valid['ppl'],
-            32.94,  # 31.02 on the full dataset
-            delta=0.1,
-        )
-        self.assertAlmostEqual(
-            valid['f1'],
-            0.1373,  # 0.1432 on the full dataset
-            delta=0.0002,
-        )
+
+        if FAST_MODE:
+            self.assertAlmostEqual(valid['ppl'], 38.64, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1376, delta=0.0002)
+        else:
+            self.fail(valid)
+            self.assertAlmostEqual(valid['ppl'], -1, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], -1, delta=0.0002)
 
     def test_wd_specificity(self):
         """
@@ -189,21 +179,17 @@ class TestControllableDialogue(unittest.TestCase):
             'task': 'projects.controllable_dialogue.tasks.agents',
             'beam_size': 20,
             'beam_min_n_best': 10,
+            'use_reply': 'model',
             'batchsize': 64,
             'num_examples': 512,  # don't run on the full dataset
             'weighted_decoding': NO_REPETITION + ',nidf:4',
         }, skip_test=True)
-        self.fail(valid)
-        self.assertAlmostEqual(
-            valid['ppl'],
-            23.54,  # 22.86 on the full dataset
-            delta=0.1,
-        )
-        self.assertAlmostEqual(
-            valid['f1'],
-            0.1433,  # 0.1460 on the full dataset
-            delta=0.0002,
-        )
+
+        if FAST_MODE:
+            self.assertAlmostEqual(valid['ppl'], 25.74, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1366, delta=0.0002)
+        else:
+            self.fail(valid)
 
     def test_bfw_responsiveness(self):
         """
@@ -214,21 +200,17 @@ class TestControllableDialogue(unittest.TestCase):
             'task': 'projects.controllable_dialogue.tasks.agents',
             'beam_size': 20,
             'beam_min_n_best': 10,
+            'use_reply': 'model',
             'batchsize': 64,
             'num_examples': 512,  # don't run on the full dataset
             'weighted_decoding': NO_REPETITION + ',intrep_2gram:-1e20,partnerrep_2gram:-1e20,lastuttsim:5'  # noqa: E501
         }, skip_test=True)
-        self.fail(valid)
-        self.assertAlmostEqual(
-            valid['ppl'],
-            23.54,  # 22.86 on the full dataset
-            delta=0.1,
-        )
-        self.assertAlmostEqual(
-            valid['f1'],
-            0.1373,  # 0.1397 on the full dataset
-            delta=0.0002,
-        )
+
+        if FAST_MODE:
+            self.assertAlmostEqual(valid['ppl'], 26.16, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1399, delta=0.0002)
+        else:
+            self.fail(valid)
 
 
 if __name__ == '__main__':
