@@ -388,6 +388,10 @@ def load_agent_module(opt):
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
         new_opt = _load_opt_file(optfile)
+        # TODO we need a better way to say these options are never copied...
+        if 'datapath' in new_opt:
+            # never use the datapath from an opt dump
+            del new_opt['datapath']
         if 'batchindex' in new_opt:
             # This saved variable can cause trouble if we switch to BS=1 at test time
             del new_opt['batchindex']
