@@ -2,11 +2,9 @@
 
 ## Paper information
 
-Abigail See, Stephen Roller, Douwe Kiela, Jason Weston. 
-
+Abigail See, Stephen Roller, Douwe Kiela, Jason Weston.  
 _[What makes a good conversation? How controllable attributes affect human 
-judgments](https://arxiv.org/abs/1902.08654)_. 
-
+judgments](https://arxiv.org/abs/1902.08654)_.  
 To appear in NAACL 2019.
 
 
