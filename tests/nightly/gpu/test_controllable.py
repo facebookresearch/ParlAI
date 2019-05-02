@@ -117,13 +117,36 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 26.66, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1389, delta=0.0002)
         else:
-            self.fail(valid)
-            self.assertAlmostEqual(valid['ppl'], -1, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], -1, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 25.83, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 13.75, delta=0.0002)
 
-    def test_ct_questionb11e10(self):
+    def test_ct_question_bucket7(self):
         """
-        Checks the question-controlled model produces correct results.
+        Checks the question-controlled model (z=7) produces correct results.
+        """
+        _, valid, _ = testing_utils.eval_model({
+            # b11e10 stands for 11 buckets, embedding size 10
+            'model_file': 'models:controllable_dialogue/control_questionb11e10',
+            'task': 'projects.controllable_dialogue.tasks.agents',
+            'beam_size': 20,
+            'beam_min_n_best': 10,
+            'batchsize': 64,
+            'use_reply': 'model',
+            'num_examples': NUM_EXAMPLES,
+            'weighted_decoding': NO_REPETITION,
+            'set_controls': 'question:7',
+        }, skip_test=True)
+
+        if FAST_MODE:
+            self.assertAlmostEqual(valid['ppl'], 31.04, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1362, delta=0.0002)
+        else:
+            self.assertAlmostEqual(valid['ppl'], 29.22, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1336, delta=0.0002)
+
+    def test_ct_question_bucket10(self):
+        """
+        Checks the question-controlled model (z=10 boost) produces correct results.
         """
         _, valid, _ = testing_utils.eval_model({
             'model_file': 'models:controllable_dialogue/control_questionb11e10',
@@ -133,22 +156,21 @@ class TestControllableDialogue(unittest.TestCase):
             'batchsize': 64,
             'use_reply': 'model',
             'num_examples': NUM_EXAMPLES,
-            'weighted_decoding': NO_REPETITION,
+            'weighted_decoding': 'extrep_nonstopword:-1e20,intrep_nonstopword:-1e20',
             'set_controls': 'question:10',
             'beam_reorder': 'best_extrep2gram_qn',
         }, skip_test=True)
 
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 31.39, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1253, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 31.27, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1400, delta=0.0002)
         else:
-            self.fail(valid)
-            self.assertAlmostEqual(valid['ppl'], -1, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], -1, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 30.26, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1304, delta=0.0002)
 
-    def test_ct_avgnidf10b10e(self):
+    def test_ct_specificity_bucket7(self):
         """
-        Checks the specificity-CT model produces correct results.
+        Checks the specificity-CT model (z=7) produces correct results.
         """
         _, valid, _ = testing_utils.eval_model({
             'model_file': 'models:controllable_dialogue/control_avgnidf10b10e',
@@ -166,9 +188,8 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 38.64, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1376, delta=0.0002)
         else:
-            self.fail(valid)
-            self.assertAlmostEqual(valid['ppl'], -1, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], -1, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 37.03, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1365, delta=0.0002)
 
     def test_wd_specificity(self):
         """
@@ -189,11 +210,12 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 25.74, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1366, delta=0.0002)
         else:
-            self.fail(valid)
+            self.assertAlmostEqual(valid['ppl'], 25.57, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1349, delta=0.0002)
 
-    def test_bfw_responsiveness(self):
+    def test_wd_responsiveness(self):
         """
-        Checks the responsiveness-BFW model produces correct results.
+        Checks the responsiveness-weighted decoding model produces correct results.
         """
         _, valid, _ = testing_utils.eval_model({
             'model_file': 'models:controllable_dialogue/convai2_finetuned_baseline',
@@ -210,7 +232,8 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 26.16, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1399, delta=0.0002)
         else:
-            self.fail(valid)
+            self.assertAlmostEqual(valid['ppl'], 25.47, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.1369, delta=0.0002)
 
 
 if __name__ == '__main__':
