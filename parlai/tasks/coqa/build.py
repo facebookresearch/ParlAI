@@ -26,15 +26,15 @@ def make_parlai_format(outpath, dtype, data):
                 question_txt = story + '\\n' + question['input_text']
             else:
                 question_txt = question['input_text']
-            output.append("text:{question}\tlabels:{labels}".format(
+            output.append('text:{question}\tlabels:{labels}'.format(
                 question=question_txt,
-                labels=ans['input_text'].replace("|", " __PIPE__ ")
+                labels=ans['input_text'].replace('|', ' __PIPE__ ')
             ))
             if question['turn_id'] < len(each['questions']):
                 output.append('\n')
         output.append('\t\tepisode_done:True\n')
     with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
-        fout.write("".join(output))
+        fout.write(''.join(output))
 
 
 def build(opt):
