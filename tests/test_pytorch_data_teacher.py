@@ -63,7 +63,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_shuffle(self):
         """Simple test to ensure that dataloader is initialized with correct
-            data sampler
+        data sampler
         """
         dts = ['train', 'valid', 'test']
         exts = ['', ':stream', ':ordered', ':stream:ordered']
@@ -100,12 +100,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_pyt_preprocess(self):
         """
-            Test that the preprocess functionality works with the PytorchDataTeacher
-            with a sample TorchAgent (here, the Seq2seq model).
+        Test that the preprocess functionality works with the PytorchDataTeacher
+        with a sample TorchAgent (here, the Seq2seq model).
 
-            This tests whether the action provided by the preprocessed teacher
-            is equivalent to the agent's observation after the agent processes it.
-
+        This tests whether the action provided by the preprocessed teacher
+        is equivalent to the agent's observation after the agent processes it.
         """
         def get_teacher_act(defaults, teacher_processed=False, agent_to=None):
             parser = train_setup_args()
@@ -149,8 +148,8 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_valid_pyt_batchsort(self):
         """
-            Tests that batchsort *works* for two epochs; that is, that
-            every example is seen both epochs
+        Tests that batchsort *works* for two epochs; that is, that
+        every example is seen both epochs
         """
         parser = train_setup_args()
 
@@ -213,12 +212,11 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_pyt_batchsort_field(self):
         """
-            Test that the batchsort actually works for Pytorch Data Teacher
+        Test that the batchsort actually works for Pytorch Data Teacher
 
-            That is, for every batch except the last one, check that the length
-            of each example (determined by batchsort_field) is within
-            `batch-length-range`
-
+        That is, for every batch except the last one, check that the length
+        of each example (determined by batchsort_field) is within
+        `batch-length-range`
         """
         # First, check that batchsort itself works
         defaults = unit_test_parser_defaults.copy()
@@ -318,10 +316,10 @@ class TestPytorchDataTeacher(unittest.TestCase):
         """
         Tests the functionality of training with batchsort
 
-        :param datatype:
-            (string) datatype to train with
-        :param preprocess:
-            (bool) whether to preprocess the data
+        :param string datatype:
+            datatype to train with
+        :param bool preprocess:
+            whether to preprocess the data
         """
         defaults = integration_test_parser_defaults.copy()
         defaults['datatype'] = datatype
@@ -386,15 +384,15 @@ class TestPytorchDataTeacher(unittest.TestCase):
 
     def test_pyt_multitask(self):
         """
-            Unit test for ensuring that PytorchDataTeacher correctly handles
-            multitasking.
+        Unit test for ensuring that PytorchDataTeacher correctly handles
+        multitasking.
 
-            This test will iterate through the following scenarios:
-                1. 2 `pytorch_teacher_task`s
-                2. 1 `pytorch_teacher_task`, 1 regular ParlAI task
-                3. 1 `pytorch_teacher_task`, 1 `pytorch_teacher_dataset`
-                4. 1 `pytorch_teacher_dataset`, 1 regular ParlAI task
-                5. 2 `pytorch_teacher_dataset`s
+        This test will iterate through the following scenarios:
+            1. 2 `pytorch_teacher_task`s
+            2. 1 `pytorch_teacher_task`, 1 regular ParlAI task
+            3. 1 `pytorch_teacher_task`, 1 `pytorch_teacher_dataset`
+            4. 1 `pytorch_teacher_dataset`, 1 regular ParlAI task
+            5. 2 `pytorch_teacher_dataset`s
 
         """
 
