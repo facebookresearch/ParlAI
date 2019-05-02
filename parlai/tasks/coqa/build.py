@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+
 import parlai.core.build_data as build_data
 import os
 import json
@@ -48,13 +49,23 @@ def build(opt):
         # Download the data.
         build_data.download(url + tfname, dpath, tfname)
         build_data.download(url + dfname, dpath, dfname)
+
         with open(os.path.join(dpath, tfname)) as f:
             data = json.load(f)['data']
-        make_parlai_format(dpath, 'train', data)
+
+        train_p = 0.8
+        valid_p = 0.2
+        assert train_p > 0
+        assert valid_p > 0
+        data_len = len(data)
+        first_valid = int(data_len * train_p)
+
+        make_parlai_format(dpath, 'train', data[:first_valid])
+        make_parlai_format(dpath, 'valid', data[first_valid:])
 
         with open(os.path.join(dpath, dfname)) as f:
             data = json.load(f)['data']
-        make_parlai_format(dpath, 'dev', data)
+        make_parlai_format(dpath, 'dev',  data)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

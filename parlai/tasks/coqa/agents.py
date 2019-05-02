@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import ParlAIDialogTeacher
+from parlai.core.utils import warn_once
 from .build import build
 
 import copy
@@ -15,6 +16,9 @@ def _path(opt):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
+    if dt == 'test':
+        warn_once("WARNING: Test set not included. Setting datatype to valid.")
+        dt = 'valid'
     return os.path.join(opt['datapath'], 'CoQA', dt + '.txt')
 
 
