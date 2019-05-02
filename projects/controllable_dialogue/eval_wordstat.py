@@ -145,6 +145,9 @@ def eval_wordstat(opt, print_parser=None):
     if opt['gold_response']:  # Special output file for gold response
         model_dir, _ = os.path.split(opt.get('model_file'))
         outfile = os.path.join(model_dir, 'goldresponse')
+        if opt['use_reply'] != 'label':
+            raise Exception('You should set --use-reply label (not --use-reply model) '
+                            'when measuring goldresponse stats')
     else:
         outfile = "%s.%s.%s.%s" % (
             opt.get('model_file'),
