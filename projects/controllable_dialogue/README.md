@@ -2,9 +2,12 @@
 
 ## Paper information
 
-Abigail See, Stephen Roller, Douwe Kiela, Jason Weston. [What makes a good
-conversation? How controllable attributes affect human
-judgments](https://arxiv.org/abs/1902.08654). To appear in NAACL 2019.
+Abigail See, Stephen Roller, Douwe Kiela, Jason Weston. 
+
+_[What makes a good conversation? How controllable attributes affect human 
+judgments](https://arxiv.org/abs/1902.08654)_. 
+
+To appear in NAACL 2019.
 
 
 ## Abstract
@@ -63,9 +66,8 @@ personas, provided for convenience (useful for talking to the model interactivel
     - `valid.txt`: This is the ConvAI2 validation set
       (`data/ConvAI2/valid_self_original_no_cands.txt`) converted to parlai
       format.
-- `wordstat_files/`:
-    - This directory contains json files with generated output and automatic metrics
-    computed for the various pretrained models. 
+- `wordstat_files/`: This directory contains json files with generated output and 
+automatic metrics computed for the various pretrained models. 
 
 ### (Alternatively) Make the data yourself
 
@@ -265,13 +267,13 @@ Once that's done, run this command:
 You should see your new CT model training. Note: this is how the models in the
 paper were trained.
 
-## Look at output and automatic metrics
+## Look at generated output and automatic metrics
 
-First, download and extract [this
-file](https://drive.google.com/open?id=16kXJXJ8WiSrUpAsShYcuzJhToVBrnf30) to
-obtain a directory called `wordstat_files`. The directory contains json files
-with the generated output and the automatic metrics computed for the pretrained
-models.
+Once you have [downloaded the data](#download-the-data), you will find a 
+directory `wordstat_files` in `data/controllable_dialogue`.
+The json files in this directory contain the generated output computed on the 
+ConvAI2 validation set, plus the corresponding automatic metrics.
+Each json file corresponds to a different model configuration. 
 
 Run the following:
 
@@ -283,11 +285,9 @@ the path to your `wordstat_files` directory. You will be able to recreate the
 table of automatic metrics from the paper (Table 6), and you can explore the
 output of the models.
 
-TODO: screenshot
-
 ## Measure automatic metrics
 
-If you want to generate json files like those in the previous section, do this:
+If you want to generate json files like those in the previous section, run this command:
 
     python projects/controllable_dialogue/eval_wordstat.py \
     -mf models:controllable_dialogue/control_questionb11e10 \
@@ -297,7 +297,8 @@ If you want to generate json files like those in the previous section, do this:
 This will create a json file containing the output and other automatic metrics
 for the question-controlled CT model with z=7. The script `eval_wordstat.py`
 always places the json file in the same place as the model file. The script can
-take a while to complete.
+take a while to complete (you can set e.g. `--num-examples 512` to generate a script 
+on a subset of the data).
 
 Note: Due to changes in ParlAI, there might be some small differences between
 the json file created via this method, and the json files downloadable in the
