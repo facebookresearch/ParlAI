@@ -98,10 +98,10 @@ Next, create `arora.pkl`:
     python projects/controllable_dialogue/controllable_seq2seq/arora.py
 
 This will create a file called `arora.pkl` in your `data/controllable_dialogue`
-directory. It might take a while -- in particular, if necessary it will download 
+directory. It might take a while - in particular, if necessary it will download 
 GloVe vectors and store them in `ParlAI/data/models/glove_vectors`.
 
-Next, create `controllable_dialogue/train.txt` and `valid.txt`:
+Next, create `data/controllable_dialogue/train.txt` and `valid.txt`:
 
     python projects/controllable_dialogue/make_control_dataset.py \
     --fromfile_datapath data/ConvAI2_parlaiformat/train.txt \
@@ -114,7 +114,7 @@ Next, create `controllable_dialogue/train.txt` and `valid.txt`:
     --controls question,lastuttsim,avg_nidf
 
 This will create files called `train.txt` and `valid.txt` in your
-`controllable_dialogue` directory.
+`data/controllable_dialogue` directory.
 
 Note: Due to changes in ParlAI, there might be some small differences between
 the generated files obtained in this section, and the downloaded files in the
@@ -230,7 +230,7 @@ lower bound should be for each bucket. Suppose you want 8 buckets. First run:
     --control-vars avg_nidf
 
 and then copy and paste the provided lower bounds into
-`controllable_dialogue/controllable_seq2seq/controls.py`, similarly to the
+`projects/controllable_dialogue/controllable_seq2seq/controls.py`, similarly to the
 existing `AVG_NIDF_10BUCKET_LBS`. Then you can train a model with
 `--control-num-buckets 8`.
 
