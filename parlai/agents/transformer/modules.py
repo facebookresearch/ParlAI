@@ -355,14 +355,12 @@ class TransformerEncoder(nn.Module):
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
-
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
 
         if self.n_segments >= 1:
             if segments is None:
                 segments = torch.zeros_like(input)
             tensor = tensor + self.segment_embeddings(segments)
-
         if self.variant == 'xlm':
             tensor = _normalize(tensor, self.norm_embeddings)
 
@@ -635,13 +633,14 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             if n_positions == 0:
                 # default to 1024
                 n_positions = 1024
+        n_segments = opt.get('n_segments', 0)
 
         if n_positions < 0:
             raise ValueError('n_positions must be positive')
 
         self.encoder = _build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx, reduction_type=None,
-            n_positions=n_positions,
+            n_positions=n_positions, n_segments=n_segments,
         )
         self.decoder = _build_decoder(
             opt, dictionary, self.embeddings, self.pad_idx,
