@@ -327,8 +327,5 @@ previous section._
 ## Human Evaluation Logs
 TODO
 
-## Human eval logs
-TODO
-
 ## Bayesian calibration code
 TODO
