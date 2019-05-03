@@ -238,7 +238,7 @@ workflows:
     jobs:
       - lint
       - unittests
-      - osx_tests
+      - osx_unittests
       - mturk_tests:
           filters:
             branches:
