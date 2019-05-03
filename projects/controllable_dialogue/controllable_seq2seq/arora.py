@@ -21,10 +21,7 @@ import os
 import pickle
 import torch
 
-FOLDER = 'controllable_dialogue'
-
-# Once you've downloaded or created your arora.pkl file, enter the filepath below
-ARORA_FP = None  # e.g. '~/ParlAI/data/controllable_dialogue/arora.pkl'
+CONTROLLABLE_DIR = 'controllable_dialogue'
 
 
 class SentenceEmbedder(object):
@@ -375,13 +372,11 @@ def learn_arora(opt):
 
 def load_arora(opt):
     """
-    Load the data in the arora.pkl file given by ARORA_FP.
+    Load the data in the arora.pkl file in data/controllable_dialogue.
     """
-    global ARORA_FP
-    if ARORA_FP is None:
-        ARORA_FP = os.path.join(opt['datapath'], FOLDER, 'arora.pkl')
-    print("Loading Arora embedding info from %s..." % ARORA_FP)
-    with open(ARORA_FP, "rb") as f:
+    arora_fp = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'arora.pkl')
+    print("Loading Arora embedding info from %s..." % arora_fp)
+    with open(arora_fp, "rb") as f:
         data = pickle.load(f)
     print("Done loading arora info.")
     return data

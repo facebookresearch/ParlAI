@@ -17,8 +17,6 @@ import os
 import math
 import pickle
 
-# Once you've downloaded or created your word2count.pkl file, enter the filepath below
-WORD2COUNT_FP = None  # e.g. '~/ParlAI/data/controllable_dialogue/word2count.pkl'
 
 CONTROLLABLE_DIR = 'controllable_dialogue'
 PARLAI_FORMAT_DIR = 'controllable_dialogue/ConvAI2_parlaiformat'
@@ -120,31 +118,27 @@ def learn_nidf(opt):
     num_sents = ns1 + ns2 + ns3 + ns4
 
     # Write word2count and num_sents to file
-    word2count_file = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'word2count.pkl')
-    print("Saving word count stats to %s..." % word2count_file)
+    word2count_fp = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'word2count.pkl')
+    print("Saving word count stats to %s..." % word2count_fp)
     data = {
         "word2count": word_counter,
         "num_sents": num_sents
     }
-    with open(word2count_file, "wb") as f:
+    with open(word2count_fp, "wb") as f:
         pickle.dump(data, f)
 
 
 def load_word2nidf(opt):
     """
-    Loads word count stats from word2count.pkl file specified in WORD2COUNT_FP,
+    Loads word count stats from word2count.pkl file in data/controllable_dialogue,
     computes NIDF for all words, and returns the word2nidf dictionary.
 
     Returns:
       word2nidf: dict mapping words to their NIDF score (float between 0 and 1)
     """
-    global WORD2COUNT_FP
-    if WORD2COUNT_FP is None:
-        WORD2COUNT_FP = os.path.join(
-            opt['datapath'], CONTROLLABLE_DIR, 'word2count.pkl'
-        )
-    print("Loading word count stats from %s..." % WORD2COUNT_FP)
-    with open(WORD2COUNT_FP, "rb") as f:
+    word2count_fp = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'word2count.pkl')
+    print("Loading word count stats from %s..." % word2count_fp)
+    with open(word2count_fp, "rb") as f:
         data = pickle.load(f)
     num_sents = data['num_sents']
     print('num_sents: ', num_sents)

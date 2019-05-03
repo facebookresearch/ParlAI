@@ -13,11 +13,16 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.core.utils import msg_to_str, TimeLogger
 from controllable_seq2seq.util import ConvAI2History
-from controllable_seq2seq.controls import eval_attr
+from controllable_seq2seq.controls import eval_attr, initialize_control_information
 import random
 
 
 def make_dataset(opt):
+
+    # Initialize control information so we can compute sentence attributes.
+    # Here we set build_task=False so we don't download data/controllable_dialogue
+    # (because we're trying to create it instead).
+    initialize_control_information(opt, build_task=False)
 
     # Create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
@@ -80,7 +85,7 @@ def make_dataset(opt):
     fw.close()
 
 
-def main():
+if __name__ == '__main__':
     random.seed(42)
     # Get command line arguments
     parser = ParlaiParser()
@@ -103,7 +108,3 @@ def main():
 
     opt = parser.parse_args()
     make_dataset(opt)
-
-
-if __name__ == '__main__':
-    main()

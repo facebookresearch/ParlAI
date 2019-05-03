@@ -73,14 +73,22 @@ arora_data = None
 sent_embedder = None
 
 
-def initialize_control_information(opt):
+def initialize_control_information(opt, build_task=True):
+    """
+    Loads information from word2count.pkl, arora.pkl in data/controllable_dialogue, and
+    uses it to initialize objects for computing NIDF and response-relatedness controls.
+
+    By default (build_task=True) we will also build the controllable_dialogue task i.e.
+    download data/controllable_dialogue if necessary.
+    """
     global word2nidf, nidf_feats, arora_data, sent_embedder
 
     if word2nidf is not None:
         # already loaded, no need to do anything
         return
 
-    build(opt)
+    if build_task:
+        build(opt)
 
     print("Loading up controllable features...")
     word2nidf = load_word2nidf(opt)  # get word2nidf dict
