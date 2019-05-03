@@ -8,7 +8,6 @@ import unittest
 import parlai.core.testing_utils as testing_utils
 
 
-@unittest.skip
 @testing_utils.skipUnlessGPU
 class TestBertModel(unittest.TestCase):
     """

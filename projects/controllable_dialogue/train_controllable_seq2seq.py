@@ -19,7 +19,6 @@ def setup_args():
     parser.set_defaults(
         task='projects.controllable_dialogue.tasks.agents',
         model='projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent',  # noqa: E501
-        model_file='/tmp/control_model',
         dict_file='models:controllable_dialogue/dict_twit30k_train_split',
         dict_lower=True,
         dict_include_valid=True,

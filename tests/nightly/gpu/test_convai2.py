@@ -17,7 +17,6 @@ You can see the full validation set leaderboard here:
 """
 
 
-@unittest.skip
 @testing_utils.skipUnlessGPU
 class TestConvai2Seq2Seq(unittest.TestCase):
     """
@@ -38,7 +37,6 @@ class TestConvai2Seq2Seq(unittest.TestCase):
         self.assertEqual(report['f1'], .1682, str(stdout))
 
 
-@unittest.skip
 class TestConvai2KVMemnn(unittest.TestCase):
     """
     Checks that the KV Profile Memory model produces correct results.
@@ -58,7 +56,6 @@ class TestConvai2KVMemnn(unittest.TestCase):
         self.assertEqual(report['f1'], .1173, str(stdout))
 
 
-@unittest.skip
 @testing_utils.skipUnlessGPU
 class TestConvai2LanguageModel(unittest.TestCase):
     """

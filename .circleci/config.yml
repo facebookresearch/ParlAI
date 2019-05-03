@@ -216,7 +216,7 @@ jobs:
                 --data "build_parameters[CIRCLE_WORKFLOW_WORKSPACE_ID]=${CIRCLE_WORKFLOW_WORKSPACE_ID}" \
                 --data "build_parameters[CIRCLE_WORKFLOW_UPSTREAM_JOB_IDS]=${CIRCLE_WORKFLOW_JOB_ID}" \
                 --data "revision=$CIRCLE_SHA1" \
-                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH?circle-token=c5ec0e32375750f0036a71e847e5eee2bbd9f2fb >/dev/null
+                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH?circle-token=$CIRCLE_API_USER_TOKEN >/dev/null
                 echo "Launching ${job}..."
             done
 
