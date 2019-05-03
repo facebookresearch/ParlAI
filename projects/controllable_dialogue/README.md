@@ -2,9 +2,10 @@
 
 ## Paper information
 
-Abigail See, Stephen Roller, Douwe Kiela, Jason Weston. [What makes a good
-conversation? How controllable attributes affect human
-judgments](https://arxiv.org/abs/1902.08654). To appear in NAACL 2019.
+Abigail See, Stephen Roller, Douwe Kiela, Jason Weston.  
+_[What makes a good conversation? How controllable attributes affect human 
+judgments](https://arxiv.org/abs/1902.08654)_.  
+To appear in NAACL 2019.
 
 
 ## Abstract
@@ -41,7 +42,7 @@ following BibTex entry:
 ## Download the data
 
 Running the commands to train or chat with the models will automatically download 
-all the data for you. Alternatively, you can manually download all the data by 
+the data for you. Alternatively, you can manually download the data by 
 running `python projects/controllable_dialogue/tasks/build.py`. This will download 
 the following files to `data/controllable_dialogue`:
 
@@ -63,9 +64,8 @@ personas, provided for convenience (useful for talking to the model interactivel
     - `valid.txt`: This is the ConvAI2 validation set
       (`data/ConvAI2/valid_self_original_no_cands.txt`) converted to parlai
       format.
-- `wordstat_files/`:
-    - This directory contains json files with generated output and automatic metrics
-    computed for the various pretrained models. 
+- `wordstat_files/`: This directory contains json files with generated output and 
+automatic metrics computed for the various pretrained models. 
 
 ### (Alternatively) Make the data yourself
 
@@ -76,46 +76,45 @@ First, convert the ConvAI2 data to ParlAI format:
     mkdir -p data/controllable_dialogue/ConvAI2_parlaiformat
 
     python parlai/scripts/convert_data_to_parlai_format.py \
-    -t convai2:SelfOriginal:no_cands -dt train:ordered \
-    -of data/controllable_dialogue/ConvAI2_parlaiformat/train.txt
+    --task convai2:SelfOriginal:no_cands \
+    --datatype train:ordered \
+    --outfile data/controllable_dialogue/ConvAI2_parlaiformat/train.txt
 
     python parlai/scripts/convert_data_to_parlai_format.py \
-    -t convai2:SelfOriginal:no_cands -dt valid \
-    -of data/controllable_dialogue/ConvAI2_parlaiformat/valid.txt
+    --task convai2:SelfOriginal:no_cands \
+    --datatype valid \
+    --outfile data/controllable_dialogue/ConvAI2_parlaiformat/valid.txt
 
 Next, create `word2count.pkl`:
 
     python projects/controllable_dialogue/controllable_seq2seq/nidf.py
 
-This will create a file called `word2count.pkl` in your `controllable_dialogue`
+This will create a file called `word2count.pkl` in your `data/controllable_dialogue`
 directory. It might take a while, especially the part when it goes through the
-Twitter dataset counting words. Once it's done, go to `nidf.py` and enter the
-filepath to your `word2count.pkl` file.
+Twitter dataset counting words. 
 
 Next, create `arora.pkl`:
 
     python projects/controllable_dialogue/controllable_seq2seq/arora.py
 
-This will create a file called `arora.pkl` in your `controllable_dialogue`
-directory. It might take a while -- in particular, it will download GloVe
-vectors and store them in `ParlAI/data/controllable_dialogue/glove_vectors`,
-which usually takes some time. Once it's done, go to `arora.py` and enter the
-filepath to your `arora.pkl` file and your `glove_vectors` directory.
+This will create a file called `arora.pkl` in your `data/controllable_dialogue`
+directory. It might take a while - in particular, if necessary it will download 
+GloVe vectors and store them in `ParlAI/data/models/glove_vectors`.
 
-Next, create `controllable_dialogue/train.txt` and `valid.txt`:
+Next, create `data/controllable_dialogue/train.txt` and `valid.txt`:
 
     python projects/controllable_dialogue/make_control_dataset.py \
-    --fromfile_datapath data/ConvAI2_parlaiformat/train.txt \
+    --fromfile_datapath data/controllable_dialogue/ConvAI2_parlaiformat/train.txt \
     --outfile data/controllable_dialogue/train.txt \
     --controls question,lastuttsim,avg_nidf
 
     python projects/controllable_dialogue/make_control_dataset.py \
-    --fromfile_datapath data/ConvAI2_parlaiformat/valid.txt \
+    --fromfile_datapath data/controllable_dialogue/ConvAI2_parlaiformat/valid.txt \
     --outfile data/controllable_dialogue/valid.txt \
     --controls question,lastuttsim,avg_nidf
 
 This will create files called `train.txt` and `valid.txt` in your
-`controllable_dialogue` directory.
+`data/controllable_dialogue` directory.
 
 Note: Due to changes in ParlAI, there might be some small differences between
 the generated files obtained in this section, and the downloaded files in the
@@ -123,7 +122,7 @@ previous section.
 
 ## Chat with the pretrained models
 
-In this section are the commands to talk to the models described in the paper.
+This section provides the commands to talk to the models described in the paper.
 You can refer to Table 5 in the paper to see how these commands correspond to 
 the configurations described there.
 
@@ -139,6 +138,8 @@ Running any of these commands will also download the pretrained models, if neces
 
     python projects/controllable_dialogue/interactive.py \
     -mf models:controllable_dialogue/convai2_finetuned_baseline
+
+This setting uses beam size 20 by default.
 
 **Talk to the repetition-controlled (WD) baseline:**
 
@@ -217,34 +218,30 @@ To train a CT model (conditioned on mean NIDF) from scratch:
     -mf /path/to/your/modelfile \
     --control-vars avg_nidf
 
-Note: if you add your paths for `train.txt`, `valid.txt` and
-`dict_twit30k_train_split` to `train_controllable_seq2seq.py` then you won't
-need to enter them via command line.
-
-This will default to embedding size 10, but you could include e.g.
+The CT control embedding size will default to 10, but you could include e.g.
 `--control-embeddingsize 15` if you wanted to change it.
 
-This code will also default to 10 NIDF buckets. If you want to use a different
-number of buckets, first you need to figure out what the NIDF lower bound
-should be for each bucket. Suppose you want 8 buckets. First run:
+For `avg_nidf`, the number of buckets will also default to 10. If you want to 
+use a different number of buckets, first you need to figure out what the NIDF 
+lower bound should be for each bucket. Suppose you want 8 buckets. First run:
 
     python projects/controllable_dialogue/get_bucket_lowerbounds.py \
     --num_buckets 8 \
     --control-vars avg_nidf
 
 and then copy and paste the provided lower bounds into
-`controllable_dialogue/controllable_seq2seq/controls.py`, similarly to the
+`projects/controllable_dialogue/controllable_seq2seq/controls.py`, similarly to the
 existing `AVG_NIDF_10BUCKET_LBS`. Then you can train a model with
 `--control-num-buckets 8`.
 
-You can train a CT model conditioned on multiple controls:
+You can train a CT model conditioned on _multiple_ controls:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
     -mf /path/to/your/modelfile \
     --control-vars avg_nidf,question
 
-To take an existing non-CT model (e.g. the baseline) and the finetune it as a
-CT model do this:
+To take an existing non-CT model (e.g. the ConvAI2-finetuned baseline) and 
+then finetune it as a CT model (here specificity-controlled), do this:
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
     -mf /path/to/your/modelfile \
@@ -265,13 +262,13 @@ Once that's done, run this command:
 You should see your new CT model training. Note: this is how the models in the
 paper were trained.
 
-## Look at output and automatic metrics
+## Look at generated output and automatic metrics
 
-First, download and extract [this
-file](https://drive.google.com/open?id=16kXJXJ8WiSrUpAsShYcuzJhToVBrnf30) to
-obtain a directory called `wordstat_files`. The directory contains json files
-with the generated output and the automatic metrics computed for the pretrained
-models.
+Once you have [downloaded the data](#download-the-data), you will find a 
+directory `wordstat_files` in `data/controllable_dialogue`.
+The json files in this directory contain the generated output computed on the 
+ConvAI2 validation set, plus the corresponding automatic metrics.
+Each json file corresponds to a different model configuration. 
 
 Run the following:
 
@@ -283,21 +280,20 @@ the path to your `wordstat_files` directory. You will be able to recreate the
 table of automatic metrics from the paper (Table 6), and you can explore the
 output of the models.
 
-TODO: screenshot
+## Save generated output and automatic metrics to file
 
-## Measure automatic metrics
-
-If you want to generate json files like those in the previous section, do this:
+If you want to generate json files like those in the previous section, run this command:
 
     python projects/controllable_dialogue/eval_wordstat.py \
     -mf models:controllable_dialogue/control_questionb11e10 \
     -wd extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20 \
     --set-controls question:7
 
-This will create a json file containing the output and other automatic metrics
-for the question-controlled CT model with z=7. The script `eval_wordstat.py`
-always places the json file in the same place as the model file. The script can
-take a while to complete.
+This will create a json file containing the output and automatic metrics for the provided 
+model configuration (here, question-controlled CT model with z=7 and WD repetition control). 
+The script `eval_wordstat.py` always places the json file in the same place as the model file. 
+The script can take a while to complete - you can set e.g. `--num-examples 512` to generate 
+output on a smaller number of examples.
 
 Note: Due to changes in ParlAI, there might be some small differences between
 the json file created via this method, and the json files downloadable in the
