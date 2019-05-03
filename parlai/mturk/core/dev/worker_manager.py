@@ -338,7 +338,7 @@ class WorkerManager():
         agent.id = new_agent_id
         agent.conversation_id = conversation_id
         data = {
-            'status': agent.status,
+            'agent_status': agent.get_status(),
             'conversation_id': conversation_id,
             'agent_id': new_agent_id
         }

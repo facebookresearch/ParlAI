@@ -54,7 +54,7 @@ const STATUS_STATIC = 'static';
 const STATUS_EXPIRED = 'expired';
 const STATUS_RETURNED = 'returned';
 const STATUS_PARLAI_DISCONNECT = 'parlai_disconnect';
-const AGENT_TIMEOUT_TIME = 20;
+const AGENT_TIMEOUT_TIME = 20000; // 20 seconds
 
 function is_final_status(status) {
   return [
@@ -99,26 +99,41 @@ class LocalAgentState {
     this.received_message_ids = new Set([]);
 
     // Remove self from active connections
-    active_connections.remove(this.connection_id);
+    if (active_connections.has(this.connection_id)) {
+      active_connections.delete(this.connection_id);
+    }
   }
 
   get_reconnect_packet() {
     return {
       conversation_id: this.conversation_id,
-      messages: this.previous_messages[this.conversation_id] || [],
+      messages: this.get_previous_messages_for(this.conversation_id),
       agent_status: this.status,
       done_text: this.done_text,
       agent_id: this.agent_id,
     }
   }
 
+  get_previous_messages_for(conversation_id) {
+    if (!conversation_id) {
+      return [];
+    }
+
+    if (!this.previous_messages[conversation_id]) {
+      return [];
+    }
+
+    return this.previous_messages[conversation_id];
+  }
+
   get_update_from_state_change(state_change) {
     // Updates this state based on the state change, and provides an
     // update packet to send forward to the client as well
-    let new_conversation_id = state_change['conversation_id'];
-    let new_status = state_change['agent_status'];
-    let done_text = state_change['done_text'];
-    let agent_id = state_change['agent_id'];
+    let new_conversation_id =
+      state_change['conversation_id'] || this.conversation_id;
+    let new_status = state_change['agent_status'] || this.status;
+    let done_text = state_change['done_text'] || this.done_text;
+    let agent_id = state_change['agent_id'] || this.agent_id;
 
     let update_packet = {};
     let needs_update = false;
@@ -130,10 +145,10 @@ class LocalAgentState {
 
     if (new_status != this.status) {
       needs_update = true;
-      update_packet['status'] = new_status;
+      update_packet['agent_status'] = new_status;
       this.status = new_status;
 
-      if (is_final_status(status)) {
+      if (is_final_status(new_status)) {
         update_packet['final'] = true;
         this._cleanup_state();
       }
@@ -192,7 +207,10 @@ class LocalAgentState {
   }
 
   get_sendable_messages() {
-    let unsent_messages = this.unsent_messages[this.conversation_id];
+    if (this.conversation_id == null) {
+      return [];
+    }
+    let unsent_messages = this.unsent_messages[this.conversation_id] || [];
     let return_messages = [];
     while (unsent_messages.length > 0) {
       return_messages.push(unsent_messages.shift())
@@ -201,7 +219,7 @@ class LocalAgentState {
   }
 
   add_sent_message(sent_message) {
-    this.previous_messages[msg['conversation_id']].push(sent_message);
+    this.previous_messages[sent_message['conversation_id']].push(sent_message);
   }
 
   get_update_from_heartbeat(heartbeat) {
@@ -216,7 +234,7 @@ class LocalAgentState {
       // Make a new packet with all the missing information
       return {
         conversation_id: this.conversation_id,
-        messages: this.previous_messages[this.conversation_id] || [],
+        messages: this.get_previous_messages_for(this.conversation_id),
         agent_status: this.status,
         done_text: this.done_text,
         agent_id: this.agent_id,
@@ -225,14 +243,17 @@ class LocalAgentState {
 
     // Updating remaining fields if needed
     let update_packet = {last_parlai_ping: world_last_ping};
-    let previous_messages = this.previous_messages[this.conversation_id];
-    if (client_message_count < previous_messages.length) {
-      let missing_messages = previous_messages.slice(client_message_count);
-      update_packet['messages'] = missing_messages;
+    if (this.conversation_id !== null) {
+      let previous_messages =
+        this.get_previous_messages_for(this.conversation_id);
+      if (client_message_count < previous_messages.length) {
+        let missing_messages = previous_messages.slice(client_message_count);
+        update_packet['messages'] = missing_messages;
+      }
     }
 
     if (client_status != this.status) {
-      update_packet['status'] = this.status;
+      update_packet['agent_status'] = this.status;
     }
 
     if (client_done_text != this.done_text) {
@@ -305,6 +326,10 @@ function _send_message(connection_id, event_name, event_data) {
     return;
   }
 
+  if (event_data.receiver_id === undefined) {
+    event_data.receiver_id = connection_id;
+  }
+
   var packet = {
     type: event_name,
     content: event_data,
@@ -347,6 +372,7 @@ function _get_from_conn_id(data) {
 function handle_pong(data) {
   // Return a pong which is used to ensure that the heroku server is still live
   data['type'] = 'pong';
+  data['id'] = uuidv4();
   var out_connection_id = _get_from_conn_id(data);
 
   world_last_ping = Date.now();
@@ -409,6 +435,8 @@ function handle_agent_heartbeat(hb) {
 function handle_batch_to_agents(incoming_messages) {
   // Process individual messages and add them to the correct agent
   // queues. Doesn't actually forward the messages
+  // TODO update when messages from SocketManager actually come in batches
+  incoming_messages = [incoming_messages];
   for (let i in incoming_messages) {
     let message = incoming_messages[i];
     var out_connection_id = _get_to_conn_id(message);
@@ -437,20 +465,21 @@ function handle_batch_to_world(agent_message) {
   }
 
   // Simply adds message to the end, will be shifted from front
-  world_message_queue.push(agent_messaged);
+  world_message_queue.push(agent_message);
 }
 
-function handle_agent_state_update(state_change) {
+function handle_agent_state_update(state_change_packet) {
   // Process this event properly, generate any required update commands
   // for the frontend agent. Generally this should just involve sending a
   // json of the given state for the current conversation.
-  let out_connection_id = _get_to_conn_id(state_change);
+  let out_connection_id = _get_to_conn_id(state_change_packet);
   let agent_state = connection_id_to_agent_state[out_connection_id];
   if (agent_state === undefined) {
     // sending state update to an agent that doesn't exist?
     console.log("msg was sent to non-existent" + out_connection_id);
-    console.log(state_change);
+    console.log(state_change_packet);
   } else if (!is_final_status(agent_state.status)) {
+    let state_change = state_change_packet.data;
     let update_packet = agent_state.get_update_from_state_change(state_change);
     // Only state updates to agents that are still alive
     if (active_connections.has(out_connection_id)) {
@@ -508,6 +537,7 @@ server.listen(PORT, function() {
 
 var active_connections = new Set([]);
 
+// TODO add crash checking around this thread?
 function main_thread() {
   // Handle active connections message sends
   for (const connection_id of active_connections) {
@@ -530,7 +560,7 @@ function main_thread() {
       type: 'message',
       sender_id: null,
       assignment_id: null,
-      conversation_id: 'ServerDisconnects',
+      conversation_id: 'MessageBatch',
       receiver_id: world_id,
       data: {'messages': world_messages},
     };
@@ -556,6 +586,7 @@ function main_thread() {
         AGENT_DISCONNECT,
         msg,
       );
+      active_connections.delete(connection_id);
     }
   }
 

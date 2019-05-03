@@ -125,7 +125,20 @@ class MainApp extends React.Component {
 
   handleAgentStatusChange(agent_status, conversation_id, done_text, agent_id) {
     // Covers conversation changes and state restores in-conversation
-    if (conversation_id != this.state.conversation_id) {
+    let old_conversation_id = this.state.conversation_id;
+
+    if (agent_status != this.state.agent_status) {
+      // Handle required state changes on a case-by-case basis.
+      if ([STATUS_DONE, STATUS_PARTNER_DISCONNECT].includes(agent_status)) {
+        this.setState({ task_done: true, chat_state: 'done' });
+      } else if ([STATUS_DISCONNECT, STATUS_RETURNED, STATUS_EXPIRED,
+                  STATUS_PARLAI_DISCONNECT].includes(agent_status)) {
+        this.setState({ chat_state: 'inactive' });
+      }
+      this.setState({ agent_status: agent_status, done_text: done_text});
+    }
+
+    if (conversation_id != old_conversation_id) {
       this.setState({
           agent_status: agent_status,
           conversation_id: conversation_id,
@@ -134,17 +147,6 @@ class MainApp extends React.Component {
       if (conversation_id == 'waiting') {
         this.setState({ messages: [], chat_state: 'waiting' });
       }
-    }
-
-    if (agent_status != this.state.agent_status) {
-      // Handle required state changes on a case-by-case basis.
-      if ([STATUS_DONE, STATUS_PARTNER_DISCONNECT].includes(agent_status)) {
-        this.setState({ task_done: true, chat_state: 'done' });
-      } else if ([STATUS_DISCONNECT, STATUS_RETURNED, STATUS_EXPIRED]
-                 .includes(agent_status)) {
-        this.setState({ chat_state: 'inactive' });
-      }
-      this.setState({ agent_status: agent_status, done_text: done_text});
     }
   }
 

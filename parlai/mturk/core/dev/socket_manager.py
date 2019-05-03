@@ -40,10 +40,7 @@ class Packet():
         data:             Contents of the packet
         conversation_id:  Packet metadata - what conversation this belongs to
         requires_ack:     No longer used.
-        blocking:         Whether or not this packet requires blocking to
-                           remain in order amongst other packets in the queue.
-                           Default is for messages and alives is True, default
-                           for the rest is false.
+        blocking:         No longer used.
         ack_func:         Function to call upon successful ack of a packet
                            Default calls no function on ack
         """
@@ -55,8 +52,6 @@ class Packet():
         self.assignment_id = assignment_id
         self.data = data
         self.conversation_id = conversation_id
-        important = self.type in [self.TYPE_ALIVE, self.TYPE_MESSAGE]
-        self.blocking = important if blocking is None else blocking
         self.ack_func = ack_func
         self.status = self.STATUS_INIT
 
@@ -69,22 +64,18 @@ class Packet():
             packet_id = packet['id']
             packet_type = packet['type']
             sender_id = packet['sender_id']
-            receiver_id = packet['receiver_id']
-            assignment_id = packet['assignment_id']
-            data = None
-            if 'data' in packet:
-                data = packet['data']
-            else:
-                data = ''
-            conversation_id = packet['conversation_id']
+            receiver_id = packet.get('receiver_id', None)
+            assignment_id = packet.get('assignment_id', None)
+            data = packet.get('data', '')
+            conversation_id = packet.get('conversation_id', None)
 
             return Packet(packet_id, packet_type, sender_id, receiver_id,
                           assignment_id, data, conversation_id)
-        except Exception:
+        except Exception as e:
             print_and_log(
                 logging.WARN,
                 'Could not create a valid packet out of the dictionary'
-                'provided: {}'.format(packet)
+                'provided: {}, error: {}'.format(packet, repr(e))
             )
             return None
 
@@ -114,7 +105,6 @@ class Packet():
         """
         packet = Packet.from_dict(self.as_dict())
         packet.id = shared_utils.generate_event_id(self.receiver_id)
-        packet.blocking = self.blocking
         return packet
 
     def __repr__(self):
@@ -181,9 +171,7 @@ class SocketManager():
         self.send_thread = None
         self.sending_queue = PriorityQueue()
         self.open_channels = set()
-        self.blocking_packets = {}  # connection_id to blocking packet map
         self.threads = {}
-        self.run = {}
         self.last_sent_ping_time = 0  # time of last heartbeat sent
         self.pings_without_pong = 0
         self.processed_packets = set()
@@ -259,8 +247,6 @@ class SocketManager():
             }), force=True)
             self.last_sent_ping_time = time.time()
 
-    # TODO AGENT_STATE_CHANGE
-
     def _send_packet(self, packet, send_time):
         """Sends a packet, blocks if the packet is blocking"""
         # Send the packet
@@ -282,7 +268,7 @@ class SocketManager():
             return
 
         packet.status = Packet.STATUS_SENT
-        if packet.ack_func != None:
+        if packet.ack_func is not None:
             packet.ack_func(packet)
 
     def _spawn_reaper_thread(self):
@@ -375,7 +361,6 @@ class SocketManager():
             # Note to self that this packet has already been processed,
             # and shouldn't be processed again in the future
             self.processed_packets.add(packet_id)
-
             if packet_type == data_model.SERVER_PONG:
                 # Incoming pong means our ping was returned
                 self.pings_without_pong = 0
@@ -386,13 +371,14 @@ class SocketManager():
             elif packet_type == data_model.MESSAGE_BATCH:
                 # Any number of agents are included in this message batch,
                 # so process each individually
-                batched_packets = packet.data
+                batched_packets = packet.data['messages']
                 for batched_packet_dict in batched_packets:
+                    batched_packet_dict['type'] = data_model.AGENT_MESSAGE
                     batched_packet = Packet.from_dict(batched_packet_dict)
                     self.message_callback(batched_packet)
             elif packet_type == data_model.AGENT_DISCONNECT:
                 # Server detected an agent disconnect, extract and remove
-                disconnected_id = packet.data.connection_id
+                disconnected_id = packet.data['connection_id']
                 worker_id, assign_id = self.worker_assign_ids[disconnected_id]
                 self.socket_dead_callback(worker_id, assign_id)
             elif packet_type == data_model.SNS_MESSAGE:
@@ -508,15 +494,15 @@ class SocketManager():
             logging.DEBUG,
             'Closing channel {}'.format(connection_id)
         )
-        self.run[connection_id] = False
-        self.open_channels.remove(connection_id)
-        with self.packet_map_lock:
-            packet_ids = list(self.packet_map.keys())
-            for packet_id in packet_ids:
-                packet = self.packet_map[packet_id]
-                packet_conn_id = packet.get_receiver_connection_id()
-                if connection_id == packet_conn_id:
-                    del self.packet_map[packet_id]
+        if connection_id in self.open_channels:
+            self.open_channels.remove(connection_id)
+            with self.packet_map_lock:
+                packet_ids = list(self.packet_map.keys())
+                for packet_id in packet_ids:
+                    packet = self.packet_map[packet_id]
+                    packet_conn_id = packet.get_receiver_connection_id()
+                    if connection_id == packet_conn_id:
+                        del self.packet_map[packet_id]
 
     def close_all_channels(self):
         """Closes all channels by clearing the list of channels"""

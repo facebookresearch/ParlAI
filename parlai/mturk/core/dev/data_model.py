@@ -18,6 +18,7 @@ COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT'
 # Socket function names / packet types
 # TODO document
 WORLD_MESSAGE = 'world message'  # Message from world to agent
+AGENT_MESSAGE = 'agent message'  # Message from agent to world
 WORLD_PING = 'world ping'  # Ping from the world for this server uptime
 SERVER_PONG = 'server pong'  # pong to confirm uptime
 MESSAGE_BATCH = 'message batch'  # packet containing batch of messages

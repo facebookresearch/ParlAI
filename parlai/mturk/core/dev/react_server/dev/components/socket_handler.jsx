@@ -156,8 +156,8 @@ class SocketHandler extends React.Component {
     }
     try {
       this.socket.send(JSON.stringify(packet));
-      if (packet.callback) {
-        callback(packet.data);
+      if (packet.content.callback !== undefined) {
+        packet.content.callback(packet.content);
       }
       return true;
     } catch (e) {
@@ -175,11 +175,11 @@ class SocketHandler extends React.Component {
   // Wrapper around packet sends that handles managing state
   // updates, as well as not sending packets that have already been sent
   sendHelper(packet, queue_time) {
-    let msg = packet.data;
+    let msg = packet.content;
     // Don't act on acknowledged packets
     if (msg.status !== STATUS_ACK) {
 
-      var success = this.safePacketSend(packet, callback);
+      var success = this.safePacketSend(packet);
 
       if (success) {
         msg.status = STATUS_ACK;  // This message was successfully sent
@@ -281,8 +281,7 @@ class SocketHandler extends React.Component {
         worker_id: this.props.worker_id,
         conversation_id: this.props.conversation_id,
       },
-      true,
-      true,
+      true, // requires_ack
       () => {
         this.props.onConfirmInit();
         this.props.onStatusChange('connected');
@@ -307,7 +306,7 @@ class SocketHandler extends React.Component {
     let msg = packet.content;
     if (packet.type == MESSAGE_BATCH) {
       let messages = msg.messages;
-      for (message of messages) {
+      for (const message of messages) {
         this.handleMessage(message);
       }
     } else if (packet.type == UPDATE_STATE) {
@@ -319,7 +318,7 @@ class SocketHandler extends React.Component {
   handleMessage(message) {
     if (used_message_ids.has(message.id)) {
       log(message.id + ' was a repeat message', 1);
-      continue;  // We've already processed this message
+      return;  // We've already processed this message
     }
     used_message_ids.add(message.id);
     log(message, 3);
@@ -399,14 +398,15 @@ class SocketHandler extends React.Component {
 
     // Update packets occasionally have the contents of a missing message batch
     if (update_packet['messages'] !== undefined) {
-      for (message of update_packet['messages']) {
+      for (const message of update_packet['messages']) {
         this.handleMessage(message);
       }
     }
 
-    let agent_status = update_packet['status'];
-    let agent_id = update_packet['agent_id'];
-    let conversation_id = update_packet['conversation_id'];
+    let agent_status = update_packet['agent_status'] || this.props.agent_status;
+    let agent_id = update_packet['agent_id'] || this.props.agent_id;
+    let conversation_id =
+      update_packet['conversation_id'] || this.props.conversation_id;
     if (agent_status != this.props.agent_status ||
         conversation_id != this.props.conversation_id) {
       this.props.onAgentStatusChange(
@@ -419,7 +419,7 @@ class SocketHandler extends React.Component {
     if (update_packet['is_final']) {
       this.closeSocket();
     }
-    this.set_state(state_update);
+    this.setState(state_update);
   }
 
 
@@ -466,7 +466,7 @@ class SocketHandler extends React.Component {
     this.socket.onopen = () => {
       log('Server connected.', 2);
       let setting_socket = false;
-      window.setTimeout(() => this.sendAlive(), 100);
+      this.sendAlive();
       window.setTimeout(() => this.failInitialize(), 10000);
       let heartbeat_id = null;
       if (this.state.heartbeat_id == null) {
@@ -549,7 +549,8 @@ class SocketHandler extends React.Component {
     }
 
     // Check to see if we've disconnected from the server
-    if (this.state.last_parlai_ping > CONNECTION_DEAD_PARLAI_PING) {
+    let time_since_last_ping = Date.now() - this.state.last_parlai_ping;
+    if (time_since_last_ping > CONNECTION_DEAD_PARLAI_PING) {
       this.closeSocket();
       let done_text =
         "Our server appears to have gone down during the \
@@ -559,7 +560,7 @@ class SocketHandler extends React.Component {
       window.clearInterval(this.state.heartbeat_id);
       this.setState({ heartbeat_id: null });
       this.props.onAgentStatusChange(
-        PARLAI_DISCONNECT,
+        STATUS_PARLAI_DISCONNECT,
         this.props.conversation_id,
         done_text,
         this.props.agent_id,
@@ -575,7 +576,7 @@ class SocketHandler extends React.Component {
       agent_status: this.props.agent_status,
       done_text: this.props.done_text,
       data: null,
-      received_message_count: used_message_ids.size(),
+      received_message_count: used_message_ids.size,
     };
 
     this.safePacketSend({ type: HEARTBEAT, content: hb });

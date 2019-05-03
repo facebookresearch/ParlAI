@@ -372,7 +372,8 @@ class MTurkManager():
 
     def _move_agents_to_waiting(self, agents):
         """Put all agents into waiting worlds, expire them if no longer
-        accepting agents. If the agent is already final, clean it
+        accepting agents. If the agent is already final, clean it.
+        Add workers in waiting worlds to the worker pool.
         """
         for agent in agents:
             worker_id = agent.worker_id
@@ -385,11 +386,13 @@ class MTurkManager():
             conversation_id = 'w_{}'.format(uuid.uuid4())
             if self.accepting_workers:
                 # Move the worker into a waiting world
+                agent.set_status(AssignState.STATUS_WAITING)
                 self.worker_manager.change_agent_conversation(
                     agent=agent,
                     conversation_id=conversation_id,
                     new_agent_id='waiting',
                 )
+                self._add_agent_to_pool(agent)
             else:
                 self.force_expire_hit(worker_id, assignment_id)
 
@@ -473,7 +476,7 @@ class MTurkManager():
 
             # Create and send the command
             data = {
-                'status': AssignState.STATUS_PARTNER_DISCONNECT,
+                'agent_status': AssignState.STATUS_PARTNER_DISCONNECT,
                 'done_text':
                     'One of your partners disconnected in the middle of the '
                     'HIT. We won\'t penalize you for their disconnect, so '
@@ -681,16 +684,12 @@ class MTurkManager():
             """Onboarding wrapper to set state to onboarding properly"""
             if self.onboard_function:
                 conversation_id = 'o_' + str(uuid.uuid4())
+                agent.set_status(AssignState.STATUS_ONBOARDING)
                 self.worker_manager.change_agent_conversation(
                     agent=mturk_agent,
                     conversation_id=conversation_id,
                     new_agent_id='onboarding',
                 )
-                # Wait for turker to be in onboarding status
-                did_arrive = \
-                    mturk_agent.wait_for_status(AssignState.STATUS_ONBOARDING)
-                if not did_arrive:
-                    return
                 # call onboarding function
                 save_data = self.onboard_function(mturk_agent)
                 if save_data is not None:
@@ -1042,6 +1041,7 @@ class MTurkManager():
                 'Waiting for all agents to join the conversation...'
             )
             start_time = time.time()
+
             while True:
                 all_joined = True
                 for agent in agents:
@@ -1114,6 +1114,7 @@ class MTurkManager():
                     # versions of the task that require fewer agents
                     agents = [a for a in agents if a.id is not None]
                     for agent in agents:
+                        agent.set_status(AssignState.STATUS_IN_TASK)
                         self.worker_manager.change_agent_conversation(
                             agent=agent,
                             conversation_id=new_conversation_id,
@@ -1223,7 +1224,7 @@ class MTurkManager():
             text = ('This HIT is expired, please return and take a new '
                     'one if you\'d want to work on this task.')
         data = {
-            'status': AssignState.STATUS_EXPIRED,
+            'agent_status': AssignState.STATUS_EXPIRED,
             'done_text': text,
         }
         self.send_state_change(worker_id, assign_id, data,
@@ -1289,6 +1290,10 @@ class MTurkManager():
         """
         data['type'] = data_model.MESSAGE_TYPE_COMMAND
         event_id = shared_utils.generate_event_id(receiver_id)
+        conversation_id = None
+        agent = self.worker_manager._get_agent(receiver_id, assignment_id)
+        if agent is not None:
+            conversation_id = agent.conversation_id
         packet = Packet(
             event_id,
             data_model.WORLD_MESSAGE,
@@ -1296,6 +1301,7 @@ class MTurkManager():
             receiver_id,
             assignment_id,
             data,
+            conversation_id=conversation_id,
             ack_func=ack_func,
         )
 
@@ -1329,6 +1335,13 @@ class MTurkManager():
                 )
             if not agent.is_final():
                 agent.set_status(AssignState.STATUS_DONE)
+                # TODO Remove change_agent_conversation, have it occur
+                # automatically on state changes
+                self.worker_manager.change_agent_conversation(
+                    agent,
+                    'done',
+                    None,
+                )
             if self.max_hits_per_worker > 0:
                 worker_state = self.worker_manager._get_worker(agent.worker_id)
                 completed_assignments = worker_state.completed_assignments()
