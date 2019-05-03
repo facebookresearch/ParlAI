@@ -9,7 +9,7 @@ standard_cpu: &standard_cpu
 
 osx_cpu: &osx_cpu
   macos:
-    - xcode: "9.3.0"
+    xcode: "9.3.0"
 
 gpu: &gpu
   environment:
