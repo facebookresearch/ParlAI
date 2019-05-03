@@ -67,9 +67,14 @@ personas, provided for convenience (useful for talking to the model interactivel
 - `wordstat_files/`: This directory contains json files with generated output and 
 automatic metrics computed for the various pretrained models. 
 
-### (Alternatively) Make the data yourself
+### (Alternatively) Making the data yourself
 
-Here are the commands to create the data yourself:
+For reproducibility, in this section we provide the commands to create 
+the data yourself.
+
+_Note: Due to changes in ParlAI, there might be some small differences between
+the generated files obtained in this section, and the downloaded files in the
+previous section._
 
 First, convert the ConvAI2 data to ParlAI format:
 
@@ -116,14 +121,29 @@ Next, create `data/controllable_dialogue/train.txt` and `valid.txt`:
 This will create files called `train.txt` and `valid.txt` in your
 `data/controllable_dialogue` directory.
 
-Note: Due to changes in ParlAI, there might be some small differences between
-the generated files obtained in this section, and the downloaded files in the
-previous section.
+## The pretrained models
+
+Running the commands in the next section to chat with the pretrained models will 
+automatically download them for you. In `data/models/controllable_dialogue` you will 
+find the following models, along with their `.opt` files:
+
+- `twitter_pretrained_baseline`: A seq2seq model trained on the Twitter dataset.
+- `convai2_finetuned_baseline`: The `twitter_pretrained_baseline` model, after 
+fine-tuning on the ConvAI2 dataset.
+- `control_avgnidf10b10e`: The `convai2_finetuned_baseline` model, after adding parameters 
+for CT specificity control (10 buckets, embedding size 10), and fine-tuned on the ConvAI2 
+dataset with loss_CT as described in Section 5.1 of the paper.
+- `control_questionb11e10`: Similarly to `control_avgnidf10b10e`, except this is CT 
+question-asking control (11 buckets, embedding size 10).
+
+The directory also contains a dictionary file:
+
+- `dict_twit30k_train_split`: This is the dictionary used for all models.
 
 ## Chat with the pretrained models
 
-This section provides the commands to talk to the models described in the paper.
-You can refer to Table 5 in the paper to see how these commands correspond to 
+This section provides the commands to talk to the model configurations described in the 
+paper. You can refer to Table 5 in the paper to see how these commands correspond to 
 the configurations described there.
 
 Running any of these commands will also download the pretrained models, if necessary.
@@ -212,17 +232,19 @@ than just the top 1), add the flag `--verbose True`.
 
 ## Train a CT model
 
-To train a CT model (conditioned on mean NIDF) from scratch:
+**To train a CT model from scratch:**
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
     -mf /path/to/your/modelfile \
     --control-vars avg_nidf
 
-The CT control embedding size will default to 10, but you could include e.g.
-`--control-embeddingsize 15` if you wanted to change it.
+Here we are training a specificity-controlled CT model.
 
-For `avg_nidf`, the number of buckets will also default to 10. If you want to 
-use a different number of buckets, first you need to figure out what the NIDF 
+**To change control embedding size:** The CT control embedding size will default to 10, 
+but you could include e.g. `--control-embeddingsize 15` if you wanted to change it.
+
+**To change number of buckets:** For `avg_nidf`, the number of buckets will default to 10. 
+If you want to use a different number of buckets, first you need to figure out what the NIDF 
 lower bound should be for each bucket. Suppose you want 8 buckets. First run:
 
     python projects/controllable_dialogue/get_bucket_lowerbounds.py \
@@ -234,14 +256,17 @@ and then copy and paste the provided lower bounds into
 existing `AVG_NIDF_10BUCKET_LBS`. Then you can train a model with
 `--control-num-buckets 8`.
 
-You can train a CT model conditioned on _multiple_ controls:
+**To train a CT model on _multiple_ controls:**
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
     -mf /path/to/your/modelfile \
     --control-vars avg_nidf,question
 
-To take an existing non-CT model (e.g. the ConvAI2-finetuned baseline) and 
-then finetune it as a CT model (here specificity-controlled), do this:
+Here we are training a model conditioned on specificity and question-asking.
+
+**To take an existing non-CT model and finetune it as a CT model:**
+First, run this command (in this example, taking the ConvAI2-finetuned 
+baseline and adding specificity control):
 
     python projects/controllable_dialogue/train_controllable_seq2seq.py \
     -mf /path/to/your/modelfile \
@@ -277,12 +302,12 @@ Run the following:
 
 and then open up `inspect_wordstats.ipynb`. Where it says `models_dir`, enter
 the path to your `wordstat_files` directory. You will be able to recreate the
-table of automatic metrics from the paper (Table 6), and you can explore the
-output of the models.
+table of automatic metrics from the paper (Table 6), and explore the models'
+generated output.
 
 ## Save generated output and automatic metrics to file
 
-If you want to generate json files like those in the previous section, run this command:
+If you want to generate json files like those in the previous section, run a command like this:
 
     python projects/controllable_dialogue/eval_wordstat.py \
     -mf models:controllable_dialogue/control_questionb11e10 \
@@ -292,12 +317,12 @@ If you want to generate json files like those in the previous section, run this 
 This will create a json file containing the output and automatic metrics for the provided 
 model configuration (here, question-controlled CT model with z=7 and WD repetition control). 
 The script `eval_wordstat.py` always places the json file in the same place as the model file. 
-The script can take a while to complete - you can set e.g. `--num-examples 512` to generate 
+The script can take a while to complete - so you can set e.g. `--num-examples 512` to generate 
 output on a smaller number of examples.
 
-Note: Due to changes in ParlAI, there might be some small differences between
+_Note: Due to changes in ParlAI, there might be some small differences between
 the json file created via this method, and the json files downloadable in the
-previous section.
+previous section._
 
 ## Human Evaluation Logs
 TODO
