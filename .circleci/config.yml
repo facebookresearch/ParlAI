@@ -146,7 +146,7 @@ jobs:
           name: Nightly GPU tests
           no_output_timeout: 60m
           command: python setup.py test -s tests.suites.nightly_gpu -v
-      - restore_cache:
+      - save_cache:
           key: nightlydata-v0-{{ checksum "zoochecksum" }}
           paths:
             - data
