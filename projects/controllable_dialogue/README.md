@@ -1,5 +1,21 @@
 # Controllable Dialogue
 
+## Table of Contents
+
+   * [Controllable Dialogue](#controllable-dialogue)
+      * [Paper information](#paper-information)
+      * [Abstract](#abstract)
+      * [Citation](#citation)
+   * [Code Instructions](#code-instructions)
+      * [Download the data](#download-the-data)
+      * [The pretrained models](#the-pretrained-models)
+      * [Chat with the pretrained models](#chat-with-the-pretrained-models)
+      * [Train a CT model](#train-a-ct-model)
+      * [Look at generated output and automatic metrics](#look-at-generated-output-and-automatic-metrics)
+      * [Save generated output and automatic metrics to file](#save-generated-output-and-automatic-metrics-to-file)
+      * [Human Evaluation Logs](#human-evaluation-logs)
+      * [Bayesian calibration code](#bayesian-calibration-code)
+
 ## Paper information
 
 Abigail See, Stephen Roller, Douwe Kiela, Jason Weston.  
@@ -324,7 +340,7 @@ _Note: Due to changes in ParlAI, there might be some small differences between
 the json file created via this method, and the json files downloadable in the
 previous section._
 
-## Human Evaluation Logs
+## Human evaluation logs
 TODO
 
 ## Bayesian calibration code
