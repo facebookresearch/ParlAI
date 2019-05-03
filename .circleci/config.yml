@@ -35,7 +35,7 @@ setup: &setup
     name: Sets up the virtual environment
     command: |
       mkdir -p ~/venv
-      virtualenv --python=python3.6 ~/venv
+      virtualenv --python=python3 ~/venv
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
       pip3 install --upgrade --progress-bar off pip
@@ -124,6 +124,11 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - run:
+          name: "OS X setup"
+          command: |
+            brew upgrade python
+            pip3 install virtualenv
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchplain
