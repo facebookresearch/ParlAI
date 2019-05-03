@@ -141,20 +141,6 @@ jobs:
           no_output_timeout: 30m
           command: python setup.py test -s tests.suites.nightly_gpu -v
 
-  nightly_cpu_tests:
-    <<: *standard_cpu
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchcpu
-      - run:
-          name: All nightly CPU tests
-          no_output_timeout: 30m
-          command: python setup.py test -s tests.suites.nightly_cpu -v
-
   mturk_tests:
     <<: *standard_cpu
     working_directory: ~/ParlAI
@@ -256,5 +242,4 @@ workflows:
     jobs:
       - unittests
       - mturk_tests
-      - nightly_cpu_tests
       - nightly_gpu_tests
