@@ -707,6 +707,37 @@ class ReviewButtons extends React.Component {
   }
 }
 
+class NextButton extends React.Component {
+  // This component is responsible for initiating the click
+  // on the next button to get the next subtask from the app
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.onInputResize !== undefined) {
+      this.props.onInputResize();
+    }
+  }
+  render() {
+    let next_button = (
+      <button
+        id="next-button"
+        type="button"
+        className="btn btn-default btn-lg"
+        onClick={() => this.props.nextButtonCallback()}
+      >
+        Next
+        <span
+          className="glyphicon glyphicon-chevron-right" aria-hidden="true" />{' '}
+      </button>
+    );
+
+    return (
+      <div>
+        <div>{next_button}</div>
+      </div>
+    );
+  }
+}
+
 class DoneButton extends React.Component {
   // This component is responsible for initiating the click
   // on the mturk form's submit button.
@@ -777,6 +808,7 @@ class DoneResponse extends React.Component {
   render() {
     let v_id = this.props.v_id;
     let XDoneButton = getCorrectComponent('XDoneButton', v_id);
+    let XNextButton = getCorrectComponent('XNextButton', v_id);
 
     let inactive_pane = null;
     if (this.props.done_text) {
@@ -794,9 +826,11 @@ class DoneResponse extends React.Component {
       paddingRight: '25px',
       float: 'left',
     };
-    let done_button = <XDoneButton {...this.props} />;
-    if (!this.props.task_done) {
-      done_button = null;
+    let button = null;
+    if (this.props.task_done) {
+      button = <XDoneButton {...this.props} />;
+    } else if (this.props.subtask_done && this.props.show_next_task_button) {
+      button = <XNextButton {...this.props} />;
     }
     return (
       <div
@@ -805,7 +839,7 @@ class DoneResponse extends React.Component {
         style={pane_style}
       >
         {inactive_pane}
-        {done_button}
+        {button}
       </div>
     );
   }
@@ -1250,6 +1284,7 @@ class LeftPane extends React.Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (
+      nextProps.task_data !== undefined &&
       nextProps.task_data.last_update !== undefined &&
       nextProps.task_data.last_update > prevState.last_update
     ) {
@@ -1372,9 +1407,11 @@ class StaticContentLayout extends React.Component {
     let XStaticRightPane = getCorrectComponent('XStaticRightPane', v_id);
     let XDoneResponse = getCorrectComponent('XDoneResponse', v_id);
     let {frame_height, ...others} = this.props;
-    let done_button = null;
-    if (this.props.task_done) {
-      done_button = <XDoneResponse {...this.props} onInputResize={() => {}}/>
+    let next_or_done_button = null;
+    if (this.props.subtask_done) {
+        next_or_done_button = (
+          <XDoneResponse {...this.props} onInputResize={() => {}}/>
+        )
     }
     return (
       <div className="row" id="ui-content">
@@ -1383,7 +1420,7 @@ class StaticContentLayout extends React.Component {
           layout_style={layout_style}
           frame_height={frame_height}
         >
-          {done_button}
+          {next_or_done_button}
         </XLeftPane>
         <XStaticRightPane {...this.props} layout_style={layout_style} />
       </div>
@@ -1493,6 +1530,7 @@ component_list = {
   XDoneResponse: ['XDoneResponse', DoneResponse],
   XIdleResponse: ['XIdleResponse', IdleResponse],
   XDoneButton: ['XDoneButton', DoneButton],
+  XNextButton: ['XNextButton', NextButton],
   XChatPane: ['XChatPane', ChatPane],
   XWaitingMessage: ['XWaitingMessage', WaitingMessage],
   XMessageList: ['XMessageList', MessageList],
@@ -1515,6 +1553,7 @@ export {
   ChatPane,
   IdleResponse,
   DoneButton,
+  NextButton,
   DoneResponse,
   TextResponse,
   ResponsePane,
