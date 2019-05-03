@@ -7,6 +7,10 @@ standard_cpu: &standard_cpu
   docker:
     - image: circleci/python:3.6.5-node
 
+osx_cpu: &osx_cpu
+  macos:
+    - xcode: "9.3.0"
+
 gpu: &gpu
   environment:
     CUDA_VERSION: "10.0"
@@ -58,6 +62,12 @@ installtorchcpu: &installtorchcpu
     command: |
       pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
 
+installtorchplain: &installtorchplain
+  run:
+    name: Install torch CPU and dependencies
+    command: |
+      pip3 install --progress-bar off torch
+
 setupcuda: &setupcuda
   run:
     name: Setup CUDA
@@ -104,6 +114,19 @@ jobs:
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpu
+      - run:
+          name: Unit tests
+          command: python setup.py test -s tests.suites.unittests -v
+
+  osx_unittests:
+    <<: *osx_cpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchplain
       - run:
           name: Unit tests
           command: python setup.py test -s tests.suites.unittests -v
@@ -215,6 +238,7 @@ workflows:
     jobs:
       - lint
       - unittests
+      - osx_tests
       - mturk_tests:
           filters:
             branches:
