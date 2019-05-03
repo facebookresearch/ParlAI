@@ -137,9 +137,19 @@ jobs:
       - <<: *installdeps
       - <<: *installtorchgpu
       - run:
+          name: Generate model file checksum
+          command: bash .circleci/zoochecksum.sh > zoochecksum
+      - restore_cache:
+          keys:
+            - nightlydata-v0-{{ checksum "zoochecksum" }}
+      - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
           command: python setup.py test -s tests.suites.nightly_gpu -v
+      - restore_cache:
+          key: nightlydata-v0-{{ checksum "zoochecksum" }}
+          paths:
+            - data
 
   mturk_tests:
     <<: *standard_cpu
