@@ -6,7 +6,7 @@
 
 import torch
 import torch.nn as nn
-
+from parlai.core.utils import neginf
 from functools import lru_cache
 
 
@@ -61,19 +61,28 @@ class MemNN(nn.Module):
             raise RuntimeError('Unexpected candidate dimensions {}'
                                ''.format(cands.dim()))
 
-    def forward(self, xs, mems, cands=None):
-        """One forward step.
+    def forward(self, xs, mems, cands=None, pad_mask=None):
+        """
+        One forward step.
 
-        :param xs:    (bsz x seqlen) LongTensor queries to the model
-        :param mems:  (bsz x num_mems x seqlen) LongTensor memories
-        :param cands: (num_cands x seqlen) or (bsz x num_cands x seqlen)
-                      LongTensor with candidates to rank
+        :param xs:
+            (bsz x seqlen) LongTensor queries to the model
 
-        :returns: scores
+        :param mems:
+            (bsz x num_mems x seqlen) LongTensor memories
+
+        :param cands:
+            (num_cands x seqlen) or (bsz x num_cands x seqlen)
+            LongTensor with candidates to rank
+        :param pad_mask:
+            (bsz x num_mems) optional mask indicating which tokens
+            correspond to padding
+
+        :returns:
             scores contains the model's predicted scores.
-                if cand_params is None, the candidates are the vocabulary;
-                otherwise, these scores are over the candidates provided.
-                (bsz x num_cands)
+            if cand_params is None, the candidates are the vocabulary;
+            otherwise, these scores are over the candidates provided.
+            (bsz x num_cands)
         """
         state = self.query_lt(xs)
         if mems is not None:
@@ -82,7 +91,8 @@ class MemNN(nn.Module):
             out_memory_embs = self.out_memory_lt(mems)
 
             for _ in range(self.hops):
-                state = self.memory_hop(state, in_memory_embs, out_memory_embs)
+                state = self.memory_hop(state, in_memory_embs, out_memory_embs,
+                                        pad_mask)
 
         if cands is not None:
             # embed candidates
@@ -96,18 +106,22 @@ class MemNN(nn.Module):
 
 
 class Embed(nn.Embedding):
-    """Embed sequences for MemNN model.
+    """
+    Embed sequences for MemNN model.
 
     Applies Position Encoding if enabled and currently applies BOW sum.
     """
 
     def __init__(self, *args, position_encoding=False, reduction='mean',
                  **kwargs):
-        """Initialize custom Embedding layer.
+        """
+        Initialize custom Embedding layer.
 
-        :param position_encoding: apply positional encoding transformation
-                                  on input sequences
-        :param reduction:         reduction strategy to sequences, default 'mean'
+        :param position_encoding:
+            apply positional encoding transformation on input sequences
+
+        :param reduction:
+            reduction strategy to sequences, default 'mean'
         """
         self.position_encoding = position_encoding
         self.reduction = reduction
@@ -120,18 +134,22 @@ class Embed(nn.Embedding):
         elif self.reduction == 'mean':
             # this is more fair than mean(-2) since mean includes null tokens
             sum = embs.sum(-2)
-            lens = input.ne(0).sum(-1).unsqueeze(-1).float()
+            lens = input.ne(self.padding_idx).sum(-1).unsqueeze(-1).float()\
+                .clamp_(min=1)
             return sum / lens
         else:
             raise RuntimeError(
                 'reduction method {} not supported'.format(self.reduction))
 
     def forward(self, input):
-        """Return BOW embedding with PE reweighting if enabled.
+        """
+        Return BOW embedding with PE reweighting if enabled.
 
-        :param input: (bsz x seqlen) LongTensor
+        :param input:
+            (bsz x seqlen) LongTensor
 
-        :returns: (bsz x esz) FloatTensor
+        :returns:
+            (bsz x esz) FloatTensor
         """
         embs = super().forward(input)
         if self.position_encoding:
@@ -150,15 +168,20 @@ class Embed(nn.Embedding):
     @staticmethod
     @lru_cache(maxsize=128)
     def position_matrix(J, d, use_cuda):
-        """Build matrix of position encoding coeffiencents.
+        """
+        Build matrix of position encoding coeffiencents.
 
         See https://papers.nips.cc/paper/5846-end-to-end-memory-networks,
         section 4.1 Model Details: Sentence Representation.
 
-        :param J: number of words in the sequence
-        :param d: dimension of the embedding
+        :param J:
+            number of words in the sequence
 
-        :returns: Position Encoding matrix
+        :param d:
+            dimension of the embedding
+
+        :returns:
+            Position Encoding matrix
         """
         m = torch.Tensor(J, d)
         for k in range(1, d + 1):
@@ -188,19 +211,30 @@ class Hop(nn.Module):
             self.rotate = lambda x: x
         self.softmax = nn.Softmax(dim=1)
 
-    def forward(self, query_embs, in_mem_embs, out_mem_embs):
-        """Compute MemNN Hop step.
+    def forward(self, query_embs, in_mem_embs, out_mem_embs, pad_mask):
+        """
+        Compute MemNN Hop step.
 
-        :param query_embs:   (bsz x esz) embedding of queries
-        :param in_mem_embs:  bsz list of (num_mems x esz) embedding of memories
-                             for activation
-        :param out_mem_embs: bsz list of (num_mems x esz) embedding of memories
-                             for outputs
+        :param query_embs:
+            (bsz x esz) embedding of queries
 
-        :returns: (bsz x esz) output state
+        :param in_mem_embs:
+            bsz list of (num_mems x esz) embedding of memories for activation
+
+        :param out_mem_embs:
+            bsz list of (num_mems x esz) embedding of memories for outputs
+
+        :param pad_mask
+            (bsz x num_mems) optional mask indicating which tokens correspond to
+            padding
+
+        :returns:
+            (bsz x esz) output state
         """
         # rotate query embeddings
         attn = torch.bmm(query_embs.unsqueeze(1), in_mem_embs).squeeze(1)
+        if pad_mask is not None:
+            attn[pad_mask] = neginf(attn.dtype)
         probs = self.softmax(attn)
         memory_output = torch.bmm(probs.unsqueeze(1), out_mem_embs).squeeze(1)
         output = memory_output + self.rotate(query_embs)
