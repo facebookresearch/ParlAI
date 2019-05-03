@@ -104,12 +104,12 @@ GloVe vectors and store them in `ParlAI/data/models/glove_vectors`.
 Next, create `data/controllable_dialogue/train.txt` and `valid.txt`:
 
     python projects/controllable_dialogue/make_control_dataset.py \
-    --fromfile_datapath data/ConvAI2_parlaiformat/train.txt \
+    --fromfile_datapath data/controllable_dialogue/ConvAI2_parlaiformat/train.txt \
     --outfile data/controllable_dialogue/train.txt \
     --controls question,lastuttsim,avg_nidf
 
     python projects/controllable_dialogue/make_control_dataset.py \
-    --fromfile_datapath data/ConvAI2_parlaiformat/valid.txt \
+    --fromfile_datapath data/controllable_dialogue/ConvAI2_parlaiformat/valid.txt \
     --outfile data/controllable_dialogue/valid.txt \
     --controls question,lastuttsim,avg_nidf
 
