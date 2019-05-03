@@ -13,7 +13,7 @@
       * [Train a CT model](#train-a-ct-model)
       * [Look at generated output and automatic metrics](#look-at-generated-output-and-automatic-metrics)
       * [Save generated output and automatic metrics to file](#save-generated-output-and-automatic-metrics-to-file)
-      * [Human Evaluation Logs](#human-evaluation-logs)
+      * [Human evaluation logs](#human-evaluation-logs)
       * [Bayesian calibration code](#bayesian-calibration-code)
 
 ## Paper information
