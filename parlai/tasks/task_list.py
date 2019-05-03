@@ -88,6 +88,20 @@ task_list = [
         ),
     },
     {
+        "id": "COQA",
+        "display_name": "Conversational Question Answering Challenge",
+        "task": "coqa",
+        "tags": ["All", "QA"],
+        "description": (
+            "CoQA is a large-scale dataset for building Conversational "
+            "Question Answering systems. The goal of the CoQA challenge "
+            "is to measure the ability of machines to understand a text "
+            "passage and answer a series of interconnected questions that "
+            "appear in a conversation. CoQA is pronounced as coca . See "
+            "https://arxiv.org/abs/1808.07042"
+        ),
+    },
+    {
         "id": "CornellMovie",
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
