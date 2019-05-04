@@ -138,7 +138,7 @@ jobs:
       - <<: *installtorchgpu
       - run:
           name: Nightly GPU tests
-          no_output_timeout: 30m
+          no_output_timeout: 60m
           command: python setup.py test -s tests.suites.nightly_gpu -v
 
   mturk_tests:
