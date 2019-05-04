@@ -88,8 +88,6 @@ class retry(object):
                 try:
                     return testfn(testself, *args, **kwargs)
                 except testself.failureException:
-                    # Output to help with timeouts.
-                    print('Retry')
                     pass
             # last time, actually throw any errors there may be
             return testfn(testself, *args, **kwargs)
