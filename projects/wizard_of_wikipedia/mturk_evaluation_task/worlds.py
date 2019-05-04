@@ -2,10 +2,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.agents import create_agent_from_shared
+from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
 import parlai.mturk.core.mturk_utils as mutils
-from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.mturk.core.worlds import MTurkOnboardWorld
+from parlai.tasks.wizard_of_wikipedia.build import build
 
 from joblib import Parallel, delayed
 import json
@@ -67,18 +68,21 @@ GMARK_MSG = 'Now the conversation is completed! \n Please evaluate the \
 
 class TopicsGenerator(object):
     def __init__(self, opt):
+        self.opt = opt
         self.topics_path = os.path.join(
-            opt.get('datapath'),
-            'wizard_of_perzona/wizard_data_no_full_splits/topic_splits.json'
+            opt['datapath'],
+            'wizard_of_wikipedia/topic_splits.json'
         )
         self.load_topics()
 
     def load_topics(self):
+        if not os.path.isfile(self.topics_path):
+            # download the wizard of wikipedia data
+            build(self.opt)
         with open(self.topics_path) as f:
             self.data = json.load(f)
-        self.seen_topics = self.data['train']['train_mtdo_topics']
-        self.unseen_topics = self.data['valid']['valid_mtdo_topics'] + \
-            self.data['test']['test_mtdo_topics']
+        self.seen_topics = self.data['train']
+        self.unseen_topics = self.data['valid'] + self.data['test']
 
     def get_topics(self, seen=True, num=3):
         if seen:
