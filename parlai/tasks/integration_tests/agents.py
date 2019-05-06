@@ -13,6 +13,7 @@ The corpora are all randomly, but deterministically generated
 """
 
 from parlai.core.teachers import DialogTeacher
+from torch.utils.data import Dataset
 import copy
 import random
 import itertools
@@ -105,6 +106,105 @@ class CandidateTeacher(DialogTeacher):
                 offset = (i + j) % len(self.corpus)
                 cands.append(self.corpus[offset])
             yield (text, [text], 0, cands), True
+
+
+class CandidateTeacherDataset(Dataset):
+    """
+    Candidate Teacher, in Pytorch Dataset form
+
+    Identical setup. Only difference is a `self.data` object, which contains
+    all the episodes in the task.
+    """
+    def __init__(self, opt, shared=None,
+                 vocab_size=VOCAB_SIZE,
+                 example_size=EXAMPLE_SIZE,
+                 num_candidates=NUM_CANDIDATES,
+                 num_train=NUM_TRAIN,
+                 num_test=NUM_TEST):
+        self.opt = opt
+        opt['datafile'] = opt['datatype'].split(':')[0]
+        self.datafile = opt['datafile']
+
+        self.vocab_size = vocab_size
+        self.example_size = example_size
+        self.num_candidates = num_candidates
+        self.num_train = num_train
+        self.num_test = num_test
+
+        # set up the vocabulary
+        self.words = list(map(str, range(self.vocab_size)))
+        self.data = self.setup_data(opt['datatype'].split(':')[0])
+
+    def __getitem__(self, index):
+        return (index, self.data[index])
+
+    def __len__(self):
+        return self.num_examples()
+
+    def num_episodes(self):
+        return len(self.data)
+
+    def num_examples(self):
+        return self.num_episodes()
+
+    def setup_data(self, fold):
+        data = []
+        # N words appearing in a random order
+        self.rng = random.Random(42)
+        full_corpus = [
+            list(x) for x in itertools.permutations(self.words, self.example_size)
+        ]
+        self.rng.shuffle(full_corpus)
+
+        it = iter(full_corpus)
+        self.train = list(itertools.islice(it, self.num_train))
+        self.val = list(itertools.islice(it, self.num_test))
+        self.test = list(itertools.islice(it, self.num_test))
+
+        # check we have enough data
+        assert (len(self.train) == self.num_train), len(self.train)
+        assert (len(self.val) == self.num_test), len(self.val)
+        assert (len(self.test) == self.num_test), len(self.test)
+
+        # check every word appear in the training set
+        assert len(set(itertools.chain(*self.train)) - set(self.words)) == 0
+
+        # select which set we're using
+        if fold == "train":
+            self.corpus = self.train
+        elif fold == "valid":
+            self.corpus = self.val
+        elif fold == "test":
+            self.corpus = self.test
+
+        # make sure the corpus is actually text strings
+        self.corpus = [' '.join(x) for x in self.corpus]
+
+        for i, text in enumerate(self.corpus):
+            cands = []
+            for j in range(NUM_CANDIDATES):
+                offset = (i + j) % len(self.corpus)
+                cands.append(self.corpus[offset])
+            ex = {
+                'text': text,
+                'labels': tuple([text]),
+                'label_candidates': tuple(cands),
+                'episode_done': True
+            }
+            data.append(ex)
+        return data
+
+
+class NoCandidateTeacherDataset(CandidateTeacherDataset):
+    def setup_data(self, fold):
+        data = super().setup_data(fold)
+        for d in data:
+            del d['label_candidates']
+        return data
+
+
+class DefaultDataset(CandidateTeacherDataset):
+    pass
 
 
 class MultipassTeacher(CandidateTeacher):

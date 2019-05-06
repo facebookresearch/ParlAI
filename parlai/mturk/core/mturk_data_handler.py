@@ -21,8 +21,28 @@ def force_dir(path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
 
-data_dir = os.path.dirname(os.path.abspath(__file__)) + '/run_data'
-os.makedirs(data_dir, exist_ok=True)
+data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'run_data')
+core_dir = os.path.dirname(os.path.abspath(__file__))
+mturk_dir = os.path.dirname(core_dir)
+new_data_dir = os.path.join(mturk_dir, 'run_data')
+
+if os.path.exists(data_dir) and not os.path.exists(new_data_dir):
+    import shutil
+    acknowledge = input(
+        'run_data is being permanently moved from `{}`'
+        ' to `{}`. Enter anything to let this script copy '
+        'run_data over. It will leave the old data in case you want to double '
+        'check, though you should be able to safely remove '
+        '`{}`.'.format(data_dir, new_data_dir, data_dir)
+    )
+    shutil.copytree(data_dir, new_data_dir)
+    print('Copied. `{}` can now be safely deleted.'.format(data_dir))
+else:
+    new_data_dir = os.path.join(mturk_dir, 'run_data')
+    os.makedirs(new_data_dir, exist_ok=True)
+
+data_dir = new_data_dir
+
 
 # Run data table:
 CREATE_RUN_DATA_SQL_TABLE = (

@@ -272,10 +272,14 @@ class StaticApp extends React.Component {
       done_text: null,
       chat_state: 'idle', // idle, text_input, inactive, done
       task_done: false,
+      subtask_done: false,
       messages: [],
       agent_id: 'NewWorker',
       task_data: {},
-      response_data: {},
+      all_tasks_data: {},
+      num_subtasks: 0,
+      response_data: [],
+      current_subtask_index: null,
       volume: 1, // min volume is 0, max is 1, TODO pull from local-storage?
     };
   }
@@ -308,7 +312,35 @@ class StaticApp extends React.Component {
   }
 
   onValidData(valid, response_data) {
-    this.setState({task_done: valid, response_data: response_data});
+    let all_response_data = this.state.response_data;
+    let show_next_task_button = false;
+    let task_done = true;
+    all_response_data[this.state.current_subtask_index] = response_data;
+    if (this.state.current_subtask_index < this.state.num_subtasks - 1) {
+      show_next_task_button = true;
+      task_done = false;
+    }
+    this.setState(
+      {
+        show_next_task_button: show_next_task_button,
+        subtask_done: valid,
+        task_done: task_done,
+        response_data: all_response_data,
+      },
+    );
+  }
+
+  nextButtonCallback() {
+    let next_subtask_index = this.state.current_subtask_index + 1;
+    this.setState(
+      {
+        current_subtask_index: next_subtask_index,
+        task_data: Object.assign(
+          {}, this.state.task_data,
+          this.state.all_tasks_data[next_subtask_index]),
+        subtask_done: false,
+      },
+    );
   }
 
   render() {
@@ -322,7 +354,12 @@ class StaticApp extends React.Component {
           }}
           onNewTaskData={new_task_data =>
             this.setState({
-              task_data: Object.assign(this.state.task_data, new_task_data),
+              all_tasks_data: Object.assign(
+                {}, this.state.all_tasks_data, new_task_data),
+              task_data: Object.assign(
+                {}, this.state.task_data, new_task_data[0]),
+              current_subtask_index: 0,
+              num_subtasks: new_task_data.length,
             })
           }
           onRequestMessage={() => {}}
@@ -372,6 +409,7 @@ class StaticApp extends React.Component {
       <div>
         <StaticFrontend
           task_done={this.state.task_done}
+          subtask_done={this.state.subtask_done}
           done_text={this.state.done_text}
           chat_state={this.state.chat_state}
           onMessageSend={(m, d, c, s) => this.onMessageSend(m, d, c, s)}
@@ -391,6 +429,10 @@ class StaticApp extends React.Component {
             this.state.worker_id,
             this.state.response_data,
           )}
+          nextButtonCallback={() => this.nextButtonCallback()}
+          show_next_task_button={this.state.show_next_task_button}
+          current_subtask_index={this.state.current_subtask_index}
+          num_subtasks={this.state.num_subtasks}
           volume={this.state.volume}
           onVolumeChange={v => this.setState({ volume: v })}
           display_feedback={DISPLAY_FEEDBACK}

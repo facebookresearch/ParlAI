@@ -97,6 +97,16 @@ def eval_model(opt, printargs=None, print_parser=None):
           opt['task'], opt.get('datatype', 'N/A')))
     report = world.report()
     print(report)
+
+    print("\n".join([
+        "",
+        "*" * 80,
+        "Thank you for using ParlAI! We are conducting a user survey.",
+        "Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9",
+        "*" * 80,
+        ""
+    ]))
+
     return report
 
 

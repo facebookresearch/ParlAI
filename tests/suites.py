@@ -30,14 +30,6 @@ def datatests():
 
 
 @_clear_cmdline_args
-def nightly_cpu():
-    """Nightly CPU tests. Runs on CircleCI"""
-    test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover('tests/nightly/cpu')
-    return test_suite
-
-
-@_clear_cmdline_args
 def nightly_gpu():
     """Nightly GPU tests. Runs on internal infra."""
     test_loader = unittest.TestLoader()

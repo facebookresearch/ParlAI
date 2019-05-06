@@ -29,7 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     WizardTransformerRankerAgent.add_cmdline_args(parser)
-    parser.set_defaults(
+    parser.set_params(
         task='wizard_of_wikipedia',
         model='projects:wizard_of_wikipedia:wizard_transformer_ranker',
         model_file='models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
@@ -45,4 +45,4 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     download(opt['datapath'])  # download pretrained retrieval model
 
-    eval_model(parser)
+    eval_model(opt)

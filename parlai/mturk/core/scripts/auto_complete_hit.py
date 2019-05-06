@@ -24,6 +24,11 @@ import sys
 import time
 import random
 
+print(
+    'This script will be removed from this location May 1st 2019. '
+    'Please use the parlai.mturk.scripts directory moving forward. '
+)
+
 HIT_page_url = sys.argv[1]
 
 # create a new Chrome session

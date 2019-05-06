@@ -18,7 +18,7 @@ if __name__ == '__main__':
         n_heads=2,
         dropout=0.20,
         ffn_size=512,
-        embeddingsize=256,
+        embedding_size=256,
         log_every_n_secs=10,
         validation_patience=12,
         validation_metric='ppl',

@@ -579,6 +579,15 @@ class TrainLoop():
         if test_world:
             test_world.shutdown()
 
+        print("\n".join([
+            "",
+            "*" * 80,
+            "Thank you for using ParlAI! We are conducting a user survey.",
+            "Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9",
+            "*" * 80,
+            ""
+        ]))
+
         return v_report, t_report
 
 

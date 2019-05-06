@@ -14,6 +14,15 @@ import uuid
 import errno
 import requests
 
+# TODO uncomment once stable is created.
+# logging.warn(
+#     'Directly importing parlai.mturk.core.<module> is pending deprecation, '
+#     'please update your callsites to use either '
+#     'parlai.mturk.core.stable.<module>  '
+#     'or parlai.mturk.core.legacy_2018.<module>. \n'
+#     'updating to stable may require some migration, as detailed in <link>.'
+# )
+
 from parlai.mturk.core.agents import AssignState
 from parlai.mturk.core.socket_manager import (
     Packet, SocketManager, StaticSocketManager
@@ -154,6 +163,9 @@ class MTurkManager():
         self.db_logger = None
         self.logging_permitted = False  # Enables logging to parl.ai
         self.task_state = self.STATE_CREATED
+        if opt.get('tmp_dir') is None:
+            opt['tmp_dir'] = shared_utils.get_tmp_dir()
+        self.tmp_dir = opt['tmp_dir']
         self._init_logging_config()
         self._assert_opts()
 
@@ -689,6 +701,7 @@ class MTurkManager():
             self._on_socket_dead(agent.worker_id, assignment_id)
         elif mturk_event_type == SNS_ASSIGN_ABANDONDED:
             agent.set_hit_is_abandoned()
+            agent.hit_is_returned = True
             # Treat as a socket_dead event
             self._on_socket_dead(agent.worker_id, assignment_id)
         elif mturk_event_type == SNS_ASSIGN_SUBMITTED:
@@ -1046,12 +1059,14 @@ class MTurkManager():
             self.populate_legacy_task_files(task_directory_path)
             self.server_url = server_utils.setup_legacy_server(
                 self.server_task_name, self.task_files_to_copy,
-                self.opt['local'], heroku_team, self.opt['hobby'])
+                self.opt['local'], heroku_team, self.opt['hobby'],
+                tmp_dir=self.opt['tmp_dir'])
         else:
             self.populate_task_files(task_directory_path)
             self.server_url = server_utils.setup_server(
                 self.server_task_name, self.task_files_to_copy,
-                self.opt['local'], heroku_team, self.opt['hobby'])
+                self.opt['local'], heroku_team, self.opt['hobby'],
+                tmp_dir=self.opt['tmp_dir'])
 
         shared_utils.print_and_log(logging.INFO, self.server_url)
 
@@ -1295,7 +1310,8 @@ class MTurkManager():
         finally:
             if self.server_task_name is not None:
                 server_utils.delete_server(self.server_task_name,
-                                           self.opt['local'])
+                                           self.opt['local'],
+                                           tmp_dir=self.opt['tmp_dir'])
             if self.topic_arn is not None:
                 mturk_utils.delete_sns_topic(self.topic_arn)
             if self.opt['unique_worker'] and not self.opt['unique_qual_name']:
@@ -1308,6 +1324,15 @@ class MTurkManager():
                 self._upload_worker_data()
             if self.worker_manager is not None:
                 self.worker_manager.shutdown()
+            print("\n".join([
+                "",
+                "*" * 80,
+                "Thank you for using ParlAI! We are conducting a user survey.",
+                "Please consider filling it out at "
+                "https://forms.gle/uEFbYGP7w6hiuGQT9",
+                "*" * 80,
+                ""
+            ]))
 
     # MTurk Agent Interaction Functions #
 
