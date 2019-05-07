@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""This file contains a list of all the models in the model zoo, the path to
+
+"""
+This file contains a list of all the models in the model zoo, the path to
 load them, agents & tasks associated (e.g. they were trained using) and a
 description. Using the path you should be able to download and use the model
 automatically, e.g.:
@@ -188,9 +190,9 @@ model_list = [
             "python examples/eval_model.py -t light_dialog "
             "-mf models:light/biranker_dialogue/model"
         ),
-        "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"
-        "'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'num_updates': 15050,"
-        "'examples': 6623, 'loss': 5307.0, 'mean_loss': 0.8013, 'mean_rank': 1.599, 'train_accuracy': 0}",
+        "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"  # noqa: E501
+        "'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'num_updates': 15050,"  # noqa: E501
+        "'examples': 6623, 'loss': 5307.0, 'mean_loss': 0.8013, 'mean_rank': 1.599, 'train_accuracy': 0}",  # noqa: E501
     },
     {
         "title": "Twitter conversational model",
@@ -200,5 +202,13 @@ model_list = [
         "task": "twitter",
         "description": ("Generic conversational model trained on the twitter task"),
         "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
+    },
+    {
+        "title": "Controllable Dialogue pretrained models",
+        "id": "controllable_dialogue",
+        "path": "models:controllable_dialogue/convai2_finetuned_baseline",
+        "agent": "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",  # noqa: E501
+        "task": "projects.controllable_dialogue.tasks.agents",
+        "description": ("Generic conversational model trained on the twitter task"),
     },
 ]

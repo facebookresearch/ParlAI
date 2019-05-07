@@ -272,6 +272,35 @@ def eval_model(opt, skip_test=False):
     )
 
 
+def display_data(opt):
+    """
+    Runs through a display data run.
+
+    :return: (stdout_train, stdout_valid, stdout_test)
+    :rtype (str, str, str)
+    """
+    import parlai.scripts.display_data as dd
+    parser = dd.setup_args()
+    parser.set_params(**opt)
+    popt = parser.parse_args(print_args=False)
+
+    with capture_output() as train_output:
+        popt['datatype'] = 'train:stream'
+        dd.display_data(popt)
+    with capture_output() as valid_output:
+        popt['datatype'] = 'valid:stream'
+        dd.display_data(popt)
+    with capture_output() as test_output:
+        popt['datatype'] = 'test:stream'
+        dd.display_data(popt)
+
+    return (
+        train_output.getvalue(),
+        valid_output.getvalue(),
+        test_output.getvalue(),
+    )
+
+
 def download_unittest_models():
     from parlai.core.params import ParlaiParser
     from parlai.core.build_data import download_models
