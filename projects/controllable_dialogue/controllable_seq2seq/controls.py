@@ -908,16 +908,17 @@ def get_ctrl_vec(exs, history, control_settings):
 
     for batch_idx, (ex, hist) in enumerate(zip(exs, history)):
         for ctrl, ctrl_info in control_settings.items():
-            if ctrl not in ex:
-                raise ValueError("The CT control '%s' is not present as a key in the "
-                                 "message dictionary:\n%s\nIf training a CT model, "
-                                 "perhaps your training data is missing the "
-                                 "annotations. If talking interactively, perhaps you "
-                                 "forgot to set --set-controls." % (ctrl, str(ex)))
             set_val = ctrl_info['set_value']  # is either int or None
             if set_val is not None:  # if we're using some preset bucket for this ctrl
                 bucket = set_val  # override with set_val, an int
             else:  # bucket the control val given in ex
+                if ctrl not in ex:
+                    raise ValueError("The CT control '%s' is not present as a key in "
+                                     "the message dictionary:\n%s\nIf training a CT "
+                                     "model, perhaps your training data is missing the "
+                                     "annotations. If talking interactively, perhaps "
+                                     "you forgot to set --set-controls."
+                                     % (ctrl, str(ex)))
                 num_buckets = ctrl_info['num_buckets']
                 bucketing_fn = CONTROL2BUCKETINGFN[ctrl]  # bucketing fn for this ctrl
                 bucket = bucketing_fn(ex, ctrl, num_buckets)  # int
