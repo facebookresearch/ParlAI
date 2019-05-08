@@ -16,7 +16,7 @@ import requests
 
 from parlai.mturk.core.dev.agents import AssignState
 from parlai.mturk.core.dev.socket_manager import (
-    Packet, SocketManager, StaticSocketManager
+    Packet, SocketManager
 )
 from parlai.mturk.core.dev.worker_manager import WorkerManager
 from parlai.mturk.core.dev.mturk_data_handler import MTurkDataHandler
@@ -988,6 +988,16 @@ class MTurkManager():
     def set_onboard_function(self, onboard_function):
         self.onboard_function = onboard_function
 
+    def move_agent_to_task(self, agent, new_conversation_id):
+        agent.set_status(AssignState.STATUS_IN_TASK)
+        self.worker_manager.change_agent_conversation(
+            agent=agent,
+            conversation_id=new_conversation_id,
+            new_agent_id=agent.id,
+        )
+        # Remove selected agents from the pool
+        self._remove_from_agent_pool(agent)
+
     def start_task(self, eligibility_function, assign_role_function,
                    task_function):
         """Handle running a task by checking to see when enough agents are
@@ -1114,14 +1124,7 @@ class MTurkManager():
                     # versions of the task that require fewer agents
                     agents = [a for a in agents if a.id is not None]
                     for agent in agents:
-                        agent.set_status(AssignState.STATUS_IN_TASK)
-                        self.worker_manager.change_agent_conversation(
-                            agent=agent,
-                            conversation_id=new_conversation_id,
-                            new_agent_id=agent.id,
-                        )
-                        # Remove selected agents from the pool
-                        self._remove_from_agent_pool(agent)
+                        self.move_agent_to_task(agent, new_conversation_id)
 
                     # Start a new thread for this task world
                     task_thread = threading.Thread(
@@ -1810,23 +1813,15 @@ class StaticMTurkManager(MTurkManager):
             )
             raise Exception('Invalid mturk manager options')
 
-    def _setup_socket(self, timeout_seconds=None):
-        """Set up a static task socket_manager with defined callbacks"""
-        assert self.task_state >= self.STATE_INIT_RUN, \
-            'socket cannot be set up until run is started'
-        socket_server_url = self.server_url
-        if (self.opt['local']):  # skip some hops for local stuff
-            socket_server_url = "https://localhost"
-        self.socket_manager = StaticSocketManager(
-            socket_server_url,
-            self.port,
-            self._on_alive,
-            self._on_new_message,
-            self._on_socket_dead,
-            self.task_group_id,
-            socket_dead_timeout=timeout_seconds,
-            server_death_callback=self.shutdown,
+    def move_agent_to_task(self, agent, new_conversation_id):
+        agent.set_status(AssignState.STATUS_IN_TASK)
+        self.worker_manager.change_agent_conversation(
+            agent=agent,
+            conversation_id=new_conversation_id,
+            new_agent_id=agent.id,
         )
+        # Remove selected agents from the pool
+        self._remove_from_agent_pool(agent)
 
     def _on_alive(self, pkt):
         """Notes a new connection from an agent. In the Static case, this
@@ -1909,45 +1904,4 @@ class StaticMTurkManager(MTurkManager):
             # on for longer than the task duration.
         else:
             # Reconnecting worker
-            agent = self.worker_manager._get_agent(worker_id, assign_id)
-            agent.log_reconnect()
-            agent.alived = True
-            if agent.conversation_id is not None and \
-                    conversation_id is not None:
-                # agent.conversation_id is None is used in testing.
-                # conversation_id is None on a fresh reconnect event, where
-                # we need to restore state somehow and shouldn't just inherit
-                conversation_id = agent.conversation_id
-            if agent.get_status() == AssignState.STATUS_NONE:
-                agent.set_status(AssignState.STATUS_IN_TASK)
-                return
-            elif agent.get_status() == AssignState.STATUS_WAITING:
-                if self.is_task_world(conversation_id):
-                    agent.set_status(AssignState.STATUS_IN_TASK)
-                    return
-                # Reconnecting in waiting is either the first reconnect after
-                # being told to wait or a waiting reconnect. Restore state if
-                # no information is held, and add to the pool if not already in
-                # the pool
-                if not conversation_id:
-                    self._restore_agent_state(worker_id, assign_id)
-            elif agent.get_status() == AssignState.STATUS_IN_TASK:
-                # Reconnecting to the onboarding world or to a task world
-                # should resend the messages already in the conversation
-                if not conversation_id:
-                    self._restore_agent_state(worker_id, assign_id)
-            elif (agent.get_status() == AssignState.STATUS_DISCONNECT or
-                  agent.get_status() == AssignState.STATUS_DONE or
-                  agent.get_status() == AssignState.STATUS_EXPIRED or
-                  agent.get_status() == AssignState.STATUS_RETURNED or
-                  agent.get_status() == AssignState.STATUS_PARTNER_DISCONNECT):
-                # inform the connecting user in all of these cases that the
-                # task is no longer workable, use appropriate message
-                data = agent.get_inactive_command_data()
-
-                def disconnect_agent(*args):
-                    self.socket_manager.close_channel(
-                        agent.get_connection_id())
-
-                self.send_command(worker_id, assign_id, data,
-                                  ack_func=disconnect_agent)
+            assert False  # this should never happen anymore, TODO clean up

@@ -38,6 +38,7 @@ class AssignState():
     STATUS_PARTNER_DISCONNECT_EARLY = 'partner disconnect early'
     STATUS_EXPIRED = 'expired'
     STATUS_RETURNED = 'returned'
+    STATUS_STATIC = 'static'
 
     def __init__(self, status=None):
         """Create an AssignState to track the state of an agent's assignment"""
@@ -196,7 +197,7 @@ class MTurkAgent(Agent):
         self.mturk_manager.send_state_change(
             self.worker_id,
             self.assignment_id,
-            {'status': status},
+            {'agent_status': status},
         )
         if self.db_logger is not None:
             if status == AssignState.STATUS_ONBOARDING:

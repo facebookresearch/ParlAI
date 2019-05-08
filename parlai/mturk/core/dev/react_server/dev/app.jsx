@@ -331,6 +331,33 @@ class StaticApp extends React.Component {
     this.setState({task_done: valid, response_data: response_data});
   }
 
+  handleAgentStatusChange(agent_status, conversation_id, done_text, agent_id) {
+    // Covers conversation changes and state restores in-conversation
+    let old_conversation_id = this.state.conversation_id;
+
+    if (agent_status != this.state.agent_status) {
+      // Handle required state changes on a case-by-case basis.
+      if ([STATUS_DONE, STATUS_PARTNER_DISCONNECT].includes(agent_status)) {
+        this.setState({ task_done: true, chat_state: 'done' });
+      } else if ([STATUS_DISCONNECT, STATUS_RETURNED, STATUS_EXPIRED,
+                  STATUS_PARLAI_DISCONNECT].includes(agent_status)) {
+        this.setState({ chat_state: 'inactive' });
+      }
+      this.setState({ agent_status: agent_status, done_text: done_text});
+    }
+
+    if (conversation_id != old_conversation_id) {
+      this.setState({
+          agent_status: agent_status,
+          conversation_id: conversation_id,
+          agent_id: agent_id,
+        });
+      if (conversation_id == 'waiting') {
+        this.setState({ messages: [], chat_state: 'waiting' });
+      }
+    }
+  }
+
   render() {
     let socket_handler = null;
     if (!this.state.is_cover_page) {
@@ -346,29 +373,13 @@ class StaticApp extends React.Component {
             })
           }
           onRequestMessage={() => {}}
-          onTaskDone={() => {}}
-          onInactiveDone={inactive_text =>
-            this.setState({
-              task_done: true,
-              chat_state: 'done',
-              done_text: inactive_text,
-            })
-          }
           onForceDone={() => { /* ForceDone never called in static flow */ }}
-          onExpire={expire_reason =>
-            this.setState({
-              chat_state: 'inactive',
-              done_text: expire_reason,
-            })
-          }
-          onConversationChange={(world_state, conversation_id, agent_id) => {
-            this.setState({
-              world_state: world_state,
-              conversation_id: conversation_id,
-              agent_id: agent_id,
-            });
-          }}
           onSuccessfulSend={() => {}}
+          onAgentStatusChange={
+            (agent_status, conversation_id, done_text, agent_id) =>
+              this.handleAgentStatusChange(
+                agent_status, conversation_id, done_text, agent_id)
+          }
           onConfirmInit={() => this.setState({ initialization_status: 'done' })}
           onFailInit={() => this.setState({ initialization_status: 'failed' })}
           onStatusChange={() => {}}

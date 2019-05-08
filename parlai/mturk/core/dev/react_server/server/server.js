@@ -58,7 +58,7 @@ const AGENT_TIMEOUT_TIME = 20000; // 20 seconds
 
 function is_final_status(status) {
   return [
-    STATUS_DONE, STATUS_DISCONNECT, STATUS_PARTNER_DISCONNECT, STATUS_STATIC,
+    STATUS_DONE, STATUS_DISCONNECT, STATUS_PARTNER_DISCONNECT,
     STATUS_EXPIRED, STATUS_RETURNED, STATUS_PARLAI_DISCONNECT,
   ].includes(status);
 }
@@ -141,6 +141,7 @@ class LocalAgentState {
       needs_update = true;
       update_packet['conversation_id'] = new_conversation_id;
       this.conversation_id = new_conversation_id;
+      this._init_conversation(new_conversation_id);
     }
 
     if (new_status != this.status) {
@@ -151,6 +152,18 @@ class LocalAgentState {
       if (is_final_status(new_status)) {
         update_packet['final'] = true;
         this._cleanup_state();
+      }
+
+      if (new_status == STATUS_STATIC) {
+        // Status static needs special cleanup to keep state but stop tracking
+        let sendable_messages = this.get_sendable_messages()
+        if (sendable_messages.length > 0) {
+          let packet = {'messages': sendable_messages};
+          _send_message(this.connection_id, MESSAGE_BATCH, packet);
+        }
+        if (active_connections.has(this.connection_id)) {
+          active_connections.delete(this.connection_id);
+        }
       }
     }
 
@@ -170,18 +183,6 @@ class LocalAgentState {
       return update_packet;
     } else {
       return null;
-    }
-  }
-
-  set_status(status, new_conversation_id = null) {
-    if (new_conversation_id !== null) {
-      this._init_conversation(new_conversation_id);
-      this.conversation_id = new_conversation_id;
-    }
-
-    this.status = status;
-    if (is_final_status(status)) {
-      this._cleanup_state();
     }
   }
 
@@ -352,11 +353,11 @@ function _send_message(connection_id, event_name, event_data) {
 // Connection ids differ when they are heading to or from the world, these
 // functions let the rest of message sending logic remain consistent
 function _get_to_conn_id(data) {
-  var reciever_id = data['receiver_id'];
-  if (reciever_id && reciever_id.startsWith('[World')) {
-    return reciever_id;
+  var receiver_id = data['receiver_id'];
+  if (receiver_id && receiver_id.startsWith('[World')) {
+    return receiver_id;
   } else {
-    return reciever_id + '_' + data['assignment_id'];
+    return receiver_id + '_' + data['assignment_id'];
   }
 }
 
@@ -402,7 +403,7 @@ function handle_alive(socket, data) {
       active_connections.add(in_connection_id)
     } else if (agent_state.conversation_id != data['conversation_id']) {
       // Agent is reconnecting, and needs to be updated in full
-      let update_packet = agent_state.get_reconnect_packet;
+      let update_packet = agent_state.get_reconnect_packet();
       _send_message(in_connection_id, UPDATE_STATE, update_packet);
     }
   } else {
@@ -570,23 +571,26 @@ function main_thread() {
   // Handle submitting disconnect events
   for (const connection_id of active_connections) {
     let agent_state = connection_id_to_agent_state[connection_id];
-    let now = Date.now();
-    if (now - agent_state.last_heartbeat > AGENT_TIMEOUT_TIME) {
-      var msg = {
-        id: uuidv4(),
-        type: 'message',
-        sender_id: null,
-        assignment_id: null,
-        conversation_id: 'ServerDisconnects',
-        receiver_id: world_id,
-        data: {connection_id: connection_id},
-      };
-      _send_message(
-        world_id,
-        AGENT_DISCONNECT,
-        msg,
-      );
-      active_connections.delete(connection_id);
+    // Non-static tasks should keep tabs on the sockets
+    if (agent_state.status != STATUS_STATIC) {
+      let now = Date.now();
+      if (now - agent_state.last_heartbeat > AGENT_TIMEOUT_TIME) {
+        var msg = {
+          id: uuidv4(),
+          type: 'message',
+          sender_id: null,
+          assignment_id: null,
+          conversation_id: 'ServerDisconnects',
+          receiver_id: world_id,
+          data: {connection_id: connection_id},
+        };
+        _send_message(
+          world_id,
+          AGENT_DISCONNECT,
+          msg,
+        );
+        active_connections.delete(connection_id);
+      }
     }
   }
 
@@ -639,7 +643,9 @@ app.post('/sns_posts', async function(req, res, next) {
         data: data,
       };
       _send_message(world_id, SNS_MESSAGE, msg);
+      /// TODO on disconnects clean up static tasks (must be by assign id)
     }
+
   }
 });
 
@@ -669,6 +675,7 @@ app.post('/submit_static', async function(req, res, next) {
     data: data,
   };
   _send_message(world_id, STATIC_MESSAGE, msg);
+  /// TODO on submit clean up static tasks  (must be by assign id)
 });
 
 // Renders the chat page by setting up the template_context given the
