@@ -12,7 +12,6 @@ import time
 from botocore.exceptions import ClientError
 
 from parlai.mturk.core.dev.agents import MTurkAgent, AssignState
-import parlai.mturk.core.dev.data_model as data_model
 import parlai.mturk.core.dev.mturk_utils as mturk_utils
 import parlai.mturk.core.dev.shared_utils as shared_utils
 

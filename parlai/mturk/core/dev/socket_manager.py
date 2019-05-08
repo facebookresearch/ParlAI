@@ -345,7 +345,7 @@ class SocketManager():
             AGENT_DISCONNECT, SNS_MESSAGE, STATIC_MESSAGE, AGENT_ALIVE
             """
             packet_dict = json.loads(args[1])
-            if packet_dict['type'] == 'conn_success': # TODO make socket func
+            if packet_dict['type'] == 'conn_success':  # TODO make socket func
                 self.alive = True
                 return
             # The packet inherits the socket function type
