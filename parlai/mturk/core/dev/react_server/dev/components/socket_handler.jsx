@@ -257,6 +257,7 @@ class SocketHandler extends React.Component {
         message_id: new_message_id,
         episode_done: false,
         duration: duration,
+        type: MESSAGE_TYPE_ACT,
       },
       true,  // requires_ack
       msg => {
