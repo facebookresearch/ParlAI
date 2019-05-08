@@ -193,8 +193,8 @@ class LocalAgentState {
 
     if (is_final_status(this.status)) {
       // There's no message queue to deliver this message to anymore
-      console.log("msg queue was already cleaned up" + out_connection_id);
-      console.log(message);
+      console.log("msg queue was already cleaned up");
+      console.log(msg);
       return;
     }
 
@@ -556,7 +556,7 @@ function main_thread() {
     world_messages.push(world_message_queue.shift());
   }
   if (world_messages.length > 0) {
-    var msg = {
+    let msg = {
       id: uuidv4(),
       type: 'message',
       sender_id: null,
@@ -575,7 +575,7 @@ function main_thread() {
     if (agent_state.status != STATUS_STATIC) {
       let now = Date.now();
       if (now - agent_state.last_heartbeat > AGENT_TIMEOUT_TIME) {
-        var msg = {
+        let msg = {
           id: uuidv4(),
           type: 'message',
           sender_id: null,
