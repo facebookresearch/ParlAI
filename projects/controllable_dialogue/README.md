@@ -1,21 +1,5 @@
 # Controllable Dialogue
 
-## Table of Contents
-
-   * [Controllable Dialogue](#controllable-dialogue)
-      * [Paper information](#paper-information)
-      * [Abstract](#abstract)
-      * [Citation](#citation)
-   * [Code Instructions](#code-instructions)
-      * [Download the data](#download-the-data)
-      * [The pretrained models](#the-pretrained-models)
-      * [Chat with the pretrained models](#chat-with-the-pretrained-models)
-      * [Train a CT model](#train-a-ct-model)
-      * [Look at generated output and automatic metrics](#look-at-generated-output-and-automatic-metrics)
-      * [Save generated output and automatic metrics to file](#save-generated-output-and-automatic-metrics-to-file)
-      * [Human evaluation logs](#human-evaluation-logs)
-      * [Bayesian calibration code](#bayesian-calibration-code)
-
 ## Paper information
 
 Abigail See, Stephen Roller, Douwe Kiela, Jason Weston. 
@@ -54,6 +38,8 @@ following BibTex entry:
     }
 
 # Code Instructions
+Once you have [installed ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai), 
+follow the instructions below.
 
 ## Download the data
 
@@ -308,7 +294,7 @@ paper were trained.
 
 ## Look at generated output and automatic metrics
 
-Once you have [downloaded the data](#download-the-data), you will find a
+Once you have downloaded the data, you will find a
 directory `wordstat_files` in `data/controllable_dialogue`.
 The json files in this directory contain the generated output computed on the
 ConvAI2 validation set, plus the corresponding automatic metrics.
