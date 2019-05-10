@@ -553,14 +553,15 @@ class DictionaryAgent(Agent):
         print('Dictionary: saving dictionary to {}'.format(filename))
 
         make_dir(os.path.dirname(filename))
-        with open(filename, 'a' if append else 'w') as write:
+        mode = 'a' if append else 'w'
+        with open(filename, mode, encoding='utf-8') as write:
             for i in self.ind2tok.keys():
                 tok = self.ind2tok[i]
                 cnt = self.freq[tok]
                 write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
 
         # save opt file
-        with open(filename + '.opt', 'w') as handle:
+        with open(filename + '.opt', 'w', encoding='utf-8') as handle:
             json.dump(self.opt, handle)
 
     def sort(self, trim=True):
@@ -707,7 +708,7 @@ class _BPEHelper(object):
             self._load_from_codecs()
 
     def _load_from_codecs(self):
-        with open(self.codecs, 'r') as codecs_file:
+        with open(self.codecs, 'r', encoding='utf-8') as codecs_file:
             self.bpe = apply_bpe.BPE(codecs_file)
 
     def tokenize(self, text):
@@ -752,7 +753,7 @@ class _BPEHelper(object):
             num_symbols = 30000
         if minfreq <= 0:
             minfreq = 2
-        with open(self.codecs, 'w') as outstream:
+        with open(self.codecs, 'w', encoding='utf-8') as outstream:
             learn_bpe.learn_bpe(
                 dictionary,
                 outstream,
@@ -768,6 +769,7 @@ class _BPEHelper(object):
         """
         Copy the codecs file to a new location.
         """
-        with open(target_file, 'w') as wfile, open(self.codecs) as rfile:
-            for line in rfile:
-                wfile.write(line)
+        with open(target_file, 'w', encoding='utf-8') as wfile:
+            with open(self.codecs, encoding='utf-8') as rfile:
+                for line in rfile:
+                    wfile.write(line)
