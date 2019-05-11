@@ -34,7 +34,7 @@ except ImportError:
     GIT_AVAILABLE = False
 
 
-DEBUG = False  # change this to true to print to stdout anyway
+DEBUG = True  # change this to true to print to stdout anyway
 
 
 def is_this_circleci():
