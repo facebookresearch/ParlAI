@@ -30,6 +30,11 @@ setup: &setup
   run:
     name: Sets up the virtual environment
     command: |
+      # make sure everything works outside our dev machines by ensuring there
+      # will be permissions errors if our directories are used
+      mkdir -p /checkpoint /private/home /scratch
+      sudo chmod 000 /checkpoint /private /private/home /scratch
+      # actually set up the environment
       mkdir -p ~/venv
       virtualenv --python=python3.6 ~/venv
       echo ". ~/venv/bin/activate" >> $BASH_ENV
