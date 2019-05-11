@@ -20,6 +20,66 @@ from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
 
 
+def print_announcements(opt):
+    """
+    Outputs any announcements the ParlAI team wishes to make to users.
+
+    Also gives the user the option to suppress the output.
+    """
+
+    noannounce_file = os.path.join(opt.get('datapath'), 'noannouncements')
+    if os.path.exists(noannounce_file):
+        # user has suppressed announcements, don't do anything
+        return
+
+    # useful constants
+    # all of these colors are bolded
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    RED = '\033[1;91m'
+    YELLOW = '\033[1;93m'
+    GREEN = '\033[1;92m'
+    BLUE = '\033[1;96m'
+    CYAN = '\033[1;94m'
+    MAGENTA = '\033[1;95m'
+
+    # only use colors if we're outputting to a terminal
+    USE_COLORS = _sys.stdout.isatty()
+    if not USE_COLORS:
+        RESET = BOLD = RED = YELLOW = GREEN = BLUE = CYAN = MAGENTA = ''
+
+    # generate the rainbow stars
+    rainbow = [RED, YELLOW, GREEN, CYAN, BLUE, MAGENTA]
+    size = 78 // len(rainbow)
+    stars = ''.join([color + '*' * size for color in rainbow])
+    stars += RESET
+
+    # compute the countdown
+    import datetime
+    now = datetime.datetime.utcnow().timestamp()
+    closes = 1558151989  # 23:59:59 EDT Fri, May 18, 2019
+    daysleft = max(0, (int(closes - now) // (60 * 60 * 24)))
+
+    # do the actual output
+    print("\n".join([
+        "",
+        stars + RESET,
+        'Thank you for using ParlAI! We are conducting a user survey.',
+        'Please fill it out at https://forms.gle/uEFbYGP7w6hiuGQT9',
+        '',
+        '{}The survey will close in {}{} day{}{}, on May 17, 2019.{}'.format(
+            BOLD,  RED, daysleft, 's' if daysleft != 1 else '', RESET + BOLD, RESET,
+        ),
+        '',
+        # don't bold the suppression command
+        '{}To suppress this message (and future announcements), run\n`touch {}`'.format(
+            RESET, noannounce_file
+        ),
+        stars,
+        RESET,
+    ]))
+
+
 def get_model_name(opt):
     model = opt.get('model', None)
     if model is None:
@@ -667,14 +727,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
-            print("\n".join([
-                "",
-                "*" * 80,
-                "Thank you for using ParlAI! We are conducting a user survey.",
-                "Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9",
-                "*" * 80,
-                ""
-            ]))
+            print_announcements(self.opt)
 
         return self.opt
 
