@@ -91,7 +91,7 @@ def get_model_name(opt):
             if os.path.isfile(optfile):
                 try:
                     # try json first
-                    with open(optfile, 'r') as handle:
+                    with open(optfile, 'r', encoding='utf-8') as handle:
                         new_opt = json.load(handle)
                         model = new_opt.get('model', None)
                 except UnicodeDecodeError:
