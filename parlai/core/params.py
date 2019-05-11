@@ -65,7 +65,7 @@ def print_announcements(opt):
         "",
         stars + RESET,
         'Thank you for using ParlAI! We are conducting a user survey.',
-        'Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9',
+        'Please fill it out at https://forms.gle/uEFbYGP7w6hiuGQT9',
         '',
         '{}The survey will close in {}{} day{}{}, on May 17, 2019.{}'.format(
             BOLD,  RED, daysleft, 's' if daysleft != 1 else '', RESET + BOLD, RESET,
