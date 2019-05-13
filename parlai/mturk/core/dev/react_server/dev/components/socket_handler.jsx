@@ -41,6 +41,8 @@ const STATUS_INIT = 'init';
 const CONNECTION_DEAD_PARLAI_PING = 60000; // A minute of downtime is death
 const REFRESH_SOCKET_MISSED_RESPONSES = 5;
 const HEARTBEAT_TIME = 3000; // One heartbeat every 3 seconds
+const ROUTER_DEAD_TIMEOUT = 12; // Failed heartbeats before checking server
+// TODO rework server connectivity functionality.
 
 /* ============== Priority Queue Data Structure ============== */
 
@@ -585,7 +587,7 @@ class SocketHandler extends React.Component {
     this.setState({
       heartbeats_without_response: this.state.heartbeats_without_response + 1,
     });
-    if (this.state.heartbeats_without_response >= 12) {
+    if (this.state.heartbeats_without_response >= ROUTER_DEAD_TIMEOUT) {
       this.closeSocket();
     } else if (this.state.heartbeats_without_response >= 3) {
       this.props.onStatusChange('reconnecting_router');

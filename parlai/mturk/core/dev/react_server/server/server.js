@@ -220,7 +220,11 @@ class LocalAgentState {
   }
 
   add_sent_message(sent_message) {
-    this.previous_messages[sent_message['conversation_id']].push(sent_message);
+    let conversation_id = sent_message['conversation_id']
+    if (this.previous_messages[conversation_id] === undefined) {
+      this._init_conversation(conversation_id)
+    }
+    this.previous_messages[conversation_id].push(sent_message);
   }
 
   get_update_from_heartbeat(heartbeat) {
@@ -303,8 +307,11 @@ var connection_id_to_socket = {};
 var socket_id_to_connection_id = {};
 var world_message_queue = [];
 var world_last_ping = 0;
-var world_id = null;
 var main_thread_timeout = null;
+
+// Used to store the id to refer to the ParlAI socket with, the world_id is
+// initialized by the first socket connection from ParlAI to the router server.
+var world_id = null;
 
 // This is a mapping of connection id -> state for an MTurk agent
 var connection_id_to_agent_state = {};
