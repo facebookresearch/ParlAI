@@ -22,7 +22,11 @@ NO = '__NO__'
 NEITHER = '__NEITHER__'
 
 MAP_CONTINUATION = {'m': MAYBE, 'f': SHOULD, 'n': SHOULD_NOT}
-MAP_AFFIRMATION = {'y': YES, 'n': NO, 'x':NEITHER}
+MAP_AFFIRMATION = {'y': YES, 'n': NO, 'x': NEITHER}
+
+OUTPUT_FORMAT = ("text:{question}\tfollowup:{continuation}\tyesno:"
+                 "{affirmation}\tanswer_starts:{start}\tlabels:{labels}")
+
 
 def make_parlai_format(outpath, dtype, data):
     print('building parlai:' + dtype)
@@ -34,18 +38,16 @@ def make_parlai_format(outpath, dtype, data):
                 for idx, q_a in enumerate(each['qas']):
                     question_txt = ''
                     if idx == 0:
-                    # include the context in the very first turn
                         question_txt = story + '\\n' + q_a['question']
                     else:
                         question_txt = q_a['question']
-                    output.append("text:{question}\tfollowup:{continuation}\t"
-                    "yesno:{affirmation}\tanswer_starts:{start}\tlabels:{labels}".format(
-                    question=question_txt,
-                    continuation=MAP_CONTINUATION.get(q_a['followup']),
-                    affirmation=MAP_AFFIRMATION.get(q_a['yesno']),
-                    start=q_a['orig_answer']['answer_start'],
-                    labels=q_a['orig_answer']['text'].replace("|", " __PIPE__ ")
-                    ))
+                    output.append(OUTPUT_FORMAT.format(
+                        question=question_txt,
+                        continuation=MAP_CONTINUATION.get(q_a['followup']),
+                        affirmation=MAP_AFFIRMATION.get(q_a['yesno']),
+                        start=q_a['orig_answer']['answer_start'],
+                        labels=q_a['orig_answer']['text'].replace("|", " __PIPE__ ")
+                        ))
                     if idx < len(each['qas']) - 1:
                         output.append('\n')
                 output.append('\t\tepisode_done:True\n')
