@@ -9,8 +9,9 @@ import parlai.core.build_data as build_data
 import os
 import json
 
-TRAIN_FILENAME = 'train_v0.2.json'
-VALID_FILENAME = 'val_v0.2.json'
+VERSION = '0.2'
+TRAIN_FILENAME = 'train_v' + VERSION + '.json'
+VALID_FILENAME = 'val_v' + VERSION + '.json'
 
 URL = 'https://s3.amazonaws.com/my89public/quac/'
 SHOULD = '__SHOULD__'
@@ -24,8 +25,32 @@ NEITHER = '__NEITHER__'
 MAP_CONTINUATION = {'m': MAYBE, 'f': SHOULD, 'n': SHOULD_NOT}
 MAP_AFFIRMATION = {'y': YES, 'n': NO, 'x': NEITHER}
 
-OUTPUT_FORMAT = ("text:{question}\tfollowup:{continuation}\tyesno:"
-                 "{affirmation}\tanswer_starts:{start}\tlabels:{labels}")
+OUTPUT_FORMAT = (
+    'text:{question}\tfollowup:{continuation}\tyesno:'
+    '{affirmation}\tanswer_starts:{start}\tlabels:{labels}'
+)
+
+
+def _handle_paragraph(each):
+    output = []
+    story = each['context'].replace('\n', '\\n')
+    for idx, q_a in enumerate(each['qas']):
+        question_txt = ''
+        if idx == 0:
+            question_txt = story + '\\n' + q_a['question']
+        else:
+            question_txt = q_a['question']
+        output.append(OUTPUT_FORMAT.format(
+            question=question_txt,
+            continuation=MAP_CONTINUATION.get(q_a['followup']),
+            affirmation=MAP_AFFIRMATION.get(q_a['yesno']),
+            start=q_a['orig_answer']['answer_start'],
+            labels=q_a['orig_answer']['text'].replace('|', ' __PIPE__ ')
+        ))
+        if idx < len(each['qas']) - 1:
+            output.append('\n')
+    output.append('\t\tepisode_done:True\n')
+    return ''.join(output)
 
 
 def make_parlai_format(outpath, dtype, data):
@@ -33,30 +58,12 @@ def make_parlai_format(outpath, dtype, data):
     with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
         for line in data:
             for each in line['paragraphs']:
-                output = []
-                story = each['context'].replace('\n', '\\n')
-                for idx, q_a in enumerate(each['qas']):
-                    question_txt = ''
-                    if idx == 0:
-                        question_txt = story + '\\n' + q_a['question']
-                    else:
-                        question_txt = q_a['question']
-                    output.append(OUTPUT_FORMAT.format(
-                        question=question_txt,
-                        continuation=MAP_CONTINUATION.get(q_a['followup']),
-                        affirmation=MAP_AFFIRMATION.get(q_a['yesno']),
-                        start=q_a['orig_answer']['answer_start'],
-                        labels=q_a['orig_answer']['text'].replace("|", " __PIPE__ ")
-                        ))
-                    if idx < len(each['qas']) - 1:
-                        output.append('\n')
-                output.append('\t\tepisode_done:True\n')
-                fout.write("".join(output))
+                fout.write(_handle_paragraph(each))
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'QuAC')
-    version = None
+    version = VERSION
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')

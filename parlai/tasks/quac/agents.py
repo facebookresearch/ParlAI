@@ -17,7 +17,7 @@ def _path(opt):
     build(opt)
     dt = opt['datatype'].split(':')[0]
     if dt == 'test':
-        warn_once("WARNING: Test set not included. Setting datatype to valid.")
+        warn_once('WARNING: Test set not included. Setting datatype to valid.')
         dt = 'valid'
     return os.path.join(opt['datapath'], 'QuAC', dt + '.txt')
 
