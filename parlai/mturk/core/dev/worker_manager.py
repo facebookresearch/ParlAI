@@ -12,7 +12,6 @@ import time
 from botocore.exceptions import ClientError
 
 from parlai.mturk.core.dev.agents import MTurkAgent, AssignState
-import parlai.mturk.core.dev.data_model as data_model
 import parlai.mturk.core.dev.mturk_utils as mturk_utils
 import parlai.mturk.core.dev.shared_utils as shared_utils
 
@@ -331,21 +330,6 @@ class WorkerManager():
             self._log_missing_agent(worker_id, assignment_id)
         return agent
 
-    def _change_agent_to_conv(self, pkt):
-        """Update an agent to a new conversation given a packet from the
-        conversation to be switched to
-        """
-        agent = self._get_agent_from_pkt(pkt)
-        if agent is not None:
-            self._assign_agent_to_conversation(agent, agent.conversation_id)
-
-    def _assign_agent_to_conversation(self, agent, conv_id):
-        """Register an agent object with a conversation id, update status"""
-        agent.conversation_id = conv_id
-        if conv_id not in self.conv_to_agent:
-            self.conv_to_agent[conv_id] = []
-        self.conv_to_agent[conv_id].append(agent)
-
     def change_agent_conversation(self, agent, conversation_id, new_agent_id):
         """Handle changing a conversation for an agent, takes a callback for
         when the command is acknowledged
@@ -353,17 +337,20 @@ class WorkerManager():
         agent.id = new_agent_id
         agent.conversation_id = conversation_id
         data = {
-            'text': data_model.COMMAND_CHANGE_CONVERSATION,
+            'agent_status': agent.get_status(),
             'conversation_id': conversation_id,
             'agent_id': new_agent_id
         }
+
         agent.flush_msg_queue()
-        self.mturk_manager.send_command(
+        self.mturk_manager.send_state_change(
             agent.worker_id,
             agent.assignment_id,
             data,
-            ack_func=self._change_agent_to_conv
         )
+        if conversation_id not in self.conv_to_agent:
+            self.conv_to_agent[conversation_id] = []
+        self.conv_to_agent[conversation_id].append(agent)
 
     def shutdown(self):
         """Handles cleaning up and storing state related to workers"""

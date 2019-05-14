@@ -38,6 +38,7 @@ class AssignState():
     STATUS_PARTNER_DISCONNECT_EARLY = 'partner disconnect early'
     STATUS_EXPIRED = 'expired'
     STATUS_RETURNED = 'returned'
+    STATUS_STATIC = 'static'
 
     def __init__(self, status=None):
         """Create an AssignState to track the state of an agent's assignment"""
@@ -193,6 +194,11 @@ class MTurkAgent(Agent):
     def set_status(self, status):
         """Set the status of this agent on the task, update db"""
         self.state.set_status(status)
+        self.mturk_manager.send_state_change(
+            self.worker_id,
+            self.assignment_id,
+            {'agent_status': status},
+        )
         if self.db_logger is not None:
             if status == AssignState.STATUS_ONBOARDING:
                 self.db_logger.log_start_onboard(
@@ -624,17 +630,15 @@ class MTurkAgent(Agent):
     def shutdown(self, timeout=None, direct_submit=False):
         """Shuts down a hit when it is completed"""
         # Timeout in seconds, after which the HIT will be expired automatically
-        command_to_send = data_model.COMMAND_SHOW_DONE_BUTTON
-        if direct_submit:
-            command_to_send = data_model.COMMAND_SUBMIT_HIT
         if not (self.hit_is_abandoned or self.hit_is_returned or
                 self.disconnected or self.hit_is_expired):
             self.mturk_manager.mark_workers_done([self])
-            self.mturk_manager.send_command(
-                self.worker_id,
-                self.assignment_id,
-                {'text': command_to_send},
-            )
+            if direct_submit:
+                self.mturk_manager.send_command(
+                    self.worker_id,
+                    self.assignment_id,
+                    {'text': data_model.COMMAND_SUBMIT_HIT},
+                )
             did_complete = self.wait_for_hit_completion(timeout=timeout)
             if did_complete and self.db_logger is not None:
                 self.db_logger.log_submit_assignment(

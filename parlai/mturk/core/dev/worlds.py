@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.worlds import World
+from parlai.mturk.core.dev.agents import AssignState
 
 
 class MTurkDataWorld(World):
@@ -158,12 +159,14 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
         """A static task parley is simply sending the task data and waiting
         for the response
         """
-        self.mturk_agent.observe({
+        agent = self.mturk_agent
+        agent.observe({
             'id': 'System',
             'text': '[TASK_DATA]',
             'task_data': self.task_data,
         })
-        self.response = self.mturk_agent.act()
+        agent.set_status(AssignState.STATUS_STATIC)
+        self.response = agent.act()
         self.episodeDone = True
 
     def prep_save_data(self, workers):
