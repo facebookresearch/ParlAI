@@ -16,7 +16,7 @@ Examples
   python eval_model.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
 """
 
-from parlai.core.params import ParlaiParser
+from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
 from parlai.core.worlds import create_task
@@ -98,14 +98,7 @@ def eval_model(opt, printargs=None, print_parser=None):
     report = world.report()
     print(report)
 
-    print("\n".join([
-        "",
-        "*" * 80,
-        "Thank you for using ParlAI! We are conducting a user survey.",
-        "Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9",
-        "*" * 80,
-        ""
-    ]))
+    print_announcements(opt)
 
     return report
 

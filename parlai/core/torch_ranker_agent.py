@@ -587,7 +587,7 @@ class TorchRankerAgent(TorchAgent):
 
                 # Load candidates
                 print("[ Loading fixed candidate set from {} ]".format(cand_path))
-                with open(cand_path, 'r') as f:
+                with open(cand_path, 'r', encoding='utf-8') as f:
                     cands = [line.strip() for line in f.readlines()]
 
                 # Load or create candidate vectors

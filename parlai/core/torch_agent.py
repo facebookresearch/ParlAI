@@ -1400,7 +1400,7 @@ class TorchAgent(Agent):
                     torch.save(states, write)
 
                 # save opt file
-                with open(path + '.opt', 'w') as handle:
+                with open(path + '.opt', 'w', encoding='utf-8') as handle:
                     if hasattr(self, 'model_version'):
                         self.opt['model_version'] = self.model_version()
                     json.dump(self.opt, handle)

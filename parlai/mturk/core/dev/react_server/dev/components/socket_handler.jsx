@@ -15,42 +15,34 @@ import ReactDOM from 'react-dom';
 
 // Incoming message commands
 const COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE';
-const COMMAND_SHOW_DONE_BUTTON = 'COMMAND_SHOW_DONE_BUTTON';
-const COMMAND_EXPIRE_HIT = 'COMMAND_EXPIRE_HIT';
 const COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT';
-const COMMAND_CHANGE_CONVERSATION = 'COMMAND_CHANGE_CONVERSATION';
-const COMMAND_RESTORE_STATE = 'COMMAND_RESTORE_STATE';
-const COMMAND_INACTIVE_HIT = 'COMMAND_INACTIVE_HIT';
-const COMMAND_INACTIVE_DONE = 'COMMAND_INACTIVE_DONE';
+const COMMAND_USER_DEFINED = 'COMMAND_USER_DEFINED';
 
-// Socket function names
-const SOCKET_OPEN_STRING = 'socket_open'; // fires when a socket opens
-const SOCKET_DISCONNECT_STRING = 'disconnect'; // fires if a socket disconnects
-const SOCKET_NEW_PACKET_STRING = 'new packet'; // fires when packets arrive
-const SOCKET_ROUTE_PACKET_STRING = 'route packet'; // to send outgoing packets
-const SOCKET_AGENT_ALIVE_STRING = 'agent alive'; // to send alive packets
+// TODO figure out how to catch this state in the server and save it
+// so that we can update the parlai local state to acknowledge the occurrence
+const STATUS_PARLAI_DISCONNECT = 'parlai_disconnect';
+
+// Socket function types
+const AGENT_MESSAGE = 'agent message'  // Message from an agent
+const HEARTBEAT = 'heartbeat'   // Heartbeat from agent, carries current state
+const MESSAGE_BATCH = 'message batch' // packet containing batch of messages
+const AGENT_ALIVE = 'agent alive'  // packet from an agent alive event
+const UPDATE_STATE = 'update state'  // packet for updating agent client state
 
 // Message types
-const MESSAGE_TYPE_MESSAGE = 'MESSAGE';
+const MESSAGE_TYPE_ACT = 'MESSAGE';
 const MESSAGE_TYPE_COMMAND = 'COMMAND';
-
-// Packet types
-const TYPE_ACK = 'ack';
-const TYPE_MESSAGE = 'message';
-const TYPE_HEARTBEAT = 'heartbeat';
-const TYPE_PONG = 'pong'; // For messages back from the router on heartbeat
-const TYPE_ALIVE = 'alive';
 
 /* ================= Local Constants ================= */
 
 const SEND_THREAD_REFRESH = 100;
-const ACK_WAIT_TIME = 2000; // Check for acknowledge every 2 seconds
 const STATUS_ACK = 'ack';
 const STATUS_INIT = 'init';
-const STATUS_SENT = 'sent';
-const CONNECTION_DEAD_MISSING_PONGS = 25;
-const REFRESH_SOCKET_MISSING_PONGS = 10;
-const HEARTBEAT_TIME = 4000; // One heartbeat every 4 seconds
+const CONNECTION_DEAD_PARLAI_PING = 60000; // A minute of downtime is death
+const REFRESH_SOCKET_MISSED_RESPONSES = 5;
+const HEARTBEAT_TIME = 3000; // One heartbeat every 3 seconds
+const ROUTER_DEAD_TIMEOUT = 12; // Failed heartbeats before checking server
+// TODO rework server connectivity functionality.
 
 /* ============== Priority Queue Data Structure ============== */
 
@@ -120,6 +112,9 @@ function uuidv4() {
   });
 }
 
+// Global state of received messages
+var used_message_ids = new Set([]);
+
 class SocketHandler extends React.Component {
   constructor(props) {
     super(props);
@@ -129,14 +124,8 @@ class SocketHandler extends React.Component {
       heartbeat_id: null, // Timeout id for heartbeat thread
       socket_closed: false, // Flag for intentional socket closure
       setting_socket: false, // Flag for socket setup being underway
-      pongs_without_heartbeat: 0, // Pongs from router w/o hb from MTurkManager
-      heartbeats_without_pong: 0, // HBs to the router without a pong back
-      packet_map: {}, // Map from packet ids to packets
-      packet_callback: {}, // Map from packet ids to callbacks
-      blocking_id: null, // Packet id of a blocking message underway
-      blocking_sent_time: null, // Time blocking message was sent
-      blocking_intend_send_time: null, // Time of blocking message priority
-      displayed_messages: [], // Message ids that are already displayed
+      heartbeats_without_response: 0, // HBs to the router without a pong back
+      last_parlai_ping: Date.now(),
       message_request_time: null, // Last request for a message to find delay
     };
   }
@@ -147,17 +136,16 @@ class SocketHandler extends React.Component {
    * The following functions comprise the outgoing
    * packet management system. Messages are enqueued
    * using sendPacket. The sendingThread works through
-   * the queued packets and passes them to sendHelper
-   * when appropriate (unblocked, not already sent).
-   * sendHelper handles updating blocking state during
-   * a send, and then pushes the packet through using
-   * safePacketSend.
+   * the queued packets and passes them through sendHelper
+   * when appropriate and then pushes the packet through
+   * the socket using safePacketSend.
    **/
 
-  // Push a packet through the socket
+  // Push a packet through the socket, call the callback on that packet data
+  // if successful. Returns true on success and false on failure.
   safePacketSend(packet) {
     if (this.socket.readyState == 0) {
-      return;
+      return false;
     } else if (this.socket.readyState > 1) {
       log('Socket not in ready state, restarting if possible', 2);
       try {
@@ -166,10 +154,14 @@ class SocketHandler extends React.Component {
         /* Socket already terminated */
       }
       this.setupSocket();
-      return;
+      return false;
     }
     try {
       this.socket.send(JSON.stringify(packet));
+      if (packet.content.callback !== undefined) {
+        packet.content.callback(packet.content);
+      }
+      return true;
     } catch (e) {
       log('Had error ' + e + ' sending message, trying to restart', 2);
       try {
@@ -178,33 +170,23 @@ class SocketHandler extends React.Component {
         /* Socket already terminated */
       }
       this.setupSocket();
+      return false;
     }
   }
 
-  // Wrapper around packet sends that handles managing blocking and state
+  // Wrapper around packet sends that handles managing state
   // updates, as well as not sending packets that have already been sent
-  sendHelper(msg, queue_time) {
+  sendHelper(packet, queue_time) {
+    let msg = packet.content;
     // Don't act on acknowledged packets
     if (msg.status !== STATUS_ACK) {
-      // Find the event to send to
-      let event_name = SOCKET_ROUTE_PACKET_STRING;
-      if (msg.type === TYPE_ALIVE) {
-        event_name = SOCKET_AGENT_ALIVE_STRING;
-      }
-      this.safePacketSend({ type: event_name, content: msg });
 
-      if (msg.require_ack) {
-        if (msg.blocking) {
-          // Block the thread
-          this.setState({
-            blocking_id: msg.id,
-            blocking_sent_time: Date.now(),
-            blocking_intend_send_time: queue_time,
-          });
-        } else {
-          // Check to see if the packet is acknowledged in the future
-          this.q.push(msg, queue_time + ACK_WAIT_TIME);
-        }
+      var success = this.safePacketSend(packet);
+
+      if (success) {
+        msg.status = STATUS_ACK;  // This message was successfully sent
+      } else if (msg.require_ack) {
+        this.q.push(packet, queue_time);  // This message needs to be retried
       }
     }
   }
@@ -215,48 +197,27 @@ class SocketHandler extends React.Component {
     if (this.state.socket_closed) {
       return;
     }
-    let blocking_id = this.state.blocking_id;
 
-    // Can't act if something is currently blocking
-    if (blocking_id === null) {
-      // Can't act on an empty queue
-      if (this.q.size() > 0) {
-        // Can't act if the send time for the next thing to send
-        // is in the future
-        if (Date.now() > this.q.peek()[1]) {
-          var item = this.q.pop();
-          var msg = item[0];
-          var t = item[1];
-          this.sendHelper(msg, t);
-        }
-      }
-    } else {
-      let blocking_sent_time = this.state.blocking_sent_time;
-      let packet_map = this.state.packet_map;
-      let blocking_intend_send_time = this.state.blocking_intend_send_time;
-      // blocking on packet `blocking_id`
-      // See if we've waited too long for the packet to be acknowledged
-      if (Date.now() - blocking_sent_time > ACK_WAIT_TIME) {
-        log('Timeout: ' + blocking_id, 1);
-        // Send the packet again now
-        var m = packet_map[blocking_id];
-        if (m.status != STATUS_ACK) {
-          // Ensure that the send retries, we wouldn't be here if the ACK worked
-          m.status = STATUS_SENT;
-          this.sendHelper(packet_map[blocking_id], blocking_intend_send_time);
-        }
+    // Can't act on an empty queue
+    if (this.q.size() > 0) {
+      // Can't act if the send time for the next thing to send
+      // is in the future
+      if (Date.now() > this.q.peek()[1]) {
+        var item = this.q.pop();
+        var packet = item[0];
+        var t = item[1];
+        this.sendHelper(packet, t);
       }
     }
   }
 
   // Enqueues a message for sending, registers the message and callback
-  sendPacket(type, data, require_ack, blocking, callback) {
+  sendPacket(event_type, data, require_ack, callback) {
     var time = Date.now();
     var id = uuidv4();
 
     var msg = {
       id: id,
-      type: type,
       sender_id: this.props.worker_id,
       assignment_id: this.props.assignment_id,
       conversation_id: this.props.conversation_id,
@@ -264,12 +225,19 @@ class SocketHandler extends React.Component {
       data: data,
       status: STATUS_INIT,
       require_ack: require_ack,
-      blocking: blocking,
+      callback: callback,
     };
 
-    this.q.push(msg, time);
-    this.state.packet_map[id] = msg;
-    this.state.packet_callback[id] = callback;
+    var packet = {
+      type: event_type,
+      content: msg,
+    };
+
+    if (event_type == AGENT_MESSAGE) {
+      used_message_ids.add(msg.id);
+    }
+
+    this.q.push(packet, time);
   }
 
   // Required function - The BaseApp class will call this function to enqueue
@@ -283,7 +251,7 @@ class SocketHandler extends React.Component {
       this.setState({ message_request_time: null });
     }
     this.sendPacket(
-      TYPE_MESSAGE,
+      AGENT_MESSAGE,
       {
         text: text,
         task_data: task_data,
@@ -291,9 +259,9 @@ class SocketHandler extends React.Component {
         message_id: new_message_id,
         episode_done: false,
         duration: duration,
+        type: MESSAGE_TYPE_ACT,
       },
-      true,
-      true,
+      true,  // requires_ack
       msg => {
         if (!is_system) {
           this.props.messages.push(msg.data);
@@ -309,15 +277,14 @@ class SocketHandler extends React.Component {
   // way to send alive packets when expected to
   sendAlive() {
     this.sendPacket(
-      TYPE_ALIVE,
+      AGENT_ALIVE,
       {
         hit_id: this.props.hit_id,
         assignment_id: this.props.assignment_id,
         worker_id: this.props.worker_id,
         conversation_id: this.props.conversation_id,
       },
-      true,
-      true,
+      true, // requires_ack
       () => {
         this.props.onConfirmInit();
         this.props.onStatusChange('connected');
@@ -330,81 +297,58 @@ class SocketHandler extends React.Component {
    *
    * The following functions are all related to
    * handling incoming messages. parseSocketMessage
-   * filters out actions based on the type of message,
-   * including updating the state of health when
-   * recieving pongs and heartbeats. handleNewMessage
-   * is used to process an incoming Message that is
-   * supposed to be entered into the chat. handleCommand
+   * filters out actions based on the type of message.
+   * handleNewAct is used to process an incoming Message that
+   * is supposed to be entered into the chat. handleCommand
    * handles the various commands that are sent from
    * the ParlAI host to change the frontend state.
    **/
 
   parseSocketMessage(event) {
-    let msg = JSON.parse(event.data)['content'];
-    if (msg.type === TYPE_HEARTBEAT) {
-      // Heartbeats ensure we're not disconnected from the server
-      log('received heartbeat: ' + msg.id, 5);
-      this.setState({ pongs_without_heartbeat: 0 });
-    } else if (msg.type === TYPE_PONG) {
-      // Messages incoming from the router, ensuring that we're at least
-      // connected to it.
-      this.setState({
-        pongs_without_heartbeat: this.state.pongs_without_heartbeat + 1,
-        heartbeats_without_pong: 0,
-      });
-      if (this.state.pongs_without_heartbeat >= 3) {
-        this.props.onStatusChange('reconnecting_server');
+    let packet = JSON.parse(event.data);
+    let msg = packet.content;
+    if (packet.type == MESSAGE_BATCH) {
+      let messages = msg.messages;
+      for (const message of messages) {
+        this.handleMessage(message);
       }
-    } else if (msg.type === TYPE_ACK) {
-      // Acks update messages so that we don't resend them
-      log('received ack: ' + msg.id, 3);
-      if (msg.id === this.state.blocking_id) {
-        // execute ack callback if it exists
-        if (this.state.packet_callback[msg.id]) {
-          this.state.packet_callback[msg.id](this.state.packet_map[msg.id]);
-        }
-        this.setState({ blocking_id: null, blocking_sent_time: null });
-      }
-      this.state.packet_map[msg.id].status = STATUS_ACK;
-    } else if (msg.type === TYPE_MESSAGE) {
-      // Acknowledge the message, then act on it
-      this.safePacketSend({
-        type: SOCKET_ROUTE_PACKET_STRING,
-        content: {
-          id: msg.id,
-          sender_id: msg.receiver_id,
-          receiver_id: msg.sender_id,
-          assignment_id: this.props.assignment_id,
-          conversation_id: this.props.conversation_id,
-          type: TYPE_ACK,
-          data: null,
-        },
-      });
-      log(msg, 3);
-      if (msg.data.type === MESSAGE_TYPE_COMMAND) {
-        this.handleCommand(msg.data);
-      } else if (msg.data.type === MESSAGE_TYPE_MESSAGE) {
-        this.handleNewMessage(msg.id, msg.data);
-      }
+    } else if (packet.type == UPDATE_STATE) {
+      this.handleStateUpdate(msg);
     }
   }
 
-  // Handles an incoming message
-  handleNewMessage(new_message_id, message) {
+  // Handles both message types, the commands and acts, prevents duplicates
+  handleMessage(message) {
+    if (used_message_ids.has(message.id)) {
+      log(message.id + ' was a repeat message', 1);
+      return;  // We've already processed this message
+    }
+    used_message_ids.add(message.id);
+    log(message, 3);
+    if (message.data.type === MESSAGE_TYPE_COMMAND) {
+      this.handleCommand(message.data);
+    } else if (message.data.type === MESSAGE_TYPE_ACT) {
+      this.handleNewAct(message.id, message.data);
+    }
+  }
+
+  // Handles an incoming act message
+  handleNewAct(new_message_id, message) {
     if (message.text === undefined) {
       message.text = '';
     }
     var agent_id = message.id;
     var message_text = message.text;
-    if (this.state.displayed_messages.indexOf(new_message_id) !== -1) {
-      // This message has already been seen and put up into the chat
-      log(new_message_id + ' was a repeat message', 1);
-      return;
-    }
 
     log('New message, ' + new_message_id + ' from agent ' + agent_id, 1);
-    this.state.displayed_messages.push(new_message_id);
     this.props.onNewMessage(message);
+
+    // Handle special case of receiving own sent message
+    if (message.id == this.props.agent_id) {
+      this.props.onSuccessfulSend();
+    }
+
+    // Task data handling
     if (message.task_data !== undefined) {
       let has_context = false;
       if (!this.props.run_static) {
@@ -423,7 +367,6 @@ class SocketHandler extends React.Component {
       message.task_data.has_context = has_context;
       this.props.onNewTaskData(message.task_data);
     }
-    this.setState({ displayed_messages: this.state.displayed_messages });
   }
 
   // Handle incoming command messages
@@ -438,55 +381,50 @@ class SocketHandler extends React.Component {
       }
       this.setState({ message_request_time: new Date().getTime() });
       log('Waiting for worker input', 4);
-    } else if (command === COMMAND_SHOW_DONE_BUTTON) {
-      // Update the UI to show the done button
-      this.props.onTaskDone();
-    } else if (command === COMMAND_INACTIVE_DONE) {
-      // Update the UI to show done with additional inactive text
-      this.closeSocket();
-      // Call correct UI renderers
-      this.props.onInactiveDone(msg['inactive_text']);
     } else if (command === COMMAND_SUBMIT_HIT) {
       // Force the hit to submit as done
       this.props.onForceDone();
-    } else if (command === COMMAND_EXPIRE_HIT) {
-      // Expire the hit unless it has already been marked as done
-      if (!this.props.task_done) {
-        this.props.onExpire(msg['inactive_text']);
-        this.closeSocket();
-      }
-    } else if (command === COMMAND_INACTIVE_HIT) {
-      // Disable the hit, show the correct message
-      this.props.onExpire(msg['inactive_text']);
-      this.closeSocket();
-    } else if (command === COMMAND_RESTORE_STATE) {
-      // Restore the messages from inside the data, call the command if needed
-      let messages = msg['messages'];
-      for (var i = 0; i < messages.length; i++) {
-        this.handleNewMessage(messages[i]['message_id'], messages[i]);
-      }
-
-      let last_command = msg['last_command'];
-      if (last_command) {
-        this.handleCommand(last_command);
-      }
-    } else if (command === COMMAND_CHANGE_CONVERSATION) {
-      // change the conversation, refresh if needed
-      let conversation_id = msg['conversation_id'];
-      log('new conversation_id: ' + conversation_id, 3);
-      let agent_id = msg['agent_id'];
-      let world_state = null;
-      if (isWaiting(conversation_id)) {
-        world_state = 'waiting';
-      } else if (isOnboarding(conversation_id)) {
-        world_state = 'onboarding';
-      } else if (isTask(conversation_id)) {
-        world_state = 'task';
-      }
-      this.props.onConversationChange(world_state, conversation_id, agent_id);
-      this.sendAlive();
+    } else if (command === COMMAND_USER_DEFINED) {
+      // TODO implement ability for user defined commands
+      // this.props.onUserDefinedCommand(msg);
     }
   }
+
+  // Handle updates to state
+  handleStateUpdate(update_packet) {
+    // State updates are responses to heartbeats, so we can use these to
+    // ensure uptime
+    let state_update = {
+      last_parlai_ping: update_packet['last_parlai_ping'],
+      heartbeats_without_response: 0,
+    }
+
+    // Update packets occasionally have the contents of a missing message batch
+    if (update_packet['messages'] !== undefined) {
+      for (const message of update_packet['messages']) {
+        this.handleMessage(message);
+      }
+    }
+
+    let agent_status = update_packet['agent_status'] || this.props.agent_status;
+    let agent_id = update_packet['agent_id'] || this.props.agent_id;
+    let conversation_id =
+      update_packet['conversation_id'] || this.props.conversation_id;
+    if (agent_status != this.props.agent_status ||
+        conversation_id != this.props.conversation_id) {
+      this.props.onAgentStatusChange(
+        agent_status,
+        conversation_id,
+        update_packet['done_text'],
+        agent_id,
+      );
+    }
+    if (update_packet['is_final']) {
+      this.closeSocket();
+    }
+    this.setState(state_update);
+  }
+
 
   /**************************************************
    * ---------- socket lifecycle functions -----------
@@ -531,7 +469,7 @@ class SocketHandler extends React.Component {
     this.socket.onopen = () => {
       log('Server connected.', 2);
       let setting_socket = false;
-      window.setTimeout(() => this.sendAlive(), 100);
+      this.sendAlive();
       window.setTimeout(() => this.failInitialize(), 10000);
       let heartbeat_id = null;
       if (this.state.heartbeat_id == null) {
@@ -597,9 +535,9 @@ class SocketHandler extends React.Component {
       return;
     }
 
-    let pongs_without_heartbeat = this.state.pongs_without_heartbeat;
-    if (pongs_without_heartbeat == REFRESH_SOCKET_MISSING_PONGS) {
-      pongs_without_heartbeat += 1;
+    let heartbeats_without_response = this.state.heartbeats_without_response;
+    if (heartbeats_without_response == REFRESH_SOCKET_MISSED_RESPONSES) {
+      heartbeats_without_response += 1;
       try {
         this.socket.close(); // Force a socket close to make it reconnect
       } catch (e) {
@@ -607,14 +545,15 @@ class SocketHandler extends React.Component {
       }
       window.clearInterval(this.state.heartbeat_id);
       this.setState({
-        pongs_without_heartbeat: pongs_without_heartbeat,
+        heartbeats_without_response: heartbeats_without_response,
         heartbeat_id: null,
       });
       this.setupSocket();
     }
 
     // Check to see if we've disconnected from the server
-    if (this.state.pongs_without_heartbeat > CONNECTION_DEAD_MISSING_PONGS) {
+    let time_since_last_ping = Date.now() - this.state.last_parlai_ping;
+    if (time_since_last_ping > CONNECTION_DEAD_PARLAI_PING) {
       this.closeSocket();
       let done_text =
         "Our server appears to have gone down during the \
@@ -623,7 +562,12 @@ class SocketHandler extends React.Component {
         compensate.";
       window.clearInterval(this.state.heartbeat_id);
       this.setState({ heartbeat_id: null });
-      this.props.onExpire(done_text);
+      this.props.onAgentStatusChange(
+        STATUS_PARLAI_DISCONNECT,
+        this.props.conversation_id,
+        done_text,
+        this.props.agent_id,
+      );
     }
 
     var hb = {
@@ -632,18 +576,20 @@ class SocketHandler extends React.Component {
       assignment_id: this.props.assignment_id,
       sender_id: this.props.worker_id,
       conversation_id: this.props.conversation_id,
-      type: TYPE_HEARTBEAT,
+      agent_status: this.props.agent_status,
+      done_text: this.props.done_text,
       data: null,
+      received_message_count: used_message_ids.size,
     };
 
-    this.safePacketSend({ type: SOCKET_ROUTE_PACKET_STRING, content: hb });
+    this.safePacketSend({ type: HEARTBEAT, content: hb });
 
     this.setState({
-      heartbeats_without_pong: this.state.heartbeats_without_pong + 1,
+      heartbeats_without_response: this.state.heartbeats_without_response + 1,
     });
-    if (this.state.heartbeats_without_pong >= 12) {
+    if (this.state.heartbeats_without_response >= ROUTER_DEAD_TIMEOUT) {
       this.closeSocket();
-    } else if (this.state.heartbeats_without_pong >= 3) {
+    } else if (this.state.heartbeats_without_response >= 3) {
       this.props.onStatusChange('reconnecting_router');
     }
   }

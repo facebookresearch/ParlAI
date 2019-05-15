@@ -65,7 +65,7 @@ def get_mturk_dir():
 
 def get_core_dir():
     import parlai.mturk.core
-    return os.path.dirname(os.path.abspath(parlai.mturk.core.__file__))
+    return os.path.dirname(os.path.abspath(parlai.mturk.core.dev.__file__))
 
 
 def get_tmp_dir():
