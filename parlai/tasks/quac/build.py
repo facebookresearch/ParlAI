@@ -31,6 +31,17 @@ OUTPUT_FORMAT = (
 )
 
 
+def _parse_answers(q_a):
+    starts = []
+    labels = []
+    starts.append(str(q_a['orig_answer']['answer_start']))
+    labels.append(q_a['orig_answer']['text'].replace('|', ' __PIPE__ '))
+    for each in q_a['answers']:
+        starts.append(str(each['answer_start']))
+        labels.append(each['text'].replace('|', ' __PIPE__ '))
+    return '|'.join(starts), '|'.join(labels)
+
+
 def _handle_paragraph(each):
     output = []
     story = each['context'].replace('\n', '\\n')
@@ -40,12 +51,13 @@ def _handle_paragraph(each):
             question_txt = story + '\\n' + q_a['question']
         else:
             question_txt = q_a['question']
+        starts, labels = _parse_answers(q_a)
         output.append(OUTPUT_FORMAT.format(
             question=question_txt,
             continuation=MAP_CONTINUATION.get(q_a['followup']),
             affirmation=MAP_AFFIRMATION.get(q_a['yesno']),
-            start=q_a['orig_answer']['answer_start'],
-            labels=q_a['orig_answer']['text'].replace('|', ' __PIPE__ ')
+            start=starts,
+            labels=labels
         ))
         if idx < len(each['qas']) - 1:
             output.append('\n')
