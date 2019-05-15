@@ -293,7 +293,6 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         if self.label_type == 'response':
             if 'train' in self.datatype:
                 label_cands = []
-                num_to_gen = self.opt["num_negatives_responses_generated_train"]
             else:
                 label_cands = wizard_entry.get('candidate_responses', [])
 
