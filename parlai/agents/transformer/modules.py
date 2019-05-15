@@ -378,7 +378,7 @@ class TransformerEncoder(nn.Module):
         elif self.reduction_type == 'max':
             return tensor.max(dim=1)[0]
         elif self.reduction_type == 'mean':
-            divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1e-20)
+            divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
             output = tensor.sum(dim=1) / divisor
             return output
         elif self.reduction_type == 'none' or self.reduction_type is None:
