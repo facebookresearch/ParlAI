@@ -11,35 +11,36 @@ import json
 
 TRAIN_FILENAME = 'coqa-train-v1.0.json'
 VALID_FILENAME = 'coqa-dev-v1.0.json'
+VERSION = '1.0'
 URL = 'https://nlp.stanford.edu/data/coqa/'
 
 
 def make_parlai_format(outpath, dtype, data):
     print('building parlai:' + dtype)
-    for each in data:
-        output = []
-        story = each['story'].replace('\n', '\\n')
-        for question, ans in zip(each['questions'], each['answers']):
-            question_txt = ''
-            if question['turn_id'] == 1:
-                # include the context in the very first turn
-                question_txt = story + '\\n' + question['input_text']
-            else:
-                question_txt = question['input_text']
-            output.append('text:{question}\tlabels:{labels}'.format(
-                question=question_txt,
-                labels=ans['input_text'].replace('|', ' __PIPE__ ')
-            ))
-            if question['turn_id'] < len(each['questions']):
-                output.append('\n')
-        output.append('\t\tepisode_done:True\n')
     with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
-        fout.write(''.join(output))
+        for each in data:
+            output = []
+            story = each['story'].replace('\n', '\\n')
+            for question, ans in zip(each['questions'], each['answers']):
+                question_txt = ''
+                if question['turn_id'] == 1:
+                    # include the context in the very first turn
+                    question_txt = story + '\\n' + question['input_text']
+                else:
+                    question_txt = question['input_text']
+                output.append('text:{question}\tlabels:{labels}'.format(
+                    question=question_txt,
+                    labels=ans['input_text'].replace('|', ' __PIPE__ ')
+                ))
+                if question['turn_id'] < len(each['questions']):
+                    output.append('\n')
+            output.append('\t\tepisode_done:True\n')
+            fout.write(''.join(output))
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CoQA')
-    version = None
+    version = VERSION
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
