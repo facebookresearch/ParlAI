@@ -161,8 +161,28 @@ class MTurkAgent(Agent):
     def __init__(self, opt, mturk_manager, hit_id, assignment_id, worker_id):
         super().__init__(opt)
 
-        self.conversation_id = None
+        # all MTurkManager functions explicitly used by agents extracted here
+        self.m_send_state_change = mturk_manager.send_state_change
+        self.m_send_message = mturk_manager.send_message
+        self.m_handle_turker_timeout = mturk_manager.handle_turker_timeout
+        self.m_send_command = mturk_manager.send_command
+        self.m_get_agent_work_status = mturk_manager.get_agent_work_status
+        self.m_approve_work = mturk_manager.approve_work
+        self.m_reject_worker = mturk_manager.reject_worker
+        self.m_block_worker = mturk_manager.block_worker
+        self.m_pay_bonus = mturk_manager.pay_bonus
+        self.m_email_worker = mturk_manager.email_worker
+        self.m_free_workers = mturk_manager.free_workers
+        self.m_mark_workers_done = mturk_manager.mark_workers_done
+        self.m_force_expire_hit = mturk_manager.force_expire_hit
+
+        # MTurkManager variables used by agents extracted here
+        self.auto_approve_delay = mturk_manager.auto_approve_delay
+
+        # TODO does anything else still use agent.mturk_manager?
         self.mturk_manager = mturk_manager
+
+        self.conversation_id = None
         self.db_logger = mturk_manager.db_logger
         self.id = None
         self.state = AssignState()
@@ -191,13 +211,23 @@ class MTurkAgent(Agent):
             'episode_done': True
         }
 
-    def set_status(self, status):
-        """Set the status of this agent on the task, update db"""
+    def set_status(self, status, conversation_id=None, agent_id=None):
+        """
+        Set the status of this agent on the task, update db, push update
+        to the router
+        """
         self.state.set_status(status)
-        self.mturk_manager.send_state_change(
+        update_packet = {'agent_status': status}
+        if conversation_id is not None:
+            update_packet['conversation_id'] = conversation_id
+        if agent_id is not None:
+            update_packet['agent_id'] = agent_id
+        # TODO move this function to be an inherited member of agent, rather
+        # than directly needing to hold onto the mturk_manager
+        self.m_send_state_change(
             self.worker_id,
             self.assignment_id,
-            {'agent_status': status},
+            update_packet,
         )
         if self.db_logger is not None:
             if status == AssignState.STATUS_ONBOARDING:
@@ -212,27 +242,27 @@ class MTurkAgent(Agent):
             elif status == AssignState.STATUS_DONE:
                 self.db_logger.log_complete_assignment(
                     self.worker_id, self.assignment_id,
-                    time.time() + self.mturk_manager.auto_approve_delay,
+                    time.time() + self.auto_approve_delay,
                     status)
             elif status == AssignState.STATUS_PARTNER_DISCONNECT:
                 self.db_logger.log_complete_assignment(
                     self.worker_id, self.assignment_id,
-                    time.time() + self.mturk_manager.auto_approve_delay,
+                    time.time() + self.auto_approve_delay,
                     status)
             elif status == AssignState.STATUS_PARTNER_DISCONNECT_EARLY:
                 self.db_logger.log_complete_assignment(
                     self.worker_id, self.assignment_id,
-                    time.time() + self.mturk_manager.auto_approve_delay,
+                    time.time() + self.auto_approve_delay,
                     status)
             elif status == AssignState.STATUS_DISCONNECT:
                 self.db_logger.log_disconnect_assignment(
                     self.worker_id, self.assignment_id,
-                    time.time() + self.mturk_manager.auto_approve_delay,
+                    time.time() + self.auto_approve_delay,
                     status)
             elif status == AssignState.STATUS_EXPIRED:
                 self.db_logger.log_complete_assignment(
                     self.worker_id, self.assignment_id,
-                    time.time() + self.mturk_manager.auto_approve_delay,
+                    time.time() + self.auto_approve_delay,
                     status)
             elif status == AssignState.STATUS_RETURNED:
                 self.db_logger.log_abandon_assignment(
@@ -256,6 +286,7 @@ class MTurkAgent(Agent):
         """Add a received message to the state"""
         self.state.append_message(message)
 
+    # TODO remove last command stuff
     def set_last_command(self, command):
         """Changes the last command recorded as sent to the agent"""
         self.state.set_last_command(command)
@@ -264,6 +295,7 @@ class MTurkAgent(Agent):
         """Returns the last command to be sent to this agent"""
         return self.state.get_last_command()
 
+    # TODO re-examine message clearing
     def clear_messages(self):
         """Clears the message history for this agent"""
         self.state.clear_messages()
@@ -276,6 +308,7 @@ class MTurkAgent(Agent):
         """Returns an appropriate connection_id for this agent"""
         return "{}_{}".format(self.worker_id, self.assignment_id)
 
+    # TODO remove reconnect logging
     def log_reconnect(self):
         """Log a reconnect of this agent """
         shared_utils.print_and_log(
@@ -296,6 +329,7 @@ class MTurkAgent(Agent):
             'agent_id': self.worker_id,
         }
 
+    # TODO remove wait_for_status
     def wait_for_status(self, desired_status):
         """Suspend a thread until a particular assignment state changes
         to the desired state
@@ -307,6 +341,7 @@ class MTurkAgent(Agent):
                 return False
             time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
+    # TODO replace with a status check
     def is_in_task(self):
         """Use conversation_id to determine if an agent is in a task"""
         if self.conversation_id:
@@ -315,8 +350,7 @@ class MTurkAgent(Agent):
 
     def observe(self, msg):
         """Send an agent a message through the mturk_manager"""
-        self.mturk_manager.send_message(
-            self.worker_id, self.assignment_id, msg)
+        self.m_send_message(self.worker_id, self.assignment_id, msg)
 
     def put_data(self, id, data):
         """Put data into the message queue if it hasn't already been seen"""
@@ -333,6 +367,7 @@ class MTurkAgent(Agent):
             messages.append(self.msg_queue.get())
         return messages
 
+    # TODO examine where this happens
     def reduce_state(self):
         """Cleans up resources related to maintaining complete state"""
         self.flush_msg_queue()
@@ -367,7 +402,9 @@ class MTurkAgent(Agent):
             logging.INFO,
             '{} timed out before sending.'.format(self.id)
         )
-        self.mturk_manager.handle_turker_timeout(
+        # TODO prepare_timeout and handling_turker_timeout can happen
+        # in the manager when an exception is thrown
+        self.m_handle_turker_timeout(
             self.worker_id,
             self.assignment_id
         )
@@ -376,7 +413,7 @@ class MTurkAgent(Agent):
     def request_message(self):
         if not (self.disconnected or self.some_agent_disconnected or
                 self.hit_is_expired):
-            self.mturk_manager.send_command(
+            self.m_send_command(
                 self.worker_id,
                 self.assignment_id,
                 {'text': data_model.COMMAND_SEND_MESSAGE}
@@ -430,7 +467,9 @@ class MTurkAgent(Agent):
     def episode_done(self):
         """Return whether or not this agent believes the conversation to
         be done"""
-        if self.mturk_manager.get_agent_work_status(self.assignment_id) == \
+        # TODO re-examine after implementing better amazon state syncing.
+        # Do this for all get_agent_work_status calls
+        if self.m_get_agent_work_status(self.assignment_id) == \
                 self.ASSIGNMENT_NOT_DONE:
             return False
         else:
@@ -450,7 +489,7 @@ class MTurkAgent(Agent):
         if self.hit_is_abandoned:
             self._print_not_available_for('review')
         else:
-            if self.mturk_manager.get_agent_work_status(self.assignment_id) \
+            if self.m_get_agent_work_status(self.assignment_id) \
                     == self.ASSIGNMENT_DONE:
                 self.mturk_manager.approve_work(
                     assignment_id=self.assignment_id)
@@ -470,7 +509,7 @@ class MTurkAgent(Agent):
         if self.hit_is_abandoned:
             self._print_not_available_for('review')
         else:
-            if self.mturk_manager.get_agent_work_status(self.assignment_id) \
+            if self.m_get_agent_work_status(self.assignment_id) \
                     == self.ASSIGNMENT_DONE:
                 self.mturk_manager.reject_work(self.assignment_id, reason)
                 shared_utils.print_and_log(
@@ -499,7 +538,7 @@ class MTurkAgent(Agent):
         if self.hit_is_abandoned:
             self._print_not_available_for('bonus')
         else:
-            if self.mturk_manager.get_agent_work_status(self.assignment_id) in\
+            if self.m_get_agent_work_status(self.assignment_id) in\
                     (self.ASSIGNMENT_DONE, self.ASSIGNMENT_APPROVED):
                 unique_request_token = str(uuid.uuid4())
                 self.mturk_manager.pay_bonus(
@@ -545,6 +584,8 @@ class MTurkAgent(Agent):
 
     def set_hit_is_abandoned(self):
         """Update local state to abandoned and mark the HIT as expired"""
+        # TODO maybe this can be handled with throwing errors as well, thus
+        # removing the need for force_expire_hit here?
         if not self.hit_is_abandoned:
             self.hit_is_abandoned = True
             self.mturk_manager.force_expire_hit(
@@ -566,6 +607,7 @@ class MTurkAgent(Agent):
             i += 1
         return
 
+    # TODO clean up this whole thing once completes are guaranteed posts
     def wait_for_hit_completion(self, timeout=None):
         """Waits for a hit to be marked as complete"""
         # Timeout in seconds, after which the HIT will be expired automatically
@@ -581,7 +623,7 @@ class MTurkAgent(Agent):
         sync_attempts = 0
         while (
             not self.hit_is_complete and
-            self.mturk_manager.get_agent_work_status(self.assignment_id) !=
+            self.m_get_agent_work_status(self.assignment_id) !=
             self.ASSIGNMENT_DONE
         ):
             if sync_attempts < 8:
@@ -634,7 +676,7 @@ class MTurkAgent(Agent):
                 self.disconnected or self.hit_is_expired):
             self.mturk_manager.mark_workers_done([self])
             if direct_submit:
-                self.mturk_manager.send_command(
+                self.m_send_command(
                     self.worker_id,
                     self.assignment_id,
                     {'text': data_model.COMMAND_SUBMIT_HIT},
@@ -656,8 +698,9 @@ class MTurkAgent(Agent):
         worlds. Only really used in special circumstances where different
         agents need different onboarding worlds.
         """
-        self.mturk_manager.worker_manager.change_agent_conversation(
-            agent=self,
-            conversation_id=self.conversation_id,
-            new_agent_id=agent_id,
+        update_packet = {'agent_id': agent_id}
+        self.m_send_state_change(
+            self.worker_id,
+            self.assignment_id,
+            update_packet,
         )

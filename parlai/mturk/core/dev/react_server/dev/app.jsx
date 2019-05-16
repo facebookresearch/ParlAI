@@ -267,7 +267,6 @@ class MainApp extends React.Component {
 
 // TODO consolidate shared functionality from SocketManager in a way that
 // prevents this class from setting a whole lot of dummy methods
-// TODO update static functionality to cover socket changes
 class StaticApp extends React.Component {
   constructor(props) {
     super(props);
