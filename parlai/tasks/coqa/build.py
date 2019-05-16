@@ -11,6 +11,7 @@ import json
 
 TRAIN_FILENAME = 'coqa-train-v1.0.json'
 VALID_FILENAME = 'coqa-dev-v1.0.json'
+VERSION = '1.0'
 URL = 'https://nlp.stanford.edu/data/coqa/'
 
 
@@ -39,7 +40,7 @@ def make_parlai_format(outpath, dtype, data):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CoQA')
-    version = None
+    version = VERSION
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
