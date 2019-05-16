@@ -10,6 +10,7 @@ import math
 import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
+from parlai.core.utils import warn_once
 from parlai.core.utils import neginf
 
 LAYER_NORM_EPS = 1e-12  # Epsilon for layer norm.
@@ -291,6 +292,7 @@ class TransformerEncoder(nn.Module):
         self.variant = variant
         self.n_segments = n_segments
 
+        self.n_positions = n_positions
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
             'Transformer embedding size must be a multiple of n_heads'
@@ -356,6 +358,13 @@ class TransformerEncoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
 
+        if positions.shape[1] > self.n_positions:
+            warn_once(
+                'You are inputting a sequence of {x} length, but only have'
+                '--n-positions {y}. Set --truncate or increase --n-positions'.format(
+                    x=positions.shape[1],
+                    y=self.n_positions)
+            )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
 
         if self.n_segments >= 1:
@@ -482,6 +491,7 @@ class TransformerDecoder(nn.Module):
         self.embeddings_scale = embeddings_scale
         self.dropout = nn.Dropout(p=dropout)  # --dropout
 
+        self.n_positions = n_positions
         self.out_dim = embedding_size
         assert embedding_size % n_heads == 0, \
             'Transformer embedding size must be a multiple of n_heads'
@@ -527,7 +537,13 @@ class TransformerDecoder(nn.Module):
             tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
             tensor = _normalize(tensor, self.norm_embeddings)
-
+        if positions.shape[1] > self.n_positions:
+            warn_once(
+                'You are inputting a sequence of {x} length, but only have'
+                '--n-positions {y}. Set --truncate or increase --n-positions'.format(
+                    x=positions.shape[1],
+                    y=self.n_positions)
+            )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
         tensor = self.dropout(tensor)  # --dropout
 
