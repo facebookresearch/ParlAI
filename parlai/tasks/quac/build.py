@@ -34,8 +34,6 @@ OUTPUT_FORMAT = (
 def _parse_answers(q_a):
     starts = []
     labels = []
-    starts.append(str(q_a['orig_answer']['answer_start']))
-    labels.append(q_a['orig_answer']['text'].replace('|', ' __PIPE__ '))
     for each in q_a['answers']:
         starts.append(str(each['answer_start']))
         labels.append(each['text'].replace('|', ' __PIPE__ '))
