@@ -26,6 +26,8 @@ def print_announcements(opt):
 
     Also gives the user the option to suppress the output.
     """
+    # no annoucements to make right now
+    return
 
     noannounce_file = os.path.join(opt.get('datapath'), 'noannouncements')
     if os.path.exists(noannounce_file):
@@ -54,29 +56,18 @@ def print_announcements(opt):
     stars = ''.join([color + '*' * size for color in rainbow])
     stars += RESET
 
-    # compute the countdown
-    import datetime
-    now = datetime.datetime.utcnow().timestamp()
-    closes = 1558151989  # 23:59:59 EDT Fri, May 18, 2019
-    daysleft = max(0, (int(closes - now) // (60 * 60 * 24)))
-
     # do the actual output
-    print("\n".join([
-        "",
-        stars + RESET,
-        'Thank you for using ParlAI! We are conducting a user survey.',
-        'Please fill it out at https://forms.gle/uEFbYGP7w6hiuGQT9',
+    print('\n'.join([
         '',
-        '{}The survey will close in {}{} day{}{}, on May 17, 2019.{}'.format(
-            BOLD,  RED, daysleft, 's' if daysleft != 1 else '', RESET + BOLD, RESET,
-        ),
-        '',
+        stars,
+        BOLD,
+        'Announcements go here.',
+        RESET,
         # don't bold the suppression command
-        '{}To suppress this message (and future announcements), run\n`touch {}`'.format(
-            RESET, noannounce_file
+        'To suppress this message (and future announcements), run\n`touch {}`'.format(
+            noannounce_file
         ),
         stars,
-        RESET,
     ]))
 
 
