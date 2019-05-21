@@ -11,6 +11,8 @@ ParlAI Quick-start
 Install
 -------
 
+First, make sure you have Python 3. Now open up terminal and run the following.
+
 1. Clone ParlAI Repository:
 
 .. code-block:: bash
@@ -57,19 +59,79 @@ Let's try asking the model a question ourselves.
 .. code-block:: bash
 
   # interact with saved model
-  python examples/interactive.py -mf /tmp/babi_memnn
+  python examples/interactive.py -mf /tmp/babi_memnn -ecands vocab
   ...
   Enter your message: John went to the hallway.\n Where is John?
 
 Hopefully the model gets this right!
 
 
-Simple model
-------------
+
+Train a Transformer on Twitter
+------------------------------
+
+Now let's try training a Transformer (Vaswani, et al 2017) ranker model.
+Make sure to complete this section on a GPU with PyTorch installed.
+
+We'll be training on the Twitter task, which is a dataset of a tweets and replies.
+There's more information on tasks in the rest of these docs,
+including a full list of `tasks <http://parl.ai/docs/tasks.html>`_ and
+`instructions <http://parl.ai/docs/tutorial_basic.html#training-and-evaluating-existing-agents>`_
+on specifying arguments for training and evaluation, including the ``-t <task>`` argument.
+Let's begin again by printing the first few examples.
+
+.. code-block:: bash
+
+  # display first examples from twitter dataset
+  python examples/display_data.py -t twitter
+
+Now, we'll train the model. This will take a while.
+
+.. code-block:: bash
+
+  # train transformer ranker
+  python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True
+
+Take note of some of the command line arguments we use here -
+we set batch size to 10, run validation every 3600 seconds,
+and take candidates from the batch for training and evaluation steps.
+The train model script will by default save the model after achieving best validation results so far.
+The twitter task is quite large, and validation is run by default only after each epoch (full pass through the train data),
+but we force validation to happen once an hour with ``-vtim 3600``.
+
+This train model script evaluates the model on the valid and test sets at the end of training, but if we wanted to evaluate a saved model -
+perhaps to compare the results of our newly trained Transformer against a pretrained seq2seq baseline from our `Model Zoo <http://parl.ai/docs/zoo.html>`_,
+we could do the following:
+
+.. code-block:: bash
+
+  # Evaluate seq2seq model trained on twitter from our model zoo
+  python examples/eval_model.py -t twitter -m legacy:seq2seq:0 -mf models:twitter/seq2seq/twitter_seq2seq_model
+
+
+Let's print some of the transformer's predictions with the same display_model script from above.
+
+.. code-block:: bash
+
+  # display predictions for model saved at specific file on twitter
+  python examples/display_model.py -t twitter -mf /tmp/tr_twitter -ecands batch
+
+And finally, we can talk to the model interactively as before:
+
+.. code-block:: bash
+
+  # interact with saved model
+  python examples/interactive.py -mf /tmp/tr_twitter
+  ...
+  Enter your message: Hi, what are you up to?
+
+
+Add a simple model
+------------------
 
 Let's put together a super simple model which will print the parsed version of what is said to it.
 
-First let's set it up:
+First let's set it up.
 
 .. code-block:: bash
 
@@ -77,6 +139,7 @@ First let's set it up:
   touch parlai/agents/parse/parse.py
 
 We'll inherit the TorchAgent parsing code so we don't have to write it ourselves.
+Open parse.py and copy the following:
 
 .. code-block:: python
 
@@ -107,12 +170,14 @@ Now let's try our parse agent again.
 
   python examples/display_model.py -t babi:task10k:1 -m parse -df /tmp/parse.dict
 
-The ParseAgent overrides one of two abstract functions in TorchAgent: ``train_step`` and ``eval_step``.
-Overriding these functions allow you to build an agent quickly by implementing just the most
+This ParseAgent implements ``eval_step``, one of two abstract functions in TorchAgent.
+The other is ``train_step``.
+You can easily and quickly build a model agent by creating a class which implements only these two functions with the most
 typical custom code for a model, and inheriting vectorization and batching from TorchAgent.
 
-You can override any functions to change the default argument values or to override the behavior with your own.
+As needed, you can also override any functions to change the default argument values or to override the behavior with your own.
 For example, you could change the vectorizer to return numpy arrays instead of Torch Tensors.
+
 
 
 Conclusion
