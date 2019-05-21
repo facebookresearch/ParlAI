@@ -358,11 +358,11 @@ class TransformerEncoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
 
-        if positions.shape[1] > self.n_positions:
+        if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have'
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
-                    x=positions.shape[1],
+                    x=positions.max().item(),
                     y=self.n_positions)
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
@@ -537,11 +537,11 @@ class TransformerDecoder(nn.Module):
             tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
             tensor = _normalize(tensor, self.norm_embeddings)
-        if positions.shape[1] > self.n_positions:
+        if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have'
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
-                    x=positions.shape[1],
+                    x=positions.max().item(),
                     y=self.n_positions)
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
