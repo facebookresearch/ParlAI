@@ -4,13 +4,6 @@
 
 --------------------------------------------------------------------------------
 
-## User Survey
-
-We are currently conducting a user survey! If you are a ParlAI user or interested in being one,
-please consider filling out the survey at [https://forms.gle/uEFbYGP7w6hiuGQT9](https://forms.gle/uEFbYGP7w6hiuGQT9).
-
---------------------------------------------------------------------------------
-
 ParlAI (pronounced “par-lay”) is a framework for dialogue AI research, implemented in Python.
 
 Its goal is to provide researchers:

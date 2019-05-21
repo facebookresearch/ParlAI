@@ -1,8 +1,3 @@
-## User Survey
-
-We are currently conducting a user survey! If you are a ParlAI user or interested in being one,
-please consider filling out the survey at [https://forms.gle/uEFbYGP7w6hiuGQT9](https://forms.gle/uEFbYGP7w6hiuGQT9).
-
 ## News
 
 2019-05-03: The [What makes a good Conversation project page](https://parl.ai/projects/controllable_dialogue/) is now available with pretrained models.

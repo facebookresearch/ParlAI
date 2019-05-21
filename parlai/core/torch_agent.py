@@ -540,8 +540,10 @@ class TorchAgent(Agent):
         # indicate whether using fp16
         self.fp16 = self.opt.get('fp16', False)
 
+        # Default to the class name, sans "Agent". child can override
+        self.id = type(self).__name__.replace("Agent", "")
+
         # now set up any fields that all instances may need
-        self.id = 'TorchAgent'  # child can override
         self.EMPTY = torch.LongTensor([])
         self.NULL_IDX = self.dict[self.dict.null_token]
         self.START_IDX = self.dict[self.dict.start_token]
