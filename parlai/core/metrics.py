@@ -114,17 +114,18 @@ def _rouge(guess, answers):
     """Compute ROUGE score between guess and *any* answers. Return the best."""
     if rouge is None:
         return None, None, None
-    evaluator = rouge.Rouge(metrics = ['rouge-n', 'rouge-l'],
-        max_n = 2,
-        limit_length = True,
-        length_limit = 1024,
-        length_limit_type = 'words',
-        apply_avg = False,
-        apply_best = True,
-        alpha = 0.5, # Default F1_score
-        weight_factor = 1.2,
-        stemming = True)
-    scores = [evaluator.get_scores(normalize_answer(guess), normalize_answer(a)) for a in answers]
+    evaluator = rouge.Rouge(metrics=['rouge-n', 'rouge-l'],
+                            max_n=2,
+                            limit_length=True,
+                            length_limit=1024,
+                            length_limit_type='words',
+                            apply_avg=False,
+                            apply_best=True,
+                            alpha=0.5,  # Default F1_score
+                            weight_factor=1.2,
+                            stemming=True)
+    scores = [evaluator.get_scores(normalize_answer(guess), normalize_answer(a))
+              for a in answers]
     scores_rouge1 = [score['rouge-1']['r'] for score in scores]
     scores_rouge2 = [score['rouge-2']['r'] for score in scores]
     scores_rougel = [score['rouge-l']['r'] for score in scores]
@@ -275,7 +276,8 @@ class Metrics(object):
         # User-reported metrics
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
-                if k not in ['correct', 'f1', 'hits@k', 'bleu', 'rouge-1', 'rouge-2', 'rouge-l']:
+                if k not in ['correct', 'f1', 'hits@k', 'bleu', 'rouge-1',
+                             'rouge-2', 'rouge-l']:
                     if k in self.metrics_list:
                         with self._lock():
                             self.metrics[k] += v
