@@ -142,7 +142,7 @@ def aggregate_metrics(reporters):
     if rouge is not None:
         sums['rouge-1'] = 0
         sums['rouge-2'] = 0
-        sums['rouge-l'] = 0
+        sums['rouge-L'] = 0
     num_tasks = 0
     total = 0
     for i in range(len(reporters)):
@@ -182,7 +182,7 @@ class Metrics(object):
             # only compute rougr if we can
             self.metrics_list.append('rouge-1')
             self.metrics_list.append('rouge-2')
-            self.metrics_list.append('rouge-l')
+            self.metrics_list.append('rouge-L')
         for k in self.metrics_list:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0
@@ -265,10 +265,10 @@ class Metrics(object):
                 if rouge1 is not None:
                     self.metrics['rouge-1'] += rouge1
                     self.metrics['rouge-2'] += rouge2
-                    self.metrics['rouge-l'] += rougel
+                    self.metrics['rouge-L'] += rougel
                     self.metrics['rouge-1_cnt'] += 1
                     self.metrics['rouge-2_cnt'] += 1
-                    self.metrics['rouge-l_cnt'] += 1
+                    self.metrics['rouge-L_cnt'] += 1
 
         # Ranking metrics.
         self.update_ranking_metrics(observation, labels)
@@ -277,7 +277,7 @@ class Metrics(object):
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
                 if k not in ['correct', 'f1', 'hits@k', 'bleu', 'rouge-1',
-                             'rouge-2', 'rouge-l']:
+                             'rouge-2', 'rouge-L']:
                     if k in self.metrics_list:
                         with self._lock():
                             self.metrics[k] += v
