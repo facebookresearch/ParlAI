@@ -782,7 +782,8 @@ class TorchAgent(Agent):
             self._number_training_updates = states['number_training_updates']
         if self.scheduler and 'lr_scheduler' in states:
             self.scheduler.load_state_dict(states['lr_scheduler'])
-        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler'):
+        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler',
+                                                      None):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
 
     def report(self):
@@ -1375,10 +1376,10 @@ class TorchAgent(Agent):
             )
         else:
             states['number_training_updates'] = self._number_training_updates
-            if getattr(self, 'scheduler'):
+            if getattr(self, 'scheduler', None):
                 states['lr_scheduler'] = self.scheduler.state_dict()
                 states['lr_scheduler_type'] = self.opt['lr_scheduler']
-            if getattr(self, 'warmup_scheduler'):
+            if getattr(self, 'warmup_scheduler', None):
                 states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
 
         return states
