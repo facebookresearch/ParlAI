@@ -21,3 +21,4 @@ sphinx_rtd_theme
 tqdm
 websocket-client
 websocket-server
+py-rouge
