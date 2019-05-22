@@ -44,13 +44,14 @@ class TestEvalModel(unittest.TestCase):
             # accuracy should be one
             self.assertTrue(score['accuracy'] == 1,
                             "accuracy != 1")
-            if rouge != None:
+            if rouge is not None:
                 self.assertTrue(score['rouge-1'] == 1,
                                 'rouge1 != 1')
                 self.assertTrue(score['rouge-2'] == 0,
                                 'rouge-2 != 0')
                 self.assertTrue(score['rouge-l'] == 1,
                                 'rouge-2 != 1')
+
 
 if __name__ == '__main__':
     unittest.main()
