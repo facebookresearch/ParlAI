@@ -8,6 +8,12 @@ from examples.eval_model import setup_args
 import ast
 import unittest
 import parlai.core.testing_utils as testing_utils
+try:
+    import rouge as rouge
+except ImportError:
+    # User doesn't have rouge installed, so we can't use it for rouge
+    # We'll just turn off things, but we might want to warn the user
+    rouge = None
 
 
 class TestEvalModel(unittest.TestCase):
@@ -38,7 +44,13 @@ class TestEvalModel(unittest.TestCase):
             # accuracy should be one
             self.assertTrue(score['accuracy'] == 1,
                             "accuracy != 1")
-
+            if rouge != None:
+                self.assertTrue(score['rouge-1'] == 1,
+                                'rouge1 != 1')
+                self.assertTrue(score['rouge-2'] == 0,
+                                'rouge-2 != 0')
+                self.assertTrue(score['rouge-l'] == 1,
+                                'rouge-2 != 1')
 
 if __name__ == '__main__':
     unittest.main()
