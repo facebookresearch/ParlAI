@@ -251,7 +251,7 @@ workflows:
       - deploy_website:
           filters:
             branches:
-              only: testwebsite # change back to master before landing
+              only: master
       - test_website:
           requires:
             - deploy_website
