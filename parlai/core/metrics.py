@@ -140,9 +140,9 @@ def aggregate_metrics(reporters):
     if nltkbleu is not None:
         sums['bleu'] = 0
     if rouge is not None:
-        sums['rouge-1'] = 0
-        sums['rouge-2'] = 0
-        sums['rouge-L'] = 0
+        sums['rouge-1'] = 0.0
+        sums['rouge-2'] = 0.0
+        sums['rouge-L'] = 0.0
     num_tasks = 0
     total = 0
     for i in range(len(reporters)):
@@ -179,7 +179,7 @@ class Metrics(object):
             # only compute bleu if we can
             self.metrics_list.append('bleu')
         if rouge is not None:
-            # only compute rougr if we can
+            # only compute rouge if we can
             self.metrics_list.append('rouge-1')
             self.metrics_list.append('rouge-2')
             self.metrics_list.append('rouge-L')

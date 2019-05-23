@@ -33,18 +33,13 @@ class TestEvalModel(unittest.TestCase):
         for i in range(1, len(scores)):
             score = ast.literal_eval(scores[i])
             # check totals
-            self.assertTrue(score['exs'] == i,
-                            "Total is incorrect")
+            self.assertEqual(score['exs'], i, "Total is incorrect")
             # accuracy should be one
-            self.assertTrue(score['accuracy'] == 1,
-                            "accuracy != 1")
+            self.assertEqual(score['accuracy'], 1, "accuracy != 1")
             if 'rouge-1' in score:
-                self.assertTrue(score['rouge-1'] == 1,
-                                'rouge1 != 1')
-                self.assertTrue(score['rouge-2'] == 0,
-                                'rouge-2 != 0')
-                self.assertTrue(score['rouge-L'] == 1,
-                                'rouge-L != 1')
+                self.assertEqual(score['rouge-1'], 1, 'rouge1 != 1')
+                self.assertEqual(score['rouge-2'], 0, 'rouge-2 != 0')
+                self.assertEqual(score['rouge-L'], 1, 'rouge-L != 1')
 
 
 if __name__ == '__main__':
