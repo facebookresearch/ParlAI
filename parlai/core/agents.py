@@ -757,8 +757,7 @@ def _create_task_agents(opt):
     my_module = importlib.import_module(module_name)
     try:
         # Tries to call the create_agent function in agents.py
-        create_agent = getattr(my_module, 'create_agents')
-        task_agents = create_agent(opt)
+        task_agents = my_module.create_agent(opt)
     except AttributeError:
         # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)

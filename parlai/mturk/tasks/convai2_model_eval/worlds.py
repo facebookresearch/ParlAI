@@ -199,7 +199,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
 
 class Convai2EvalWorld(MultiAgentDialogWorld):
     def __init__(self, opt, agents=None, shared=None,
-                 range_turn=[5, 6], max_turn=10,
+                 range_turn=(5, 6), max_turn=10,
                  max_resp_time=120,
                  model_agent_opt=None,
                  world_tag='',

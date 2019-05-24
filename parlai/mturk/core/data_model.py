@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
+r"""
 Commands to communicate between the agent manager and individual clients. The
 following describes the intended behavoir of each command
 

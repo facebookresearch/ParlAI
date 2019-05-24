@@ -84,7 +84,7 @@ class retry(object):
         from functools import wraps
         @wraps(testfn)
         def _wrapper(testself, *args, **kwargs):
-            for i in range(self.ntries - 1):
+            for _ in range(self.ntries - 1):
                 try:
                     return testfn(testself, *args, **kwargs)
                 except testself.failureException:

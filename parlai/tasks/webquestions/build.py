@@ -10,12 +10,14 @@ import json
 import os
 import re
 
+STRIP_CHARS = ' ()"()'
+
 
 def parse_ans(a):
     a = a.lstrip('(list')
     ans = ''
-    for a in re.split('\(description', a):
-        a = a.strip(' ()"()')
+    for a in re.split(r'\(description', a):
+        a = a.strip(STRIP_CHARS)
         ans = ans + '|' + a
     return ans.lstrip('|')
 

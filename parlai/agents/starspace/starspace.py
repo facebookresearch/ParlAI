@@ -335,7 +335,7 @@ class StarspaceAgent(Agent):
         if cache_sz < 1:
             return negs
         k = self.opt['neg_samples']
-        for i in range(1, k * 3):
+        for _i in range(1, k * 3):
             index = random.randint(0, cache_sz)
             neg = self.ys_cache[index]
             if not self.same(ys, neg):

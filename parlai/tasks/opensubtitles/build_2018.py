@@ -78,7 +78,7 @@ def get_movie_id(filename_path):
 # and apply deduplication for the extracted replicas
 def get_list_of_files(top_path):
     result = {}
-    for path, dirs, files in os.walk(top_path):
+    for path, _dirs, files in os.walk(top_path):
         for filename in files:
             if filename.endswith('.xml'):
                 full_filename = os.path.realpath(os.path.join(path, filename))

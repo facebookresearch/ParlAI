@@ -304,7 +304,9 @@ class TransformerEncoder(nn.Module):
         if embedding is not None:
             self.embeddings = embedding
         else:
-            assert False
+            raise AssertionError(
+                "This code should not execute. Left here in case we want to enable it."
+            )
             assert padding_idx is not None
             self.embeddings = nn.Embedding(
                 vocabulary_size, embedding_size, padding_idx=padding_idx

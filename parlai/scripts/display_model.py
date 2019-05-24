@@ -40,7 +40,7 @@ def display_model(opt):
 
     # Show some example dialogs.
     with world:
-        for k in range(int(opt['num_examples'])):
+        for _k in range(int(opt['num_examples'])):
             world.parley()
             print(world.display() + "\n~~")
             if world.epoch_done():

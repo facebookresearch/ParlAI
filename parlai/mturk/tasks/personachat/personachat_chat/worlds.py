@@ -116,7 +116,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
 
 class PersonaChatWorld(MultiAgentDialogWorld):
     def __init__(self, opt, agents=None, shared=None,
-                 range_turn=[4, 7], max_turn=10,
+                 range_turn=(4, 7), max_turn=10,
                  max_resp_time=120,
                  world_tag='NONE',
                  agent_timeout_shutdown=120):
@@ -247,7 +247,7 @@ class PersonaChatWorld(MultiAgentDialogWorld):
                 '<b>You can track your character description on the left.</b> '
                 '\n <span style="color:blue"><b>Please try to speak to the '
                 'other person as if you are the character assigned.</b></span>'
-                '\n \ <span style="color:blue"><b>Do not trivially copy the '
+                '\n <span style="color:blue"><b>Do not trivially copy the '
                 'character descriptions into the message.</b></span>'
             )
 
