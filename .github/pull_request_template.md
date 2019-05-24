@@ -3,16 +3,12 @@ Please enter a clear and concise description of what your pull request does, and
 it is necessary. If your patch fixes an issue, please reference that issue here.
 
 **Testing steps**
-Enter steps to test your pull request:
-
-**Expected behavior**
-Give a clear and concise description of what you expected to happen during testing.
+Enter steps to test your pull request. Give a clear and concise description of
+what you expected to happen during testing.
 
 **Logs**
-If applicable, please paste the command line from your testing:
-
 ```
-Output goes here
+If applicable, please paste the command line from your testing:
 ```
 
 **Other information**
