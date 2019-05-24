@@ -9,7 +9,7 @@ from parlai.core.image_featurizers import ImageLoader
 from .build import build
 try:
     import torch  # noqa: F401
-except Exception as e:
+except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
 from parlai.core.dict import DictionaryAgent

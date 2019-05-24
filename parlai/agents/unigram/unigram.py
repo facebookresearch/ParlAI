@@ -74,7 +74,7 @@ class UnigramAgent(Agent):
         return (
             not word.startswith('__') and
             word != '\n' and
-            not re.match('[^\w]', word)
+            not re.match(r'[^\w]', word)
         )
 
     def get_prediction(self):

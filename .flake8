@@ -1,7 +1,8 @@
 [flake8]
-exclude = .git,__pycache__,parlai_internal,legacy_agents,task_config.py
+exclude = .git,__pycache__,parlai_internal,legacy_agents,task_config.py,.eggs
 extend-ignore =
-    C
     E741
+    E501
+select = C,E,F,W,B,B950
 
-max-line-length=88
+max-line-length=80

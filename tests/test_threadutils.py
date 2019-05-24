@@ -30,7 +30,7 @@ class TestSharedTable(unittest.TestCase):
         st = SharedTable({'key': 0})
         try:
             st['none']
-            assert False, 'did not fail on nonexistent key'
+            self.fail('did not fail on nonexistent key')
         except KeyError:
             pass
 
@@ -42,7 +42,7 @@ class TestSharedTable(unittest.TestCase):
 
         try:
             st['key'] = 2.1
-            assert False, 'cannot change type of value for set keys'
+            self.fail('cannot change type of value for set keys')
         except TypeError:
             pass
 
@@ -51,7 +51,7 @@ class TestSharedTable(unittest.TestCase):
 
         try:
             st['key'] = True
-            assert False, 'cannot change removed key'
+            self.fail('cannot change removed key')
         except KeyError:
             pass
 

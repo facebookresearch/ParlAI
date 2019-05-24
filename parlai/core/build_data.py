@@ -254,8 +254,7 @@ def modelzoo_path(datapath, path):
         module_name = 'parlai.zoo.{}'.format(animal)
         try:
             my_module = importlib.import_module(module_name)
-            download = getattr(my_module, 'download')
-            download(datapath)
+            my_module.download(datapath)
         except (ImportError, AttributeError):
             pass
 

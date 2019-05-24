@@ -104,7 +104,7 @@ def verify(opt, printargs=None, print_parser=None):
                                 opt,
                             )
                         is_label_cand[c] = True
-                for l, has in is_label_cand.items():
+                for _, has in is_label_cand.items():
                     if has is False:
                         warn("warning: label missing in candidate_labels:\n", act, opt)
                         counts['label_candidates_with_missing_label'] += 1

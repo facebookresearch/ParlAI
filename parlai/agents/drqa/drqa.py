@@ -351,12 +351,12 @@ class DrqaAgent(Agent):
             return paras[0:1]
         new_paras = []
         if pi > 0:
-            for i in range(min(subsample, pi - 1)):
+            for _i in range(min(subsample, pi - 1)):
                 ind = random.randint(0, pi - 1)
                 new_paras.append(paras[ind])
         new_paras.append(paras[pi])
         if pi < len(paras) - 1:
-            for i in range(min(subsample, len(paras) - 1 - pi)):
+            for _i in range(min(subsample, len(paras) - 1 - pi)):
                 ind = random.randint(pi + 1, len(paras) - 1)
                 new_paras.append(paras[ind])
         return new_paras
