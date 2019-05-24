@@ -147,17 +147,21 @@ class History(object):
 
     :param dict_agent:
         DictionaryAgent object for tokenizing the history
+
+    :param int max_speakers:
+        Maximum number of speakers in the conversation.
     """
 
     def __init__(self, opt, field='text', vec_type='deque', maxlen=None,
                  size=-1, p1_token='__p1__', p2_token='__p2__',
-                 dict_agent=None):
+                 dict_agent=None, max_speakers=2):
         self.field = field
         self.dict = dict_agent
         self.delimiter = opt.get('delimiter', '\n')
         self.delimiter_tok = self.parse(self.delimiter)
         self.size = size
         self.split_on_newln = opt.get('split_lines', False)
+        self.max_speakers = max_speakers
 
         # set up history objects
         if vec_type != 'deque' and vec_type != 'list':
@@ -169,6 +173,13 @@ class History(object):
 
         self.history_strings = []
         self.history_vecs = []
+        # turns keeps track of which turn in dialogue this is
+        self.turns = []
+        self.turn_id = 0
+        # positions keeps track of positioning of individual words
+        self.positions = []
+        # speakers keeps track of who was doing the speaking
+        self.speakers = []
 
         # person token args
         self.add_person_tokens = opt.get('person_tokens', False)
@@ -187,6 +198,10 @@ class History(object):
         """Clear the history."""
         self.history_strings = []
         self.history_vecs = []
+        self.speakers = []
+        self.turns = []
+        self.turn_id = 0
+        self.positions = []
 
     def _update_strings(self, text):
         if self.size > 0:
@@ -194,11 +209,30 @@ class History(object):
                 self.history_strings.pop(0)
         self.history_strings.append(text)
 
-    def _update_vecs(self, text):
+    def _update_vecs(self, text, speaker):
+        """
+        Update the vectors.
+
+        :param str text: the text to add
+        :param int speaker: the speaker to keep track of. Recommended 1 or 2.
+        """
         if self.size > 0:
             while len(self.history_vecs) >= self.size:
                 self.history_vecs.pop(0)
-        self.history_vecs.append(self.parse(text))
+                self.turns.pop(0)
+                self.positions.pop(0)
+                self.speakers.pop(0)
+
+        tokens = self.parse(text)
+        self.history_vecs.append(tokens)
+
+        # record the speaker we're told
+        self.speakers.append([speaker] * len(tokens))
+        # positions is clear, start it fresh every time
+        self.positions.append(list(range(len(tokens))))
+        # turns will be rescaled in get_feature_vecs
+        self.turns.append([self.turn_id] * len(tokens))
+        self.turn_id += 1
 
     def update_history(self, obs, add_next=None):
         """
@@ -220,7 +254,7 @@ class History(object):
             # update history string
             self._update_strings(add_next)
             # update history vecs
-            self._update_vecs(add_next)
+            self._update_vecs(add_next, 2)
 
         if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
@@ -235,7 +269,7 @@ class History(object):
                 # update history string
                 self._update_strings(text)
                 # update history vecs
-                self._update_vecs(text)
+                self._update_vecs(text, 1)
 
         if obs['episode_done']:
             # end of this episode, clear the history when we see a new example
@@ -247,26 +281,42 @@ class History(object):
             return self.delimiter.join(self.history_strings)
         return None
 
-    def get_history_vec(self):
-        """Return a vectorized version of the history."""
-        if len(self.history_vecs) == 0:
+    def _max_concat(self, seq, delimiter):
+        if len(seq) == 0:
             return None
 
         if self.vec_type == 'deque':
             history = deque(maxlen=self.max_len)
-            for vec in self.history_vecs[:-1]:
+            for vec in seq[:-1]:
                 history.extend(vec)
-                history.extend(self.delimiter_tok)
-            history.extend(self.history_vecs[-1])
+                history.extend(delimiter)
+            history.extend(seq[-1])
         else:
             # vec type is a list
             history = []
-            for vec in self.history_vecs[:-1]:
+            for vec in seq[:-1]:
                 history += vec
-                history += self.delimiter_tok
-            history += self.history_vecs[-1]
+                history += delimiter
+            history += seq[-1]
 
         return history
+
+    def get_history_vec(self):
+        """Return a vectorized version of the history."""
+        return self._max_concat(self.history_vecs, self.delimiter_tok)
+
+    def get_features_vec(self):
+        """Returns a vectorized version of the conversational features."""
+        delim = [0] * len(self.delimiter)
+        speakers = self._max_concat(self.speakers, delim)
+        positions = self._max_concat(self.positions, delim)
+        # we want turns to count in reverse, so we need to do some magic to reverse
+        # but we also want it to be offset from speakers since we plan to abuse
+        # the n_segments
+        turns = self._max_concat(self.turns, delim)
+        turn_offset = self.max_speakers + self.turn_id
+        turns = [turn_offset - t for t in turns]
+        return [positions, turns, speakers]
 
     def get_history_vec_list(self):
         """Return a list of history vecs."""

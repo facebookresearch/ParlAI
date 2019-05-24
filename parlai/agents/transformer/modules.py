@@ -372,7 +372,12 @@ class TransformerEncoder(nn.Module):
         if self.n_segments >= 1:
             if segments is None:
                 segments = torch.zeros_like(input)
-            tensor = tensor + self.segment_embeddings(segments)
+            segments = self.segment_embeddings(segments)
+            if segments.shape != tensor.shape:
+                # segments has multiple features, so just add them all
+                segments = segments.sum(dim=1)
+                assert segments.shape == tensor.shape
+            tensor = tensor + segments
 
         if self.variant == 'xlm':
             tensor = _normalize(tensor, self.norm_embeddings)

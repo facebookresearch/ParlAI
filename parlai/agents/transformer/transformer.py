@@ -4,7 +4,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.utils import warn_once
-from parlai.core.utils import padded_3d
+from parlai.core.utils import padded_3d, padded_tensor
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 
@@ -200,6 +200,7 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
+        argparser.add_argument('--special-features', type='bool', default=False)
         cls.dictionary_class().add_cmdline_args(argparser)
 
         super(TransformerGeneratorAgent, cls).add_cmdline_args(argparser)
@@ -214,3 +215,59 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         if self.use_cuda:
             self.model.cuda()
         return self.model
+
+    def _set_text_vec(self, obs, history, truncate):
+        obs = super()._set_text_vec(obs, history, truncate)
+        if 'text' not in obs:
+            return obs
+
+        if not self.opt['special_features']:
+            return obs
+
+        if 'feats_vec' not in obs:
+            obs['feats_vec'] = history.get_features_vec()
+
+        # check truncation
+        if 'feats_vec' in obs:
+            feats = obs['feats_vec']
+            feats = [
+                torch.LongTensor(self._check_truncate(f, truncate, True))
+                for f in feats
+            ]
+            obs['feats_vec'] = feats
+
+        return obs
+
+    def batchify(self, obs_batch, sort=False):
+        batch = super().batchify(obs_batch, sort=sort)
+        if not self.opt['special_features']:
+            batch['positions_vec'] = None
+            batch['segments_vec'] = None
+            return batch
+
+        positions, *segments = zip(*(ex['feats_vec'] for ex in batch.observations))
+        batch['positions_vec'], _ = padded_tensor(
+            positions, 0, self.use_cuda, fp16friendly=self.opt.get('fp16')
+        )
+        batch['segments_vec'] = padded_3d(
+            segments, 0, self.use_cuda, fp16friendly=self.opt.get('fp16')
+        ).transpose(0, 1)
+        return batch
+
+    def _dummy_batch(self, batchsize, maxlen):
+        """
+        Creates a dummy batch. This is used to preinitialize the cuda buffer,
+        or otherwise force a null backward pass after an OOM.
+        """
+        batch = super()._dummy_batch(batchsize, maxlen)
+
+        if self.opt['special_features']:
+            batch['positions_vec'] = torch.ones(batchsize, maxlen).long().cuda()
+            batch['segments_vec'] = torch.ones(batchsize, 2, maxlen).long().cuda()
+        else:
+            batch['positions_vec'] = None
+            batch['segments_vec'] = None
+        return batch
+
+    def _model_input(self, batch):
+        return (batch.text_vec, batch.positions_vec, batch.segments_vec, )
