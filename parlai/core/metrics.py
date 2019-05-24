@@ -123,7 +123,8 @@ def _rouge(guess, answers):
                             apply_best=True,
                             alpha=0.5,  # Default F1_score
                             weight_factor=1.2,
-                            stemming=True)
+                            stemming=False,
+                            ensure_compatibility=True)
     scores = [evaluator.get_scores(normalize_answer(guess), normalize_answer(a))
               for a in answers]
     scores_rouge1 = [score['rouge-1']['r'] for score in scores]
