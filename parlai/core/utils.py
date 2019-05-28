@@ -711,7 +711,7 @@ class OffensiveLanguageDetector(object):
 
         segment(text)
         res = []
-        for i in range(0, k):
+        for _i in range(0, k):
             res.append(heapq._heappop_max(max_heap)[1])
         return res
 

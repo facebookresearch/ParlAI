@@ -24,15 +24,6 @@ def detect_gpu():
     return commit_msg or test_changed
 
 
-def detect_long_cpu():
-    commit_msg = '[cpu]' in testing_utils.git_commit_messages().lower()
-    test_changed = any(
-        'tests/nightly/cpu' in fn
-        for fn in testing_utils.git_changed_files()
-    )
-    return commit_msg or test_changed
-
-
 def detect_data():
     commit_msg = '[data]' in testing_utils.git_commit_messages().lower()
     test_changed = any(
@@ -53,7 +44,6 @@ def detect_mturk():
 
 MAPPING = {
     'nightly_gpu_tests': detect_gpu,
-    'nightly_cpu_tests': detect_long_cpu,
     'datatests': detect_data,
     'mturk_tests': detect_mturk,
 }

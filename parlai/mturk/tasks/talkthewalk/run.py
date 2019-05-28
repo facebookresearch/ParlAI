@@ -73,9 +73,9 @@ def main():
         worker_count = 0
 
         def assign_worker_roles(workers):
-                workers[0].id = mturk_agent_ids[0]
-                workers[1].id = mturk_agent_ids[1]
-                return [workers[0], workers[1]]
+            workers[0].id = mturk_agent_ids[0]
+            workers[1].id = mturk_agent_ids[1]
+            return [workers[0], workers[1]]
 
         def run_conversation(mturk_manager, opt, workers):
             # Create mturk agents

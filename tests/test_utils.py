@@ -77,7 +77,7 @@ class TestUtils(unittest.TestCase):
         # Shouldn't be able to construct a namedtuple without providing info
         try:
             NT()
-            assert False, "Shouldn't be able to construct namedtuple"
+            self.fail("Shouldn't be able to construct namedtuple")
         except TypeError:
             pass
 
@@ -91,9 +91,9 @@ class TestUtils(unittest.TestCase):
         # Test setting it with something else
         set_namedtuple_defaults(NT, default=1)
         nt = NT()
-        assert nt.a is 1
-        assert nt.b is 1
-        assert nt.c is 1
+        assert nt.a == 1
+        assert nt.b == 1
+        assert nt.c == 1
 
     def test_padded_tensor(self):
         # list of lists

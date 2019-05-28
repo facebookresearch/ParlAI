@@ -20,6 +20,57 @@ from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
 
 
+def print_announcements(opt):
+    """
+    Outputs any announcements the ParlAI team wishes to make to users.
+
+    Also gives the user the option to suppress the output.
+    """
+    # no annoucements to make right now
+    return
+
+    noannounce_file = os.path.join(opt.get('datapath'), 'noannouncements')
+    if os.path.exists(noannounce_file):
+        # user has suppressed announcements, don't do anything
+        return
+
+    # useful constants
+    # all of these colors are bolded
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    RED = '\033[1;91m'
+    YELLOW = '\033[1;93m'
+    GREEN = '\033[1;92m'
+    BLUE = '\033[1;96m'
+    CYAN = '\033[1;94m'
+    MAGENTA = '\033[1;95m'
+
+    # only use colors if we're outputting to a terminal
+    USE_COLORS = _sys.stdout.isatty()
+    if not USE_COLORS:
+        RESET = BOLD = RED = YELLOW = GREEN = BLUE = CYAN = MAGENTA = ''
+
+    # generate the rainbow stars
+    rainbow = [RED, YELLOW, GREEN, CYAN, BLUE, MAGENTA]
+    size = 78 // len(rainbow)
+    stars = ''.join([color + '*' * size for color in rainbow])
+    stars += RESET
+
+    # do the actual output
+    print('\n'.join([
+        '',
+        stars,
+        BOLD,
+        'Announcements go here.',
+        RESET,
+        # don't bold the suppression command
+        'To suppress this message (and future announcements), run\n`touch {}`'.format(
+            noannounce_file
+        ),
+        stars,
+    ]))
+
+
 def get_model_name(opt):
     model = opt.get('model', None)
     if model is None:
@@ -31,7 +82,7 @@ def get_model_name(opt):
             if os.path.isfile(optfile):
                 try:
                     # try json first
-                    with open(optfile, 'r') as handle:
+                    with open(optfile, 'r', encoding='utf-8') as handle:
                         new_opt = json.load(handle)
                         model = new_opt.get('model', None)
                 except UnicodeDecodeError:
@@ -667,14 +718,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
-            print("\n".join([
-                "",
-                "*" * 80,
-                "Thank you for using ParlAI! We are conducting a user survey.",
-                "Please consider filling it out at https://forms.gle/uEFbYGP7w6hiuGQT9",
-                "*" * 80,
-                ""
-            ]))
+            print_announcements(self.opt)
 
         return self.opt
 

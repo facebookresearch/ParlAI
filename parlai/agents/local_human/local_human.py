@@ -21,7 +21,7 @@ class LocalHumanAgent(Agent):
                            help='File of label_candidates to send to other agent')
         agent.add_argument('--single_turn', type='bool', default=False,
                            help='If on, assumes single turn episodes.')
-    
+
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'localHuman'

@@ -304,7 +304,6 @@ class TransformerEncoder(nn.Module):
         if embedding is not None:
             self.embeddings = embedding
         else:
-            # assert False
             assert padding_idx is not None
             self.embeddings = nn.Embedding(
                 vocabulary_size, embedding_size, padding_idx=padding_idx
@@ -378,7 +377,7 @@ class TransformerEncoder(nn.Module):
         elif self.reduction_type == 'max':
             return tensor.max(dim=1)[0]
         elif self.reduction_type == 'mean':
-            divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1e-20)
+            divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
             output = tensor.sum(dim=1) / divisor
             return output
         elif self.reduction_type == 'none' or self.reduction_type is None:
@@ -635,13 +634,14 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             if n_positions == 0:
                 # default to 1024
                 n_positions = 1024
+        n_segments = opt.get('n_segments', 0)
 
         if n_positions < 0:
             raise ValueError('n_positions must be positive')
 
         self.encoder = _build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx, reduction_type=None,
-            n_positions=n_positions,
+            n_positions=n_positions, n_segments=n_segments,
         )
         self.decoder = _build_decoder(
             opt, dictionary, self.embeddings, self.pad_idx,

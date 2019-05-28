@@ -540,8 +540,10 @@ class TorchAgent(Agent):
         # indicate whether using fp16
         self.fp16 = self.opt.get('fp16', False)
 
+        # Default to the class name, sans "Agent". child can override
+        self.id = type(self).__name__.replace("Agent", "")
+
         # now set up any fields that all instances may need
-        self.id = 'TorchAgent'  # child can override
         self.EMPTY = torch.LongTensor([])
         self.NULL_IDX = self.dict[self.dict.null_token]
         self.START_IDX = self.dict[self.dict.start_token]
@@ -780,7 +782,7 @@ class TorchAgent(Agent):
             self._number_training_updates = states['number_training_updates']
         if self.scheduler and 'lr_scheduler' in states:
             self.scheduler.load_state_dict(states['lr_scheduler'])
-        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler'):
+        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler', None):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
 
     def report(self):
@@ -1373,10 +1375,10 @@ class TorchAgent(Agent):
             )
         else:
             states['number_training_updates'] = self._number_training_updates
-            if getattr(self, 'scheduler'):
+            if getattr(self, 'scheduler', None):
                 states['lr_scheduler'] = self.scheduler.state_dict()
                 states['lr_scheduler_type'] = self.opt['lr_scheduler']
-            if getattr(self, 'warmup_scheduler'):
+            if getattr(self, 'warmup_scheduler', None):
                 states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
 
         return states
@@ -1400,7 +1402,7 @@ class TorchAgent(Agent):
                     torch.save(states, write)
 
                 # save opt file
-                with open(path + '.opt', 'w') as handle:
+                with open(path + '.opt', 'w', encoding='utf-8') as handle:
                     if hasattr(self, 'model_version'):
                         self.opt['model_version'] = self.model_version()
                     json.dump(self.opt, handle)

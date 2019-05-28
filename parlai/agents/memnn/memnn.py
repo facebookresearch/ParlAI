@@ -52,7 +52,8 @@ class MemnnAgent(TorchRankerAgent):
 
     @staticmethod
     def model_version():
-        """Return current version of this model, counting up from 0.
+        """
+        Return current version of this model, counting up from 0.
 
         Models may not be backwards-compatible with older versions.
         Version 1 split from version 0 on Sep 7, 2018.
@@ -87,7 +88,11 @@ class MemnnAgent(TorchRankerAgent):
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         mems = self._build_mems(batch.memory_vecs)
-        scores = self.model(batch.text_vec, mems, cand_vecs)
+        # Check for rows that have no non-null tokens
+        pad_mask = None
+        if mems is not None:
+            pad_mask = (mems != self.NULL_IDX).sum(dim=-1) == 0
+        scores = self.model(batch.text_vec, mems, cand_vecs, pad_mask)
         return scores
 
     @lru_cache(maxsize=None)  # bounded by opt['memsize'], cache string concats
@@ -153,14 +158,17 @@ class MemnnAgent(TorchRankerAgent):
         return obs
 
     def _build_mems(self, mems):
-        """Build memory tensors.
+        """
+        Build memory tensors.
 
         During building, will add time features to the memories if enabled.
 
-        :param: list of length batchsize containing inner lists of 1D tensors
-                containing the individual memories for each row in the batch.
+        :param mems:
+            list of length batchsize containing inner lists of 1D tensors
+            containing the individual memories for each row in the batch.
 
-        :returns: 3d padded tensor of memories (bsz x num_mems x seqlen)
+        :returns:
+            3d padded tensor of memories (bsz x num_mems x seqlen)
         """
         if mems is None:
             return None
@@ -186,20 +194,11 @@ class MemnnAgent(TorchRankerAgent):
         padded = torch.LongTensor(bsz, num_mems, seqlen).fill_(0)
 
         for i, mem in enumerate(mems):
-            # tf_offset = len(mem) - 1
+            tf_offset = len(mem) - 1
             for j, m in enumerate(mem):
                 padded[i, j, :len(m)] = m
-                # if self.use_time_features:
-                #     padded[i, j, -1] = self.dict[self._time_feature(tf_offset - j)]
-
-        # NOTE: currently below we are adding tf's to every memory,
-        # including emtpy ones. above commented-out code adds only to filled
-        # ones but is significantly slower to run.
-        if self.use_time_features:
-            nm = num_mems - 1
-            for i in range(num_mems):
-                # put lowest time feature in most recent memory
-                padded[:, nm - i, -1] = self.dict[self._time_feature(i)]
+                if self.use_time_features:
+                    padded[i, j, -1] = self.dict[self._time_feature(tf_offset - j)]
 
         if self.use_cuda:
             padded = padded.cuda()

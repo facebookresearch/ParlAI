@@ -30,7 +30,7 @@ import json
 
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.worlds import create_task
-from parlai.core.params import ParlaiParser
+from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.utils import Timer, round_sigfigs, warn_once
 from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
@@ -578,6 +578,8 @@ class TrainLoop():
             valid_world.shutdown()
         if test_world:
             test_world.shutdown()
+
+        print_announcements(opt)
 
         return v_report, t_report
 

@@ -29,6 +29,7 @@ from parlai.mturk.core.socket_manager import (
 )
 from parlai.mturk.core.worker_manager import WorkerManager
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
+from parlai.core.params import print_announcements
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.mturk_utils as mturk_utils
 import parlai.mturk.core.server_utils as server_utils
@@ -1324,6 +1325,8 @@ class MTurkManager():
                 self._upload_worker_data()
             if self.worker_manager is not None:
                 self.worker_manager.shutdown()
+
+            print_announcements(self.opt)
 
     # MTurk Agent Interaction Functions #
 
