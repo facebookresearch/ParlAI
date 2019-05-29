@@ -5,12 +5,12 @@
 
 Intro to ParlAI
 ===============
-**Authors**: Alexander Holden Miller, Jason Weston
+**Authors**: Alexander Holden Miller, Margaret Li, Jason Weston
 
 
 What is ParlAI?
 ---------------
-It's a python-based platform for enabling dialog AI research.
+ParlAI is a python-based platform for enabling dialog AI research.
 
 Its goal is to provide researchers:
 
@@ -25,28 +25,28 @@ You can also see the `README <https://github.com/facebookresearch/ParlAI/blob/ma
 Core Concepts
 -------------
 
-We're going to introduce some of the terminology we use to help us think in the ParlAI framework.
+We're going to introduce some of the terminology we use in the ParlAI framework.
 In ParlAI, we call an environment a **world**.  In each world, there are **agents**.
 Examples of agents include models and datasets. Agents interact with each other by
 taking turns acting and observing **acts**.
 
 To concretize this, we'll consider the train loop used to train a Transformer ranker
-on the Twitter dataset in our Quick Start. We call this train environment a world,
+on the Twitter dataset in our :doc:`Quick Start <tutorial_quick>`. We call this train environment a world,
 and it contains two agents - the transformer model and the dataset. The model and dataset
 agents interact with each other in this way: the dataset acts first and outputs a batch of train
 examples with the correct labels. The model observes this act to get the train examples,
 and then acts by doing a single train step on this batch (predicting labels and updating its parameters according to the loss).
 The dataset observes this act and outputs the next batch, and so on.
 
-Now let's take a more detailed look at these concepts.
+That's just a quick overview. Now let's take a more detailed look at these concepts and how to use them.
 
 
 Agents
 ^^^^^^
 
 The most basic concept in ParlAI is an Agent.
-Agents can be humans, a simple bot which repeats back anything that it hears,
-your perfectly-tuned neural network, a dataset being read out,
+An agent can be a human, a simple bot which repeats back anything that it hears,
+your perfectly tuned neural network, a dataset being read out,
 or anything else that might send messages or interact with its environment.
 
 Agents have two primary methods they need to define:
@@ -56,11 +56,11 @@ Agents have two primary methods they need to define:
     def observe(self, observation): # update internal state with observation
     def act(self): # produce action based on internal state
 
-``observe()`` takes as input the result of an action taken by another agent and
-updates this agent's internal state accordingly.
+``observe()`` takes as input an observation dict, which is usually the result of an action taken by another agent,
+and updates this agent's internal state accordingly.
 
-``act()`` produces an action from the agent. For a dataset agent, this might return a
-batch of examples. For a neural net agent, it could be a train step or eval step.
+``act()`` produces an action from the agent. For a dataset agent, this might increment a counter for examples seen and
+return the next batch of examples. For a neural net agent, this could be a train step or eval step.
 
 
 Observations
@@ -68,7 +68,7 @@ Observations
 Observations are what we call the objects returned by an agent's act function and are so named
 because they are input to other agents' observe() functions.
 This is the primary way messages are passed between agents and the environment in ParlAI.
-Observations are usually in the form of python dictionaries containing different types of information
+Observations are usually in the form of python dictionaries containing different types of information.
 
 The :doc:`observations <observations>` documentation goes into more detail about
 each field, but the following table shows the basics.
@@ -100,13 +100,13 @@ Teachers
 ^^^^^^^^
 
 A Teacher is special type of agent. They implement the ``act`` and ``observe``
-functions like any agent does, but they also keep track of metrics which they
+functions as all agents do, but they also keep track of metrics which they
 return via a ``report`` function, such as the number of questions they have posed
 or how many times those questions have been answered correctly.
 
-Datasets and typically implement a subclass of Teacher, providing functions which
+Datasets and tasks typically implement a subclass of Teacher, providing functions which
 download the dataset from its source if necessary, read the file into the
-right format, and provide an example with each call to the teacher's ``act``
+right format, and return an example with each call to the teacher's ``act``
 function.
 
 Observations exchanged between a student (model) Agent and a bAbI task Teacher might look like the following dicts:
@@ -140,8 +140,8 @@ Worlds
 ^^^^^^
 
 Worlds define the environment in which agents interact with one another. Worlds
-must implement a ``parley`` method, which conducts one turn of interactions typically containing
-one action per each agent with each call.
+must implement a ``parley`` method. Each call to ``parley`` conducts one turn of interactions typically containing
+one action per agent.
 
 A simple world included in ParlAI, which all of our currently included tasks use,
 is the ``DialogPartnerWorld``. DialogPartnerWorld is initialized with one task teacher agent and one student agent.

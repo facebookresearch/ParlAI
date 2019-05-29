@@ -5,7 +5,7 @@
 
 ParlAI Quick-start
 ==================
-**Authors**: Alexander Holden Miller
+**Authors**: Alexander Holden Miller, Margaret Li
 
 
 Install
@@ -73,11 +73,12 @@ Train a Transformer on Twitter
 Now let's try training a Transformer (Vaswani, et al 2017) ranker model.
 Make sure to complete this section on a GPU with PyTorch installed.
 
-We'll be training on the Twitter task, which is a dataset of a tweets and replies.
-There's more information on tasks in the rest of these docs,
+We'll be training on the Twitter task, which is a dataset of tweets and replies.
+There's more information on tasks in these docs,
 including a full list of `tasks <http://parl.ai/docs/tasks.html>`_ and
 `instructions <http://parl.ai/docs/tutorial_basic.html#training-and-evaluating-existing-agents>`_
-on specifying arguments for training and evaluation, including the ``-t <task>`` argument.
+on specifying arguments for training and evaluation (like the ``-t <task>`` argument used here).
+
 Let's begin again by printing the first few examples.
 
 .. code-block:: bash
@@ -85,19 +86,20 @@ Let's begin again by printing the first few examples.
   # display first examples from twitter dataset
   python examples/display_data.py -t twitter
 
-Now, we'll train the model. This will take a while.
+Now, we'll train the model. This will take a while to reach convergence.
 
 .. code-block:: bash
 
   # train transformer ranker
   python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True
 
-Take note of some of the command line arguments we use here -
+You can modify some of the command line arguments we use here -
 we set batch size to 10, run validation every 3600 seconds,
-and take candidates from the batch for training and evaluation steps.
+and take candidates from the batch for training and evaluation.
+
 The train model script will by default save the model after achieving best validation results so far.
-The twitter task is quite large, and validation is run by default only after each epoch (full pass through the train data),
-but we force validation to happen once an hour with ``-vtim 3600``.
+The Twitter task is quite large, and validation is run by default after each epoch (full pass through the train data),
+but we want to save our model more frequently so we set validation to run once an hour with ``-vtim 3600``.
 
 This train model script evaluates the model on the valid and test sets at the end of training, but if we wanted to evaluate a saved model -
 perhaps to compare the results of our newly trained Transformer against a pretrained seq2seq baseline from our `Model Zoo <http://parl.ai/docs/zoo.html>`_,
