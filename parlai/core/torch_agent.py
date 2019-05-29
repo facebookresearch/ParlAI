@@ -207,7 +207,8 @@ class History(object):
         if self.size > 0:
             while len(self.history_strings) >= self.size:
                 self.history_strings.pop(0)
-        self.history_strings.append(text)
+        # self.history_strings.append(text)
+        self.history_strings.insert(0, text)
 
     def _update_vecs(self, text, speaker):
         """
@@ -218,20 +219,21 @@ class History(object):
         """
         if self.size > 0:
             while len(self.history_vecs) >= self.size:
-                self.history_vecs.pop(0)
-                self.turns.pop(0)
-                self.positions.pop(0)
-                self.speakers.pop(0)
+                self.history_vecs.pop(-1)
+                self.turns.pop(-1)
+                self.positions.pop(-1)
+                self.speakers.pop(-1)
 
         tokens = self.parse(text)
-        self.history_vecs.append(tokens)
+        # self.history_vecs.append(tokens)
+        self.history_vecs.insert(0, tokens)
 
         # record the speaker we're told
-        self.speakers.append([speaker] * len(tokens))
+        self.speakers.insert(0, [speaker] * len(tokens))
         # positions is clear, start it fresh every time
-        self.positions.append(list(range(len(tokens))))
+        self.positions.insert(0, list(range(len(tokens))))
         # turns will be rescaled in get_feature_vecs
-        self.turns.append([self.turn_id] * len(tokens))
+        self.turns.insert(0, [self.turn_id] * len(tokens))
         self.turn_id += 1
 
     def update_history(self, obs, add_next=None):
@@ -1108,7 +1110,7 @@ class TorchAgent(ABC, Agent):
         # check truncation
         if 'text_vec' in obs:
             obs['text_vec'] = torch.LongTensor(
-                self._check_truncate(obs['text_vec'], truncate, True)
+                self._check_truncate(obs['text_vec'], truncate, False)
             )
 
         return obs
