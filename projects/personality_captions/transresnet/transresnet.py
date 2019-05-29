@@ -61,6 +61,7 @@ class TransresnetAgent(Agent):
         self.id = 'TransresnetAgent'
         self.one_cand_set = opt.get('one_cand_set', False)
         self.episode_done = True
+        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
 
         if not shared:
             # setup dict
@@ -106,7 +107,7 @@ class TransresnetAgent(Agent):
         )
         if init_model_path is not None:
             self.load(init_model_path)
-        if not self.opt.get('no_cuda', False):
+        if self.use_cuda:
             self.model.cuda()
 
     def load_personalities(self):
@@ -333,7 +334,7 @@ class TransresnetAgent(Agent):
                           'Reloading the best model so far.'
                           )
                     self._build_model(self.model_file)
-                    if not self.opt.get('no_cuda'):
+                    if self.use_cuda:
                         self.model = self.model.cuda()
                     print('Unfreezing.')
                     self.model.unfreeze_text_encoder()
