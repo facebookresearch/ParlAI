@@ -18,6 +18,15 @@ REPLACEMENT = """
 """  # noqa: E501
 
 
+NEEDLE3 = '<title>ParlAI Documentation &mdash; ParlAI  documentation</title>'
+REPLACEMENT3 = """
+<title>ParlAI Documentation &mdash; ParlAI  documentation</title>
+<link rel="shortcut icon" type="image/png" href="/static/img/favicon-32x32.png" sizes="32x32"/>
+<link rel="shortcut icon" type="image/png" href="/static/img/favicon-16x16.png" sizes="16x16"/>
+<link rel="shortcut icon" type="image/png" href="/static/img/favicon-96x96.png" sizes="96x96"/>
+"""  # noqa: E501
+
+
 if __name__ == '__main__':
     for root, dirs, files in os.walk("build/docs/"):
         for file in files:
@@ -28,5 +37,6 @@ if __name__ == '__main__':
                     content = fin.read()
                     content = content.replace(NEEDLE1, REPLACEMENT)
                     content = content.replace(NEEDLE2, REPLACEMENT)
+                    content = content.replace(NEEDLE3, REPLACEMENT3)
                 with open(file_path, 'w') as fout:
                     fout.write(content)
