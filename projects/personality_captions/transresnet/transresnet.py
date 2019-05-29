@@ -16,6 +16,7 @@ import random
 import json
 import numpy as np
 import torch
+import tqdm
 
 
 class TransresnetAgent(Agent):
@@ -38,6 +39,8 @@ class TransresnetAgent(Agent):
         argparser.add_argument('--one-cand-set', type='bool', default=False,
                                help='True if each example has one set of shared '
                                'label candidates')
+        argparser.add_argument('--fixed-cands-path', type=str, default=None,
+                               help='path to text file with candidates')
         argparser.add_argument('--pretrained', type='bool', default=False,
                                help='True if pretrained model')
         DictionaryAgent.add_cmdline_args(argparser)
@@ -60,8 +63,11 @@ class TransresnetAgent(Agent):
         self.model_file = opt['model_file']
         self.id = 'TransresnetAgent'
         self.one_cand_set = opt.get('one_cand_set', False)
+        self.fcp = None
+        if opt.get('fixed_cands_path') is not None:
+            self.fcp = opt['fixed_cands_path']
+            self.one_cand_set = True
         self.episode_done = True
-        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
 
         if not shared:
             # setup dict
@@ -70,6 +76,8 @@ class TransresnetAgent(Agent):
             self.personalities_list = self.load_personalities()
             # possibly load the model from a model file
             self._build_model()
+            # load candidates if specified
+            self._setup_cands()
             self.freeze_patience = self.opt['freeze_patience']
             if self.freeze_patience != -1:
                 # For fine-tuning
@@ -107,8 +115,30 @@ class TransresnetAgent(Agent):
         )
         if init_model_path is not None:
             self.load(init_model_path)
-        if self.use_cuda:
+        if not self.opt.get('no_cuda', False):
             self.model.cuda()
+
+    def _setup_cands(self):
+        self.fixed_cands = None
+        if self.fcp is not None:
+            cands_enc_file = '{}.cands_enc'.format(self.fcp)
+            if os.path.isfile(cands_enc_file):
+                self.fixed_cands = torch.load(
+                    cands_enc_file, map_location=lambda cpu, _: cpu
+                )
+            else:
+                with open(self.fcp) as f:
+                    cands_text = [c.replace('\n', '') for c in f.readlines()]
+                print('Extracting cand encodings')
+                pbar = tqdm.tqdm(
+                    total=len(cands_text), unit='cand', unit_scale=True,
+                    desc='Extracting candidate encodings'
+                )
+                self.fixed_cands = []
+                for c in cands_text:
+                    self.fixed_cands.append(self.model(None, None, c)[1].detach())
+                    pbar.update(1)
+                torch.save(self.fixed_cands, cands_enc_file)
 
     def load_personalities(self):
         """
@@ -182,10 +212,12 @@ class TransresnetAgent(Agent):
         med_rank = None
         chosen_captions = None
         comments = [v['eval_labels'] for v in valid_obs]
-        if 'label_candidates' in valid_obs[0]:
+        if 'label_candidates' in valid_obs[0] or self.fixed_cands is not None:
             # User provides candidates, used as negatives for evaluation
-            candidates = [v['label_candidates'] for v in valid_obs]
             candidates_encoded = None
+            if self.fixed_cands is not None:
+                candidates_encoded = self.fixed_cands
+            candidates = [v['label_candidates'] for v in valid_obs]
             if self.one_cand_set:
                 candidates_encoded = self.model(
                     None,
@@ -334,7 +366,7 @@ class TransresnetAgent(Agent):
                           'Reloading the best model so far.'
                           )
                     self._build_model(self.model_file)
-                    if self.use_cuda:
+                    if not self.opt.get('no_cuda'):
                         self.model = self.model.cuda()
                     print('Unfreezing.')
                     self.model.unfreeze_text_encoder()
