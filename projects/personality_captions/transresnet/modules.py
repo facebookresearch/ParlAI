@@ -307,7 +307,9 @@ class TransresnetModel(nn.Module):
             else:
                 _, index_top = torch.topk(scores, scores.size(0), dim=0)
             elected.append(
-                [candidates[img_index][idx] for idx in index_top.unsqueeze(1)]
+                [candidates[img_index][idx] if not one_cand_set
+                 else candidates[idx]
+                 for idx in index_top.unsqueeze(1)]
             )
         return elected
 

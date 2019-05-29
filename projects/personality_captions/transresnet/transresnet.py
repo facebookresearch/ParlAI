@@ -90,6 +90,8 @@ class TransresnetAgent(Agent):
             self.dict = shared['dict']
             self.model = shared['model']
             self.personalities_list = shared['personalities_list']
+            self.fixed_cands = shared['fixed_cands']
+            self.fixed_cands_enc = shared['fixed_cands_enc']
 
         super().__init__(opt, shared)
 
@@ -98,6 +100,8 @@ class TransresnetAgent(Agent):
         shared['dict'] = self.dict
         shared['model'] = self.model
         shared['personalities_list'] = self.personalities_list
+        shared['fixed_cands'] = self.fixed_cands
+        shared['fixed_cands_enc'] = self.fixed_cands_enc
         return shared
 
     def _build_model(self, path=None):
@@ -121,25 +125,30 @@ class TransresnetAgent(Agent):
 
     def _setup_cands(self):
         self.fixed_cands = None
+        self.fixed_cands_enc = None
         if self.fcp is not None:
+            with open(self.fcp) as f:
+                self.fixed_cands = [c.replace('\n', '') for c in f.readlines()]
             cands_enc_file = '{}.cands_enc'.format(self.fcp)
             if os.path.isfile(cands_enc_file):
-                self.fixed_cands = torch.load(
+                self.fixed_cands_enc = torch.load(
                     cands_enc_file, map_location=lambda cpu, _: cpu
                 )
             else:
-                with open(self.fcp) as f:
-                    cands_text = [c.replace('\n', '') for c in f.readlines()]
                 print('Extracting cand encodings')
                 pbar = tqdm.tqdm(
-                    total=len(cands_text), unit='cand', unit_scale=True,
+                    total=len(self.fixed_cands), unit='cand', unit_scale=True,
                     desc='Extracting candidate encodings'
                 )
-                self.fixed_cands = []
-                for c in cands_text:
-                    self.fixed_cands.append(self.model(None, None, c)[1].detach())
-                    pbar.update(1)
-                torch.save(self.fixed_cands, cands_enc_file)
+                fixed_cands_enc = []
+                for idx, batch in enumerate([self.fixed_cands[i:i + 50]
+                                             for i in range(
+                                                0, len(self.fixed_cands)-50, 50)]):
+                    embedding = self.model(None, None, batch)[1].detach()
+                    fixed_cands_enc.append(embedding)
+                    pbar.update(50)
+                self.fixed_cands_enc = torch.cat(fixed_cands_enc, 0)
+                torch.save(self.fixed_cands_enc, cands_enc_file)
 
     def load_personalities(self):
         """
@@ -217,7 +226,8 @@ class TransresnetAgent(Agent):
             # User provides candidates, used as negatives for evaluation
             candidates_encoded = None
             if self.fixed_cands is not None:
-                candidates_encoded = self.fixed_cands
+                candidates_encoded = self.fixed_cands_enc
+                candidates = self.fixed_cands
             candidates = [v['label_candidates'] for v in valid_obs]
             if self.one_cand_set:
                 candidates_encoded = self.model(
