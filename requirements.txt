@@ -1,8 +1,8 @@
 Pillow
 boto3
 botocore
-flake8
 flake8-bugbear
+flake8
 gitpython
 h5py
 joblib
