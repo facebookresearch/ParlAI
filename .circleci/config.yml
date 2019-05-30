@@ -35,14 +35,13 @@ setup: &setup
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
       pip3 install --upgrade --progress-bar off pip
-      pip3 install --progress-bar off flake8 gitpython
-      python setup.py develop --no-deps
+
 
 installdeps: &installdeps
   run:
     name: Installs basic dependencies
     command: |
-      pip3 install --progress-bar off -r requirements.txt
+      python setup.py develop
 
 installtorchgpu: &installtorchgpu
   run:
@@ -125,7 +124,9 @@ jobs:
       - run:
           name: Lint
           working_directory: ~/ParlAI
-          command: bash ./tests/lint_changed.sh
+          command: |
+            pip install flake8 gitpython flake8-bugbear  # only what's needd to lint
+            bash ./tests/lint_changed.sh
 
   nightly_gpu_tests:
     <<: *gpu
@@ -215,6 +216,8 @@ jobs:
           name: "Conditionally launching long tests..."
           working_directory: ~/ParlAI/
           command: |
+            pip install gitpython
+            python setup.py develop --no-deps
             python .circleci/triggers.py | while read job; do
               curl -s \
                 --data "build_parameters[CIRCLE_JOB]=${job}" \
