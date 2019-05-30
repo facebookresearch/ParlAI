@@ -17,6 +17,7 @@ import cgi
 import PIL.Image as Image
 from base64 import b64decode
 import io
+import os
 
 HOST_NAME = 'localhost'
 PORT = 8080
@@ -43,7 +44,7 @@ WEB_HTML = """
                       <div class="media-content">
                         <div class="content">
                           <p>
-                            <img id="preview" src="Examples.png" height="100px" width="100px" />
+                            <img id="preview" src="Examples.png"/ style="max-height:300px">
                           </p>
                         </div>
                       </div>
@@ -103,6 +104,7 @@ WEB_HTML = """
                 content.className = "content";
 
                 var para = document.createElement("p");
+                para.id = "model-response";
                 var paraText = document.createTextNode(text);
 
                 var strong = document.createElement("strong");
@@ -134,9 +136,11 @@ WEB_HTML = """
                 }}).then(response=>response.json()).then(data=>{{
                     var parDiv = document.getElementById("parent");
 
-                    parDiv.append(createChatRow("You", text));
-
                     // Change info for Model response
+                    var oldResponse = document.getElementById("model-response");
+                    if (oldResponse) {{
+                        oldResponse.parentNode.remove(oldResponse);
+                    }}
                     parDiv.append(createChatRow("Model", data.text));
                     window.scrollTo(0,document.body.scrollHeight);
                 }});
@@ -181,10 +185,10 @@ class MyHandler(BaseHTTPRequestHandler):
         img_data = str(data['image'][0])
         _, encoded = img_data.split(',', 1)
         image = Image.open(io.BytesIO(b64decode(encoded))).convert('RGB')
-        reply['image'] = SHARED['image_loader'].extract(image)
-        SHARED['agent'].observe(reply)
         import pdb; pdb.set_trace()
 
+        reply['image'] = SHARED['image_loader'].extract(image)
+        SHARED['agent'].observe(reply)
         model_res = SHARED['agent'].act()
         return model_res
 
@@ -237,15 +241,23 @@ class MyHandler(BaseHTTPRequestHandler):
 
 def setup_interactive(shared):
     parser = setup_args()
-    SHARED['opt'] = parser.parse_args(print_args=True)
-
-    SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
-    SHARED['opt']['image_mode'] = 'resnet152'
-    SHARED['image_loader'] = ImageLoader(SHARED['opt'])
+    opt = parser.parse_args(print_args=True)
+    if not opt.get('model_file'):
+        raise RuntimeError('Please specify a model file')
+    if opt.get('fixed_cands_path') is None:
+        opt['fixed_cands_path'] = os.path.join(
+            '/'.join(opt.get('model_file').split('/')[:-1]), 'candidates.txt'
+        )
+    opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+    opt['image_mode'] = 'resnet152'
+    # opt['image_size'] = 440
+    # opt['crop_size'] = 440
+    SHARED['opt'] = opt
+    SHARED['image_loader'] = ImageLoader(opt)
 
     # Create model and assign it to the specified task
-    SHARED['agent'] = create_agent(SHARED.get('opt'), requireModelExists=True)
-    SHARED['world'] = create_task(SHARED.get('opt'), SHARED['agent'])
+    SHARED['agent'] = create_agent(opt, requireModelExists=True)
+    SHARED['world'] = create_task(opt, SHARED['agent'])
 
 
 if __name__ == '__main__':

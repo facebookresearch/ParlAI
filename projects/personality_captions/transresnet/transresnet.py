@@ -67,7 +67,6 @@ class TransresnetAgent(Agent):
         self.fcp = None
         if opt.get('fixed_cands_path') is not None:
             self.fcp = opt['fixed_cands_path']
-            self.one_cand_set = True
         self.episode_done = True
 
         if not shared:
@@ -130,6 +129,7 @@ class TransresnetAgent(Agent):
             with open(self.fcp) as f:
                 self.fixed_cands = [c.replace('\n', '') for c in f.readlines()]
             cands_enc_file = '{}.cands_enc'.format(self.fcp)
+            print('loading saved cand encodings')
             if os.path.isfile(cands_enc_file):
                 self.fixed_cands_enc = torch.load(
                     cands_enc_file, map_location=lambda cpu, _: cpu
@@ -221,40 +221,43 @@ class TransresnetAgent(Agent):
         """
         med_rank = None
         chosen_captions = None
-        comments = [v['eval_labels'] for v in valid_obs]
         if 'label_candidates' in valid_obs[0] or self.fixed_cands is not None:
             # User provides candidates, used as negatives for evaluation
             candidates_encoded = None
             if self.fixed_cands is not None:
                 candidates_encoded = self.fixed_cands_enc
                 candidates = self.fixed_cands
-            candidates = [v['label_candidates'] for v in valid_obs]
-            if self.one_cand_set:
-                candidates_encoded = self.model(
-                    None,
-                    None,
-                    candidates[0]
-                )[1].detach()
+            else:
+                candidates = [v['label_candidates'] for v in valid_obs]
+                if self.one_cand_set:
+                    candidates_encoded = self.model(
+                        None,
+                        None,
+                        candidates[0]
+                    )[1].detach()
             chosen_captions = self.model.choose_best_caption(
                 image_feats,
                 personalities,
                 candidates,
                 candidates_encoded=candidates_encoded,
-                k=-1
+                k=-1 if self.fixed_cands is None else 100
             )
             # calculate median ranks
-            med_rank = []
-            for i, c_list in enumerate(chosen_captions):
-                lowest_rank = len(c_list) + 1
-                for ii, c in enumerate(comments[i]):
-                    lowest_rank = min(lowest_rank, c_list.index(c) + 1)
-                med_rank.append(lowest_rank)
-            num_correct = sum(
-                [1 if chosen_captions[i][0] in comments[i]
-                 else 0 for i in range(len(comments))]
-            )
-            loss = -1  # loss not calculated
             num_examples = len(chosen_captions)
+            loss = -1
+            if self.fixed_cands is not None:
+                num_correct = 0
+            else:
+                med_rank = []
+                for i, c_list in enumerate(chosen_captions):
+                    lowest_rank = len(c_list) + 1
+                    for ii, c in enumerate(comments[i]):
+                        lowest_rank = min(lowest_rank, c_list.index(c) + 1)
+                    med_rank.append(lowest_rank)
+                num_correct = sum(
+                    [1 if chosen_captions[i][0] in comments[i]
+                     else 0 for i in range(len(comments))]
+                )
         else:
             comments = [random.choice(v['eval_labels']) for v in valid_obs]
             loss, num_correct, num_examples = self.model.eval_batch(
@@ -271,15 +274,17 @@ class TransresnetAgent(Agent):
             observations,
             is_training
         )
-        image_feats = [v.get('image') for v in valid_obs]
-        for i, im in enumerate(image_feats):
+        tmp_image_feats = [v.get('image') for v in valid_obs]
+        for i, im in enumerate(tmp_image_feats):
             try:
                 if len(im.size()) == 4:
-                    image_feats[i] = im[0, :, 0, 0]
+                    tmp_image_feats[i] = im[0, :, 0, 0]
             except TypeError:   # No Image Feats Given
-                image_feats[i] = self.blank_image_features
-        for img in image_feats:
-            img.requires_grad = False
+                tmp_image_feats[i] = self.blank_image_features
+        image_feats = []
+        for img in tmp_image_feats:
+            # img.requires_grad = False
+            image_feats.append(img.detach())
         personalities = [v.get('text', '') for v in valid_obs]
 
         chosen_captions = None
@@ -310,11 +315,15 @@ class TransresnetAgent(Agent):
         seen_texts = set()
         for i in range(len(observations)):
             if 'image' in observations[i]:
-                text = observations[i][label_key][0]
-                if text not in seen_texts:
-                    seen_texts.add(text)
+                if self.fixed_cands is not None:
                     valid_obs.append(observations[i])
                     valid_indexes.append(i)
+                else:
+                    text = observations[i][label_key][0]
+                    if text not in seen_texts:
+                        seen_texts.add(text)
+                        valid_obs.append(observations[i])
+                        valid_indexes.append(i)
         return valid_obs, valid_indexes
 
     def update_metrics(self, loss, num_correct, num_samples, med_rank=None):
