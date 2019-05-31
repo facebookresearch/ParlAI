@@ -632,7 +632,6 @@ class OffensiveLanguageDetector(object):
         """Determine if text contains any offensive words in the filter."""
         return self.contains_offensive_language(key)
 
-    # TODO: can we delete this?
     def str_segment(self, text, dict_agent, k=1, max_length=None):
         """
         Segment a word without spaces into the most probable phrase with spaces.
@@ -656,7 +655,6 @@ class OffensiveLanguageDetector(object):
 
             We can then run old.contains_offensive_language(split_str)
             which yields the offensive word 'fuck'
-
         """
         freqs = dict_agent.freqs()
 
