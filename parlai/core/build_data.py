@@ -16,6 +16,8 @@ import requests
 import shutil
 import tqdm
 
+from parlai.core.utils import warn_once
+
 
 def built(path, version_string=None):
     """
@@ -244,9 +246,9 @@ def modelzoo_path(datapath, path):
     """
     if path is None:
         return None
-    if not path.startswith('models:'):
+    if not path.startswith('models:') and not path.startswith('internal:'):
         return path
-    else:
+    elif path.startswith('models:'):
         # Check if we need to download the model
         animal = path[7:path.rfind('/')].replace('/', '.')
         if '.' not in animal:
@@ -259,3 +261,17 @@ def modelzoo_path(datapath, path):
             pass
 
         return os.path.join(datapath, 'models', path[7:])
+    else:
+        # Internal path --  useful for non-public projects.
+        # Save the path to your internal model zoo in
+        # parlai_internal/.internal_zoo_path
+        zoo_path = 'parlai_internal/zoo/.internal_zoo_path'
+        if not os.path.isfile('parlai_internal/zoo/.internal_zoo_path'):
+            warn_once('Please specify the path to your internal zoo in the '
+                      'file parlai_internal/zoo/.internal_zoo_path in your '
+                      'internal repository.')
+            return None
+        else:
+            with open(zoo_path, 'r') as f:
+                zoo = f.read().split('\n')[0]
+            return os.path.join(zoo, path[9:])
