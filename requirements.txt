@@ -1,6 +1,8 @@
 Pillow
 boto3
 botocore
+flake8-rst-docstrings
+flake8-docstrings
 flake8-bugbear
 flake8
 gitpython
