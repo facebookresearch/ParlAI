@@ -45,9 +45,9 @@ We provide our best model trained with ResNet152 image features. To evaluate the
 
 Which yields the following results:
 
-      {'exs': 10000, 'accuracy': 0.5172, 'f1': 0.5998, 'hits@1': 0.517, 'hits@5': 0.824,
-          'hits@10': 0.908, 'hits@100': 0.998, 'bleu': 0.5057, 'hits@1/100': 0.5172,
-          'loss': -0.0079, 'med_rank': 1.0}
+      {'exs': 10000, 'accuracy': 0.5113, 'f1': 0.5951, 'hits@1': 0.511, 'hits@5': 0.816,
+      'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0,
+      'loss': -0.002, 'med_rank': 1.0}
 
 ## Model Examples
 
