@@ -263,8 +263,8 @@ def modelzoo_path(datapath, path):
 
         return os.path.join(datapath, 'models', path[zoo_len:])
     else:
-        # Internal path (starts with "izoo:")--useful for non-public projects.
-        # Save the path to your internal model zoo in
+        # Internal path (starts with "izoo:") -- useful for non-public
+        # projects.  Save the path to your internal model zoo in
         # parlai_internal/.internal_zoo_path
         zoo_path = 'parlai_internal/zoo/.internal_zoo_path'
         if not os.path.isfile('parlai_internal/zoo/.internal_zoo_path'):
