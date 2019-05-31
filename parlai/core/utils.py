@@ -48,7 +48,7 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
 
 
 def neginf(dtype):
-    """Returns a representable finite number near -inf for a dtype."""
+    """Return a representable finite number near -inf for a dtype."""
     if dtype is torch.float16:
         return -NEAR_INF_FP16
     else:
@@ -357,6 +357,7 @@ class PaddingUtils(object):
 
     DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
     """
+
     # DEPRECATIONDAY: delete!
 
     @classmethod
@@ -631,10 +632,10 @@ class OffensiveLanguageDetector(object):
         """Determine if text contains any offensive words in the filter."""
         return self.contains_offensive_language(key)
 
+    # TODO: can we delete this?
     def str_segment(self, text, dict_agent, k=1, max_length=None):
         """
-        Function that segments a word without spaces into the most
-        probable phrase with spaces
+        Segment a word without spaces into the most probable phrase with spaces.
 
         :param string text: string to segment
         :param DictionaryAgent dict_agent: Dictionary we use
@@ -893,6 +894,7 @@ def msg_to_str(msg, ignore_fields=''):
     return txt.rstrip('\t')
 
 
+# DEPREATION DAY: DELETE
 def set_namedtuple_defaults(namedtuple, default=None):
     """
     Set *all* of the fields for a given nametuple to a singular value.
@@ -1076,7 +1078,7 @@ def fp16_optimizer_wrapper(
     loss_initial_scale=2.**17
 ):
     """
-    Wraps the an optimizer with FP16 loss scaling protection.
+    Wrap the an optimizer with FP16 loss scaling protection.
 
     Requires apex to be installed. Will throw an ImportError if it is not.
 
