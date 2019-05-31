@@ -1,5 +1,5 @@
 ## News
-2019-05-29: The [Personality-Captions project page](http://parl.ai/projects/personality_captions/) is updated with pretrained models and specialized model code.
+2019-05-31: The [Personality-Captions project page](http://parl.ai/projects/personality_captions/) is updated with pretrained models, specialized model code, and an interactive demo.
 
 2019-05-03: The [What makes a good Conversation project page](https://parl.ai/projects/controllable_dialogue/) is now available with pretrained models.
 

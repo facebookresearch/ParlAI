@@ -49,6 +49,14 @@ Which yields the following results:
       'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0,
       'loss': -0.002, 'med_rank': 1.0}
 
+Additionally, we provide an interactive script that you can use to view outputs of our pretrained model.
+Simply run the following command:
+
+      python projects/personality_captions/interactive.py \
+      -mf models:personality_captions/transresnet/model
+
+Which will allow you to upload an image and choose a personality for the model to use.
+
 ## Model Examples
 
 <p align="center"><img width="85%" src="Examples.png" /></p>

@@ -35,7 +35,7 @@ WEB_HTML = """
             <div class="column is-three-fifths is-offset-one-fifth">
               <section class="hero is-info is-large has-background-light has-text-grey-dark">
                 <div id="parent" class="hero-body">
-                    <article class="media">
+                    <article class="media" id="photo-info">
                       <figure class="media-left">
                         <span class="icon is-large">
                           <i class="fas fa-robot fas fa-2x"></i>
@@ -185,8 +185,6 @@ class MyHandler(BaseHTTPRequestHandler):
         img_data = str(data['image'][0])
         _, encoded = img_data.split(',', 1)
         image = Image.open(io.BytesIO(b64decode(encoded))).convert('RGB')
-        import pdb; pdb.set_trace()
-
         reply['image'] = SHARED['image_loader'].extract(image)
         SHARED['agent'].observe(reply)
         model_res = SHARED['agent'].act()
@@ -250,8 +248,6 @@ def setup_interactive(shared):
         )
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
     opt['image_mode'] = 'resnet152'
-    # opt['image_size'] = 440
-    # opt['crop_size'] = 440
     SHARED['opt'] = opt
     SHARED['image_loader'] = ImageLoader(opt)
 
