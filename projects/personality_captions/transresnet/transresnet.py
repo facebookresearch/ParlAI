@@ -251,12 +251,12 @@ class TransresnetAgent(Agent):
                 med_rank = []
                 for i, c_list in enumerate(chosen_captions):
                     lowest_rank = len(c_list) + 1
-                    for ii, c in enumerate(comments[i]):
+                    for ii, c in enumerate(chosen_captions[i]):
                         lowest_rank = min(lowest_rank, c_list.index(c) + 1)
                     med_rank.append(lowest_rank)
                 num_correct = sum(
-                    [1 if chosen_captions[i][0] in comments[i]
-                     else 0 for i in range(len(comments))]
+                    [1 if chosen_captions[i][0] in chosen_captions[i]
+                     else 0 for i in range(len(chosen_captions))]
                 )
         else:
             comments = [random.choice(v['eval_labels']) for v in valid_obs]
