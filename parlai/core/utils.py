@@ -894,7 +894,7 @@ def msg_to_str(msg, ignore_fields=''):
     return txt.rstrip('\t')
 
 
-# DEPREATION DAY: DELETE
+# DEPRECATION DAY: DELETE
 def set_namedtuple_defaults(namedtuple, default=None):
     """
     Set *all* of the fields for a given nametuple to a singular value.
