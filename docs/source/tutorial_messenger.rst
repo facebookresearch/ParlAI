@@ -15,7 +15,7 @@ Facebook agents communicate in observation/action dict format, the same as all o
 
 .. figure:: _static/img/personachat_example.png
    :align: center
-   
+
    *Sample chat with a PersonaChat model over messenger*
 
 Each messenger task has at least one messenger agent that connects to ParlAI using the Facebook messenger Send/Receive API, encapsulated as a ``MessengerAgent`` object.
@@ -44,7 +44,7 @@ For instance, after downloading the personachat models you can run:
 
 .. code-block:: bash
 
-    python run.py --model projects.personachat.kvmemnn.kvmemnn:Kvmemnn --model_file models:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model
+    python run.py --model projects.personachat.kvmemnn.kvmemnn:Kvmemnn --model_file zoo:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model
 
 This code will allow users to talk with a bot in conversations like the one displayed above.
 
