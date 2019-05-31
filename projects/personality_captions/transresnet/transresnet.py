@@ -136,6 +136,7 @@ class TransresnetAgent(Agent):
                 )
             else:
                 print('Extracting cand encodings')
+                self.model.eval()
                 pbar = tqdm.tqdm(
                     total=len(self.fixed_cands), unit='cand', unit_scale=True,
                     desc='Extracting candidate encodings'
