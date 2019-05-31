@@ -311,6 +311,7 @@ class TransresnetModel(nn.Module):
                  else candidates[idx]
                  for idx in index_top.unsqueeze(1)]
             )
+
         return elected
 
     def eval_batch_of_100(self, context_encoded, captions_encoded):
