@@ -18,21 +18,13 @@ import json
 import logging
 import os
 import sys
-import time
 import copy
 import random
 import pprint
 
 
-# Place the WorkerID of anyone you want to ban in here
-BLOCKLIST = "".strip().split()
-
-MASTER_QUALIF = {
-    'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
-    'Comparator': 'Exists',
-    'RequiredToPreview': True
-}
-
+# update this with models you want to run. these names correspond to variables
+# in model_configs.py
 SETTINGS_TO_RUN = """
 baseline_model
 greedy_model
@@ -206,17 +198,6 @@ def main():
             )
             print('Created qualification: ', qualification_id)
             start_opt['unique_qualif_id'] = qualification_id
-
-        if not start_opt['is_sandbox']:
-            # ADD BLOCKED WORKERS HERE
-            blocked_worker_list = BLOCKLIST
-            for w in blocked_worker_list:
-                try:
-                    print('Soft Blocking {}\n'.format(w))
-                    mturk_manager.soft_block_worker(w)
-                except Exception:
-                    print('Did not soft block worker:', w)
-                time.sleep(0.1)
 
         def run_onboard(worker):
             worker.personas_generator = personas_generator
