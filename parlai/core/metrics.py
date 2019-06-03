@@ -29,13 +29,7 @@ try:
 except ImportError:
     # User doesn't have rouge installed, so we can't use it for rouge
     # We'll just turn off things, but we might want to warn the user
-    warn_once('Run pip install py-rouge to get rouge metrcis')
-    rouge = None
-
-try:
-    import nltk.tokenizer  # noqa
-except ImportError:
-    warn_once('Run python -c import nltk; nltk.download("punkt")')
+    warn_once('Run pip install py-rouge to get rouge metrics')
     rouge = None
 
 re_art = re.compile(r'\b(a|an|the)\b')
@@ -254,7 +248,11 @@ class Metrics(object):
             # F1 and BLEU metrics.
             f1 = _f1_score(prediction, labels)
             bleu = _bleu(prediction, labels)
-            rouge1, rouge2, rougel = _rouge(prediction, labels)
+            try:
+                rouge1, rouge2, rougel = _rouge(prediction, labels)
+            except LookupError:
+                warn_once('Run python -c import nltk; nltk.download("punkt")')
+                rouge1 = None
             with self._lock():
                 self.metrics['f1'] += f1
                 self.metrics['f1_cnt'] += 1
