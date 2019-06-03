@@ -7,7 +7,8 @@ from parlai.agents.bert_ranker.bert_dictionary import BertDictionaryAgent
 from parlai.agents.bert_ranker.helpers import (
     BertWrapper,
     get_bert_optimizer,
-    MODEL_PATH
+    MODEL_PATH,
+    surround
 )
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
 from parlai.zoo.bert.build import download
@@ -30,6 +31,7 @@ class BertClassifierAgent(TorchClassifierAgent):
         self.pretrained_path = os.path.join(opt['datapath'], 'models',
                                             'bert_models', MODEL_PATH)
         opt['pretrained_path'] = self.pretrained_path
+        self.use_segment_idx = opt.get('use_segment_idx', False)
         super().__init__(opt, shared)
 
     @staticmethod
@@ -43,6 +45,8 @@ class BertClassifierAgent(TorchClassifierAgent):
                                      'all'],
                             help='which part of the encoders do we optimize '
                                  '(defaults to all layers)')
+        parser.add_argument('--add-cls-token', type='bool', default=True,
+                            help='add [CLS] and [SEP] tokens to text vec')
         parser.set_defaults(
             dict_maxexs=0,  # skip building dictionary
         )
@@ -62,6 +66,15 @@ class BertClassifierAgent(TorchClassifierAgent):
         self.optimizer = get_bert_optimizer([self.model],
                                             self.opt['type_optimization'],
                                             self.opt['learningrate'])
+
+    def _set_text_vec(self, *args, **kwargs):
+        obs = super()._set_text_vec(*args, **kwargs)
+        if self.opt.get('add_cls_token', True):
+            # concatenate the [CLS] and [SEP] tokens
+            if obs is not None and 'text_vec' in obs:
+                obs['text_vec'] = surround(obs['text_vec'], self.START_IDX,
+                                           self.END_IDX)
+        return obs
 
     def score(self, batch):
         segment_idx = batch.text_vec * 0
