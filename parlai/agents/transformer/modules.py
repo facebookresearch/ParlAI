@@ -360,7 +360,7 @@ class TransformerEncoder(nn.Module):
 
         if positions.max().item() > self.n_positions:
             warn_once(
-                'You are inputting a sequence of {x} length, but only have'
+                'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
                     x=positions.max().item(),
                     y=self.n_positions)
@@ -539,7 +539,7 @@ class TransformerDecoder(nn.Module):
             tensor = _normalize(tensor, self.norm_embeddings)
         if positions.max().item() > self.n_positions:
             warn_once(
-                'You are inputting a sequence of {x} length, but only have'
+                'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
                     x=positions.max().item(),
                     y=self.n_positions)
