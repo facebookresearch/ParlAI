@@ -68,6 +68,8 @@ personas, provided for convenience (useful for talking to the model interactivel
       format.
 - `wordstat_files/`: This directory contains json files with generated output and
 automatic metrics computed for the various pretrained models.
+- `evaluation_logs/`: This directory contains logs and evaluations from the human
+   evaluations.
 
 ### (Alternatively) Making the data yourself
 
@@ -333,6 +335,25 @@ previous section._
 
 ## Human Evaluation code, logs, and analysis
 
-Will all be released at a later date. Check back here soon, or
-[track the issue](https://github.com/facebookresearch/ParlAI/issues/1690) on
-GitHub.
+Human evaluation logs should be downloaded automatically after following the
+download instructions above. You'll find them in the `evaluation_logs/` folder.
+
+A Jupyter notebook which generates the graphs and tables for the human experiments
+is available in the
+[project folder](https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue).
+The notebook should be launched from the ParlAI root directory.
+
+The code for running your own mechanical turk evaluations is also available in
+the corresponding
+[mturk folder](https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue/mturk).
+You will probably want to make changes to the `model_config.py` and `run.py` to change
+which models are being evaluated, and then you can launch the experiment with:
+
+```
+python parlai/mturk/tasks/controllable_dialogue/run.py -r 0.9 --count-complete --hobby --max-resp-time 1200 --max-connections 20 -nc 1200 --sandbox
+```
+Change it to `--live` if you're prepared to spend actual currency. The output must be
+lightly postprocessed to use it with the analysis tools released. If you intend to do
+this, please file an issue on the
+[ParlAI GitHub](https://github.com/facebookresearch/ParlAI/).
+
