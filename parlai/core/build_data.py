@@ -266,6 +266,7 @@ def modelzoo_path(datapath, path):
         # Internal path (starts with "izoo:") -- useful for non-public
         # projects.  Save the path to your internal model zoo in
         # parlai_internal/.internal_zoo_path
+        # TODO: test the internal zoo.
         zoo_path = 'parlai_internal/zoo/.internal_zoo_path'
         if not os.path.isfile('parlai_internal/zoo/.internal_zoo_path'):
             raise RuntimeError(
