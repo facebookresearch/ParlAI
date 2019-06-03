@@ -233,12 +233,14 @@ def train_model(opt):
     )
 
 
-def eval_model(opt, skip_test=False):
+def eval_model(opt, skip_valid=False, skip_test=False):
     """
     Runs through an evaluation loop.
 
     :param opt:
         Any non-default options you wish to set.
+    :param bool skip_valid:
+        If true skips the valid evaluation, and the second return value will be None.
     :param bool skip_test:
         If true skips the test evaluation, and the third return value will be None.
 
@@ -261,7 +263,7 @@ def eval_model(opt, skip_test=False):
 
     with capture_output() as output:
         popt['datatype'] = 'valid'
-        valid = ems.eval_model(popt)
+        valid = None if skip_valid else ems.eval_model(popt)
         popt['datatype'] = 'test'
         test = None if skip_test else ems.eval_model(popt)
 

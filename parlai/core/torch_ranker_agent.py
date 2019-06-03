@@ -200,9 +200,12 @@ class TorchRankerAgent(TorchAgent):
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
-        if batch.text_vec is None:
+        if batch.text_vec is None and batch.image is None:
             return
-        batchsize = batch.text_vec.size(0)
+        if batch.text_vec is not None:
+            batchsize = batch.text_vec.size(0)
+        else:
+            batchsize = len(batch.image)
         self.model.train()
         self.zero_grad()
 
@@ -241,9 +244,12 @@ class TorchRankerAgent(TorchAgent):
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
-        if batch.text_vec is None:
+        if batch.text_vec is None and batch.image is None:
             return
-        batchsize = batch.text_vec.size(0)
+        if batch.text_vec is not None:
+            batchsize = batch.text_vec.size(0)
+        else:
+            batchsize = len(batch.image)
         self.model.eval()
 
         cands, cand_vecs, label_inds = self._build_candidates(
@@ -354,7 +360,10 @@ class TorchRankerAgent(TorchAgent):
         """
         label_vecs = batch.label_vec  # [bsz] list of lists of LongTensors
         label_inds = None
-        batchsize = batch.text_vec.shape[0]
+        if batch.text_vec is not None:
+            batchsize = batch.text_vec.shape[0]
+        else:
+            batchsize = len(batch.image)
 
         if label_vecs is not None:
             assert label_vecs.dim() == 2
