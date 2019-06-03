@@ -17,7 +17,7 @@ class TestEvalModel(unittest.TestCase):
         """Test output of running eval_model"""
         parser = setup_args()
         parser.set_defaults(
-            task='tasks.repeat:RepeatTeacher:10',
+            task='integration_tests',
             model='repeat_label',
             datatype='valid',
             num_examples=5,
@@ -30,6 +30,7 @@ class TestEvalModel(unittest.TestCase):
 
         # decode the output
         scores = str_output.split("\n---\n")
+
         for i in range(1, len(scores)):
             score = ast.literal_eval(scores[i])
             # check totals
@@ -38,7 +39,7 @@ class TestEvalModel(unittest.TestCase):
             self.assertEqual(score['accuracy'], 1, "accuracy != 1")
             if 'rouge-1' in score:
                 self.assertEqual(score['rouge-1'], 1, 'rouge1 != 1')
-                self.assertEqual(score['rouge-2'], 0, 'rouge-2 != 0')
+                self.assertEqual(score['rouge-2'], 1, 'rouge-2 != 1')
                 self.assertEqual(score['rouge-L'], 1, 'rouge-L != 1')
 
 
