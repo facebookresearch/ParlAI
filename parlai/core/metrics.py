@@ -13,6 +13,7 @@ between processes.
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, no_lock
 from collections import Counter
+from parlai.core.utils import warn_once
 
 import re
 
@@ -28,6 +29,13 @@ try:
 except ImportError:
     # User doesn't have rouge installed, so we can't use it for rouge
     # We'll just turn off things, but we might want to warn the user
+    warn_once('Run pip install py-rouge to get rouge metrcis')
+    rouge = None
+
+try:
+    import nltk.tokenizer  # noqa
+except ImportError:
+    warn_once('Run python -c import nltk; nltk.download("punkt")')
     rouge = None
 
 re_art = re.compile(r'\b(a|an|the)\b')
@@ -114,17 +122,7 @@ def _rouge(guess, answers):
     """Compute ROUGE score between guess and *any* answers. Return the best."""
     if rouge is None:
         return None, None, None
-    evaluator = rouge.Rouge(metrics=['rouge-n', 'rouge-l'],
-                            max_n=2,
-                            limit_length=True,
-                            length_limit=1024,
-                            length_limit_type='words',
-                            apply_avg=False,
-                            apply_best=True,
-                            alpha=0.5,  # Default F1_score
-                            weight_factor=1.2,
-                            stemming=False,
-                            ensure_compatibility=True)
+    evaluator = rouge.Rouge(metrics=['rouge-n', 'rouge-l'], max_n=2)
     scores = [evaluator.get_scores(normalize_answer(guess), normalize_answer(a))
               for a in answers]
     scores_rouge1 = [score['rouge-1']['r'] for score in scores]
