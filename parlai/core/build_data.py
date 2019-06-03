@@ -244,11 +244,14 @@ def modelzoo_path(datapath, path):
     """
     if path is None:
         return None
-    if not path.startswith('models:'):
+    if (not path.startswith('models:') and not path.startswith('zoo:') and not
+            path.startswith('izoo:')):
         return path
-    else:
+    elif path.startswith('models:') or path.startswith('zoo:'):
+        zoo = path.split(':')[0]
+        zoo_len = len(zoo) + 1
         # Check if we need to download the model
-        animal = path[7:path.rfind('/')].replace('/', '.')
+        animal = path[zoo_len:path.rfind('/')].replace('/', '.')
         if '.' not in animal:
             animal += '.build'
         module_name = 'parlai.zoo.{}'.format(animal)
@@ -258,4 +261,20 @@ def modelzoo_path(datapath, path):
         except (ImportError, AttributeError):
             pass
 
-        return os.path.join(datapath, 'models', path[7:])
+        return os.path.join(datapath, 'models', path[zoo_len:])
+    else:
+        # Internal path (starts with "izoo:") -- useful for non-public
+        # projects.  Save the path to your internal model zoo in
+        # parlai_internal/.internal_zoo_path
+        # TODO: test the internal zoo.
+        zoo_path = 'parlai_internal/zoo/.internal_zoo_path'
+        if not os.path.isfile('parlai_internal/zoo/.internal_zoo_path'):
+            raise RuntimeError(
+                'Please specify the path to your internal zoo in the '
+                'file parlai_internal/zoo/.internal_zoo_path in your '
+                'internal repository.'
+            )
+        else:
+            with open(zoo_path, 'r') as f:
+                zoo = f.read().split('\n')[0]
+            return os.path.join(zoo, path[5:])

@@ -77,7 +77,7 @@ class TestDictionary(unittest.TestCase):
             pass
         testing_utils.download_unittest_models()
 
-        zoo_path = 'models:unittest/seq2seq/model'
+        zoo_path = 'zoo:unittest/seq2seq/model'
         model_path = modelzoo_path(datapath, zoo_path)
         os.remove(model_path + '.dict')
         # Test that eval model fails

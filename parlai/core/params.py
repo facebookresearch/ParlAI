@@ -697,7 +697,7 @@ class ParlaiParser(argparse.ArgumentParser):
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
 
-        # map filenames that start with 'models:' to point to the model zoo dir
+        # map filenames that start with 'zoo:' to point to the model zoo dir
         if self.opt.get('model_file') is not None:
             self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
                                                    self.opt['model_file'])

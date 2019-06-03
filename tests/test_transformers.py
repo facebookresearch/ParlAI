@@ -90,8 +90,8 @@ class TestTransformerRanker(unittest.TestCase):
         stdout, valid, test = testing_utils.eval_model(dict(
             task='integration_tests:multipass',
             model='transformer/ranker',
-            model_file='models:unittest/transformer_ranker/model',
-            dict_file='models:unittest/transformer_ranker/model.dict',
+            model_file='zoo:unittest/transformer_ranker/model',
+            dict_file='zoo:unittest/transformer_ranker/model.dict',
             batch_size=64,
         ))
 
@@ -272,8 +272,8 @@ class TestTransformerGenerator(unittest.TestCase):
         stdout, valid, test = testing_utils.eval_model(dict(
             task='integration_tests:multipass',
             model='transformer/generator',
-            model_file='models:unittest/transformer_generator2/model',
-            dict_file='models:unittest/transformer_generator2/model.dict',
+            model_file='zoo:unittest/transformer_generator2/model',
+            dict_file='zoo:unittest/transformer_generator2/model.dict',
             rank_candidates=True,
             batch_size=64,
         ))

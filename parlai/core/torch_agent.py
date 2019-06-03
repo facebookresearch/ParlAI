@@ -858,7 +858,7 @@ class TorchAgent(Agent):
             embs = vocab.GloVe(
                 name=name, dim=pretrained_dim,
                 cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:glove_vectors'))
+                                    'zoo:glove_vectors'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
             from parlai.zoo.fasttext_cc_vectors.build import download
