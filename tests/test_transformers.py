@@ -402,9 +402,9 @@ class TestLearningRateScheduler(unittest.TestCase):
         )
 
         for BASE_ARGS in [GENERATOR_ARGS, RANKER_ARGS]:
+            mdl = BASE_ARGS['model']
             with testing_utils.tempdir() as tmpdir:
                 model_file = os.path.join(tmpdir, 'model')
-
                 stdout1, valid1, test1 = testing_utils.train_model(dict(
                     model_file=model_file,
                     lr_scheduler='invsqrt',
@@ -419,13 +419,13 @@ class TestLearningRateScheduler(unittest.TestCase):
                 self.assertGreater(
                     valid2['num_updates'],
                     valid1['num_updates'],
-                    'Number of updates is not increasing'
+                    '({}) Number of updates is not increasing'.format(mdl)
                 )
                 # make sure the learning rate is decreasing
                 self.assertLess(
                     valid2['lr'],
                     valid1['lr'],
-                    'Learning rate is not decreasing'
+                    '({}) Learning rate is not decreasing'.format(mdl)
                 )
                 # but make sure we're not loading the scheduler if we're fine
                 # tuning
@@ -438,12 +438,14 @@ class TestLearningRateScheduler(unittest.TestCase):
                 self.assertEqual(
                     valid3['num_updates'],
                     valid1['num_updates'],
-                    'Finetuning LR scheduler reset failed (num_updates).'
+                    '({}) Finetuning LR scheduler reset failed '
+                    '(num_updates).'.format(mdl)
                 )
                 self.assertEqual(
                     valid3['lr'],
                     valid1['lr'],
-                    'Finetuning LR scheduler reset failed (lr).'
+                    '({}) Finetuning LR scheduler reset failed '
+                    '(lr).'.format(mdl)
                 )
                 # and make sure we're not loading the scheduler if it changes
                 stdout4, valid4, test4 = testing_utils.train_model(dict(
@@ -455,13 +457,14 @@ class TestLearningRateScheduler(unittest.TestCase):
                 self.assertEqual(
                     valid4['num_updates'],
                     valid1['num_updates'],
-                    ('LR scheduler change reset failed (num_updates).\n' +
-                     stdout4)
+                    '({}) LR scheduler change reset failed (num_updates).'
+                    '\n{}'.format(mdl, stdout4)
                 )
                 self.assertEqual(
                     valid4['lr'],
                     1e-3,
-                    'LR is not correct in final resume.\n' + stdout4
+                    '({}) LR is not correct in final resume.\n{}'.format(
+                        mdl, stdout4)
                 )
 
 
