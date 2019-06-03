@@ -251,7 +251,7 @@ class Metrics(object):
             try:
                 rouge1, rouge2, rougel = _rouge(prediction, labels)
             except LookupError:
-                warn_once('Run python -c import nltk; nltk.download("punkt")')
+                warn_once('Run python -c \"import nltk; nltk.download(\'punkt\')\"')
                 rouge1 = None
             with self._lock():
                 self.metrics['f1'] += f1
