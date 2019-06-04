@@ -3,7 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""The standard way to train a model. After training, also computes validation
+
+"""
+Training script for ParlAI.
+
+The standard way to train a model. After training, also computes validation
 and test error.
 
 The user must provide a model (with ``--model``) and a task (with ``--task`` or
@@ -11,7 +15,6 @@ The user must provide a model (with ``--model``) and a task (with ``--task`` or
 
 Examples
 --------
-
 .. code-block:: shell
 
   python -m parlai.scripts.train -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
@@ -40,7 +43,16 @@ from parlai.core.distributed_utils import (
 from parlai.scripts.build_pytorch_data import get_pyt_dict_file
 
 
-def setup_args(parser=None):
+def setup_args(parser=None) -> ParlaiParser:
+    """
+    Build the ParlAI parser, adding command line args if necessary.
+
+    :param ParlaiParser parser:
+        Preexisting parser to append options to. Will be created if needed.
+
+    :returns:
+        the ParlaiParser with CLI options added.
+    """
     if parser is None:
         parser = ParlaiParser(True, True, 'Train a model')
     parser.add_pytorch_datateacher_args()
@@ -125,6 +137,21 @@ def _maybe_load_eval_world(agent, opt, datatype):
 
 
 def load_eval_world(agent, opt, datatype):
+    """
+    Create a new eval world for the agent and the given opt.
+
+    Overrides the datatype options for doing this.  Handles some magic
+    overrides of other special options for the training script.
+
+    :param Agent agent:
+        The model being trained.
+
+    :param Opt opt:
+        The global CLI opts.
+
+    :param string datatype:
+        The new datatype.
+    """
     if 'stream' in opt['datatype']:
         datatype += ':stream'
     opt = opt.copy()
@@ -153,11 +180,16 @@ def run_eval(valid_world, opt, datatype, max_exs=-1, write_log=False):
     """
     Eval on validation/test data.
 
-    :param valid_world: the pre-created validation world.
-    :param opt: the options that specific the task, eval_task, etc
-    :param datatype: the datatype to use, such as "valid" or "test"
-    :param bool write_log: specifies to write metrics to file if the model_file is set
-    :param int max_exs: limits the number of examples if max_exs > 0
+    :param valid_world:
+        the pre-created validation world.
+    :param opt:
+        the options that specific the task, eval_task, etc
+    :param datatype:
+        the datatype to use, such as "valid" or "test"
+    :param bool write_log:
+        specifies to write metrics to file if the model_file is set
+    :param int max_exs:
+        limits the number of examples if max_exs > 0
     """
     if valid_world is None:
         # This isn't the primary worker, so we can just skip evaluation
@@ -190,13 +222,16 @@ def run_eval(valid_world, opt, datatype, max_exs=-1, write_log=False):
     return valid_report
 
 
-def save_best_valid(model_file, best_valid):
+def _save_best_valid(model_file, best_valid):
+    """Save the best validation score to disk."""
     f = open(model_file + '.best_valid', 'w')
     f.write(str(best_valid))
     f.close()
 
 
 class TrainLoop():
+    """TrainLoop contains the core training loop logic."""
+
     def __init__(self, opt):
         # if python is called from a non-interactive shell, like a bash script,
         # it will by-default ignore SIGINTs, and KeyboardInterrupt exceptions are
@@ -294,6 +329,7 @@ class TrainLoop():
             self.writer = TensorboardLogger(opt)
 
     def save_model(self, suffix=None):
+        """Save the model to disk, possibly with a suffix."""
         if not is_primary_worker():
             # never do IO as a non-primary worker
             return
@@ -330,6 +366,12 @@ class TrainLoop():
             }, f)
 
     def validate(self):
+        """
+        Perform a validation run, checking whether we should stop training.
+
+        :return: boolean indicating whether training should stop
+        :rtype: bool
+        """
         opt = self.opt
 
         if self.valid_world is None:
@@ -385,7 +427,7 @@ class TrainLoop():
                 self.save_model()
                 print("[ saving best valid metric: " +
                       opt['model_file'] + ".best_valid ]")
-                save_best_valid(opt['model_file'], self.best_valid)
+                _save_best_valid(opt['model_file'], self.best_valid)
                 self.saved = True
             if (opt['validation_metric'] == 'accuracy' and
                     self.best_valid >= opt['validation_cutoff']):
@@ -428,8 +470,10 @@ class TrainLoop():
 
     def _sync_training_metrics(self, metrics):
         """
-        Sync training metrics across workers. A handful of special cases are handled
-        as exceptions, and the remaining metrics are simply averaged across workers.
+        Sync training metrics across workers.
+
+        A handful of special cases are handled as exceptions, and the remaining
+        metrics are simply averaged across workers.
         """
         if not is_distributed():
             # nothing special needed
@@ -450,7 +494,7 @@ class TrainLoop():
 
     def _compute_eta(self, epochs_completed, time_elapsed):
         """
-        Computes the estimated seconds remaining in training.
+        Compute the estimated seconds remaining in training.
 
         :param float epochs_completed: number of epochs already completed.
         :param float time_elapsed: total time spent already, in seconds.
@@ -474,6 +518,7 @@ class TrainLoop():
         return eta
 
     def log(self):
+        """Output a training log entry."""
         opt = self.opt
         if opt['display_examples']:
             print(self.world.display() + '\n~~')
@@ -502,6 +547,11 @@ class TrainLoop():
             self.writer.add_metrics('train', self._total_exs, train_report)
 
     def train(self):
+        """
+        Perform a training run.
+
+        :return: tuple of reports (validation_report, test_report)
+        """
         if is_distributed():
             warn_once(
                 "Distributed training outputs average-per-worker metrics during "
