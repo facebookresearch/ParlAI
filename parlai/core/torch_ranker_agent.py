@@ -32,7 +32,7 @@ class TorchRankerAgent(TorchAgent):
 
     - Training/evaluating on candidates from a variety of sources.
     - Computing hits@1, hits@5, mean reciprical rank (MRR), and other metrics.
-    - Caching representations for fast runtime when deploying modesl to production.
+    - Caching representations for fast runtime when deploying models to production.
     """
 
     # TODO: mark methods as abstract

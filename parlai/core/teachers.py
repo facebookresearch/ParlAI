@@ -467,7 +467,7 @@ class DialogTeacher(FixedDialogTeacher):
         """
         Provide consistent label candidates for all examples.
 
-        Default implemntation returns ``None`` always, but this may be overriden
+        Default implementation returns ``None`` always, but this may be overriden
         to provide candidates in all areas. See ``FbDialogueTeacher``.
         """
         # TODO DEPRECATIONDAY: FbiDialogueTeacher is being deprecated, should we

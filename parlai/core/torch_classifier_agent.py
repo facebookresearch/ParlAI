@@ -241,11 +241,16 @@ class TorchClassifierAgent(TorchAgent):
         """
         Use the confusion matrix to compute precision and recall.
 
+        :param confmat:
+            the confusion matrics
         :param str class_name:
-            the class name to compute P/R for.
+            the class name to compute P/R for
+        :param metrics:
+            metrics dictionary to modify
         :return:
             the number of examples of each class.
         """
+        # TODO: document these parameter types.
         eps = 0.00001  # prevent divide by zero errors
         true_positives = confmat[(class_name, class_name)]
         num_actual_positives = sum([confmat[(class_name, c)]
