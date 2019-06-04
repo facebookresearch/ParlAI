@@ -152,9 +152,7 @@ class TransresnetAgent(Agent):
                 torch.save(self.fixed_cands_enc, cands_enc_file)
 
     def load_personalities(self):
-        """
-            return the list of personality
-        """
+        """Load and return the list of personalities"""
         personality_path = os.path.join(
             self.opt['datapath'],
             'personality_captions/personalities.txt'
@@ -170,9 +168,9 @@ class TransresnetAgent(Agent):
                     perss.append(line[0:-1])
         return perss
 
-    def observe(self, observations):
-        self.observation = observations
-        return observations
+    def observe(self, observation):
+        self.observation = observation
+        return observation
 
     def act(self):
         return self.batch_act([self.observation])[0]
@@ -271,22 +269,21 @@ class TransresnetAgent(Agent):
         return loss, num_correct, num_examples, med_rank, chosen_captions
 
     def batch_act(self, observations):
+        """
+        Act on a batch of observations
+
+        :param observations:
+            list of observations
+
+        :return:
+            A list of acts, one for each observation
+        """
         is_training = any(['labels' in obs for obs in observations])
         valid_obs, valid_indexes = self.filter_valid_obs(
             observations,
             is_training
         )
-        tmp_image_feats = [v.get('image') for v in valid_obs]
-        for i, im in enumerate(tmp_image_feats):
-            try:
-                if len(im.size()) == 4:
-                    tmp_image_feats[i] = im[0, :, 0, 0]
-            except TypeError:   # No Image Feats Given
-                tmp_image_feats[i] = self.blank_image_features
-        image_feats = []
-        for img in tmp_image_feats:
-            # img.requires_grad = False
-            image_feats.append(img.detach())
+        image_feats = self.extract_image_feats(valid_obs)
         personalities = [v.get('text', '') for v in valid_obs]
 
         chosen_captions = None
@@ -308,6 +305,29 @@ class TransresnetAgent(Agent):
                 result[index_obs]['text'] = chosen_captions[i][0]
                 result[index_obs]['text_candidates'] = chosen_captions[i]
         return result
+
+    def extract_image_feats(self, obs):
+        """
+        Extract image features from the observations
+
+        :param obs:
+            list of observations
+
+        :return:
+            list of image features
+        """
+        tmp_image_feats = [v.get('image') for v in obs]
+        for i, im in enumerate(tmp_image_feats):
+            try:
+                # Check if given img features of form [1, <dim>, 1, 1]
+                if len(im.size()) == 4:
+                    tmp_image_feats[i] = im[0, :, 0, 0]
+            except TypeError:  # No Image Feats Given
+                tmp_image_feats[i] = self.blank_image_features
+        image_feats = []
+        for img in tmp_image_feats:
+            image_feats.append(img.detach())
+        return image_feats
 
     def filter_valid_obs(self, observations, is_training):
         """Filter out invalid observations"""
@@ -370,6 +390,9 @@ class TransresnetAgent(Agent):
         """
         Receive the metrics from validation. Unfreeze text encoder weights
         after a certain number of rounds without improvement.
+
+        :param metrics_dict:
+            the metrics dictionary
         """
         if 'tasks' in metrics_dict:
             metrics_dict = metrics_dict['tasks']['personality_captions']

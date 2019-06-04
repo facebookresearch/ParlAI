@@ -79,11 +79,23 @@ class TransresnetModel(nn.Module):
         )
 
     def _build_personality_dictionary(self, personalities_list):
+        """
+        Build the personality dictionary mapping personality to id
+
+        :param personalities_list:
+            list of personalities
+        """
         self.personalities_list = personalities_list
         self.personality_to_id = {p: i for i, p in enumerate(personalities_list)}
         self.num_personalities = len(self.personalities_list) + 1
 
     def _build_text_encoder(self, n_layers_text):
+        """
+        Build the text (candidate) encoder
+
+        :param n_layers_text:
+            how many layers the transformer will have
+        """
         self.embeddings = nn.Embedding(
             len(self.dictionary),
             self.opt['embedding_size']
@@ -121,6 +133,12 @@ class TransresnetModel(nn.Module):
         )
 
     def _build_image_encoder(self, n_layers_img):
+        """
+        Build the image encoder mapping raw image features to the appropriate space.
+
+        :param n_layers_img:
+            number of feed-forward layers for the image encoder
+        """
         image_layers = [
             nn.BatchNorm1d(self.opt['image_features_dim']),
             nn.Dropout(p=self.opt['dropout']),
@@ -372,16 +390,36 @@ class TransresnetModel(nn.Module):
         return loss, num_correct
 
     def freeze_text_encoder(self):
+        """Freeze the text (candidate) encoder"""
         self.text_encoder_frozen = True
 
     def unfreeze_text_encoder(self):
+        """Unfreeze the text (candidate) encoder"""
         self.text_encoder_frozen = False
 
     def sum_encodings(self, addends):
+        """
+        Add up a list of encodings, of which some may be `None`
+
+        :param addends:
+            tensors to add
+
+        :return:
+            sum of non-`None` addends
+        """
         addends = [a for a in addends if a is not None]
         return sum(addends)
 
     def personalities_to_index(self, personalities):
+        """
+        Map personalities to their index in the personality dictionary
+
+        :param personalities:
+            list of personalities
+
+        :return:
+            list of personality ids
+        """
         res = []
         for i, p in enumerate(personalities):
             if p in self.personality_to_id:
@@ -438,7 +476,7 @@ class TransresnetModel(nn.Module):
 
 def load_fasttext_embeddings(dic, embedding_dim, datapath):
     """
-        Helper that loads weights from fasttext_cc and put them in embeddings.weights
+    Helper that loads weights from fasttext_cc and put them in embeddings.weights
     """
     print('Initializing embeddings from fasttext_cc')
     from parlai.zoo.fasttext_cc_vectors.build import download
