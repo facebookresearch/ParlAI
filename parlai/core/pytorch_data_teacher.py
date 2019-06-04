@@ -780,4 +780,5 @@ class DefaultTeacher(PytorchDataTeacher):
 
     This exists to simplify loading code in parlai.core.agents.get_task_module.
     """
+
     pass
