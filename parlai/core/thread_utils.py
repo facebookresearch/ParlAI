@@ -5,6 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 """
 Provides utilities useful for multiprocessing.
+
+This includes a ``SharedTable``.
 """
 
 from multiprocessing import Lock, RawArray
@@ -16,6 +18,7 @@ import sys
 class SharedTable(MutableMapping):
     """
     Provides a simple shared-memory table of integers, floats, or strings.
+
     Use this class as follows:
 
     .. code-block:: python
@@ -36,8 +39,9 @@ class SharedTable(MutableMapping):
 
     def __init__(self, init_dict=None):
         """
-        Create a shared memory version of each element of the initial
-        dictionary. Creates an empty array otherwise, which will extend
+        Create a shared memory version of each element of the initial dictionary.
+
+        Creates an empty array otherwise, which will extend
         automatically when keys are added.
 
         Each different type (all supported types listed in the ``types`` array
@@ -92,7 +96,7 @@ class SharedTable(MutableMapping):
         return key in self.idx or key in self.tensors
 
     def __getitem__(self, key):
-        """Returns shared value if key is available."""
+        """Return shared value if key is available."""
         if key in self.tensors:
             return self.tensors[key]
         elif key in self.idx:
@@ -103,12 +107,14 @@ class SharedTable(MutableMapping):
 
     def __setitem__(self, key, value):
         """
-        If key is in table, update it. Otherwise, extend the array to make
-        room. This uses additive resizing not multiplicative, since the number
-        of keys is not likely to change frequently during a run, so do not abuse
-        it.
+        If key is in table, update it. Otherwise, extend the array to make room.
+
+        This uses additive resizing not multiplicative, since the number
+        of keys is not likely to change frequently during a run, so do not
+        abuse it.
+
         Raises an error if you try to change the type of the value stored for
-        that key--if you need to do this, you must delete the key first.
+        that key -- if you need to do this, you must delete the key first.
         """
         val_type = type(value)
         if 'Tensor' in str(val_type):
@@ -139,7 +145,7 @@ class SharedTable(MutableMapping):
             raise KeyError('Key "{}" not found in SharedTable'.format(key))
 
     def __str__(self):
-        """Returns simple dict representation of the mapping."""
+        """Return simple dict representation of the mapping."""
         lhs = [
             '{k}: {v}'.format(k=key, v=self.arrays[typ][idx])
             for key, (idx, typ) in self.idx.items()
@@ -148,15 +154,17 @@ class SharedTable(MutableMapping):
         return '{{{}}}'.format(', '.join(lhs + rhs))
 
     def __repr__(self):
-        """Returns the object type and memory location with the mapping."""
+        """Return the object type and memory location with the mapping."""
         representation = super().__repr__()
         return representation.replace('>', ': {}>'.format(str(self)))
 
     def get_lock(self):
+        """Return the lock."""
         return self.lock
 
 
 def is_tensor(v):
+    """Return if an object is a torch Tensor, without importing torch."""
     if type(v).__module__.startswith('torch'):
         import torch
         return torch.is_tensor(v)

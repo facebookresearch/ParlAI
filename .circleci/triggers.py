@@ -6,16 +6,26 @@
 
 """
 Detects whether specific CircleCI jobs should run.
+
+You can get CircleCI to run extra tests for your pull request by adding special
+words into your commit messages.
+
+[gpu]: Run the nightly GPU tests
+[mturk]: Run the mturk tests
+[data]: Run the data tests
+[long]: run all above
 """
 
 import parlai.core.testing_utils as testing_utils
 
 
 def detect_all():
+    """Check if we should run all tests."""
     return '[long]' in testing_utils.git_commit_messages()
 
 
 def detect_gpu():
+    """Check if we should run GPU tests."""
     commit_msg = '[gpu]' in testing_utils.git_commit_messages()
     test_changed = any(
         'tests/nightly/gpu' in fn
@@ -25,6 +35,7 @@ def detect_gpu():
 
 
 def detect_data():
+    """Check if we should run data tests."""
     commit_msg = '[data]' in testing_utils.git_commit_messages().lower()
     test_changed = any(
         testing_utils.is_new_task_filename(fn)
@@ -34,6 +45,7 @@ def detect_data():
 
 
 def detect_mturk():
+    """Check if we should run mturk tests."""
     commit_msg = '[mturk]' in testing_utils.git_commit_messages().lower()
     mturk_changed = any(
         'parlai/mturk' in fn
@@ -50,6 +62,7 @@ MAPPING = {
 
 
 def main():
+    """Run the program, printing the name of tests we should run to stdout."""
     run_all = detect_all()
     for testname, detector in MAPPING.items():
         if run_all or detector():

@@ -4,6 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Torch Ranker Agents provide functionality for building ranking models.
+
+See the TorchRankerAgent tutorial for examples.
+"""
+
 import os
 from tqdm import tqdm
 
@@ -18,8 +24,22 @@ from parlai.core.distributed_utils import is_distributed
 
 
 class TorchRankerAgent(TorchAgent):
+    """
+    Abstract TorchRankerAgent class; only meant to be extended.
+
+    TorchRankerAgents aim to provide convenient functionality for building ranking
+    models. This includes:
+
+    - Training/evaluating on candidates from a variety of sources.
+    - Computing hits@1, hits@5, mean reciprical rank (MRR), and other metrics.
+    - Caching representations for fast runtime when deploying models to production.
+    """
+
+    # TODO: mark methods as abstract
+
     @classmethod
     def add_cmdline_args(cls, argparser):
+        """Add CLI args."""
         super(TorchRankerAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
@@ -141,11 +161,13 @@ class TorchRankerAgent(TorchAgent):
             'Abstract class: user must implement score()')
 
     def build_model(self):
-        """Build a new model (implemented by children classes)"""
+        """Build a new model (implemented by children classes)."""
+        # TODO: mark as abstract
         raise NotImplementedError(
             'Abstract class: user must implement build_model()')
 
-    def get_batch_train_metrics(self, scores):
+    def _get_batch_train_metrics(self, scores):
+        # TODO: document
         batchsize = scores.size(0)
         # get accuracy
         targets = scores.new_empty(batchsize).long()
@@ -159,7 +181,8 @@ class TorchRankerAgent(TorchAgent):
         self.metrics['rank'] += torch.sum(ranks).item()
         self.metrics['mrr'] += torch.sum(mrr).item()
 
-    def get_train_preds(self, scores, label_inds, cands, cand_vecs):
+    def _get_train_preds(self, scores, label_inds, cands, cand_vecs):
+        # TODO: document
         # TODO: speed these calculations up
         batchsize = scores.size(0)
         _, ranks = scores.sort(1, descending=True)
@@ -181,6 +204,8 @@ class TorchRankerAgent(TorchAgent):
             return super().is_valid(obs)
 
         if 'text_vec' not in obs and 'image' not in obs:
+            # TODO: this should really be a call to super, i.e.
+            # if not super().is_valid(obs): return False
             return False
 
         # skip examples for which the set of label candidates do not
@@ -229,7 +254,7 @@ class TorchRankerAgent(TorchAgent):
 
         # Get train predictions
         if self.opt['candidates'] == 'batch':
-            self.get_batch_train_metrics(scores)
+            self._get_batch_train_metrics(scores)
             return Output()
         if not self.opt.get('train_predict', False):
             warn_once(
@@ -237,7 +262,7 @@ class TorchRankerAgent(TorchAgent):
                 "`--train-predict` to calculate train metrics."
             )
             return Output()
-        return self.get_train_preds(scores, label_inds, cands, cand_vecs)
+        return self._get_train_preds(scores, label_inds, cands, cand_vecs)
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
@@ -293,9 +318,10 @@ class TorchRankerAgent(TorchAgent):
 
     def _set_label_cands_vec(self, *args, **kwargs):
         """
-        Sets the 'label_candidates_vec' field in the observation.
+        Set the 'label_candidates_vec' field in the observation.
 
-        Useful to override to change vectorization behavior"""
+        Useful to override to change vectorization behavior.
+        """
         obs = args[0]
         cands_key = ('candidates' if 'labels' in obs else
                      'eval_candidates' if 'eval_labels' in obs else None)
@@ -308,7 +334,7 @@ class TorchRankerAgent(TorchAgent):
 
     def _build_candidates(self, batch, source, mode):
         """
-        Build a candidate set for this batch
+        Build a candidate set for this batch.
 
         :param batch:
             a Batch object (defined in torch_agent.py)
@@ -319,6 +345,7 @@ class TorchRankerAgent(TorchAgent):
             'train' or 'eval'
 
         :return: tuple of tensors (label_inds, cands, cand_vecs)
+
             label_inds: A [bsz] LongTensor of the indices of the labels for each
                 example from its respective candidate set
             cands: A [num_cands] list of (text) candidates
@@ -327,6 +354,7 @@ class TorchRankerAgent(TorchAgent):
                 OR a [batchsize, num_cands, seqlen] LongTensor if source=='inline'
 
         Possible sources of candidates:
+
             * batch: the set of all labels in this batch
                 Use all labels in the batch as the candidate set (with all but the
                 example's label being treated as negatives).
@@ -336,11 +364,10 @@ class TorchRankerAgent(TorchAgent):
                 the correct label will be treated as a negative.
             * batch-all-cands: the set of all candidates in this batch
                 Use all candidates in the batch as candidate set.
-                Note 1: This can result in a very large number of
-                        of candidates.
+                Note 1: This can result in a very large number of candidates.
                 Note 2: In this case we will deduplicate candidates.
                 Note 3: just like with 'batch' the candidate set is identical
-                        for all examples in a batch.
+                for all examples in a batch.
             * inline: batch_size lists, one list per example
                 If each example comes with a list of possible candidates, use those.
                 Note: With this setting, each example will have its own candidate set.
@@ -534,7 +561,7 @@ class TorchRankerAgent(TorchAgent):
 
     def set_vocab_candidates(self, shared):
         """
-        Load the tokens from the vocab as candidates
+        Load the tokens from the vocab as candidates.
 
         self.vocab_candidates will contain a [num_cands] list of strings
         self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
@@ -561,7 +588,7 @@ class TorchRankerAgent(TorchAgent):
 
     def set_fixed_candidates(self, shared):
         """
-        Load a set of fixed candidates and their vectors (or vectorize them here)
+        Load a set of fixed candidates and their vectors (or vectorize them here).
 
         self.fixed_candidates will contain a [num_cands] list of strings
         self.fixed_candidate_vecs will contain a [num_cands, seq_len] LongTensor
@@ -604,8 +631,8 @@ class TorchRankerAgent(TorchAgent):
                     if setting == 'reuse' and os.path.isfile(vecs_path):
                         vecs = self.load_candidates(vecs_path)
                     else:  # setting == 'replace' OR generating for the first time
-                        vecs = self.make_candidate_vecs(cands)
-                        self.save_candidates(vecs, vecs_path)
+                        vecs = self._make_candidate_vecs(cands)
+                        self._save_candidates(vecs, vecs_path)
 
                 self.fixed_candidates = cands
                 self.fixed_candidate_vecs = vecs
@@ -619,10 +646,12 @@ class TorchRankerAgent(TorchAgent):
                         encs = self.load_candidates(
                             enc_path, cand_type='encodings')
                     else:
-                        encs = self.make_candidate_encs(self.fixed_candidate_vecs,
-                                                        path=enc_path)
-                        self.save_candidates(encs, path=enc_path,
-                                             cand_type='encodings')
+                        encs = self._make_candidate_encs(
+                            self.fixed_candidate_vecs, path=enc_path
+                        )
+                        self._save_candidates(
+                            encs, path=enc_path, cand_type='encodings'
+                        )
                     self.fixed_candidate_encs = encs
                     if self.use_cuda:
                         self.fixed_candidate_encs = self.fixed_candidate_encs.cuda()
@@ -639,10 +668,12 @@ class TorchRankerAgent(TorchAgent):
                 self.fixed_candidate_encs = None
 
     def load_candidates(self, path, cand_type='vectors'):
+        """Load fixed candidates from a path."""
         print("[ Loading fixed candidate set {} from {} ]".format(cand_type, path))
         return torch.load(path, map_location=lambda cpu, _: cpu)
 
-    def make_candidate_vecs(self, cands):
+    def _make_candidate_vecs(self, cands):
+        """Prebuild cached vectors for fixed candidates."""
         cand_batches = [cands[i:i + 512] for i in range(0, len(cands), 512)]
         print("[ Vectorizing fixed candidate set ({} batch(es) of up to 512) ]"
               "".format(len(cand_batches)))
@@ -651,17 +682,31 @@ class TorchRankerAgent(TorchAgent):
             cand_vecs.extend(self.vectorize_fixed_candidates(batch))
         return padded_3d([cand_vecs], dtype=cand_vecs[0].dtype).squeeze(0)
 
-    def save_candidates(self, vecs, path, cand_type='vectors'):
+    def _save_candidates(self, vecs, path, cand_type='vectors'):
+        """Save cached vectors."""
         print("[ Saving fixed candidate set {} to {} ]".format(cand_type,
                                                                path))
         with open(path, 'wb') as f:
             torch.save(vecs, f)
 
     def encode_candidates(self, padded_cands):
+        """
+        Convert the given candidates to vectors.
+
+        This is an abstract method that must be implemented by the user.
+
+        :param padded_cands:
+            The padded candidates.
+        """
+        # TODO: mark as abstract.
+        # TODO: describe input type and return type.
         raise NotImplementedError(
             'Abstract class: user must implement encode_candidates()')
 
-    def make_candidate_encs(self, vecs, path):
+    def _make_candidate_encs(self, vecs, path):
+        """Make candidate encodings."""
+        # TODO: document better
+
         cand_encs = []
         vec_batches = [vecs[i:i + 256] for i in range(0, len(vecs), 256)]
         print("[ Vectorizing fixed candidates set from ({} batch(es) of up to 256) ]"
@@ -673,7 +718,7 @@ class TorchRankerAgent(TorchAgent):
 
     def vectorize_fixed_candidates(self, cands_batch):
         """
-        Convert a batch of candidates from text to vectors
+        Convert a batch of candidates from text to vectors.
 
         :param cands_batch:
             a [batchsize] list of candidates (strings)

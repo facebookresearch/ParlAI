@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-This module provides a set of teachers that deal with dialog:
+This module provides a set of teachers that deal with dialog.
 
     ``FixedDialogTeacher(Teacher)``
     Base class for teachers in tasks that have fixed dialog - i.e., dialog
@@ -59,26 +59,30 @@ class DataLoader(Thread):
     A teacher may submit a request to the loader, which will return the
     appropriate data.
 
-    To submit a request, a teacher should call ``request_load`` with the
-    following arguments:
-
-    :param receive_fn:
-        a receive function (for receiving the data)
-    :param load_fn:
-        a load function (for loading the data)
-    :param args:
-        arguments for the load function. args can be either a dictionary of
-        arguments for a function, or a list of positional arguments
+    To submit a request, a teacher should call ``request_load``.
     """
+
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
         self.num_workers = opt.get('num_load_threads', 1)
         self.request_queue = queue.Queue()
 
     def request_load(self, receive_fn, load_fn, args):
+        """
+        Queue a request for loading.
+
+        :param receive_fn:
+            a receive function (for receiving the data)
+        :param load_fn:
+            a load function (for loading the data)
+        :param args:
+            arguments for the load function. args can be either a dictionary of
+            arguments for a function, or a list of positional arguments
+        """
         self.request_queue.put((receive_fn, load_fn, args))
 
     def run(self):
+        """Run the execution loop."""
         executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.num_workers)
         with executor:
             while True:
@@ -136,6 +140,7 @@ class FixedDialogTeacher(Teacher):
 
     To see this in action, take a look at this teacher in ``tasks.vqa_v1.agents``.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -176,10 +181,7 @@ class FixedDialogTeacher(Teacher):
             return no_lock()
 
     def reset(self):
-        """
-        Reset the dialog so that it is at the start of the epoch, and all
-        metrics are reset.
-        """
+        """Reset the dialog to the start of the epoch, and reset all metrics."""
         super().reset()
         self.metrics.clear()
         self.lastY = None
@@ -193,17 +195,20 @@ class FixedDialogTeacher(Teacher):
 
     def submit_load_request(self):
         """
+        Submit a load request.
+
         An agent should implement this method to submit requests to the data
         loader. At the end of this method, the agent should call
         ``self.data_loader.request_load()`` with the appropriate args.
 
         By default, this method does nothing.
         """
+        # TODO: mark as abstract
         pass
 
     def receive_data(self, future):
         """
-        Function for receiving data from the data loader.
+        Receive data from the data loader.
 
         :param future: result from the load request.
         """
@@ -211,10 +216,7 @@ class FixedDialogTeacher(Teacher):
         self.data_queue.put(data)
 
     def share(self):
-        """
-        Shares data structures between other instances created for batching
-        or hogwild.
-        """
+        """Share the data and dataloader."""
         shared = super().share()
 
         if hasattr(self, 'lastYs'):
@@ -236,7 +238,7 @@ class FixedDialogTeacher(Teacher):
 
     def next_episode_idx(self, num_eps=None, loop=None):
         """
-        Returns the next episode index.
+        Return the next episode index.
 
         :param num_eps:
             default None uses ``num_episodes`` value.
@@ -259,7 +261,7 @@ class FixedDialogTeacher(Teacher):
 
     def next_example(self):
         """
-        Returns the next example.
+        Return the next example.
 
         If there are multiple examples in the same episode, returns the next
         one in that episode. If that episode is over, gets a new episode index
@@ -286,7 +288,7 @@ class FixedDialogTeacher(Teacher):
         return ex, epoch_done
 
     def next_batch(self):
-        """Returns the next batch of examples."""
+        """Return the next batch of examples."""
         # get next batch
         with self._lock():
             self.index.value += 1
@@ -324,6 +326,7 @@ class FixedDialogTeacher(Teacher):
     def get(self, episode_idx, entry_idx=0):
         """
         Get the specified episode and the specified entry in that episode.
+
         Children must override this method in order to inherit the
         `next_example` method.
 
@@ -333,6 +336,7 @@ class FixedDialogTeacher(Teacher):
             which example to return from the episode.  Many datasets have only
             single-entry episodes, so this defaults to zero.
         """
+        # TODO: mark as abstract, get rid of runtime error.
         raise RuntimeError('"Get" method must be overriden by children.')
 
     def observe(self, observation):
@@ -348,7 +352,7 @@ class FixedDialogTeacher(Teacher):
 
     def batch_act(self, observations):
         """
-        Returns an entire batch of examples instead of just one.
+        Return an entire batch of examples.
 
         Note: Currently used by PytorchDataTeacher.
         """
@@ -446,14 +450,14 @@ class DialogTeacher(FixedDialogTeacher):
         self.reset()
 
     def reset(self):
-        # Reset the dialog so that it is at the start of the epoch,
-        # and all metrics are reset.
+        """Reset the dialog to the start of the epoch, reset all metrics."""
         super().reset()
         if self.stream:
             self.data.reset()
             self.epochDone = False
 
     def share(self):
+        """Share the data."""
         shared = super().share()
         if hasattr(self, 'data'):
             shared['data'] = self.data.share()
@@ -461,12 +465,19 @@ class DialogTeacher(FixedDialogTeacher):
 
     def label_candidates(self):
         """
-        Returns ``None`` by default, but override this in children (such as
-        ``FbDialogTeacher``) to load up candidate labels for every example.
+        Provide consistent label candidates for all examples.
+
+        Default implementation returns ``None`` always, but this may be overriden
+        to provide candidates in all areas. See ``FbDialogueTeacher``.
         """
+        # TODO DEPRECATIONDAY: FbiDialogueTeacher is being deprecated, should we
+        # remove this?
+
+        # TODO: mark as optionally abstract?
         return None
 
     def num_episodes(self):
+        """Return the number of episodes in the data."""
         try:
             return self.data.num_episodes()
         except AttributeError:
@@ -474,15 +485,18 @@ class DialogTeacher(FixedDialogTeacher):
 
     @lru_cache(maxsize=1)
     def num_examples(self):
+        """Return the number of examples in the data."""
         try:
             return self.data.num_examples()
         except AttributeError:
             return super().num_examples()
 
     def get(self, episode_idx, entry_idx=0):
+        """Get a specific example."""
         return self.data.get(episode_idx, entry_idx)[0]
 
     def next_example(self):
+        """Get the next example."""
         if self.stream:
             action, epoch_done = self.data.get()
         else:
@@ -547,6 +561,7 @@ class DialogData(object):
         self.copied_cands = False
 
     def share(self):
+        """Share the data."""
         shared = {
             'data': self.data,
             'cands': self.cands,
@@ -556,7 +571,7 @@ class DialogData(object):
 
     def _read_episode(self, data_loader):
         """
-        Reads one episode at a time from the provided iterable over entries.
+        Read one episode at a time from the provided iterable over entries.
 
         :param data_loader:
             an iterable which returns tuples in the format described in the
@@ -571,6 +586,7 @@ class DialogData(object):
                 last_cands = None
 
             # intern all strings so we don't store them more than once
+            # TODO: clean up the if .. sys.intern else None by refactoring
             new_entry = []
             if len(entry) > 0:
                 # process text if available
@@ -578,11 +594,13 @@ class DialogData(object):
                     new_entry.append(sys.intern(entry[0]))
                 else:
                     new_entry.append(None)
+                # TODO: unindent all of these one level.
                 if len(entry) > 1:
                     # process labels if available
                     if entry[1] is None:
                         new_entry.append(None)
                     elif hasattr(entry[1], '__iter__') and type(entry[1]) is not str:
+                        # TODO: this could use the abc collections
                         # make sure iterable over labels, not single string
                         new_entry.append(tuple(sys.intern(e) for e in entry[1]))
                     else:
@@ -602,6 +620,8 @@ class DialogData(object):
                     elif last_cands and entry[3] is last_cands:
                         # if cands are shared, say "same" so we
                         # don't store them again
+                        # TODO: This is bad, and it's not actually used anywhere
+                        # DEPRECATIONDAY: make this more rational
                         new_entry.append(sys.intern('same as last time'))
                     elif hasattr(entry[3], '__iter__') and type(entry[3]) is not str:
                         # make sure iterable over candidates, not single string
@@ -622,7 +642,7 @@ class DialogData(object):
 
     def _load(self, data_loader, datafile):
         """
-        Loads up data from an iterable over tuples described in the class docs.
+        Load up data from an iterable over tuples described in the class docs.
 
         :param iter data_loader:
             an iterator which returns tuples in the format described in the
@@ -639,7 +659,7 @@ class DialogData(object):
     @lru_cache(maxsize=1)
     def num_examples(self):
         """
-        Returns total number of entries available.
+        Return total number of entries available.
 
         Each episode has at least one entry, but might have many more.
         """
@@ -716,6 +736,7 @@ class DialogData(object):
 class StreamDialogData(DialogData):
     """
     Provides a data structure for streaming textual dialog data.
+
     This can be used whenever the dialog data follows the format described in
     DialogData but cannot fit entirely into memory.
 
@@ -768,6 +789,7 @@ class StreamDialogData(DialogData):
         self.num_exs = None
 
     def share(self):
+        """Share the stream."""
         shared = super().share()
         # also share reset method to allow datastream to be reset
         shared['reset'] = self.reset
@@ -784,9 +806,7 @@ class StreamDialogData(DialogData):
         self.data = self._data_generator(data_loader, datafile)
 
     def _data_generator(self, data_loader, datafile):
-        """
-        Generates data using the iterator over tuples constructed by data_loader.
-        """
+        """Generate data using the iterator over tuples constructed by data_loader."""
         self.is_reset = False
         while True:
             for episode in self._read_episode(data_loader(datafile)):
@@ -797,7 +817,7 @@ class StreamDialogData(DialogData):
 
     def load_length(self):
         """
-        Calculates the length of the dataset and caches it in a file.
+        Calculate the length of the dataset and caches it in a file.
 
         Note that this can take some time for large datasets. Episode and entry
         indexes cannot be specified during streaming.
@@ -818,11 +838,13 @@ class StreamDialogData(DialogData):
         return int(num_eps), int(num_exs)
 
     def num_examples(self):
+        """Return the number of examples in the data."""
         if not self.num_exs:
             self.num_eps, self.num_exs = self.load_length()
         return self.num_exs
 
     def num_episodes(self):
+        """Return the number of episodes in the data."""
         if not self.num_eps:
             self.num_eps, self.num_exs = self.load_length()
         return self.num_eps
@@ -835,9 +857,9 @@ class StreamDialogData(DialogData):
 
     def get(self):
         """
-        Returns a the next entry from the stream in the current episode for
-        this instance. When episode is done returns first entry of next
-        episode.
+        Get the next entry from the stream.
+
+        When episode is done returns first entry of next episode.
         """
         # first look up data
         if self.next_episode != -1 or self.entry_idx != 0:
@@ -954,16 +976,20 @@ class FbDialogTeacher(DialogTeacher):
         super().__init__(opt, shared)
 
     def share(self):
+        """Share the data and canidates."""
         shared = super().share()
         shared['cands'] = self.cands
         return shared
 
     def label_candidates(self):
+        """Return the candidates."""
         return self.cands
 
     def load_cands(self, path):
         """
-        Load global fixed set of candidate labels that the teacher provides
+        Load a global fixed set of candidates.
+
+        The candidates will be provided by the teacher for
         every example (the true labels for a specific example are also added to
         this set, so that it's possible to get the right answer).
         """
@@ -999,8 +1025,8 @@ class FbDialogTeacher(DialogTeacher):
         return cands
 
     def setup_data(self, path):
-        """
-        Reads data in the fbdialog format.
+        r"""
+        Read data in the fbdialog format.
 
         Returns ``((x,y,r,c), new_episode?)`` tuples.
 
@@ -1011,7 +1037,7 @@ class FbDialogTeacher(DialogTeacher):
 
         ::
 
-            x: 'Sam went to the kitchen\\nPat gave Sam the milk\\nWhere is the milk?'
+            x: 'Sam went to the kitchen\nPat gave Sam the milk\nWhere is the milk?'
             y: ['kitchen']
             r: '1'
             c: ['hallway', 'kitchen', 'bathroom']
@@ -1183,17 +1209,21 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.reset()
 
     def share(self):
+        """Share the episodes."""
         shared = super().share()
         shared['episodes'] = self.episodes
         return shared
 
     def num_examples(self):
+        """Return the number of examples from the data."""
         return self.num_exs
 
     def num_episodes(self):
+        """Return the number of episodes from the data."""
         return len(self.episodes)
 
     def get(self, episode_idx, entry_idx=None):
+        """Get a specific example from the dataset."""
         return self.episodes[episode_idx][entry_idx].copy()
 
     def _setup_data(self, path):
