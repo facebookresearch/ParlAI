@@ -53,6 +53,8 @@ class BertClassifierAgent(TorchClassifierAgent):
         self.pretrained_path = os.path.join(opt['datapath'], 'models',
                                             'bert_models', MODEL_PATH)
         opt['pretrained_path'] = self.pretrained_path
+        self.add_cls_token = opt.get('add_cls_token', True)
+        self.sep_last_utt = opt.get('sep_last_utt', False)
         super().__init__(opt, shared)
 
     @classmethod
@@ -97,7 +99,7 @@ class BertClassifierAgent(TorchClassifierAgent):
 
     def _set_text_vec(self, *args, **kwargs):
         obs = super()._set_text_vec(*args, **kwargs)
-        if self.opt.get('add_cls_token', True):
+        if self.add_cls_token:
             # insert [CLS] token
             start_tensor = obs['text_vec'].new_tensor([self.dict.start_idx])
             obs['text_vec'] = torch.cat([start_tensor, obs['text_vec']], 0)
@@ -105,13 +107,18 @@ class BertClassifierAgent(TorchClassifierAgent):
 
     def score(self, batch):
         segment_idx = batch.text_vec * 0
-        if self.opt.get('sep_last_utt', False):
+        if self.sep_last_utt:
             batch_len = batch.text_vec.size(1)
             # find where [SEP] token is
             seps = (batch.text_vec == self.dict.end_idx).nonzero()
-            for row in seps:
-                # set last utterance to segment 1
-                segment_idx[row[0], list(range(row[1], batch_len))] = 1
+            if len(seps) > 0:
+                for row in seps:
+                    # set last utterance to segment 1
+                    segment_idx[row[0], list(range(row[1], batch_len))] = 1
+            else:
+                # only one utterance: everything after [CLS] token
+                # should be segment 1
+                segment_idx = (batch.text_vec != self.dict.start_idx)
 
         mask = (batch.text_vec != self.NULL_IDX).long()
         token_idx = batch.text_vec * mask
