@@ -167,7 +167,7 @@ class Teacher(Agent):
     # Default unknown length
     def num_examples(self):
         """
-        Return the number of examples (individual utterances) in the dataset.
+        Return the number of examples (e.g. individual utterances) in the dataset.
 
         Default implementation returns `None`, indicating an unknown number.
         """
@@ -175,7 +175,7 @@ class Teacher(Agent):
 
     def num_episodes(self):
         """
-        Return the number of episodes (conversations) in the dataset.
+        Return the number of episodes (e.g. conversations) in the dataset.
 
         Default implementation returns `None`, indicating an unknown number.
         """

@@ -404,7 +404,7 @@ class ExecutableWorld(MultiAgentDialogWorld):
     """
     World where messages from agents can be interpreted as _actions_.
 
-    Actions  result in changes in the environment (are executed). Hence a grounded
+    Actions result in changes in the environment (are executed). Hence a grounded
     simulation can be implemented rather than just dialogue between agents.
     """
 

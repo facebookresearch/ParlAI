@@ -775,7 +775,9 @@ class PytorchDataTeacher(FixedDialogTeacher):
 
 
 class DefaultTeacher(PytorchDataTeacher):
-    """Default teacher."""
+    """
+    Alias for PytorchDataTeacher.
 
-    # TODO: isn't having a DefaultTeacher here a bad idea? What is this used for?
+    This exists to simplify loading code in parlai.core.agents.get_task_module.
+    """
     pass
