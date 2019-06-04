@@ -182,7 +182,6 @@ class TransresnetModel(nn.Module):
         captions_encoded = None
         context_encoded = None
         img_encoded = None
-        pers_encoded = None
 
         # encode captions
         if captions is not None:
@@ -193,6 +192,28 @@ class TransresnetModel(nn.Module):
             captions_encoded = self.additional_layer(captions_encoded)
 
         # encode personalities
+        pers_encoded = self.forward_personality(personalities, personalities_tensor)
+
+        # encode images
+        img_encoded = self.forward_image(image_features)
+
+        context_encoded = self.sum_encodings([pers_encoded, img_encoded])
+        return context_encoded, captions_encoded
+
+    def forward_personality(self, personalities, personalities_tensor):
+        """
+        Encode personalities
+
+        :param personalities:
+            list of personalities, one per example
+        :param personalities_tensor:
+            (optional) list of personality representations, usually a one-hot
+            vector if specified
+
+        :return:
+            encoded representation of the personalities
+        """
+        pers_encoded = None
         if personalities is not None:
             if personalities_tensor is not None:
                 pers_feature = personalities_tensor
@@ -208,15 +229,26 @@ class TransresnetModel(nn.Module):
                 pers_feature = res
             pers_encoded = self.personality_encoder(pers_feature)
 
-        # encode images
+        return pers_encoded
+
+    def forward_image(self, image_features):
+        """
+        Encode image features.
+
+        :param image_features:
+            list of image features
+
+        :return:
+            encoded representation of the image features
+        """
+        img_encoded = None
         if image_features is not None:
             stacked = torch.stack(image_features)
             if self.use_cuda:
                 stacked = stacked.cuda()
             img_encoded = self.image_encoder(stacked)
 
-        context_encoded = self.sum_encodings([pers_encoded, img_encoded])
-        return context_encoded, captions_encoded
+        return img_encoded
 
     def train_batch(self, image_features, personalities, captions):
         """
@@ -312,25 +344,25 @@ class TransresnetModel(nn.Module):
             one_cand_set = False
             candidates_encoded = [self.forward(None, None, c)[1].detach()
                                   for c in candidates]
-        elected = []
+        chosen = []
         for img_index in range(len(context_encoded)):
-            image_vec = context_encoded[img_index:img_index+1, :]
+            context_encoding = context_encoded[img_index:img_index+1, :]
             scores = torch.mm(
                 candidates_encoded[img_index] if not one_cand_set
                 else candidates_encoded,
-                image_vec.transpose(0, 1)
+                context_encoding.transpose(0, 1)
             )
             if k >= 1:
                 _, index_top = torch.topk(scores, k, dim=0)
             else:
                 _, index_top = torch.topk(scores, scores.size(0), dim=0)
-            elected.append(
+            chosen.append(
                 [candidates[img_index][idx] if not one_cand_set
                  else candidates[idx]
                  for idx in index_top.unsqueeze(1)]
             )
 
-        return elected
+        return chosen
 
     def eval_batch_of_100(self, context_encoded, captions_encoded):
         """
@@ -408,7 +440,7 @@ class TransresnetModel(nn.Module):
             sum of non-`None` addends
         """
         addends = [a for a in addends if a is not None]
-        return sum(addends)
+        return sum(addends) if len(addends) > 0 else None
 
     def personalities_to_index(self, personalities):
         """
