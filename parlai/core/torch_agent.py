@@ -17,12 +17,13 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from torch import optim
 from collections import deque
+from copy import deepcopy
 import json
 import random
 import numpy as np
 import os
+from torch import optim
 
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
@@ -236,7 +237,7 @@ class History(object):
                 # update history vecs
                 self._update_vecs(text)
 
-        if obs.get('episode_done', True):
+        if obs['episode_done']:
             # end of this episode, clear the history when we see a new example
             self.reset_on_next_update = True
 
@@ -1285,7 +1286,7 @@ class TorchAgent(Agent):
         # if the last observation was the end of an episode,
         # then we shouldn't use it as history
         if (use_reply == 'none' or not self.observation or
-                self.observation.get('episode_done', True)):
+                self.observation['episode_done']):
             return None
 
         if use_reply == 'label':
@@ -1322,7 +1323,7 @@ class TorchAgent(Agent):
             if ends.get(i):
                 # check whether *last* example was the end of an episode
                 preds[i].clear()
-            ends[i] = obs.get('episode_done', True)
+            ends[i] = obs['episode_done']
             preds[i].append(replies[i].get('text'))
 
     def reply_history(self):
@@ -1350,7 +1351,7 @@ class TorchAgent(Agent):
         reply = self.last_reply(use_reply=self.opt.get('use_reply', 'label'))
         # update the history using the observation
         self.history.update_history(observation, add_next=reply)
-        self.observation = observation
+        self.observation = deepcopy(observation)
         return self.vectorize(self.observation, self.history,
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
@@ -1481,7 +1482,7 @@ class TorchAgent(Agent):
             return batch_reply
 
         self.match_batch(batch_reply, batch.valid_indices, output)
-        self.replies['batch_reply'] = batch_reply
+        self.replies['batch_reply'] = deepcopy(batch_reply)
         self._save_history(observations, batch_reply)  # save model predictions
 
         return batch_reply
