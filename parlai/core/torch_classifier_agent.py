@@ -3,6 +3,10 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
+"""Torch Classifier Agents classify text into a fixed set of labels."""
+
+
 from parlai.core.distributed_utils import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import round_sigfigs, warn_once
@@ -22,6 +26,7 @@ class TorchClassifierAgent(TorchAgent):
 
     @staticmethod
     def add_cmdline_args(parser):
+        """Add CLI args."""
         TorchAgent.add_cmdline_args(parser)
         parser = parser.add_argument_group('Torch Classifier Arguments')
         # class arguments
@@ -132,8 +137,9 @@ class TorchClassifierAgent(TorchAgent):
 
     def _get_labels(self, batch):
         """
-        Obtain the correct labels. Raise an exception if one of the labels
-        is not in the class list.
+        Obtain the correct labels.
+
+        Raises a ``KeyError`` if one of the labels is not in the class list.
         """
         try:
             labels_indices_list = [self.class_dict[label] for label in
@@ -161,10 +167,7 @@ class TorchClassifierAgent(TorchAgent):
             self.metrics['confusion_matrix'][(label, pred)] += 1
 
     def _format_interactive_output(self, probs, prediction_id):
-        """
-        Nicely format interactive mode output when we want to also
-        print the scores associated with the predictions.
-        """
+        """Format interactive mode output with scores."""
         preds = []
         for i, pred_id in enumerate(prediction_id.tolist()):
             prob = round_sigfigs(probs[i][pred_id], 4)
@@ -236,9 +239,18 @@ class TorchClassifierAgent(TorchAgent):
 
     def _report_prec_recall_metrics(self, confmat, class_name, metrics):
         """
-        Uses the confusion matrix to predict the recall and precision for
-        class `class_name`. Returns the number of examples of each class.
+        Use the confusion matrix to compute precision and recall.
+
+        :param confmat:
+            the confusion matrics
+        :param str class_name:
+            the class name to compute P/R for
+        :param metrics:
+            metrics dictionary to modify
+        :return:
+            the number of examples of each class.
         """
+        # TODO: document these parameter types.
         eps = 0.00001  # prevent divide by zero errors
         true_positives = confmat[(class_name, class_name)]
         num_actual_positives = sum([confmat[(class_name, c)]

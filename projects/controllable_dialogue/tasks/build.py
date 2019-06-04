@@ -15,7 +15,9 @@ FOLDER_NAME = 'controllable_dialogue'
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], FOLDER_NAME)
-    version = '1.0'
+    # version 1.0: initial release
+    # version 1.1: add evaluation logs
+    version = '1.1'
 
     if not build_data.built(dpath, version_string=version):
         if build_data.built(dpath):
@@ -32,6 +34,11 @@ def build(opt):
         fname_wordstats = 'wordstats_v1.tar.gz'
         build_data.download(URL_ROOT + fname_wordstats, dpath, fname_wordstats)
         build_data.untar(dpath, fname_wordstats)
+
+        # next download the evaluation logs
+        fname_evallogs = 'evaluationlogs_v1.tar.gz'
+        build_data.download(URL_ROOT + fname_evallogs, dpath, fname_evallogs)
+        build_data.untar(dpath, fname_evallogs)
 
         print("Data has been placed in " + dpath)
 

@@ -11,7 +11,7 @@ import parlai.core.testing_utils as testing_utils
 
 END2END_OPTIONS = {
     'task': 'wizard_of_wikipedia:generator:random_split',
-    'model_file': 'models:wizard_of_wikipedia/end2end_generator/model',
+    'model_file': 'zoo:wizard_of_wikipedia/end2end_generator/model',
     'batchsize': 32,
     'log_every_n_secs': 30,
     'embedding_type': 'random',
@@ -21,7 +21,7 @@ END2END_OPTIONS = {
 RETRIEVAL_OPTIONS = {
     'task': 'wizard_of_wikipedia',
     'model': 'projects:wizard_of_wikipedia:wizard_transformer_ranker',
-    'model_file': 'models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
+    'model_file': 'zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
     'datatype': 'test',
     'n_heads': 6,
     'ffn_size': 1200,

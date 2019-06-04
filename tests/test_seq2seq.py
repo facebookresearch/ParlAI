@@ -165,8 +165,8 @@ class TestBackwardsCompatibility(unittest.TestCase):
         stdout, valid, test = testing_utils.eval_model(dict(
             task='integration_tests:multipass',
             model='seq2seq',
-            model_file='models:unittest/seq2seq/model',
-            dict_file='models:unittest/seq2seq/model.dict',
+            model_file='zoo:unittest/seq2seq/model',
+            dict_file='zoo:unittest/seq2seq/model.dict',
             no_cuda=True,
         ))
 

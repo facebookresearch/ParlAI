@@ -3,6 +3,8 @@ exclude = .git,__pycache__,parlai_internal,legacy_agents,task_config.py,.eggs
 extend-ignore =
     E741
     E501
-select = C,E,F,W,B,B950
+    D107
+    D105
+select = C,E,F,W,B,B950,D,RST
 
 max-line-length=80
