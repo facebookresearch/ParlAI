@@ -89,7 +89,7 @@ class TorchRankerAgent(TorchAgent):
     def __init__(self, opt, shared=None):
         # Must call _get_init_model() first so that paths are updated if necessary
         # (e.g., a .dict file)
-        init_model, _ = self._get_init_model(opt, shared)
+        init_model, is_finetune = self._get_init_model(opt, shared)
         opt['rank_candidates'] = True
         super().__init__(opt, shared)
 
@@ -135,7 +135,7 @@ class TorchRankerAgent(TorchAgent):
                 optim_params,
                 states.get('optimizer'), states.get('optimizer_type')
             )
-            self.build_lr_scheduler(states)
+            self.build_lr_scheduler(states, hard_reset=is_finetune)
 
         if shared is None and is_distributed():
             self.model = torch.nn.parallel.DistributedDataParallel(
@@ -655,6 +655,10 @@ class TorchRankerAgent(TorchAgent):
                     self.fixed_candidate_encs = encs
                     if self.use_cuda:
                         self.fixed_candidate_encs = self.fixed_candidate_encs.cuda()
+                    if self.fp16:
+                        self.fixed_candidate_encs = self.fixed_candidate_encs.half()
+                    else:
+                        self.fixed_candidate_encs = self.fixed_candidate_encs.float()
                 else:
                     self.fixed_candidate_encs = None
 
@@ -665,8 +669,7 @@ class TorchRankerAgent(TorchAgent):
 
     def load_candidates(self, path, cand_type='vectors'):
         """Load fixed candidates from a path."""
-        print("[ Loading fixed candidate set {} from {} ]".format(cand_type,
-                                                                  path))
+        print("[ Loading fixed candidate set {} from {} ]".format(cand_type, path))
         return torch.load(path, map_location=lambda cpu, _: cpu)
 
     def _make_candidate_vecs(self, cands):

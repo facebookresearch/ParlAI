@@ -538,7 +538,7 @@ class TorchAgent(Agent):
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
         # indicate whether using fp16
-        self.fp16 = self.opt.get('fp16', False)
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
 
         # Default to the class name, sans "Agent". child can override
         self.id = type(self).__name__.replace("Agent", "")
@@ -863,7 +863,7 @@ class TorchAgent(Agent):
             embs = vocab.GloVe(
                 name=name, dim=pretrained_dim,
                 cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:glove_vectors'))
+                                    'zoo:glove_vectors'))
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
             from parlai.zoo.fasttext_cc_vectors.build import download
