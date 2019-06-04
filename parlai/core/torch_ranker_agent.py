@@ -626,6 +626,10 @@ class TorchRankerAgent(TorchAgent):
                     self.fixed_candidate_encs = encs
                     if self.use_cuda:
                         self.fixed_candidate_encs = self.fixed_candidate_encs.cuda()
+                    if self.fp16:
+                        self.fixed_candidate_encs = self.fixed_candidate_encs.half()
+                    else:
+                        self.fixed_candidate_encs = self.fixed_candidate_encs.float()
                 else:
                     self.fixed_candidate_encs = None
 
@@ -635,8 +639,7 @@ class TorchRankerAgent(TorchAgent):
                 self.fixed_candidate_encs = None
 
     def load_candidates(self, path, cand_type='vectors'):
-        print("[ Loading fixed candidate set {} from {} ]".format(cand_type,
-                                                                  path))
+        print("[ Loading fixed candidate set {} from {} ]".format(cand_type, path))
         return torch.load(path, map_location=lambda cpu, _: cpu)
 
     def make_candidate_vecs(self, cands):

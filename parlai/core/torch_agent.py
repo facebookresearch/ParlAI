@@ -538,7 +538,7 @@ class TorchAgent(Agent):
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
         # indicate whether using fp16
-        self.fp16 = self.opt.get('fp16', False)
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
 
         # Default to the class name, sans "Agent". child can override
         self.id = type(self).__name__.replace("Agent", "")
