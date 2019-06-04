@@ -46,7 +46,7 @@ class TestTransresnet(unittest.TestCase):
             'test hits@10 = {}\nLOG:\n{}'.format(test['hits@10'], stdout)
         )
         self.assertEqual(
-            test['med_rank'], 1.0,
+            test['med_rank'], 2.0,
             'test med_rank = {}\nLOG:\n{}'.format(test['med_rank'], stdout)
         )
 
