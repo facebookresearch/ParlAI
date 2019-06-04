@@ -175,6 +175,17 @@ def untar(path, fname, deleteTar=True):
         os.remove(fullpath)
 
 
+def cat(file1, file2, outfile, deleteFiles=True):
+    with open(outfile, 'wb') as wfd:
+        for f in [file1, file2]:
+            with open(f, 'rb') as fd:
+                shutil.copyfileobj(fd, wfd, 1024 * 1024 * 10)
+                # 10MB per writing chunk to avoid reading big file into memory.
+    if deleteFiles:
+        os.remove(file1)
+        os.remove(file2)
+
+
 def _get_confirm_token(response):
     for key, value in response.cookies.items():
         if key.startswith('download_warning'):
