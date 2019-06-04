@@ -222,8 +222,10 @@ class TestTorchAgent(unittest.TestCase):
         param options.
         """
         agent = get_agent()
-        obs_labs = {'text': 'No. Try not.', 'labels': ['Do.', 'Do not.']}
-        obs_elabs = {'text': 'No. Try not.', 'eval_labels': ['Do.', 'Do not.']}
+        obs_labs = {'text': 'No. Try not.', 'labels': ['Do.', 'Do not.'],
+                    'episode_done': True}
+        obs_elabs = {'text': 'No. Try not.', 'eval_labels': ['Do.', 'Do not.'],
+                     'episode_done': True}
 
         for obs in (obs_labs, obs_elabs):
             lab_key = 'labels' if 'labels' in obs else 'eval_labels'
@@ -290,6 +292,7 @@ class TestTorchAgent(unittest.TestCase):
         obs = {
             'text': 'Hello.\nMy name is Inogo Montoya.\n'
                     'You killed my father.\nPrepare to die.',
+            'episode_done': True,
         }
         agent.history.update_history(obs)
         vecs = agent.history.get_history_vec_list()
@@ -308,19 +311,25 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent(rank_candidates=True)
         obs_labs = [
             {'text': 'It\'s only a flesh wound.',
-             'labels': ['Yield!']},
+             'labels': ['Yield!'],
+             'episode_done': True},
             {'text': 'The needs of the many outweigh...',
-             'labels': ['The needs of the few.']},
+             'labels': ['The needs of the few.'],
+             'episode_done': True},
             {'text': 'Hello there.',
-             'labels': ['General Kenobi.']},
+             'labels': ['General Kenobi.'],
+             'episode_done': True},
         ]
         obs_elabs = [
             {'text': 'It\'s only a flesh wound.',
-             'eval_labels': ['Yield!']},
+             'eval_labels': ['Yield!'],
+             'episode_done': True},
             {'text': 'The needs of the many outweigh...',
-             'eval_labels': ['The needs of the few.']},
+             'eval_labels': ['The needs of the few.'],
+             'episode_done': True},
             {'text': 'Hello there.',
-             'eval_labels': ['General Kenobi.']},
+             'eval_labels': ['General Kenobi.'],
+             'episode_done': True},
         ]
         for obs_batch in (obs_labs, obs_elabs):
             lab_key = 'labels' if 'labels' in obs_batch[0] else 'eval_labels'
@@ -782,11 +791,14 @@ class TestTorchAgent(unittest.TestCase):
 
         obs_labs = [
             {'text': 'It\'s only a flesh wound.',
-             'labels': ['Yield!']},
+             'labels': ['Yield!'],
+             'episode_done': True},
             {'text': 'The needs of the many outweigh...',
-             'labels': ['The needs of the few.']},
+             'labels': ['The needs of the few.'],
+             'episode_done': True},
             {'text': 'Hello there.',
-             'labels': ['General Kenobi.']},
+             'labels': ['General Kenobi.'],
+             'episode_done': True},
         ]
         obs_labs_vecs = []
         for o in obs_labs:
@@ -799,11 +811,14 @@ class TestTorchAgent(unittest.TestCase):
 
         obs_elabs = [
             {'text': 'It\'s only a flesh wound.',
-             'eval_labels': ['Yield!']},
+             'eval_labels': ['Yield!'],
+             'episode_done': True},
             {'text': 'The needs of the many outweigh...',
-             'eval_labels': ['The needs of the few.']},
+             'eval_labels': ['The needs of the few.'],
+             'episode_done': True},
             {'text': 'Hello there.',
-             'eval_labels': ['General Kenobi.']},
+             'eval_labels': ['General Kenobi.'],
+             'episode_done': True},
         ]
         obs_elabs_vecs = []
         for o in obs_elabs:
