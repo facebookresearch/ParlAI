@@ -34,7 +34,7 @@ import json
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser, print_announcements
-from parlai.core.utils import Timer, round_sigfigs, warn_once
+from parlai.core.utils import Timer, round_sigfigs, warn_once, seed_all
 from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.core.distributed_utils import (
@@ -183,6 +183,7 @@ def setup_args(parser=None) -> ParlaiParser:
         'this will eventually default to True, but '
         'currently defaults to False.',
     )
+    train.add_argument('--seed', default=None, type=int, help='Set a random seed.')
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
@@ -289,7 +290,7 @@ def _save_best_valid(model_file, best_valid):
     f.close()
 
 
-class TrainLoop():
+class TrainLoop:
     """TrainLoop contains the core training loop logic."""
 
     def __init__(self, opt):
@@ -297,6 +298,10 @@ class TrainLoop():
         # it will by-default ignore SIGINTs, and KeyboardInterrupt exceptions are
         # not produced. This line brings them back
         signal.signal(signal.SIGINT, signal.default_int_handler)
+
+        if opt.get('seed', None) is not None:
+            # set the random seed
+            seed_all(opt['seed'])
 
         if isinstance(opt, ParlaiParser):
             print('[ Deprecated Warning: TrainLoop should be passed opt not Parser ]')

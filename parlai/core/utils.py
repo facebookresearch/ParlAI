@@ -945,6 +945,32 @@ def msg_to_str(msg, ignore_fields=''):
     return txt.rstrip('\t')
 
 
+def seed_all(seed):
+    """
+    Set the random seed in all places (torch, numpy, python).
+
+    If numpy or torch aren't installed, gracefully skips those.
+
+    :param int seed:
+        the random seed.
+
+    :return:
+        None
+    """
+    import random
+    random.seed(seed)
+    try:
+        import numpy.random
+        numpy.random.seed(seed)
+    except ImportError:
+        pass
+    try:
+        import torch
+        torch.manual_seed(seed)
+    except ImportError:
+        pass
+
+
 # DEPRECATION DAY: DELETE
 def set_namedtuple_defaults(namedtuple, default=None):
     """
