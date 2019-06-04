@@ -176,6 +176,7 @@ def untar(path, fname, deleteTar=True):
 
 
 def cat(file1, file2, outfile, deleteFiles=True):
+    """Concatenate two files to an outfile, possibly deleting the originals."""
     with open(outfile, 'wb') as wfd:
         for f in [file1, file2]:
             with open(f, 'rb') as fd:
