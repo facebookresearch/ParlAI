@@ -232,8 +232,7 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
 
 class PersonalityCaptionsTestTeacher(PersonalityCaptionsTeacher):
     """
-    Test PersonalityCaptions teacher for ensuring pretrained model does not
-    break.
+    Test PersonalityCaptions teacher for ensuring pretrained model does not break.
     """
     def _setup_data(self, data_path, personalities_data_path):
         super()._setup_data(data_path, personalities_data_path)
