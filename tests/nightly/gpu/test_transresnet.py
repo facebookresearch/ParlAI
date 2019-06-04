@@ -3,7 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
+"""Test for Transresnet Pretrained Model."""
 
 import unittest
 import parlai.scripts.display_data as display_data
@@ -21,9 +21,11 @@ MODEL_OPTIONS = {
 
 @testing_utils.skipUnlessGPU
 class TestTransresnet(unittest.TestCase):
-    """Checks that pre-trained Transresnet model gives the correct results"""
+    """Checks that pre-trained Transresnet model gives the correct results."""
+
     @classmethod
     def setUpClass(cls):
+        """Set up the test by downloading the model/data."""
         with testing_utils.capture_output():
             parser = display_data.setup_args()
             parser.set_defaults(**MODEL_OPTIONS)
@@ -32,6 +34,7 @@ class TestTransresnet(unittest.TestCase):
             display_data.display_data(opt)
 
     def test_transresnet(self):
+        """Test pretrained model."""
         stdout, _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
         self.assertEqual(
             test['accuracy'], 0.4,

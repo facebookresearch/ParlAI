@@ -3,6 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+"""Agent code for the model described in (https://arxiv.org/abs/1811.00945)."""
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
@@ -21,17 +22,18 @@ import tqdm
 
 class TransresnetAgent(Agent):
     """
-        Model described in (https://arxiv.org/abs/1811.00945)
+    Model described in (https://arxiv.org/abs/1811.00945).
 
-        A model for producing engaging captions about an image. Given an image and
-        this model will attempt to predict an appropriate
-        next utterance in the dialog, in the context of a given personality.
+    A model for producing engaging captions about an image. Given an image and
+    this model will attempt to predict an appropriate
+    next utterance in the dialog, in the context of a given personality.
 
-        See the paper linked above for more information.
+    See the paper linked above for more information.
     """
 
     @staticmethod
     def add_cmdline_args(argparser):
+        """Add command line args."""
         arg_group = argparser.add_argument_group('Transresnet Arguments')
         TransresnetModel.add_cmdline_args(argparser)
         argparser.add_argument('--freeze-patience', type=int, default=-1,
@@ -95,6 +97,7 @@ class TransresnetAgent(Agent):
         super().__init__(opt, shared)
 
     def share(self):
+        """Share appropriate attributes."""
         shared = super().share()
         shared['dict'] = self.dict
         shared['model'] = self.model
@@ -142,9 +145,9 @@ class TransresnetAgent(Agent):
                     desc='Extracting candidate encodings'
                 )
                 fixed_cands_enc = []
-                for idx, batch in enumerate([self.fixed_cands[i:i + 50]
-                                             for i in range(
-                                                0, len(self.fixed_cands)-50, 50)]):
+                for _, batch in enumerate(
+                    [self.fixed_cands[i:i + 50] for i in range(0, len(self.fixed_cands)-50, 50)]
+                ):
                     embedding = self.model(None, None, batch)[1].detach()
                     fixed_cands_enc.append(embedding)
                     pbar.update(50)
@@ -152,7 +155,7 @@ class TransresnetAgent(Agent):
                 torch.save(self.fixed_cands_enc, cands_enc_file)
 
     def load_personalities(self):
-        """Load and return the list of personalities"""
+        """Load and return the list of personalities."""
         personality_path = os.path.join(
             self.opt['datapath'],
             'personality_captions/personalities.txt'
@@ -169,15 +172,17 @@ class TransresnetAgent(Agent):
         return perss
 
     def observe(self, observation):
+        """Observe."""
         self.observation = observation
         return observation
 
     def act(self):
+        """Act."""
         return self.batch_act([self.observation])[0]
 
     def train_step(self, valid_obs, image_feats, personalities):
         """
-        Model train step
+        Model train step.
 
         :param valid_obs:
             list of valid observations
@@ -202,7 +207,7 @@ class TransresnetAgent(Agent):
 
     def eval_step(self, valid_obs, image_feats, personalities):
         """
-        Model eval step
+        Model eval step.
 
         :param valid_obs:
             list of valid observations
@@ -251,7 +256,7 @@ class TransresnetAgent(Agent):
                 med_rank = []
                 for i, c_list in enumerate(chosen_captions):
                     lowest_rank = len(c_list) + 1
-                    for ii, c in enumerate(comments[i]):
+                    for _, c in enumerate(comments[i]):
                         lowest_rank = min(lowest_rank, c_list.index(c) + 1)
                     med_rank.append(lowest_rank)
                 num_correct = sum(
@@ -270,7 +275,7 @@ class TransresnetAgent(Agent):
 
     def batch_act(self, observations):
         """
-        Act on a batch of observations
+        Act on a batch of observations.
 
         :param observations:
             list of observations
@@ -308,7 +313,7 @@ class TransresnetAgent(Agent):
 
     def extract_image_feats(self, obs):
         """
-        Extract image features from the observations
+        Extract image features from the observations.
 
         :param obs:
             list of observations
@@ -330,7 +335,7 @@ class TransresnetAgent(Agent):
         return image_feats
 
     def filter_valid_obs(self, observations, is_training):
-        """Filter out invalid observations"""
+        """Filter out invalid observations."""
         label_key = 'labels' if is_training else 'eval_labels'
         valid_obs = []
         valid_indexes = []
@@ -350,7 +355,7 @@ class TransresnetAgent(Agent):
 
     def update_metrics(self, loss, num_correct, num_samples, med_rank=None):
         """
-        Update Metrics
+        Update Metrics.
 
         :param loss:
             float loss
@@ -369,8 +374,9 @@ class TransresnetAgent(Agent):
 
     def _setup_dict(self):
         """
-        Set up the dictionary. The pretrained model used a separate dictionary
-        from the standard ParlAI one.
+        Set up the dictionary.
+
+        The pretrained model used a separate dictionary from the standard ParlAI one.
         """
         self.dict = DictionaryAgent(self.opt)
         if self.opt.get('pretrained', False):
@@ -388,8 +394,9 @@ class TransresnetAgent(Agent):
 
     def receive_metrics(self, metrics_dict):
         """
-        Receive the metrics from validation. Unfreeze text encoder weights
-        after a certain number of rounds without improvement.
+        Receive the metrics from validation.
+
+        Unfreeze text encoder weights after a certain number of rounds without improvement.
 
         :param metrics_dict:
             the metrics dictionary
@@ -418,9 +425,12 @@ class TransresnetAgent(Agent):
                     print('Done')
 
     def reset(self):
+        """Reset metrics."""
+        super().reset()
         self.reset_metrics()
 
     def reset_metrics(self):
+        """Reset the metrics."""
         self.metrics['hits@1/100'] = 0.0
         self.metrics['loss'] = 0.0
         self.metrics['num_samples'] = 0.0
@@ -428,6 +438,12 @@ class TransresnetAgent(Agent):
             self.metrics['med_rank'] = []
 
     def report(self):
+        """
+        Report the current metrics.
+
+        :return:
+            a metrics dict
+        """
         m = {}
         if self.metrics['num_samples'] > 0:
             m['hits@1/100'] = round_sigfigs(
@@ -443,6 +459,12 @@ class TransresnetAgent(Agent):
         return m
 
     def save(self, path=None):
+        """
+        Save the model.
+
+        :param path:
+            path for saving model
+        """
         path = self.opt.get('model_file', None) if path is None else path
         self.dict.save(path + '.dict', sort=False)
         print('Saving best model')
@@ -455,6 +477,12 @@ class TransresnetAgent(Agent):
             handle.write('\n')
 
     def load(self, path):
+        """
+        Load a model.
+
+        :param path:
+            path from which to load model
+        """
         states = torch.load(path, map_location=lambda cpu, _: cpu)
         if 'model' in states:
             self.model.load_state_dict(states['model'])
