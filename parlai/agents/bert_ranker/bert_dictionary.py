@@ -14,7 +14,6 @@ except ImportError:
 from .helpers import VOCAB_PATH
 
 import os
-import torch
 
 
 class BertDictionaryAgent(DictionaryAgent):

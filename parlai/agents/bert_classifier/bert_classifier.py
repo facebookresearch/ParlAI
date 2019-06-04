@@ -54,7 +54,6 @@ class BertClassifierAgent(TorchClassifierAgent):
                                             'bert_models', MODEL_PATH)
         opt['pretrained_path'] = self.pretrained_path
         super().__init__(opt, shared)
-        self.delimiter = opt['delimiter']
 
     @classmethod
     def history_class(cls):
