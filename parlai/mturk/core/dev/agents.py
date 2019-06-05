@@ -14,12 +14,10 @@ import parlai.mturk.core.dev.data_model as data_model
 import parlai.mturk.core.dev.shared_utils as shared_utils
 
 # Special act messages for failure states
+# TODO replace with raised errors
 MTURK_DISCONNECT_MESSAGE = '[DISCONNECT]'  # Turker disconnected from conv
 TIMEOUT_MESSAGE = '[TIMEOUT]'  # the Turker did not respond but didn't return
 RETURN_MESSAGE = '[RETURNED]'  # the Turker returned the HIT
-
-# TODO move time management into another class, this way we can handle it
-# relative to heartbeats. This will come with more thorough testing.
 
 
 class AssignState:
@@ -63,6 +61,7 @@ class AssignState:
         self.message_ids.append(message['message_id'])
         self.messages.append(message)
 
+    # TODO is this still needed?
     def set_last_command(self, command):
         self.last_command = command
 
@@ -95,6 +94,7 @@ class AssignState:
             or self.status == self.STATUS_EXPIRED
         )
 
+    # TODO most of these can be stored elsewhere, as the router gets these
     def get_inactive_command_text(self):
         """Get appropriate inactive command and text to respond to a reconnect
         given the current assignment state
@@ -508,7 +508,7 @@ class MTurkAgent(Agent):
         else:
             if self.m_get_agent_work_status(self.assignment_id) \
                     == self.ASSIGNMENT_DONE:
-                self.mturk_manager.approve_work(
+                self.m_approve_work(
                     assignment_id=self.assignment_id)
                 shared_utils.print_and_log(
                     logging.INFO,
@@ -528,7 +528,7 @@ class MTurkAgent(Agent):
         else:
             if self.m_get_agent_work_status(self.assignment_id) \
                     == self.ASSIGNMENT_DONE:
-                self.mturk_manager.reject_work(self.assignment_id, reason)
+                self.m_reject_work(self.assignment_id, reason)
                 shared_utils.print_and_log(
                     logging.INFO,
                     'Conversation ID: {}, Agent ID: {} - HIT is '
@@ -542,7 +542,8 @@ class MTurkAgent(Agent):
 
     def block_worker(self, reason='unspecified'):
         """Block a worker from our tasks"""
-        self.mturk_manager.block_worker(worker_id=self.worker_id, reason=reason)
+        self.m_block_worker(
+            worker_id=self.worker_id, reason=reason)
         shared_utils.print_and_log(
             logging.WARN,
             'Blocked worker ID: {}. Reason: {}'.format(self.worker_id, reason),
@@ -557,7 +558,7 @@ class MTurkAgent(Agent):
             if self.m_get_agent_work_status(self.assignment_id) in\
                     (self.ASSIGNMENT_DONE, self.ASSIGNMENT_APPROVED):
                 unique_request_token = str(uuid.uuid4())
-                self.mturk_manager.pay_bonus(
+                self.m_pay_bonus(
                     worker_id=self.worker_id,
                     bonus_amount=bonus_amount,
                     assignment_id=self.assignment_id,
@@ -573,8 +574,10 @@ class MTurkAgent(Agent):
 
     def email_worker(self, subject, message_text):
         """Sends an email to a worker, returns true on a successful send"""
-        response = self.mturk_manager.email_worker(
-            worker_id=self.worker_id, subject=subject, message_text=message_text
+        response = self.m_email_worker(
+            worker_id=self.worker_id,
+            subject=subject,
+            message_text=message_text
         )
         if 'success' in response:
             shared_utils.print_and_log(
@@ -599,7 +602,8 @@ class MTurkAgent(Agent):
         # removing the need for force_expire_hit here?
         if not self.hit_is_abandoned:
             self.hit_is_abandoned = True
-            self.mturk_manager.force_expire_hit(self.worker_id, self.assignment_id)
+            self.m_force_expire_hit(
+                self.worker_id, self.assignment_id)
 
     def wait_completion_timeout(self, iterations):
         """Suspends the thread waiting for hit completion for some number of
@@ -626,7 +630,7 @@ class MTurkAgent(Agent):
             if timeout < 0:
                 # Negative timeout is for testing, wait for packet to send
                 time.sleep(1)
-                self.mturk_manager.free_workers([self])
+                self.m_free_workers([self])
                 return True
             start_time = time.time()
         wait_periods = 1
@@ -647,7 +651,7 @@ class MTurkAgent(Agent):
                 self.disconnected = True
             # Check if the Turker already returned/disconnected
             if self.hit_is_returned or self.disconnected:
-                self.mturk_manager.free_workers([self])
+                self.m_free_workers([self])
                 return False
             if timeout:
                 current_time = time.time()
@@ -659,7 +663,7 @@ class MTurkAgent(Agent):
                         ),
                     )
                     self.set_hit_is_abandoned()
-                    self.mturk_manager.free_workers([self])
+                    self.m_free_workers([self])
                     return False
             shared_utils.print_and_log(
                 logging.DEBUG,
@@ -675,19 +679,16 @@ class MTurkAgent(Agent):
                 self.conversation_id, self.id
             ),
         )
-        self.mturk_manager.free_workers([self])
+        self.m_free_workers([self])
         return True
 
     def shutdown(self, timeout=None, direct_submit=False):
         """Shuts down a hit when it is completed"""
         # Timeout in seconds, after which the HIT will be expired automatically
-        if not (
-            self.hit_is_abandoned
-            or self.hit_is_returned
-            or self.disconnected
-            or self.hit_is_expired
-        ):
-            self.mturk_manager.mark_workers_done([self])
+        # TODO clean this up, a lot can be handled by the manager instead
+        if not (self.hit_is_abandoned or self.hit_is_returned or
+                self.disconnected or self.hit_is_expired):
+            self.m_mark_workers_done([self])
             if direct_submit:
                 self.m_send_command(
                     self.worker_id,
