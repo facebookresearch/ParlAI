@@ -252,7 +252,7 @@ class DialogPartnerWorld(World):
         if self.agents is not None and len(self.agents) > 0:
             # Name the world after the first agent.
             self.id = self.agents[0].getID()
-        
+
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents."""
         acts = self.acts
