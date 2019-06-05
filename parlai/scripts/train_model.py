@@ -516,8 +516,9 @@ class TrainLoop:
         """
         Remove inaccurate multiworld metrics.
 
-        When training in multitask mode, agent-level metrics may be shown, but are actually averages
-        not distinguished across the worlds. This method hides those tasks.
+        When training in multitask mode, agent-level metrics may be shown,
+        but are actually averages
+        not distinguished across the worlds. This method adds a warning.
 
         Issue: https://github.com/facebookresearch/ParlAI/issues/1750
         """
