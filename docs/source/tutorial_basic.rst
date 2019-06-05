@@ -177,10 +177,15 @@ Using ParlAI
 Concepts in Action: Simple Display Data Loop
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Now that we understand the basics, let's set up a simple loop which displays
-whichever task we specify. A complete version of this for utility is included
-in the ``examples`` directory (in ``display_data.py``), but we'll do this from scratch
+Now that we understand the basics, let's set up a simple script which displays
+any specified task. A complete version of this for utility is included
+at ``parlai/scripts/display_data.py``, but we'll do this from scratch
 to demonstrate the concepts we just introduced.
+
+We'll create a new agent class and implement observe() and act() functions
+so that, in a world with a task teacher, it will observe the data outputted
+by the task teacher, save it as its last observation,
+and then act by printing the label in its observation.
 
 First, a few imports:
 
@@ -190,18 +195,17 @@ First, a few imports:
     from parlai.core.params import ParlaiParser
     from parlai.core.worlds import create_task
 
-The Agent class will be the parent class for our own agent, which we'll implement here.
+
+The Agent class will be the parent class for our own agent.
 The ``ParlaiParser`` provides a set of default command-line arguments and
-parsing, and create_task allows us to automatically set up the right world and
-teacher for a named task from the set of tasks available within ParlAI.
+parsing, and create_task will automatically set up the appropriate world and
+teacher for any task available within ParlAI that we choose.
 
-First, we'll define our agent class. Its act function just repeats back the correct answer if
-available or else says "I don't know."
-
+We define our agent (which we name ``ParrotAgent``)
 
 .. code-block:: python
 
-    class RepeatLabelAgent(Agent):
+    class ParrotAgent(Agent):
         # initialize by setting id
         def __init__(self, opt):
             self.id = 'LabelAgent'
@@ -226,7 +230,7 @@ Now that we have our our agent, we'll set up the display loop.
     parser = ParlaiParser()
     opt = parser.parse_args()
 
-    agent = RepeatLabelAgent(opt)
+    agent = ParrotAgent(opt)
     world = create_task(opt, agent)
 
     for _ in range(10):
@@ -246,7 +250,7 @@ world.display() you could access world.acts directly:
     parser = ParlaiParser()
     opt = parser.parse_args()
 
-    agent = RepeatLabelAgent(opt)
+    agent = ParrotAgent(opt)
     world = create_task(opt, agent)
 
     for _ in range(10):
@@ -311,7 +315,7 @@ These modes can be set from the command line with '-dt valid' / '-dt test'.
 You can also set '-dt train:evalmode' if you want to look at the train data in the same way
 as the test data (with labels hidden).
 
-Now, our RepeatLabel agent no longer has anything to say. For datasets which provide a set
+Now, our Parrot agent no longer has anything to say. For datasets which provide a set
 of candidates to choose from ('label_candidates' in the observation dict), we
 can give our agent a chance of getting the answer correct by replying with one
 of those.
