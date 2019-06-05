@@ -1447,7 +1447,6 @@ class TorchAgent(ABC, Agent):
 
         self.match_batch(batch_reply, batch.valid_indices, output)
         self.replies['batch_reply'] = batch_reply
-        self._save_history(observations, batch_reply)  # save model predictions
 
         return batch_reply
 
