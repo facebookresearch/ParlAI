@@ -38,6 +38,7 @@ from .utils import (
     no_lock,
     str_to_msg,
 )
+from parlai.scripts.convert_fbdialog_to_parlai import dump_data
 
 from functools import lru_cache
 
@@ -1202,16 +1203,19 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             self.num_exs = 0
             if opt.get('parlaidialogteacher_datafile') is not None:
                 self._setup_data(opt.get('parlaidialogteacher_datafile'))
+            if opt.get('parlaidialogteacher_cands_datafile') is not None:
+                self._load_cands(opt.get('parlaidialogteacher_cands_datafile'))
         else:
             self.episodes = shared['episodes']
+            self.cands = shared['cands']
             self.num_exs = sum(len(e) for e in self.episodes)
-        self.id = opt.get('parlaidialogteacher_datafile', 'teacher')
         self.reset()
 
     def share(self):
         """Share the episodes."""
         shared = super().share()
         shared['episodes'] = self.episodes
+        shared['cands'] = self.cands
         return shared
 
     def num_examples(self):
@@ -1224,7 +1228,10 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=None):
         """Get a specific example from the dataset."""
-        return self.episodes[episode_idx][entry_idx].copy()
+        ex = self.episodes[episode_idx][entry_idx].copy()
+        if self.cands is not None:
+            ex['label_candidates'] = self.cands
+        return ex
 
     def _setup_data(self, path):
         print("[loading parlAI text data:" + path + "]")
@@ -1244,3 +1251,45 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             # add last episode
             eps[-1]['episode_done'] = True
             self.episodes.append(eps)
+
+    def _convert_from_fbdialog(self, path, outfile=None):
+        """
+        Convert a datafile from fbdialog format to parlai dialog format.
+
+        :param path:
+            datafile path of the original fbdialog data
+        :param outfile:
+            optional path to the parlai text dialog format
+        """
+        if path is not None and os.path.exists(path):
+            if outfile is None:
+                outfile = '{}.parlai'.format(path)
+            if not os.path.exists(outfile):
+                opt = {
+                    'infile': path,
+                    'outfile': outfile,
+                }
+                dump_data(opt)
+        return outfile
+
+    def _load_cands(self, path=None):
+        """
+        Load a global fixed set of candidates.
+
+        The candidates will be provided by the teacher for
+        every example (the true labels for a specific example are also added to
+        this set, so that it's possible to get the right answer).
+        """
+        if path is None or not os.path.exists(path):
+            return None
+        print("[loading parlAI text data cands:" + path + "]")
+        self.cands = []
+        cands = set()
+        with open(path) as read:
+            for line in read:
+                msg = str_to_msg(line.rstrip('\n'))
+                if msg:
+                    labels = msg.get('labels')
+                    if labels:
+                        cands.update(labels)
+        self.cands = list(cands)

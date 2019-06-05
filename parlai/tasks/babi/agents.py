@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 import parlai.core.agents as core_agents
 from .build import build
 
@@ -40,39 +40,46 @@ def mod_labels(ys, task):
 
 
 # Single bAbI task (1k training).
-class Task1kTeacher(FbDialogTeacher):
+class Task1kTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         task = opt.get('task', 'babi:Task1k:1')
         self.task_num = task.split(':')[2]
         opt['datafile'] = _path('', self.task_num, opt)
         opt['cands_datafile'] = _path('', task.split(':')[2], opt, 'train')
+        opt['parlaidialogteacher_datafile'] = self._convert_from_fbdialog(opt['datafile'])
+        opt['parlaidialogteacher_cands_datafile'] = self._convert_from_fbdialog(opt['cands_datafile'])
         super().__init__(opt, shared)
 
-    def setup_data(self, path):
-        for entry, new in super().setup_data(path):
-            entry[1] = mod_labels(entry[1], self.task_num)
-            yield entry, new
+    def get(self, episode_idx, entry_idx=None):
+        """Override to modify labels."""
+        ex = super().get(episode_idx, entry_idx)
+        ex['labels'] = mod_labels(ex['labels'], self.task_num)
+        return ex
 
-    def load_cands(self, path):
-        return mod_labels(super().load_cands(path), self.task_num)
-
+    def _load_cands(self, path):
+        super()._load_cands(path)
+        self.cands = mod_labels(self.cands, self.task_num)
 
 # Single bAbI task (10k training).
-class Task10kTeacher(FbDialogTeacher):
+class Task10kTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         task = opt.get('task', 'babi:Task10k:1')
         self.task_num = task.split(':')[2]
         opt['datafile'] = _path('-10k', self.task_num, opt)
         opt['cands_datafile'] = _path('-10k', task.split(':')[2], opt, 'train')
+        opt['parlaidialogteacher_datafile'] = self._convert_from_fbdialog(opt['datafile'])
+        opt['parlaidialogteacher_cands_datafile'] = self._convert_from_fbdialog(opt['cands_datafile'])
         super().__init__(opt, shared)
 
-    def setup_data(self, path):
-        for entry, new in super().setup_data(path):
-            entry[1] = mod_labels(entry[1], self.task_num)
-            yield entry, new
+    def get(self, episode_idx, entry_idx=None):
+        """Override to modify labels."""
+        ex = super().get(episode_idx, entry_idx)
+        ex['labels'] = mod_labels(ex['labels'], self.task_num)
+        return ex
 
-    def load_cands(self, path):
-        return mod_labels(super().load_cands(path), self.task_num)
+    def _load_cands(self, path):
+        super()._load_cands(path)
+        self.cands = mod_labels(self.cands, self.task_num)
 
 
 # By default train on all tasks at once.
