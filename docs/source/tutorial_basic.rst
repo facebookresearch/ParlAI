@@ -159,6 +159,7 @@ Another simple world we include is MultiAgentDialogWorld, which is similar
 but generalizes this to cycle between any number of agents in a round robin
 fashion.
 
+
 Advanced Worlds
 ^^^^^^^^^^^^^^^
 
@@ -173,12 +174,13 @@ tutorial (see: :doc:`tutorial_worlds`).
 Using ParlAI
 ------------
 
-Simple Display Data Loop
+Concepts in Action: Simple Display Data Loop
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Now that we understand the basics, let's set up a simple loop which displays
 whichever task we specify. A complete version of this for utility is included
-in the ``examples`` directory (in ``display_data.py``), but we'll do this one from scratch.
+in the ``examples`` directory (in ``display_data.py``), but we'll do this from scratch
+to demonstrate the concepts we just introduced.
 
 First, a few imports:
 
@@ -193,7 +195,7 @@ The ``ParlaiParser`` provides a set of default command-line arguments and
 parsing, and create_task allows us to automatically set up the right world and
 teacher for a named task from the set of tasks available within ParlAI.
 
-First, we'll define our agent, which just repeats back the correct answer if
+First, we'll define our agent class. Its act function just repeats back the correct answer if
 available or else says "I don't know."
 
 
@@ -306,7 +308,7 @@ This tells the agent not to use these labels for training--however, the labels a
 still available via the 'eval_labels' field in case you need to compute model-side
 metrics such as perplexity.
 These modes can be set from the command line with '-dt valid' / '-dt test'.
-You can also set 'train:evalmode' if you want to look at the train data in the same way
+You can also set '-dt train:evalmode' if you want to look at the train data in the same way
 as the test data (with labels hidden).
 
 Now, our RepeatLabel agent no longer has anything to say. For datasets which provide a set
@@ -396,8 +398,8 @@ The set of tasks in ParlAI can be found in the task list in the `code here <http
 here <tasks.html>`_. See `this tutorial <tutorial_task.html>`_ for making your own tasks.
 
 ParlAI downloads the data required for a requested task automatically (using the build.py code in the task)
-and will put it in your `--datapath`, which is configurable, but by default will be in
-ParlAI/data (but you can point this e.g. to another disk with more memory).
-It only downloads the tasks you request.
+and will put it in your `--datapath`. This is ParlAI/data by default
+(but you can configure this to point elsewhere e.g. to another disk with more memory).
+Only the tasks you request are downloaded.
 
 The set of tasks in ParlAI is continually growing from contributors.
