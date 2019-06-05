@@ -687,7 +687,6 @@ class TorchRankerAgent(TorchAgent):
         with open(path, 'wb') as f:
             torch.save(vecs, f)
 
-    @abstractmethod
     def encode_candidates(self, padded_cands):
         """
         Convert the given candidates to vectors.
@@ -697,8 +696,13 @@ class TorchRankerAgent(TorchAgent):
         :param padded_cands:
             The padded candidates.
         """
-        # TODO: describe input type and return type.
-        pass
+        raise RuntimeError(
+            'Abstract method: user ust implement encode_candidates .'
+            'If your agent encodes candidates independently '
+            'from context, you can get performance gains with fixed cands by '
+            'implementing this function and running with the flag '
+            '--encode-candidate-vecs True.'
+        )
 
     def _make_candidate_encs(self, vecs, path):
         """Make candidate encodings."""
