@@ -137,17 +137,17 @@ First let's set it up.
 
 .. code-block:: bash
 
-  mkdir parlai/agents/parse
-  touch parlai/agents/parse/parse.py
+  mkdir parlai/agents/parrot
+  touch parlai/agents/parrot/parrot.py
 
 We'll inherit the TorchAgent parsing code so we don't have to write it ourselves.
-Open parse.py and copy the following:
+Open parrot.py and copy the following:
 
 .. code-block:: python
 
   from parlai.core.torch_agent import TorchAgent, Output
 
-  class ParseAgent(TorchAgent):
+  class ParrotAgent(TorchAgent):
       def eval_step(self, batch):
           # for each row in batch, convert tensor to string
           return Output([str(row) for row in batch.text_vec])
@@ -156,7 +156,7 @@ Now let's test it out:
 
 .. code-block:: bash
 
-  python examples/display_model.py -t babi:task10k:1 -m parse
+  python examples/display_model.py -t babi:task10k:1 -m parrot
 
 You'll notice the model is always outputting the index for the "unknown" token.
 This token is automatically selected because the dictionary doesn't recognize any tokens,
@@ -164,15 +164,15 @@ because we haven't built a dictionary yet. Let's do that now.
 
 .. code-block:: bash
 
-  python examples/build_dict.py -t babi:task10k:1 -df /tmp/parse.dict
+  python examples/build_dict.py -t babi:task10k:1 -df /tmp/parrot.dict
 
-Now let's try our parse agent again.
+Now let's try our parrot agent again.
 
 .. code-block:: bash
 
-  python examples/display_model.py -t babi:task10k:1 -m parse -df /tmp/parse.dict
+  python examples/display_model.py -t babi:task10k:1 -m parrot -df /tmp/parrot.dict
 
-This ParseAgent implements ``eval_step``, one of two abstract functions in TorchAgent.
+This ParrotAgent implements ``eval_step``, one of two abstract functions in TorchAgent.
 The other is ``train_step``.
 You can easily and quickly build a model agent by creating a class which implements only these two functions with the most
 typical custom code for a model, and inheriting vectorization and batching from TorchAgent.
