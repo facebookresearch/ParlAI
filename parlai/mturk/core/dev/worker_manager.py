@@ -159,10 +159,12 @@ class WorkerManager():
         worker = self.mturk_workers[worker_id]
         return worker.get_agent_for_assignment(assignment_id)
 
+    # TODO use DB
     def time_block_worker(self, worker_id):
         self.time_blocked_workers.append(worker_id)
         self.mturk_manager.soft_block_worker(worker_id, 'max_time_qual')
 
+    # TODO use DB
     def un_time_block_workers(self, workers=None):
         if workers is None:
             workers = self.time_blocked_workers
@@ -170,6 +172,7 @@ class WorkerManager():
         for worker_id in workers:
             self.mturk_manager.un_soft_block_worker(worker_id, 'max_time_qual')
 
+    # TODO use DB
     def load_disconnects(self):
         """Load disconnects from file, populate the disconnects field for any
         worker_id that has disconnects in the list. Any disconnect that
@@ -195,6 +198,7 @@ class WorkerManager():
                 self.mturk_workers[worker_id] = WorkerState(worker_id)
             self.mturk_workers[worker_id].disconnects += 1
 
+    # TODO use DB
     def save_disconnects(self):
         """Saves the local list of disconnects to file"""
         file_path = os.path.join(parent_dir, DISCONNECT_FILE_NAME)
@@ -283,6 +287,7 @@ class WorkerManager():
                 hit_ids.append(hit_id)
         return hit_ids
 
+    # TODO update this once using submitted state via POST
     def get_agent_work_status(self, assignment_id):
         """Get the current status of an assignment's work"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
@@ -330,6 +335,7 @@ class WorkerManager():
             self._log_missing_agent(worker_id, assignment_id)
         return agent
 
+    # TODO this should no longer be used for anything
     def change_agent_conversation(self, agent, conversation_id, new_agent_id):
         """Handle changing a conversation for an agent, takes a callback for
         when the command is acknowledged

@@ -105,7 +105,7 @@ class MainApp extends React.Component {
       task_description: null,
       mturk_submit_url: null,
       frame_height: FRAME_HEIGHT,
-      socket_status: null,
+      socket_status: null,  // TODO improve this functionality for disconnects
       hit_id: HIT_ID, // gotten from template
       assignment_id: ASSIGNMENT_ID, // gotten from template
       worker_id: WORKER_ID, // gotten from template
