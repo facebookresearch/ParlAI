@@ -1198,37 +1198,88 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
+        self.streaming = 'stream' in opt.get('datatype')
+        self.datafile = opt.get('parlaidialogteacher_datafile')
+        self.num_exs = None
+        self.num_eps = None
         if not shared:
             self.episodes = []
-            self.num_exs = 0
             if opt.get('parlaidialogteacher_datafile') is not None:
-                self._setup_data(opt.get('parlaidialogteacher_datafile'))
+                if not self.streaming:
+                    self._setup_data(opt.get('parlaidialogteacher_datafile'))
+                else:
+                    self.stream_data_gen = self._stream_data_gen(
+                        opt.get('parlaidialogteacher_datafile')
+                    )
             if opt.get('parlaidialogteacher_cands_datafile') is not None:
                 self._load_cands(opt.get('parlaidialogteacher_cands_datafile'))
         else:
-            self.episodes = shared['episodes']
+            if not self.streaming:
+                self.episodes = shared['episodes']
+                self.num_exs = sum(len(e) for e in self.episodes)
+                self.num_eps = len(self.episodes)
+            else:
+                self.stream_data_gen = shared['stream_data_gen']
             self.cands = shared['cands']
-            self.num_exs = sum(len(e) for e in self.episodes)
         self.reset()
+
+    def reset(self):
+        """Override to reset self.episode."""
+        super().reset()
+        self.episode = None
 
     def share(self):
         """Share the episodes."""
         shared = super().share()
-        shared['episodes'] = self.episodes
+        if not self.streaming:
+            shared['episodes'] = self.episodes
+        else:
+            shared['stream_data_gen'] = self.stream_data_gen
         shared['cands'] = self.cands
         return shared
 
+    def _load_length(self):
+        """
+        Calculate the length of the dataset and caches it in a file.
+
+        Note that this can take some time for large datasets. Episode and entry
+        indexes cannot be specified during streaming.
+        """
+        datafiles = self.datafile if type(self.datafile) is tuple else [self.datafile]
+        length_file = datafiles[0] + ".lengths"
+        if not os.path.isfile(length_file):
+            num_eps = 0
+            num_exs = 0
+            for episode in self._stream_data_gen(self.datafile):
+                num_eps += 1
+                num_exs += len(episode)
+            with open(length_file, 'w') as f:
+                f.write("{}\n{}".format(num_eps, num_exs))
+        else:
+            with open(length_file, 'r') as f:
+                num_eps, num_exs = f.readlines()
+        return int(num_eps), int(num_exs)
+
     def num_examples(self):
         """Return the number of examples from the data."""
+        if not self.num_exs:
+            self.num_eps, self.num_exs = self._load_length()
         return self.num_exs
 
     def num_episodes(self):
         """Return the number of episodes from the data."""
-        return len(self.episodes)
+        if not self.num_eps:
+            self.num_eps, self.num_exs = self._load_length()
+        return self.num_eps
 
     def get(self, episode_idx, entry_idx=None):
         """Get a specific example from the dataset."""
-        ex = self.episodes[episode_idx][entry_idx].copy()
+        if not self.streaming:
+            ex = self.episodes[episode_idx][entry_idx].copy()
+        else:
+            if self.episode is None:
+                self.episode = next(self.stream_data_gen)
+            ex = self.episode[entry_idx].copy()
         if self.cands is not None:
             ex['label_candidates'] = self.cands
         return ex
@@ -1237,6 +1288,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         print("[loading parlAI text data:" + path + "]")
         self.episodes = []
         self.num_exs = 0
+        self.num_eps = 0
         eps = []
         with open(path) as read:
             for line in read:
@@ -1246,11 +1298,36 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
                     eps.append(msg)
                     if msg.get('episode_done', False):
                         self.episodes.append(eps)
+                        self.num_eps += 1
                         eps = []
         if len(eps) > 0:
             # add last episode
             eps[-1]['episode_done'] = True
             self.episodes.append(eps)
+
+    def _stream_data_gen(self, path):
+        """
+        Stream data from disk.
+
+        :param path:
+            path to data
+
+        :return:
+            the next episode
+        """
+        episode = []
+        with open(path) as read:
+            for line in read:
+                msg = str_to_msg(line.rstrip('\n'))
+                if msg:
+                    episode.append(msg)
+                    if msg.get('episode_done', False):
+                        yield episode
+                        episode = []
+        if len(episode) > 0:
+            # add last episode
+            episode[-1]['episode_done'] = True
+            yield episode
 
     def _convert_from_fbdialog(self, path, outfile=None):
         """
