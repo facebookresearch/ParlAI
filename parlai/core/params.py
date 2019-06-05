@@ -13,8 +13,9 @@ import json
 import sys as _sys
 import datetime
 from parlai.core.agents import get_agent_module, get_task_module
-from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
+from parlai.tasks.tasks import ids_to_tasks
+from parlai.core.utils import Opt
 
 
 def print_announcements(opt):
@@ -671,7 +672,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         self.add_extra_args(args)
         self.args = super().parse_args(args=args)
-        self.opt = vars(self.args)
+        self.opt = Opt(vars(self.args))
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
