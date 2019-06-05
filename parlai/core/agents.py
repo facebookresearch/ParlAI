@@ -735,10 +735,6 @@ def _add_task_flags_to_agent_opt(agent, opt, flags):
     task = []
     for f in fl:
         if '=' in f:
-            warn_once(
-                'Try not to use task flags. They may disappear in the future. '
-                'If you see this warning, please report it in a GitHub Issue.'
-            )
             one_flag = f.split('=')
             opt[one_flag[0]] = one_flag[1]
         else:
