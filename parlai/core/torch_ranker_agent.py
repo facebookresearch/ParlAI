@@ -697,7 +697,7 @@ class TorchRankerAgent(TorchAgent):
             The padded candidates.
         """
         raise RuntimeError(
-            'Abstract method: user ust implement encode_candidates .'
+            'Abstract method: user must implement encode_candidates(). '
             'If your agent encodes candidates independently '
             'from context, you can get performance gains with fixed cands by '
             'implementing this function and running with the flag '
