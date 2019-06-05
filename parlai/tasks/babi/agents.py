@@ -46,8 +46,12 @@ class Task1kTeacher(ParlAIDialogTeacher):
         self.task_num = task.split(':')[2]
         opt['datafile'] = _path('', self.task_num, opt)
         opt['cands_datafile'] = _path('', task.split(':')[2], opt, 'train')
-        opt['parlaidialogteacher_datafile'] = self._convert_from_fbdialog(opt['datafile'])
-        opt['parlaidialogteacher_cands_datafile'] = self._convert_from_fbdialog(opt['cands_datafile'])
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
+        opt['parlaidialogteacher_cands_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['cands_datafile']
+        )
         super().__init__(opt, shared)
 
     def get(self, episode_idx, entry_idx=None):
@@ -67,8 +71,12 @@ class Task10kTeacher(ParlAIDialogTeacher):
         self.task_num = task.split(':')[2]
         opt['datafile'] = _path('-10k', self.task_num, opt)
         opt['cands_datafile'] = _path('-10k', task.split(':')[2], opt, 'train')
-        opt['parlaidialogteacher_datafile'] = self._convert_from_fbdialog(opt['datafile'])
-        opt['parlaidialogteacher_cands_datafile'] = self._convert_from_fbdialog(opt['cands_datafile'])
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
+        opt['parlaidialogteacher_cands_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['cands_datafile']
+        )
         super().__init__(opt, shared)
 
     def get(self, episode_idx, entry_idx=None):

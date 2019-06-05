@@ -17,7 +17,7 @@ Task 3: Dialogs discussing questions about movies as well as recommendations.
 Task 4: Dialogs discussing Movies from Reddit (the /r/movies SubReddit).
 """
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 import parlai.core.agents as core_agents
 from .build import build
 
@@ -60,7 +60,7 @@ def _path(task, opt):
 
 
 # The knowledge base of facts that can be used to answer questions.
-class KBTeacher(FbDialogTeacher):
+class KBTeacher(ParlAIDialogTeacher):
     """Simple text entry with each movie's facts in the knowledge base."""
 
     def __init__(self, opt, shared=None):
@@ -68,11 +68,14 @@ class KBTeacher(FbDialogTeacher):
         build(opt)
         opt['datafile'] = os.path.join(opt['datapath'], 'MovieDialog',
                                        'movie_dialog_dataset', 'movie_kb.txt')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
 # Single task.
-class TaskTeacher(FbDialogTeacher):
+class TaskTeacher(ParlAIDialogTeacher):
     """Teacher with single task, specified by moviedialog:task:N."""
 
     def __init__(self, opt, shared=None):
@@ -83,6 +86,9 @@ class TaskTeacher(FbDialogTeacher):
         except IndexError:
             self.task = '1'  # default task
         opt['datafile'], opt['cands_datafile'] = _path(self.task, opt)
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 

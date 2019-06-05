@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from .build import build
 
 import copy
@@ -21,11 +21,17 @@ def _path(opt, filtered):
                         'qa-{type}.txt'.format(type=dt))
 
 
-class DefaultTeacher(FbDialogTeacher):
+class DefaultTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, '')
         opt['cands_datafile'] = os.path.join(opt['datapath'], 'WikiMovies',
                                              'movieqa', 'knowledge_source',
                                              'entities.txt')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
+        opt['parlaidialogteacher_cands_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['cands_datafile']
+        )
         super().__init__(opt, shared)

@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 import parlai.core.agents as core_agents
 from .build import build
 
@@ -28,31 +28,39 @@ def _path(task, opt):
         opt['datapath'], 'CBT', 'CBTest', 'data', task + '_' + suffix + '.txt')
 
 
-class NETeacher(FbDialogTeacher):
+class NETeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path('cbtest_NE', opt)
-        opt['cloze'] = True
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile'], cloze=True
+        )
         super().__init__(opt, shared)
 
 
-class CNTeacher(FbDialogTeacher):
+class CNTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path('cbtest_CN', opt)
-        opt['cloze'] = True
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile'], cloze=True
+        )
         super().__init__(opt, shared)
 
 
-class VTeacher(FbDialogTeacher):
+class VTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path('cbtest_V', opt)
-        opt['cloze'] = True
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile'], cloze=True
+        )
         super().__init__(opt, shared)
 
 
-class PTeacher(FbDialogTeacher):
+class PTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path('cbtest_P', opt)
-        opt['cloze'] = True
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile'], cloze=True
+        )
         super().__init__(opt, shared)
 
 

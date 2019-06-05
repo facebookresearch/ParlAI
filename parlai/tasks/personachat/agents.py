@@ -21,7 +21,7 @@ This is specified in the following way:
 """
 
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from .build import build
 
 import copy
@@ -35,17 +35,23 @@ def _path(opt, persona):
     return os.path.join(opt['datapath'], 'Persona-Chat', 'personachat', dt + '.txt')
 
 
-class NoneTeacher(FbDialogTeacher):
+class NoneTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'none_original')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
-class SelfOriginalTeacher(FbDialogTeacher):
+class SelfOriginalTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'self_original')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
@@ -53,17 +59,23 @@ class SelfTeacher(SelfOriginalTeacher):
     pass
 
 
-class SelfRevisedTeacher(FbDialogTeacher):
+class SelfRevisedTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'self_revised')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
-class OtherOriginalTeacher(FbDialogTeacher):
+class OtherOriginalTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'other_original')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
@@ -71,17 +83,23 @@ class OtherTeacher(OtherOriginalTeacher):
     pass
 
 
-class OtherRevisedTeacher(FbDialogTeacher):
+class OtherRevisedTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'other_revised')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
-class BothOriginalTeacher(FbDialogTeacher):
+class BothOriginalTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'both_original')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
@@ -89,10 +107,13 @@ class BothTeacher(BothOriginalTeacher):
     pass
 
 
-class BothRevisedTeacher(FbDialogTeacher):
+class BothRevisedTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'both_revised')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 

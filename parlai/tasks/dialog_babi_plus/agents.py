@@ -6,7 +6,7 @@
 
 import os
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from parlai.tasks.dialog_babi_plus.build import build
 
 tasks = {}
@@ -36,19 +36,22 @@ def _path(task, opt):
 
 
 # The knowledge base of facts that can be used to answer questions.
-class KBTeacher(FbDialogTeacher):
+class KBTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
         opt['datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI-plus',
                                        'dialog-bAbI-plus-tasks',
                                        'dialog-babi-kb-all.txt')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(opt['datafile'])
         super().__init__(opt, shared)
 
 
 # Single task.
-class DefaultTeacher(FbDialogTeacher):
+class DefaultTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         default_task_id = 1
         paths = _path(default_task_id, opt)
         opt['datafile'], opt['cands_datafile'] = paths
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(opt['datafile'])
+        opt['parlaidialogteacher_cands_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(opt['cands_datafile'])
         super().__init__(opt, shared)

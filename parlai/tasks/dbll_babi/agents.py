@@ -11,7 +11,7 @@
 # which specifies task 2, and policy with 0.5 answers correct, see the paper
 # for more details: https://arxiv.org/abs/1604.06045
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from .build import build
 
 import copy
@@ -48,22 +48,30 @@ def _path(subdir, task, opt, dt=''):
                             suffix=_suffixes[dt]))
 
 
-class TaskTeacher(FbDialogTeacher):
+class TaskTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         params = opt['task'].split(':')[2]
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(os.path.join('babi', 'babi1'), params, opt)
         opt['cands_datafile'] = _path(os.path.join('babi', 'babi1'), params,
                                       opt, 'train')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
+        opt['parlaidialogteacher_cands_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['cands_datafile']
+        )
         super().__init__(opt, shared)
 
 
 # Defaults to task 2 with p=0.5.
-class DefaultTeacher(FbDialogTeacher):
+class DefaultTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         task = '2_p0.5'
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(os.path.join('babi', 'babi1'), task, opt)
         opt['cands_datafile'] = _path(os.path.join('babi', 'babi1'), task,
                                       opt, 'train')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(opt['datafile'])
+        opt['parlaidialogteacher_cands_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(opt['cands_datafile'])
         super().__init__(opt, shared)

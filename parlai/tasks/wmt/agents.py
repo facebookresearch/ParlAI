@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from .build import build
 
 import copy
@@ -18,12 +18,15 @@ def _path(task, opt, dt):
                         '{task}_{type}.txt'.format(task=task, type=dt))
 
 
-class EnDeTeacher(FbDialogTeacher):
+class EnDeTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         self.task_name = 'en_de'
         dt = opt['datatype'].split(':')[0]
         opt['datafile'] = _path(self.task_name, opt, dt)
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 

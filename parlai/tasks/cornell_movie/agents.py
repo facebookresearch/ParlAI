@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from .build import build
 
 import copy
@@ -19,11 +19,19 @@ def _path(opt, filtered):
                         dt + filtered + '.txt')
 
 
-class DefaultTeacher(FbDialogTeacher):
+class DefaultTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, '')
         opt['cands_datafile'] = opt['datafile']
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile'],
+            additional_data_loader=opt.get('additional_data_loader'),
+            outfile='{}.parlai.double'.format(opt['datafile'])
+        )
+        opt['parlaidialogteacher_cands_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['cands_datafile']
+        )
         super().__init__(opt, shared)
 
 
@@ -31,22 +39,22 @@ class DoubleTeacher(DefaultTeacher):
     """This version creates text-label pairs from the perspective of both
     speakers.
     """
-    def setup_data(self, path):
+    def __init__(self, opt, shared=None):
+        opt['additional_data_loader'] = DoubleTeacher.setup_data
+        super().__init__(opt, shared)
+
+    @classmethod
+    def setup_data(cls, dataloader):
         """Adds additional perspectives.
         For example, in the conversation:
-
         x1 y1
         x2 y2
         x3
-
         Creates the additional dialog:
-
         '' x1
         y1 x2
         y2 x3
-
         And if a y3 was available in response to x3, also would have added:
-
         y3
         """
 
@@ -66,7 +74,7 @@ class DoubleTeacher(DefaultTeacher):
 
         # this shows conversations in both directions
         alternate = []
-        for entry, new in super().setup_data(path):
+        for entry, new in dataloader:
             if new:
                 for i, e in enumerate(rebuild(alternate)):
                     yield e, i == 0

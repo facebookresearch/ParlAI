@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from .build import build
 
 import copy
@@ -41,16 +41,17 @@ def _path(subdir, task, opt):
 
 
 # The knowledge base of facts that can be used to answer questions.
-class KBTeacher(FbDialogTeacher):
+class KBTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
         opt['datafile'] = os.path.join(
             opt['datapath'], 'DBLL', 'dbll', 'movieqa-dbll', 'movie_kb.txt')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(opt['datafile'])
         super().__init__(opt, shared)
 
 
 # Each individual task.
-class TaskTeacher(FbDialogTeacher):
+class TaskTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         params = opt['task'].split(':')[2]
         opt = copy.deepcopy(opt)
@@ -59,11 +60,17 @@ class TaskTeacher(FbDialogTeacher):
         opt['cands_datafile'] = os.path.join(opt['datapath'], 'WikiMovies',
                                              'movieqa', 'knowledge_source',
                                              'entities.txt')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
+        opt['parlaidialogteacher_cands_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['cands_datafile']
+        )
         super().__init__(opt, shared)
 
 
 # Defaults to task 2 with p=0.5.
-class DefaultTeacher(FbDialogTeacher):
+class DefaultTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         task = "2_p0.5"
         opt = copy.deepcopy(opt)
@@ -72,5 +79,11 @@ class DefaultTeacher(FbDialogTeacher):
         opt['cands_datafile'] = os.path.join(opt['datapath'], 'WikiMovies',
                                              'movieqa', 'knowledge_source',
                                              'entities.txt')
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
+        opt['parlaidialogteacher_cands_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['cands_datafile']
+        )
         super().__init__(opt, shared)
         self.defaultPosReward = 1

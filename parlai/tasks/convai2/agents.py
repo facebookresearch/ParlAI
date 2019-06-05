@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from parlai.core.utils import warn_once
 from .build import build
 
@@ -33,7 +33,7 @@ def _path(opt, persona, use_cands):
     return os.path.join(opt['datapath'], 'ConvAI2', dt + cands + '.txt')
 
 
-class BothTeacher(FbDialogTeacher):
+class BothTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         try:
@@ -42,10 +42,13 @@ class BothTeacher(FbDialogTeacher):
         except Exception:
             use_cands = True
         opt['datafile'] = _path(opt, 'both_original', use_cands)
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
-class NoneTeacher(FbDialogTeacher):
+class NoneTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         try:
@@ -54,10 +57,13 @@ class NoneTeacher(FbDialogTeacher):
         except Exception:
             use_cands = True
         opt['datafile'] = _path(opt, 'none_original', use_cands)
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
-class SelfOriginalTeacher(FbDialogTeacher):
+class SelfOriginalTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         try:
@@ -66,6 +72,9 @@ class SelfOriginalTeacher(FbDialogTeacher):
         except Exception:
             use_cands = True
         opt['datafile'] = _path(opt, 'self_original', use_cands)
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
@@ -73,7 +82,7 @@ class SelfTeacher(SelfOriginalTeacher):
     pass
 
 
-class SelfRevisedTeacher(FbDialogTeacher):
+class SelfRevisedTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         try:
@@ -82,6 +91,9 @@ class SelfRevisedTeacher(FbDialogTeacher):
         except Exception:
             use_cands = True
         opt['datafile'] = _path(opt, 'self_revised', use_cands)
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 

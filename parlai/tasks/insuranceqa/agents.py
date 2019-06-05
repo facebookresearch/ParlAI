@@ -6,7 +6,7 @@
 import copy
 import os
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from .build import build
 
 
@@ -22,15 +22,18 @@ def _path(version, opt, exsz=''):
 
 
 # V1 InsuranceQA task
-class V1Teacher(FbDialogTeacher):
+class V1Teacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path('V1', opt)
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 
 # V2 InsuranceQA task
-class V2Teacher(FbDialogTeacher):
+class V2Teacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         task = opt.get('task', None)
@@ -39,6 +42,9 @@ class V2Teacher(FbDialogTeacher):
             task = 'insuranceqa:V2:100'
         split = task.split(':')
         opt['datafile'] = _path('V2', opt, split[2])
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 

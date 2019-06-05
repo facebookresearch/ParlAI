@@ -7,7 +7,7 @@ import copy
 import json
 import os
 
-from parlai.core.teachers import DialogTeacher, FbDialogTeacher
+from parlai.core.teachers import DialogTeacher, ParlAIDialogTeacher
 from .build import build
 
 
@@ -24,10 +24,13 @@ def _path(opt, is_passage=False):
     return os.path.join(opt['datapath'], 'MS_MARCO', fname)
 
 
-class PassageTeacher(FbDialogTeacher):
+class PassageTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, is_passage=True)
+        opt['parlaidialogteacher_datafile'] = ParlAIDialogTeacher._convert_from_fbdialog(
+            opt['datafile']
+        )
         super().__init__(opt, shared)
 
 

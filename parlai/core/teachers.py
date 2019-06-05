@@ -16,12 +16,6 @@ This module provides a set of teachers that deal with dialog.
     ``DialogTeacher(FixedDialogTeacher)``
      Base teacher class for doing dialog specifically with fixed chat logs.
 
-    ``FbDialogTeacher(DialogTeacher)``
-     Teacher class that provides access to data in the Facebook Dialog format.
-     See the class description for more details.
-     ** NOTE: ** We plan to deprecate this method soon in favor of ParlAIDialogTeacher,
-     however several existing tasks are currently still using it.
-
     ``ParlAIDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the ParlAI Dialog format.
      See the class description for more details.
@@ -907,237 +901,6 @@ class StreamDialogData(DialogData):
         return self.data
 
 
-class FbDialogTeacher(DialogTeacher):
-    """
-    This module provides access to data in the Facebook Dialog format.
-
-    Subclasses ``DialogTeacher`` for functionality and provides an
-    implementation of ``setup_data()`` which iterates over datasets in the
-    "fbdialog" format. If your data is in the format below, use this class to
-    handle file parsing for you.
-
-    The way FB Dialog data is set up is as follows:
-
-    ::
-
-        1 Sam went to the kitchen.
-        2 Pat gave Sam the milk.
-        3 Where is the milk?<TAB>kitchen<TAB>1<TAB>hallway|kitchen|bathroom
-        4 Sam went to the hallway.
-        5 Pat went to the bathroom.
-        6 Where is the milk?<TAB>hallway<TAB>1<TAB>hallway|kitchen|bathroom
-
-    Lines 1-6 represent a single episode, with two different examples: the
-    first example is lines 1-3, and the second is lines 4-6.
-
-    Lines 1,2,4, and 5 represent contextual information.
-
-    Lines 3 and 6 contain a query, a label, a reward for getting the question
-    correct, and three label candidates.
-
-    Since both of these examples are part of the same episode, the information
-    provided in the first example is relevant to the query in the second
-    example and therefore the agent must remember the first example in order to
-    do well.
-
-    In general dialog in this format can contain any speech, not just QA pairs:
-
-    ::
-
-        1 Hi how's it going?<TAB>It's going great. What's new?
-        2 Well I'm working on a new project at work.<TAB>Oh me too!
-        3 Oh cool!<TAB>Tell me about yours.
-
-    etc.
-
-    Note that dialogs are interpreted as being one-way. For example, consider
-    this dialog:
-
-    ::
-
-        1 X1    Y1
-        2 X2    Y2
-        3 X3    Y3
-
-    A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated.
-    However, Y1 => X2 and Y2 => X3 are not created as separate examples by
-    default. This makes sense for some data (we don't need to train on the idea
-    that "kitchen" should be followed by "Sam went to the hallway..." above),
-    but for other datasets it may be helpful to add additional examples in the
-    reverse direction ("Oh cool!" is a response to "Oh me too!" above).
-    """
-
-    def __init__(self, opt, shared=None):
-        self.opt = opt
-        self.cloze = opt.get('cloze', False)
-        if shared and 'cands' in shared:
-            self.cands = shared['cands']
-        else:
-            self.cands = self.load_cands(opt.get('cands_datafile', None))
-        super().__init__(opt, shared)
-
-    def share(self):
-        """Share the data and canidates."""
-        shared = super().share()
-        shared['cands'] = self.cands
-        return shared
-
-    def label_candidates(self):
-        """Return the candidates."""
-        return self.cands
-
-    def load_cands(self, path):
-        """
-        Load a global fixed set of candidates.
-
-        The candidates will be provided by the teacher for
-        every example (the true labels for a specific example are also added to
-        this set, so that it's possible to get the right answer).
-        """
-        if path is None:
-            return None
-        cands = []
-        lines_have_ids = False
-        cands_are_replies = False
-        cnt = 0
-        with open(path) as read:
-            for line in read:
-                line = line.strip().replace('\\n', '\n')
-                if len(line) > 0:
-                    cnt = cnt + 1
-                    # If lines are numbered we strip them of numbers.
-                    if cnt == 1 and line[0:2] == '1 ':
-                        lines_have_ids = True
-                    # If tabs then the label_candidates are all the replies.
-                    if '\t' in line and not cands_are_replies:
-                        cands_are_replies = True
-                        cands = []
-                    if lines_have_ids:
-                        space_idx = line.find(' ')
-                        line = line[space_idx + 1:]
-                        if cands_are_replies:
-                            sp = line.split('\t')
-                            if len(sp) > 1 and sp[1] != '':
-                                cands.append(sp[1])
-                        else:
-                            cands.append(line)
-                    else:
-                        cands.append(line)
-        return cands
-
-    def setup_data(self, path):
-        r"""
-        Read data in the fbdialog format.
-
-        Returns ``((x,y,r,c), new_episode?)`` tuples.
-
-        ``x`` represents a query, ``y`` represents the labels, ``r`` represents
-        any reward, and ``c`` represents any label_candidates.
-
-        The example above will be translated into the following tuples:
-
-        ::
-
-            x: 'Sam went to the kitchen\nPat gave Sam the milk\nWhere is the milk?'
-            y: ['kitchen']
-            r: '1'
-            c: ['hallway', 'kitchen', 'bathroom']
-            new_episode = True (this is the first example in the episode)
-
-
-        ::
-
-            x: 'Sam went to the hallway\\nPat went to the bathroom\\nWhere is the
-                milk?'
-            y: ['hallway']
-            r: '1'
-            c: ['hallway', 'kitchen', 'bathroom']
-            new_episode = False (this is the second example in the episode)
-        """
-        print("[loading fbdialog data:" + path + "]")
-        with open(path) as read:
-            start = True
-            x = ''
-            reward = 0
-            last_conv_id = None
-            for line in read:
-                line = line.strip().replace('\\n', '\n')
-                if len(line) == 0:
-                    # empty response
-                    continue
-
-                # first, get conversation index -- '1' means start of episode
-                space_idx = line.find(' ')
-                if space_idx == -1:
-                    # empty line, both individuals are saying whitespace
-                    conv_id = int(line)
-                else:
-                    conv_id = int(line[:space_idx])
-
-                # split line into constituent parts, if available:
-                # x<tab>y<tab>reward<tab>label_candidates
-                # where y, reward, and label_candidates are optional
-                split = line[space_idx + 1:].split('\t')
-
-                # remove empty items and strip each one
-                for i in range(len(split)):
-                    word = split[i].strip()
-                    if len(word) == 0:
-                        split[i] = ''
-                    else:
-                        split[i] = word
-                # Empty reward string same as None
-                if len(split) > 2 and split[2] == '':
-                    split[2] = None
-
-                # now check if we're at a new episode
-                if last_conv_id is None or conv_id <= last_conv_id:
-                    x = x.strip()
-                    if x:
-                        yield [x, None, reward], start
-                    start = True
-                    reward = 0
-                    # start a new episode
-                    if self.cloze:
-                        x = 'Fill in the blank in the last sentence.\n{x}'.format(
-                            x=split[0]
-                        )
-                    else:
-                        x = split[0]
-                else:
-                    if x:
-                        # otherwise add current x to what we have so far
-                        x = '{x}\n{next_x}'.format(x=x, next_x=split[0])
-                    else:
-                        x = split[0]
-                last_conv_id = conv_id
-                if len(split) > 2 and split[2]:
-                    reward += float(split[2])
-
-                if len(split) > 1 and split[1]:
-                    # only generate an example if we have a y
-                    split[0] = x
-                    # split labels
-                    split[1] = split[1].split('|')
-                    if len(split) > 3:
-                        # split label_candidates
-                        split[3] = split[3].split('|')
-                    if len(split) > 2:
-                        split[2] = reward
-                    else:
-                        split.append(reward)
-                    if start:
-                        yield split, True
-                        start = False
-                    else:
-                        yield split, False
-                    # reset x in case there is unlabeled data still left
-                    x = ''
-                    reward = 0
-            if x:
-                yield [x, None, reward], start
-
-
 class ParlAIDialogTeacher(FixedDialogTeacher):
     """
     This module provides access to data in the ParlAI Text Dialog format.
@@ -1202,6 +965,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.datafile = opt.get('parlaidialogteacher_datafile')
         self.num_exs = None
         self.num_eps = None
+        self.cands = None
         if not shared:
             self.episodes = []
             if opt.get('parlaidialogteacher_datafile') is not None:
@@ -1280,6 +1044,8 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             if self.episode is None:
                 self.episode = next(self.stream_data_gen)
             ex = self.episode[entry_idx].copy()
+            if ex.get('episode_done'):
+                self.episode = None
         if self.cands is not None:
             ex['label_candidates'] = self.cands
         return ex
@@ -1329,12 +1095,17 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             episode[-1]['episode_done'] = True
             yield episode
 
-    def _convert_from_fbdialog(self, path, outfile=None):
+    @classmethod
+    def _convert_from_fbdialog(path, cloze=False, additional_data_loader=None, outfile=None):
         """
         Convert a datafile from fbdialog format to parlai dialog format.
 
         :param path:
             datafile path of the original fbdialog data
+        :param cloze:
+            whether dataset is cloze
+        :param additional_data_loader:
+            load function to add on top of standard fbdialog loader
         :param outfile:
             optional path to the parlai text dialog format
         """
@@ -1345,6 +1116,8 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
                 opt = {
                     'infile': path,
                     'outfile': outfile,
+                    'cloze': cloze,
+                    'additional_data_loader': additional_data_loader
                 }
                 dump_data(opt)
         return outfile

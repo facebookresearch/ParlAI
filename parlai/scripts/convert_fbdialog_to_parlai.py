@@ -18,7 +18,7 @@ from parlai.core.utils import msg_to_str
 import random
 
 
-def setup_data(path, cloze=False):
+def setup_data(path, cloze=False, double=False):
     r"""
     Read data in the fbdialog format.
 
@@ -46,6 +46,9 @@ def setup_data(path, cloze=False):
         r: '1'
         c: ['hallway', 'kitchen', 'bathroom']
         new_episode = False (this is the second example in the episode)
+
+    :param cloze:
+        if cloze, add special question to the end
     """
     print("[loading fbdialog data:" + path + "]")
     with open(path) as read:
@@ -239,7 +242,10 @@ def dump_data(opt):
     print('[ starting to convert.. ]')
     print('[ saving output to {} ]'.format(outfile))
     with open(outfile, 'w') as fw:
-        for ep in _read_episode(setup_data(opt.get('infile'), cloze=opt.get('cloze'))):
+        data_loader = setup_data(opt.get('infile'), cloze=opt.get('cloze'))
+        if opt.get('additional_data_loader'):
+            data_loader = opt.get('additional_data_loader')((data_loader))
+        for ep in _read_episode(data_loader):
             for i, ex in enumerate(ep):
                 ex = build_table(ex)
                 ex['episode_done'] = i == len(ep) - 1
@@ -262,6 +268,8 @@ def main():
     parser.add_argument('-if', '--ignore-fields', default='id', type=str,
                         help='Ignore these fields from the message (returned\
                                 with .act() )')
+    parser.add_argument('--cloze', default=False, type='bool',
+                        help='whether dataset is cloze')
     opt = parser.parse_args()
     dump_data(opt)
 
