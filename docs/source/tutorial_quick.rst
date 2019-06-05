@@ -57,7 +57,7 @@ Let's try asking the model a question ourselves.
 .. code-block:: bash
 
   # interact with saved model
-  python examples/interactive.py -mf /tmp/babi_memnn
+  python examples/interactive.py -mf /tmp/babi_memnn --eval-candidates vocab
   ...
   Enter your message: John went to the hallway.\n Where is John?
 
