@@ -18,7 +18,6 @@ See below for documentation on each specific tool.
 """
 
 from collections import deque
-from copy import deepcopy
 import json
 import random
 import numpy as np
@@ -1351,7 +1350,7 @@ class TorchAgent(Agent):
         reply = self.last_reply(use_reply=self.opt.get('use_reply', 'label'))
         # update the history using the observation
         self.history.update_history(observation, add_next=reply)
-        self.observation = deepcopy(observation)
+        self.observation = observation
         return self.vectorize(self.observation, self.history,
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)
@@ -1485,7 +1484,7 @@ class TorchAgent(Agent):
         self.replies['batch_reply'] = batch_reply
         self._save_history(observations, batch_reply)  # save model predictions
 
-        return deepcopy(batch_reply)
+        return batch_reply
 
     def train_step(self, batch):
         """[Abstract] Process one batch with training labels."""
