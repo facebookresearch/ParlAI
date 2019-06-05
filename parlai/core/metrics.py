@@ -29,7 +29,7 @@ try:
 except ImportError:
     # User doesn't have rouge installed, so we can't use it for rouge
     # We'll just turn off things, but we might want to warn the user
-    warn_once('Run pip install py-rouge to get rouge metrics')
+    warn_once('Rouge metrics require py-rouge. Please run `pip install py-rouge`.')
     rouge = None
 
 re_art = re.compile(r'\b(a|an|the)\b')
@@ -113,12 +113,22 @@ def _bleu(guess, answers):
 
 
 def _rouge(guess, answers):
+    global rouge
     """Compute ROUGE score between guess and *any* answers. Return the best."""
     if rouge is None:
         return None, None, None
     evaluator = rouge.Rouge(metrics=['rouge-n', 'rouge-l'], max_n=2)
-    scores = [evaluator.get_scores(normalize_answer(guess), normalize_answer(a))
-              for a in answers]
+    try:
+        scores = [evaluator.get_scores(normalize_answer(guess), normalize_answer(a))
+                  for a in answers]
+    except LookupError:
+        warn_once(
+            'ROUGE requires nltk punkt tokenizer. Please run '
+            '`python -c "import nltk; nltk.download(\'punkt\')`'
+        )
+        rouge = None
+        return None, None, None
+
     scores_rouge1 = [score['rouge-1']['r'] for score in scores]
     scores_rouge2 = [score['rouge-2']['r'] for score in scores]
     scores_rougel = [score['rouge-l']['r'] for score in scores]
@@ -248,11 +258,8 @@ class Metrics(object):
             # F1 and BLEU metrics.
             f1 = _f1_score(prediction, labels)
             bleu = _bleu(prediction, labels)
-            try:
-                rouge1, rouge2, rougel = _rouge(prediction, labels)
-            except LookupError:
-                warn_once('Run python -c \"import nltk; nltk.download(\'punkt\')\"')
-                rouge1 = None
+            rouge1, rouge2, rougel = _rouge(prediction, labels)
+
             with self._lock():
                 self.metrics['f1'] += f1
                 self.metrics['f1_cnt'] += 1
