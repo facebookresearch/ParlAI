@@ -515,10 +515,10 @@ class TrainLoop:
     def _cleanup_inaccurate_metrics(self, metrics):
         """
         Remove inaccurate multiworld metrics.
-        
+
         When training in multitask mode, agent-level metrics may be shown, but are actually averages
         not distinguished across the worlds. This method hides those tasks.
-        
+
         Issue: https://github.com/facebookresearch/ParlAI/issues/1750
         """
         # TODO: fix the root issue
