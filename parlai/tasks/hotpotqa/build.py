@@ -20,6 +20,7 @@ OUTPUT_FORMAT = (
     'labels:{answer}'
 )
 
+
 def _handle_data_point(data_point):
     output = []
     context_question_txt = ""
