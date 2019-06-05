@@ -65,6 +65,16 @@ Essentially, there is one training example every line, and each field in a
 ParlAI message is tab separated with the name of the field, followed by a colon.
 E.g. the usual fields like 'text', 'labels', 'label_candidates' etc. can all
 be used, or you can add your own fields too if you have a special use for them.
+A more complicated example from QuAC dataset could be :
+::
+
+	[followup]: None
+	[yesno]: __NEITHER__
+	[answer_starts]: 478
+	[train.txt]: any literary items of interest?
+	[labels: Malayalam literature is ancient in origin. The oldest literature works in Malayalam, distinct from the Tamil tradition,]
+
+Where you can have other fields for marking followups, yes / no, where the answer start etc rather than just simple qustion and answer pairs. Use them as your dataset requires.
 
 
 Creating a New Task: *the more complete way*
@@ -110,7 +120,8 @@ We then use the build_data utilities to check if this data hasn't been
 previously built or if the version is outdated. If not, we proceed to creating
 the directory for the data, and then downloading and uncompressing it.
 Finally, we mark the build as done, so that ``build_data.built()`` returns
-true from now on. Below is an example of setting up the MNIST dataset.
+true from now on. Below is an example of setting up the MNIST dataset. You could
+also do the train / test set split here.
 
 .. code-block:: python
 
@@ -244,7 +255,7 @@ It then sets up the paths for the built data.
         # build the data if it does not exist
         build(opt)
 
-        # set up path to data (specific to each dataset)
+        # set up path to data (specific to each dataset), for example train / test / valid split
         dt = opt['datatype'].split(':')[0]
         return os.path.join(opt['datapath'], 'Twitter', dt + '.txt')
 
