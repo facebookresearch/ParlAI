@@ -10,6 +10,7 @@ Torch Ranker Agents provide functionality for building ranking models.
 See the TorchRankerAgent tutorial for examples.
 """
 
+from abc import abstractmethod
 import os
 from tqdm import tqdm
 
@@ -34,8 +35,6 @@ class TorchRankerAgent(TorchAgent):
     - Computing hits@1, hits@5, mean reciprical rank (MRR), and other metrics.
     - Caching representations for fast runtime when deploying models to production.
     """
-
-    # TODO: mark methods as abstract
 
     @classmethod
     def add_cmdline_args(cls, argparser):
@@ -144,6 +143,7 @@ class TorchRankerAgent(TorchAgent):
                 broadcast_buffers=False,
             )
 
+    @abstractmethod
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
         Given a batch and candidate set, return scores (for ranking).
@@ -157,14 +157,12 @@ class TorchRankerAgent(TorchAgent):
             where we cache the candidate encodings), you do not need to call
             self.model on cand_vecs
         """
-        raise NotImplementedError(
-            'Abstract class: user must implement score()')
+        pass
 
+    @abstractmethod
     def build_model(self):
         """Build a new model (implemented by children classes)."""
-        # TODO: mark as abstract
-        raise NotImplementedError(
-            'Abstract class: user must implement build_model()')
+        pass
 
     def _get_batch_train_metrics(self, scores):
         # TODO: document
@@ -689,6 +687,7 @@ class TorchRankerAgent(TorchAgent):
         with open(path, 'wb') as f:
             torch.save(vecs, f)
 
+    @abstractmethod
     def encode_candidates(self, padded_cands):
         """
         Convert the given candidates to vectors.
@@ -698,10 +697,8 @@ class TorchRankerAgent(TorchAgent):
         :param padded_cands:
             The padded candidates.
         """
-        # TODO: mark as abstract.
         # TODO: describe input type and return type.
-        raise NotImplementedError(
-            'Abstract class: user must implement encode_candidates()')
+        pass
 
     def _make_candidate_encs(self, vecs, path):
         """Make candidate encodings."""
