@@ -11,6 +11,7 @@ import math
 import os
 import random
 import time
+import traceback
 import warnings
 import heapq
 
@@ -153,6 +154,33 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
                 else:
                     cands.append(line)
     return cands
+
+
+class Opt(dict):
+    """
+    Class for tracking options.
+
+    Functions like a dict, but allows us to track the history of arguments
+    as they are set.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.history = {}
+
+    def __setitem__(self, key, val):
+        loc = traceback.format_stack()[-2]
+        self.history.setdefault(key, []).append((loc, val))
+        super().__setitem__(key, val)
+
+    def display_history(self, key):
+        """Display the history for an item in the dict."""
+        if key not in self.history:
+            print('No history for key {}'.format(key))
+            return
+        item_hist = self.history[key]
+        for i, change in enumerate(item_hist):
+            print('{}. {} was set to {} at:\n{}\n'.format(i, key, change[1],
+                                                          change[0]))
 
 
 class Predictor(object):
