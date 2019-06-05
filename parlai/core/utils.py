@@ -6,6 +6,7 @@
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
+from copy import deepcopy
 from functools import lru_cache
 import math
 import os
@@ -172,14 +173,24 @@ class Opt(dict):
         self.history.setdefault(key, []).append((loc, val))
         super().__setitem__(key, val)
 
+    def __deepcopy__(self, memo):
+        """Override deepcopy so that history is copied over to new object."""
+        # deepcopy the dict
+        memo = deepcopy(dict(self))
+        # make into Opt object
+        memo = Opt(memo)
+        # deepcopy the history
+        memo.history = deepcopy(self.history)
+        return memo
+
     def display_history(self, key):
         """Display the history for an item in the dict."""
         if key not in self.history:
-            print('No history for key {}'.format(key))
+            print('No history for key {}.'.format(key))
             return
         item_hist = self.history[key]
         for i, change in enumerate(item_hist):
-            print('{}. {} was set to {} at:\n{}\n'.format(i, key, change[1],
+            print('{}. {} was set to {} at:\n{}\n'.format(i + 1, key, change[1],
                                                           change[0]))
 
 
