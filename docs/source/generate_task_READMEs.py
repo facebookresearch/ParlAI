@@ -19,9 +19,8 @@ for task_dict in task_list:
     description = task_dict.get('description', None)
     notes = task_dict.get('notes', None)
 
-
-    str = "Task: " + display_name + '\n' 
-    str += '='*len(str)
+    str = "Task: " + display_name + '\n'
+    str += '=' * len(str)
     description = description.replace('Link: http', '\n\nLink: http')
     str += "\nDescription: " + description + "\n\n"
     str += "Tags: #" + id + ", "
