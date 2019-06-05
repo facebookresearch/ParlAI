@@ -429,6 +429,7 @@ class SocketManager():
                 self.server_death_callback()
                 raise ConnectionRefusedError(  # noqa F821 we only support py3
                     'Was not able to establish a connection with the server, '
+                    'please try to run again. If that fails,'
                     'please ensure that your local device has the correct SSL '
                     'certs installed.'
                 )
