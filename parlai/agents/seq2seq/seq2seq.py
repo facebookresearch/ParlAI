@@ -136,18 +136,12 @@ class Seq2seqAgent(TorchGeneratorAgent):
             # set loaded states if applicable
             self.model.load_state_dict(states['model'])
 
-        if self.use_cuda:
-            self.model.cuda()
-
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
             self.model.decoder.lt.weight.requires_grad = False
             self.model.encoder.lt.weight.requires_grad = False
             if opt['lookuptable'] in ['dec_out', 'all']:
                 self.model.decoder.e2s.weight.requires_grad = False
-
-        if self.use_cuda:
-            self.model.cuda()
 
         return self.model
 

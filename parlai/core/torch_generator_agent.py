@@ -357,6 +357,10 @@ class TorchGeneratorAgent(TorchAgent):
 
             self.build_criterion()
             self.build_model()
+
+            if self.use_cuda:
+                self.model = self.model.cuda()
+
             if self.fp16:
                 self.model = self.model.half()
 

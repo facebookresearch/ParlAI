@@ -211,6 +211,4 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
             self._copy_embeddings(
                 self.model.encoder.embeddings.weight, self.opt['embedding_type']
             )
-        if self.use_cuda:
-            self.model.cuda()
         return self.model
