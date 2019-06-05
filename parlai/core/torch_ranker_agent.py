@@ -696,7 +696,7 @@ class TorchRankerAgent(TorchAgent):
         :param padded_cands:
             The padded candidates.
         """
-        raise RuntimeError(
+        raise NotImplementedError(
             'Abstract method: user must implement encode_candidates(). '
             'If your agent encodes candidates independently '
             'from context, you can get performance gains with fixed cands by '
