@@ -45,6 +45,7 @@ class MemnnAgent(TorchRankerAgent):
         argparser.set_defaults(
             split_lines=True,
             add_p1_after_newln=True,
+            encode_candidate_vecs=True,
         )
         TorchRankerAgent.add_cmdline_args(argparser)
         MemnnAgent.dictionary_class().add_cmdline_args(argparser)
