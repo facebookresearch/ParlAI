@@ -9,7 +9,7 @@
 Its goal is to provide researchers:
 
 - a **unified framework** for sharing, training and testing dialogue models from open-domain chitchat to VQA.
-- many popular **datasets available all in one place, with the same API**, among them [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/) and more than 70 others. See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
+- many popular **datasets available all in one place, with the same API**, among them [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/) and more than 70 others. See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
 - a wide set of **reference models** -- from retrieval baselines to Transformers.
 - seamless **integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome)** for data collection and human evaluation
 - **integration with [Facebook Messenger](http://www.parl.ai/docs/tutorial_messenger.html)** to connect agents with humans in a chat interface
@@ -34,7 +34,53 @@ This is the recommended installation procedure, as it provides ready access to t
 
 All needed data will be downloaded to ~/ParlAI/data, and any non-data files (such as the MemNN code) if requested will be downloaded to ~/ParlAI/downloads. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
 
-## Goals
+## Documentation
+
+ - [Basics: world, agents, teachers, action and observations](https://parl.ai/docs/tutorial_basic.html)
+ - [List of available tasks/datasets](https://parl.ai/docs/tasks.html)
+ - [Creating a dataset/task](http://www.parl.ai/docs/tutorial_task.html).
+ - [List of available agents](./parlai/agents)
+ - [Creating a new agent](https://parl.ai/docs/tutorial_seq2seq.html#).
+ - [Model zoo (pretrained models)](https://parl.ai/docs/zoo.html)
+ - [Plug into MTurk](http://parl.ai/docs/tutorial_mturk.html)
+ - [Plug into Facebook Messenger](http://parl.ai/docs/tutorial_messenger.html)
+
+
+## Examples
+
+A large set of examples can be found in [this directory](./examples). Here are a few of them.
+Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
+
+Display 10 random examples from task 1 of the "1k training examples" bAbI task:
+```bash
+python examples/display_data.py -t babi:task1k:1
+```
+
+Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
+```bash
+python examples/eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
+```
+
+Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
+```bash
+python examples/train_model.py -t babi:task10k:1 -m seq2seq -mf /tmp/model_s2s -bs 32 -vtim 30 -vcut 0.95
+```
+
+
+## Code Organization
+
+The code is set up into several main directories:
+
+- [**core**](./parlai/core): contains the primary code for the framework
+- [**agents**](./parlai/agents): contains agents which can interact with the different tasks (e.g. machine learning models)
+- [**examples**](./parlai/examples): contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
+- [**tasks**](./parlai/tasks): contains code for the different tasks available from within ParlAI
+- [**mturk**](./parlai/mturk): contains code for setting up Mechanical Turk, as well as sample MTurk tasks
+- [**messenger**](./parlai/messenger): contains code for interfacing with Facebook Messenger
+- [**zoo**](./parlai/zoo): contains code to directly download and use pretrained models from our model zoo
+
+
+## Detailed Goals
 
 Unified framework for evaluation of dialogue models
 
@@ -69,52 +115,6 @@ Set of datasets to bootstrap a working dialogue model for human interaction
 - Python framework.
 - Examples of training with PyTorch.
 - Supports batch and hogwild training and evaluation of models.
-
-## Documentation
-
- - [Basics: world, agents, teachers, action and observations](https://parl.ai/docs/tutorial_basic.html)
- - [List of available tasks/datasets](https://parl.ai/docs/tasks.html)
- - [Creating a dataset/task](http://www.parl.ai/docs/tutorial_task.html).
- - [List of available agents](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents)
- - [Creating a new agent](https://parl.ai/docs/tutorial_seq2seq.html#).
- - [Model zoo (pretrained models)](https://parl.ai/docs/zoo.html)
- - [Plug into MTurk](http://parl.ai/docs/tutorial_mturk.html)
- - [Plug into Facebook Messenger](http://parl.ai/docs/tutorial_messenger.html)
-
-
-## Examples
-
-A large set of examples can be found in [this directory](./examples). Here are a few of them.
-Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
-
-Display 10 random examples from task 1 of the "1k training examples" bAbI task:
-```bash
-python examples/display_data.py -t babi:task1k:1
-```
-
-Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
-```bash
-python examples/eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
-```
-
-Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
-```bash
-python examples/train_model.py -t babi:task10k:1 -m seq2seq -mf /tmp/model_s2s -bs 32 -vtim 30 -vcut 0.95
-```
-
-
-## Code Organization
-
-The code is set up into several main directories:
-
-- [**core**](./parlai/core): contains the primary code for the framework
-- **agents**: contains agents which can interact with the different tasks (e.g. machine learning models)
-- **examples**: contains a few basic examples of different loops (building dictionary, train/eval, displaying data)
-- **tasks**: contains code for the different tasks available from within ParlAI
-- **mturk**: contains code for setting up Mechanical Turk, as well as sample MTurk tasks
-- **messenger**: contains code for interfacing with Facebook Messenger
-- **zoo**: contains code to directly download and use pretrained models from our model zoo
-
 
 ## Support
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
