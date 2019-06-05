@@ -39,7 +39,7 @@ for task_dict in task_list:
         tasks[task] += '\n\n' + str
 
 for t in tasks.keys():
-    path = os.path.join("../../parlai/tasks/", t, 'README.txt')
+    path = os.path.join("../../parlai/tasks/", t, 'README.md')
     fout = open(path, 'w')
     fout.write(tasks[t])
     fout.close()
