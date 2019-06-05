@@ -249,7 +249,9 @@ class DialogPartnerWorld(World):
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)
-
+        if type(self.agents) == list and len(self.agents) > 0:
+            self.id = self.agents[0].getID()
+        
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents."""
         acts = self.acts

@@ -21,6 +21,7 @@ from torch import optim
 from collections import deque
 import json
 import random
+from copy import deepcopy
 import numpy as np
 import os
 
@@ -1344,7 +1345,7 @@ class TorchAgent(Agent):
         reply = self.last_reply(use_reply=self.opt.get('use_reply', 'label'))
         # update the history using the observation
         self.history.update_history(observation, add_next=reply)
-        self.observation = observation
+        self.observation = deepcopy(observation)
         return self.vectorize(self.observation, self.history,
                               text_truncate=self.text_truncate,
                               label_truncate=self.label_truncate)

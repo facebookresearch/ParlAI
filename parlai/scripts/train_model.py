@@ -431,8 +431,16 @@ class TrainLoop():
         Sync training metrics across workers. A handful of special cases are handled
         as exceptions, and the remaining metrics are simply averaged across workers.
         """
+        # delete some keys in tasks for now, as multitask training loss reporting is bad
+        # TODO(the_roller): fix this
+        if 'tasks' in metrics:
+            tasks = metrics['tasks']
+            rm_keys = {'loss', 'mean_loss', 'examples', 'num_updates'}
+            for rmk in rm_keys:
+                for k in tasks.keys():
+                    if rmk in tasks[k]:
+                        del tasks[k][rmk]
         if not is_distributed():
-            # nothing special needed
             return metrics
         all_versions = all_gather_list(metrics)
         return self._average_dicts(all_versions)
