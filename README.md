@@ -4,26 +4,35 @@
 
 --------------------------------------------------------------------------------
 
-ParlAI (pronounced “par-lay”) is a framework for dialogue AI research, implemented in Python.
+[ParlAI](http://parl.ai) (pronounced “par-lay”) is a framework for dialogue AI research, implemented in Python.
 
 Its goal is to provide researchers:
 
-- a unified framework for sharing, training and testing dialogue models
-- many popular datasets available all in one place -- from open-domain chitchat to visual question answering.
-- a wide set of reference models -- from retrieval baselines to Transformers.
-- seamless integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome) for data collection and human evaluation
-- integration with [Facebook Messenger](http://www.parl.ai/docs/tutorial_messenger.html) to connect agents with humans in a chat interface
-
-Many [tasks](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) are supported, including popular datasets such as [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [MCTest](https://www.microsoft.com/en-us/research/publication/mctest-challenge-dataset-open-domain-machine-comprehension-text/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [WebQuestions](http://www.aclweb.org/anthology/D13-1160), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) for the current complete task list.
-
-Included are examples of training neural models with [PyTorch](http://pytorch.org/), with batch training on GPU or hogwild training on CPUs. Using [Tensorflow](https://www.tensorflow.org/) or other frameworks instead is also straightforward.
-
-Our aim is for the number of tasks and agents that train on them to grow in a community-based way.
+- a **unified framework** for sharing, training and testing dialogue models from open-domain chitchat to visual question answering.
+- many popular **datasets available all in one place, with the same API**, among them [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/) and more than 70 others. See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
+- a wide set of **reference models** -- from retrieval baselines to Transformers.
+- seamless **integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome)** for data collection and human evaluation
+- **integration with [Facebook Messenger](http://www.parl.ai/docs/tutorial_messenger.html)** to connect agents with humans in a chat interface
 
 ParlAI is described in the following paper:
-[“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476).
+[“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476). See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates.
 
-See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
+## Installing ParlAI
+
+ParlAI currently requires Python3. Dependencies of the core modules are listed in requirement.txt. Some models included (in parlai/agents) have additional requirements.
+
+Run the following commands to clone the repository and install ParlAI:
+
+```bash
+git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
+cd ~/ParlAI; python setup.py develop
+```
+
+This will link the cloned directory to your site-packages.
+
+This is the recommended installation procedure, as it provides ready access to the examples and allows you to modify anything you might need. This is especially useful if you if you want to submit another task to the repository.
+
+All needed data will be downloaded to ~/ParlAI/data, and any non-data files (such as the MemNN code) if requested will be downloaded to ~/ParlAI/downloads. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
 
 ## Goals
 
@@ -304,7 +313,7 @@ The mturk library contains the following directories:
 
 To run an MTurk task:
 
-- First ensure that the task directory is in parlai/mturk/tasks/. 
+- First ensure that the task directory is in parlai/mturk/tasks/.
 - Then, run its run.py file with proper flags: `python run.py -nc <num_conversations> -r <reward> [--sandbox]/[--live]`. Use `--sandbox` to run the task in MTurk sandbox mode before pushing it live.
 
 To add your own MTurk task:
