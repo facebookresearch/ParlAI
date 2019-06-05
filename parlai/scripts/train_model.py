@@ -532,7 +532,6 @@ class TrainLoop:
         Sync training metrics across workers. A handful of special cases are handled
         as exceptions, and the remaining metrics are simply averaged across workers.
         """
-        self._cleanup_inaccurate_metrics(metrics)
         if not is_distributed():
             # nothing special needed
             return metrics
@@ -581,7 +580,9 @@ class TrainLoop:
             print(self.world.display() + '\n~~')
         logs = []
         # get report
-        train_report = self._sync_training_metrics(self.world.report())
+        train_report = self.world.report()
+        self._cleanup_inaccurate_metrics(train_report)
+        train_report = self._sync_training_metrics(train_report)
         self.world.reset_metrics()
 
         # time elapsed
