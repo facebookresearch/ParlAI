@@ -11,13 +11,13 @@ See the TorchRankerAgent tutorial for examples.
 """
 
 from abc import abstractmethod
+from itertools import islice
 import os
 from tqdm import tqdm
 
 import torch
 from torch import nn
 
-from itertools import islice
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
