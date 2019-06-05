@@ -249,7 +249,8 @@ class DialogPartnerWorld(World):
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)
-        if type(self.agents) == list and len(self.agents) > 0:
+        if self.agents is not None and len(self.agents) > 0:
+            # Name the world after the first agent.
             self.id = self.agents[0].getID()
         
     def parley(self):

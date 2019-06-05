@@ -426,21 +426,27 @@ class TrainLoop():
                 finalized[k] = np.mean(values)
         return finalized
 
+    def _cleanup_inaccurate_metrics(self, metrics):
+        """
+        Remove inaccurate multiworld metrics.
+        
+        When training in multitask mode, agent-level metrics may be shown, but are actually averages
+        not distinguished across the worlds. This method hides those tasks.
+        
+        Issue: https://github.com/facebookresearch/ParlAI/issues/1750
+        """
+        # TODO: fix the root issue
+        if 'tasks' in metrics:
+            metrics['warning'] = 'agent level metrics (e.g. loss, mean_loss, ppl) are averaged over tasks'
+                        
     def _sync_training_metrics(self, metrics):
         """
         Sync training metrics across workers. A handful of special cases are handled
         as exceptions, and the remaining metrics are simply averaged across workers.
         """
-        # delete some keys in tasks for now, as multitask training loss reporting is bad
-        # TODO(the_roller): fix this
-        if 'tasks' in metrics:
-            tasks = metrics['tasks']
-            rm_keys = {'loss', 'mean_loss', 'examples', 'num_updates'}
-            for rmk in rm_keys:
-                for k in tasks.keys():
-                    if rmk in tasks[k]:
-                        del tasks[k][rmk]
+        self._cleanup_inaccurate_metrics(metrics)
         if not is_distributed():
+            # nothing special needed
             return metrics
         all_versions = all_gather_list(metrics)
         return self._average_dicts(all_versions)
