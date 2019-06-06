@@ -17,12 +17,13 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from torch import optim
+from abc import ABC, abstractmethod
 from collections import deque
 import json
 import random
 import numpy as np
 import os
+from torch import optim
 
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
@@ -280,9 +281,9 @@ class History(object):
             return token + ' ' + text
 
 
-class TorchAgent(Agent):
+class TorchAgent(ABC, Agent):
     """
-    A provided base agent for any model that wants to use Torch.
+    A provided abstract base agent for any model that wants to use Torch.
 
     Exists to make it easier to implement a new agent.
     Not necessary, but reduces duplicated code.
@@ -1486,17 +1487,15 @@ class TorchAgent(Agent):
 
         return batch_reply
 
+    @abstractmethod
     def train_step(self, batch):
         """[Abstract] Process one batch with training labels."""
-        raise NotImplementedError(
-            'Abstract class: user must implement train_step'
-        )
+        pass
 
+    @abstractmethod
     def eval_step(self, batch):
         """[Abstract] Process one batch but do not train on it."""
-        raise NotImplementedError(
-            'Abstract class: user must implement eval_step'
-        )
+        pass
 
     def backward(self, loss):
         """

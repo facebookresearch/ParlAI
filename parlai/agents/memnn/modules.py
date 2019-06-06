@@ -51,16 +51,6 @@ class MemNN(nn.Module):
         self.answer_embedder = embedding()
         self.memory_hop = Hop(embedding_size)
 
-    def _score(self, output, cands):
-        if cands.dim() == 2:
-            return torch.matmul(output, cands.t())
-        elif cands.dim() == 3:
-            return torch.bmm(output.unsqueeze(1),
-                             cands.transpose(1, 2)).squeeze(1)
-        else:
-            raise RuntimeError('Unexpected candidate dimensions {}'
-                               ''.format(cands.dim()))
-
     def forward(self, xs, mems, cands=None, pad_mask=None):
         """
         One forward step.
@@ -101,8 +91,7 @@ class MemNN(nn.Module):
             # rank all possible tokens
             cand_embs = self.answer_embedder.weight
 
-        scores = self._score(state, cand_embs)
-        return scores
+        return state, cand_embs
 
 
 class Embed(nn.Embedding):

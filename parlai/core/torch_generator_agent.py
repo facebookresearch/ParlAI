@@ -18,6 +18,7 @@ Contains the following utilities:
 * Beam class which provides some generic beam functionality for classes to use
 """
 
+from abc import ABC, abstractmethod
 import os
 import math
 import tempfile
@@ -34,7 +35,7 @@ from parlai.core.thread_utils import SharedTable
 from parlai.core.distributed_utils import is_distributed
 
 
-class TorchGeneratorModel(nn.Module):
+class TorchGeneratorModel(nn.Module, ABC):
     """
     Abstract TorchGeneratorModel.
 
@@ -143,6 +144,7 @@ class TorchGeneratorModel(nn.Module):
         _, preds = logits.max(dim=2)
         return logits, preds
 
+    @abstractmethod
     def reorder_encoder_states(self, encoder_states, indices):
         """
         Reorder encoder states according to a new set of indices.
@@ -189,10 +191,9 @@ class TorchGeneratorModel(nn.Module):
         :rtype:
             model specific
         """
-        raise NotImplementedError(
-            "reorder_encoder_states must be implemented by the model"
-        )
+        pass
 
+    @abstractmethod
     def reorder_decoder_incremental_state(self, incremental_state, inds):
         """
         Reorder incremental state for the decoder.
@@ -223,9 +224,7 @@ class TorchGeneratorModel(nn.Module):
         :rtype:
             model specific
         """
-        raise NotImplementedError(
-            "reorder_decoder_incremental_state must be implemented by model"
-        )
+        pass
 
     def forward(self, *xs, ys=None, cand_params=None, prev_enc=None, maxlen=None,
                 bsz=None):
@@ -403,6 +402,7 @@ class TorchGeneratorAgent(TorchAgent):
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
+    @abstractmethod
     def build_model(self):
         """
         Construct the model.
@@ -410,9 +410,7 @@ class TorchGeneratorAgent(TorchAgent):
         The model should be set to self.model, and support
         the TorchGeneratorModel interface.
         """
-        raise NotImplementedError(
-            "AbstractClass: build_model must be implemented by the user."
-        )
+        pass
 
     def build_criterion(self):
         """
