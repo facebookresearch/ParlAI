@@ -167,6 +167,7 @@ class Opt(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.history = {}
+        self.deepcopies = []
 
     def __setitem__(self, key, val):
         loc = traceback.format_stack()[-2]
@@ -175,13 +176,26 @@ class Opt(dict):
 
     def __deepcopy__(self, memo):
         """Override deepcopy so that history is copied over to new object."""
+        # track location of deepcopy
+        loc = traceback.format_stack()[-3]
+        self.deepcopies.append(loc)
         # deepcopy the dict
         memo = deepcopy(dict(self))
         # make into Opt object
         memo = Opt(memo)
         # deepcopy the history
         memo.history = deepcopy(self.history)
+        # deepcopy the deepcopy history
+        memo.deepcopies = deepcopy(self.deepcopies)
         return memo
+
+    def display_deepcopies(self):
+        if len(self.deepcopies) == 0:
+            print('No deepcopies performed on this opt.')
+            return
+        print('Deepcopies were performed at the following locations:\n')
+        for i, loc in enumerate(self.deepcopies):
+            print('{}. {}'.format(i + 1, loc))
 
     def display_history(self, key):
         """Display the history for an item in the dict."""
