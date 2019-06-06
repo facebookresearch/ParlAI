@@ -4,19 +4,23 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
+r"""
 Example TorchGeneratorAgent model.
 
 This demonstrates the minimal structure of a building a generative model.
 
-You can train this agent with:
+You can train this agent to a reasonable accuracy with:
 
-.. code-block:: python
+.. code-block:: bash
 
-    python examples/train_model.py -mf /tmp/example_model -t convai2 -m example_tga -bs 16
+    python examples/train_model.py -m example_tga \
+        -mf /tmp/example_model \
+        -t convai2 -bs 32 -eps 2 --truncate 128
+
+Afterwards, you can play with --beam-size to see how responses differ with
+different beam lengths.
 """  # noqa: E501
 
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import parlai.core.torch_generator_agent as tga
@@ -38,7 +42,7 @@ class Encoder(nn.Module):
         # must call super on all nn.Modules.
         super().__init__()
 
-        _vocab_size, esz = embeddings.shape
+        _vocab_size, esz = embeddings.weight.shape
         self.embeddings = embeddings
         self.lstm = nn.LSTM(
             input_size=esz,
@@ -65,7 +69,7 @@ class Encoder(nn.Module):
             This particular implementation returns the output tensor from the LSTM.
         """
         embedded = self.embeddings(input_tokens)
-        hidden = self.lstm(embedded)
+        _output, hidden = self.lstm(embedded)
         return hidden
 
 
@@ -83,7 +87,7 @@ class Decoder(nn.Module):
         Arguments here can be used to provide hyperparameters.
         """
         super().__init__()
-        _vocab_size, self.esz = embeddings.shape
+        _vocab_size, self.esz = embeddings.weight.shape
         self.embeddings = embeddings
         self.lstm = nn.LSTM(
             input_size=self.esz,
@@ -105,14 +109,19 @@ class Decoder(nn.Module):
             The previous hidden state of the decoder.
         """
         embedded = self.embeddings(input)
-        # In the next example, we'll keep the (h, c) around for fast decoding
-        output, _ = self.lstm(embedded)
+        if incr_state is None:
+            # this is our very first call. We want to seed the LSTM with the
+            # hidden state of the decoder
+            state = encoder_state
+        else:
+            # We've generated some tokens already, so we can reuse the existing
+            # decoder state
+            state = incr_state
 
-        # we should return the decoder output, before the final softmax
-        # we can additionally provide some incremental state. This version won't
-        # use incremental state, so we'll just use None
-        incremental_state = None
-        return output, incremental_state
+        # get the new output and decoder incremental state
+        output, incr_state = self.lstm(embedded, state)
+
+        return output, incr_state
 
 
 class ExampleModel(tga.TorchGeneratorModel):
@@ -125,7 +134,7 @@ class ExampleModel(tga.TorchGeneratorModel):
 
     def __init__(self, dictionary, esz=256, hidden_size=1024):
         super().__init__(
-            padding_idx=dictionary[dictionary.pad_token],
+            padding_idx=dictionary[dictionary.null_token],
             start_idx=dictionary[dictionary.start_token],
             end_idx=dictionary[dictionary.end_token],
             unknown_idx=dictionary[dictionary.unk_token]
@@ -134,28 +143,63 @@ class ExampleModel(tga.TorchGeneratorModel):
         self.encoder = Encoder(self.embeddings, hidden_size)
         self.decoder = Decoder(self.embeddings, hidden_size)
 
-    def reorder_encoder_states(self, encoder_states, indices):
-        """
-        Reorder the encoder shapes to select only the given batch indices.
-
-        Since encoder_state can be arbitrary, you must implement this yourself.
-        Typically you will just want to index select on the batch dimension.
-        """
-        return torch.index_select(encoder_states, indices)
-
     def output(self, decoder_output):
         """Perform the final output -> logits transformation."""
         return F.linear(decoder_output, self.embeddings.weight)
 
+    def reorder_encoder_states(self, encoder_states, indices):
+        """
+        Reorder the encoder states to select only the given batch indices.
 
-class ExampleSeqAgent(tga.TorchGeneratorAgent):
+        Since encoder_state can be arbitrary, you must implement this yourself.
+        Typically you will just want to index select on the batch dimension.
+        """
+        h, c = encoder_states
+        return h[:, indices, :], c[:, indices, :]
+
+    def reorder_decoder_incremental_state(self, incr_state, indices):
+        """
+        Reorder the decoder states to select only the given batch indices.
+
+        This method can be a stub which always returns None; this will result in
+        the decoder doing a complete forward pass for every single token, making
+        generation O(n^2). However, if any state can be cached, then this method
+        should be implemented to reduce the generation complexity to O(n).
+        """
+        h, c = incr_state
+        return h[:, indices, :], c[:, indices, :]
+
+
+class ExampleTgaAgent(tga.TorchGeneratorAgent):
     """
     Example agent.
 
     Implements the interface for TorchGeneratorAgent. The minimum requirement
-    is that it implements ``build_model``.
+    is that it implements ``build_model``, but we will want to include additional
+    command line parameters.
     """
+
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        """Add CLI arguments."""
+        # Make sure to add all of TorchGeneratorAgent's arguments
+        super(ExampleTgaAgent, cls).add_cmdline_args(argparser)
+
+        # Add custom arguments only for this model.
+        group = argparser.add_argument_group('Example TGA Agent')
+        group.add_argument(
+            '-hid', '--hidden-size', type=int, default=1024,
+            help='Hidden size.'
+        )
 
     def build_model(self):
         """Construct the model."""
+
         self.model = ExampleModel(self.dict, self.opt['hidden_size'])
+        # we're responsible for setting the embeddings ourselves, but TorchAgent
+        # gives us a nice helper
+        if self.opt['embedding_type'] != 'random':
+            self._copy_embeddings(
+                self.model.embeddings.weight, self.opt['embedding_type']
+            )
+
