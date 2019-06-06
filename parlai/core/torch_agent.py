@@ -17,12 +17,13 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from torch import optim
+from abc import ABC, abstractmethod
 from collections import deque
 import json
 import random
 import numpy as np
 import os
+from torch import optim
 
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
@@ -122,8 +123,7 @@ class Output(AttrDict):
 
 class History(object):
     """
-    History handles tracking the dialogue history/state over the course of an
-    episode.
+    History handles tracking the dialogue state over the course of an episode.
 
     History may also be used to track the history of any field.
 
@@ -148,6 +148,7 @@ class History(object):
     :param dict_agent:
         DictionaryAgent object for tokenizing the history
     """
+
     def __init__(self, opt, field='text', vec_type='deque', maxlen=None,
                  size=-1, p1_token='__p1__', p2_token='__p2__',
                  dict_agent=None):
@@ -241,13 +242,13 @@ class History(object):
             self.reset_on_next_update = True
 
     def get_history_str(self):
-        """Returns the string version of the history."""
+        """Return the string version of the history."""
         if len(self.history_strings) > 0:
             return self.delimiter.join(self.history_strings)
         return None
 
     def get_history_vec(self):
-        """Returns a vectorized version of the history."""
+        """Return a vectorized version of the history."""
         if len(self.history_vecs) == 0:
             return None
 
@@ -268,7 +269,7 @@ class History(object):
         return history
 
     def get_history_vec_list(self):
-        """Returns a list of history vecs."""
+        """Return a list of history vecs."""
         return self.history_vecs
 
     def _add_person_tokens(self, text, token, add_after_newln=False):
@@ -280,9 +281,9 @@ class History(object):
             return token + ' ' + text
 
 
-class TorchAgent(Agent):
+class TorchAgent(ABC, Agent):
     """
-    A provided base agent for any model that wants to use Torch.
+    A provided abstract base agent for any model that wants to use Torch.
 
     Exists to make it easier to implement a new agent.
     Not necessary, but reduces duplicated code.
@@ -538,7 +539,7 @@ class TorchAgent(Agent):
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
         # indicate whether using fp16
-        self.fp16 = self.opt.get('fp16', False)
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
 
         # Default to the class name, sans "Agent". child can override
         self.id = type(self).__name__.replace("Agent", "")
@@ -594,9 +595,10 @@ class TorchAgent(Agent):
 
     def _get_init_model(self, opt, shared):
         """
-        Get model file to initialize with. If `init_model` exits, we will
-        return the path to that file and maybe load dict file from that path.
-        Otherwise, use `model_file.`
+        Get model file to initialize with.
+
+        If `init_model` exits, we will return the path to that file and maybe
+        load dict file from that path. Otherwise, use `model_file.`
 
         :return:  path to load model from, whether we loaded from `init_model`
                   or not
@@ -636,7 +638,6 @@ class TorchAgent(Agent):
             type of optimizer being loaded, if changed will skip loading
             optimizer states
         """
-
         opt = self.opt
 
         # set up optimizer args
@@ -686,8 +687,8 @@ class TorchAgent(Agent):
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
         Create the learning rate scheduler, and assign it to self.scheduler.
-        This scheduler will be updated upon a call to receive_metrics.
 
+        This scheduler will be updated upon a call to receive_metrics.
         May also create self.warmup_scheduler, if appropriate.
 
         :param state_dict states: Possible state_dict provided by model
@@ -786,6 +787,11 @@ class TorchAgent(Agent):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
 
     def report(self):
+        """
+        Report metrics.
+
+        Report includes learning rate and number of training updates.
+        """
         metrics = {}
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
@@ -795,7 +801,7 @@ class TorchAgent(Agent):
         return metrics
 
     def _is_lr_warming_up(self):
-        """Checks if we're warming up the learning rate."""
+        """Check if we're warming up the learning rate."""
         return (
             self.warmup_scheduler is not None and
             self._number_training_updates <= self.opt['warmup_updates']
@@ -1007,7 +1013,7 @@ class TorchAgent(Agent):
 
     def _set_text_vec(self, obs, history, truncate):
         """
-        Sets the 'text_vec' field in the observation.
+        Set the 'text_vec' field in the observation.
 
         Useful to override to change vectorization behavior
         """
@@ -1030,7 +1036,7 @@ class TorchAgent(Agent):
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
         """
-        Sets the 'labels_vec' field in the observation.
+        Set the 'labels_vec' field in the observation.
 
         Useful to override to change vectorization behavior
         """
@@ -1062,7 +1068,7 @@ class TorchAgent(Agent):
 
     def _set_label_cands_vec(self, obs, add_start, add_end, truncate):
         """
-        Sets the 'label_candidates_vec' field in the observation.
+        Set the 'label_candidates_vec' field in the observation.
 
         Useful to override to change vectorization behavior
         """
@@ -1129,6 +1135,7 @@ class TorchAgent(Agent):
         return obs
 
     def is_valid(self, obs):
+        """Determine if an observation is valid or not."""
         return 'text_vec' in obs or 'image' in obs
 
     def batchify(self, obs_batch, sort=False):
@@ -1351,7 +1358,7 @@ class TorchAgent(Agent):
 
     def state_dict(self):
         """
-        Get the state dict for saving
+        Get the state dict for saving.
 
         Override this method for more specific saving.
         """
@@ -1480,21 +1487,21 @@ class TorchAgent(Agent):
 
         return batch_reply
 
+    @abstractmethod
     def train_step(self, batch):
         """[Abstract] Process one batch with training labels."""
-        raise NotImplementedError(
-            'Abstract class: user must implement train_step'
-        )
+        pass
 
+    @abstractmethod
     def eval_step(self, batch):
         """[Abstract] Process one batch but do not train on it."""
-        raise NotImplementedError(
-            'Abstract class: user must implement eval_step'
-        )
+        pass
 
     def backward(self, loss):
         """
-        Perform a backward pass. It is recommended you use this instead of
+        Perform a backward pass.
+
+        It is recommended you use this instead of
         loss.backward(), for integration with distributed training and FP16
         training.
         """
@@ -1505,9 +1512,11 @@ class TorchAgent(Agent):
 
     def update_params(self):
         """
-        Perform step of optimization, clipping gradients and adjusting LR
-        schedule if needed. Gradient accumulation is also performed if agent
-        is called with --update-freq.
+        Perform step of optimization.
+
+        Handles clipping gradients and adjusting LR schedule if needed.
+        Gradient accumulation is also performed if agent is called with
+        --update-freq.
 
         It is recommended (but not forced) that you call this in train_step.
         """

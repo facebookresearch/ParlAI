@@ -57,7 +57,7 @@ def _exact_match(guess, answers):
 
 def _prec_recall_f1_score(pred_items, gold_items):
     """
-    Computes precision, recall and f1 given a set of gold and prediction items.
+    Compute precision, recall and f1 given a set of gold and prediction items.
 
     :param pred_items: iterable of predicted values
     :param gold_items: iterable of gold values
@@ -104,6 +104,7 @@ def _bleu(guess, answers):
 
 
 def aggregate_metrics(reporters):
+    """Aggregate metrics from multiple reports."""
     # reporters is a list of teachers or worlds
     m = {}
     m['tasks'] = {}
@@ -172,7 +173,7 @@ class Metrics(object):
             # otherwise do nothing
             return no_lock()
 
-    def update_ranking_metrics(self, observation, labels):
+    def _update_ranking_metrics(self, observation, labels):
         text_cands = observation.get('text_candidates', None)
         if text_cands is None:
             return
@@ -200,6 +201,7 @@ class Metrics(object):
                 self.metrics['hits@_cnt'] += 1
 
     def update(self, observation, labels):
+        """Update metrics based on an observation and true labels."""
         with self._lock():
             self.metrics['cnt'] += 1
 
@@ -225,7 +227,7 @@ class Metrics(object):
                     self.metrics['bleu_cnt'] += 1
 
         # Ranking metrics.
-        self.update_ranking_metrics(observation, labels)
+        self._update_ranking_metrics(observation, labels)
 
         # User-reported metrics
         if 'metrics' in observation:
@@ -256,7 +258,7 @@ class Metrics(object):
         return loss
 
     def report(self):
-        # Report the metrics over all data seen so far.
+        """Report the metrics over all data seen so far."""
         m = {}
         total = self.metrics['cnt']
         m['exs'] = total
@@ -286,6 +288,8 @@ class Metrics(object):
         return m
 
     def clear(self):
+        """Clear all the metrics."""
+        # TODO: rename to reset for consistency with rest of ParlAI
         with self._lock():
             self.metrics['cnt'] = 0
             for k in self.metrics_list:
