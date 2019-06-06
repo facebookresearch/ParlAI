@@ -195,7 +195,7 @@ class Opt(dict):
             return
         print('Deepcopies were performed at the following locations:\n')
         for i, loc in enumerate(self.deepcopies):
-            print('{}. {}'.format(i, loc))
+            print('{}. {}'.format(i + 1, loc))
 
     def display_history(self, key):
         """Display the history for an item in the dict."""
