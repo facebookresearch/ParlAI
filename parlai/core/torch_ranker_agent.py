@@ -165,7 +165,12 @@ class TorchRankerAgent(TorchAgent):
         pass
 
     def _get_batch_train_metrics(self, scores):
-        # TODO: document
+        """
+        Get fast metrics calculations if we train with batch candidates.
+
+        Specifically, calculate accuracy ('train_accuracy'), average rank,
+        and mean reciprocal rank.
+        """
         batchsize = scores.size(0)
         # get accuracy
         targets = scores.new_empty(batchsize).long()
@@ -180,7 +185,7 @@ class TorchRankerAgent(TorchAgent):
         self.metrics['mrr'] += torch.sum(mrr).item()
 
     def _get_train_preds(self, scores, label_inds, cands, cand_vecs):
-        # TODO: document
+        """Return predictions from training."""
         # TODO: speed these calculations up
         batchsize = scores.size(0)
         _, ranks = scores.sort(1, descending=True)
@@ -197,13 +202,15 @@ class TorchRankerAgent(TorchAgent):
         return Output(preds)
 
     def is_valid(self, obs):
-        """Override from TorchAgent."""
+        """
+        Override from TorchAgent.
+
+        Check to see if label candidates contain the label.
+        """
         if not self.opt.get('ignore_bad_candidates', False):
             return super().is_valid(obs)
 
-        if 'text_vec' not in obs and 'image' not in obs:
-            # TODO: this should really be a call to super, i.e.
-            # if not super().is_valid(obs): return False
+        if not super().is_valid(obs):
             return False
 
         # skip examples for which the set of label candidates do not
@@ -705,8 +712,11 @@ class TorchRankerAgent(TorchAgent):
         )
 
     def _make_candidate_encs(self, vecs, path):
-        """Make candidate encodings."""
-        # TODO: document better
+        """
+        Encode candidates from candidate vectors.
+
+        Requires encode_candidates() to be implemented.
+        """
 
         cand_encs = []
         vec_batches = [vecs[i:i + 256] for i in range(0, len(vecs), 256)]
