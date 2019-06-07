@@ -1572,3 +1572,21 @@ class TorchAgent(Agent):
             return
 
         self.optimizer.zero_grad()
+
+    def _total_parameters(self):
+        """
+        Compute the total number of parameters in the model.
+
+        :return:
+            total number of parameters in the model.
+        """
+        return sum(p.numel() for p in self.model.parameters())
+
+    def _trainable_parameters(self):
+        """
+        Compute the total number of trainable parameters in the model.
+
+        :return:
+            total number of trainable parameters in the model.
+        """
+        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
