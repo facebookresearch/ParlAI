@@ -665,15 +665,23 @@ class TorchAgent(ABC, Agent):
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
-        if self.fp16:
-            self.optimizer = fp16_optimizer_wrapper(self.optimizer)
 
         if optim_states:
             if saved_optim_type != opt['optimizer']:
-                print('WARNING: not loading optim state since optim class '
-                      'changed.')
+                print('WARNING: not loading optim state since optim class changed.')
             else:
+                if 'loss_scaler' in optim_states:
+                    # previously, this code used to load up the fp16 optimizer
+                    # states directly, including the current fp16 scalars and all.
+                    # due to some changes in the APEX state_dict, this
+                    # auxillary information is no longer valid.  it makes sense
+                    # to simply to recover the underlying fp32 optimizer
+                    # state directly and reset the fp16 aspects.
+                    optim_states = optim_states['optimizer_state_dict']
+
                 try:
+                    # TODO: we might want to hard reset optimizers here in the
+                    # case of fine tuning.
                     self.optimizer.load_state_dict(optim_states)
                 except ValueError:
                     print('WARNING: not loading optim state since model '
@@ -683,6 +691,9 @@ class TorchAgent(ABC, Agent):
                         for k, v in state.items():
                             if isinstance(v, torch.Tensor):
                                 state[k] = v.cuda()
+
+        if self.fp16:
+            self.optimizer = fp16_optimizer_wrapper(self.optimizer)
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
@@ -1370,8 +1381,15 @@ class TorchAgent(ABC, Agent):
             else:
                 states['model'] = self.model.state_dict()
 
-        if hasattr(self, 'optimizer'):  # save optimizer params
-            states['optimizer'] = self.optimizer.state_dict()
+        # save optimizer params
+        if hasattr(self, 'optimizer'):
+            # don't store the fp16 wrapper
+            if self.fp16:
+                # store the "true" optimizer, not the fp16 wrapped version
+                states['optimizer'] = self.optimizer.optimizer.state_dict()
+            else:
+                # nothing abnormal.
+                states['optimizer'] = self.optimizer.state_dict()
             states['optimizer_type'] = self.opt['optimizer']
 
         # lr scheduler
