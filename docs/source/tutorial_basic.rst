@@ -174,8 +174,8 @@ tutorial (see: :doc:`tutorial_worlds`).
 Using ParlAI
 ------------
 
-Concepts in Action: Simple Display Data Loop
-^^^^^^^^^^^^^^^^^^^^^^^^
+Concepts in Action: Simple Display Data Script
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Now that we understand the basics, let's set up a simple script which displays
 any specified task. A complete version of this for utility is included
@@ -184,7 +184,7 @@ to demonstrate the concepts we just introduced.
 
 We'll create a new agent class and implement observe() and act() functions
 so that, in a world with a task teacher, it will observe the data outputted
-by the task teacher, save it as its last observation,
+by the task teacher, save the data as its last observation,
 and then act by printing the label in its observation.
 
 First, a few imports:
@@ -201,14 +201,14 @@ The ``ParlaiParser`` provides a set of default command-line arguments and
 parsing, and create_task will automatically set up the appropriate world and
 teacher for any task available within ParlAI that we choose.
 
-We define our agent (which we name ``ParrotAgent``)
+We define our agent (which we name ``RepeatLabelAgent``):
 
 .. code-block:: python
 
-    class ParrotAgent(Agent):
+    class RepeatLabelAgent(Agent):
         # initialize by setting id
         def __init__(self, opt):
-            self.id = 'LabelAgent'
+            self.id = 'RepeatLabel'
         # store observation for later, return it unmodified
         def observe(self, observation):
             self.observation = observation
@@ -230,7 +230,7 @@ Now that we have our our agent, we'll set up the display loop.
     parser = ParlaiParser()
     opt = parser.parse_args()
 
-    agent = ParrotAgent(opt)
+    agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
 
     for _ in range(10):
@@ -240,68 +240,27 @@ Now that we have our our agent, we'll set up the display loop.
             print('EPOCH DONE')
             break
 
-And that's it! The world.display() automatically cycles through each of the
-world's agents and displays their last action.  NOTE, if you want to get at and
-look at the data from here rather than calling
-world.display() you could access world.acts directly:
+And that's it! The world.display() cycles through each of the
+world's agents and displays their last action.  However, if you want to access
+the data directly without calling
+world.display(), you could access world.acts directly:
 
 .. code-block:: python
 
     parser = ParlaiParser()
     opt = parser.parse_args()
 
-    agent = ParrotAgent(opt)
+    agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
 
     for _ in range(10):
         world.parley()
-	for a in world.acts:
-	    # print the actions from each agent
-	    print(a)
-        if world.epoch_done():
-            print('EPOCH DONE')
-            break
-
-
-If you run this on the command
-line, you can specify which task to show by setting '-t {task}'.
-
-Tasks are specified in the following format:
-
-* '-t babi' sets up the ``DefaultTeacher`` in 'parlai/core/tasks/babi/agents.py'.
-
-* '-t babi:task1k' sets up the ``Task1kTeacher`` in the babi/agents.py file, which allows
-  you to specify specific settings for certain tasks. For bAbI, this refers to the setting
-  where there are only 1000 unique training examples per task.
-
-* '-t babi:task1k:1' provides 1 as a parameter to ``Task1kTeacher``, which is interpreted
-  by the Task1kTeacher to mean "I want task 1" (as opposed to the 19 other bAbI tasks).
-
-* '-t babi,squad' sets up the ``DefaultTeacher`` for both babi and squad. Any number
-  of tasks can be chained together with commas to load up each one of them.
-
-* '-t #qa' specifies the 'qa' category, loading up all tasks with that category
-  in the 'parlai/core/task_list.py' file.
-
-
-These flags are used across ParlAI, here are some examples of using them for
-displaying data with the existing script
-`display_data <https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/display_data.py>`_:
-
-.. code-block:: python
-
-   #Display 10 random examples from task 1 of the "1k training examples" bAbI task:
-   python examples/display_data.py -t babi:task1k:1
-
-   #Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD dataset at the same time:
-   python examples/display_data.py -t babi:task1k:1,squad -n 100
-
-
-The `--task` flag (`-t`  for short) specifies the task and `--datatype` (`-dt`) specifies
-train, valid or test. Note that `train:stream` or `valid:stream` can be specified
-to denote that you want the data to stream online if possible, rather than loading into memory,
-and `train:ordered` can be specified, otherwise data from the train set comes in a random order by
-default (whereas valid and test data is ordered by default).
+      	for a in world.acts:
+      	    # print the actions from each agent
+      	    print(a)
+              if world.epoch_done():
+                  print('EPOCH DONE')
+                  break
 
 
 Validation and Testing
@@ -311,11 +270,8 @@ During validation and testing, the 'labels' field is removed from the observatio
 This tells the agent not to use these labels for training--however, the labels are
 still available via the 'eval_labels' field in case you need to compute model-side
 metrics such as perplexity.
-These modes can be set from the command line with '-dt valid' / '-dt test'.
-You can also set '-dt train:evalmode' if you want to look at the train data in the same way
-as the test data (with labels hidden).
 
-Now, our Parrot agent no longer has anything to say. For datasets which provide a set
+In these cases, our RepeatLabel agent no longer has anything to say. For datasets which provide a set
 of candidates to choose from ('label_candidates' in the observation dict), we
 can give our agent a chance of getting the answer correct by replying with one
 of those.
@@ -339,21 +295,81 @@ the labels aren't available:
         return reply
 
 
-Of course, we can do much better than randomly guessing. In another tutorial,
+Of course, we can do much better than randomly guessing. In :doc:`a later tutorial <tutorial_seq2seq>`,
 we'll set up a better agent which learns from the training data.
+
+
+Tasks
+^^^^^
+
+If you run this on the command line, you can specify which task to show by setting '-t {task}' in the following format:
+
+* '-t babi' sets up the ``DefaultTeacher`` in 'parlai/core/tasks/babi/agents.py'.
+
+* '-t babi:task1k' sets up the ``Task1kTeacher`` in the babi/agents.py file, which allows
+  you to specify specific settings for certain tasks. For bAbI, this refers to the setting
+  where there are only 1000 unique training examples per task.
+
+* '-t babi:task1k:1' provides 1 as a parameter to ``Task1kTeacher``, which is interpreted
+  by the Task1kTeacher to mean "I want task 1" (as opposed to the 19 other bAbI tasks).
+
+* '-t babi,squad' sets up the ``DefaultTeacher`` for both babi and squad. Any number
+  of tasks can be chained together with commas to load up each one of them.
+
+* '-t #qa' specifies the 'qa' category, loading up all tasks with that category
+  in the 'parlai/core/task_list.py' file.
+
+
+These flags are used across ParlAI. Here are some examples of using them for
+displaying data with the existing script
+`display_data <https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/display_data.py>`_:
+
+.. code-block:: python
+
+   #Display 10 random examples from task 1 of the "1k training examples" bAbI task:
+   python examples/display_data.py -t babi:task1k:1
+
+   #Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD dataset at the same time:
+   python examples/display_data.py -t babi:task1k:1,squad -n 100
+
+
+In the last section, we mentioned that labels are hidden at validation and test time.
+The `--datatype` (`-dt`) flag specifies train, valid or test. These modes can be set from the command line with '-dt valid' / '-dt test'.
+You can also set '-dt train:evalmode' if you want to look at the train data in the same way
+as the test data (with labels hidden).
+
+ParlAI downloads the data required for a requested task automatically (using the build.py code in the task)
+and will put it in your `--datapath`. This is ParlAI/data by default but you can configure this to point elsewhere,
+e.g. to another disk with more memory. Only the tasks you request are downloaded.
+Additionally, you could specify `-dt train:stream` or `-dt valid:stream`
+to denote that you want the data to stream online if possible, rather than loading into memory.
+
+You can also specify `-dt train:ordered` the override the default behavior that data
+from the train set comes in a random order (whereas valid and test data is ordered by default).
+
+We maintain a complete task list in the `code here <https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/task_list.py>`_ or in this `documentation
+here <tasks.html>`_. The set of tasks in ParlAI is continually growing from contributors.
+See `this tutorial <tutorial_task.html>`_ for making your own tasks.
 
 
 Training and Evaluating Existing Agents
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For now, we'll look at the main calls for evaluating and
-training an agent that is already coded.
-We can use the scripts
+For now, we'll look at the scripts we've provided for training and evaluation:
 `train_model <https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/train_model.py>`_
 and `eval_model <https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/eval_model.py>`_.
 Here are some examples:
 
 .. code-block:: python
+
+   #Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
+   python examples/train_model.py -t babi:task10k:1 -m seq2seq -mf /tmp/model_s2s -bs 32 -vtim 30 -vcut 0.95
+
+   #Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
+   python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa
+
+   #Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from our model zoo:
+   python examples/eval_model.py -t squad -mf "models:drqa/squad/model"
 
    #Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
    python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
@@ -364,21 +380,10 @@ Here are some examples:
    #Display the predictions of that same IR baseline model:
    python examples/display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
 
-   #Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
-   python examples/train_model.py -t babi:task10k:1 -m seq2seq -mf /tmp/model_s2s -bs 32 -vtim 30 -vcut 0.95
-
-
-   #Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
-   python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa
-
-   #Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from our model zoo:
-   python examples/eval_model.py -t squad -mf "models:drqa/squad/model"
-
 
 The main flags are:
 
-1) `-m` (`-model`) which sets the agent type that will be trained.
-The agents available in parlAI `are here <https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents>`_.
+1) `-m` (`-model`) which sets the agent type that will be trained. The agents available in parlAI `are here <https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents>`_.
 See `this tutorial <tutorial_task.html>`_ for making your own agents.
 
 2) `-mf` (`--modelfile`) points to the file name of where to save your model.
@@ -393,17 +398,3 @@ Of course every model has various parameters and hyperparameters to set in gener
 A new feature in ParlAI is that it also now maintains a *model zoo* of existing model files of agents that have been trained on tasks. See the devoted documentation section or `here for details <https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py>`_.
 
 The set of agents and models in the model zoo in ParlAI is continually growing from contributors.
-
-
-Tasks
-^^^^^
-
-The set of tasks in ParlAI can be found in the task list in the `code here <https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/task_list.py>`_ or in this `documentation
-here <tasks.html>`_. See `this tutorial <tutorial_task.html>`_ for making your own tasks.
-
-ParlAI downloads the data required for a requested task automatically (using the build.py code in the task)
-and will put it in your `--datapath`. This is ParlAI/data by default
-(but you can configure this to point elsewhere e.g. to another disk with more memory).
-Only the tasks you request are downloaded.
-
-The set of tasks in ParlAI is continually growing from contributors.
