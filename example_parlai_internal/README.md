@@ -38,7 +38,7 @@ an existing repository from command line.
 Now you can do `from parlai_internal.X.Y import Z` to use your custom modules.
 
 Additionally, you can invoke your internal model agents from command line with `-m internal:model`.
-Providing this argument will cause the parser to look for `parlai_internal.agents.model.ModelAgent`.
+Providing this argument will cause the parser to look for `parlai_internal.agents.model.model.ModelAgent`.
 As an example, we provide `parlai_internal/agents/parrot/parrot.py`. You could call
 (from the top-level ParlAI folder):
 
@@ -47,7 +47,7 @@ python examples/display_model.py -t babi:task10k:1 -m internal:parrot
 ```
 
 Similarly, you can add private tasks under a tasks folder here and invoke them with `-t internal:taskname`.
-The parser will look for `parlai_internal.tasks.taskname.DefaultTeacher`.
+The parser will look for `parlai_internal.tasks.taskname.taskname..DefaultTeacher`.
 
 You can even create your own model zoo of pretrained models. `parlai_internal/zoo/.internal_zoo_path`
 needs to be modified to contain the path to the folder containing all of your models. Once
