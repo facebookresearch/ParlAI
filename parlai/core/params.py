@@ -799,3 +799,9 @@ class ParlaiParser(argparse.ArgumentParser):
 
         arg_group.add_argument = ag_add_argument  # override _ => -
         return arg_group
+
+    def error(self, message):
+        """Override to print custom error message."""
+        self.print_help()
+        _sys.stderr.write('\nParse Error: %s\n' % message)
+        _sys.exit(2)
