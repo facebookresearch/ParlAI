@@ -99,14 +99,14 @@ class BertClassifierAgent(TorchClassifierAgent):
 
     def _set_text_vec(self, *args, **kwargs):
         obs = super()._set_text_vec(*args, **kwargs)
-        if self.add_cls_token:
+        if 'text_vec' in obs and self.add_cls_token:
             # insert [CLS] token
-            start_tensor = obs['text_vec'].new_tensor([self.dict.start_idx])
+            start_tensor = torch.LongTensor([self.dict.start_idx])
             obs['text_vec'] = torch.cat([start_tensor, obs['text_vec']], 0)
         return obs
 
     def score(self, batch):
-        segment_idx = batch.text_vec * 0
+        segment_idx = (batch.text_vec * 0).long()
         if self.sep_last_utt:
             batch_len = batch.text_vec.size(1)
             # find where [SEP] token is
@@ -118,8 +118,7 @@ class BertClassifierAgent(TorchClassifierAgent):
             else:
                 # only one utterance: everything after [CLS] token
                 # should be segment 1
-                segment_idx = (batch.text_vec != self.dict.start_idx)
-
+                segment_idx = (batch.text_vec != self.dict.start_idx).long()
         mask = (batch.text_vec != self.NULL_IDX).long()
         token_idx = batch.text_vec * mask
         return self.model(token_idx, segment_idx, mask)
