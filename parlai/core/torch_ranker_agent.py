@@ -311,7 +311,20 @@ class TorchRankerAgent(TorchAgent):
             # using a generator instead of a list comprehension allows
             # to cap the number of elements.
             cand_preds_generator = (cand_list[rank] for rank in ordering)
-            cand_preds.append(list(islice(cand_preds_generator, max_preds)))
+            if False:
+                cand_preds.append(list(islice(cand_preds_generator, max_preds)))
+            else:
+                res = list(islice(cand_preds_generator, max_preds))
+                newres= []
+                for r in res:
+                    if r not in self.used_responses:
+                        newres.append(r)
+                    #else:
+                    #    print("skipped!")
+                cand_preds.append(newres)
+
+        #if batch.observations[0]['episode_done']:
+        #    self.used_responses = []
 
         preds = [cand_preds[i][0] for i in range(batchsize)]
         return Output(preds, cand_preds)
