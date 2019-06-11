@@ -27,7 +27,7 @@ def _handle_data_point(data_point):
     context_question_txt = ""
     for [title, sentences_list] in data_point['context']:
         sentences = '\\n'.join(sentences_list)
-        context_question_txt += '{}\\n{}\\n\\n'.format(title,sentences)
+        context_question_txt += '{}\\n{}\\n\\n'.format(title, sentences)
 
     context_question_txt += data_point['question']
 
