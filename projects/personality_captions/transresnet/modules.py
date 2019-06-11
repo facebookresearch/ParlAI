@@ -3,6 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+"""Model Code."""
 
 import torch
 from torch import nn
@@ -12,8 +13,11 @@ from parlai.agents.transformer import transformer as Transformer
 
 
 class TransresnetModel(nn.Module):
+    """Actual model code for the Transresnet Agent."""
+
     @staticmethod
     def add_cmdline_args(argparser):
+        """Add command line arguments."""
         Transformer.add_common_cmdline_args(argparser)
         agent = argparser.add_argument_group('TransresnetModel arguments')
         agent.add_argument('--truncate', type=int, default=32,
@@ -79,11 +83,23 @@ class TransresnetModel(nn.Module):
         )
 
     def _build_personality_dictionary(self, personalities_list):
+        """
+        Build the personality dictionary mapping personality to id.
+
+        :param personalities_list:
+            list of personalities
+        """
         self.personalities_list = personalities_list
         self.personality_to_id = {p: i for i, p in enumerate(personalities_list)}
         self.num_personalities = len(self.personalities_list) + 1
 
     def _build_text_encoder(self, n_layers_text):
+        """
+        Build the text (candidate) encoder.
+
+        :param n_layers_text:
+            how many layers the transformer will have
+        """
         self.embeddings = nn.Embedding(
             len(self.dictionary),
             self.opt['embedding_size']
@@ -121,6 +137,12 @@ class TransresnetModel(nn.Module):
         )
 
     def _build_image_encoder(self, n_layers_img):
+        """
+        Build the image encoder mapping raw image features to the appropriate space.
+
+        :param n_layers_img:
+            number of feed-forward layers for the image encoder
+        """
         image_layers = [
             nn.BatchNorm1d(self.opt['image_features_dim']),
             nn.Dropout(p=self.opt['dropout']),
@@ -146,7 +168,7 @@ class TransresnetModel(nn.Module):
         self, image_features, personalities, captions, personalities_tensor=None
     ):
         """
-        Model forward pass
+        Model forward pass.
 
         :param image_features:
             list of tensors of image features, one per example
@@ -164,7 +186,6 @@ class TransresnetModel(nn.Module):
         captions_encoded = None
         context_encoded = None
         img_encoded = None
-        pers_encoded = None
 
         # encode captions
         if captions is not None:
@@ -175,6 +196,28 @@ class TransresnetModel(nn.Module):
             captions_encoded = self.additional_layer(captions_encoded)
 
         # encode personalities
+        pers_encoded = self.forward_personality(personalities, personalities_tensor)
+
+        # encode images
+        img_encoded = self.forward_image(image_features)
+
+        context_encoded = self.sum_encodings([pers_encoded, img_encoded])
+        return context_encoded, captions_encoded
+
+    def forward_personality(self, personalities, personalities_tensor):
+        """
+        Encode personalities.
+
+        :param personalities:
+            list of personalities, one per example
+        :param personalities_tensor:
+            (optional) list of personality representations, usually a one-hot
+            vector if specified
+
+        :return:
+            encoded representation of the personalities
+        """
+        pers_encoded = None
         if personalities is not None:
             if personalities_tensor is not None:
                 pers_feature = personalities_tensor
@@ -190,20 +233,32 @@ class TransresnetModel(nn.Module):
                 pers_feature = res
             pers_encoded = self.personality_encoder(pers_feature)
 
-        # encode images
+        return pers_encoded
+
+    def forward_image(self, image_features):
+        """
+        Encode image features.
+
+        :param image_features:
+            list of image features
+
+        :return:
+            encoded representation of the image features
+        """
+        img_encoded = None
         if image_features is not None:
             stacked = torch.stack(image_features)
             if self.use_cuda:
                 stacked = stacked.cuda()
             img_encoded = self.image_encoder(stacked)
 
-        context_encoded = self.sum_encodings([pers_encoded, img_encoded])
-        return context_encoded, captions_encoded
+        return img_encoded
 
     def train_batch(self, image_features, personalities, captions):
         """
-        Batch train on a set of examples. Uses captions from other examples as
-        negatives during training
+        Batch train on a set of examples.
+
+        Uses captions from other examples as negatives during training
 
         :param image_features:
             list of tensors of image features
@@ -237,8 +292,9 @@ class TransresnetModel(nn.Module):
 
     def eval_batch(self, image_features, personalities, captions):
         """
-        Evaluate performance of model on one batch. Batch is split into chunks of
-        100 to evaluate hits@1/100
+        Evaluate performance of model on one batch.
+
+        Batch is split into chunks of 100 to evaluate hits@1/100
 
         :param image_features:
             list of tensors of image features
@@ -268,7 +324,7 @@ class TransresnetModel(nn.Module):
         self, image_features, personalities, candidates, candidates_encoded=None, k=1
     ):
         """
-        Choose the best caption for each example
+        Choose the best caption for each example.
 
         :param image_features:
             list of tensors of image features
@@ -294,30 +350,31 @@ class TransresnetModel(nn.Module):
             one_cand_set = False
             candidates_encoded = [self.forward(None, None, c)[1].detach()
                                   for c in candidates]
-        elected = []
+        chosen = []
         for img_index in range(len(context_encoded)):
-            image_vec = context_encoded[img_index:img_index+1, :]
+            context_encoding = context_encoded[img_index:img_index+1, :]
             scores = torch.mm(
                 candidates_encoded[img_index] if not one_cand_set
                 else candidates_encoded,
-                image_vec.transpose(0, 1)
+                context_encoding.transpose(0, 1)
             )
             if k >= 1:
                 _, index_top = torch.topk(scores, k, dim=0)
             else:
                 _, index_top = torch.topk(scores, scores.size(0), dim=0)
-            elected.append(
+            chosen.append(
                 [candidates[img_index][idx] if not one_cand_set
                  else candidates[idx]
                  for idx in index_top.unsqueeze(1)]
             )
 
-        return elected
+        return chosen
 
     def eval_batch_of_100(self, context_encoded, captions_encoded):
         """
-        Evaluate a batch of 100 examples, where the captions of the other examples
-        are used as negatives.
+        Evaluate a batch of 100 examples.
+
+        The captions of the other examples are used as negatives.
 
         :param context_encoded:
             the encoded context
@@ -347,7 +404,7 @@ class TransresnetModel(nn.Module):
         self, context_encoded, captions_encoded, during_train=False
     ):
         """
-        Compute loss - and number of correct examples - for one batch
+        Compute loss - and number of correct examples - for one batch.
 
         :param context_encoded:
             the encoded context
@@ -372,18 +429,38 @@ class TransresnetModel(nn.Module):
         return loss, num_correct
 
     def freeze_text_encoder(self):
+        """Freeze the text (candidate) encoder."""
         self.text_encoder_frozen = True
 
     def unfreeze_text_encoder(self):
+        """Unfreeze the text (candidate) encoder."""
         self.text_encoder_frozen = False
 
     def sum_encodings(self, addends):
+        """
+        Add up a list of encodings, some of which may be `None`.
+
+        :param addends:
+            tensors to add
+
+        :return:
+            sum of non-`None` addends
+        """
         addends = [a for a in addends if a is not None]
-        return sum(addends)
+        return sum(addends) if len(addends) > 0 else None
 
     def personalities_to_index(self, personalities):
+        """
+        Map personalities to their index in the personality dictionary.
+
+        :param personalities:
+            list of personalities
+
+        :return:
+            list of personality ids
+        """
         res = []
-        for i, p in enumerate(personalities):
+        for p in personalities:
             if p in self.personality_to_id:
                 res.append(self.personality_to_id[p] + 1)
             else:
@@ -392,7 +469,7 @@ class TransresnetModel(nn.Module):
 
     def captions_to_tensor(self, captions):
         """
-        Tokenize a list of sentences into a 2D float tensor
+        Tokenize a list of sentences into a 2D float tensor.
 
         :param captions:
             list of sentences to tokenize
@@ -437,9 +514,7 @@ class TransresnetModel(nn.Module):
 
 
 def load_fasttext_embeddings(dic, embedding_dim, datapath):
-    """
-        Helper that loads weights from fasttext_cc and put them in embeddings.weights
-    """
+    """Load weights from fasttext_cc and put them in embeddings.weights."""
     print('Initializing embeddings from fasttext_cc')
     from parlai.zoo.fasttext_cc_vectors.build import download
     pretrained = download(datapath)
@@ -458,13 +533,13 @@ def load_fasttext_embeddings(dic, embedding_dim, datapath):
 
 
 class LinearWrapper(nn.Module):
-    """
-    Linear layer with dropout
-    """
+    """Linear layer with dropout."""
+
     def __init__(self, in_dim, out_dim, dropout):
         super(LinearWrapper, self).__init__()
         self.lin = nn.Linear(in_dim, out_dim)
         self.dp = nn.Dropout(dropout)
 
     def forward(self, input):
+        """Forward pass."""
         return self.lin(self.dp(input))

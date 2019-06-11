@@ -49,8 +49,12 @@ class BertDictionaryAgent(DictionaryAgent):
         tokens_id = self.tokenizer.convert_tokens_to_ids(tokens)
         return tokens_id
 
-    def vec2txt(self, tensor):
-        idxs = [idx.item() for idx in tensor.cpu()]
+    def vec2txt(self, vec):
+        if not isinstance(vec, list):
+            # assume tensor
+            idxs = [idx.item() for idx in vec.cpu()]
+        else:
+            idxs = vec
         toks = self.tokenizer.convert_ids_to_tokens(idxs)
         return ' '.join(toks)
 

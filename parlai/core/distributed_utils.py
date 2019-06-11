@@ -7,6 +7,9 @@
 
 """
 Useful utilities for training in distributed mode.
+
+Many of these functions act as wrappers which perform no-ops if code is running
+in non-distributed mode.
 """
 
 import builtins
@@ -50,16 +53,12 @@ def validate_params(opt):
 
 
 def is_distributed():
-    """
-    Returns True if we are in distributed mode.
-    """
+    """Return if we are in distributed mode."""
     return TORCH_AVAILABLE and dist.is_available() and dist.is_initialized()
 
 
 def num_workers():
-    """
-    Get the total number of workers.
-    """
+    """Get the total number of workers."""
     if not is_distributed():
         return 1
     else:
@@ -68,6 +67,8 @@ def num_workers():
 
 def is_primary_worker():
     """
+    Determine if we are the primary (master) worker.
+
     Returns False if we are a secondary worker. Returns True if we are either
     (1) not in distributed mode (2) or are the primary (rank 0) worker.
     """
@@ -76,8 +77,7 @@ def is_primary_worker():
 
 def override_print(suppress=False, prefix=None):
     """
-    Overrides the builtin print, to either mute or annotate the output with a
-    given prefix.
+    Override the builtin print to mute or annotate the output with a given prefix.
 
     Recommended usage is to call this with suppress=True for all non-primary workers,
     or call with with a prefix of rank on all workers.
@@ -104,9 +104,9 @@ def override_print(suppress=False, prefix=None):
 
 def all_gather_list(data, max_size=16384):
     """
-    Gathers arbitrary data from all nodes into a list.
+    Gather arbitrary data from all nodes into a list.
 
-    Similar to :func:`~torch.distributed.all_gather` but for arbitrary Python
+    Similar to `~torch.distributed.all_gather` but for arbitrary Python
     data. Note that *data* must be picklable.
 
     :param data:
@@ -168,8 +168,19 @@ def all_gather_list(data, max_size=16384):
 
 def sync_object(data, max_size=16384):
     """
-    Syncs an object among all workers, overriding everyone's version with the
-    primary worker's. Data must be pickleable.
+    Sync an object among all workers.
+
+    All workers will return the same value for `data` when returning from this
+    method, always using the primary worker's version. Useful for ensuring control
+    flow decisions are made the same.
+
+    :param object data:
+        The object to synchronize. Must be pickleable.
+    :param int max_size:
+        The maximum size of this object in bytes. Large values than 255^2 are not
+        supported.
+
+    :return: the synchronized data
     """
     if not is_distributed():
         return data
