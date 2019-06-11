@@ -237,7 +237,7 @@ class History(object):
                 # update history vecs
                 self._update_vecs(text)
 
-        if obs.get('episode_done', True):
+        if obs['episode_done']:
             # end of this episode, clear the history when we see a new example
             self.reset_on_next_update = True
 
@@ -1315,7 +1315,7 @@ class TorchAgent(ABC, Agent):
         # if the last observation was the end of an episode,
         # then we shouldn't use it as history
         if (use_reply == 'none' or not self.observation or
-                self.observation.get('episode_done', True)):
+                self.observation['episode_done']):
             return None
 
         if use_reply == 'label':
