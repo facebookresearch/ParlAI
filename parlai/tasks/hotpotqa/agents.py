@@ -11,9 +11,7 @@ from .build import build
 import copy
 import os
 
-'''All teachers have a version with and without label candidates. Each teacher
-defaults to using a dataset with label candidates. To use a dataset without
-label candidates, specify this using the task flag:
+'''Usage:
 
 --task hotspotqa:{TEACHER_NAME}
 
