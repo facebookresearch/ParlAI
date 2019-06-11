@@ -26,7 +26,6 @@ Examples
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 
-from copy import deepcopy
 import numpy as np
 import os
 import signal
@@ -232,7 +231,7 @@ def load_eval_worlds(agent, opt, datatype):
     tasks = opt['task'].split(',')
     worlds = []
     for task in tasks:
-        task_opt = deepcopy(opt)
+        task_opt = opt.copy()  # copy opt since we edit the task
         task_opt['task'] = task
         if opt.get('validation_share_agent', False):
             valid_agent = create_agent_from_shared(agent.share())

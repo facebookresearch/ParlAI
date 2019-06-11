@@ -22,7 +22,6 @@ from parlai.core.logs import TensorboardLogger
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger, round_sigfigs
 
-from copy import deepcopy
 import random
 
 
@@ -66,13 +65,12 @@ def eval_model(opt, printargs=None, print_parser=None):
     random.seed(42)
 
     reports = []
+    agent = create_agent(opt, requireModelExists=True)  # create model
     tasks = opt['task'].split(',')
     for task in tasks:
-        # Create model and assign it to the specified task
-        task_opt = deepcopy(opt)  # copy opt since we're editing the task
+        task_opt = opt.copy()  # copy opt since we're editing the task
         task_opt['task'] = task
-        agent = create_agent(task_opt, requireModelExists=True)
-        world = create_task(task_opt, agent)
+        world = create_task(task_opt, agent)  # create worlds for tasks
 
         if print_parser:
             # Show arguments after loading model
