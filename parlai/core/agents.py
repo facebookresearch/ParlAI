@@ -42,7 +42,7 @@ This module also provides a utility method:
 """
 
 from parlai.core.build_data import modelzoo_path
-from parlai.core.utils import warn_once
+from parlai.core.utils import Opt, warn_once
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
@@ -361,6 +361,7 @@ def compare_init_model_opts(opt, curr_opt):
     """Print loud warning when `init_model` opts differ from previous configuration."""
     if opt.get('init_model') is None:
         return
+    opt['init_model'] = modelzoo_path(opt['datapath'], opt['init_model'])
     optfile = opt['init_model'] + '.opt'
     if not os.path.isfile(optfile):
         return
@@ -417,7 +418,7 @@ def _load_opt_file(optfile):
         # oops it's pickled
         with open(optfile, 'rb') as handle:
             opt = pickle.load(handle)
-    return opt
+    return Opt(opt)
 
 
 def load_agent_module(opt):
@@ -735,10 +736,6 @@ def _add_task_flags_to_agent_opt(agent, opt, flags):
     task = []
     for f in fl:
         if '=' in f:
-            warn_once(
-                'Try not to use task flags. They may disappear in the future. '
-                'If you see this warning, please report it in a GitHub Issue.'
-            )
             one_flag = f.split('=')
             opt[one_flag[0]] = one_flag[1]
         else:
