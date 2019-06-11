@@ -149,21 +149,29 @@ def aggregate_metrics(reporters):
         sums['rouge-L'] = 0.0
     num_tasks = 0
     total = 0
+    agent_metrics = {}
     for i in range(len(reporters)):
-        tid = reporters[i].getID()
-        mt = reporters[i].report()
-        while tid in m['tasks']:
+        task_id = reporters[i].getID()
+        task_report = reporters[i].report()
+        for metric, val in task_report.items():
+            agent_metrics.setdefault(metric, []).append(val)
+        while task_id in m['tasks']:
             # prevent name cloberring if using multiple tasks with same ID
-            tid += '_'
-        m['tasks'][tid] = mt
-        total += mt['exs']
+            task_id += '_'
+        m['tasks'][task_id] = task_report
+        total += task_report['exs']
         found_any = False
         for k in sums.keys():
-            if k in mt:
-                sums[k] += mt[k]
+            if k in task_report:
+                sums[k] += task_report[k]
                 found_any = True
         if found_any:
             num_tasks += 1
+    # aggregate agent reported metrics across tasks (average)
+    if len(reporters) > 0:
+        m['tasks']['all'] = {}
+        for metric, vals in agent_metrics.items():
+            m['tasks']['all'][metric] = round_sigfigs(sum(vals) / len(vals), 4)
     m['exs'] = total
     m['accuracy'] = 0
     if num_tasks > 0:

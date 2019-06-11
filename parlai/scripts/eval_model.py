@@ -20,8 +20,9 @@ from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger
+from parlai.core.utils import TimeLogger, round_sigfigs
 
+from copy import deepcopy
 import random
 
 
@@ -64,42 +65,66 @@ def eval_model(opt, printargs=None, print_parser=None):
 
     random.seed(42)
 
-    # Create model and assign it to the specified task
-    agent = create_agent(opt, requireModelExists=True)
-    world = create_task(opt, agent)
+    reports = []
+    tasks = opt['task'].split(',')
+    for task in tasks:
+        # Create model and assign it to the specified task
+        task_opt = deepcopy(opt)  # copy opt since we're editing the task
+        task_opt['task'] = task
+        agent = create_agent(task_opt, requireModelExists=True)
+        world = create_task(task_opt, agent)
 
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
-    log_every_n_secs = opt.get('log_every_n_secs', -1)
-    if log_every_n_secs <= 0:
-        log_every_n_secs = float('inf')
-    log_time = TimeLogger()
+        if print_parser:
+            # Show arguments after loading model
+            print_parser.opt = agent.opt
+            print_parser.print_args()
+        log_every_n_secs = opt.get('log_every_n_secs', -1)
+        if log_every_n_secs <= 0:
+            log_every_n_secs = float('inf')
+        log_time = TimeLogger()
 
-    # Show some example dialogs:
-    cnt = 0
-    while not world.epoch_done():
-        cnt += opt.get('batchsize', 1)
-        world.parley()
-        if opt['display_examples']:
-            print(world.display() + "\n~~")
-        if log_time.time() > log_every_n_secs:
-            report = world.report()
-            text, report = log_time.log(report['exs'], world.num_examples(),
-                                        report)
-            print(text)
-        if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
-            break
-    if world.epoch_done():
-        print("EPOCH DONE")
-    print('finished evaluating task {} using datatype {}'.format(
-          opt['task'], opt.get('datatype', 'N/A')))
-    report = world.report()
-    print(report)
+        # Show some example dialogs:
+        cnt = 0
+        while not world.epoch_done():
+            cnt += opt.get('batchsize', 1)
+            world.parley()
+            if opt['display_examples']:
+                print(world.display() + "\n~~")
+            if log_time.time() > log_every_n_secs:
+                report = world.report()
+                text, report = log_time.log(report['exs'], world.num_examples(),
+                                            report)
+                print(text)
+            if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
+                break
+        if world.epoch_done():
+            print("EPOCH DONE")
+        print('finished evaluating task {} using datatype {}'.format(
+              task, opt.get('datatype', 'N/A')))
+        report = world.report()
+        reports.append(report)
+        print(report)
 
-    print_announcements(opt)
+    if len(tasks) > 1:
+        # multiple tasks, aggregate metrics
+        agent_metrics = {}
+        total_report = {'tasks': {}}
+        for i, report in enumerate(reports):
+            total_report['tasks'][tasks[i]] = report
+            for metric, val in report.items():
+                agent_metrics.setdefault(metric, []).append(val)
+        total_report['tasks']['all'] = {}
+        for metric, vals in agent_metrics.items():
+            total_report['tasks']['all'][metric] = \
+                round_sigfigs(sum(vals) / len(vals))
 
+        print_announcements(opt)
+        print('finished evaluating tasks {} using datatype {}'.format(
+              tasks, opt.get('datatype', 'N/A')))
+        print(total_report)
+        return total_report
+
+    # singular task, return report as usual
     return report
 
 

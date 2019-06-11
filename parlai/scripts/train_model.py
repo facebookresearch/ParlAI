@@ -26,6 +26,7 @@ Examples
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 
+from copy import deepcopy
 import numpy as np
 import os
 import signal
@@ -188,15 +189,15 @@ def setup_args(parser=None) -> ParlaiParser:
     return parser
 
 
-def _maybe_load_eval_world(agent, opt, datatype):
+def _maybe_load_eval_worlds(agent, opt, datatype):
     if not is_primary_worker():
         # only need the validation on the main worker
         return None
     else:
-        return load_eval_world(agent, opt, datatype)
+        return load_eval_worlds(agent, opt, datatype)
 
 
-def load_eval_world(agent, opt, datatype):
+def load_eval_worlds(agent, opt, datatype):
     """
     Create a new eval world for the agent and the given opt.
 
@@ -227,21 +228,27 @@ def load_eval_world(agent, opt, datatype):
     if opt.get('eval_batchsize'):
         # override eval time batchsize
         opt['batchsize'] = opt['eval_batchsize']
-    if opt.get('validation_share_agent', False):
-        valid_agent = create_agent_from_shared(agent.share())
-    else:
-        valid_agent = agent
 
-    valid_world = create_task(opt, valid_agent)
-    return valid_world
+    tasks = opt['task'].split(',')
+    worlds = []
+    for task in tasks:
+        task_opt = deepcopy(opt)
+        task_opt['task'] = task
+        if opt.get('validation_share_agent', False):
+            valid_agent = create_agent_from_shared(agent.share())
+        else:
+            valid_agent = agent
+        valid_world = create_task(task_opt, valid_agent)
+        worlds.append(valid_world)
+    return worlds
 
 
-def run_eval(valid_world, opt, datatype, max_exs=-1, write_log=False):
+def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
     """
     Eval on validation/test data.
 
     :param valid_world:
-        the pre-created validation world.
+        list of the pre-created validation worlds.
     :param opt:
         the options that specific the task, eval_task, etc
     :param datatype:
@@ -251,25 +258,43 @@ def run_eval(valid_world, opt, datatype, max_exs=-1, write_log=False):
     :param int max_exs:
         limits the number of examples if max_exs > 0
     """
-    if valid_world is None:
+    if valid_worlds is None:
         # This isn't the primary worker, so we can just skip evaluation
         return None
 
     print('[ running eval: ' + datatype + ' ]')
-    valid_world.reset()
-    cnt = 0
-    while not valid_world.epoch_done():
-        valid_world.parley()
-        if cnt == 0 and opt['display_examples']:
-            print(valid_world.display() + '\n~~')
-            print(valid_world.report())
-        cnt += valid_world.opt['batchsize']
-        if max_exs > 0 and cnt >= max_exs:
-            # note this max_exs is approximate--some batches won't always be
-            # full depending on the structure of the data
-            break
-    valid_report = valid_world.report()
-    valid_world.reset()  # this makes sure agent doesn't remember valid data
+    reports = []
+    for v_world in valid_worlds:
+        v_world.reset()
+        cnt = 0
+        while not v_world.epoch_done():
+            v_world.parley()
+            if cnt == 0 and opt['display_examples']:
+                print(v_world.display() + '\n~~')
+                print(v_world.report())
+            cnt += v_world.opt['batchsize']
+            if max_exs > 0 and cnt >= max_exs / len(valid_worlds):
+                # note this max_exs is approximate--some batches won't always be
+                # full depending on the structure of the data
+                break
+        valid_report = v_world.report()
+        reports.append(valid_report)
+    v_world.reset()  # this makes sure agent doesn't remember valid data
+
+    if len(valid_worlds) > 1:
+        # multiple tasks, aggregate metrics
+        tasks = [world.opt['task'] for world in valid_worlds]
+        agent_metrics = {}
+        total_report = {'tasks': {}}
+        for i, report in enumerate(reports):
+            total_report['tasks'][tasks[i]] = report
+            for metric, val in report.items():
+                agent_metrics.setdefault(metric, []).append(val)
+        total_report['tasks']['all'] = {}
+        for metric, vals in agent_metrics.items():
+            total_report['tasks']['all'][metric] = \
+                round_sigfigs(sum(vals) / len(vals), 4)
+        valid_report = total_report
 
     metrics = datatype + ':' + str(valid_report)
     print(metrics)
@@ -378,7 +403,7 @@ class TrainLoop():
                 f.close()
         self.impatience = 0
         self.saved = False
-        self.valid_world = None
+        self.valid_worlds = None
         self.opt = opt
 
         # we may have been preempted, make sure we note that amount
@@ -447,13 +472,13 @@ class TrainLoop():
         """
         opt = self.opt
 
-        if self.valid_world is None:
+        if self.valid_worlds is None:
             # we need to load the world now
-            self.valid_world = _maybe_load_eval_world(self.agent, opt, 'valid')
+            self.valid_worlds = _maybe_load_eval_worlds(self.agent, opt, 'valid')
 
         # run evaluation on valid set
         valid_report = sync_object(
-            run_eval(self.valid_world, opt, 'valid', opt['validation_max_exs'])
+            run_eval(self.valid_worlds, opt, 'valid', opt['validation_max_exs'])
         )
         v = valid_report.copy()
         v['train_time'] = self.train_time.time()
@@ -475,12 +500,16 @@ class TrainLoop():
             self.agent.receive_metrics(valid_report)
 
         # check which metric to look at
-        if '/' in opt['validation_metric']:
-            # if you are multitasking and want your validation metric to be
-            # a metric specific to a subtask, specify your validation metric
-            # as -vmt subtask/metric
-            subtask = opt['validation_metric'].split('/')[0]
-            validation_metric = opt['validation_metric'].split('/')[1]
+        if 'tasks' in valid_report:
+            if '/' in opt['validation_metric']:
+                # if you are multitasking and want your validation metric to be
+                # a metric specific to a subtask, specify your validation metric
+                # as -vmt subtask/metric
+                subtask = opt['validation_metric'].split('/')[0]
+                validation_metric = opt['validation_metric'].split('/')[1]
+            else:
+                subtask = 'all'
+                validation_metric = opt['validation_metric']
             new_valid = valid_report['tasks'][subtask][validation_metric]
         else:
             new_valid = valid_report[opt['validation_metric']]
@@ -730,15 +759,17 @@ class TrainLoop():
             # reload best validation model
             self.agent = create_agent(opt)
 
-        valid_world = _maybe_load_eval_world(self.agent, opt, 'valid')
+        valid_worlds = _maybe_load_eval_worlds(self.agent, opt, 'valid')
         max_exs = opt['validation_max_exs'] if opt.get('short_final_eval') else -1
-        v_report = run_eval(valid_world, opt, 'valid', max_exs, write_log=True)
-        test_world = _maybe_load_eval_world(self.agent, opt, 'test')
-        t_report = run_eval(test_world, opt, 'test', max_exs, write_log=True)
-        if valid_world:
-            valid_world.shutdown()
-        if test_world:
-            test_world.shutdown()
+        v_report = run_eval(valid_worlds, opt, 'valid', max_exs, write_log=True)
+        test_worlds = _maybe_load_eval_worlds(self.agent, opt, 'test')
+        t_report = run_eval(test_worlds, opt, 'test', max_exs, write_log=True)
+        if valid_worlds:
+            for valid_world in valid_worlds:
+                valid_world.shutdown()
+        if test_worlds:
+            for test_world in test_worlds:
+                test_world.shutdown()
 
         print_announcements(opt)
 
