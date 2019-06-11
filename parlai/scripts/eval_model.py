@@ -34,15 +34,66 @@ def setup_args(parser=None):
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('--metrics', type=str, default="all",
-                        help="list of metrics to show/compute, e.g. "
-                             "ppl,f1,accuracy,hits@1."
-                             "If 'all' is specified [default] all are shown.")
+                        help='list of metrics to show/compute, e.g. '
+                             'ppl, f1, accuracy, hits@1.'
+                             'If `all` is specified [default] all are shown.')
     TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')
     return parser
 
 
-def eval_model(opt, printargs=None, print_parser=None):
+def _eval_single_world(opt, agent, task):
+    print('[ Evaluating task {} on using datatype {}. ] '.format(
+        task, opt.get('datatype', 'N/A')))
+    task_opt = opt.copy()  # copy opt since we're editing the task
+    task_opt['task'] = task
+    world = create_task(task_opt, agent)  # create worlds for tasks
+
+    # logging
+    log_every_n_secs = opt.get('log_every_n_secs', -1)
+    if log_every_n_secs <= 0:
+        log_every_n_secs = float('inf')
+    log_time = TimeLogger()
+
+    # Show some example dialogs:
+    max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
+    cnt = 0
+
+    while not world.epoch_done() and cnt < max_cnt:
+        cnt += opt.get('batchsize', 1)
+        world.parley()
+        if opt['display_examples']:
+            print(world.display() + '\n~~')
+        if log_time.time() > log_every_n_secs:
+            report = world.report()
+            text, report = log_time.log(report['exs'], world.num_examples(),
+                                        report)
+            print(text)
+
+    report = world.report()
+    return report
+
+
+def _aggregate_reports(reports, tasks):
+    if len(reports) == 1:
+        # singular task
+        return reports[0]
+    # multiple tasks, aggregate metrics
+    agent_metrics = {}
+    total_report = {'tasks': {}}
+    for i, report in enumerate(reports):
+        total_report['tasks'][tasks[i]] = report
+        for metric, val in report.items():
+            agent_metrics.setdefault(metric, []).append(val)
+    total_report['tasks']['all'] = {}
+    for metric, vals in agent_metrics.items():
+        total_report['tasks']['all'][metric] = round_sigfigs(
+            sum(vals) / len(vals)
+        )
+    return total_report
+
+
+def eval_model(opt, print_parser=None):
     """Evaluates a model.
 
     :param opt: tells the evaluation function how to run
@@ -50,82 +101,32 @@ def eval_model(opt, printargs=None, print_parser=None):
         model after loading the model
     :return: the final result of calling report()
     """
-    if printargs is not None:
-        print('[ Deprecated Warning: eval_model no longer uses `printargs` ]')
-        print_parser = printargs
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
-    if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: eval_model should be passed opt not Parser ]')
-        opt = opt.parse_args()
-
     random.seed(42)
 
-    reports = []
-    agent = create_agent(opt, requireModelExists=True)  # create model
+    # load model and possibly print opt
+    agent = create_agent(opt, requireModelExists=True)
+    if print_parser:
+        # show args after loading model
+        print_parser.opt = agent.opt
+        print_parser.print_args()
+
     tasks = opt['task'].split(',')
+    reports = []
     for task in tasks:
-        task_opt = opt.copy()  # copy opt since we're editing the task
-        task_opt['task'] = task
-        world = create_task(task_opt, agent)  # create worlds for tasks
+        task_report = _eval_single_world(opt, agent, task)
+        reports.append(task_report)
 
-        if print_parser:
-            # Show arguments after loading model
-            print_parser.opt = agent.opt
-            print_parser.print_args()
-        log_every_n_secs = opt.get('log_every_n_secs', -1)
-        if log_every_n_secs <= 0:
-            log_every_n_secs = float('inf')
-        log_time = TimeLogger()
+    report = _aggregate_reports(reports, tasks)
 
-        # Show some example dialogs:
-        cnt = 0
-        while not world.epoch_done():
-            cnt += opt.get('batchsize', 1)
-            world.parley()
-            if opt['display_examples']:
-                print(world.display() + "\n~~")
-            if log_time.time() > log_every_n_secs:
-                report = world.report()
-                text, report = log_time.log(report['exs'], world.num_examples(),
-                                            report)
-                print(text)
-            if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
-                break
-        if world.epoch_done():
-            print("EPOCH DONE")
-        print('finished evaluating task {} using datatype {}'.format(
-              task, opt.get('datatype', 'N/A')))
-        report = world.report()
-        reports.append(report)
-        print(report)
+    # print announcments and report
+    print_announcements(opt)
+    print('[ Finished evaluating tasks {} using datatype {} ]'.format(
+          tasks, opt.get('datatype', 'N/A')))
+    print(report)
 
-    if len(tasks) > 1:
-        # multiple tasks, aggregate metrics
-        agent_metrics = {}
-        total_report = {'tasks': {}}
-        for i, report in enumerate(reports):
-            total_report['tasks'][tasks[i]] = report
-            for metric, val in report.items():
-                agent_metrics.setdefault(metric, []).append(val)
-        total_report['tasks']['all'] = {}
-        for metric, vals in agent_metrics.items():
-            total_report['tasks']['all'][metric] = \
-                round_sigfigs(sum(vals) / len(vals))
-
-        print_announcements(opt)
-        print('finished evaluating tasks {} using datatype {}'.format(
-              tasks, opt.get('datatype', 'N/A')))
-        print(total_report)
-        return total_report
-
-    # singular task, return report as usual
     return report
 
 
 if __name__ == '__main__':
     parser = setup_args()
-    eval_model(parser.parse_args(print_args=False), print_parser=parser)
+    eval_model(parser.parse_args(print_args=False))

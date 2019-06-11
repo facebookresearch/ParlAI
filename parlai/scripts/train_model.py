@@ -192,8 +192,7 @@ def _maybe_load_eval_worlds(agent, opt, datatype):
     if not is_primary_worker():
         # only need the validation on the main worker
         return None
-    else:
-        return load_eval_worlds(agent, opt, datatype)
+    return load_eval_worlds(agent, opt, datatype)
 
 
 def load_eval_worlds(agent, opt, datatype):
@@ -242,6 +241,45 @@ def load_eval_worlds(agent, opt, datatype):
     return worlds
 
 
+def _run_single_eval(opt, valid_world, max_exs):
+    # run evaluation on a single world
+    valid_world.reset()
+
+    cnt = 0
+    max_cnt = max_exs if max_exs > 0 else float('inf')
+    while not valid_world.epoch_done() and cnt < max_cnt:
+        valid_world.parley()
+        if cnt == 0 and opt['display_examples']:
+            print(valid_world.display() + '\n~~')
+            print(valid_world.report())
+        cnt += valid_world.opt['batchsize']
+
+    valid_report = valid_world.report()
+    valid_world.reset()  # make sure world doesn't remember valid data
+
+    return valid_report
+
+
+def _aggregate_reports(reports, valid_worlds):
+    if len(reports) == 1:
+        return reports[0]
+
+    # multiple tasks, aggregate metrics
+    tasks = [world.opt['task'] for world in valid_worlds]
+    agent_metrics = {}
+    total_report = {'tasks': {}}
+    for i, report in enumerate(reports):
+        total_report['tasks'][tasks[i]] = report
+        for metric, val in report.items():
+            agent_metrics.setdefault(metric, []).append(val)
+    total_report['tasks']['all'] = {}
+    for metric, vals in agent_metrics.items():
+        total_report['tasks']['all'][metric] = round_sigfigs(
+            sum(vals) / len(vals), 4)
+
+    return total_report
+
+
 def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
     """
     Eval on validation/test data.
@@ -264,46 +302,23 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
     print('[ running eval: ' + datatype + ' ]')
     reports = []
     for v_world in valid_worlds:
-        v_world.reset()
-        cnt = 0
-        while not v_world.epoch_done():
-            v_world.parley()
-            if cnt == 0 and opt['display_examples']:
-                print(v_world.display() + '\n~~')
-                print(v_world.report())
-            cnt += v_world.opt['batchsize']
-            if max_exs > 0 and cnt >= max_exs / len(valid_worlds):
-                # note this max_exs is approximate--some batches won't always be
-                # full depending on the structure of the data
-                break
-        valid_report = v_world.report()
-        reports.append(valid_report)
-    v_world.reset()  # this makes sure agent doesn't remember valid data
+        task_report = _run_single_eval(opt, v_world,
+                                       max_exs / len(valid_worlds))
+        reports.append(task_report)
 
-    if len(valid_worlds) > 1:
-        # multiple tasks, aggregate metrics
-        tasks = [world.opt['task'] for world in valid_worlds]
-        agent_metrics = {}
-        total_report = {'tasks': {}}
-        for i, report in enumerate(reports):
-            total_report['tasks'][tasks[i]] = report
-            for metric, val in report.items():
-                agent_metrics.setdefault(metric, []).append(val)
-        total_report['tasks']['all'] = {}
-        for metric, vals in agent_metrics.items():
-            total_report['tasks']['all'][metric] = \
-                round_sigfigs(sum(vals) / len(vals), 4)
-        valid_report = total_report
+    report = _aggregate_reports(reports, valid_worlds)
 
-    metrics = datatype + ':' + str(valid_report)
+    metrics = '{}:{}'.format(datatype, report)
     print(metrics)
+
+    # write to file
     if write_log and opt.get('model_file'):
         # Write out metrics
         f = open(opt['model_file'] + '.' + datatype, 'a+')
         f.write(metrics + '\n')
         f.close()
 
-    return valid_report
+    return report
 
 
 def _save_best_valid(model_file, best_valid):
