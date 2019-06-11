@@ -4,6 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""Unit tests for TorchAgent."""
+
 import unittest
 from parlai.core.agents import Agent
 
@@ -55,6 +57,7 @@ class MockDict(Agent):
         pass
 
     def add_cmdline_args(self, *args, **kwargs):
+        """Add CLI args."""
         pass
 
     def txt2vec(self, txt):
@@ -73,17 +76,18 @@ class TorchAgent(TorchAgent):
 
     def train_step(self, batch):
         """Return confirmation of training."""
-        return Output([f'Training {i}!' for i in range(len(batch.text_vec))])
+        return Output(['Training {}!'.format(i) for i in range(len(batch.text_vec))])
 
     def eval_step(self, batch):
         """Return confirmation of evaluation."""
-        return Output([f'Evaluating {i}!' for i in range(len(batch.text_vec))])
+        return Output(['Evaluating {}!'.format(i) for i in range(len(batch.text_vec))])
 
 
 def get_agent(**kwargs):
-    """Return opt-initialized agent.
+    r"""
+    Return opt-initialized agent.
 
-    :param kwargs: any kwargs you want to set using parser.set_params(**kwargs)
+    :param kwargs: any kwargs you want to set using parser.set_params(\*\*kwargs)
     """
     if 'no_cuda' not in kwargs:
         kwargs['no_cuda'] = True
