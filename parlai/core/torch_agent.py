@@ -17,6 +17,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
+from abc import ABC, abstractmethod
 from collections import deque
 import json
 import random
@@ -280,9 +281,9 @@ class History(object):
             return token + ' ' + text
 
 
-class TorchAgent(Agent):
+class TorchAgent(ABC, Agent):
     """
-    A provided base agent for any model that wants to use Torch.
+    A provided abstract base agent for any model that wants to use Torch.
 
     Exists to make it easier to implement a new agent.
     Not necessary, but reduces duplicated code.
@@ -667,21 +668,43 @@ class TorchAgent(Agent):
         if self.fp16:
             self.optimizer = fp16_optimizer_wrapper(self.optimizer)
 
-        if optim_states:
-            if saved_optim_type != opt['optimizer']:
-                print('WARNING: not loading optim state since optim class '
-                      'changed.')
+        # TODO: we might want to hard reset optimizers here in the
+        # case of fine tuning. Some rudimentary experiments seemed to
+        # indicate that keeping adam weights around was desirable, so this
+        # will remain the behavior for the time being.
+        if optim_states and saved_optim_type != opt['optimizer']:
+            # we changed from adam to adamax, or sgd to adam, or similar
+            print('WARNING: not loading optim state since optim class changed.')
+        elif optim_states:
+            # check for any fp16/fp32 conversions we need to do
+            optimstate_fp16 = ('loss_scaler' in optim_states)
+            if self.fp16 and optimstate_fp16:
+                # previously trained in fp16, now we're training in fp16.
+                # ideally no action needed, but APEX broke backwards
+                # compatibility and this is the hack around it.
+                optim_states['loss_scaler'] = (
+                    self.optimizer.state_dict()['loss_scaler']
+                )
+            elif optimstate_fp16 and not self.fp16:
+                # old optimizer was fp16 but now we're doing fp32,
+                # drop the fp16 wrapper from the state_dict and just load
+                # the fp16 weights into the fp32 tensors
+                optim_states = optim_states['optimizer_state_dict']
+            elif not optimstate_fp16 and self.fp16:
+                # old optimizer was fp32, but now we're doing fp16.
+                # this is a bit clunky, but alternatives are worse
+                self.optimizer.optimizer.load_state_dict(optim_states)
+                return
             else:
-                try:
-                    self.optimizer.load_state_dict(optim_states)
-                except ValueError:
-                    print('WARNING: not loading optim state since model '
-                          'params changed.')
-                if self.use_cuda:
-                    for state in self.optimizer.state.values():
-                        for k, v in state.items():
-                            if isinstance(v, torch.Tensor):
-                                state[k] = v.cuda()
+                # previously trained in fp32, loading in fp32.
+                # no special treatment needed.
+                pass
+
+            # finally, try to actually load the optimizer state
+            try:
+                self.optimizer.load_state_dict(optim_states)
+            except ValueError:
+                print('WARNING: not loading optim state since model params changed.')
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
@@ -768,7 +791,14 @@ class TorchAgent(Agent):
             # first make sure there are no null pointers
             states = {}
 
-        if states and states.get('lr_scheduler_type') != self.opt['lr_scheduler']:
+        if (
+            # there is already an old LR scheduler saved on disk
+            states and
+            # and the old LR scheduler is different
+            states.get('lr_scheduler_type') != self.opt['lr_scheduler'] and
+            # and we're not already using a fresh scheduler
+            not hard_reset
+        ):
             # the LR scheduler changed, start things fresh
             warn_once("LR scheduler is different from saved. Starting fresh!")
             hard_reset = True
@@ -1305,6 +1335,7 @@ class TorchAgent(Agent):
             return batch_reply[self.batch_idx].get('text')
         return None
 
+<<<<<<< HEAD
     def _save_history(self, observations, replies):
         """Save the model replies to the history."""
         # make sure data structure is set up
@@ -1369,7 +1400,8 @@ class TorchAgent(Agent):
             else:
                 states['model'] = self.model.state_dict()
 
-        if hasattr(self, 'optimizer'):  # save optimizer params
+        if hasattr(self, 'optimizer'):
+            # save optimizer params
             states['optimizer'] = self.optimizer.state_dict()
             states['optimizer_type'] = self.opt['optimizer']
 
@@ -1482,21 +1514,18 @@ class TorchAgent(Agent):
 
         self.match_batch(batch_reply, batch.valid_indices, output)
         self.replies['batch_reply'] = batch_reply
-        self._save_history(observations, batch_reply)  # save model predictions
 
         return batch_reply
 
+    @abstractmethod
     def train_step(self, batch):
         """[Abstract] Process one batch with training labels."""
-        raise NotImplementedError(
-            'Abstract class: user must implement train_step'
-        )
+        pass
 
+    @abstractmethod
     def eval_step(self, batch):
         """[Abstract] Process one batch but do not train on it."""
-        raise NotImplementedError(
-            'Abstract class: user must implement eval_step'
-        )
+        pass
 
     def backward(self, loss):
         """
@@ -1572,3 +1601,21 @@ class TorchAgent(Agent):
             return
 
         self.optimizer.zero_grad()
+
+    def _total_parameters(self):
+        """
+        Compute the total number of parameters in the model.
+
+        :return:
+            total number of parameters in the model.
+        """
+        return sum(p.numel() for p in self.model.parameters())
+
+    def _trainable_parameters(self):
+        """
+        Compute the total number of trainable parameters in the model.
+
+        :return:
+            total number of trainable parameters in the model.
+        """
+        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)

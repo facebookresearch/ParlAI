@@ -16,4 +16,4 @@ Any other information or context you would like to provide.
 
 **Data tests (if applicable)**
 If you added a new teacher, you will be asked to run
-`python setup.py -s tests.suites.datatests`. Please paste this log here.
+`python setup.py test -s tests.suites.datatests`. Please paste this log here.

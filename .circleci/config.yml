@@ -42,6 +42,7 @@ installdeps: &installdeps
     name: Installs basic dependencies
     command: |
       python setup.py develop
+      python -c "import nltk; nltk.download('punkt')"
 
 installtorchgpu: &installtorchgpu
   run:
