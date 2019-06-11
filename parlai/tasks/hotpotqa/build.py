@@ -9,9 +9,10 @@ import parlai.core.build_data as build_data
 import os
 import json
 
-TRAIN_FILENAME = 'hotpot_train_v1.1.json'
-DEV_DISTRACTOR_FILENAME = 'hotpot_dev_distractor_v1.json'
-DEV_FULLWIKI_FILENAME = 'hotpot_dev_fullwiki_v1.json'
+VERSION = '1'
+TRAIN_FILENAME = f'hotpot_train_v{VERSION}.1.json'
+DEV_DISTRACTOR_FILENAME = f'hotpot_dev_distractor_v{VERSION}.json'
+DEV_FULLWIKI_FILENAME = f'hotpot_dev_fullwiki_v{VERSION}.json'
 
 URL = 'http://curtis.ml.cmu.edu/datasets/hotpot/'
 
@@ -48,7 +49,7 @@ def make_parlai_format(outpath, dtype, data):
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'HotpotQA')
 
-    if not build_data.built(dpath):
+    if not build_data.built(dpath, version_string=VERSION):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
@@ -73,4 +74,4 @@ def build(opt):
             make_parlai_format(dpath, 'valid_fullwiki', data)
 
         # Mark the data as built.
-        build_data.mark_done(dpath)
+        build_data.mark_done(dpath, version_string=VERSION)

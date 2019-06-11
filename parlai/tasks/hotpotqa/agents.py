@@ -11,22 +11,41 @@ from .build import build
 import copy
 import os
 
+'''All teachers have a version with and without label candidates. Each teacher
+defaults to using a dataset with label candidates. To use a dataset without
+label candidates, specify this using the task flag:
 
-def _path(opt):
+--task hotspotqa:{TEACHER_NAME}
+
+where TEACHER_NAME is distractor or fullwiki (default).
+'''
+
+
+def _path(opt, teacher_name):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
-    if dt == 'test_distractor':
+    if dt == 'test':
         warn_once('WARNING: Test set not included. Setting datatype to valid.')
-        dt = 'valid_distractor'
-    if dt == 'test_fullwiki':
-        warn_once('WARNING: Test set not included. Setting datatype to valid.')
-        dt = 'valid_fullwiki'
+        dt = 'valid'
+    if dt == 'valid':
+        dt = dt + '_' + teacher_name
     return os.path.join(opt['datapath'], 'HotpotQA', dt + '.txt')
 
 
-class DefaultTeacher(ParlAIDialogTeacher):
+class DistractorTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['parlaidialogteacher_datafile'] = _path(opt)
+        opt['parlaidialogteacher_datafile'] = _path(opt, "distractor")
         super().__init__(opt, shared)
+
+
+class FullwikiTeacher(ParlAIDialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt['parlaidialogteacher_datafile'] = _path(opt, "fullwiki")
+        super().__init__(opt, shared)
+
+
+class DefaultTeacher(FullwikiTeacher):
+    pass
