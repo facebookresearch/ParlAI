@@ -650,15 +650,16 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent(history_size=3, person_tokens=True)
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
-        self.assertEqual(text, f'{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(text, '{} I am Groot.'.format(agent.P1_TOKEN))
 
         # second exchange, history should still contain the tokens
         agent.history.update_history(obs, add_next='I am Groot?')
         text = agent.history.get_history_str()
-        self.assertEqual(text,
-                         f'{agent.P1_TOKEN} I am Groot.\n'
-                         f'{agent.P2_TOKEN} I am Groot?\n'
-                         f'{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(
+            text,
+            '{} I am Groot.\n{} I am Groot?\n{} I am Groot.'
+            .format(agent.P1_TOKEN, agent.P2_TOKEN, agent.P1_TOKEN)
+        )
 
         # now add add_p1_after_newln
         agent = get_agent(history_size=3, person_tokens=True,
@@ -667,17 +668,19 @@ class TestTorchAgent(unittest.TestCase):
         ctx_obs['text'] = 'Groot is Groot.\nI am Groot.'
         agent.history.update_history(ctx_obs)
         text = agent.history.get_history_str()
-        self.assertEqual(text,
-                         f'Groot is Groot.\n{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(
+            text,
+            'Groot is Groot.\n{} I am Groot.'.format(agent.P1_TOKEN)
+        )
 
         # second exchange, history should still contain context text
         agent.history.update_history(obs, add_next='I am Groot?')
         text = agent.history.get_history_str()
-        self.assertEqual(text,
-                         'Groot is Groot.\n'
-                         f'{agent.P1_TOKEN} I am Groot.\n'
-                         f'{agent.P2_TOKEN} I am Groot?\n'
-                         f'{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(
+            text,
+            'Groot is Groot.\n{} I am Groot.\n{} I am Groot?\n{} I am Groot.'
+            .format(agent.P1_TOKEN, agent.P2_TOKEN, agent.P1_TOKEN)
+        )
 
         # test history vecs
         agent.history.reset()
@@ -755,17 +758,17 @@ class TestTorchAgent(unittest.TestCase):
         """Make sure agent stores and returns observation."""
         agent = get_agent()
         obs = {
-            'text': 'I\'ll be back.',
-            'labels': ['I\'m back.'],
+            'text': "I'll be back.",
+            'labels': ["I'm back."],
             'episode_done': True
         }
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
         self.assertIsNotNone(agent.observation)
-        self.assertEqual(out['text'], 'I\'ll be back.')
+        self.assertEqual(out['text'], "I'll be back.")
         # episode was done so shouldn't remember history
         out = agent.observe(obs.copy())
-        self.assertEqual(out['text'], 'I\'ll be back.')
+        self.assertEqual(out['text'], "I'll be back.")
         self.assertTrue('text_vec' in out, 'Text should be vectorized.')
 
         # now try with episode not done
@@ -773,11 +776,10 @@ class TestTorchAgent(unittest.TestCase):
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
         self.assertIsNotNone(agent.observation)
-        self.assertEqual(out['text'], 'I\'ll be back.')
+        self.assertEqual(out['text'], "I'll be back.")
         # should remember history
         out = agent.observe(obs.copy())
-        self.assertEqual(out['text'],
-                         'I\'ll be back.\nI\'m back.\nI\'ll be back.')
+        self.assertEqual(out['text'], "I'll be back.\nI'm back.\nI'll be back.")
 
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batch_act(self):
@@ -785,7 +787,7 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent()
 
         obs_labs = [
-            {'text': 'It\'s only a flesh wound.',
+            {'text': "It's only a flesh wound.",
              'labels': ['Yield!']},
             {'text': 'The needs of the many outweigh...',
              'labels': ['The needs of the few.']},
@@ -799,10 +801,10 @@ class TestTorchAgent(unittest.TestCase):
             obs_labs_vecs.append(agent.vectorize(o, agent.history))
         reply = agent.batch_act(obs_labs_vecs)
         for i in range(len(obs_labs_vecs)):
-            self.assertEqual(reply[i]['text'], f'Training {i}!')
+            self.assertEqual(reply[i]['text'], 'Training {}!'.format(i))
 
         obs_elabs = [
-            {'text': 'It\'s only a flesh wound.',
+            {'text': "It's only a flesh wound.",
              'eval_labels': ['Yield!']},
             {'text': 'The needs of the many outweigh...',
              'eval_labels': ['The needs of the few.']},
@@ -816,7 +818,7 @@ class TestTorchAgent(unittest.TestCase):
             obs_elabs_vecs.append(agent.vectorize(o, agent.history))
         reply = agent.batch_act(obs_elabs_vecs)
         for i in range(len(obs_elabs_vecs)):
-            self.assertEqual(reply[i]['text'], f'Evaluating {i}!')
+            self.assertEqual(reply[i]['text'], 'Evaluating {}!'.format(i))
 
 
 if __name__ == '__main__':
