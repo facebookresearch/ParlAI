@@ -10,9 +10,9 @@ import os
 import json
 
 VERSION = '1'
-TRAIN_FILENAME = f'hotpot_train_v{VERSION}.1.json'
-DEV_DISTRACTOR_FILENAME = f'hotpot_dev_distractor_v{VERSION}.json'
-DEV_FULLWIKI_FILENAME = f'hotpot_dev_fullwiki_v{VERSION}.json'
+TRAIN_FILENAME = 'hotpot_train_v{}.1.json'.format(VERSION)
+DEV_DISTRACTOR_FILENAME = 'hotpot_dev_distractor_v{}.json'.format(VERSION)
+DEV_FULLWIKI_FILENAME = 'hotpot_dev_fullwiki_v{}.json'.format(VERSION)
 
 URL = 'http://curtis.ml.cmu.edu/datasets/hotpot/'
 
@@ -27,7 +27,7 @@ def _handle_data_point(data_point):
     context_question_txt = ""
     for [title, sentences_list] in data_point['context']:
         sentences = '\\n'.join(sentences_list)
-        context_question_txt += f'{title}\\n{sentences}\\n\\n'
+        context_question_txt += '{}\\n{}\\n\\n'.format(title,sentences)
 
     context_question_txt += data_point['question']
 
