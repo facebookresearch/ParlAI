@@ -361,6 +361,7 @@ def compare_init_model_opts(opt, curr_opt):
     """Print loud warning when `init_model` opts differ from previous configuration."""
     if opt.get('init_model') is None:
         return
+    opt['init_model'] = modelzoo_path(opt['datapath'], opt['init_model'])
     optfile = opt['init_model'] + '.opt'
     if not os.path.isfile(optfile):
         return

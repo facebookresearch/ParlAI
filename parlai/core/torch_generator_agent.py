@@ -356,6 +356,9 @@ class TorchGeneratorAgent(TorchAgent):
 
             self.build_criterion()
             self.build_model()
+            print("Total parameters: {}".format(self._total_parameters()))
+            print("Trainable parameters:  {}".format(self._trainable_parameters()))
+
             if self.fp16:
                 self.model = self.model.half()
 
