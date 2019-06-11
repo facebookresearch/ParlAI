@@ -110,10 +110,23 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu35
+      - <<: *installtorchcpu36
       - run:
           name: Data tests
           command: python setup.py test -s tests.suites.datatests -v
+
+  unittests_35:
+    <<: *standard_cpu35
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu35
+      - run:
+          name: Unit tests (py35)
+          command: python setup.py test -s tests.suites.unittests -v
 
   unittests_36:
     <<: *standard_cpu36
@@ -126,19 +139,6 @@ jobs:
       - <<: *installtorchcpu36
       - run:
           name: Unit tests (py36)
-          command: python setup.py test -s tests.suites.unittests -v
-
-  unittests_35:
-    <<: *standard_cpu35
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchcpu36
-      - run:
-          name: Unit tests (py35)
           command: python setup.py test -s tests.suites.unittests -v
 
   unittests_37:

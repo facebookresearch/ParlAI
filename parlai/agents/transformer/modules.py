@@ -733,8 +733,10 @@ class MultiHeadAttention(nn.Module):
         # Input is [B, query_len, dim]
         # Mask is [B, key_len] (selfattn) or [B, key_len, key_len] (enc attn)
         batch_size, query_len, dim = query.size()
-        assert dim == self.dim, \
-            f'Dimensions do not match: {dim} query vs {self.dim} configured'
+        assert dim == self.dim, (
+            'Dimensions do not match: {} query vs {} configured'
+            .format(dim, self.dim)
+        )
         assert mask is not None, 'Mask is None, please specify a mask'
         n_heads = self.n_heads
         dim_per_head = dim // n_heads
