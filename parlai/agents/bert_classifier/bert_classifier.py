@@ -9,8 +9,10 @@ from parlai.agents.bert_ranker.helpers import (
     get_bert_optimizer,
     MODEL_PATH
 )
+from parlai.core.agents import _load_opt_file
 from parlai.core.torch_agent import History
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
+from parlai.core.utils import warn_once
 from parlai.zoo.bert.build import download
 
 from collections import deque
@@ -53,6 +55,7 @@ class BertClassifierAgent(TorchClassifierAgent):
         self.pretrained_path = os.path.join(opt['datapath'], 'models',
                                             'bert_models', MODEL_PATH)
         opt['pretrained_path'] = self.pretrained_path
+        self._upgrade_opt(opt)
         self.add_cls_token = opt.get('add_cls_token', True)
         self.sep_last_utt = opt.get('sep_last_utt', False)
         super().__init__(opt, shared)
@@ -84,6 +87,19 @@ class BertClassifierAgent(TorchClassifierAgent):
     @staticmethod
     def dictionary_class():
         return BertDictionaryAgent
+
+    def _upgrade_opt(self, opt):
+        model_opt = opt['model_file'] + '.opt'
+        if not os.path.isfile(model_opt):
+            return
+        old_opt = _load_opt_file(model_opt)
+        if 'add_cls_token' not in old_opt:
+            # old model, make this default to False
+            warn_once(
+                'Old model: overriding `add_cls_token` to False.'
+            )
+            opt['add_cls_token'] = False
+        return
 
     def build_model(self):
         num_classes = len(self.class_list)
