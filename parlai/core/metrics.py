@@ -169,11 +169,6 @@ def aggregate_metrics(reporters):
     if num_tasks > 0:
         for k in sums.keys():
             m[k] = round_sigfigs(sums[k] / num_tasks, 4)
-    m['exs'] = total
-    m['accuracy'] = 0
-    if num_tasks > 0:
-        for k in sums.keys():
-            m[k] = round_sigfigs(sums[k] / num_tasks, 4)
     return m
 
 
