@@ -49,13 +49,13 @@ def _eval_single_world(opt, agent, task):
     task_opt['task'] = task
     world = create_task(task_opt, agent)  # create worlds for tasks
 
-    # logging
+    # set up logging
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
         log_every_n_secs = float('inf')
     log_time = TimeLogger()
 
-    # Show some example dialogs:
+    # max number of examples to evaluate
     max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
     cnt = 0
 
@@ -63,6 +63,7 @@ def _eval_single_world(opt, agent, task):
         cnt += opt.get('batchsize', 1)
         world.parley()
         if opt['display_examples']:
+            # display examples
             print(world.display() + '\n~~')
         if log_time.time() > log_every_n_secs:
             report = world.report()
