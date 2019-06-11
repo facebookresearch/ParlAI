@@ -1335,42 +1335,6 @@ class TorchAgent(ABC, Agent):
             return batch_reply[self.batch_idx].get('text')
         return None
 
-    def _save_history(self, observations, replies):
-        """Save the model replies to the history."""
-        # make sure data structure is set up
-        if 'predictions' not in self.replies:
-            self.replies['predictions'] = {}
-        if 'episode_ends' not in self.replies:
-            self.replies['episode_ends'] = {}
-        # shorthand
-        preds = self.replies['predictions']
-        ends = self.replies['episode_ends']
-        for i, obs in enumerate(observations):
-            # iterate through batch, saving replies
-            if i not in preds:
-                preds[i] = []
-            if ends.get(i):
-                # check whether *last* example was the end of an episode
-                preds[i].clear()
-            ends[i] = obs.get('episode_done', True)
-            preds[i].append(replies[i].get('text'))
-
-    def reply_history(self):
-        """
-        Get the model's predicted reply history within this episode.
-
-        :param batch:
-            (default False) return the reply history for every row in the
-            batch, otherwise will return just for this example.
-
-        :return:
-            list of lists of strings, each of the past model replies in in the
-            current episode. will be None wherever model did not reply.
-        """
-        # make sure in batch order
-        preds = sorted((b, p) for b, p in self.replies['predictions'].items())
-        return [p for b, p in preds]
-
     def observe(self, observation):
         """
         Process incoming message in preparation for producing a response.
@@ -1513,7 +1477,6 @@ class TorchAgent(ABC, Agent):
 
         self.match_batch(batch_reply, batch.valid_indices, output)
         self.replies['batch_reply'] = batch_reply
-        self._save_history(observations, batch_reply)  # save model predictions
 
         return batch_reply
 
