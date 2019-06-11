@@ -200,7 +200,10 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
-        argparser.add_argument('--special-features', type='bool', default=False)
+        argparser.add_argument(
+            '--special-features',
+            default='none',
+        )
         cls.dictionary_class().add_cmdline_args(argparser)
 
         super(TransformerGeneratorAgent, cls).add_cmdline_args(argparser)
@@ -219,9 +222,6 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
     def _set_text_vec(self, obs, history, truncate):
         obs = super()._set_text_vec(obs, history, truncate)
         if 'text' not in obs:
-            return obs
-
-        if not self.opt['special_features']:
             return obs
 
         if 'feats_vec' not in obs:
@@ -245,13 +245,26 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
             batch['segments_vec'] = None
             return batch
 
-        positions, *segments = zip(*(ex['feats_vec'] for ex in batch.observations))
-        batch['positions_vec'], _ = padded_tensor(
-            positions, 0, self.use_cuda, fp16friendly=self.opt.get('fp16')
-        )
-        batch['segments_vec'] = padded_3d(
-            segments, 0, self.use_cuda, fp16friendly=self.opt.get('fp16')
-        ).transpose(0, 1)
+        segments = list(zip(*(ex['feats_vec'] for ex in batch.observations)))
+
+        if self.opt['special_features'] == 'none':
+            batch['segments_vec'] = None
+        else:
+            selection = []
+            segments = padded_3d(
+                segments, 0, self.use_cuda, fp16friendly=self.opt.get('fp16')
+            )
+            if 'pos' in self.opt['special_features']:
+                selection.append(0)
+            if 'turn' in self.opt['special_features']:
+                selection.append(1)
+            if 'speaker' in self.opt['special_features']:
+                # only use turn
+                selection.append(2)
+            segments = segments[selection]
+            segments = segments.transpose(0, 1)
+            batch['segments_vec'] = segments
+
         return batch
 
     def _dummy_batch(self, batchsize, maxlen):
@@ -261,13 +274,18 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         """
         batch = super()._dummy_batch(batchsize, maxlen)
 
-        if self.opt['special_features']:
-            batch['positions_vec'] = torch.ones(batchsize, maxlen).long().cuda()
-            batch['segments_vec'] = torch.ones(batchsize, 2, maxlen).long().cuda()
-        else:
-            batch['positions_vec'] = None
+        num_features = 0
+        if 'pos' in self.opt['special_features']:
+            num_features += 1
+        if 'speaker' in self.opt['special_features']:
+            num_features += 1
+        if 'turn' in self.opt['special_features']:
+            num_features += 1
+        if num_features == 0:
             batch['segments_vec'] = None
+        else:
+            batch['segments_vec'] = torch.ones(batchsize, num_features, maxlen).long().cuda()
         return batch
 
     def _model_input(self, batch):
-        return (batch.text_vec, batch.positions_vec, batch.segments_vec, )
+        return (batch.text_vec, None, batch.segments_vec, )
