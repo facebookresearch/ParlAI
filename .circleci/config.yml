@@ -3,9 +3,17 @@ version: 2
 # -------------------------------------------------------------------------------------
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
-standard_cpu: &standard_cpu
+standard_cpu37: &standard_cpu37
+  docker:
+    - image: circleci/python:3.7.1
+
+standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.5-node
+
+standard_cpu35: &standard_cpu35
+  docker:
+    - image: circleci/python:3.5.7
 
 gpu: &gpu
   environment:
@@ -31,11 +39,11 @@ setup: &setup
     name: Sets up the virtual environment
     command: |
       mkdir -p ~/venv
-      virtualenv --python=python3.6 ~/venv
+      virtualenv --python=python3 ~/venv
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
+      python --version
       pip3 install --upgrade --progress-bar off pip
-
 
 installdeps: &installdeps
   run:
@@ -53,11 +61,23 @@ installtorchgpu: &installtorchgpu
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
 
-installtorchcpu: &installtorchcpu
+installtorchcpu35: &installtorchcpu35
+  run:
+    name: Install torch CPU and dependencies
+    command: |
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp35-cp35m-linux_x86_64.whl
+
+installtorchcpu36: &installtorchcpu36
   run:
     name: Install torch CPU and dependencies
     command: |
       pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+
+installtorchcpu37: &installtorchcpu37
+  run:
+    name: Install torch CPU and dependencies
+    command: |
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp37-cp37m-linux_x86_64.whl
 
 setupcuda: &setupcuda
   run:
@@ -84,33 +104,59 @@ buildwebsite: &buildwebsite
 # -------------------------------------------------------------------------------------
 jobs:
   datatests:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu
+      - <<: *installtorchcpu36
       - run:
           name: Data tests
           command: python setup.py test -s tests.suites.datatests -v
 
-  unittests:
-    <<: *standard_cpu
+  unittests_35:
+    <<: *standard_cpu35
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu
+      - <<: *installtorchcpu35
       - run:
-          name: Unit tests
+          name: Unit tests (py35)
+          command: python setup.py test -s tests.suites.unittests -v
+
+  unittests_36:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu36
+      - run:
+          name: Unit tests (py36)
+          command: python setup.py test -s tests.suites.unittests -v
+
+  unittests_37:
+    <<: *standard_cpu37
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu37
+      - run:
+          name: Unit tests (py37)
           command: python setup.py test -s tests.suites.unittests -v
 
   lint:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -145,7 +191,7 @@ jobs:
           command: python setup.py test -s tests.suites.nightly_gpu -v
 
   mturk_tests:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -157,25 +203,25 @@ jobs:
           command: python setup.py test -s tests.suites.mturk -v
 
   build_website:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu
+      - <<: *installtorchcpu36
       - <<: *buildwebsite
 
   deploy_website:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu
+      - <<: *installtorchcpu36
       - <<: *buildwebsite
       - run:
           working_directory: ~/ParlAI/
@@ -187,7 +233,7 @@ jobs:
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
 
   test_website:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/
     steps:
       - run:
@@ -207,7 +253,7 @@ jobs:
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 
   check_extra_tests:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -239,7 +285,9 @@ workflows:
   commit:
     jobs:
       - lint
-      - unittests
+      - unittests_37
+      - unittests_36
+      - unittests_35
       - mturk_tests:
           filters:
             branches:
@@ -268,7 +316,9 @@ workflows:
               only:
                 - master
     jobs:
-      - unittests
+      - unittests_35
+      - unittests_36
+      - unittests_37
       - mturk_tests
       - nightly_gpu_tests
       - test_website
