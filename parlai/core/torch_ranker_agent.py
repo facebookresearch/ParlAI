@@ -53,7 +53,7 @@ class TorchRankerAgent(TorchAgent):
             help='The source of candidates during evaluation (defaults to the same'
                  'value as --candidates if no flag is given)')
         agent.add_argument(
-            '--repeat_blocking_heuristic', type='bool', default=True,
+            '--repeat-blocking-heuristic', type='bool', default=True,
             help='Block repeating previous utterances. '
             'Helpful for many models that score repeats highly, so switched '
             'on by default.')
@@ -318,7 +318,7 @@ class TorchRankerAgent(TorchAgent):
             cand_preds_generator = (cand_list[rank] for rank in ordering)
             cand_preds.append(list(islice(cand_preds_generator, max_preds)))
 
-        if (self.opt.get('repeat_blocking_heuristic', False) and
+        if (self.opt.get('repeat_blocking_heuristic', True) and
             self.opt.get('eval_candidates') == 'fixed'):
             cand_preds = self.block_repeats(cand_preds)
 
