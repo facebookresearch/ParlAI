@@ -1,4 +1,5 @@
 ## News
+2019-05-31: The [Personality-Captions project page](http://parl.ai/projects/personality_captions/) is updated with pretrained models, specialized model code, and an interactive demo.
 
 2019-06-12: Added [HotpotQA](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/quac) as another dataset.
 
