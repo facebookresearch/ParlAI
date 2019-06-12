@@ -80,6 +80,25 @@ def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
 def gelu(tensor):
     return 0.5 * tensor * (1.0 + torch.erf(tensor / math.sqrt(2.0)))
 
+def get_n_positions_from_options(opt):
+    if opt is None:
+        return 1024
+    n_positions = 1024
+    if opt.get('n_positions'):
+        # if the number of positions is explicitly provided, use that
+        n_positions = opt['n_positions']
+    else:
+        # else, use the worst case from truncate
+        n_positions = max(
+            opt.get('truncate') or  0,
+            opt.get('text_truncate') or 0,
+            opt.get('label_truncate') or 0
+        )
+        if n_positions == 0:
+            n_positions = 1024
+    return n_positions
+
+
 
 class TransformerMemNetModel(nn.Module):
     """Model which takes context, memories, candidates and encodes them"""
@@ -96,19 +115,7 @@ class TransformerMemNetModel(nn.Module):
         if not opt.get('learn_embeddings'):
             self.embeddings.weight.requires_grad = False
 
-        if opt.get('n_positions'):
-            # if the number of positions is explicitly provided, use that
-            n_positions = opt['n_positions']
-        else:
-            # else, use the worst case from truncate
-            n_positions = max(
-                opt.get('truncate') or 0,
-                opt.get('text_truncate') or 0,
-                opt.get('label_truncate') or 0
-            )
-            if n_positions == 0:
-                # default to 1024
-                n_positions = 1024
+        n_positions = get_n_positions_from_options(opt)
 
         if n_positions < 0:
             raise ValueError('n_positions must be positive')
