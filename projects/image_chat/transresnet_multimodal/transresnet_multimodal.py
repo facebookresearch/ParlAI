@@ -206,7 +206,7 @@ class TransresnetMultimodalAgent(TransresnetAgent):
             dialogue_histories,
             candidates,
             candidates_encoded=candidates_encoded,
-            k=-1,
+            k=-1 if self.fixed_cands is None else 100,
             batchsize=len(valid_obs)
         )
         loss = -1

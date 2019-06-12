@@ -353,7 +353,9 @@ class TransresnetMultimodalModel(TransresnetModel):
             _, index_top = torch.topk(scores, k, dim=0)
         else:
             _, index_top = torch.topk(scores, scores.size(0), dim=0)
-        return [candidates[idx][idx2] for idx2 in index_top.unsqueeze(1)]
+        return [candidates[idx][idx2] if not one_cand_set
+                else candidates[idx2]
+                for idx2 in index_top.unsqueeze(1)]
 
     def get_loss(self, total_encoded, labels_encoded):
         """
