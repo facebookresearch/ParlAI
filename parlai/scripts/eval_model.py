@@ -77,6 +77,7 @@ def _eval_single_world(opt, agent, task):
                                         report)
             print(text)
 
+    world.reset()
     report = world.report()
     return report
 
