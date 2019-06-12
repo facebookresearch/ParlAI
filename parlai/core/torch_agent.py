@@ -1040,7 +1040,8 @@ class TorchAgent(ABC, Agent):
         else:
             return vec[:truncate]
 
-    def _set_text_vec(self, obs, history, truncate):
+    def _set_text_vec(self, obs, history, truncate, add_start=False,
+                      add_end=False):
         """
         Set the 'text_vec' field in the observation.
 
@@ -1053,7 +1054,9 @@ class TorchAgent(ABC, Agent):
             # text vec is not precomputed, so we set it using the history
             obs['text'] = history.get_history_str()
             if obs['text'] is not None:
-                obs['text_vec'] = history.get_history_vec()
+                vec = history.get_history_vec()
+                vec = self._add_start_end_tokens(vec, add_start, add_end)
+                obs['text_vec'] = vec
 
         # check truncation
         if 'text_vec' in obs:
