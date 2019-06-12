@@ -1171,6 +1171,7 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         # Run rest of tests
 
         # Test message send from agent
+        acked_packet = None
         test_message_text_1 = 'test_message_text_1'
         msg_id = self.agent1.send_message(test_message_text_1)
         self.assertEqualBy(lambda: self.message_packet is None, False, 8)

@@ -42,7 +42,7 @@ This module also provides a utility method:
 """
 
 from parlai.core.build_data import modelzoo_path
-from parlai.core.utils import warn_once
+from parlai.core.utils import Opt, warn_once
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
@@ -361,6 +361,7 @@ def compare_init_model_opts(opt, curr_opt):
     """Print loud warning when `init_model` opts differ from previous configuration."""
     if opt.get('init_model') is None:
         return
+    opt['init_model'] = modelzoo_path(opt['datapath'], opt['init_model'])
     optfile = opt['init_model'] + '.opt'
     if not os.path.isfile(optfile):
         return
@@ -417,7 +418,7 @@ def _load_opt_file(optfile):
         # oops it's pickled
         with open(optfile, 'rb') as handle:
             opt = pickle.load(handle)
-    return opt
+    return Opt(opt)
 
 
 def load_agent_module(opt):

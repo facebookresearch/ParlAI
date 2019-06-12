@@ -211,4 +211,18 @@ model_list = [
         "task": "projects.controllable_dialogue.tasks.agents",
         "description": ("Generic conversational model trained on the twitter task"),
     },
+    {
+        "title": "Personality-Captions pretrained model",
+        "id": "personality_captions",
+        "path": "models:personality_captions/transresnet",
+        "agent": "projects.personality_captions.transresnet.transresnet:TransresnetAgent",  # noqa: E501
+        "task": "personality_captions",
+        "description": ("Transresnet Model pretrained on the Personality-Captions task"),
+        "example": (
+            "python examples/eval_model.py -t personality_captions "
+            "-mf models:personality_captions/transresnet/model --num-test-labels 5 -dt test"
+        ),
+        "result": "{'exs': 10000, 'accuracy': 0.5113, 'f1': 0.5951, 'hits@1': 0.511, 'hits@5': 0.816, "  # noqa: E501
+        "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}"  # noqa: E501
+    },
 ]

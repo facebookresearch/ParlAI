@@ -45,6 +45,7 @@ class MemnnAgent(TorchRankerAgent):
         argparser.set_defaults(
             split_lines=True,
             add_p1_after_newln=True,
+            encode_candidate_vecs=True,
         )
         TorchRankerAgent.add_cmdline_args(argparser)
         MemnnAgent.dictionary_class().add_cmdline_args(argparser)
@@ -86,13 +87,33 @@ class MemnnAgent(TorchRankerAgent):
         self.model = MemNN(len(self.dict), self.opt['embedding_size'],
                            padding_idx=self.NULL_IDX, **kwargs)
 
+    def _score(self, output, cands):
+        if cands.dim() == 2:
+            return torch.matmul(output, cands.t())
+        elif cands.dim() == 3:
+            return torch.bmm(output.unsqueeze(1),
+                             cands.transpose(1, 2)).squeeze(1)
+        else:
+            raise RuntimeError('Unexpected candidate dimensions {}'
+                               ''.format(cands.dim()))
+
+    def encode_candidates(self, padded_cands):
+        return self.model.answer_embedder(padded_cands)
+
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         mems = self._build_mems(batch.memory_vecs)
         # Check for rows that have no non-null tokens
         pad_mask = None
         if mems is not None:
             pad_mask = (mems != self.NULL_IDX).sum(dim=-1) == 0
-        scores = self.model(batch.text_vec, mems, cand_vecs, pad_mask)
+
+        if cand_encs is not None:
+            state, _ = self.model(batch.text_vec, mems, None, pad_mask)
+        else:
+            state, cand_encs = self.model(batch.text_vec, mems, cand_vecs,
+                                          pad_mask)
+        scores = self._score(state, cand_encs)
+
         return scores
 
     @lru_cache(maxsize=None)  # bounded by opt['memsize'], cache string concats

@@ -10,13 +10,14 @@ Torch Ranker Agents provide functionality for building ranking models.
 See the TorchRankerAgent tutorial for examples.
 """
 
+from abc import abstractmethod
+from itertools import islice
 import os
 from tqdm import tqdm
 
 import torch
 from torch import nn
 
-from itertools import islice
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
@@ -34,8 +35,6 @@ class TorchRankerAgent(TorchAgent):
     - Computing hits@1, hits@5, mean reciprical rank (MRR), and other metrics.
     - Caching representations for fast runtime when deploying models to production.
     """
-
-    # TODO: mark methods as abstract
 
     @classmethod
     def add_cmdline_args(cls, argparser):
@@ -177,6 +176,7 @@ class TorchRankerAgent(TorchAgent):
                 self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
             )
 
+    @abstractmethod
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
         Given a batch and candidate set, return scores (for ranking).
@@ -190,15 +190,20 @@ class TorchRankerAgent(TorchAgent):
             where we cache the candidate encodings), you do not need to call
             self.model on cand_vecs
         """
-        raise NotImplementedError('Abstract class: user must implement score()')
+        pass
 
+    @abstractmethod
     def build_model(self):
         """Build a new model (implemented by children classes)."""
-        # TODO: mark as abstract
-        raise NotImplementedError('Abstract class: user must implement build_model()')
+        pass
 
     def _get_batch_train_metrics(self, scores):
-        # TODO: document
+        """
+        Get fast metrics calculations if we train with batch candidates.
+
+        Specifically, calculate accuracy ('train_accuracy'), average rank,
+        and mean reciprocal rank.
+        """
         batchsize = scores.size(0)
         # get accuracy
         targets = scores.new_empty(batchsize).long()
@@ -213,7 +218,7 @@ class TorchRankerAgent(TorchAgent):
         self.metrics['mrr'] += torch.sum(mrr).item()
 
     def _get_train_preds(self, scores, label_inds, cands, cand_vecs):
-        # TODO: document
+        """Return predictions from training."""
         # TODO: speed these calculations up
         batchsize = scores.size(0)
         _, ranks = scores.sort(1, descending=True)
@@ -230,13 +235,15 @@ class TorchRankerAgent(TorchAgent):
         return Output(preds)
 
     def is_valid(self, obs):
-        """Override from TorchAgent."""
+        """
+        Override from TorchAgent.
+
+        Check to see if label candidates contain the label.
+        """
         if not self.opt.get('ignore_bad_candidates', False):
             return super().is_valid(obs)
 
-        if 'text_vec' not in obs and 'image' not in obs:
-            # TODO: this should really be a call to super, i.e.
-            # if not super().is_valid(obs): return False
+        if not super().is_valid(obs):
             return False
 
         # skip examples for which the set of label candidates do not
@@ -777,15 +784,20 @@ class TorchRankerAgent(TorchAgent):
         :param padded_cands:
             The padded candidates.
         """
-        # TODO: mark as abstract.
-        # TODO: describe input type and return type.
         raise NotImplementedError(
-            'Abstract class: user must implement encode_candidates()'
+            'Abstract method: user must implement encode_candidates(). '
+            'If your agent encodes candidates independently '
+            'from context, you can get performance gains with fixed cands by '
+            'implementing this function and running with the flag '
+            '--encode-candidate-vecs True.'
         )
 
     def _make_candidate_encs(self, vecs, path):
-        """Make candidate encodings."""
-        # TODO: document better
+        """
+        Encode candidates from candidate vectors.
+
+        Requires encode_candidates() to be implemented.
+        """
 
         cand_encs = []
         vec_batches = [vecs[i: i + 256] for i in range(0, len(vecs), 256)]
