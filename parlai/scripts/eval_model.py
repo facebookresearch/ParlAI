@@ -19,8 +19,9 @@ Examples
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
+from parlai.core.metrics import aggregate_task_reports
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger, round_sigfigs
+from parlai.core.utils import TimeLogger
 
 import random
 
@@ -33,7 +34,12 @@ def setup_args(parser=None):
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.add_argument('--metrics', type=str, default="all",
+    parser.add_argument('-micro', '--aggregate-micro', type='bool',
+                        default=True,
+                        help='If multitasking, average metrics over the '
+                             'number of examples. If false, averages over the '
+                             'number of tasks.')
+    parser.add_argument('--metrics', type=str, default='all',
                         help='list of metrics to show/compute, e.g. '
                              'ppl, f1, accuracy, hits@1.'
                              'If `all` is specified [default] all are shown.')
@@ -75,25 +81,6 @@ def _eval_single_world(opt, agent, task):
     return report
 
 
-def _aggregate_reports(reports, tasks):
-    if len(reports) == 1:
-        # singular task
-        return reports[0]
-    # multiple tasks, aggregate metrics
-    agent_metrics = {}
-    total_report = {'tasks': {}}
-    for i, report in enumerate(reports):
-        total_report['tasks'][tasks[i]] = report
-        for metric, val in report.items():
-            agent_metrics.setdefault(metric, []).append(val)
-    total_report['tasks']['all'] = {}
-    for metric, vals in agent_metrics.items():
-        total_report['tasks']['all'][metric] = round_sigfigs(
-            sum(vals) / len(vals)
-        )
-    return total_report
-
-
 def eval_model(opt, print_parser=None):
     """Evaluates a model.
 
@@ -117,7 +104,8 @@ def eval_model(opt, print_parser=None):
         task_report = _eval_single_world(opt, agent, task)
         reports.append(task_report)
 
-    report = _aggregate_reports(reports, tasks)
+    report = aggregate_task_reports(reports, tasks,
+                                    micro=opt.get('aggregate_micro', True))
 
     # print announcments and report
     print_announcements(opt)

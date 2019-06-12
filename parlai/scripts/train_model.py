@@ -32,6 +32,7 @@ import signal
 import json
 
 from parlai.core.agents import create_agent, create_agent_from_shared
+from parlai.core.metrics import aggregate_task_reports
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.utils import Timer, round_sigfigs, warn_once
@@ -183,6 +184,14 @@ def setup_args(parser=None) -> ParlaiParser:
         'this will eventually default to True, but '
         'currently defaults to False.',
     )
+    train.add_argument(
+        '-micro',
+        '--aggregate-micro',
+        type='bool',
+        default=True,
+        help='If multitasking, average metrics over the number of examples. '
+             'If false, averages over the number of tasks.'
+     )
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
@@ -229,15 +238,18 @@ def load_eval_worlds(agent, opt, datatype):
 
     tasks = opt['task'].split(',')
     worlds = []
+    # possibly load agent
+    if opt.get('validation_share_agent', False):
+        valid_agent = create_agent_from_shared(agent.share())
+    else:
+        valid_agent = agent
+    # create worlds
     for task in tasks:
         task_opt = opt.copy()  # copy opt since we edit the task
         task_opt['task'] = task
-        if opt.get('validation_share_agent', False):
-            valid_agent = create_agent_from_shared(agent.share())
-        else:
-            valid_agent = agent
         valid_world = create_task(task_opt, valid_agent)
         worlds.append(valid_world)
+
     return worlds
 
 
@@ -258,26 +270,6 @@ def _run_single_eval(opt, valid_world, max_exs):
     valid_world.reset()  # make sure world doesn't remember valid data
 
     return valid_report
-
-
-def _aggregate_reports(reports, valid_worlds):
-    if len(reports) == 1:
-        return reports[0]
-
-    # multiple tasks, aggregate metrics
-    tasks = [world.opt['task'] for world in valid_worlds]
-    agent_metrics = {}
-    total_report = {'tasks': {}}
-    for i, report in enumerate(reports):
-        total_report['tasks'][tasks[i]] = report
-        for metric, val in report.items():
-            agent_metrics.setdefault(metric, []).append(val)
-    total_report['tasks']['all'] = {}
-    for metric, vals in agent_metrics.items():
-        total_report['tasks']['all'][metric] = round_sigfigs(
-            sum(vals) / len(vals), 4)
-
-    return total_report
 
 
 def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
@@ -306,7 +298,9 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
                                        max_exs / len(valid_worlds))
         reports.append(task_report)
 
-    report = _aggregate_reports(reports, valid_worlds)
+    tasks = [world.opt['task'] for world in valid_worlds]
+    report = aggregate_task_reports(reports, tasks,
+                                    micro=opt.get('aggregate_micro', True))
 
     metrics = '{}:{}'.format(datatype, report)
     print(metrics)

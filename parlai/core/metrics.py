@@ -53,6 +53,46 @@ def normalize_answer(s):
     return white_space_fix(remove_articles(remove_punc(lower(s))))
 
 
+def aggregate_task_reports(reports, tasks, micro=True):
+    """
+    Aggregate separate task reports into a single report.
+
+    :param reports: list of report dicts from separate tasks
+    :param tasks: list of tasks
+    :param mico: average per example if True, else average over t
+
+    :return: aggregated report dicts
+    """
+    if len(reports) == 1:
+        # singular task
+        return reports[0]
+    # multiple tasks, aggregate metrics
+    metrics = {}
+    exs = {}
+    total_report = {'tasks': {}}
+    # collect metrics from all reports
+    for i, report in enumerate(reports):
+        total_report['tasks'][tasks[i]] = report
+        for metric, val in report.items():
+            if metric == 'exs':
+                exs[tasks[i]] = val
+            else:
+                metrics.setdefault(metric, {})[tasks[i]] = val
+    # now aggregate
+    total_exs = sum(exs.values())
+    total_report['exs'] = total_exs
+    for metric, task_vals in metrics.items():
+        if micro:
+            # average over the number of examples
+            vals = [task_vals[task] * exs[task] for task in tasks]
+            total_report[metric] = round_sigfigs(sum(vals) / total_exs, 4)
+        else:  # macro
+            # average over tasks
+            vals = task_vals.values()
+            total_report[metric] = round_sigfigs(sum(vals) / len(vals), 4)
+    return total_report
+
+
 def _exact_match(guess, answers):
     """Check if guess is a (normalized) exact match with any answer."""
     if guess is None or answers is None:
