@@ -11,7 +11,7 @@ from parlai.core.build_data import download_models
 from projects.convai2.eval_f1 import setup_args, eval_f1
 
 
-if __name__ == '__main__':
+def main():
     parser = setup_args()
     parser.set_params(
         model='legacy:seq2seq:0',
@@ -28,4 +28,8 @@ if __name__ == '__main__':
                   'convai2_self_seq2seq_model.dict',
                   'convai2_self_seq2seq_model.opt']
         download_models(opt, fnames, 'convai2', version='v3.0')
-    eval_f1(opt, print_parser=parser)
+    return eval_f1(opt, print_parser=parser)
+
+
+if __name__ == '__main__':
+    main()

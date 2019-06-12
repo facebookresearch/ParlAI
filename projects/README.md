@@ -6,7 +6,7 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Generative Models
 
-- **What makes a good conversation? How controllable attributes affect human judgments** [[paper]](https://arxiv.org/abs/1902.08654).
+- **What makes a good conversation? How controllable attributes affect human judgments** [[website]](https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue) [[paper]](https://arxiv.org/abs/1902.08654).
   _Optimizing for multi-turn engaging conversations -- by controlling question-asking, specificity, response-relatedness and repetition._
 
 - **Retrieve and Refine** [[paper]](https://arxiv.org/abs/1808.04776).

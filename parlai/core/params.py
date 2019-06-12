@@ -3,9 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Provides an argument parser and a set of default command line options for
-using the ParlAI package.
-"""
+"""Provide an argument parser and default command line options for using ParlAI."""
 
 import argparse
 import importlib
@@ -15,11 +13,64 @@ import json
 import sys as _sys
 import datetime
 from parlai.core.agents import get_agent_module, get_task_module
-from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.build_data import modelzoo_path
+from parlai.tasks.tasks import ids_to_tasks
+from parlai.core.utils import Opt
+
+
+def print_announcements(opt):
+    """
+    Output any announcements the ParlAI team wishes to make to users.
+
+    Also gives the user the option to suppress the output.
+    """
+    # no annoucements to make right now
+    return
+
+    noannounce_file = os.path.join(opt.get('datapath'), 'noannouncements')
+    if os.path.exists(noannounce_file):
+        # user has suppressed announcements, don't do anything
+        return
+
+    # useful constants
+    # all of these colors are bolded
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    RED = '\033[1;91m'
+    YELLOW = '\033[1;93m'
+    GREEN = '\033[1;92m'
+    BLUE = '\033[1;96m'
+    CYAN = '\033[1;94m'
+    MAGENTA = '\033[1;95m'
+
+    # only use colors if we're outputting to a terminal
+    USE_COLORS = _sys.stdout.isatty()
+    if not USE_COLORS:
+        RESET = BOLD = RED = YELLOW = GREEN = BLUE = CYAN = MAGENTA = ''
+
+    # generate the rainbow stars
+    rainbow = [RED, YELLOW, GREEN, CYAN, BLUE, MAGENTA]
+    size = 78 // len(rainbow)
+    stars = ''.join([color + '*' * size for color in rainbow])
+    stars += RESET
+
+    # do the actual output
+    print('\n'.join([
+        '',
+        stars,
+        BOLD,
+        'Announcements go here.',
+        RESET,
+        # don't bold the suppression command
+        'To suppress this message (and future announcements), run\n`touch {}`'.format(
+            noannounce_file
+        ),
+        stars,
+    ]))
 
 
 def get_model_name(opt):
+    """Get the model name from either `--model` or `--model-file`."""
     model = opt.get('model', None)
     if model is None:
         # try to get model name from model opt file
@@ -30,7 +81,7 @@ def get_model_name(opt):
             if os.path.isfile(optfile):
                 try:
                     # try json first
-                    with open(optfile, 'r') as handle:
+                    with open(optfile, 'r', encoding='utf-8') as handle:
                         new_opt = json.load(handle)
                         model = new_opt.get('model', None)
                 except UnicodeDecodeError:
@@ -42,6 +93,7 @@ def get_model_name(opt):
 
 
 def str2bool(value):
+    """Convert 'yes', 'false', '1', etc. into a boolean."""
     v = value.lower()
     if v in ('yes', 'true', 't', '1', 'y'):
         return True
@@ -57,9 +109,11 @@ def str2floats(s):
 
 
 def str2class(value):
-    """From import path string, returns the class specified. For example, the
-    string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent' returns
-    <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
+    """
+    From import path string, returns the class specified.
+
+    For example, the string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent'
+    returns <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
     """
     if ':' not in value:
         raise RuntimeError('Use a colon before the name of the class.')
@@ -77,7 +131,8 @@ def class2str(value):
 
 
 def fix_underscores(args):
-    """Converts underscores to hyphens in args.
+    """
+    Convert underscores to hyphens in args.
 
     For example, converts '--gradient_clip' to '--gradient-clip'.
 
@@ -94,10 +149,12 @@ def fix_underscores(args):
 
 
 class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
-    """Produces a custom-formatted `--help` option
+    """
+    Produce a custom-formatted `--help` option.
 
     See https://goo.gl/DKtHb5 for details.
     """
+
     def __init__(self, *args, **kwargs):
         kwargs['max_help_position'] = 8
         kwargs['width'] = 130
@@ -112,12 +169,22 @@ class CustomHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
 
 
 class ParlaiParser(argparse.ArgumentParser):
-    """Pseudo-extension of ``argparse`` which sets a number of parameters
+    """
+    Provide an opt-producer and CLI argument parser.
+
+    Pseudo-extension of ``argparse`` which sets a number of parameters
     for the ParlAI framework. More options can be added specific to other
     modules by passing this object and calling ``add_arg()`` or
     ``add_argument()`` on it.
 
     For example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
+
+    :param add_parlai_args:
+        (default True) initializes the default arguments for ParlAI
+        package, including the data download paths and task arguments.
+    :param add_model_args:
+        (default False) initializes the default arguments for loading
+        models, including initializing arguments from that model.
     """
 
     def __init__(
@@ -126,12 +193,7 @@ class ParlaiParser(argparse.ArgumentParser):
         add_model_args=False,
         description='ParlAI parser',
     ):
-        """Initializes the ParlAI argparser.
-        - add_parlai_args (default True) initializes the default arguments for
-        ParlAI package, including the data download paths and task arguments.
-        - add_model_args (default False) initializes the default arguments for
-        loading models, including initializing arguments from that model.
-        """
+        """Initialize the ParlAI argparser."""
         super().__init__(description=description, allow_abbrev=False,
                          conflict_handler='resolve',
                          formatter_class=CustomHelpFormatter)
@@ -154,14 +216,15 @@ class ParlaiParser(argparse.ArgumentParser):
             self.add_model_args()
 
     def add_parlai_data_path(self, argument_group=None):
+        """Add --datapath CLI arg."""
         if argument_group is None:
             argument_group = self
-        default_data_path = os.path.join(self.parlai_home, 'data')
         argument_group.add_argument(
-            '-dp', '--datapath', default=default_data_path,
+            '-dp', '--datapath', default=None,
             help='path to datasets, defaults to {parlai_dir}/data')
 
     def add_mturk_args(self):
+        """Add standard mechanical turk arguments."""
         mturk = self.add_argument_group('Mechanical Turk')
         default_log_path = os.path.join(self.parlai_home, 'logs', 'mturk')
         mturk.add_argument(
@@ -269,12 +332,17 @@ class ParlaiParser(argparse.ArgumentParser):
             '--heroku-team', dest='heroku_team', default=None,
             help='Specify Heroku team name to use for launching Dynos.'
         )
+        mturk.add_argument(
+            '--tmp-dir', dest='tmp_dir', default=None,
+            help='Specify location to use for scratch builds and such.'
+        )
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
         mturk.set_defaults(verbose=False)
 
     def add_messenger_args(self):
+        """Add Facebook Messenger arguments."""
         messenger = self.add_argument_group('Facebook Messenger')
         messenger.add_argument(
             '--debug', dest='is_debug', action='store_true',
@@ -306,7 +374,7 @@ class ParlaiParser(argparse.ArgumentParser):
         messenger.set_defaults(verbose=False)
 
     def add_parlai_args(self, args=None):
-        default_downloads_path = os.path.join(self.parlai_home, 'downloads')
+        """Add common ParlAI args across all scripts."""
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
             '-v', '--show-advanced-args', action='store_true',
@@ -316,7 +384,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '-t', '--task',
             help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
         parlai.add_argument(
-            '--download-path', default=default_downloads_path,
+            '--download-path', default=None,
             hidden=True,
             help='path for non-data dependencies to store any needed files.'
                  'defaults to {parlai_dir}/downloads')
@@ -368,6 +436,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_parlai_data_path(parlai)
 
     def add_distributed_training_args(self):
+        """Add CLI args for distributed training."""
         grp = self.add_argument_group('Distributed Training')
         grp.add_argument(
             '--distributed-world-size', type=int,
@@ -381,6 +450,7 @@ class ParlaiParser(argparse.ArgumentParser):
         return grp
 
     def add_pytorch_datateacher_args(self):
+        """Add CLI args for PytorchDataTeacher."""
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
             '-pyt', '--pytorch-teacher-task',
@@ -491,7 +561,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 pass
 
     def add_pyt_dataset_args(self, opt):
-        """Add arguments specific to specified pytorch dataset"""
+        """Add arguments specific to specified pytorch dataset."""
         from parlai.core.pytorch_data_teacher import get_dataset_classes
         dataset_classes = get_dataset_classes(opt)
         for dataset, _, _ in dataset_classes:
@@ -519,6 +589,7 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
+        parsed = self._infer_datapath(parsed)
 
         # find which image mode specified if any, and add additional arguments
         image_mode = parsed.get('image_mode', None)
@@ -556,7 +627,7 @@ class ParlaiParser(argparse.ArgumentParser):
                                'got an attribute error when parsing.')
 
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
-        """Custom parse known args to ignore help flag."""
+        """Parse known args to ignore help flag."""
         if args is None:
             # args default to the system args
             args = _sys.argv[1:]
@@ -567,24 +638,46 @@ class ParlaiParser(argparse.ArgumentParser):
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
 
+    def _infer_datapath(self, opt):
+        """
+        Set the value for opt['datapath'] and opt['download_path'].
+
+        Sets the value for opt['datapath'] and opt['download_path'], correctly
+        respecting environmental variables and the default.
+        """
+        # set environment variables
+        # Priority for setting the datapath (same applies for download_path):
+        # --datapath -> os.environ['PARLAI_DATAPATH'] -> <self.parlai_home>/data
+        if opt.get('download_path'):
+            os.environ['PARLAI_DOWNPATH'] = opt['download_path']
+        elif os.environ.get('PARLAI_DOWNPATH') is None:
+            os.environ['PARLAI_DOWNPATH'] = os.path.join(self.parlai_home, 'downloads')
+        if opt.get('datapath'):
+            os.environ['PARLAI_DATAPATH'] = opt['datapath']
+        elif os.environ.get('PARLAI_DATAPATH') is None:
+            os.environ['PARLAI_DATAPATH'] = os.path.join(self.parlai_home, 'data')
+
+        opt['download_path'] = os.environ['PARLAI_DOWNPATH']
+        opt['datapath'] = os.environ['PARLAI_DATAPATH']
+
+        return opt
+
     def parse_args(self, args=None, namespace=None, print_args=True):
-        """Parses the provided arguments and returns a dictionary of the
-        ``args``. We specifically remove items with ``None`` as values in order
+        """
+        Parse the provided arguments and returns a dictionary of the ``args``.
+
+        We specifically remove items with ``None`` as values in order
         to support the style ``opt.get(key, default)``, which would otherwise
         return ``None``.
         """
         self.add_extra_args(args)
         self.args = super().parse_args(args=args)
-        self.opt = vars(self.args)
+        self.opt = Opt(vars(self.args))
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
 
-        # set environment variables
-        if self.opt.get('download_path'):
-            os.environ['PARLAI_DOWNPATH'] = self.opt['download_path']
-        if self.opt.get('datapath'):
-            os.environ['PARLAI_DATAPATH'] = self.opt['datapath']
+        self.opt = self._infer_datapath(self.opt)
 
         # set all arguments specified in commandline as overridable
         option_strings_dict = {}
@@ -613,7 +706,7 @@ class ParlaiParser(argparse.ArgumentParser):
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
 
-        # map filenames that start with 'models:' to point to the model zoo dir
+        # map filenames that start with 'zoo:' to point to the model zoo dir
         if self.opt.get('model_file') is not None:
             self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
                                                    self.opt['model_file'])
@@ -634,6 +727,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
+            print_announcements(self.opt)
 
         return self.opt
 
@@ -666,6 +760,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     @property
     def show_advanced_args(self):
+        """Check if we should show arguments marked as hidden."""
         if hasattr(self, '_show_advanced_args'):
             return self._show_advanced_args
         known_args, _ = self.parse_known_args(nohelp=True)
@@ -676,6 +771,7 @@ class ParlaiParser(argparse.ArgumentParser):
         return self._show_advanced_args
 
     def _handle_hidden_args(self, kwargs):
+        """Hide help messages for arguments marked as hidden."""
         if 'hidden' in kwargs:
             flag = kwargs['hidden']
             del kwargs['hidden']
@@ -705,6 +801,7 @@ class ParlaiParser(argparse.ArgumentParser):
         return arg_group
 
     def error(self, message):
-        _sys.stderr.write('error: %s\n' % message)
+        """Override to print custom error message."""
         self.print_help()
+        _sys.stderr.write('\nParse Error: %s\n' % message)
         _sys.exit(2)

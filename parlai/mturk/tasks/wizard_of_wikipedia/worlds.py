@@ -482,21 +482,22 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                     np.random.randint(0, 1000),
                     self.task_type))
             self.good_wiz = True
-        pickle.dump({'persona': self.persona_to_topics,
-                     'relevant_topics': self.relevant_topics,
-                     'chosen_topic_passage': self.chosen_topic_passage,
-                     'dialog': self.dialog,
-                     'speaker_with_persona': self.agents[0].worker_id,
-                     'workers': [ag.worker_id for ag in self.agents],
-                     'n_turn': self.num_turns,
-                     'hit_ids': [ag.hit_id for ag in self.agents],
-                     'assignment_ids': [ag.assignment_id for ag in self.agents],
-                     'wizard_eval': self.wizard_eval,
-                     'chosen_topic': self.chosen_topic,
-                     'wizard_good': convo_finished and self.good_wiz,
-                     'good_wizard_worker': self.wizard_worker if self.good_wiz else '',
-                     'bad_wizard_worker': self.wizard_worker if not self.good_wiz else ''},
-                    open(filename, 'wb'))
+        pickle.dump({
+            'persona': self.persona_to_topics,
+            'relevant_topics': self.relevant_topics,
+            'chosen_topic_passage': self.chosen_topic_passage,
+            'dialog': self.dialog,
+            'speaker_with_persona': self.agents[0].worker_id,
+            'workers': [ag.worker_id for ag in self.agents],
+            'n_turn': self.num_turns,
+            'hit_ids': [ag.hit_id for ag in self.agents],
+            'assignment_ids': [ag.assignment_id for ag in self.agents],
+            'wizard_eval': self.wizard_eval,
+            'chosen_topic': self.chosen_topic,
+            'wizard_good': convo_finished and self.good_wiz,
+            'good_wizard_worker': self.wizard_worker if self.good_wiz else '',
+            'bad_wizard_worker': self.wizard_worker if not self.good_wiz else ''
+        }, open(filename, 'wb'))
         print('{}: Data successfully saved at {}.'.format(
             self.world_tag,
             filename))

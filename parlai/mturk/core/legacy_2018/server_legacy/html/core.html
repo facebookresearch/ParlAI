@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html>
+
+{% block html_head %}
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+<title>MTurk Chat</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+{% endblock %}
+
+<body>
+<div class="container-fluid" id="ui-container">
+<div id="ui-placeholder"></div>
+<div class="row" id="ui-content" style="display: none">
+
+{% block main_pane %}
+{% block left_pane %}
+<div id="left-pane" class="col-xs-4" style="height: {{frame_height}}px; background-color: #dff0d8; padding: 30px; overflow:scroll;">
+    <h1>Live Chat</h1>
+    <hr style="border-top: 1px solid #555" />
+    <span id="task-description" style="font-size: 16px">
+    </span>
+</div>
+{% endblock %}
+
+{% block right_pane %}
+<div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+    <div id="right-top-pane" style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+        <div id="message_thread" style="width: 100%">
+        </div>
+        <button id="connected-button" class="btn btn-lg" style="position: absolute; top: 5px; right: 10px; opacity: 1; font-size: 11px; color: white;" disabled>connected</button>
+        <div id="waiting-for-message" class="row" style="margin-left: 0; margin-right: 0; display: none">
+            <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
+                <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
+                    <?xml version="1.0" encoding="utf-8"?><svg width='25px' height='25px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-hourglass"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><g><path fill="none" stroke="#007282" stroke-width="5" stroke-miterlimit="10" d="M58.4,51.7c-0.9-0.9-1.4-2-1.4-2.3s0.5-0.4,1.4-1.4 C70.8,43.8,79.8,30.5,80,15.5H70H30H20c0.2,15,9.2,28.1,21.6,32.3c0.9,0.9,1.4,1.2,1.4,1.5s-0.5,1.6-1.4,2.5 C29.2,56.1,20.2,69.5,20,85.5h10h40h10C79.8,69.5,70.8,55.9,58.4,51.7z" class="glass"></path><clipPath id="uil-hourglass-clip1"><rect x="15" y="20" width="70" height="25" class="clip"><animate attributeName="height" from="25" to="0" dur="1.5s" repeatCount="indefinite" values="25;0;0" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="20" to="45" dur="1.5s" repeatCount="indefinite" values="20;45;45" keyTimes="0;0.5;1"></animate></rect></clipPath><clipPath id="uil-hourglass-clip2"><rect x="15" y="55" width="70" height="25" class="clip"><animate attributeName="height" from="0" to="25" dur="1.5s" repeatCount="indefinite" values="0;25;25" keyTimes="0;0.5;1"></animate><animate attributeName="y" from="80" to="55" dur="1.5s" repeatCount="indefinite" values="80;55;55" keyTimes="0;0.5;1"></animate></rect></clipPath><path d="M29,23c3.1,11.4,11.3,19.5,21,19.5S67.9,34.4,71,23H29z" clip-path="url(#uil-hourglass-clip1)" fill="#ffab00" class="sand"></path><path d="M71.6,78c-3-11.6-11.5-20-21.5-20s-18.5,8.4-21.5,20H71.6z" clip-path="url(#uil-hourglass-clip2)" fill="#ffab00" class="sand"></path><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="180 50 50" repeatCount="indefinite" dur="1.5s" values="0 50 50;0 50 50;180 50 50" keyTimes="0;0.7;1"></animateTransform></g></svg>
+                </div>
+                <span style="font-size: 16px">Waiting for the next person to speak...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+        <div id="response-type-idle" class="response-type-module" style="display:none">
+        </div>
+        <div id="response-type-text-input" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <div style="height: 50px; width: 100%; display: block; float: left; ">
+                <input id="id_text_input" type="text" style="width: 80%; height: 100%; float: left; font-size: 16px" class="form-control" value="" placeholder="Please enter here...">
+                <button class="btn btn-primary" style="width: 100px; height: 100%; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_send_msg_button">Send</button>
+            </div>
+        </div>
+        <div id="response-type-done" class="response-type-module" style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <span id="inactive" style="font-size: 14pt;margin-right: 15px"></span>
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% endblock %}
+
+</div>
+</div>
+<form id="mturk_submit_form" action="" method="post" style="display:none">
+    <input id="assignmentId" name="assignmentId" value="" />
+    <input id="hitId" name="hitId" value="" />
+    <input id="workerId" name="workerId" value="" />
+    <input type="submit" value="Submit" name="submitButton" id="mturk_submit_button" />
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+<script src="https://cdn.rawgit.com/yf225/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js"></script>
+<script src="https://github.com/lancedikson/bowser/releases/download/1.6.0/bowser.min.js"></script>
+
+<script type="text/javascript">
+  /* ================= Data Model Constants ================= */
+
+  var COMMAND_SEND_MESSAGE = 'COMMAND_SEND_MESSAGE'
+  var COMMAND_SHOW_DONE_BUTTON = 'COMMAND_SHOW_DONE_BUTTON'
+  var COMMAND_EXPIRE_HIT = 'COMMAND_EXPIRE_HIT'
+  var COMMAND_SUBMIT_HIT = 'COMMAND_SUBMIT_HIT'
+  var COMMAND_CHANGE_CONVERSATION = 'COMMAND_CHANGE_CONVERSATION'
+  var COMMAND_RESTORE_STATE = 'COMMAND_RESTORE_STATE'
+  var COMMAND_INACTIVE_HIT = 'COMMAND_INACTIVE_HIT'
+  var COMMAND_INACTIVE_DONE = 'COMMAND_INACTIVE_DONE'
+
+  // Socket function names
+  var SOCKET_OPEN_STRING = 'socket_open' // fires when a socket opens
+  var SOCKET_DISCONNECT_STRING = 'disconnect' // fires when a socket disconnects
+  var SOCKET_NEW_PACKET_STRING = 'new packet' // fires when packets arrive
+  var SOCKET_ROUTE_PACKET_STRING = 'route packet' // to send outgoing packets
+  var SOCKET_AGENT_ALIVE_STRING = 'agent alive' // to send alive packets
+
+  // Message types
+  var MESSAGE_TYPE_MESSAGE = 'MESSAGE'
+  var MESSAGE_TYPE_COMMAND = 'COMMAND'
+
+  // Packet types
+  var TYPE_ACK = 'ack';
+  var TYPE_MESSAGE = 'message';
+  var TYPE_HEARTBEAT = 'heartbeat';
+  var TYPE_PONG = 'pong';  // For messages back from the router on heartbeat
+  var TYPE_ALIVE = 'alive';
+
+  /* ================= Local Constants ================= */
+
+  var SEND_THREAD_REFRESH = 100;
+  var ACK_WAIT_TIME = 300; // Check for acknowledge every 0.3 seconds
+  var STATUS_ACK = 'ack';
+  var STATUS_INIT = 'init';
+  var STATUS_SENT = 'sent';
+  var CONNECTION_DEAD_MISSING_PONGS = 15;
+  var REFRESH_SOCKET_MISSING_PONGS = 5;
+  var HEARTBEAT_TIME = 2000;  // One heartbeat every 2 seconds
+
+  /* ================= State variables ================= */
+
+  var verbosity = 4;
+
+  var q = new PriorityQueue();
+  var mturk_submit_url = null;
+  var task_done = false;
+
+  var socket = null;
+  var socket_closed = false;
+  var heartbeat_id = null;
+  var packet_map = {};
+  var packet_callback = {};
+  var blocking_id = null;
+  var blocking_sent_time = null;
+  var blocking_intend_send_time = null;
+  var last_local_heartbeat = null;
+  var displayed_messages = [];
+  var setting_socket = false;
+  var pongs_without_heartbeat = 0;
+  var heartbeats_without_pong = 0;
+
+  var is_cover_page = ("{{is_cover_page}}" === 'true') ? true : false;
+  var is_init_page = ("{{is_init_page}}" === 'true') ? true : false;
+
+  var task_group_id = get_url_parameter('task_group_id');
+  var assignment_id = null;
+  var hit_id = null;
+  var worker_id = null;
+  var conversation_id = "{{conversation_id}}" || null;
+  var cur_agent_id = "{{cur_agent_id}}" || null;
+  var task_description = null;
+
+  var is_mobile = false;
+  var block_mobile = true;
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    is_mobile = true;
+  }
+
+  /* ============== Priority Queue Data Structure ============== */
+
+  // Initializing a 'priority queue'
+  function PriorityQueue() {
+    this.data = []
+  }
+
+  // Pushes an element as far back as it needs to go in order to insert
+  PriorityQueue.prototype.push = function(element, priority) {
+    priority = +priority
+    for (var i = 0; i < this.data.length && this.data[i][0] < priority; i++);
+    this.data.splice(i, 0, [element, priority])
+  }
+
+  // Remove and return the front element of the queue
+  PriorityQueue.prototype.pop = function() {
+    return this.data.shift()
+  }
+
+  // Show the front element of the queue
+  PriorityQueue.prototype.peek = function() {
+    return this.data[0]
+  }
+
+  // gets the size of the queue
+  PriorityQueue.prototype.size = function() {
+    return this.data.length
+  }
+
+  /* ================= Utility functions ================= */
+
+  // log the data when the verbosity is greater than the level
+  // (where low level is high importance)
+  // Levels: 0 - Error, unusual behavior, something worth notifying
+  //         1 - Server interactions on the message level, commands
+  //         2 - Server interactions on the heartbeat level
+  //         3 - Potentially important function calls
+  //         4 - Practically anything
+  function log(data, level) {
+    if (verbosity >= level) {
+      console.log(data)
+    }
+  }
+
+  // If we're in the amazon turk HIT page (within an iFrame) return True
+  function in_mturk_hit_page() {
+    try {
+      return window.self !== window.top;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  // Get a parameter from the URL
+  // Returns true for parameters with no value
+  function get_url_parameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1));
+    var sURLVariables = sPageURL.split('&');
+    var sParameterName;
+    var i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+      sParameterName = sURLVariables[i].split('=');
+
+      if (sParameterName[0] === sParam) {
+        return sParameterName[1] === undefined ? true : sParameterName[1];
+      }
+    }
+    return undefined;
+  };
+
+  // Generates a new url with a different parameter value set
+  function replace_url_parameter(url, paramName, paramValue){
+    // Handle blank params
+    if (paramValue == null) {
+      paramValue = '';
+    }
+
+    // Find and replace an existing url parameter
+    var pattern = new RegExp('\\b('+paramName+'=).*?(&|$)');
+    if (url.search(pattern)>=0) {
+      return url.replace(pattern,'$1' + paramValue + '$2');
+    }
+
+    // Append the new parameter to the end of the URL
+    correct_delimiter = (url.indexOf('?')>0 ? '&' : '?');
+    return url + correct_delimiter + paramName + '=' + paramValue;
+  }
+
+  // Sends a request to get the hit_config
+  function get_hit_config(callback_function) {
+    $.ajax({
+      url: '/get_hit_config',
+      timeout: 3000 // in milliseconds
+    }).retry({times: 10, timeout: 3000}).then(
+      function(data) {
+        log(object_to_string(data), 1);
+        if (callback_function) {
+          callback_function(data);
+        }
+      }
+    );
+  }
+
+  // Converts an arbitrary object into a string
+  function object_to_string(obj) {
+    var str = '';
+    for (var p in obj) {
+      if (obj.hasOwnProperty(p)) {
+        str += p + '::' + obj[p] + '\n';
+      }
+    }
+    return str;
+  }
+
+  // Sees if the current browser supports WebSockets
+  function check_websockets_support() {
+    return !((bowser.msie && bowser.version < 10) ||
+             (bowser.firefox && bowser.version < 11) ||
+             (bowser.chrome && bowser.version < 16) ||
+             (bowser.safari && bowser.version < 7) ||
+             (bowser.opera && bowser.version < 12.1));
+  }
+
+  // Checks to see if given conversation_id is for a waiting world
+  function is_waiting(conversation_id) {
+    return (conversation_id != null && conversation_id.indexOf('w_') !== -1);
+  }
+
+  // Checks to see if given conversation_id is for a task world
+  function is_task(conversation_id) {
+    return (conversation_id != null && conversation_id.indexOf('t_') !== -1);
+  }
+
+  // Checks to see if given conversation_id is for an onboarding world
+  function is_onboarding(conversation_id) {
+    return (conversation_id != null && conversation_id.indexOf('o_') !== -1);
+  }
+
+  // Redirects the page to a new location
+  function handle_redirect(agent_id, conversation_id) {
+    var url = window.location.href;
+    url = replace_url_parameter(url, 'mturk_agent_id', agent_id);
+    url = replace_url_parameter(url, 'conversation_id', conversation_id);
+    url = replace_url_parameter(url, 'changing_conversation', true);
+
+    // Reload page to get agent-specific template
+    log("Redirecting to new URL..." + url, 2);
+    window.location.href = url;
+  }
+
+  // Generate a random id
+  function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  // Enqueues a message for sending, registers the message and callback
+  function send_packet(type, data, require_ack, blocking, callback) {
+    var time = Date.now();
+    var id = uuidv4();
+
+    var msg = {
+      id: id,
+      type: type,
+      sender_id: worker_id,
+      assignment_id: assignment_id,
+      conversation_id: conversation_id,
+      receiver_id: '[World_' + task_group_id + ']',
+      data: data,
+      status: STATUS_INIT,
+      require_ack: require_ack,
+      blocking: blocking
+    };
+
+    q.push(msg, time);
+    packet_map[id] = msg;
+    packet_callback[id] = callback;
+  }
+
+  // Callback for submission
+  function all_done_callback() {
+    if (in_mturk_hit_page()) {
+      $("input#mturk_submit_button").click();
+    }
+  }
+
+  /* ================= UI handlers ================= */
+
+  // On window resize, ensure that the UI is properly displayed
+  function window_resize() {
+    log("The window was resized", 4);
+    // Set the text input width to match the bottom width minus space
+    // for the done button
+    $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
+
+    // Set the chat window height to be the remainder after removing the
+    // height of the text pane
+    var left_height = $("div#left-pane").height();
+    var text_height = $("div#right-bottom-pane").outerHeight()
+    $("div#right-top-pane").height((left_height - text_height) - 20);
+  }
+  $(window).resize(window_resize);
+
+  // Handling keypress event for enter detection
+  $(document).keypress(function(e) {
+    // Handle enters as submits, so simulate clicking send message button
+    if (e.which == 13) {
+      if (!($("button#id_send_msg_button").prop("disabled") === true)) {
+        $("button#id_send_msg_button").click();
+      }
+    }
+  });
+
+  // Wrapper around $ getters to set the inactive/done text
+  function set_inactive_text(inactive_text) {
+    $('#inactive').text(inactive_text);
+  }
+
+  // Clear all the messages in the message window
+  function clear_messages() {
+    var displayed_messages = [];
+    $('div#message_thread').html("");
+  }
+
+  // Updates the UI to allow worker input, focuses onto the text box
+  function wait_for_worker_input() {
+    update_UI_for_response_type('text_input');
+    $("div#waiting-for-message").css("display", "none");
+    $("input#id_text_input").focus();
+    log('Waiting for worker input', 4);
+  }
+
+  // Grabs the conversation pane and scrolls it to the bottom
+  function scroll_conversation_to_bottom() {
+    $('div#right-top-pane').animate({
+      scrollTop: $('div#right-top-pane').get(0).scrollHeight
+    }, 500);
+  }
+
+  // Updates the UI to display specific components
+  function update_UI_for_response_type(response_type) {
+    $("div.response-type-module").css("display", "none");
+    $("div#waiting-for-message").css("display", "none");
+    $("div#response-type-text-input").css("display", "none");
+
+    if (response_type == 'idle') {
+      $("div#response-type-idle").css("display", "");
+      $("div#waiting-for-message").css("display", "");
+    } else if (response_type == 'text_input') {
+      $("div#response-type-text-input").css("display", "");
+    } else if (response_type == 'done') {
+      $("div#response-type-done").css("display", "");
+    } else if (response_type == 'inactive') {
+      $("div#response-type-done").css("display", "");
+      $("button#done-button").css("display", "none");
+    }
+
+    // Redraw the elements
+    $(window).resize();
+  }
+
+  // Adds a message to the thread
+  function add_message_to_conversation(agent_id, message_text, is_self) {
+    // Select the right display style given if the message is from self
+    var float_loc = 'left';
+    var alert_class = 'alert-warning';
+    if (is_self) {
+      float_loc = 'right';
+      alert_class = 'alert-info';
+    }
+
+    $('div#message_thread').append(
+      '<div class="row" style="margin-left: 0; margin-right: 0">' +
+        '<div class="alert '+alert_class+'" role="alert" style="float: '+float_loc+'; display:table">' +
+          '<span style="font-size: 16px"><b>'+agent_id+'</b>: '+message_text+'</span>' +
+        '</div>'+
+      '</div>'
+    );
+
+    $("div#message_thread").css("display", "");
+    scroll_conversation_to_bottom();
+    $("div#waiting-for-message").css("display", "");
+  }
+
+  // Done button click submits to MTurk
+  $("button#done-button").on('click', function() {
+    all_done_callback();
+  });
+
+  // renders the cover page
+  function init_cover_page() {
+    $("div#ui-placeholder").css("display", "none");
+    $("div#ui-content").css("display", "");
+    if (is_mobile && block_mobile) {
+      full_task_desc = (
+        "<h1>Sorry, this task cannot be completed on mobile devices. " +
+        "Please use a computer.</h1><br>Task Description follows:<br>" +
+        task_description
+      );
+      $("span#task-description").html(full_task_desc);
+    } else {
+      $("span#task-description").html(task_description);
+    }
+  }
+
+  // Renders the chat panel
+  function init_chat_panel() {
+    $("div#ui-placeholder").css("display", "none");
+    $("div#ui-content").css("display", "");
+    $("form#mturk_submit_form input#assignmentId").val(assignment_id);
+    $("form#mturk_submit_form input#hitId").val(hit_id);
+    $("form#mturk_submit_form input#workerId").val(worker_id);
+    $("form#mturk_submit_form").attr("action", mturk_submit_url);
+    $("span#task-description").html(task_description);
+
+    update_UI_for_response_type('idle');
+    $("div#waiting-for-message").css("display", "");
+    $("div#left-pane").removeClass('col-xs-12');
+    $("div#left-pane").addClass('col-xs-4');
+
+    $(window).resize();
+  }
+
+  /* ================= Socket handling ================= */
+
+  function safe_packet_send(packet) {
+    if (socket.readyState == 0) {
+      return;
+    }
+    if (socket.readyState > 1) {
+      log("Socket not in ready state, restarting if possible", 2);
+      try {
+        socket.close();
+      } catch(e) {/* Socket already terminated */}
+      setup_socket();
+      return;
+    }
+    try {
+      socket.send(JSON.stringify(packet));
+    } catch(e) {
+      log("Had error " + e + " sending message, trying to restart", 2);
+      try {
+        socket.close();
+      } catch(e) {/* Socket already terminated */}
+      setup_socket();
+    }
+  }
+
+  // way to send alive packets when expected to
+  function send_alive() {
+    send_packet(
+      TYPE_ALIVE,
+      {
+        hit_id: hit_id,
+        assignment_id: assignment_id,
+        worker_id: worker_id,
+        conversation_id: conversation_id
+      },
+      true,
+      true,
+      null
+    );
+  }
+
+  function parse_socket_message(event) {
+    msg = JSON.parse(event.data)['content']
+    if (msg.type === TYPE_HEARTBEAT) {
+      // Heartbeats ensure we're not disconnected from the server
+      log('received heartbeat: ' + msg.id, 4);
+      pongs_without_heartbeat = 0;
+    } else if (msg.type === TYPE_PONG) {
+      // Messages incoming from the router, ensuring that we're at least
+      // connected to it.
+      pongs_without_heartbeat += 1;
+      heartbeats_without_pong = 0;
+      if (pongs_without_heartbeat >= 3) {
+        $("button#connected-button").text('reconnecting to server');
+        $("#connected-button").css('background', '#f0ad4e');
+      }
+    } else if (msg.type === TYPE_ACK) {
+      // Acks update messages so that we don't resend them
+      log('received ack: ' + msg.id, 3);
+      if (msg.id === blocking_id) {
+        // release lock when ack arrives
+        blocking_id = null;
+        blocking_sent_time = null;
+        // execute ack callback if it exists
+        if (packet_callback[msg.id]) {
+          packet_callback[msg.id](packet_map[msg.id]);
+        }
+      }
+      packet_map[msg.id].status = STATUS_ACK;
+    } else if (blocking_id !== null) {
+      return;  // shouldn't recieve messages while trying to send to world
+    } else if (msg.type === TYPE_MESSAGE) {
+      // Acknowledge the message, then act on it
+      safe_packet_send({
+        type: SOCKET_ROUTE_PACKET_STRING,
+        content: {
+          id: msg.id,
+          sender_id: msg.receiver_id,
+          receiver_id: msg.sender_id,
+          assignment_id: assignment_id,
+          conversation_id: conversation_id,
+          type: TYPE_ACK,
+          data: null
+        }
+      });
+      log(msg, 3);
+      if (msg.data.type === MESSAGE_TYPE_COMMAND){
+        handle_command(msg.data);
+      } else if (msg.data.type === MESSAGE_TYPE_MESSAGE) {
+        handle_new_message(msg.id, msg.data);
+      }
+    }
+  }
+
+  // Sets up and registers the socket and the callbacks
+  function setup_socket() {
+    if (setting_socket || socket_closed) {
+      return;
+    }
+    setting_socket = true
+    window.setTimeout(function() {setting_socket = false;}, 4000);
+    var url = window.location;
+    if (url.hostname == 'localhost') {
+      socket = new WebSocket('ws://' + url.hostname + ':' + url.port);
+    } else {
+      socket = new WebSocket('wss://' + url.hostname + ':' + url.port);
+    }
+    // TODO if socket setup fails here, see if 404 or timeout, then check
+    // other reasonable domain. If that succeeds, assume the heroku server
+    // died.
+
+    socket.onmessage = parse_socket_message;
+
+    socket.onopen = () => {
+      log('Server connected.', 2);
+      setting_socket = false
+      window.setTimeout(send_alive, 100);
+      if (heartbeat_id == null) {
+        heartbeat_id = window.setInterval(_heartbeat_thread, HEARTBEAT_TIME);
+      }
+      $("button#connected-button").text('connected');
+      $("#connected-button").css('background', '#5cb85c');
+    }
+
+    socket.onerror = () => {
+      log('Server disconnected.', 3);
+      try {
+        socket.close();
+      } catch(e) {
+        log('Server had error ' + e + ' when closing after an error', 1);
+      }
+      window.setTimeout(setup_socket, 500);
+    }
+
+    socket.onclose = () => {
+      log('Server closing.', 3);
+      $("button#connected-button").text('disconnected');
+      $("#connected-button").css('background', '#d9534f');
+    }
+  }
+
+  // Closes the socket
+  function close_socket() {
+    if (!socket_closed) {
+      log("Socket closing", 3);
+      socket.close();
+      socket_closed = true;
+    } else {
+      log("Socket already closed", 2);
+    }
+  }
+
+  /* ============== Incoming Message Handlers ============== */
+
+  // Handles INACTIVE HIT commands where the user is told that their
+  // HIT is unable to be completed
+  function handle_no_done_inactive(msg) {
+    // Show the chat panel in case it isn't already shown
+    is_init_page = false;
+    init_chat_panel();
+
+    close_socket();
+
+    // Update the UI
+    set_inactive_text(msg['inactive_text']);
+    update_UI_for_response_type('inactive');
+    scroll_conversation_to_bottom();
+
+    // Redraw UI
+    $(window).resize();
+  }
+
+  // Update state and call the done renderer
+  function handle_done() {
+    task_done = true;
+    update_UI_for_response_type('done');
+  }
+
+  // Handle incoming command messages
+  function handle_command(msg) {
+    var command = msg['text'];
+    log('Recieved command ' + command, 1);
+    if (command === COMMAND_SEND_MESSAGE) {
+      // Update UI to wait for the worker to submit a message
+      wait_for_worker_input();
+    } else if (command === COMMAND_SHOW_DONE_BUTTON) {
+      // Update the UI to show the done button
+      set_inactive_text('');
+      handle_done();
+    } else if (command === COMMAND_INACTIVE_DONE) {
+      // Update the UI to show done with additional inactive text
+      close_socket();
+      // Call correct UI renderers
+      init_chat_panel();
+      set_inactive_text(msg['inactive_text']);
+      handle_done();
+    } else if (command === COMMAND_SUBMIT_HIT) {
+      // Force the hit to submit as done
+      all_done_callback();
+    } else if (command === COMMAND_EXPIRE_HIT) {
+      // Expire the hit unless it has already been marked as done
+      if (!task_done) {
+        handle_no_done_inactive(msg);
+      }
+    } else if (command === COMMAND_INACTIVE_HIT) {
+      // Disable the hit, show the correct message
+      handle_no_done_inactive(msg)
+    } else if (command === COMMAND_RESTORE_STATE) {
+      // Restore the messages from inside the data, call the command if needed
+      clear_messages();
+      messages = msg['messages'];
+      for (var i = 0; i < messages.length; i++) {
+        handle_new_message(messages[i]['message_id'], messages[i]);
+      }
+
+      last_command = msg['last_command'];
+      if (last_command) {
+        handle_command(last_command);
+      }
+    } else if (command === COMMAND_CHANGE_CONVERSATION) {
+      // change the conversation, refresh if needed
+      log('current conversation_id: ' + conversation_id, 3);
+      var new_conversation_id = msg['conversation_id'];
+      log('new conversation_id: ' + new_conversation_id, 3);
+      var new_agent_id = msg['agent_id'];
+      if ((conversation_id === null) ||
+          (is_waiting(conversation_id) && is_task(new_conversation_id))) {
+        // Redirect when moving from task to waiting or nothing to anything
+        handle_redirect(new_agent_id, new_conversation_id);
+      } else if (is_waiting(new_conversation_id)) {
+        // Display the waiting world, if there are any handlers for it
+        conversation_id = new_conversation_id;
+        agent_id = new_agent_id;
+        show_waiting_world();
+        // No redirect, so tell the world we're here
+        send_alive();
+      } else {
+        // Update the conversation id
+        conversation_id = new_conversation_id;
+        agent_id = new_agent_id;
+        // No redirect, so tell the world we're here
+        send_alive();
+      }
+    }
+  }
+
+  {% block handle_new_message %}
+  // Handles an incoming message
+  function handle_new_message(new_message_id, message) {
+    var agent_id = message.id;
+    var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    if (displayed_messages.indexOf(new_message_id) !== -1) {
+      // This message has already been seen and put up into the chat
+      log(new_message_id + ' was a repeat message', 1);
+      return;
+    }
+
+    log('New message, ' + new_message_id + ' from agent ' + agent_id, 1);
+    displayed_messages.push(new_message_id);
+    if (agent_id !== cur_agent_id) {
+      add_message_to_conversation(agent_id, message_text, false);
+    } else {
+      add_message_to_conversation(agent_id, message_text, true);
+    }
+  }
+  {% endblock %}
+
+  // Handle submitting a message
+  $("button#id_send_msg_button").on('click', function () {
+    var text = $("input#id_text_input").val();
+    if (!(text == '')) {
+      // Disable the send button
+      $("button#id_send_msg_button").addClass("disabled");
+      $("button#id_send_msg_button").prop("disabled", true);
+      new_message_id = uuidv4()
+      // Send a packet
+      send_packet(
+        TYPE_MESSAGE,
+        {
+          text: text,
+          id: cur_agent_id,
+          message_id: new_message_id,
+          episode_done: false
+        },
+        true,
+        true,
+        function(msg) {
+          // On callback enable the button and clear the text field
+          $("button#id_send_msg_button").removeClass("disabled");
+          $("button#id_send_msg_button").prop("disabled", false);
+          $("input#id_text_input").val("");
+          $("div#response-type-text-input").css("display", "none");
+          // push the message into the conversation
+          handle_new_message(new_message_id, msg.data);
+          after_send_packet();
+        }
+      );
+    }
+  });
+
+  /* =================== 'Threads'=================== */
+
+  function _send_helper(msg, queue_time) {
+    // Don't act on acknowledged packets
+    if (msg.status !== STATUS_ACK) {
+      // Find the event to send to
+      var event_name = SOCKET_ROUTE_PACKET_STRING;
+      if (msg.type === TYPE_ALIVE) {
+        event_name = SOCKET_AGENT_ALIVE_STRING;
+      }
+      safe_packet_send({type: event_name, content: msg});
+
+      if (msg.require_ack) {
+        if (msg.blocking) {
+          // Block the thread
+          blocking_id = msg.id;
+          blocking_sent_time = Date.now();
+          blocking_intend_send_time = queue_time
+        } else {
+          // Check to see if the packet is acknowledged in the future
+          q.push(msg, queue_time + ACK_WAIT_TIME);
+        }
+      }
+    }
+  }
+
+  // Thread checks the message queue and handles pushing out new messages
+  // as they are added to the queue
+  function _sending_thread() {
+    if (socket_closed) {
+      return
+    }
+
+    // Can't act if something is currently blocking
+    if (blocking_id === null) {
+      // Can't act on an empty queue
+      if (q.size() > 0) {
+        // Can't act if the send time for the next thing to send
+        // is in the future
+        if (Date.now() > q.peek()[1]) {
+          var item = q.pop();
+          var msg = item[0];
+          var t = item[1];
+          _send_helper(msg, t)
+        }
+      }
+    } else {
+      // blocking on packet `blocking_id`
+      // See if we've waited too long for the packet to be acknowledged
+      if ((Date.now() - blocking_sent_time) > ACK_WAIT_TIME) {
+        log('Timeout: ' + blocking_id, 1);
+        // Send the packet again now
+        var m = packet_map[blocking_id];
+        // Ensure that the send retries, we wouldn't be here if the ACK worked
+        m.status = STATUS_SENT;
+        _send_helper(packet_map[blocking_id], blocking_intend_send_time)
+      }
+    }
+  }
+
+  // Thread sends heartbeats through the socket for as long we are connected
+  function _heartbeat_thread() {
+    if (socket_closed) {
+      // No reason to keep a heartbeat if the socket is closed
+      window.clearInterval(heartbeat_id)
+      heartbeat_id = null;
+      return;
+    }
+
+    if (pongs_without_heartbeat == REFRESH_SOCKET_MISSING_PONGS) {
+      pongs_without_heartbeat += 1;
+      try {
+        socket.close();
+      } catch(e) {/* Socket already terminated */}
+      window.clearInterval(heartbeat_id);
+      heartbeat_id = null;
+      setup_socket();
+    }
+
+    // Check to see if we've disconnected from the server
+    if (pongs_without_heartbeat > CONNECTION_DEAD_MISSING_PONGS) {
+      close_socket();
+      set_inactive_text('Our server appears to have gone down during the \
+        duration of this HIT. Please send us a message if you\'ve done \
+        substantial work and we can find out if the hit is complete enough to \
+        compensate.');
+      update_UI_for_response_type('inactive');
+      window.clearInterval(heartbeat_id)
+      heartbeat_id = null;
+    }
+
+    var hb = {
+      'id': uuidv4(),
+      'receiver_id': '[World_' + task_group_id + ']',
+      'assignment_id': assignment_id,
+      'sender_id' : worker_id,
+      'conversation_id': conversation_id,
+      'type': TYPE_HEARTBEAT,
+      'data': null
+    };
+
+    safe_packet_send({type: SOCKET_ROUTE_PACKET_STRING, content: hb});
+
+    heartbeats_without_pong += 1;
+    if (heartbeats_without_pong >= 3) {
+      $("button#connected-button").text('reconnecting to router');
+      $("#connected-button").css('background', '#f0ad4e');
+    }
+  }
+
+  /* =================== Initialization =================== */
+
+  function fail_initialize() {
+    $("div#ui-placeholder").html('Unable to initialize. We may be having \
+      issues with our chat servers. Please refresh the page, or if that \
+      isn\'t working return the HIT and try again later if you would like \
+      to work on this task.');
+    close_socket();
+  }
+
+  // Initializes the chat page
+  function init_chat_page() {
+    if (is_init_page) {
+      $("div#ui-placeholder").html("Initializing...");
+      setTimeout(fail_initialize, 10000);
+    } else {
+      init_chat_panel();
+    }
+    setup_socket();
+    window.setInterval(_sending_thread, SEND_THREAD_REFRESH);
+  }
+
+  // Starts everything once the document is ready
+  $(document).ready(function() {
+    if (check_websockets_support()) {
+      // Get parameters
+      assignment_id = get_url_parameter('assignmentId');
+      hit_id = get_url_parameter('hitId');
+      worker_id = get_url_parameter('workerId');
+
+      // Retrieve the HIT config, extract info
+      get_hit_config(function(data) {
+        task_description = data['task_description'];
+        mturk_submit_url = data['mturk_submit_url'];
+        var frame_height = data['frame_height'];
+        $("div#left-pane").css("height", frame_height+"px");
+        log("Task Description " + task_description, 2);
+        if (is_cover_page) {
+          init_cover_page();
+        } else {
+          if (block_mobile && is_mobile) {
+            $("div#ui-placeholder").html(
+              "As noted in the task description, this task doesn't work " +
+              "on mobile yet. Please return it and only work on it from a " +
+              "full-screen device."
+            );
+          } else {
+            init_chat_page();
+          }
+        }
+      });
+    } else {
+      $("body").html("Sorry, but we found that your browser does not support WebSockets. Please consider updating your browser to a newer version and check this HIT again.");
+    }
+  });
+
+  /* =================== unimplemented =================== */
+  function after_receive_command(command) {};
+  function after_receive_message(message) {};
+  function after_send_packet() {};
+  function show_waiting_world(){};
+</script>
+
+{% block additional_scripts %}
+{% endblock %}
+
+</html>

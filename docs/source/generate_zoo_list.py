@@ -32,7 +32,7 @@ for model in model_list:
     # make sure we indent for markdown though
     result = ["   " + r for r in result]
     result = "\n".join(result)
-    fout.write('.. code-block:: \n\n   {}\n   ...\n{}\n\n'.format(example, result))
+    fout.write('.. code-block:: none\n\n   {}\n   ...\n{}\n'.format(example, result))
     fout.write('\n')
 
 fout.close()

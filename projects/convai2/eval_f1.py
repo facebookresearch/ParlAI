@@ -27,6 +27,7 @@ def eval_f1(opt, print_parser):
     report = eval_model(opt, print_parser)
     print('============================')
     print('FINAL F1: ' + str(report['f1']))
+    return report
 
 
 if __name__ == '__main__':

@@ -4,9 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
-General utilities for helping writing ParlAI unit and integration tests.
-"""
+"""General utilities for helping writing ParlAI unit and integration tests."""
 
 import sys
 import os
@@ -38,18 +36,18 @@ DEBUG = False  # change this to true to print to stdout anyway
 
 
 def is_this_circleci():
-    """Returns if we are currently running in CircleCI."""
+    """Return if we are currently running in CircleCI."""
     return bool(os.environ.get('CIRCLECI'))
 
 
 def skipUnlessTorch(testfn, reason='pytorch is not installed'):
-    """Decorator for skipping a test if torch is not installed."""
+    """Decorate a test to skip if torch is not installed."""
     return unittest.skipUnless(TORCH_AVAILABLE, reason)(testfn)
 
 
 def skipIfGPU(testfn, reason='Test is CPU-only'):
     """
-    Decorator for skipping a test if a GPU is available.
+    Decorate a test to skip if a GPU is available.
 
     Useful for disabling hogwild tests.
     """
@@ -57,12 +55,12 @@ def skipIfGPU(testfn, reason='Test is CPU-only'):
 
 
 def skipUnlessGPU(testfn, reason='Test requires a GPU'):
-    """Decorator for skipping a test if no GPU is available."""
+    """Decorate a test to skip if no GPU is available."""
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
 def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
-    """Decorator for skipping a test if running on CircleCI."""
+    """Decorate a test to skip if running on CircleCI."""
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
@@ -77,14 +75,16 @@ class retry(object):
     ...     import random
     ...     self.assertLess(0.5, random.random())
     """
+
     def __init__(self, ntries=3):
         self.ntries = ntries
 
     def __call__(self, testfn):
+        """Call testfn(), possibly multiple times on failureException."""
         from functools import wraps
         @wraps(testfn)
         def _wrapper(testself, *args, **kwargs):
-            for i in range(self.ntries - 1):
+            for _ in range(self.ntries - 1):
                 try:
                     return testfn(testself, *args, **kwargs)
                 except testself.failureException:
@@ -95,9 +95,7 @@ class retry(object):
 
 
 def git_ls_files(root=None, skip_nonexisting=True):
-    """
-    List all files tracked by git.
-    """
+    """List all files tracked by git."""
     filenames = git_.ls_files(root).split('\n')
     if skip_nonexisting:
         filenames = [fn for fn in filenames if os.path.exists(fn)]
@@ -105,9 +103,7 @@ def git_ls_files(root=None, skip_nonexisting=True):
 
 
 def git_ls_dirs(root=None):
-    """
-    Lists all folders tracked by git.
-    """
+    """List all folders tracked by git."""
     dirs = set()
     for fn in git_ls_files(root):
         dirs.add(os.path.dirname(fn))
@@ -116,7 +112,11 @@ def git_ls_dirs(root=None):
 
 def git_changed_files(skip_nonexisting=True):
     """
-    Lists all the changed files in the git repository.
+    List all the changed files in the git repository.
+
+    :param bool skip_nonexisting:
+        If true, ignore files that don't exist on disk. This is useful for
+        disregarding files created in master, but don't exist in HEAD.
     """
     fork_point = git_.merge_base('origin/master', 'HEAD').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
@@ -126,9 +126,7 @@ def git_changed_files(skip_nonexisting=True):
 
 
 def git_commit_messages():
-    """
-    Outputs each commit message between here and master.
-    """
+    """Output each commit message between here and master."""
     fork_point = git_.merge_base('origin/master', 'HEAD').strip()
     messages = git_.log(fork_point + '..HEAD')
     return messages
@@ -136,8 +134,9 @@ def git_commit_messages():
 
 def is_new_task_filename(filename):
     """
-    Checks if a given filename counts as a new task. Used in tests and
-    test triggers, and only here to avoid redundancy.
+    Check if a given filename counts as a new task.
+
+    Used in tests and test triggers, and only here to avoid redundancy.
     """
     return (
         'parlai/tasks' in filename and
@@ -149,22 +148,30 @@ def is_new_task_filename(filename):
 class TeeStringIO(io.StringIO):
     """
     StringIO which also prints to stdout.
+
+    Used in case of DEBUG=False to make sure we get verbose output.
     """
+
     def __init__(self, *args):
         self.stream = sys.stdout
         super().__init__(*args)
 
     def write(self, data):
+        """Write data to stdout and the buffer."""
         if DEBUG and self.stream:
             self.stream.write(data)
         super().write(data)
+
+    def __str__(self):
+        return self.getvalue()
 
 
 @contextlib.contextmanager
 def capture_output():
     """
-    Context manager which suppresses all stdout and stderr, and combines them
-    into a single io.StringIO.
+    Suppress all stdout and stderr into a single buffer.
+
+    Use as a context manager.
 
     :returns: the output
     :rtype: io.StringIO
@@ -182,7 +189,9 @@ def capture_output():
 @contextlib.contextmanager
 def tempdir():
     """
-    Simple wrapper for creating a temporary directory.
+    Create a temporary directory.
+
+    Use as a context manager so the directory is automatically cleaned up.
 
     >>> with tempdir() as tmpdir:
     ...    print(tmpdir)  # prints a folder like /tmp/randomname
@@ -194,13 +203,13 @@ def tempdir():
 
 def train_model(opt):
     """
-    Runs through a TrainLoop.
+    Run through a TrainLoop.
 
     If model_file is not in opt, then this helper will create a temporary
     directory to store the model, dict, etc.
 
-    :return: (stdout, stderr, valid_results, test_results)
-    :rtype: (str, str, dict, dict)
+    :return: (stdout, valid_results, test_results)
+    :rtype: (str, dict, dict)
     """
     import parlai.scripts.train_model as tms
 
@@ -213,6 +222,7 @@ def train_model(opt):
             parser = tms.setup_args()
             # needed at the very least to set the overrides.
             parser.set_params(**opt)
+            parser.set_params(log_every_n_secs=10)
             popt = parser.parse_args(print_args=False)
             # in some rare cases, like for instance if the model class also
             # overrides its default params, the params override will not
@@ -229,21 +239,26 @@ def train_model(opt):
     )
 
 
-def eval_model(opt):
+def eval_model(opt, skip_test=False):
     """
-    Runs through an evaluation loop.
+    Run through an evaluation loop.
 
-    :return: (stdout, stderr, valid_results, test_results)
-    :rtype: (str, str, dict, dict)
+    :param opt:
+        Any non-default options you wish to set.
+    :param bool skip_test:
+        If true skips the test evaluation, and the third return value will be None.
+
+    :return: (stdout, valid_results, test_results)
+    :rtype: (str, dict, dict)
 
     If model_file is not in opt, then this helper will create a temporary directory
     to store the model files, and clean up afterwards. You can keep the directory
     by disabling autocleanup
     """
-
     import parlai.scripts.eval_model as ems
     parser = ems.setup_args()
     parser.set_params(**opt)
+    parser.set_params(log_every_n_secs=10)
     popt = parser.parse_args(print_args=False)
 
     if popt.get('model_file') and not popt.get('dict_file'):
@@ -253,7 +268,7 @@ def eval_model(opt):
         popt['datatype'] = 'valid'
         valid = ems.eval_model(popt)
         popt['datatype'] = 'test'
-        test = ems.eval_model(popt)
+        test = None if skip_test else ems.eval_model(popt)
 
     return (
         output.getvalue(),
@@ -262,7 +277,37 @@ def eval_model(opt):
     )
 
 
+def display_data(opt):
+    """
+    Run through a display data run.
+
+    :return: (stdout_train, stdout_valid, stdout_test)
+    :rtype: (str, str, str)
+    """
+    import parlai.scripts.display_data as dd
+    parser = dd.setup_args()
+    parser.set_params(**opt)
+    popt = parser.parse_args(print_args=False)
+
+    with capture_output() as train_output:
+        popt['datatype'] = 'train:stream'
+        dd.display_data(popt)
+    with capture_output() as valid_output:
+        popt['datatype'] = 'valid:stream'
+        dd.display_data(popt)
+    with capture_output() as test_output:
+        popt['datatype'] = 'test:stream'
+        dd.display_data(popt)
+
+    return (
+        train_output.getvalue(),
+        valid_output.getvalue(),
+        test_output.getvalue(),
+    )
+
+
 def download_unittest_models():
+    """Download the unittest pretrained models."""
     from parlai.core.params import ParlaiParser
     from parlai.core.build_data import download_models
     opt = ParlaiParser().parse_args(print_args=False)

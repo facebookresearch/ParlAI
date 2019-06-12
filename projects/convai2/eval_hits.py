@@ -27,6 +27,7 @@ def eval_hits(opt, print_parser):
     report = eval_model(opt, print_parser)
     print('============================')
     print('FINAL Hits@1: ' + str(report['hits@1']))
+    return report
 
 
 if __name__ == '__main__':

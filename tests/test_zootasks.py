@@ -35,7 +35,9 @@ class TestZooAndTasks(unittest.TestCase):
                     "bert"]
         )
 
-    def _check_directory(self, listname, thing_list, thing_dir, thing_key, ignore=[]):
+    def _check_directory(self, listname, thing_list, thing_dir, thing_key, ignore=None):
+        if ignore is None:
+            ignore = []
         dirs = testing_utils.git_ls_dirs()
         # get only directories directly in the thing directory
         dirs = [d for d in dirs if os.path.dirname(d) == thing_dir]

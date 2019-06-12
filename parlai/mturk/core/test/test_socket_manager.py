@@ -1171,11 +1171,17 @@ class TestSocketManagerMessageHandling(unittest.TestCase):
         # Run rest of tests
 
         # Test message send from agent
+        acked_packet = None
         test_message_text_1 = 'test_message_text_1'
         msg_id = self.agent1.send_message(test_message_text_1)
         self.assertEqualBy(lambda: self.message_packet is None, False, 8)
         self.assertEqualBy(lambda: acked_packet is None, False, 8)
-        self.assertEqual(self.message_packet.id, acked_packet.id)
+        self.assertEqual(
+            self.message_packet.id,
+            acked_packet.id,
+            'Packet {} was not the expected acked packet {}'
+                .format(self.message_packet, acked_packet)
+        )
         self.assertEqual(self.message_packet.id, msg_id)
         self.assertEqual(self.message_packet.data['text'], test_message_text_1)
 

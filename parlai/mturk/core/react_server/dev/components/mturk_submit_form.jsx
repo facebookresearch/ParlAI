@@ -35,6 +35,8 @@ function postData(url = ``, data = {}) {
 }
 
 // Callback for submission
+// TODO make the nonstatic send a message to the the server so we can catch
+// it without needing to wait for MTurk to update their status.
 function allDoneCallback() {
   if (inMTurkHITPage()) {
     $('input#mturk_submit_button').click();

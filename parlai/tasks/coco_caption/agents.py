@@ -12,7 +12,7 @@ from .build_2017 import build as build_2017
 from .build_2017 import buildImage as buildImage_2017
 try:
     import torch  # noqa: F401
-except Exception as e:
+except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 from torch.utils.data import Dataset
 
