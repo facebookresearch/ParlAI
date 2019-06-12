@@ -508,16 +508,12 @@ class TrainLoop():
             self.agent.receive_metrics(valid_report)
 
         # check which metric to look at
-        if 'tasks' in valid_report:
-            if '/' in opt['validation_metric']:
-                # if you are multitasking and want your validation metric to be
-                # a metric specific to a subtask, specify your validation metric
-                # as -vmt subtask/metric
-                subtask = opt['validation_metric'].split('/')[0]
-                validation_metric = opt['validation_metric'].split('/')[1]
-            else:
-                subtask = 'all'
-                validation_metric = opt['validation_metric']
+        if 'tasks' in valid_report and '/' in opt['validation_metric']:
+            # if you are multitasking and want your validation metric to be
+            # a metric specific to a subtask, specify your validation metric
+            # as -vmt subtask/metric
+            subtask = opt['validation_metric'].split('/')[0]
+            validation_metric = opt['validation_metric'].split('/')[1]
             new_valid = valid_report['tasks'][subtask][validation_metric]
         else:
             new_valid = valid_report[opt['validation_metric']]
