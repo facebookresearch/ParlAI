@@ -167,6 +167,7 @@ class History(object):
         self.max_len = maxlen
 
         self.history_strings = []
+        self.history_raw_strings = []
         self.history_vecs = []
 
         # person token args
@@ -184,6 +185,7 @@ class History(object):
 
     def reset(self):
         """Clear the history."""
+        self.history_raw_strings = []
         self.history_strings = []
         self.history_vecs = []
 
@@ -192,6 +194,12 @@ class History(object):
             while len(self.history_strings) >= self.size:
                 self.history_strings.pop(0)
         self.history_strings.append(text)
+
+    def _update_raw_strings(self, text):
+        if self.size > 0:
+            while len(self.history_raw_strings) >= self.size:
+                self.history_raw_strings.pop(0)
+        self.history_raw_strings.append(text)
 
     def _update_vecs(self, text):
         if self.size > 0:
@@ -214,6 +222,7 @@ class History(object):
             self.reset_on_next_update = False
 
         if add_next is not None:
+            self._update_raw_strings(add_next)
             if self.add_person_tokens:
                 add_next = self._add_person_tokens(add_next, self.p2_token)
             # update history string
@@ -227,6 +236,7 @@ class History(object):
             else:
                 next_texts = [obs[self.field]]
             for text in next_texts:
+                self._update_raw_strings(text)
                 if self.add_person_tokens:
                     text = self._add_person_tokens(obs[self.field],
                                                    self.p1_token,

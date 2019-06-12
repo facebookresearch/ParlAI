@@ -53,9 +53,9 @@ class TorchRankerAgent(TorchAgent):
             help='The source of candidates during evaluation (defaults to the same'
                  'value as --candidates if no flag is given)')
         agent.add_argument(
-            '--repeat_blocking_heuristic', type=str, default='both',
-            help='block repeating previous utterances of self, partner or both '
-            'or none. Helpful for many models that score repeats highly, so switched '
+            '--repeat_blocking_heuristic', type='bool', default=True,
+            help='Block repeating previous utterances. '
+            'Helpful for many models that score repeats highly, so switched '
             'on by default.')
         agent.add_argument(
             '-fcp', '--fixed-candidates-path', type=str,
@@ -326,14 +326,17 @@ class TorchRankerAgent(TorchAgent):
         return Output(preds, cand_preds)
 
     def block_repeats(self, cand_preds):
-        #import pdb; pdb.set_trace()
+        """Heuristic to block a model repeating a line from the history."""
+        history_strings = []
+        for h in self.history.history_raw_strings:
+            # Heuristic: Block any given line in the history, splitting by '\n'.
+            history_strings.extend(h.split('\n'))
+            
         new_preds= []
         for cp in cand_preds:
             np = []
             for c in cp:
-                # problem: history_strings could be preprocessed i think?
-                # ask emily what to do .. can i add something else to history object?
-                if c not in self.history.history_strings:
+                if c not in history_strings:
                     np.append(c)
             new_preds.append(np)
         return new_preds
