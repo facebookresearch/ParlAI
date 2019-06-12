@@ -320,7 +320,7 @@ class TorchRankerAgent(TorchAgent):
                     if r not in self.used_responses:
                         newres.append(r)
                     #else:
-                    #    print("skipped!")
+                    #  print("skipped!")
                 cand_preds.append(newres)
 
         #if batch.observations[0]['episode_done']:
