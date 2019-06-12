@@ -182,12 +182,14 @@ WEB_HTML = """
             document.getElementById("newImage").addEventListener("click", function(event){{
                 event.preventDefault()
                 var oldResponse = document.getElementById("model-response1");
-                if (oldResponse) {{
+                while (oldResponse) {{
                     oldResponse.parentNode.remove(oldResponse);
+                    oldResponse = document.getElementById("model-response1");
                 }}
                 var oldResponse = document.getElementById("model-response2");
-                if (oldResponse) {{
+                while (oldResponse) {{
                     oldResponse.parentNode.remove(oldResponse);
+                    oldResponse = document.getElementById("model-response2");
                 }}
                 var preview = document.getElementById("preview");
                 preview.setAttribute('src', '');
