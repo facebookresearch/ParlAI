@@ -1,6 +1,6 @@
 ## News
 
-2019-06-12: Added [HotPotQA](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/quac) as another dataset.
+2019-06-12: Added [HotpotQA](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/quac) as another dataset.
 
 2019-05-15: Added [QuAC](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/quac), Question Answering in Context dataset, and [COQA](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/coqa), Conversational Question Answering Challenge datasets.
 
