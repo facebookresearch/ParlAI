@@ -53,6 +53,11 @@ class TorchRankerAgent(TorchAgent):
             help='The source of candidates during evaluation (defaults to the same'
                  'value as --candidates if no flag is given)')
         agent.add_argument(
+            '--repeat_blocking_heuristic', type=str, default='both',
+            help='block repeating previous utterances of self, partner or both '
+            'or none. Helpful for many models that score repeats highly, so switched '
+            'on by default.')
+        agent.add_argument(
             '-fcp', '--fixed-candidates-path', type=str,
             help='A text file of fixed candidates to use for all examples, one '
                  'candidate per line')
@@ -311,24 +316,28 @@ class TorchRankerAgent(TorchAgent):
             # using a generator instead of a list comprehension allows
             # to cap the number of elements.
             cand_preds_generator = (cand_list[rank] for rank in ordering)
-            if False:
-                cand_preds.append(list(islice(cand_preds_generator, max_preds)))
-            else:
-                res = list(islice(cand_preds_generator, max_preds))
-                newres= []
-                for r in res:
-                    if r not in self.used_responses:
-                        newres.append(r)
-                    #else:
-                    #  print("skipped!")
-                cand_preds.append(newres)
+            cand_preds.append(list(islice(cand_preds_generator, max_preds)))
 
-        #if batch.observations[0]['episode_done']:
-        #    self.used_responses = []
+        if (self.opt.get('repeat_blocking_heuristic', 'none') != 'none' and
+            self.opt.get('eval_candidates') == 'fixed'):
+            cand_preds = self.block_repeats(cand_preds)
 
         preds = [cand_preds[i][0] for i in range(batchsize)]
         return Output(preds, cand_preds)
 
+    def block_repeats(self, cand_preds):
+        #import pdb; pdb.set_trace()
+        new_preds= []
+        for cp in cand_preds:
+            np = []
+            for c in cp:
+                # problem: history_strings could be preprocessed i think?
+                # ask emily what to do .. can i add something else to history object?
+                if c not in self.history.history_strings:
+                    np.append(c)
+            new_preds.append(np)
+        return new_preds
+            
     def _set_label_cands_vec(self, *args, **kwargs):
         """
         Set the 'label_candidates_vec' field in the observation.
