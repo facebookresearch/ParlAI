@@ -23,7 +23,7 @@ def main():
     fnames = ['kvmemnn.tgz']
     opt['model_type'] = 'kvmemnn'  # for builder
     download_models(opt, fnames, 'convai2')
-    return eval_f1(parser, print_parser=parser)
+    return eval_f1(opt, print_parser=parser)
 
 
 if __name__ == '__main__':
