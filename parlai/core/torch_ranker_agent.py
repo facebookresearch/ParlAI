@@ -318,7 +318,7 @@ class TorchRankerAgent(TorchAgent):
             cand_preds_generator = (cand_list[rank] for rank in ordering)
             cand_preds.append(list(islice(cand_preds_generator, max_preds)))
 
-        if (self.opt.get('repeat_blocking_heuristic', 'none') != 'none' and
+        if (self.opt.get('repeat_blocking_heuristic', False) and
             self.opt.get('eval_candidates') == 'fixed'):
             cand_preds = self.block_repeats(cand_preds)
 
