@@ -90,6 +90,11 @@ def aggregate_task_reports(reports, tasks, micro=True):
             # average over tasks
             vals = task_vals.values()
             total_report[metric] = round_sigfigs(sum(vals) / len(vals), 4)
+    # add a warning describing how metrics were averaged across tasks.
+    total_report['warning'] = 'metrics are averaged across tasks'
+    if micro:
+        total_report['warning'] += (' and weighted by the number of examples '
+                                    'per task')
     return total_report
 
 
