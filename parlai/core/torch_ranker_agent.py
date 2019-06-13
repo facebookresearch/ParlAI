@@ -387,14 +387,11 @@ class TorchRankerAgent(TorchAgent):
         Useful to override to change vectorization behavior.
         """
         obs = args[0]
-        cands_key = (
-            'candidates'
-            if 'labels' in obs
-            else 'eval_candidates'
-            if 'eval_labels' in obs
-            else None
-        )
-        if cands_key is not None and self.opt[cands_key] not in [
+        if 'labels' in obs:
+            cands_key = 'candidates'
+        else:
+            cands_key = 'eval_candidates'
+        if self.opt[cands_key] not in [
             'inline',
             'batch-all-cands',
         ]:
@@ -557,8 +554,8 @@ class TorchRankerAgent(TorchAgent):
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
 
+            label_inds = label_vecs.new_empty((batchsize))
             if label_vecs is not None:
-                label_inds = label_vecs.new_empty((batchsize))
                 for i, label_vec in enumerate(label_vecs):
                     label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(0)).fill_(
                         self.NULL_IDX
@@ -566,7 +563,8 @@ class TorchRankerAgent(TorchAgent):
                     if cand_vecs[i].size(0) < len(label_vec):
                         label_vec = label_vec[0: cand_vecs[i].size(1)]
                     label_vec_pad[0: label_vec.size(0)] = label_vec
-                    label_inds[i] = self._find_match(cand_vecs, label_vec_pad)
+                    label_inds[i] = self._find_match(cand_vecs, label_vec_pad,
+                                                     self.opt.get('ignore_bad_candidates'))
 
         elif source == 'vocab':
             warn_once(
@@ -583,10 +581,12 @@ class TorchRankerAgent(TorchAgent):
         return (cands, cand_vecs, label_inds)
 
     @staticmethod
-    def _find_match(cand_vecs, label_vec):
+    def _find_match(cand_vecs, label_vec, ignore_bad_candidates=False):
         matches = ((cand_vecs == label_vec).sum(1) == cand_vecs.size(1)).nonzero()
         if len(matches) > 0:
             return matches[0]
+        if ignore_bad_candidates:
+            return 0
         raise RuntimeError(
             'At least one of your examples has a set of label candidates '
             'that does not contain the label. To ignore this error '
