@@ -550,7 +550,7 @@ class TorchRankerAgent(TorchAgent):
                             'At least one of your examples has a set of label candidates '
                             'that does not contain the label. To ignore this error '
                             'set `--ignore-bad-candidates True`.'
-        )
+                        )
 
                     
         elif source == 'fixed':
@@ -588,6 +588,7 @@ class TorchRankerAgent(TorchAgent):
                             'At least one of your examples has a set of label candidates '
                             'that does not contain the label. To ignore this error '
                             'set `--ignore-bad-candidates True`.'
+                        )
 
         elif source == 'vocab':
             warn_once(
