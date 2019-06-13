@@ -543,7 +543,7 @@ class TorchRankerAgent(TorchAgent):
                     if label_inds[i] == -1:
                         bad_batch = True
                 if bad_batch:
-                    if self.opt.get('ignore_bad_candidates'):
+                    if self.opt.get('ignore_bad_candidates') and not self.is_training:
                         label_inds = None
                     else:
                         raise RuntimeError(
@@ -581,7 +581,7 @@ class TorchRankerAgent(TorchAgent):
                     if label_inds[i] == -1:
                         bad_batch = True
                 if bad_batch:
-                    if self.opt.get('ignore_bad_candidates'):
+                    if self.opt.get('ignore_bad_candidates') and not self.is_training:
                         label_inds = None
                     else:
                         raise RuntimeError(
