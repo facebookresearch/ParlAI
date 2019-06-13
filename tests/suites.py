@@ -52,6 +52,13 @@ def mturk():
     test_suite = test_loader.discover("parlai/mturk/core/test/")
     return test_suite
 
+@_clear_cmdline_args
+def internal_tests():
+    """Internal Tests"""
+    test_loader = unittest.TestLoader()
+    test_suite = test_loader.discover("parlai_internal/tests")
+    return test_suite
+
 
 if __name__ == '__main__':
     unittest.run(unittests())
