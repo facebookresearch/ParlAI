@@ -59,7 +59,7 @@ def aggregate_task_reports(reports, tasks, micro=True):
 
     :param reports: list of report dicts from separate tasks
     :param tasks: list of tasks
-    :param mico: average per example if True, else average over t
+    :param micro: average per example if True, else average over t
 
     :return: aggregated report dicts
     """

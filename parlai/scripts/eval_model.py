@@ -49,7 +49,7 @@ def setup_args(parser=None):
 
 
 def _eval_single_world(opt, agent, task):
-    print('[ Evaluating task {} on using datatype {}. ] '.format(
+    print('[ Evaluating task {} using datatype {}. ] '.format(
         task, opt.get('datatype', 'N/A')))
     task_opt = opt.copy()  # copy opt since we're editing the task
     task_opt['task'] = task
