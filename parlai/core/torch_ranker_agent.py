@@ -552,7 +552,6 @@ class TorchRankerAgent(TorchAgent):
                             'set `--ignore-bad-candidates True`.'
                         )
 
-                    
         elif source == 'fixed':
             warn_once(
                 "[ Executing {} mode with a common set of fixed candidates "
