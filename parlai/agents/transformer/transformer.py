@@ -196,67 +196,6 @@ class TransformerRankerAgent(TorchRankerAgent):
 
         return scores
 
-class CrossEncoderAgent(TorchRankerAgent):
-
-    @classmethod
-    def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
-        super(CrossEncoderAgent, cls).add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Cross Arguments')
-        add_common_cmdline_args(agent)
-        cls.dictionary_class().add_cmdline_args(argparser)
-        return agent
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel:
-            from parlai.core.distributed_utils import is_distributed
-            if is_distributed():
-                raise ValueError(
-                    'Cannot combine --data-parallel and distributed mode'
-                )
-            self.model = torch.nn.DataParallel(self.model)
-
-    def build_model(self, states=None):
-        n_positions = get_n_positions_from_options(self.opt)
-        embeddings = torch.nn.Embedding(
-            len(self.dict),
-            self.opt['embedding_size'],
-            padding_idx=0
-        )
-        torch.nn.init.normal_(embeddings.weight, 0,
-                              self.opt['embedding_size'] ** -0.5)
-        self.model = TransformerEncoder(
-            n_heads=self.opt['n_heads'],
-            n_layers=self.opt['n_layers'],
-            embedding_size=self.opt['embedding_size'],
-            ffn_size=self.opt['ffn_size'],
-            vocabulary_size=len(self.dict),
-            embedding=embeddings,
-            dropout=self.opt['dropout'],
-            attention_dropout=self.opt['attention_dropout'],
-            relu_dropout=self.opt['relu_dropout'],
-            padding_idx=0,
-            learn_positional_embeddings=self.opt['learn_positional_embeddings'],
-            embeddings_scale=self.opt['embeddings_scale'],
-            reduction_type= self.opt.get('reduction_type', 'mean'),
-            n_positions=n_positions,
-            n_segments=self.opt.get('n_segments', 0),
-            activation=self.opt['activation'],
-            variant=self.opt['variant'])
-        return self.model
-
-    def vectorize(self, *args, **kwargs):
-        kwargs['add_start'] = True
-        kwargs['add_end'] = True
-        obs = super().vectorize(*args, **kwargs)
-        return obs
-
-    def score_candidates(self, batch, cand_vecs, cand_encs=None):
-        pdb.set_trace()
-        return torch.zeros(len(batch), cand_vecs.size(1))
-
 
 class TransformerGeneratorAgent(TorchGeneratorAgent):
     @classmethod
