@@ -531,6 +531,7 @@ class TorchRankerAgent(TorchAgent):
             )
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
+                bad_batch = False
                 for i, label_vec in enumerate(label_vecs):
                     label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(1)).fill_(
                         self.NULL_IDX
@@ -539,7 +540,19 @@ class TorchRankerAgent(TorchAgent):
                         label_vec = label_vec[0: cand_vecs[i].size(1)]
                     label_vec_pad[0: label_vec.size(0)] = label_vec
                     label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
+                    if label_inds[i] == -1:
+                        bad_batch = True
+                if bad_batch:
+                    if self.opt.get('ignore_bad_candidates'):
+                        label_inds = None
+                    else:
+                        raise RuntimeError(
+                            'At least one of your examples has a set of label candidates '
+                            'that does not contain the label. To ignore this error '
+                            'set `--ignore-bad-candidates True`.'
+        )
 
+                    
         elif source == 'fixed':
             warn_once(
                 "[ Executing {} mode with a common set of fixed candidates "
@@ -554,8 +567,9 @@ class TorchRankerAgent(TorchAgent):
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
 
-            label_inds = label_vecs.new_empty((batchsize))
             if label_vecs is not None:
+                label_inds = label_vecs.new_empty((batchsize))
+                bad_batch = False
                 for i, label_vec in enumerate(label_vecs):
                     label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(0)).fill_(
                         self.NULL_IDX
@@ -563,8 +577,17 @@ class TorchRankerAgent(TorchAgent):
                     if cand_vecs[i].size(0) < len(label_vec):
                         label_vec = label_vec[0: cand_vecs[i].size(1)]
                     label_vec_pad[0: label_vec.size(0)] = label_vec
-                    label_inds[i] = self._find_match(cand_vecs, label_vec_pad,
-                                                     self.opt.get('ignore_bad_candidates'))
+                    label_inds[i] = self._find_match(cand_vecs, label_vec_pad)
+                    if label_inds[i] == -1:
+                        bad_batch = True
+                if bad_batch:
+                    if self.opt.get('ignore_bad_candidates'):
+                        label_inds = None
+                    else:
+                        raise RuntimeError(
+                            'At least one of your examples has a set of label candidates '
+                            'that does not contain the label. To ignore this error '
+                            'set `--ignore-bad-candidates True`.'
 
         elif source == 'vocab':
             warn_once(
@@ -581,17 +604,11 @@ class TorchRankerAgent(TorchAgent):
         return (cands, cand_vecs, label_inds)
 
     @staticmethod
-    def _find_match(cand_vecs, label_vec, ignore_bad_candidates=False):
+    def _find_match(cand_vecs, label_vec):
         matches = ((cand_vecs == label_vec).sum(1) == cand_vecs.size(1)).nonzero()
         if len(matches) > 0:
             return matches[0]
-        if ignore_bad_candidates:
-            return 0
-        raise RuntimeError(
-            'At least one of your examples has a set of label candidates '
-            'that does not contain the label. To ignore this error '
-            'set `--ignore-bad-candidates True`.'
-        )
+        return -1
 
     def share(self):
         """Share model parameters."""
