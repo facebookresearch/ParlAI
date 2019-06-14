@@ -24,12 +24,11 @@ class BertDictionaryAgent(DictionaryAgent):
     def __init__(self, opt):
         super().__init__(opt)
         # initialize from vocab path
-        # download(opt['datapath'])
-
         if 'bert_model' in opt:
             vocab_path = os.path.join(opt['datapath'], 'models', 'bert_models',
                                       '{}-vocab.txt'.format(opt['bert_model']))
         else:
+            download(opt['datapath'])
             vocab_path = os.path.join(opt['datapath'], 'models', 'bert_models',
                                       VOCAB_PATH)
         self.tokenizer = BertTokenizer.from_pretrained(vocab_path)
@@ -54,9 +53,7 @@ class BertDictionaryAgent(DictionaryAgent):
 
     def txt2vec(self, text, vec_type=list):
         tokens = self.tokenizer.tokenize(text)
-        tokens_id = self.tokenizer.convert_tokens_to_ids([self.start_token] +
-                                                         tokens +
-                                                         [self.end_token])
+        tokens_id = self.tokenizer.convert_tokens_to_ids(tokens)
         return tokens_id
 
     def vec2txt(self, tensor):
