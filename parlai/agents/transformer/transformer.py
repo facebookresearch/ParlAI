@@ -49,6 +49,9 @@ def add_common_cmdline_args(argparser):
     argparser.add_argument('--activation', choices={'relu', 'gelu'}, default='relu',
                            help='Nonlinear activation to use. AIAYN uses relu, but '
                                 'more recent papers prefer gelu.')
+    argparser.add_argument('--separate_embeddings', type='bool', default=False,
+                           help='Have two distinct embedding table for candidate and context'
+                           'in the memory network')
 
 
 class Transformer(Agent):
