@@ -97,8 +97,7 @@ class ImageLoader():
 
         return switcher.get(self.image_mode)
 
-    def extract(self, image, path):
-        """Extract an image."""
+    def extract(self, image, path=None):
         # check whether initialize CNN network.
         if not self.netCNN:
             self.init_cnn(self.opt)
@@ -108,7 +107,8 @@ class ImageLoader():
             transform = transform.cuda()
         feature = self.netCNN(transform)
         # save the feature
-        self.torch.save(feature.cpu(), path)
+        if path is not None:
+            self.torch.save(feature.cpu(), path)
         return feature
 
     def _img_to_ascii(self, path):
