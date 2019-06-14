@@ -56,19 +56,19 @@ All needed data will be downloaded to `~/ParlAI/data`, and any non-data files (s
 A large set of examples can be found in [this directory](./examples). Here are a few of them.
 Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
 
-Display 10 random examples from task 1 of the "1k training examples" bAbI task:
+Display 10 random examples from the Wikimovies dataset
 ```bash
-python examples/display_data.py -t babi:task1k:1
+python examples/display_data.py -t wikimovies
 ```
 
-Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
+Evaluate an IR baseline model on the validation set of the Personachat dataset:
 ```bash
-python examples/eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
+python examples/eval_model.py -m ir_baseline -t personachat -dt valid
 ```
 
-Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
+Train a single layer transformer (embedding size 300, 4 attention heads)  for 2 epochs using batchsize 64, word vectors are initialized with fasttext and using the other elements of the batch as negative. (requires pytorch and torchtext):
 ```bash
-python examples/train_model.py -t babi:task10k:1 -m seq2seq -mf /tmp/model_s2s -bs 32 -vtim 30 -vcut 0.95
+python examples/train_model.py -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
 ```
 
 
