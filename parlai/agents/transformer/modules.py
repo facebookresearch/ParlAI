@@ -140,8 +140,11 @@ class TransformerMemNetModel(nn.Module):
                 self.context_encoder, self.context_encoder.out_dim,
             )
         else:
+            cand_embeddings = _create_embeddings(
+                dictionary, opt['embedding_size'], self.pad_idx
+            )
             self.cand_encoder = _build_encoder(
-                opt, dictionary, self.embeddings, self.pad_idx,
+                opt, dictionary, cand_embeddings, self.pad_idx,
                 n_positions=n_positions,
                 reduction_type=self.reduction_type,
                 n_segments=self.n_segments,
