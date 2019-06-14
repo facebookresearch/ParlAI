@@ -40,6 +40,7 @@ All needed data will be downloaded to ~/ParlAI/data, and any non-data files (suc
 
 ## Documentation
 
+ - [Quick Start](https://parl.ai/docs/tutorial_quick.html)
  - [Basics: world, agents, teachers, action and observations](https://parl.ai/docs/tutorial_basic.html)
  - [List of available tasks/datasets](https://parl.ai/docs/tasks.html)
  - [Creating a dataset/task](http://www.parl.ai/docs/tutorial_task.html).
