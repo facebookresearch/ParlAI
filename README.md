@@ -43,9 +43,9 @@ All needed data will be downloaded to ~/ParlAI/data, and any non-data files (suc
  - [Quick Start](https://parl.ai/docs/tutorial_quick.html)
  - [Basics: world, agents, teachers, action and observations](https://parl.ai/docs/tutorial_basic.html)
  - [List of available tasks/datasets](https://parl.ai/docs/tasks.html)
- - [Creating a dataset/task](http://www.parl.ai/docs/tutorial_task.html).
+ - [Creating a dataset/task](http://www.parl.ai/docs/tutorial_task.html)
  - [List of available agents](./parlai/agents)
- - [Creating a new agent](https://parl.ai/docs/tutorial_seq2seq.html#).
+ - [Creating a new agent](https://parl.ai/docs/tutorial_seq2seq.html#)
  - [Model zoo (pretrained models)](https://parl.ai/docs/zoo.html)
  - [Plug into MTurk](http://parl.ai/docs/tutorial_mturk.html)
  - [Plug into Facebook Messenger](http://parl.ai/docs/tutorial_messenger.html)
