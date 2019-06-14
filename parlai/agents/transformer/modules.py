@@ -92,14 +92,14 @@ class TransformerMemNetModel(nn.Module):
         self.embeddings = _create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
-        if opt.get('separate_embeddings'):
+        if not opt.get('share_word_embeddings'):
             self.cand_embeddings = _create_embeddings(
                 dictionary, opt['embedding_size'], self.pad_idx
             )
 
         if not opt.get('learn_embeddings'):
             self.embeddings.weight.requires_grad = False
-            if opt.get('separate_embeddings'):
+            if not opt.get('share_word_embeddings'):
                 self.cand_embeddings.weight.requires_grad = False
 
 
@@ -134,16 +134,16 @@ class TransformerMemNetModel(nn.Module):
                 self.context_encoder, self.context_encoder.out_dim,
             )
         else:
-            if not opt.get('separate_embeddings'):
+            if not opt.get('share_word_embeddings'):
                 self.cand_encoder = _build_encoder(
-                    opt, dictionary, self.embeddings, self.pad_idx,
+                    opt, dictionary, self.cand_embeddings, self.pad_idx,
                     n_positions=n_positions,
                     reduction_type=self.reduction_type,
                     n_segments=self.n_segments,
                     )
             else:
                 self.cand_encoder = _build_encoder(
-                    opt, dictionary, self.cand_embeddings, self.pad_idx,
+                    opt, dictionary, self.embeddings, self.pad_idx,
                     n_positions=n_positions,
                     reduction_type=self.reduction_type,
                     n_segments=self.n_segments,
