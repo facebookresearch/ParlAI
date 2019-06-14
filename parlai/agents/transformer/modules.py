@@ -58,8 +58,8 @@ def _build_encoder(
         n_segments=n_segments,
         activation=opt['activation'],
         variant=opt['variant'],
+        output_scaling=opt['output_scaling']
     )
-
 
 def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
                    n_positions=1024, n_segments=0):
@@ -269,6 +269,8 @@ class TransformerEncoder(nn.Module):
     :param variant:
         Which transformer architecture to use. Could be AIAYN or XLM.
         Future versions may support things like GPT-2, ...
+    :param output_scaling:
+        Scale the outputs by a given scalar
     """
     def __init__(
         self,
@@ -289,6 +291,7 @@ class TransformerEncoder(nn.Module):
         activation='relu',
         variant='aiayn',
         n_segments=0,
+        output_scaling=1.0,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -359,6 +362,7 @@ class TransformerEncoder(nn.Module):
                 variant=variant,
                 activation=activation,
             ))
+        self.output_scaling = output_scaling
 
     def forward(self, input, positions=None, segments=None):
         """
@@ -397,6 +401,7 @@ class TransformerEncoder(nn.Module):
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
 
+        tensor *= self.output_scaling
         if self.reduction_type == 'first':
             return tensor[:, 0, :]
         elif self.reduction_type == 'max':

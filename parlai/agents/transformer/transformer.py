@@ -52,6 +52,8 @@ def add_common_cmdline_args(argparser):
     argparser.add_argument('--activation', choices={'relu', 'gelu'}, default='relu',
                            help='Nonlinear activation to use. AIAYN uses relu, but '
                                 'more recent papers prefer gelu.')
+    argparser.add_argument('--output-scaling', type=float, default=1.0,
+                           help='scale the output of every transformer by this quantity.')
 
 
 class Transformer(Agent):
@@ -191,7 +193,9 @@ class TransformerRankerAgent(TorchRankerAgent):
 
         if cand_encs is not None:
             cands_h = cand_encs
-
+        print(context_h[:,0:5])
+        print(cands_h.shape)
+        print(cands_h[0,0:10,0:5])
         scores = self._score(context_h, cands_h)
 
         return scores
