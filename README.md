@@ -4,15 +4,19 @@
 
 --------------------------------------------------------------------------------
 
-[ParlAI](http://parl.ai) (pronounced “par-lay”) is a framework for dialogue AI research, implemented in Python.
+[ParlAI](http://parl.ai) (pronounced “par-lay”) is a python framework for
+sharing, training and testing dialogue models, from open-domain chitchat to
+VQA (Visual Question Answering).
 
 Its goal is to provide researchers:
 
-- a **unified framework** for sharing, training and testing dialogue models from open-domain chitchat to VQA.
-- many popular **datasets available all in one place, with the same API**, among them [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/) and more than 70 others. See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
+- **70+ popular datasets available all in one place, with the same API**, among them [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
 - a wide set of **reference models** -- from retrieval baselines to Transformers.
+- a large zoo of **pretrained models** ready to use off the shelf
 - seamless **integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome)** for data collection and human evaluation
 - **integration with [Facebook Messenger](http://www.parl.ai/docs/tutorial_messenger.html)** to connect agents with humans in a chat interface
+- a large range of **helpers to create your own agents** and combine several datasets
+- **multimodality**, some tasks use text and images
 
 ParlAI is described in the following paper:
 [“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476). See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates.
@@ -78,43 +82,6 @@ The code is set up into several main directories:
 - [**mturk**](./parlai/mturk): contains code for setting up Mechanical Turk, as well as sample MTurk tasks
 - [**messenger**](./parlai/messenger): contains code for interfacing with Facebook Messenger
 - [**zoo**](./parlai/zoo): contains code to directly download and use pretrained models from our model zoo
-
-
-## Detailed Goals
-
-Unified framework for evaluation of dialogue models
-
-- downloads tasks/datasets on demand and provides the same simple interface to them
-- unifies dataset input and evaluation frameworks/metrics
-- `agents/` directory encourages researchers to submit their training code to the repository to share with others
-- aids reproducibility
-
-End goal is general dialogue, which includes many different skills
-
-- seamlessly combines simulated and real language tasks
-- encourages multi-task model development & evaluation
-- helps to reduce overfitting of models to specific datasets         
-
-End goal is real dialogue with people
-
-- train and evaluate on live dialogue with humans via Mechanical Turk or Messenger
-- easy setup for connecting turkers with your dialogue agent
-- allow to compare different research groups turk experiments
-
-Set of datasets to bootstrap a working dialogue model for human interaction
-
-- motivates building new datasets that will go in the repository
-
-## Properties
-
-- All datasets look like natural dialogue: a single format / API.
-- Both fixed datasets (conversation logs) and interactive (online/RL) tasks.
-- Both real and simulated tasks.
-- Supports other media, e.g. visual in VQA.
-- Can use Mechanical Turk to run / collect data / evaluate.
-- Python framework.
-- Examples of training with PyTorch.
-- Supports batch and hogwild training and evaluation of models.
 
 ## Support
 If you have any questions, bug reports or feature requests, please don't hesitate to post on our [Github Issues page](https://github.com/facebookresearch/ParlAI/issues).
