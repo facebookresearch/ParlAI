@@ -17,19 +17,24 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from torch import optim
+from abc import ABC, abstractmethod
 from collections import deque
 import json
 import random
 import numpy as np
 import os
+from torch import optim
 
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (
-    AttrDict, argsort, padded_tensor, warn_once, round_sigfigs,
-    fp16_optimizer_wrapper
+    AttrDict,
+    argsort,
+    padded_tensor,
+    warn_once,
+    round_sigfigs,
+    fp16_optimizer_wrapper,
 )
 from parlai.core.distributed_utils import is_primary_worker
 
@@ -86,19 +91,33 @@ class Batch(AttrDict):
         the original observations in the batched order
     """
 
-    def __init__(self, text_vec=None, text_lengths=None,
-                 label_vec=None, label_lengths=None, labels=None,
-                 valid_indices=None,
-                 candidates=None, candidate_vecs=None,
-                 image=None, observations=None,
-                 **kwargs):
+    def __init__(
+        self,
+        text_vec=None,
+        text_lengths=None,
+        label_vec=None,
+        label_lengths=None,
+        labels=None,
+        valid_indices=None,
+        candidates=None,
+        candidate_vecs=None,
+        image=None,
+        observations=None,
+        **kwargs
+    ):
         super().__init__(
-            text_vec=text_vec, text_lengths=text_lengths,
-            label_vec=label_vec, label_lengths=label_lengths, labels=labels,
+            text_vec=text_vec,
+            text_lengths=text_lengths,
+            label_vec=label_vec,
+            label_lengths=label_lengths,
+            labels=labels,
             valid_indices=valid_indices,
-            candidates=candidates, candidate_vecs=candidate_vecs,
-            image=image, observations=observations,
-            **kwargs)
+            candidates=candidates,
+            candidate_vecs=candidate_vecs,
+            image=image,
+            observations=observations,
+            **kwargs
+        )
 
 
 class Output(AttrDict):
@@ -122,8 +141,7 @@ class Output(AttrDict):
 
 class History(object):
     """
-    History handles tracking the dialogue history/state over the course of an
-    episode.
+    History handles tracking the dialogue state over the course of an episode.
 
     History may also be used to track the history of any field.
 
@@ -148,9 +166,18 @@ class History(object):
     :param dict_agent:
         DictionaryAgent object for tokenizing the history
     """
-    def __init__(self, opt, field='text', vec_type='deque', maxlen=None,
-                 size=-1, p1_token='__p1__', p2_token='__p2__',
-                 dict_agent=None):
+
+    def __init__(
+        self,
+        opt,
+        field='text',
+        vec_type='deque',
+        maxlen=None,
+        size=-1,
+        p1_token='__p1__',
+        p2_token='__p2__',
+        dict_agent=None,
+    ):
         self.field = field
         self.dict = dict_agent
         self.delimiter = opt.get('delimiter', '\n')
@@ -160,13 +187,12 @@ class History(object):
 
         # set up history objects
         if vec_type != 'deque' and vec_type != 'list':
-            raise RuntimeError(
-                'Type {} is not supported for history'.format(vec_type)
-            )
+            raise RuntimeError('Type {} is not supported for history'.format(vec_type))
         self.vec_type = vec_type
         self.max_len = maxlen
 
         self.history_strings = []
+        self.history_raw_strings = []
         self.history_vecs = []
 
         # person token args
@@ -184,6 +210,7 @@ class History(object):
 
     def reset(self):
         """Clear the history."""
+        self.history_raw_strings = []
         self.history_strings = []
         self.history_vecs = []
 
@@ -192,6 +219,12 @@ class History(object):
             while len(self.history_strings) >= self.size:
                 self.history_strings.pop(0)
         self.history_strings.append(text)
+
+    def _update_raw_strings(self, text):
+        if self.size > 0:
+            while len(self.history_raw_strings) >= self.size:
+                self.history_raw_strings.pop(0)
+        self.history_raw_strings.append(text)
 
     def _update_vecs(self, text):
         if self.size > 0:
@@ -214,6 +247,7 @@ class History(object):
             self.reset_on_next_update = False
 
         if add_next is not None:
+            self._update_raw_strings(add_next)
             if self.add_person_tokens:
                 add_next = self._add_person_tokens(add_next, self.p2_token)
             # update history string
@@ -227,27 +261,28 @@ class History(object):
             else:
                 next_texts = [obs[self.field]]
             for text in next_texts:
+                self._update_raw_strings(text)
                 if self.add_person_tokens:
-                    text = self._add_person_tokens(obs[self.field],
-                                                   self.p1_token,
-                                                   self.add_p1_after_newln)
+                    text = self._add_person_tokens(
+                        obs[self.field], self.p1_token, self.add_p1_after_newln
+                    )
                 # update history string
                 self._update_strings(text)
                 # update history vecs
                 self._update_vecs(text)
 
-        if obs.get('episode_done', True):
+        if obs['episode_done']:
             # end of this episode, clear the history when we see a new example
             self.reset_on_next_update = True
 
     def get_history_str(self):
-        """Returns the string version of the history."""
+        """Return the string version of the history."""
         if len(self.history_strings) > 0:
             return self.delimiter.join(self.history_strings)
         return None
 
     def get_history_vec(self):
-        """Returns a vectorized version of the history."""
+        """Return a vectorized version of the history."""
         if len(self.history_vecs) == 0:
             return None
 
@@ -268,7 +303,7 @@ class History(object):
         return history
 
     def get_history_vec_list(self):
-        """Returns a list of history vecs."""
+        """Return a list of history vecs."""
         return self.history_vecs
 
     def _add_person_tokens(self, text, token, add_after_newln=False):
@@ -280,9 +315,9 @@ class History(object):
             return token + ' ' + text
 
 
-class TorchAgent(Agent):
+class TorchAgent(ABC, Agent):
     """
-    A provided base agent for any model that wants to use Torch.
+    A provided abstract base agent for any model that wants to use Torch.
 
     Exists to make it easier to implement a new agent.
     Not necessary, but reduces duplicated code.
@@ -310,10 +345,14 @@ class TorchAgent(Agent):
         Override this (and probably call super()) to add your own optimizers.
         """
         # first pull torch.optim in
-        optims = {k.lower(): v for k, v in optim.__dict__.items()
-                  if not k.startswith('__') and k[0].isupper()}
+        optims = {
+            k.lower(): v
+            for k, v in optim.__dict__.items()
+            if not k.startswith('__') and k[0].isupper()
+        }
         try:
             import apex.optimizers.fused_adam as fused_adam
+
             optims['fused_adam'] = fused_adam.FusedAdam
         except ImportError:
             pass
@@ -321,6 +360,7 @@ class TorchAgent(Agent):
         try:
             # https://openreview.net/pdf?id=S1fUpoR5FQ
             from qhoptim.pyt import QHM, QHAdam
+
             optims['qhm'] = QHM
             optims['qhadam'] = QHAdam
         except ImportError:
@@ -353,137 +393,205 @@ class TorchAgent(Agent):
         agent = argparser.add_argument_group('TorchAgent Arguments')
         # pretrained embedding arguments
         agent.add_argument(
-            '-emb', '--embedding-type', default='random',
-            choices=['random', 'glove', 'glove-fixed', 'glove-twitter-fixed',
-                     'fasttext', 'fasttext-fixed', 'fasttext_cc',
-                     'fasttext_cc-fixed'],
+            '-emb',
+            '--embedding-type',
+            default='random',
+            choices=[
+                'random',
+                'glove',
+                'glove-fixed',
+                'glove-twitter-fixed',
+                'fasttext',
+                'fasttext-fixed',
+                'fasttext_cc',
+                'fasttext_cc-fixed',
+            ],
             help='Choose between different strategies for initializing word '
-                 'embeddings. Default is random, but can also preinitialize '
-                 'from Glove or Fasttext. Preinitialized embeddings can also '
-                 'be fixed so they are not updated during training.'
+            'embeddings. Default is random, but can also preinitialize '
+            'from Glove or Fasttext. Preinitialized embeddings can also '
+            'be fixed so they are not updated during training.',
         )
         agent.add_argument(
-            '-embp', '--embedding-projection', default='random',
+            '-embp',
+            '--embedding-projection',
+            default='random',
             help='If pretrained embeddings have a different dimensionality '
-                 'than your embedding size, strategy for projecting to the '
-                 'correct size. If the dimensions are the same, this is '
-                 'ignored unless you append "-force" to your choice.'
+            'than your embedding size, strategy for projecting to the '
+            'correct size. If the dimensions are the same, this is '
+            'ignored unless you append "-force" to your choice.',
         )
         # optimizer arguments
         agent.add_argument(
-            '--fp16', type='bool', default=False, help='Use fp16 computations.')
+            '--fp16', type='bool', default=False, help='Use fp16 computations.'
+        )
         agent.add_argument(
-            '-opt', '--optimizer', default='sgd', choices=cls.optim_opts(),
+            '-opt',
+            '--optimizer',
+            default='sgd',
+            choices=cls.optim_opts(),
             help='Choose between pytorch optimizers. Any member of torch.optim'
-                 ' should be valid.'
+            ' should be valid.',
         )
         agent.add_argument(
-            '-lr', '--learningrate', type=float, default=1,
-            help='learning rate'
+            '-lr', '--learningrate', type=float, default=1, help='learning rate'
         )
         agent.add_argument(
-            '-clip', '--gradient-clip', type=float, default=0.1,
-            help='gradient clipping using l2 norm'
+            '-clip',
+            '--gradient-clip',
+            type=float,
+            default=0.1,
+            help='gradient clipping using l2 norm',
         )
         agent.add_argument(
-            '-mom', '--momentum', default=0, type=float,
-            help='if applicable, momentum value for optimizer.'
+            '-mom',
+            '--momentum',
+            default=0,
+            type=float,
+            help='if applicable, momentum value for optimizer.',
         )
         agent.add_argument(
-            '--nesterov', default=True, type='bool',
-            help='if applicable, whether to use nesterov momentum.'
+            '--nesterov',
+            default=True,
+            type='bool',
+            help='if applicable, whether to use nesterov momentum.',
         )
         agent.add_argument(
-            '-nu', '--nus', default='0.7', type='floats',
+            '-nu',
+            '--nus',
+            default='0.7',
+            type='floats',
             help='if applicable, nu value(s) for optimizer. can use a single '
-                 'value like 0.7 or a comma-separated tuple like 0.7,1.0'
+            'value like 0.7 or a comma-separated tuple like 0.7,1.0',
         )
         agent.add_argument(
-            '-beta', '--betas', default='0.9,0.999', type='floats',
+            '-beta',
+            '--betas',
+            default='0.9,0.999',
+            type='floats',
             help='if applicable, beta value(s) for optimizer. can use a single '
-                 'value like 0.9 or a comma-separated tuple like 0.9,0.999'
+            'value like 0.9 or a comma-separated tuple like 0.9,0.999',
         )
         # lr scheduler
         agent.add_argument(
-            '--lr-scheduler', type=str, default='reduceonplateau',
+            '--lr-scheduler',
+            type=str,
+            default='reduceonplateau',
             choices=['reduceonplateau', 'none', 'fixed', 'invsqrt'],
-            help='Learning rate scheduler.'
+            help='Learning rate scheduler.',
         )
         agent.add_argument(
-            '--lr-scheduler-patience', type=int, default=3,
+            '--lr-scheduler-patience',
+            type=int,
+            default=3,
             help='LR scheduler patience. In number of validation runs. If using '
-                 'fixed scheduler, LR is decayed every <patience> validations.'
+            'fixed scheduler, LR is decayed every <patience> validations.',
         )
         agent.add_argument(
-            '--lr-scheduler-decay', type=float, default=0.5,
+            '--lr-scheduler-decay',
+            type=float,
+            default=0.5,
             help='Decay factor for LR scheduler, or how much LR is multiplied by '
-                 'when it is lowered.'
+            'when it is lowered.',
         )
         agent.add_argument(
-            '--warmup-updates', type=int, default=-1, hidden=True,
+            '--warmup-updates',
+            type=int,
+            default=-1,
+            hidden=True,
             help='Learning rate warmup period, in number of SGD updates. '
-                 'Linearly scales up LR over period. Only enabled if > 0.'
+            'Linearly scales up LR over period. Only enabled if > 0.',
         )
         agent.add_argument(
-            '--warmup-rate', type=float, default=1e-4, hidden=True,
+            '--warmup-rate',
+            type=float,
+            default=1e-4,
+            hidden=True,
             help='Warmup learning rate *multiplier*. Initial LR is multiplied by '
-                 'this value. Linearly adjusted up to 1.0 across --warmup-updates '
-                 'steps.'
+            'this value. Linearly adjusted up to 1.0 across --warmup-updates '
+            'steps.',
         )
         agent.add_argument(
-            '--update-freq', type=int, default=-1, hidden=True,
-            help='Accumulate gradients N times before performing an optimizer.step().'
+            '--update-freq',
+            type=int,
+            default=-1,
+            hidden=True,
+            help='Accumulate gradients N times before performing an optimizer.step().',
         )
         # preprocessing arguments
         agent.add_argument(
-            '-rc', '--rank-candidates', type='bool', default=False,
-            help='Whether the model should parse candidates for ranking.'
+            '-rc',
+            '--rank-candidates',
+            type='bool',
+            default=False,
+            help='Whether the model should parse candidates for ranking.',
         )
         agent.add_argument(
-            '-tr', '--truncate', default=-1, type=int,
-            help='Truncate input lengths to increase speed / use less memory.')
+            '-tr',
+            '--truncate',
+            default=-1,
+            type=int,
+            help='Truncate input lengths to increase speed / use less memory.',
+        )
         agent.add_argument(
-            '--text-truncate', type=int,
+            '--text-truncate',
+            type=int,
             help='Text input truncation length: if not specified, this will '
-                 'default to `truncate`'
+            'default to `truncate`',
         )
         agent.add_argument(
-            '--label-truncate', type=int,
+            '--label-truncate',
+            type=int,
             help='Label truncation length: if not specified, this will default '
-                 'to `truncate`'
+            'to `truncate`',
         )
         agent.add_argument(
-            '-histsz', '--history-size', default=-1, type=int,
-            help='Number of past dialog utterances to remember.'
+            '-histsz',
+            '--history-size',
+            default=-1,
+            type=int,
+            help='Number of past dialog utterances to remember.',
         )
         agent.add_argument(
-            '-pt', '--person-tokens', type='bool', default=False,
+            '-pt',
+            '--person-tokens',
+            type='bool',
+            default=False,
             help='add person tokens to history. adds __p1__ in front of input '
-                 'text and __p2__ in front of past labels when available or '
-                 'past utterances generated by the model. these are added to '
-                 'the dictionary during initialization.'
+            'text and __p2__ in front of past labels when available or '
+            'past utterances generated by the model. these are added to '
+            'the dictionary during initialization.',
         )
         agent.add_argument(
-            '--split-lines', type='bool', default=False,
+            '--split-lines',
+            type='bool',
+            default=False,
             help='split the dialogue history on newlines and save in separate '
-                 'vectors'
+            'vectors',
         )
         agent.add_argument(
-            '--use-reply', default='label', hidden=True,
+            '--use-reply',
+            default='label',
+            hidden=True,
             choices=['label', 'model', 'none'],
             help='Which previous replies to use as history. If label, use '
-                 'gold dataset replies. If model, use model\'s own replies. '
-                 'If none, do not track replies in history.'
+            'gold dataset replies. If model, use model\'s own replies. '
+            'If none, do not track replies in history.',
         )
         agent.add_argument(
-            '--add-p1-after-newln', type='bool', default=False, hidden=True,
+            '--add-p1-after-newln',
+            type='bool',
+            default=False,
+            hidden=True,
             help='Add the other speaker token before the last newline in the '
-                 'input instead of at the beginning of the input. this is '
-                 'useful for tasks that include some kind of context before '
-                 'the actual utterance (e.g. squad, babi, personachat).')
+            'input instead of at the beginning of the input. this is '
+            'useful for tasks that include some kind of context before '
+            'the actual utterance (e.g. squad, babi, personachat).',
+        )
         agent.add_argument(
-            '--delimiter', type=str, default='\n',
-            help='Join history lines with this token, defaults to newline'
+            '--delimiter',
+            type=str,
+            default='\n',
+            help='Join history lines with this token, defaults to newline',
         )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
@@ -493,9 +601,12 @@ class TorchAgent(Agent):
             '-gpu', '--gpu', type=int, default=-1, help='which GPU to use'
         )
         gpugroup.add_argument(
-            '--no-cuda', default=False, action='store_true', dest='no_cuda',
+            '--no-cuda',
+            default=False,
+            action='store_true',
+            dest='no_cuda',
             help='disable GPUs even if available. otherwise, will use GPUs if '
-                 'available on the device.'
+            'available on the device.',
         )
 
         cls.dictionary_class().add_cmdline_args(argparser)
@@ -538,7 +649,7 @@ class TorchAgent(Agent):
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
         # indicate whether using fp16
-        self.fp16 = self.opt.get('fp16', False)
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
 
         # Default to the class name, sans "Agent". child can override
         self.id = type(self).__name__.replace("Agent", "")
@@ -594,9 +705,10 @@ class TorchAgent(Agent):
 
     def _get_init_model(self, opt, shared):
         """
-        Get model file to initialize with. If `init_model` exits, we will
-        return the path to that file and maybe load dict file from that path.
-        Otherwise, use `model_file.`
+        Get model file to initialize with.
+
+        If `init_model` exits, we will return the path to that file and maybe
+        load dict file from that path. Otherwise, use `model_file.`
 
         :return:  path to load model from, whether we loaded from `init_model`
                   or not
@@ -616,8 +728,7 @@ class TorchAgent(Agent):
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
-                if (os.path.isfile(init_model + '.dict') or
-                        opt['dict_file'] is None):
+                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
                     opt['dict_file'] = init_model + '.dict'
 
         return init_model, is_finetune
@@ -636,7 +747,6 @@ class TorchAgent(Agent):
             type of optimizer being loaded, if changed will skip loading
             optimizer states
         """
-
         opt = self.opt
 
         # set up optimizer args
@@ -667,27 +777,49 @@ class TorchAgent(Agent):
         if self.fp16:
             self.optimizer = fp16_optimizer_wrapper(self.optimizer)
 
-        if optim_states:
-            if saved_optim_type != opt['optimizer']:
-                print('WARNING: not loading optim state since optim class '
-                      'changed.')
+        # TODO: we might want to hard reset optimizers here in the
+        # case of fine tuning. Some rudimentary experiments seemed to
+        # indicate that keeping adam weights around was desirable, so this
+        # will remain the behavior for the time being.
+        if optim_states and saved_optim_type != opt['optimizer']:
+            # we changed from adam to adamax, or sgd to adam, or similar
+            print('WARNING: not loading optim state since optim class changed.')
+        elif optim_states:
+            # check for any fp16/fp32 conversions we need to do
+            optimstate_fp16 = ('loss_scaler' in optim_states)
+            if self.fp16 and optimstate_fp16:
+                # previously trained in fp16, now we're training in fp16.
+                # ideally no action needed, but APEX broke backwards
+                # compatibility and this is the hack around it.
+                optim_states['loss_scaler'] = (
+                    self.optimizer.state_dict()['loss_scaler']
+                )
+            elif optimstate_fp16 and not self.fp16:
+                # old optimizer was fp16 but now we're doing fp32,
+                # drop the fp16 wrapper from the state_dict and just load
+                # the fp16 weights into the fp32 tensors
+                optim_states = optim_states['optimizer_state_dict']
+            elif not optimstate_fp16 and self.fp16:
+                # old optimizer was fp32, but now we're doing fp16.
+                # this is a bit clunky, but alternatives are worse
+                self.optimizer.optimizer.load_state_dict(optim_states)
+                return
             else:
-                try:
-                    self.optimizer.load_state_dict(optim_states)
-                except ValueError:
-                    print('WARNING: not loading optim state since model '
-                          'params changed.')
-                if self.use_cuda:
-                    for state in self.optimizer.state.values():
-                        for k, v in state.items():
-                            if isinstance(v, torch.Tensor):
-                                state[k] = v.cuda()
+                # previously trained in fp32, loading in fp32.
+                # no special treatment needed.
+                pass
+
+            # finally, try to actually load the optimizer state
+            try:
+                self.optimizer.load_state_dict(optim_states)
+            except ValueError:
+                print('WARNING: not loading optim state since model params changed.')
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
         Create the learning rate scheduler, and assign it to self.scheduler.
-        This scheduler will be updated upon a call to receive_metrics.
 
+        This scheduler will be updated upon a call to receive_metrics.
         May also create self.warmup_scheduler, if appropriate.
 
         :param state_dict states: Possible state_dict provided by model
@@ -702,6 +834,7 @@ class TorchAgent(Agent):
             optimizer = optimizer.optimizer
 
         if self.opt.get('warmup_updates', -1) > 0:
+
             def _warmup_lr(step):
                 start = self.opt['warmup_rate']
                 end = 1.0
@@ -709,10 +842,7 @@ class TorchAgent(Agent):
                 lr_mult = start + (end - start) * progress
                 return lr_mult
 
-            self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
-                optimizer,
-                _warmup_lr,
-            )
+            self.warmup_scheduler = optim.lr_scheduler.LambdaLR(optimizer, _warmup_lr)
         else:
             self.warmup_scheduler = None
 
@@ -730,18 +860,10 @@ class TorchAgent(Agent):
             self.scheduler = None
         elif self.opt.get('lr_scheduler') == 'reduceonplateau':
             self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-                optimizer,
-                'min',
-                factor=decay,
-                patience=patience,
-                verbose=True
+                optimizer, 'min', factor=decay, patience=patience, verbose=True
             )
         elif self.opt.get('lr_scheduler') == 'fixed':
-            self.scheduler = optim.lr_scheduler.StepLR(
-                optimizer,
-                patience,
-                gamma=decay,
-            )
+            self.scheduler = optim.lr_scheduler.StepLR(optimizer, patience, gamma=decay)
         elif self.opt.get('lr_scheduler') == 'invsqrt':
             if self.opt.get('warmup_updates', -1) <= 0:
                 raise ValueError(
@@ -753,14 +875,12 @@ class TorchAgent(Agent):
             def _invsqrt_lr(step):
                 return decay_factor / np.sqrt(max(1, step))
 
-            self.scheduler = optim.lr_scheduler.LambdaLR(
-                optimizer,
-                _invsqrt_lr,
-            )
+            self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, _invsqrt_lr)
         else:
             raise ValueError(
-                "Don't know what to do with lr_scheduler '{}'"
-                .format(self.opt.get('lr_scheduler'))
+                "Don't know what to do with lr_scheduler '{}'".format(
+                    self.opt.get('lr_scheduler')
+                )
             )
 
         # time to load LR state from the checkpoint, if possible.
@@ -768,7 +888,14 @@ class TorchAgent(Agent):
             # first make sure there are no null pointers
             states = {}
 
-        if states and states.get('lr_scheduler_type') != self.opt['lr_scheduler']:
+        if (
+            # there is already an old LR scheduler saved on disk
+            states and
+            # and the old LR scheduler is different
+            states.get('lr_scheduler_type') != self.opt['lr_scheduler'] and
+            # and we're not already using a fresh scheduler
+            not hard_reset
+        ):
             # the LR scheduler changed, start things fresh
             warn_once("LR scheduler is different from saved. Starting fresh!")
             hard_reset = True
@@ -782,10 +909,15 @@ class TorchAgent(Agent):
             self._number_training_updates = states['number_training_updates']
         if self.scheduler and 'lr_scheduler' in states:
             self.scheduler.load_state_dict(states['lr_scheduler'])
-        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler'):
+        if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler', None):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
 
     def report(self):
+        """
+        Report metrics.
+
+        Report includes learning rate and number of training updates.
+        """
         metrics = {}
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
@@ -795,10 +927,10 @@ class TorchAgent(Agent):
         return metrics
 
     def _is_lr_warming_up(self):
-        """Checks if we're warming up the learning rate."""
+        """Check if we're warming up the learning rate."""
         return (
-            self.warmup_scheduler is not None and
-            self._number_training_updates <= self.opt['warmup_updates']
+            self.warmup_scheduler is not None
+            and self._number_training_updates <= self.opt['warmup_updates']
         )
 
     def receive_metrics(self, metrics_dict):
@@ -835,8 +967,9 @@ class TorchAgent(Agent):
             pass
         else:
             raise ValueError(
-                "Don't know how to work with lr scheduler '{}'"
-                .format(self.opt['lr_scheduler'])
+                "Don't know how to work with lr scheduler '{}'".format(
+                    self.opt['lr_scheduler']
+                )
             )
 
     def _get_embtype(self, emb_type):
@@ -856,21 +989,26 @@ class TorchAgent(Agent):
                 init = 'glove'
                 name = '840B'
             embs = vocab.GloVe(
-                name=name, dim=pretrained_dim,
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:glove_vectors'))
+                name=name,
+                dim=pretrained_dim,
+                cache=modelzoo_path(self.opt.get('datapath'), 'zoo:glove_vectors'),
+            )
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
             from parlai.zoo.fasttext_cc_vectors.build import download
+
             embs = download(self.opt.get('datapath'))
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
             from parlai.zoo.fasttext_vectors.build import download
+
             embs = download(self.opt.get('datapath'))
         else:
-            raise RuntimeError('embedding type {} not implemented. check arg, '
-                               'submit PR to this function, or override it.'
-                               ''.format(emb_type))
+            raise RuntimeError(
+                'embedding type {} not implemented. check arg, '
+                'submit PR to this function, or override it.'
+                ''.format(emb_type)
+            )
         return embs, init
 
     def _project_vec(self, vec, target_dim, method='random'):
@@ -905,8 +1043,9 @@ class TorchAgent(Agent):
                 # TODO: PCA
                 # TODO: PCA + RP
                 # TODO: copy
-                raise RuntimeError('Projection method not implemented: {}'
-                                   ''.format(method))
+                raise RuntimeError(
+                    'Projection method not implemented: {}' ''.format(method)
+                )
         else:
             return vec
 
@@ -928,14 +1067,15 @@ class TorchAgent(Agent):
         cnt = 0
         for w, i in self.dict.tok2ind.items():
             if w in embs.stoi:
-                vec = self._project_vec(embs.vectors[embs.stoi[w]],
-                                        weight.size(1))
+                vec = self._project_vec(embs.vectors[embs.stoi[w]], weight.size(1))
                 weight.data[i] = vec
                 cnt += 1
 
         if log:
-            print('Initialized embeddings for {} tokens ({}%) from {}.'
-                  ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
+            print(
+                'Initialized embeddings for {} tokens ({}%) from {}.'
+                ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
+            )
 
     def share(self):
         """
@@ -967,8 +1107,9 @@ class TorchAgent(Agent):
             new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def _vectorize_text(self, text, add_start=False, add_end=False,
-                        truncate=None, truncate_left=True):
+    def _vectorize_text(
+        self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
+    ):
         """
         Return vector from text.
 
@@ -1007,7 +1148,7 @@ class TorchAgent(Agent):
 
     def _set_text_vec(self, obs, history, truncate):
         """
-        Sets the 'text_vec' field in the observation.
+        Set the 'text_vec' field in the observation.
 
         Useful to override to change vectorization behavior
         """
@@ -1030,7 +1171,7 @@ class TorchAgent(Agent):
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
         """
-        Sets the 'labels_vec' field in the observation.
+        Set the 'labels_vec' field in the observation.
 
         Useful to override to change vectorization behavior
         """
@@ -1048,13 +1189,13 @@ class TorchAgent(Agent):
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
             obs[label_type + '_vec'] = self._check_truncate(
-                obs[label_type + '_vec'], truncate)
+                obs[label_type + '_vec'], truncate
+            )
         else:
             # pick one label if there are multiple
             lbls = obs[label_type]
             label = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-            vec_label = self._vectorize_text(label, add_start, add_end,
-                                             truncate, False)
+            vec_label = self._vectorize_text(label, add_start, add_end, truncate, False)
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -1062,7 +1203,7 @@ class TorchAgent(Agent):
 
     def _set_label_cands_vec(self, obs, add_start, add_end, truncate):
         """
-        Sets the 'label_candidates_vec' field in the observation.
+        Set the 'label_candidates_vec' field in the observation.
 
         Useful to override to change vectorization behavior
         """
@@ -1076,11 +1217,19 @@ class TorchAgent(Agent):
             obs['label_candidates'] = list(obs['label_candidates'])
             obs['label_candidates_vecs'] = [
                 self._vectorize_text(c, add_start, add_end, truncate, False)
-                for c in obs['label_candidates']]
+                for c in obs['label_candidates']
+            ]
         return obs
 
-    def vectorize(self, obs, history, add_start=True, add_end=True,
-                  text_truncate=None, label_truncate=None):
+    def vectorize(
+        self,
+        obs,
+        history,
+        add_start=True,
+        add_end=True,
+        text_truncate=None,
+        label_truncate=None,
+    ):
         """
         Make vectors out of observation fields and store in the observation.
 
@@ -1129,6 +1278,7 @@ class TorchAgent(Agent):
         return obs
 
     def is_valid(self, obs):
+        """Determine if an observation is valid or not."""
         return 'text_vec' in obs or 'image' in obs
 
     def batchify(self, obs_batch, sort=False):
@@ -1161,8 +1311,7 @@ class TorchAgent(Agent):
         if len(obs_batch) == 0:
             return Batch()
 
-        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if
-                     self.is_valid(ex)]
+        valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if self.is_valid(ex)]
 
         if len(valid_obs) == 0:
             return Batch()
@@ -1174,7 +1323,7 @@ class TorchAgent(Agent):
         if any('text_vec' in ex for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = padded_tensor(
-                _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16'),
+                _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16')
             )
             if sort:
                 sort = False  # now we won't sort on labels
@@ -1184,8 +1333,7 @@ class TorchAgent(Agent):
 
         # LABELS
         labels_avail = any('labels_vec' in ex for ex in exs)
-        some_labels_avail = (labels_avail or
-                             any('eval_labels_vec' in ex for ex in exs))
+        some_labels_avail = labels_avail or any('eval_labels_vec' in ex for ex in exs)
 
         ys, y_lens, labels = None, None, None
         if some_labels_avail:
@@ -1196,13 +1344,14 @@ class TorchAgent(Agent):
             y_lens = [y.shape[0] for y in label_vecs]
 
             ys, y_lens = padded_tensor(
-                label_vecs, self.NULL_IDX, self.use_cuda,
-                fp16friendly=self.opt.get('fp16')
+                label_vecs,
+                self.NULL_IDX,
+                self.use_cuda,
+                fp16friendly=self.opt.get('fp16'),
             )
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
-                    y_lens, ys, valid_inds, label_vecs, labels, y_lens,
-                    descending=True
+                    y_lens, ys, valid_inds, label_vecs, labels, y_lens, descending=True
                 )
 
         # LABEL_CANDIDATES
@@ -1216,11 +1365,18 @@ class TorchAgent(Agent):
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
-        return Batch(text_vec=xs, text_lengths=x_lens, label_vec=ys,
-                     label_lengths=y_lens, labels=labels,
-                     valid_indices=valid_inds, candidates=cands,
-                     candidate_vecs=cand_vecs, image=imgs,
-                     observations=exs)
+        return Batch(
+            text_vec=xs,
+            text_lengths=x_lens,
+            label_vec=ys,
+            label_lengths=y_lens,
+            labels=labels,
+            valid_indices=valid_inds,
+            candidates=cands,
+            candidate_vecs=cand_vecs,
+            image=imgs,
+            observations=exs,
+        )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
         """
@@ -1279,18 +1435,21 @@ class TorchAgent(Agent):
         # if the last observation was the end of an episode,
         # then we shouldn't use it as history
         if (use_reply == 'none' or not self.observation or
-                self.observation.get('episode_done', True)):
+                self.observation['episode_done']):
             return None
 
         if use_reply == 'label':
             # first look for the true label, if we aren't on a new episode
-            label_key = ('labels' if 'labels' in self.observation else
-                         'eval_labels' if 'eval_labels' in self.observation
-                         else None)
+            label_key = (
+                'labels'
+                if 'labels' in self.observation
+                else 'eval_labels'
+                if 'eval_labels' in self.observation
+                else None
+            )
             if label_key is not None:
                 lbls = self.observation[label_key]
-                last_reply = (lbls[0] if len(lbls) == 1
-                              else self.random.choice(lbls))
+                last_reply = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
                 return last_reply
 
         # otherwise, we use the last reply the model generated
@@ -1298,42 +1457,6 @@ class TorchAgent(Agent):
         if batch_reply is not None:
             return batch_reply[self.batch_idx].get('text')
         return None
-
-    def _save_history(self, observations, replies):
-        """Save the model replies to the history."""
-        # make sure data structure is set up
-        if 'predictions' not in self.replies:
-            self.replies['predictions'] = {}
-        if 'episode_ends' not in self.replies:
-            self.replies['episode_ends'] = {}
-        # shorthand
-        preds = self.replies['predictions']
-        ends = self.replies['episode_ends']
-        for i, obs in enumerate(observations):
-            # iterate through batch, saving replies
-            if i not in preds:
-                preds[i] = []
-            if ends.get(i):
-                # check whether *last* example was the end of an episode
-                preds[i].clear()
-            ends[i] = obs.get('episode_done', True)
-            preds[i].append(replies[i].get('text'))
-
-    def reply_history(self):
-        """
-        Get the model's predicted reply history within this episode.
-
-        :param batch:
-            (default False) return the reply history for every row in the
-            batch, otherwise will return just for this example.
-
-        :return:
-            list of lists of strings, each of the past model replies in in the
-            current episode. will be None wherever model did not reply.
-        """
-        # make sure in batch order
-        preds = sorted((b, p) for b, p in self.replies['predictions'].items())
-        return [p for b, p in preds]
 
     def observe(self, observation):
         """
@@ -1345,13 +1468,16 @@ class TorchAgent(Agent):
         # update the history using the observation
         self.history.update_history(observation, add_next=reply)
         self.observation = observation
-        return self.vectorize(self.observation, self.history,
-                              text_truncate=self.text_truncate,
-                              label_truncate=self.label_truncate)
+        return self.vectorize(
+            self.observation,
+            self.history,
+            text_truncate=self.text_truncate,
+            label_truncate=self.label_truncate,
+        )
 
     def state_dict(self):
         """
-        Get the state dict for saving
+        Get the state dict for saving.
 
         Override this method for more specific saving.
         """
@@ -1363,22 +1489,22 @@ class TorchAgent(Agent):
             else:
                 states['model'] = self.model.state_dict()
 
-        if hasattr(self, 'optimizer'):  # save optimizer params
+        if hasattr(self, 'optimizer'):
+            # save optimizer params
             states['optimizer'] = self.optimizer.state_dict()
             states['optimizer_type'] = self.opt['optimizer']
 
         # lr scheduler
         if torch.__version__.startswith('0.'):
             warn_once(
-                "Must upgrade to Pytorch 1.0 to save the state of your "
-                "LR scheduler."
+                "Must upgrade to Pytorch 1.0 to save the state of your " "LR scheduler."
             )
         else:
             states['number_training_updates'] = self._number_training_updates
-            if getattr(self, 'scheduler'):
+            if getattr(self, 'scheduler', None):
                 states['lr_scheduler'] = self.scheduler.state_dict()
                 states['lr_scheduler_type'] = self.opt['lr_scheduler']
-            if getattr(self, 'warmup_scheduler'):
+            if getattr(self, 'warmup_scheduler', None):
                 states['warmup_scheduler'] = self.warmup_scheduler.state_dict()
 
         return states
@@ -1476,25 +1602,24 @@ class TorchAgent(Agent):
 
         self.match_batch(batch_reply, batch.valid_indices, output)
         self.replies['batch_reply'] = batch_reply
-        self._save_history(observations, batch_reply)  # save model predictions
 
         return batch_reply
 
+    @abstractmethod
     def train_step(self, batch):
         """[Abstract] Process one batch with training labels."""
-        raise NotImplementedError(
-            'Abstract class: user must implement train_step'
-        )
+        pass
 
+    @abstractmethod
     def eval_step(self, batch):
         """[Abstract] Process one batch but do not train on it."""
-        raise NotImplementedError(
-            'Abstract class: user must implement eval_step'
-        )
+        pass
 
     def backward(self, loss):
         """
-        Perform a backward pass. It is recommended you use this instead of
+        Perform a backward pass.
+
+        It is recommended you use this instead of
         loss.backward(), for integration with distributed training and FP16
         training.
         """
@@ -1505,9 +1630,11 @@ class TorchAgent(Agent):
 
     def update_params(self):
         """
-        Perform step of optimization, clipping gradients and adjusting LR
-        schedule if needed. Gradient accumulation is also performed if agent
-        is called with --update-freq.
+        Perform step of optimization.
+
+        Handles clipping gradients and adjusting LR schedule if needed.
+        Gradient accumulation is also performed if agent is called with
+        --update-freq.
 
         It is recommended (but not forced) that you call this in train_step.
         """
@@ -1525,9 +1652,7 @@ class TorchAgent(Agent):
         # compute warmup adjustment if needed
         if self.opt.get('warmup_updates', -1) > 0:
             if not hasattr(self, 'warmup_scheduler'):
-                raise RuntimeError(
-                    'Looks like you forgot to call build_lr_scheduler'
-                )
+                raise RuntimeError('Looks like you forgot to call build_lr_scheduler')
             if self._is_lr_warming_up():
                 self.warmup_scheduler.step(epoch=self._number_training_updates)
 
@@ -1562,3 +1687,21 @@ class TorchAgent(Agent):
             return
 
         self.optimizer.zero_grad()
+
+    def _total_parameters(self):
+        """
+        Compute the total number of parameters in the model.
+
+        :return:
+            total number of parameters in the model.
+        """
+        return sum(p.numel() for p in self.model.parameters())
+
+    def _trainable_parameters(self):
+        """
+        Compute the total number of trainable parameters in the model.
+
+        :return:
+            total number of trainable parameters in the model.
+        """
+        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)

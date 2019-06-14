@@ -9,6 +9,8 @@ from parlai.core.utils import round_sigfigs
 from parlai.core.utils import set_namedtuple_defaults
 from parlai.core.utils import padded_tensor
 from parlai.core.utils import argsort
+from parlai.core.utils import Opt
+from copy import deepcopy
 import time
 import unittest
 import torch
@@ -77,7 +79,7 @@ class TestUtils(unittest.TestCase):
         # Shouldn't be able to construct a namedtuple without providing info
         try:
             NT()
-            assert False, "Shouldn't be able to construct namedtuple"
+            self.fail("Shouldn't be able to construct namedtuple")
         except TypeError:
             pass
 
@@ -91,9 +93,9 @@ class TestUtils(unittest.TestCase):
         # Test setting it with something else
         set_namedtuple_defaults(NT, default=1)
         nt = NT()
-        assert nt.a is 1
-        assert nt.b is 1
-        assert nt.c is 1
+        assert nt.a == 1
+        assert nt.b == 1
+        assert nt.c == 1
 
     def test_padded_tensor(self):
         # list of lists
@@ -117,6 +119,20 @@ class TestUtils(unittest.TestCase):
         assert argsort(keys, items, items2, descending=True) == [items, items2]
 
         assert np.all(argsort(torch_keys, torch_keys)[0].numpy() == np.arange(1, 6))
+
+    def test_opt(self):
+        opt = {'x': 0}
+        opt = Opt(opt)
+        opt['x'] += 1
+        opt['x'] = 10
+        history = opt.history['x']
+        self.assertEqual(history[0][1], 1, 'History not set properly')
+        self.assertEqual(history[1][1], 10, 'History not set properly')
+
+        opt_copy = deepcopy(opt)
+        history = opt_copy.history['x']
+        self.assertEqual(history[0][1], 1, 'Deepcopy history not set properly')
+        self.assertEqual(history[1][1], 10, 'Deepcopy history not set properly')
 
 
 if __name__ == '__main__':

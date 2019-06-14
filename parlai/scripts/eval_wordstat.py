@@ -64,7 +64,7 @@ def setup_args(parser=None):
     return parser
 
 
-def get_word_stats(text, agent_dict, bins=[0, 100, 1000, 100000]):
+def get_word_stats(text, agent_dict, bins=(0, 100, 1000, 100000)):
     """
     Function which takes text sequence and dict, returns word freq and length statistics
 

@@ -5,6 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
+Common Abstract classes for many agents.
+
 This module provides a set of basic agents:
 
     ``Agent(object)``
@@ -40,7 +42,7 @@ This module also provides a utility method:
 """
 
 from parlai.core.build_data import modelzoo_path
-from parlai.core.utils import warn_once
+from parlai.core.utils import Opt, warn_once
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
@@ -78,28 +80,49 @@ class Agent(object):
         return t
 
     def getID(self):
+        """Return the agent ID."""
         return self.id
 
     def epoch_done(self):
+        """
+        Return whether the epoch is done or not.
+
+        :rtype: boolean
+        """
         return False
 
     def reset(self):
+        """
+        Reset the agent, clearing its observation.
+
+        Many subclasses implement additional reset logic.
+        """
         self.observation = None
 
     def reset_metrics(self):
+        """
+        Reset any metrics reported by this agent.
+
+        This is called to indicate metrics should start fresh, and is typically
+        called between loggings or after a `report()`.
+        """
         pass
 
     def save(self, path=None):
         """
-        If applicable, save any parameters needed to recreate this agent from
-        loaded parameters.
+        Save any parameters needed to recreate this agent from loaded parameters.
+
+        Default implementation is no-op, but many subagents implement this logic.
         """
         pass
 
     def share(self):
         """
-        If applicable, share any parameters needed to create a shared version
-        of this agent.
+        Share any parameters needed to create a shared version of this agent.
+
+        Default implementation shares the class and the opt, but most agents will
+        want to also add model weights, teacher data, etc. This especially useful
+        for avoiding providing pointers to large objects to all agents in a batch.
         """
         shared = {}
         shared['class'] = type(self)
@@ -113,8 +136,9 @@ class Agent(object):
 
 class Teacher(Agent):
     """
-    Basic Teacher agent which keeps track of how many times it's received
-    messages. Teachers provide the ``report()`` method to get back metrics.
+    Basic Teacher agent that keeps track of how many times it's received messages.
+
+    Teachers provide the ``report()`` method to get back metrics.
     """
 
     def __init__(self, opt, shared=None):
@@ -131,30 +155,44 @@ class Teacher(Agent):
 
     # return state/action dict based upon passed state
     def act(self):
+        """Act upon the previous observation."""
         if self.observation is not None and 'text' in self.observation:
             t = {'text': 'Hello agent!'}
         return t
 
     def epoch_done(self):
+        """Return whether the epoch is done."""
         return self.epochDone
 
     # Default unknown length
     def num_examples(self):
+        """
+        Return the number of examples (e.g. individual utterances) in the dataset.
+
+        Default implementation returns `None`, indicating an unknown number.
+        """
         return None
 
     def num_episodes(self):
+        """
+        Return the number of episodes (e.g. conversations) in the dataset.
+
+        Default implementation returns `None`, indicating an unknown number.
+        """
         return None
 
-    # Return transformed metrics showing total examples and accuracy if avail.
     def report(self):
+        """Return metrics showing total examples and accuracy if available."""
         return self.metrics.report()
 
     def reset(self):
+        """Reset the teacher."""
         super().reset()
         self.reset_metrics()
         self.epochDone = False
 
     def reset_metrics(self):
+        """Reset metrics."""
         self.metrics.clear()
 
     def share(self):
@@ -166,8 +204,10 @@ class Teacher(Agent):
 
 class MultiTaskTeacher(Teacher):
     """
+    MultiTaskTeacher which teaches multiple tasks.
+
     Creates a teacher that is actually a set of teachers each based on a task
-    string--each of these teachers will get called in turn,
+    string -- each of these teachers will get called in turn,
     either randomly or in order.  They are all in the same world (they are the
     same agent switching tasks).
 
@@ -208,6 +248,7 @@ class MultiTaskTeacher(Teacher):
             sum += weight
 
     def num_examples(self):
+        """Return the number of examples."""
         if not hasattr(self, 'num_exs'):
             # num_examples is sum of all examples in all tasks
             tasks_num_exs = [t.num_examples() for t in self.tasks]
@@ -218,6 +259,7 @@ class MultiTaskTeacher(Teacher):
         return self.num_exs
 
     def num_episodes(self):
+        """Return the number of episodes."""
         if not hasattr(self, 'num_eps'):
             # num_episodes is sum of all num_episodes in all tasks
             tasks_num_eps = [t.num_episodes() for t in self.tasks]
@@ -228,9 +270,11 @@ class MultiTaskTeacher(Teacher):
         return self.num_eps
 
     def observe(self, observation):
+        """Make an observation."""
         return self.tasks[self.task_idx].observe(observation)
 
     def act(self):
+        """Act on the previous observation."""
         if self.new_task:
             self.new_task = False
             if self.random:
@@ -253,6 +297,7 @@ class MultiTaskTeacher(Teacher):
         return t
 
     def epoch_done(self):
+        """Return whether all subtasks are completed."""
         for t in self.tasks:
             if not t.epoch_done():
                 return False
@@ -260,21 +305,26 @@ class MultiTaskTeacher(Teacher):
 
     # return transformed metrics showing total examples and accuracy if avail.
     def report(self):
+        """Report aggregated metrics across all subtasks."""
         return aggregate_metrics(self.tasks)
 
     def reset(self):
+        """Reset all subtasks."""
         for t in self.tasks:
             t.reset()
 
     def reset_metrics(self):
+        """Reset metrics for each subtask."""
         for t in self.tasks:
             t.reset_metrics()
 
     def save(self):
+        """Save each subtask."""
         for t in self.tasks:
             t.save()
 
     def share(self):
+        """Shares this teacher by sharing each subtask."""
         shared = {}
         shared['class'] = type(self)
         shared['opt'] = self.opt
@@ -308,12 +358,10 @@ def name_to_agent_class(name):
 
 
 def compare_init_model_opts(opt, curr_opt):
-    """
-    Prints loud warning when `init_model` opts differ from those that
-    are being loaded.
-    """
+    """Print loud warning when `init_model` opts differ from previous configuration."""
     if opt.get('init_model') is None:
         return
+    opt['init_model'] = modelzoo_path(opt['datapath'], opt['init_model'])
     optfile = opt['init_model'] + '.opt'
     if not os.path.isfile(optfile):
         return
@@ -370,7 +418,7 @@ def _load_opt_file(optfile):
         # oops it's pickled
         with open(optfile, 'rb') as handle:
             opt = pickle.load(handle)
-    return opt
+    return Opt(opt)
 
 
 def load_agent_module(opt):
@@ -677,10 +725,12 @@ def get_task_module(taskname):
     return teacher_class
 
 
-def add_task_flags_to_agent_opt(agent, opt, flags):
+# TODO: remove this. It was added but doesn't have a clear use case now.
+def _add_task_flags_to_agent_opt(agent, opt, flags):
     """
-    Allows to insert task flags in the task name itself, they are put inside
-    the opt before the task is created.
+    Handle task flags provided by the task name itself.
+
+    With this you can set specific opts with `-t task:flag=foo`.
     """
     fl = flags.split(':')
     task = []
@@ -713,7 +763,7 @@ def create_task_agent_from_taskname(opt):
     if ',' not in opt['task']:
         # Single task
         teacher_class = get_task_module(opt['task'])
-        add_task_flags_to_agent_opt(teacher_class, opt, opt['task'])
+        _add_task_flags_to_agent_opt(teacher_class, opt, opt['task'])
         task_agents = teacher_class(opt)
         if type(task_agents) != list:
             task_agents = [task_agents]
@@ -757,8 +807,7 @@ def _create_task_agents(opt):
     my_module = importlib.import_module(module_name)
     try:
         # Tries to call the create_agent function in agents.py
-        create_agent = getattr(my_module, 'create_agents')
-        task_agents = create_agent(opt)
+        task_agents = my_module.create_agent(opt)
     except AttributeError:
         # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)

@@ -111,11 +111,11 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
         that marks that they should be blocked from this task.
         """
         if self.firstTime and self.correct != len(self.questions):
-                mturk_utils.give_worker_qualification(
-                    self.mturk_agent.worker_id,
-                    self.qualification_id,
-                    is_sandbox=self.opt['is_sandbox'],
-                )
+            mturk_utils.give_worker_qualification(
+                self.mturk_agent.worker_id,
+                self.qualification_id,
+                is_sandbox=self.opt['is_sandbox'],
+            )
         self.mturk_agent.shutdown()
 
     def review_work(self):

@@ -1904,4 +1904,4 @@ class StaticMTurkManager(MTurkManager):
             # on for longer than the task duration.
         else:
             # Reconnecting worker
-            assert False  # this should never happen anymore, TODO clean up
+            raise AssertionError('This should never happen anymore.')  # TODO: clean up

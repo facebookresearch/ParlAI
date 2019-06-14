@@ -1,4 +1,9 @@
 ## News
+2019-06-12: The [Personality-Captions project page](http://parl.ai/projects/personality_captions/) is updated with pretrained models, specialized model code, and an interactive demo.
+
+2019-06-12: Added [HotpotQA](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/quac) as another dataset.
+
+2019-05-15: Added [QuAC](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/quac), Question Answering in Context dataset, and [COQA](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/coqa), Conversational Question Answering Challenge datasets.
 
 2019-05-03: The [What makes a good Conversation project page](https://parl.ai/projects/controllable_dialogue/) is now available with pretrained models.
 

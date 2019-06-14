@@ -12,6 +12,17 @@ flake8 --version | grep '^3\.[6-9]\.' >/dev/null || \
     ( echo "Please install flake8 >=3.6.0." && false )
 
 CHANGED_FILES="$(git diff --name-only master... | grep '\.py$' | tr '\n' ' ')"
+
+while getopts i opt; do
+  case $opt in
+    i)
+      CHANGED_FILES="$(git -C ./parlai_internal/ diff --name-only master... |
+      xargs -I '{}' realpath --relative-to=. $(git -C ./parlai_internal/ rev-parse --show-toplevel)/'{}' |
+      grep '\.py$' | tr '\n' ' ')"
+      ;;
+    esac
+  done
+
 if [ "$CHANGED_FILES" != "" ]
 then
     # soft complaint on too-long-lines

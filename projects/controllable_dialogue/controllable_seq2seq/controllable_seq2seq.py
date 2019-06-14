@@ -406,7 +406,7 @@ class ControllableSeq2seqAgent(TorchAgent):
             self.control_settings[c] = d
 
         # Get list of WD features and weights, self.wd_features and self.wd_weights
-        if self.opt['weighted_decoding'] != "":
+        if self.opt.get('weighted_decoding', '') != "":
             if self.beam_size == 1:
                 raise ValueError("WD control is not currently implemented for greedy "
                                  "search. Either increase --beam-size to be greater "

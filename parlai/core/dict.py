@@ -27,7 +27,7 @@ RETOK = re.compile(r'\w+|[^\w\s]|\n', re.UNICODE)
 
 
 def escape(s):
-    """
+    r"""
     Replace potential special characters with escaped version.
 
     For example, \n => \\n and \t => \\t
@@ -39,7 +39,7 @@ def escape(s):
 
 
 def unescape(s):
-    """
+    r"""
     Revert escaped characters back to their special version.
 
     For example, \\n => \n and \\t => \t
@@ -303,6 +303,7 @@ class DictionaryAgent(Agent):
                 self.save_path = opt['dict_file']
 
     def add_token(self, word):
+        """Add a single token to the dictionary."""
         if word not in self.tok2ind:
             index = len(self.tok2ind)
             self.tok2ind[word] = index
@@ -310,6 +311,8 @@ class DictionaryAgent(Agent):
 
     def __contains__(self, key):
         """
+        Return if the dictionary contains the key.
+
         If key is an int, returns whether the key is in the indices.
         If key is a str, return if the token is in the dict of tokens.
         """
@@ -320,6 +323,8 @@ class DictionaryAgent(Agent):
 
     def __getitem__(self, key):
         """
+        Lookup the word or ID.
+
         If key is an int, returns the corresponding token. If it does not
         exist, return the unknown token.
         If key is a str, return the token's index. If the token is not in the
@@ -338,6 +343,8 @@ class DictionaryAgent(Agent):
 
     def __setitem__(self, key, value):
         """
+        Set the frequency for a word to a value.
+
         If the key is not in the dictionary, add it to the dictionary and set
         its frequency to value.
         """
@@ -348,11 +355,13 @@ class DictionaryAgent(Agent):
         self.add_token(key)
 
     def keys(self):
+        """Return all the words in the dictionary."""
         return self.tok2ind.keys()
 
     def copy_dict(self, dictionary):
         """
         Overwrite own state with any state in the other dictionary.
+
         This allows loading of the contents of another dictionary while keeping
         the current dictionary version.
         """
@@ -360,6 +369,7 @@ class DictionaryAgent(Agent):
             setattr(self, k, v)
 
     def max_freq(self):
+        """Return the largest frequency of any nonspecial token."""
         return max(
             self.freq[k]
             for k in self.freq.keys()
@@ -369,30 +379,41 @@ class DictionaryAgent(Agent):
         )
 
     def freqs(self):
+        """Return the frequency dictionary."""
+        # TODO: deprecate this
         return self.freq
 
     def spacy_tokenize(self, text, **kwargs):
+        """
+        Tokenize using spaCy.
+
+        Does whatever spaCy does. See https://spacy.io/.
+        """
         tokens = self.NLP.tokenizer(text)
         return [t.text for t in tokens]
 
     def spacy_span_tokenize(self, text):
-        """Returns tuple of tokens, spans."""
+        """Return tuple of tokens, spans."""
+        # TODO: can we delete this?
         tokens = self.NLP.tokenizer(text)
         return ([t.text for t in tokens],
                 [(t.idx, t.idx + len(t.text)) for t in tokens])
 
     def nltk_tokenize(self, text, building=False):
         """
+        Tokenize using NLTK PunktTokenizer.
+
         Uses nltk-trained PunktTokenizer for sentence tokenization and
         Treebank Word Tokenizer for tokenizing words within sentences.
         """
-
         return (token for sent in self.sent_tok.tokenize(text)
                 for token in self.word_tok.tokenize(sent))
 
     @staticmethod
     def re_tokenize(text):
-        """
+        r"""
+        Tokenize using a liberal regular expression.
+
         Find boundaries between word characters, newlines, and non-word
         non-whitespace tokens ``(r'[\\w\\n]+ | [^\\w\\s] | \\n')``.
 
@@ -404,6 +425,8 @@ class DictionaryAgent(Agent):
     @staticmethod
     def split_tokenize(text):
         """
+        Tokenize on whitespace and some limited punctuation.
+
         Splits tokens based on whitespace after adding whitespace around
         punctuation.
 
@@ -415,10 +438,8 @@ class DictionaryAgent(Agent):
                 .split())
 
     def span_tokenize(self, text):
-        """
-        Tokenizes, and then calculates the starting index of each token in
-        the original string.
-        """
+        """Tokenize and find  starting index of each token in the original string."""
+        # TODO: can this be deleted?
         if self.tokenizer == 'spacy':
             # spacy has own
             return self.spacy_span_tokenize(text)
@@ -433,7 +454,7 @@ class DictionaryAgent(Agent):
         return tokens, indices
 
     def tokenize(self, text, building=False):
-        """Returns a sequence of tokens from the iterable."""
+        """Return a sequence of tokens from the iterable."""
         if self.lower:
             text = text.lower()
 
@@ -566,12 +587,15 @@ class DictionaryAgent(Agent):
 
     def sort(self, trim=True):
         """
-        Sorts the dictionary, so that the elements with the lowest index have
-        the highest counts. This reindexes the dictionary according to the
-        sorted frequencies, breaking ties alphabetically by token.
+        Sort the dictionary.
 
-        :param bool trim: If True, truncate the dictionary based on minfreq and
-            maxtokens.
+        Inline operation. Rearranges the dictionary so that the elements with
+        the lowest index have the highest counts. This reindexes the dictionary
+        according to the sorted frequencies, breaking ties alphabetically by
+        token.
+
+        :param bool trim:
+            If True, truncate the dictionary based on minfreq and maxtokens.
         """
         # sort first by count, then alphabetically
         if trim:
@@ -591,11 +615,14 @@ class DictionaryAgent(Agent):
 
     def parse(self, txt_or_vec, vec_type=list):
         """
-        Convenience function for parsing either text or vectors of indices.
+        Parse either text or a vector of indices.
+
+        Calls `~txt2vec` if `txt_or_vec is a string, or `~vec2txt` otherwise.
 
         :param vec_type:
             type of the returned vector if the input is a string.
         """
+        # TODO: try to deprecate this, preferring straight txt2vec
         if type(txt_or_vec) == str:
             return self.txt2vec(txt_or_vec, vec_type)
         else:
@@ -603,11 +630,13 @@ class DictionaryAgent(Agent):
 
     def txt2vec(self, text, vec_type=list):
         """
-        Converts a string to a vector (list of ints).
+        Convert a string to a vector (list of ints).
 
         First runs a sentence tokenizer, then a word tokenizer.
 
-        ``vec_type`` is the type of the returned vector if the input is a string.
+        :param type vec_type:
+            The type of the returned vector if the input is a string. Suggested
+            ``list``, ``tuple``, ``set``, or ``np.ndarray``.
         """
         if vec_type == list or vec_type == tuple or vec_type == set:
             res = vec_type((self[token] for token in self.tokenize(str(text))))
@@ -622,6 +651,8 @@ class DictionaryAgent(Agent):
 
     def vec2txt(self, vector, delimiter=' '):
         """
+        Convert a vector of IDs to a string.
+
         Converts a vector (iterable of ints) into a string, with each token
         separated by the delimiter (default ``' '``).
         """
@@ -766,9 +797,7 @@ class _BPEHelper(object):
         return True
 
     def copy_codecs_file(self, target_file):
-        """
-        Copy the codecs file to a new location.
-        """
+        """Copy the codecs file to a new location."""
         with open(target_file, 'w', encoding='utf-8') as wfile:
             with open(self.codecs, encoding='utf-8') as rfile:
                 for line in rfile:
