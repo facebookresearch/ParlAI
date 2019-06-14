@@ -66,7 +66,8 @@ Evaluate an IR baseline model on the validation set of the Personachat dataset:
 python examples/eval_model.py -m ir_baseline -t personachat -dt valid
 ```
 
-Train a single layer transformer (embedding size 300, 4 attention heads)  for 2 epochs using batchsize 64, word vectors are initialized with fasttext and using the other elements of the batch as negative. (requires pytorch and torchtext):
+Train a single layer transformer on personachat (requires pytorch and torchtext).
+Detail: embedding size 300, 4 attention heads,  2 epochs using batchsize 64, word vectors are initialized with fasttext and the other elements of the batch are used as negative during training.
 ```bash
 python examples/train_model.py -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
 ```
