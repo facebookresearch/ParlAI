@@ -53,3 +53,10 @@ class BertSpanDictionaryAgent(BertDictionaryAgent):
             valid = False
 
         return tokens_id, start_position, end_position, valid
+
+    def txt2vec(self, text, vec_type=list):
+        tokens = self.tokenizer.tokenize(text)
+        tokens_id = self.tokenizer.convert_tokens_to_ids([self.start_token] +
+                                                         tokens +
+                                                         [self.end_token])
+        return tokens_id
