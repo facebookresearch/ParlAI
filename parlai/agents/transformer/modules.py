@@ -715,7 +715,14 @@ class BasicAttention(nn.Module):
         self.attn = attn
         self.dim = dim
 
-    def forward(self, xs, ys):
+    def forward(self, xs, ys, mask_ys=None):
+        """ xs: B x query_len x dim
+            ys: B x key_len x dim
+            TODO: Document this
+        """
+        bsz = xs.size(0)
+        y_len = ys.size(1)
+        x_len = xs.size(1)
         if self.attn == 'cosine':
             l1 = self.cosine(xs, ys).unsqueeze(self.dim - 1)
         else:
@@ -723,6 +730,10 @@ class BasicAttention(nn.Module):
             if self.attn == 'sqrt':
                 d_k = ys.size(-1)
                 l1 = l1 / math.sqrt(d_k)
+        if mask_ys is not None:
+            attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
+            attn_mask = attn_mask.repeat(1,x_len,1)
+            l1.masked_fill_(attn_mask, -float('inf'))
         l2 = self.softmax(l1)
         lhs_emb = torch.bmm(l2, ys)
         # add back the query
