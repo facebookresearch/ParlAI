@@ -193,9 +193,6 @@ class TransformerRankerAgent(TorchRankerAgent):
 
         if cand_encs is not None:
             cands_h = cand_encs
-        print(context_h[:,0:5])
-        print(cands_h.shape)
-        print(cands_h[0,0:10,0:5])
         scores = self._score(context_h, cands_h)
 
         return scores
