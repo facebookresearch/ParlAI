@@ -10,6 +10,7 @@ from parlai.core.agents import Agent
 from parlai.core.utils import warn_once
 from parlai.core.utils import padded_3d
 from parlai.core.torch_ranker_agent import TorchRankerAgent
+from .transformer import TransformerRankerAgent
 import torch
 
 class CrossencoderAgent(TorchRankerAgent):
@@ -20,14 +21,15 @@ class CrossencoderAgent(TorchRankerAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
-        super(CrossEncoderAgent, cls).add_cmdline_args(argparser)
+        TransformerRankerAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Cross Arguments')
-        add_common_cmdline_args(agent)
-        cls.dictionary_class().add_cmdline_args(argparser)
         return agent
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
+        self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
+        if self.use_cuda:
+            self.rank_loss.cuda()
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
             from parlai.core.distributed_utils import is_distributed
@@ -36,6 +38,7 @@ class CrossencoderAgent(TorchRankerAgent):
                     'Cannot combine --data-parallel and distributed mode'
                 )
             self.model = torch.nn.DataParallel(self.model)
+
 
     def build_model(self, states=None):
         self.model = CrossEncoderModule(self.opt, self.dict, self.NULL_IDX)
@@ -96,7 +99,7 @@ class CrossencoderAgent(TorchRankerAgent):
         cand_idx = cand_vecs.view(num_cands_per_sample * bsz, -1)
         tokens, segments = self.concat_without_padding(text_idx, cand_idx,
                                                        self.NULL_IDX)
-        scores = self.model(tokens, None, segments)
+        scores = self.model(tokens, segments)
         scores = scores.view(bsz, num_cands_per_sample)
         return scores
 
@@ -106,7 +109,7 @@ class CrossEncoderModule(torch.nn.Module):
     """
 
     def __init__(self, opt, dict, null_idx):
-        super(CrossEncoderModule).__init__()
+        super(CrossEncoderModule, self).__init__()
         n_positions = get_n_positions_from_options(opt)
         embeddings = torch.nn.Embedding(
             len(dict),
@@ -125,17 +128,18 @@ class CrossEncoderModule(torch.nn.Module):
             dropout=opt['dropout'],
             attention_dropout=opt['attention_dropout'],
             relu_dropout=opt['relu_dropout'],
-            padding_idx=NULL_IDX,
+            padding_idx=null_idx,
             learn_positional_embeddings=opt['learn_positional_embeddings'],
             embeddings_scale=opt['embeddings_scale'],
             reduction_type= opt.get('reduction_type', 'first'),
             n_positions=n_positions,
             n_segments=2,
             activation=opt['activation'],
-            variant=opt['variant'])
-         self.linear_layer = torch.nn.Linear(opt['embedding_size'],1)
+            variant=opt['variant'],
+            output_scaling=opt['output_scaling'])
+        self.linear_layer = torch.nn.Linear(opt['embedding_size'],1)
 
-    def forward(self, tokens, segments)
+    def forward(self, tokens, segments):
         """ Scores each concatenation text + candidate.
         """
         encoded = self.encoder(tokens, None, segments)
