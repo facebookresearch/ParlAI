@@ -102,7 +102,6 @@ class TransformerMemNetModel(nn.Module):
             if not opt.get('share_word_embeddings'):
                 self.cand_embeddings.weight.requires_grad = False
 
-
         if opt.get('n_positions'):
             # if the number of positions is explicitly provided, use that
             n_positions = opt['n_positions']
