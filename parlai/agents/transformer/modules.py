@@ -135,19 +135,15 @@ class TransformerMemNetModel(nn.Module):
             )
         else:
             if not opt.get('share_word_embeddings'):
-                self.cand_encoder = _build_encoder(
-                    opt, dictionary, self.cand_embeddings, self.pad_idx,
-                    n_positions=n_positions,
-                    reduction_type=self.reduction_type,
-                    n_segments=self.n_segments,
-                    )
+                cand_embeddings = self.cand_embeddings
             else:
-                self.cand_encoder = _build_encoder(
-                    opt, dictionary, self.embeddings, self.pad_idx,
-                    n_positions=n_positions,
-                    reduction_type=self.reduction_type,
-                    n_segments=self.n_segments,
-                    )
+                cand_embeddings = self.embeddings
+            self.cand_encoder = _build_encoder(
+                opt, dictionary, cand_embeddings, self.pad_idx,
+                n_positions=n_positions,
+                reduction_type=self.reduction_type,
+                n_segments=self.n_segments,
+                )
 
         # build memory encoder
         if opt.get('wrap_memory_encoder', False):
