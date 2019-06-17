@@ -54,6 +54,9 @@ def add_common_cmdline_args(argparser):
                                 'more recent papers prefer gelu.')
     argparser.add_argument('--output-scaling', type=float, default=1.0,
                            help='scale the output of every transformer by this quantity.')
+    argparser.add_argument('--share_word_embeddings', type='bool', default=True,
+                       help='Share word embeddings table for candidate and context'
+                       'in the memory network')
 
 
 class Transformer(Agent):
