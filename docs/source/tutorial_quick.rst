@@ -111,21 +111,13 @@ we could do the following:
   python examples/eval_model.py -t twitter -m legacy:seq2seq:0 -mf models:twitter/seq2seq/twitter_seq2seq_model
 
 
-Let's print some of the transformer's predictions with the same display_model script from above.
+Finally, let's print some of our transformer's predictions with the same display_model script from above.
 
 .. code-block:: bash
 
   # display predictions for model saved at specific file on twitter
   python examples/display_model.py -t twitter -mf /tmp/tr_twitter -ecands batch
 
-And finally, we can talk to the model interactively as before:
-
-.. code-block:: bash
-
-  # interact with saved model
-  python examples/interactive.py -mf /tmp/tr_twitter
-  ...
-  Enter your message: Hi, what are you up to?
 
 
 Add a simple model
