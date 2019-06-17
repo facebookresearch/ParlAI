@@ -493,7 +493,7 @@ class TorchAgent(ABC, Agent):
             '--lr-scheduler',
             type=str,
             default='reduceonplateau',
-            choices=['reduceonplateau', 'none', 'fixed', 'invsqrt'],
+            choices=['reduceonplateau', 'none', 'fixed', 'invsqrt', 'cosine'],
             help='Learning rate scheduler.',
         )
         lr_group.add_argument(
@@ -892,6 +892,14 @@ class TorchAgent(ABC, Agent):
                 return decay_factor / np.sqrt(max(1, step))
 
             self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, _invsqrt_lr)
+        elif self.opt.get('lr_scheduler') == 'cosine':
+            if self.opt.get('warmup_updates', -1) <= 0:
+                raise ValueError(
+                    '--lr-scheduler cosine requires setting --warmup-updates'
+                )
+            self.scheduler = optim.lr_scheduler.CosineAnnealingLR(
+                optimizer, self.opt['warmup_updates']
+            )
         else:
             raise ValueError(
                 "Don't know what to do with lr_scheduler '{}'".format(
@@ -984,7 +992,7 @@ class TorchAgent(ABC, Agent):
             self.scheduler.step(metrics_dict['loss'])
         elif self.opt['lr_scheduler'] == 'fixed':
             self.scheduler.step()
-        elif self.opt['lr_scheduler'] == 'invsqrt':
+        elif self.opt['lr_scheduler'] in ['invsqrt', 'cosine']:
             # this is a training step lr scheduler, nothing to adjust in validation
             pass
         else:
@@ -1688,6 +1696,11 @@ class TorchAgent(ABC, Agent):
         if self.opt.get('lr_scheduler') == 'invsqrt' and not self._is_lr_warming_up():
             # training step scheduler
             self.scheduler.step(self._number_training_updates)
+        elif self.opt.get('lr_scheduler') == 'cosine' and not self._is_lr_warming_up():
+            self.scheduler.step(
+                (self._number_training_updates - self.opt['warmup_updates'])
+                % self.opt['warmup_updates']
+            )
 
         if self.fp16:
             # we've been accumulating grads in fp16 and delaying the fp32 copy update.
