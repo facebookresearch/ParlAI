@@ -25,13 +25,13 @@ class PolyencoderAgent(TorchRankerAgent):
         TransformerRankerAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Cross Arguments')
         agent.add_argument('--polyencoder-type', type=str, default='codes',
-                           choices=['codes', 'first_n'],
+                           choices=['codes', 'n_first'],
                            help='Type of polyencoder, either we compute'
                                 'vectors using codes + attention, or we '
                                 'simply take the first N vectors.')
         agent.add_argument('--poly-n-codes', type=int, default=64,
                            help='number of vectors used to represent the context'
-                                'in the case of first_n, those are the number'
+                                'in the case of n_first, those are the number'
                                 'of vectors that are considered.')
         agent.add_argument('--poly-attention-type', type=str, default='basic',
                            choices=['basic', 'basic_sqrt', 'multihead'],
@@ -67,7 +67,7 @@ class PolyencoderAgent(TorchRankerAgent):
 
 
     def build_model(self, states=None):
-        self.model = CrossEncoderModule(self.opt, self.dict, self.NULL_IDX)
+        self.model = PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
         return self.model
 
     def vectorize(self, *args, **kwargs):
@@ -84,49 +84,28 @@ class PolyencoderAgent(TorchRankerAgent):
             obs['text_vec'] = surround(obs['text_vec'],
                                        self.START_IDX,
                                        self.END_IDX)
-        return obs
-
-    def concat_without_padding(self, text_idx, cand_idx,
-                               null_idx= 0, segments_idx=[0, 1]):
-        """ if text_idx = [[1, 2, 3, 4, 0, 0  ]]
-            and cand_idx = [[5, 6, 7, 8, 0, 0 ]]
-            then result = (tokens, segments) where
-            tokens = [[1, 2, 3, 4, 5, 6, 7, 8, 0, 0, 0, 0]]
-            segments = [[0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0]]
-        """
-        assert text_idx.size(0) == cand_idx.size(0)
-        assert len(text_idx.size()) == 2
-        assert len(cand_idx.size()) == 2
-        text_idx = text_idx.cpu()
-        cand_idx = cand_idx.cpu()
-        cand_len = cand_idx.size(1)
-        concat_len = text_idx.size(1) + cand_idx.size(1)
-        tokens = text_idx.new_zeros(text_idx.size(0), concat_len) + null_idx
-        segments = text_idx.new_zeros(text_idx.size(0), concat_len) + null_idx
-        for i in range(len(tokens)):
-            non_nuls = torch.sum(text_idx[i, :] != null_idx)
-            tokens[i, 0:non_nuls] = text_idx[i, 0:non_nuls]
-            segments[i, 0:non_nuls] = segments_idx[0]
-            tokens[i, non_nuls:non_nuls+cand_len] = cand_idx[i, :]
-            segments[i, non_nuls:non_nuls+cand_len] = segments_idx[1]
-        if self.use_cuda:
-            tokens = tokens.cuda()
-            segments = segments.cuda()
-        return tokens, segments
-
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
-        num_cands_per_sample = cand_vecs.size(1)
-        bsz =  cand_vecs.size(0)
-        text_idx = (batch.text_vec.unsqueeze(1)
-                                  .expand(-1, num_cands_per_sample, -1)
-                                  .contiguous()
-                                  .view(num_cands_per_sample * bsz, -1))
-        cand_idx = cand_vecs.view(num_cands_per_sample * bsz, -1)
-        tokens, segments = self.concat_without_padding(text_idx, cand_idx,
-                                                       self.NULL_IDX)
-        scores = self.model(tokens, segments)
-        scores = scores.view(bsz, num_cands_per_sample)
+        bsz = batch.text_vec.size(0)
+        ctxt_rep, ctxt_rep_mask, _ = self.model('encode', ctxt_tokens=batch.text_vec)
+
+        if cand_encs is not None:
+            raise Exception('cand_encs is not yet taken into account')
+        if len(cand_vecs.shape) == 3:
+            _, _, cand_rep = self.model('encode', cand_tokens=cand_vecs)
+        elif len(cand_vecs.shape) == 2:
+            _, _, cand_rep = self.model('encode', cand_tokens=cand_vecs.unsqueeze(1))
+            cand_rep = cand_rep.repeat(bsz, bsz, -1)
+
+        print(ctxt_rep[0, 0:5, 0:5])
+        print(ctxt_rep_mask[0, 0:5])
+        print(cand_rep[0, 0:5, 0:5])
+
+        scores = self.model('score',
+                            ctxt_rep=ctxt_rep,
+                            ctxt_rep_mask=ctxt_rep_mask,
+                            cand_rep=cand_rep)
+        print(scores[0:2, 0:3])
         return scores
 
 class PolyEncoderModule(torch.nn.Module):
@@ -134,10 +113,10 @@ class PolyEncoderModule(torch.nn.Module):
     """
 
     def __init__(self, opt, dict, null_idx):
-        super(CrossEncoderModule, self).__init__()
+        super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
-        self.encoder_context = get_encoder(opt, dict, null_idx, 'none')
-        self.encoder_cand = get_encoder(opt, dict, null_idx, 'mean')
+        self.encoder_ctxt = self.get_encoder(opt, dict, null_idx, 'none')
+        self.encoder_cand = self.get_encoder(opt, dict, null_idx, 'mean')
 
         self.type = opt['polyencoder_type']
         self.n_codes = opt['poly_n_codes']
@@ -150,7 +129,7 @@ class PolyEncoderModule(torch.nn.Module):
         # In case it's a polyencoder with code.
         if self.type == 'codes':
             # experimentally it seems that random with size = 1 was good.
-            codes = torch.empty(self.n_codes,embed_dim))
+            codes = torch.empty(self.n_codes,embed_dim)
             codes = torch.nn.init.uniform_(codes)
             self.codes = torch.nn.Parameter(codes)
 
@@ -161,9 +140,9 @@ class PolyEncoderModule(torch.nn.Module):
                                         embed_dim,
                                         opt['dropout'])
             elif self.codes_attention_type == 'basic_sqrt':
-                self.code_attention = BasicAttention(dim=1, attn='sqrt')
+                self.code_attention = BasicAttention(dim=1, attn='sqrt', get_weights=False)
             elif self.codes_attention_type == 'basic':
-                self.code_attention = BasicAttention(dim=1, attn='basic')
+                self.code_attention = BasicAttention(dim=1, attn='basic', get_weights=False)
 
         # The final attention (the one that takes the candidate as key)
         if self.attention_type == 'multihead':
@@ -172,12 +151,9 @@ class PolyEncoderModule(torch.nn.Module):
                                 opt['embedding_size'],
                                 opt['dropout'])
         elif self.attention_type == 'basic_sqrt':
-            self.attention = BasicAttention(dim=1, attn='sqrt')
+            self.attention = BasicAttention(dim=1, attn='sqrt', get_weights=False)
         elif self.attention_type == 'basic':
-            self.attention = BasicAttention(dim=1, attn='basic')
-
-
-
+            self.attention = BasicAttention(dim=1, attn='basic', get_weights=False)
 
     def get_encoder(self, opt, dict, null_idx, reduction_type):
         n_positions = get_n_positions_from_options(opt)
@@ -208,14 +184,13 @@ class PolyEncoderModule(torch.nn.Module):
             variant=opt['variant'],
             output_scaling=opt['output_scaling'])
 
-    def encode(self,tokens_context, tokens_candidate):
+    def encode(self,ctxt_tokens, cand_tokens):
         """
-            :param tokens_context:
+            :param ctxt_tokens:
                 2D long tensor, batchsize x sent_len
-            :param tokens_candidate:
-                2D long tensor, batchsize x sent_len
-                Note this is 2D, if you need to perform operation on 3D, please
-                do it before hand
+            :param cand_tokens:
+                3D long tensor, batchsize x sent_len
+                Note this will actually view it as a 2D tensor
             :returns: (ctxt_rep, ctxt_mask, cand_rep)
                 - ctxt_rep 3D float tensor, batchsize x n_codes x dim
                 - ctxt_mask byte:  batchsize x n_codes (all 1 in case
@@ -223,44 +198,75 @@ class PolyEncoderModule(torch.nn.Module):
                     in the ctxt_rep)
                 - cand_rep (2D float tensor) batchsize x dim
         """
-        cand_embed = self.encoder_cand(tokens_candidate)
-        # get context_representation. Now that depends on the cases.
-        bs = context_output.size(0)
-        dim = context_output.size(2)
-        ctxt_out, ctxt_mask = self.encoder_context(tokens_context)
-        if self.attention_type == 'codes'
-            # Basic Attention and MultiHeadAttention share the same API.
-            ctxt_rep = self.code_attention(self.codes.repeat(bs,1,1),
-                                           ctxt_out,
-                                           ctxt_mask)
-            ctxt_rep_mask = ctxt_rep.new_ones(bs, self.n_codes).byte()
+        if ctxt_tokens is not None:
+            assert len(ctxt_tokens.shape) == 2
+            bsz = ctxt_tokens.size(0)
+        if cand_tokens is not None:
+            assert len(cand_tokens.shape) == 3
+            bsz = cand_tokens.size(0)
+            num_cands = cand_tokens.size(1)
 
-        elif self.attention_type == 'n_first':
-            # Expand the output if it is not long enough
-            if ctxt_out.size(1) < self.n_codes:
-                difference = self.n_codes - ctxt_out.size(1)
-                extra_rep = ctxt_out.new_zeros(bs, difference, dim)
-                ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
-                extra_mask = ctxt_mask.new_zeros(bs, difference)
-                ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
-            else:
-                ctxt_rep = ctxt_out[:, 0:self.n_codes, :]
-                ctxt_rep_mask = ctxt_mask[:, 0:self.n_codes]
+        cand_embed = None
+        ctxt_rep = None
+        ctxt_rep_mask = None
+
+        if cand_tokens is not None:
+            cand_embed = self.encoder_cand(cand_tokens.view(bsz * num_cands, -1))
+            cand_embed = cand_embed.view(bsz, num_cands, -1)
+
+        if ctxt_tokens is not None:
+            # get context_representation. Now that depends on the cases.
+            ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
+            dim = ctxt_out.size(2)
+            if self.type == 'codes':
+                # Basic Attention and MultiHeadAttention share the same API.
+                ctxt_rep = self.code_attention(self.codes.repeat(bsz,1,1),
+                                               ctxt_out,
+                                               ctxt_mask)
+                ctxt_rep_mask = ctxt_rep.new_ones(bs, self.n_codes).byte()
+
+            elif self.type == 'n_first':
+                # Expand the output if it is not long enough
+                if ctxt_out.size(1) < self.n_codes:
+                    difference = self.n_codes - ctxt_out.size(1)
+                    extra_rep = ctxt_out.new_zeros(bs, difference, dim)
+                    ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
+                    extra_mask = ctxt_mask.new_zeros(bs, difference)
+                    ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
+                else:
+                    ctxt_rep = ctxt_out[:, 0:self.n_codes, :]
+                    ctxt_rep_mask = ctxt_mask[:, 0:self.n_codes]
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
 
+    def score(self, ctxt_rep, ctxt_rep_mask, cand_embed):
+        """
+            Scores the candidates
+            :param ctxt_rep: 3D float tensor, bsz x ctxt_len x dim
+            :param ctxt_rep_mask: 2D byte tensor, bsz x ctxt_len, in case
+                there are some elements of the ctxt that we should not take into
+                account.
+            :param cand_embed: 3D float tensor, bsz x num_cands x dim
 
+            :returns: scores, 2D float tensor: bsz x num_cands
+        """
 
+        # reduces the context representation to a 3D tensor bsz x num_cands x dim
+        ctxt_final_rep = self.attention(cand_embed,
+                                        ctxt_rep,
+                                        ctxt_rep_mask)
+        scores = torch.sum(ctxt_final_rep * cand_embed, 2)
+        return scores
 
-
-    def forward(self, operation_type, tokens_context, tokens_candidate):
+    def forward(self, operation_type, ctxt_tokens=None, cand_tokens=None,
+                      ctxt_rep=None, ctxt_rep_mask=None, cand_rep=None):
         """ Due to a limitation of parlai, we have to have one single model
             in the agent. And because we want to be able to use data-parallel,
             we need to have one single forward() method.
             Therefore the operation_type can be either 'encode' or 'score'.
         """
         if operation_type == 'encode':
-            return self.encode(tokens_context, tokens_candidate)
+            return self.encode(ctxt_tokens, cand_tokens)
         elif operation_type == 'score':
-            return self.score()
+            return self.score(ctxt_rep, ctxt_rep_mask, cand_rep)
         raise Exception('Unsupported operation: %s' % operation_type)

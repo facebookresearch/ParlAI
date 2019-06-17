@@ -707,13 +707,14 @@ class TransformerGeneratorModel(TorchGeneratorModel):
 
 
 class BasicAttention(nn.Module):
-    def __init__(self, dim=1, attn='cosine'):
+    def __init__(self, dim=1, attn='cosine', get_weights=True):
         super().__init__()
         self.softmax = nn.Softmax(dim=dim)
         if attn == 'cosine':
             self.cosine = nn.CosineSimilarity(dim=dim)
         self.attn = attn
         self.dim = dim
+        self.get_weights=get_weights
 
     def forward(self, xs, ys, mask_ys=None):
         """ xs: B x query_len x dim
@@ -739,7 +740,10 @@ class BasicAttention(nn.Module):
         # add back the query
         lhs_emb = lhs_emb.add(xs)
 
-        return lhs_emb.squeeze(self.dim - 1), l2
+        if self.get_weights:
+            return lhs_emb.squeeze(self.dim - 1), l2
+        else:
+            return lhs_emb.squeeze(self.dim - 1)
 
 
 class MultiHeadAttention(nn.Module):

@@ -38,6 +38,7 @@ class CrossencoderAgent(TorchRankerAgent):
                     'Cannot combine --data-parallel and distributed mode'
                 )
             self.model = torch.nn.DataParallel(self.model)
+        self.START_IDX = self.END_IDX
 
 
     def build_model(self, states=None):
