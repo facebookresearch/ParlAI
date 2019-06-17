@@ -6,16 +6,19 @@
 
 
 """
-Generic PyTorch-based Generator agent. Implements quite a bit of boilerplate,
-including forced-decoding loss and beam search.
+Generic PyTorch-based Generator agent.
+
+Implements quite a bit of boilerplate, including forced-decoding loss and beam
+search.
 
 Contains the following utilities:
 
-* TorchGeneratorAgent class, which serves as a useful parent for generative torch
+* `ref:TorchGeneratorAgent` class, which serves as a useful parent for generative torch
   agents.
 * Beam class which provides some generic beam functionality for classes to use
 """
 
+from abc import ABC, abstractmethod
 import os
 import math
 import tempfile
@@ -32,9 +35,11 @@ from parlai.core.thread_utils import SharedTable
 from parlai.core.distributed_utils import is_distributed
 
 
-class TorchGeneratorModel(nn.Module):
+class TorchGeneratorModel(nn.Module, ABC):
     """
-    This Interface expects you to implement model with the following reqs:
+    Abstract TorchGeneratorModel.
+
+    This interface expects you to implement model with the following reqs:
 
     :attribute model.encoder:
         takes input returns tuple (enc_out, enc_hidden, attn_mask)
@@ -45,6 +50,7 @@ class TorchGeneratorModel(nn.Module):
     :attribute model.output:
         takes decoder outputs and returns distr over dictionary
     """
+
     def __init__(
         self,
         padding_idx=0,
@@ -66,7 +72,7 @@ class TorchGeneratorModel(nn.Module):
 
     def decode_greedy(self, encoder_states, bsz, maxlen):
         """
-        Greedy search
+        Perform a greedy search.
 
         :param int bsz:
             Batch size. Because encoder_states is model-specific, it cannot
@@ -90,7 +96,7 @@ class TorchGeneratorModel(nn.Module):
         xs = self._starts(bsz)
         incr_state = None
         logits = []
-        for i in range(maxlen):
+        for _i in range(maxlen):
             # todo, break early if all beams saw EOS
             scores, incr_state = self.decoder(xs, encoder_states, incr_state)
             scores = scores[:, -1:, :]
@@ -107,8 +113,9 @@ class TorchGeneratorModel(nn.Module):
 
     def decode_forced(self, encoder_states, ys):
         """
-        Decode with a fixed, true sequence, computing loss. Useful for
-        training, or ranking fixed candidates.
+        Decode with a fixed, true sequence, computing loss.
+
+        Useful for training, or ranking fixed candidates.
 
         :param ys:
             the prediction targets. Contains both the start and end tokens.
@@ -137,6 +144,7 @@ class TorchGeneratorModel(nn.Module):
         _, preds = logits.max(dim=2)
         return logits, preds
 
+    @abstractmethod
     def reorder_encoder_states(self, encoder_states, indices):
         """
         Reorder encoder states according to a new set of indices.
@@ -183,10 +191,9 @@ class TorchGeneratorModel(nn.Module):
         :rtype:
             model specific
         """
-        raise NotImplementedError(
-            "reorder_encoder_states must be implemented by the model"
-        )
+        pass
 
+    @abstractmethod
     def reorder_decoder_incremental_state(self, incremental_state, inds):
         """
         Reorder incremental state for the decoder.
@@ -217,9 +224,7 @@ class TorchGeneratorModel(nn.Module):
         :rtype:
             model specific
         """
-        raise NotImplementedError(
-            "reorder_decoder_incremental_state must be implemented by model"
-        )
+        pass
 
     def forward(self, *xs, ys=None, cand_params=None, prev_enc=None, maxlen=None,
                 bsz=None):
@@ -280,15 +285,17 @@ class TorchGeneratorModel(nn.Module):
 
 class TorchGeneratorAgent(TorchAgent):
     """
-    Abstract Generator agent. Only meant to be extended.
+    Abstract Generator agent; only meant to be extended.
 
     TorchGeneratorAgent aims to handle much of the bookkeeping and
     infrastructure work for any generative models, like seq2seq or transformer.
     It implements the train_step and eval_step. The only requirement is that
     your model *must* implemented the interface TorchGeneratorModel interface.
     """
+
     @classmethod
     def add_cmdline_args(cls, argparser):
+        """Add command line arguments."""
         agent = argparser.add_argument_group('Torch Generator Agent')
         agent.add_argument('--beam-size', type=int, default=1,
                            help='Beam size, if 1 then greedy search')
@@ -349,6 +356,9 @@ class TorchGeneratorAgent(TorchAgent):
 
             self.build_criterion()
             self.build_model()
+            print("Total parameters: {}".format(self._total_parameters()))
+            print("Trainable parameters:  {}".format(self._trainable_parameters()))
+
             if self.fp16:
                 self.model = self.model.half()
 
@@ -395,6 +405,7 @@ class TorchGeneratorAgent(TorchAgent):
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
+    @abstractmethod
     def build_model(self):
         """
         Construct the model.
@@ -402,14 +413,14 @@ class TorchGeneratorAgent(TorchAgent):
         The model should be set to self.model, and support
         the TorchGeneratorModel interface.
         """
-        raise NotImplementedError(
-            "AbstractClass: build_model must be implemented by the user."
-        )
+        pass
 
     def build_criterion(self):
         """
-        Constructs the loss function. By default torch.nn.CrossEntropyLoss.
-        The criterion function should be set to self.criterion.
+        Construct the loss function.
+
+        By default torch.nn.CrossEntropyLoss.  The criterion function should be
+        set to self.criterion.
 
         If overridden, this model should (1) handle calling cuda and (2)
         produce a sum that can be used for a per-token loss.
@@ -422,8 +433,13 @@ class TorchGeneratorAgent(TorchAgent):
 
     def _dummy_batch(self, batchsize, maxlen):
         """
-        Creates a dummy batch. This is used to preinitialize the cuda buffer,
-        or otherwise force a null backward pass after an OOM.
+        Create a dummy batch.
+
+        This is used to preinitialize the cuda buffer, or otherwise force a
+        null backward pass after an OOM.
+
+        If your model uses additional inputs beyond text_vec and label_vec,
+        you will need to override it to add additional fields.
         """
         return Batch(
             text_vec=torch.ones(batchsize, maxlen).long().cuda(),
@@ -509,8 +525,10 @@ class TorchGeneratorAgent(TorchAgent):
 
     def _model_input(self, batch):
         """
-        Creates the input (x) value for the model. Must return a tuple.
-        This will be passed directly into the model via *args, i.e.,
+        Create the input (x) value for the model.
+
+        Must return a tuple.  This will be passed directly into the model via
+        `*args`, i.e.,
 
         >>> model(*_model_input(batch))
 
@@ -521,8 +539,9 @@ class TorchGeneratorAgent(TorchAgent):
 
     def compute_loss(self, batch, return_output=False):
         """
-        Computes and returns the loss for the given batch. Easily overridable for
-        customized loss functions.
+        Compute and return the loss for the given batch.
+
+        Easily overridable for customized loss functions.
 
         If return_output is True, the full output from the call to self.model()
         is also returned, via a (loss, model_output) pair.
@@ -656,7 +675,7 @@ class TorchGeneratorAgent(TorchAgent):
     def beam_search(self, model, batch, beam_size, start=1, end=2,
                     pad=0, min_length=3, min_n_best=5, max_ts=40, block_ngram=0):
         """
-        Beam search given the model and Batch
+        Beam search given the model and Batch.
 
         This function expects to be given a TorchGeneratorModel. Please refer to
         that interface for information.
@@ -708,7 +727,7 @@ class TorchGeneratorAgent(TorchAgent):
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
 
-        for ts in range(max_ts):
+        for _ts in range(max_ts):
             # exit early if needed
             if all((b.done() for b in beams)):
                 break
@@ -890,7 +909,7 @@ class Beam(object):
 
     @staticmethod
     def find_ngrams(input_list, n):
-        """Get list of ngrams with context length n-1"""
+        """Get list of ngrams with context length n-1."""
         return list(zip(*[input_list[i:] for i in range(n)]))
 
     def get_output_from_current_step(self):

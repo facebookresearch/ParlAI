@@ -13,6 +13,7 @@ between processes.
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, no_lock
 from collections import Counter
+from parlai.core.utils import warn_once
 
 import re
 
@@ -22,6 +23,14 @@ except ImportError:
     # User doesn't have nltk installed, so we can't use it for bleu
     # We'll just turn off things, but we might want to warn the user
     nltkbleu = None
+
+try:
+    import rouge as rouge
+except ImportError:
+    # User doesn't have rouge installed, so we can't use it for rouge
+    # We'll just turn off things, but we might want to warn the user
+    warn_once('Rouge metrics require py-rouge. Please run `pip install py-rouge`.')
+    rouge = None
 
 re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
@@ -44,6 +53,51 @@ def normalize_answer(s):
     return white_space_fix(remove_articles(remove_punc(lower(s))))
 
 
+def aggregate_task_reports(reports, tasks, micro=True):
+    """
+    Aggregate separate task reports into a single report.
+
+    :param reports: list of report dicts from separate tasks
+    :param tasks: list of tasks
+    :param micro: average per example if True, else average over t
+
+    :return: aggregated report dicts
+    """
+    if len(reports) == 1:
+        # singular task
+        return reports[0]
+    # multiple tasks, aggregate metrics
+    metrics = {}
+    exs = {}
+    total_report = {'tasks': {}}
+    # collect metrics from all reports
+    for i, report in enumerate(reports):
+        total_report['tasks'][tasks[i]] = report
+        for metric, val in report.items():
+            if metric == 'exs':
+                exs[tasks[i]] = val
+            else:
+                metrics.setdefault(metric, {})[tasks[i]] = val
+    # now aggregate
+    total_exs = sum(exs.values())
+    total_report['exs'] = total_exs
+    for metric, task_vals in metrics.items():
+        if micro:
+            # average over the number of examples
+            vals = [task_vals[task] * exs[task] for task in tasks]
+            total_report[metric] = round_sigfigs(sum(vals) / total_exs, 4)
+        else:  # macro
+            # average over tasks
+            vals = task_vals.values()
+            total_report[metric] = round_sigfigs(sum(vals) / len(vals), 4)
+    # add a warning describing how metrics were averaged across tasks.
+    total_report['warning'] = 'metrics are averaged across tasks'
+    if micro:
+        total_report['warning'] += (' and weighted by the number of examples '
+                                    'per task')
+    return total_report
+
+
 def _exact_match(guess, answers):
     """Check if guess is a (normalized) exact match with any answer."""
     if guess is None or answers is None:
@@ -57,7 +111,7 @@ def _exact_match(guess, answers):
 
 def _prec_recall_f1_score(pred_items, gold_items):
     """
-    Computes precision, recall and f1 given a set of gold and prediction items.
+    Compute precision, recall and f1 given a set of gold and prediction items.
 
     :param pred_items: iterable of predicted values
     :param gold_items: iterable of gold values
@@ -103,27 +157,55 @@ def _bleu(guess, answers):
     )
 
 
+def _rouge(guess, answers):
+    global rouge
+    """Compute ROUGE score between guess and *any* answers. Return the best."""
+    if rouge is None:
+        return None, None, None
+    evaluator = rouge.Rouge(metrics=['rouge-n', 'rouge-l'], max_n=2)
+    try:
+        scores = [evaluator.get_scores(normalize_answer(guess), normalize_answer(a))
+                  for a in answers]
+    except LookupError:
+        warn_once(
+            'ROUGE requires nltk punkt tokenizer. Please run '
+            '`python -c "import nltk; nltk.download(\'punkt\')`'
+        )
+        rouge = None
+        return None, None, None
+
+    scores_rouge1 = [score['rouge-1']['r'] for score in scores]
+    scores_rouge2 = [score['rouge-2']['r'] for score in scores]
+    scores_rougel = [score['rouge-l']['r'] for score in scores]
+    return max(scores_rouge1), max(scores_rouge2), max(scores_rougel)
+
+
 def aggregate_metrics(reporters):
+    """Aggregate metrics from multiple reports."""
     # reporters is a list of teachers or worlds
     m = {}
     m['tasks'] = {}
     sums = {'accuracy': 0, 'f1': 0, 'loss': 0, 'ppl': 0}
     if nltkbleu is not None:
         sums['bleu'] = 0
+    if rouge is not None:
+        sums['rouge-1'] = 0.0
+        sums['rouge-2'] = 0.0
+        sums['rouge-L'] = 0.0
     num_tasks = 0
     total = 0
     for i in range(len(reporters)):
-        tid = reporters[i].getID()
-        mt = reporters[i].report()
-        while tid in m['tasks']:
-            # prevent name cloberring if using multiple tasks with same ID
-            tid += '_'
-        m['tasks'][tid] = mt
-        total += mt['exs']
+        task_id = reporters[i].getID()
+        task_report = reporters[i].report()
+        while task_id in m['tasks']:
+            # prevent name clobbering if using multiple tasks with same ID
+            task_id += '_'
+        m['tasks'][task_id] = task_report
+        total += task_report['exs']
         found_any = False
         for k in sums.keys():
-            if k in mt:
-                sums[k] += mt[k]
+            if k in task_report:
+                sums[k] += task_report[k]
                 found_any = True
         if found_any:
             num_tasks += 1
@@ -145,6 +227,11 @@ class Metrics(object):
         if nltkbleu is not None:
             # only compute bleu if we can
             self.metrics_list.append('bleu')
+        if rouge is not None:
+            # only compute rouge if we can
+            self.metrics_list.append('rouge-1')
+            self.metrics_list.append('rouge-2')
+            self.metrics_list.append('rouge-L')
         for k in self.metrics_list:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0
@@ -172,7 +259,7 @@ class Metrics(object):
             # otherwise do nothing
             return no_lock()
 
-    def update_ranking_metrics(self, observation, labels):
+    def _update_ranking_metrics(self, observation, labels):
         text_cands = observation.get('text_candidates', None)
         if text_cands is None:
             return
@@ -200,6 +287,7 @@ class Metrics(object):
                 self.metrics['hits@_cnt'] += 1
 
     def update(self, observation, labels):
+        """Update metrics based on an observation and true labels."""
         with self._lock():
             self.metrics['cnt'] += 1
 
@@ -217,20 +305,30 @@ class Metrics(object):
             # F1 and BLEU metrics.
             f1 = _f1_score(prediction, labels)
             bleu = _bleu(prediction, labels)
+            rouge1, rouge2, rougel = _rouge(prediction, labels)
+
             with self._lock():
                 self.metrics['f1'] += f1
                 self.metrics['f1_cnt'] += 1
                 if bleu is not None:
                     self.metrics['bleu'] += bleu
                     self.metrics['bleu_cnt'] += 1
+                if rouge1 is not None:
+                    self.metrics['rouge-1'] += rouge1
+                    self.metrics['rouge-2'] += rouge2
+                    self.metrics['rouge-L'] += rougel
+                    self.metrics['rouge-1_cnt'] += 1
+                    self.metrics['rouge-2_cnt'] += 1
+                    self.metrics['rouge-L_cnt'] += 1
 
         # Ranking metrics.
-        self.update_ranking_metrics(observation, labels)
+        self._update_ranking_metrics(observation, labels)
 
         # User-reported metrics
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
-                if k not in ['correct', 'f1', 'hits@k', 'bleu']:
+                if k not in ['correct', 'f1', 'hits@k', 'bleu', 'rouge-1',
+                             'rouge-2', 'rouge-L']:
                     if k in self.metrics_list:
                         with self._lock():
                             self.metrics[k] += v
@@ -256,7 +354,7 @@ class Metrics(object):
         return loss
 
     def report(self):
-        # Report the metrics over all data seen so far.
+        """Report the metrics over all data seen so far."""
         m = {}
         total = self.metrics['cnt']
         m['exs'] = total
@@ -286,6 +384,8 @@ class Metrics(object):
         return m
 
     def clear(self):
+        """Clear all the metrics."""
+        # TODO: rename to reset for consistency with rest of ParlAI
         with self._lock():
             self.metrics['cnt'] = 0
             for k in self.metrics_list:

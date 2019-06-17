@@ -369,7 +369,7 @@ Here are some examples:
    python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa
 
    #Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from our model zoo:
-   python examples/eval_model.py -t squad -mf "models:drqa/squad/model"
+   python examples/eval_model.py -t squad -mf "zoo:drqa/squad/model"
 
    #Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
    python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid

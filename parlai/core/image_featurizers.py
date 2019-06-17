@@ -4,62 +4,21 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""Provide functionality for loading images."""
+
 import parlai.core.build_data as build_data
 
 import os
 from PIL import Image
 from zipfile import ZipFile
-from functools import wraps
-from threading import Lock, Condition
 
 _greyscale = '  .,:;crsA23hHG#98&@'
 _cache_size = 84000
 
 
-def first_n_cache(function):
-    cache = {}
-    cache_monitor = CacheMonitor()
-
-    @wraps(function)
-    def wrapper(*args):
-        path = args[1]
-        loader = args[0]
-        if path in cache:
-            img = cache[path]
-        else:
-            img = function(*args)
-            if img is not None and len(cache) < _cache_size:
-                cache_monitor.waitForCache()
-                cache[path] = img
-                cache_monitor.doneWithCache()
-        if loader.use_cuda and loader.im not in [None, 'none', 'raw', 'ascii']:
-            img = loader.torch.from_numpy(img).cuda()
-        return img
-    return wrapper
-
-
-class CacheMonitor():
-    def __init__(self):
-        self.cache_lock = Lock()
-        self.cache_available = Condition(self.cache_lock)
-        self.cache_busy = False
-
-    def waitForCache(self):
-        with self.cache_lock:
-            while self.cache_busy:
-                self.cache_available.wait()
-            self.cache_busy = True
-
-    def doneWithCache(self):
-        with self.cache_lock:
-            self.cache_busy = False
-            self.cache_available.notify_all()
-
-
 class ImageLoader():
-    """
-    Extract image feature using pretrained CNN network.
-    """
+    """Extract image feature using pretrained CNN network."""
+
     def __init__(self, opt):
         self.opt = opt.copy()
         self.use_cuda = False
@@ -70,8 +29,9 @@ class ImageLoader():
 
     def init_cnn(self, opt):
         """
-        Lazy initialization of preprocessor model in case we don't need any
-        image preprocessing.
+        Lazy initialization of preprocessor model.
+
+        In case we don't need any image preprocessing.
         """
         try:
             import torch
@@ -97,7 +57,7 @@ class ImageLoader():
             print('[ Using CUDA ]')
             torch.cuda.set_device(opt.get('gpu', -1))
 
-        cnn_type, layer_num = self.image_mode_switcher()
+        cnn_type, layer_num = self._image_mode_switcher()
 
         # initialize the pretrained CNN using pytorch.
         CNN = getattr(torchvision.models, cnn_type)
@@ -117,7 +77,7 @@ class ImageLoader():
         if self.use_cuda:
             self.netCNN.cuda()
 
-    def image_mode_switcher(self):
+    def _image_mode_switcher(self):
         switcher = {
             'resnet152': ['resnet152', -1],
             'resnet101': ['resnet101', -1],
@@ -137,7 +97,7 @@ class ImageLoader():
 
         return switcher.get(self.image_mode)
 
-    def extract(self, image, path):
+    def extract(self, image, path=None):
         # check whether initialize CNN network.
         if not self.netCNN:
             self.init_cnn(self.opt)
@@ -147,10 +107,11 @@ class ImageLoader():
             transform = transform.cuda()
         feature = self.netCNN(transform)
         # save the feature
-        self.torch.save(feature.cpu(), path)
+        if path is not None:
+            self.torch.save(feature.cpu(), path)
         return feature
 
-    def img_to_ascii(self, path):
+    def _img_to_ascii(self, path):
         im = Image.open(path)
         im.thumbnail((60, 40), Image.BICUBIC)
         im = im.convert('L')
@@ -162,8 +123,8 @@ class ImageLoader():
             asc.append('\n')
         return ''.join(asc)
 
-    # @first_n_cache
     def load(self, path):
+        """Load from a given path."""
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
         is_zip = False
@@ -188,7 +149,7 @@ class ImageLoader():
             return Image.open(path).convert('RGB')
         elif mode == 'ascii':
             # convert images to ascii ¯\_(ツ)_/¯
-            return self.img_to_ascii(path)
+            return self._img_to_ascii(path)
         else:
             # otherwise, looks for preprocessed version under 'mode' directory
             if not is_zip:

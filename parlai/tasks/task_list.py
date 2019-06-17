@@ -195,6 +195,21 @@ task_list = [
         ),
     },
     {
+        "id": "HotpotQA",
+        "display_name": "HotpotQA",
+        "task": "hotpotqa",
+        "tags": ["All", "QA"],
+        "description": (
+            "HotpotQA is a dataset for multi-hop question answering."
+            "The overall setting is that given some context paragraphs"
+            "(e.g., a few paragraphs, or the entire Web) and a question,"
+            "a QA system answers the question by extracting a span of text"
+            "from the context. It is necessary to perform multi-hop reasoning"
+            "to correctly answer the question."
+            "Link: https://arxiv.org/pdf/1809.09600.pdf"
+        ),
+    },
+    {
         "id": "LIGHT-Dialogue",
         "display_name": "LIGHT-Dialogue",
         "task": "light_dialog",
@@ -364,6 +379,24 @@ task_list = [
             "Cloze dataset based on a missing (anonymized) entity phrase from a "
             "Daily Mail article, Hermann et al. '15. Link: "
             "https://arxiv.org/abs/1506.03340"
+        ),
+    },
+    {
+        "id": "QuAC",
+        "display_name": "Question Answering in Context",
+        "task": "quac",
+        "tags": ["All", "QA"],
+        "description": (
+            "Question Answering in Context is a dataset for modeling, "
+            "understanding, and participating in information seeking dialog. Data "
+            "instances consist of an interactive dialog between two crowd workers: "
+            "(1) a student who poses a sequence of freeform questions to learn as "
+            "much as possible about a hidden Wikipedia text, and (2) a teacher who "
+            "answers the questions by providing short excerpts (spans) from the text. "
+            "QuAC introduces challenges not found in existing machine comprehension "
+            "datasets: its questions are often more open-ended, unanswerable, "
+            "or only meaningful within the dialog context. link: "
+            "https://arxiv.org/abs/1808.07036"
         ),
     },
     {

@@ -18,8 +18,8 @@ see a few of them:
 """
 
 from parlai.core.params import ParlaiParser
-from train_model import setup_args as train_args
-from train_model import TrainLoop
+from .train_model import setup_args as train_args
+from .train_model import TrainLoop
 
 import cProfile
 import io

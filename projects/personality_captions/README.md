@@ -36,8 +36,26 @@ ShotTell, ResNeXt-IG-3.5B            | [Shuster et al. (2019)](https://arxiv.org
 
 ## Pretrained Models
 
-Pretrained models are forthcoming; this website will be updated when they are
-available for download.
+We provide our best model trained with ResNet152 image features. To evaluate the model, specify the following command:
+
+      python examples/eval_model.py \
+          -bs 128 -t personality_captions
+          -mf models:personality_captions/transresnet/model
+          --num-test-labels 5 -dt test
+
+Which yields the following results:
+
+      {'exs': 10000, 'accuracy': 0.5113, 'f1': 0.5951, 'hits@1': 0.511, 'hits@5': 0.816,
+      'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0,
+      'loss': -0.002, 'med_rank': 1.0}
+
+Additionally, we provide an interactive script that you can use to view outputs of our pretrained model.
+Simply run the following command:
+
+      python projects/personality_captions/interactive.py \
+      -mf models:personality_captions/transresnet/model
+
+Which will allow you to upload an image and choose a personality for the model to use.
 
 ## Model Examples
 
@@ -47,9 +65,10 @@ available for download.
 
 If you use the dataset or models in your own work, please cite with the following BibText entry:
 
-    @inproceedings{shuster2019_personality_caps,
-      author={Shuster, Kurt and Humeau, Samuel and Hu, Hexiang and Bordes, Antoine and Weston, Jason},
-      title={Engaging Image Captioning via Personality},
-      booktitle = {2019 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-      year={2019},
-    }
+        @InProceedings{Shuster_2019_CVPR,
+        author = {Shuster, Kurt and Humeau, Samuel and Hu, Hexiang and Bordes, Antoine and Weston, Jason},
+        title = {Engaging Image Captioning via Personality},
+        booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+        month = {June},
+        year = {2019}
+        }

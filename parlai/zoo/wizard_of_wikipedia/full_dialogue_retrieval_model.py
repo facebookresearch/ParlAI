@@ -11,6 +11,6 @@ from parlai.core.build_data import download_models
 
 def download(datapath):
     opt = {'datapath': datapath}
-    fnames = ['wizard_retrieval_2.tgz']
+    fnames = ['wizard_package3.tgz']
     opt['model_type'] = 'full_dialogue_retrieval_model'
-    download_models(opt, fnames, 'wizard_of_wikipedia', version='v2.0')
+    download_models(opt, fnames, 'wizard_of_wikipedia', version='v3.0')

@@ -101,15 +101,15 @@ def _fairseq_opt_wrapper(opt, skip_pretrained_embedding_loading=False):
         args.update_freq = options.eval_str_list(args.update_freq, int)
     if hasattr(args, "max_sentences_valid"):
         args.max_sentences_valid = args.max_sentences
-    if getattr(args, "truncate") == -1:
+    if args.truncate == -1:
         # some torch agents use positional embeddings, which must have a max length
-        setattr(args, "truncate", 1024)
+        args.truncate = 1024
     if not hasattr(args, "max_source_positions"):
         # fairseq uses a different name for this CLI parameter
         # Sometimes it's set in model defaults, but not for all models
-        setattr(args, "max_source_positions", getattr(args, "truncate"))
+        args.max_source_positions = args.truncate
         # if we don't have source lengths, we don't have target lengths
-        setattr(args, "max_target_positions", getattr(args, "truncate"))
+        args.max_target_positions = args.truncate
 
     # handle modelzoo if possible
     for k in ("encoder_embed_path", "decoder_embed_path"):

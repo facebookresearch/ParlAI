@@ -285,15 +285,19 @@ class TestPytorchDataTeacher(unittest.TestCase):
             .format(defaults, str_output)
         )
 
+    @testing_utils.retry()
     def test_pyt_train(self):
         self._pyt_train('train')
 
+    @testing_utils.retry()
     def test_pyt_train_stream(self):
         self._pyt_train('train:stream')
 
+    @testing_utils.retry()
     def test_pyt_train_stream_ordered(self):
         self._pyt_train('train:stream:ordered')
 
+    @testing_utils.retry()
     def test_pyt_preprocess_train(self):
         """
         Test that the preprocess functionality works with the PytorchDataTeacher
@@ -335,12 +339,15 @@ class TestPytorchDataTeacher(unittest.TestCase):
             .format((datatype, preprocess), str_output)
         )
 
+    @testing_utils.retry()
     def test_pyt_batchsort_train(self):
         self._pyt_batchsort_train('train', False)
 
+    @testing_utils.retry()
     def test_pyt_batchsort_train_stream(self):
         self._pyt_batchsort_train('train:stream', False)
 
+    @testing_utils.retry()
     def test_pyt_batchsort_train_preprocess(self):
         self._pyt_batchsort_train('train', True)
 

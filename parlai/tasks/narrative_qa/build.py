@@ -37,7 +37,7 @@ def write_dict_list_to_csv(dict_list, filepath):
             writer.writerow(row)
 
 
-def divide_csv_into_sets(csv_filepath, sets=['train', 'valid', 'test']):
+def divide_csv_into_sets(csv_filepath, sets=('train', 'valid', 'test')):
     reader, fh = read_csv_to_dict_list(csv_filepath)
 
     base_filename = os.path.basename(csv_filepath).split('.')[0]
@@ -53,14 +53,14 @@ def divide_csv_into_sets(csv_filepath, sets=['train', 'valid', 'test']):
     fh.close()
 
 
-def make_folders(base_path, sets=['train', 'valid', 'test']):
+def make_folders(base_path, sets=('train', 'valid', 'test')):
     for s in sets:
         path = os.path.join(base_path, s)
         if not os.path.exists(path):
             os.mkdir(path)
 
 
-def move_files(base_path, sets=['train', 'valid', 'test']):
+def move_files(base_path, sets=('train', 'valid', 'test')):
     source = os.listdir(base_path)
 
     for f in source:
