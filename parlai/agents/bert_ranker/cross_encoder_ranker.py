@@ -13,7 +13,6 @@ from .helpers import (BertWrapper, BertModel, get_bert_optimizer,
 
 import os
 import torch
-import pdb
 
 
 class CrossEncoderRankerAgent(TorchRankerAgent):
