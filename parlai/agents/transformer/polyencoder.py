@@ -13,7 +13,6 @@ from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .transformer import TransformerRankerAgent
 from .modules import BasicAttention, MultiHeadAttention
 import torch
-import pdb
 
 class PolyencoderAgent(TorchRankerAgent):
     """ Equivalent of bert_ranker/polyencoder and biencoder_multiple_output
@@ -97,12 +96,11 @@ class PolyencoderAgent(TorchRankerAgent):
             _, _, cand_rep = self.model('encode', cand_tokens=cand_vecs)
         elif len(cand_vecs.shape) == 2:
             _, _, cand_rep = self.model('encode', cand_tokens=cand_vecs.unsqueeze(1))
-            cand_rep = cand_rep.expand(bsz, bsz, -1)
+            cand_rep = cand_rep.expand(bsz, bsz, -1).transpose(0,1).contiguous()
         scores = self.model('score',
                             ctxt_rep=ctxt_rep,
                             ctxt_rep_mask=ctxt_rep_mask,
                             cand_rep=cand_rep)
-        pdb.set_trace()
         return scores
 
 class PolyEncoderModule(torch.nn.Module):
@@ -137,9 +135,9 @@ class PolyEncoderModule(torch.nn.Module):
                                         embed_dim,
                                         opt['dropout'])
             elif self.codes_attention_type == 'basic_sqrt':
-                self.code_attention = BasicAttention(dim=1, attn='sqrt', get_weights=False)
+                self.code_attention = BasicAttention(dim=2, attn='sqrt', get_weights=False)
             elif self.codes_attention_type == 'basic':
-                self.code_attention = BasicAttention(dim=1, attn='basic', get_weights=False)
+                self.code_attention = BasicAttention(dim=2, attn='basic', get_weights=False)
 
         # The final attention (the one that takes the candidate as key)
         if self.attention_type == 'multihead':
@@ -150,7 +148,7 @@ class PolyEncoderModule(torch.nn.Module):
         elif self.attention_type == 'basic_sqrt':
             self.attention = BasicAttention(dim=2, attn='sqrt', get_weights=False)
         elif self.attention_type == 'basic':
-            self.attention = BasicAttention(dim=2, attn='basic', get_weights=True)
+            self.attention = BasicAttention(dim=2, attn='basic', get_weights=False)
 
     def get_encoder(self, opt, dict, null_idx, reduction_type):
         n_positions = get_n_positions_from_options(opt)
@@ -215,20 +213,21 @@ class PolyEncoderModule(torch.nn.Module):
             # get context_representation. Now that depends on the cases.
             ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
             dim = ctxt_out.size(2)
+
             if self.type == 'codes':
                 # Basic Attention and MultiHeadAttention share the same API.
                 ctxt_rep = self.code_attention(self.codes.repeat(bsz,1,1),
                                                ctxt_out,
                                                ctxt_mask)
-                ctxt_rep_mask = ctxt_rep.new_ones(bs, self.n_codes).byte()
+                ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
 
             elif self.type == 'n_first':
                 # Expand the output if it is not long enough
                 if ctxt_out.size(1) < self.n_codes:
                     difference = self.n_codes - ctxt_out.size(1)
-                    extra_rep = ctxt_out.new_zeros(bs, difference, dim)
+                    extra_rep = ctxt_out.new_zeros(bsz, difference, dim)
                     ctxt_rep = torch.cat([ctxt_out, extra_rep], dim=1)
-                    extra_mask = ctxt_mask.new_zeros(bs, difference)
+                    extra_mask = ctxt_mask.new_zeros(bsz, difference)
                     ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
                 else:
                     ctxt_rep = ctxt_out[:, 0:self.n_codes, :]
@@ -249,7 +248,7 @@ class PolyEncoderModule(torch.nn.Module):
         """
 
         # reduces the context representation to a 3D tensor bsz x num_cands x dim
-        ctxt_final_rep, w = self.attention(cand_embed,
+        ctxt_final_rep = self.attention(cand_embed,
                                         ctxt_rep,
                                         ctxt_rep_mask)
         scores = torch.sum(ctxt_final_rep * cand_embed, 2)
