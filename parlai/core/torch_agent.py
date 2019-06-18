@@ -709,6 +709,7 @@ class TorchAgent(ABC, Agent):
         self.NULL_IDX = self.dict[self.dict.null_token]
         self.START_IDX = self.dict[self.dict.start_token]
         self.END_IDX = self.dict[self.dict.end_token]
+        self.UNK_IDX = self.dict[self.dict.unk_token]
 
         # for gradient acumulation
         self._number_grad_accum = 0

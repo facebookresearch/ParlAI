@@ -438,6 +438,7 @@ class TorchGeneratorAgent(TorchAgent):
         self.metrics['nll_loss'] = 0.0
         self.metrics['num_tokens'] = 0
         self.metrics['correct_tokens'] = 0
+        self.metrics['unk_tokens'] = 0
 
     def share(self):
         """Share internal states between parent and child instances."""
@@ -467,6 +468,7 @@ class TorchGeneratorAgent(TorchAgent):
                 m['ppl'] = math.exp(m['nll_loss'])
             except OverflowError:
                 m['ppl'] = float('inf')
+            m['unk'] = self.metrics['unk_tokens']
         if self.metrics['total_skipped_batches'] > 0:
             m['total_skipped_batches'] = self.metrics['total_skipped_batches']
         for k, v in m.items():
@@ -516,6 +518,7 @@ class TorchGeneratorAgent(TorchAgent):
         self.metrics['correct_tokens'] += correct
         self.metrics['nll_loss'] += loss.item()
         self.metrics['num_tokens'] += target_tokens
+        self.metrics['unk_tokens'] += (batch.label_vec == self.UNK_IDX).sum().item()
         loss /= target_tokens  # average loss per token
         if return_output:
             return (loss, model_output)
