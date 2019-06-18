@@ -165,7 +165,8 @@ class TransformerMemNetModel(nn.Module):
         else:
             self.memory_transformer = self.context_encoder
 
-        self.attender = BasicAttention(dim=2, attn=opt['memory_attention'])
+        self.attender = BasicAttention(dim=2, attn=opt['memory_attention'],
+                                       residual=True)
 
     def encode_cand(self, words):
         if words is None:
@@ -714,7 +715,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
 
 
 class BasicAttention(nn.Module):
-    def __init__(self, dim=1, attn='cosine', get_weights=True):
+    def __init__(self, dim=1, attn='cosine', residual=False, get_weights=True):
         super().__init__()
         self.softmax = nn.Softmax(dim=dim)
         if attn == 'cosine':
@@ -722,6 +723,7 @@ class BasicAttention(nn.Module):
         self.attn = attn
         self.dim = dim
         self.get_weights=get_weights
+        self.residual=residual
 
     def forward(self, xs, ys, mask_ys=None):
         """ xs: B x query_len x dim
@@ -744,8 +746,10 @@ class BasicAttention(nn.Module):
             l1.masked_fill_(attn_mask, -float('inf'))
         l2 = self.softmax(l1)
         lhs_emb = torch.bmm(l2, ys)
-        # add back the query
-        lhs_emb = lhs_emb.add(xs)
+
+        # # add back the query
+        if self.residual:
+            lhs_emb = lhs_emb.add(xs)
 
         if self.get_weights:
             return lhs_emb.squeeze(self.dim - 1), l2

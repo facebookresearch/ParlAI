@@ -13,6 +13,7 @@ from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .transformer import TransformerRankerAgent
 from .modules import BasicAttention, MultiHeadAttention
 import torch
+import pdb
 
 class PolyencoderAgent(TorchRankerAgent):
     """ Equivalent of bert_ranker/polyencoder and biencoder_multiple_output
@@ -23,7 +24,7 @@ class PolyencoderAgent(TorchRankerAgent):
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         TransformerRankerAgent.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Cross Arguments')
+        agent = argparser.add_argument_group('Polyencoder Arguments')
         agent.add_argument('--polyencoder-type', type=str, default='codes',
                            choices=['codes', 'n_first'],
                            help='Type of polyencoder, either we compute'
@@ -64,6 +65,7 @@ class PolyencoderAgent(TorchRankerAgent):
                     'Cannot combine --data-parallel and distributed mode'
                 )
             self.model = torch.nn.DataParallel(self.model)
+        self.START_IDX = self.END_IDX
 
 
     def build_model(self, states=None):
@@ -95,17 +97,12 @@ class PolyencoderAgent(TorchRankerAgent):
             _, _, cand_rep = self.model('encode', cand_tokens=cand_vecs)
         elif len(cand_vecs.shape) == 2:
             _, _, cand_rep = self.model('encode', cand_tokens=cand_vecs.unsqueeze(1))
-            cand_rep = cand_rep.repeat(bsz, bsz, -1)
-
-        print(ctxt_rep[0, 0:5, 0:5])
-        print(ctxt_rep_mask[0, 0:5])
-        print(cand_rep[0, 0:5, 0:5])
-
+            cand_rep = cand_rep.expand(bsz, bsz, -1)
         scores = self.model('score',
                             ctxt_rep=ctxt_rep,
                             ctxt_rep_mask=ctxt_rep_mask,
                             cand_rep=cand_rep)
-        print(scores[0:2, 0:3])
+        pdb.set_trace()
         return scores
 
 class PolyEncoderModule(torch.nn.Module):
@@ -116,7 +113,7 @@ class PolyEncoderModule(torch.nn.Module):
         super(PolyEncoderModule, self).__init__()
         self.null_idx = null_idx
         self.encoder_ctxt = self.get_encoder(opt, dict, null_idx, 'none')
-        self.encoder_cand = self.get_encoder(opt, dict, null_idx, 'mean')
+        self.encoder_cand = self.get_encoder(opt, dict, null_idx, opt['reduction_type'])
 
         self.type = opt['polyencoder_type']
         self.n_codes = opt['poly_n_codes']
@@ -151,9 +148,9 @@ class PolyEncoderModule(torch.nn.Module):
                                 opt['embedding_size'],
                                 opt['dropout'])
         elif self.attention_type == 'basic_sqrt':
-            self.attention = BasicAttention(dim=1, attn='sqrt', get_weights=False)
+            self.attention = BasicAttention(dim=2, attn='sqrt', get_weights=False)
         elif self.attention_type == 'basic':
-            self.attention = BasicAttention(dim=1, attn='basic', get_weights=False)
+            self.attention = BasicAttention(dim=2, attn='basic', get_weights=True)
 
     def get_encoder(self, opt, dict, null_idx, reduction_type):
         n_positions = get_n_positions_from_options(opt)
@@ -252,7 +249,7 @@ class PolyEncoderModule(torch.nn.Module):
         """
 
         # reduces the context representation to a 3D tensor bsz x num_cands x dim
-        ctxt_final_rep = self.attention(cand_embed,
+        ctxt_final_rep, w = self.attention(cand_embed,
                                         ctxt_rep,
                                         ctxt_rep_mask)
         scores = torch.sum(ctxt_final_rep * cand_embed, 2)
