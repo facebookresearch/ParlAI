@@ -76,7 +76,6 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             else:
                 text_vec = text_vec[:, 0:self.opt['fix_size']]
 
-
         tokens_context = text_vec.unsqueeze(
             1).expand(-1, nb_cands, -1).contiguous().view(nb_cands * size_batch, -1)
         segments_context = tokens_context * 0
