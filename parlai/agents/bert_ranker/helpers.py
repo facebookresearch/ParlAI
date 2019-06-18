@@ -35,6 +35,9 @@ def add_common_args(parser):
                         help='Which layer of Bert do we use? Default=-1=last one.')
     parser.add_argument('--out-dim', type=int, default=768,
                         help='For biencoder, output dimension')
+    parser.add_argument('--fix-size', type=int, default=-1,
+                        help='For crossencoder, fix the context to a given size'
+                             'including PAD')
     parser.add_argument('--topn', type=int, default=10,
                         help='For the biencoder: select how many elements to return')
     parser.add_argument('--data-parallel', type='bool', default=False,

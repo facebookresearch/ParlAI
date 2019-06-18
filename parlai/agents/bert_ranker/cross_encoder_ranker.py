@@ -13,6 +13,7 @@ from .helpers import (BertWrapper, BertModel, get_bert_optimizer,
 
 import os
 import torch
+import pdb
 
 
 class CrossEncoderRankerAgent(TorchRankerAgent):
@@ -67,6 +68,16 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         nb_cands = cand_vecs.size()[1]
         size_batch = cand_vecs.size()[0]
         text_vec = batch.text_vec
+
+        if self.opt['fix_size'] != -1:
+            if text_vec.size(1) < self.opt['fix_size']:
+                new_text_vec = text_vec.new_zeros((text_vec.size(0), self.opt['fix_size']))
+                new_text_vec[:, 0:text_vec.size(1)] = text_vec
+                text_vec = new_text_vec
+            else:
+                text_vec = text_vec[:, 0:self.opt['fix_size']]
+
+
         tokens_context = text_vec.unsqueeze(
             1).expand(-1, nb_cands, -1).contiguous().view(nb_cands * size_batch, -1)
         segments_context = tokens_context * 0
