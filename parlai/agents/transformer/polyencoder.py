@@ -88,17 +88,16 @@ class PolyencoderAgent(TorchRankerAgent):
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         bsz = batch.text_vec.size(0)
-        ctxt_rep, ctxt_rep_mask, _ = self.model('encode', ctxt_tokens=batch.text_vec)
+        ctxt_rep, ctxt_rep_mask, _ = self.model(ctxt_tokens=batch.text_vec)
 
         if cand_encs is not None:
             raise Exception('cand_encs is not yet taken into account')
         if len(cand_vecs.shape) == 3:
-            _, _, cand_rep = self.model('encode', cand_tokens=cand_vecs)
+            _, _, cand_rep = self.model(cand_tokens=cand_vecs)
         elif len(cand_vecs.shape) == 2:
-            _, _, cand_rep = self.model('encode', cand_tokens=cand_vecs.unsqueeze(1))
+            _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
             cand_rep = cand_rep.expand(bsz, bsz, -1).transpose(0,1).contiguous()
-        scores = self.model('score',
-                            ctxt_rep=ctxt_rep,
+        scores = self.model(ctxt_rep=ctxt_rep,
                             ctxt_rep_mask=ctxt_rep_mask,
                             cand_rep=cand_rep)
         return scores
@@ -254,15 +253,15 @@ class PolyEncoderModule(torch.nn.Module):
         scores = torch.sum(ctxt_final_rep * cand_embed, 2)
         return scores
 
-    def forward(self, operation_type, ctxt_tokens=None, cand_tokens=None,
+    def forward(self, ctxt_tokens=None, cand_tokens=None,
                       ctxt_rep=None, ctxt_rep_mask=None, cand_rep=None):
         """ Due to a limitation of parlai, we have to have one single model
             in the agent. And because we want to be able to use data-parallel,
             we need to have one single forward() method.
             Therefore the operation_type can be either 'encode' or 'score'.
         """
-        if operation_type == 'encode':
+        if ctxt_tokens is not None or cand_tokens is not None:
             return self.encode(ctxt_tokens, cand_tokens)
-        elif operation_type == 'score':
+        elif ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None:
             return self.score(ctxt_rep, ctxt_rep_mask, cand_rep)
         raise Exception('Unsupported operation: %s' % operation_type)
