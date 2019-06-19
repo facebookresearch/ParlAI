@@ -103,7 +103,7 @@ class Batch(AttrDict):
         candidate_vecs=None,
         image=None,
         observations=None,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(
             text_vec=text_vec,
@@ -116,7 +116,7 @@ class Batch(AttrDict):
             candidate_vecs=candidate_vecs,
             image=image,
             observations=observations,
-            **kwargs
+            **kwargs,
         )
 
 
