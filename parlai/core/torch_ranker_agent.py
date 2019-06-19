@@ -22,7 +22,6 @@ from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 from parlai.core.distributed_utils import is_distributed
-import pdb
 
 
 class TorchRankerAgent(TorchAgent):
