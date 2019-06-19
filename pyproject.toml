@@ -7,5 +7,6 @@ exclude = '''
 /(
     \.eggs
   | \.git
+  | parlai_internal
 )/
 '''
