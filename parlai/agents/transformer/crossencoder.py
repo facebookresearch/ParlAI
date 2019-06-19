@@ -5,7 +5,6 @@
 # hack to make sure -m transformer/generator works as expected
 from .modules import TransformerEncoder
 from .modules import get_n_positions_from_options
-from .modules import surround
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .transformer import TransformerRankerAgent
 import torch
@@ -54,9 +53,9 @@ class CrossencoderAgent(TorchRankerAgent):
         """
         obs = super()._set_text_vec(*args, **kwargs)
         if 'text_vec' in obs:
-            obs['text_vec'] = surround(obs['text_vec'],
-                                       self.START_IDX,
-                                       self.END_IDX)
+            obs['text_vec'] = self._add_start_end_tokens(obs['text_vec'],
+                                                         True,
+                                                         True)
         return obs
 
     def concat_without_padding(self, text_idx, cand_idx, null_idx=0):

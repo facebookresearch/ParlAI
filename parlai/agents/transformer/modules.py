@@ -43,14 +43,6 @@ def _normalize(tensor, norm_layer):
     return norm_layer(tensor.view(-1, size[-1])).view(size)
 
 
-def surround(idx_vector, start_idx, end_idx):
-    """ Surround the vector by start_idx and end_idx.
-    """
-    start_tensor = idx_vector.new_tensor([start_idx])
-    end_tensor = idx_vector.new_tensor([end_idx])
-    return torch.cat([start_tensor, idx_vector, end_tensor], 0)
-
-
 def _create_embeddings(dictionary, embedding_size, padding_idx):
     """Create and initialize word embeddings."""
     e = nn.Embedding(len(dictionary), embedding_size, padding_idx)
