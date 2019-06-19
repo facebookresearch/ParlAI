@@ -15,7 +15,7 @@ import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.utils import Opt
+from parlai.core.utils import Opt, load_opt_file
 
 
 def print_announcements(opt):
@@ -55,18 +55,22 @@ def print_announcements(opt):
     stars += RESET
 
     # do the actual output
-    print('\n'.join([
-        '',
-        stars,
-        BOLD,
-        'Announcements go here.',
-        RESET,
-        # don't bold the suppression command
-        'To suppress this message (and future announcements), run\n`touch {}`'.format(
-            noannounce_file
-        ),
-        stars,
-    ]))
+    print(
+        '\n'.join(
+            [
+                '',
+                stars,
+                BOLD,
+                'Announcements go here.',
+                RESET,
+                # don't bold the suppression command
+                'To suppress this message (and future announcements), run\n`touch {}`'.format(
+                    noannounce_file
+                ),
+                stars,
+            ]
+        )
+    )
 
 
 def get_model_name(opt):
@@ -125,7 +129,7 @@ def str2class(value):
 def class2str(value):
     """Inverse of params.str2class()."""
     s = str(value)
-    s = s[s.find('\'') + 1:s.rfind('\'')]  # pull out import path
+    s = s[s.find('\'') + 1 : s.rfind('\'')]  # pull out import path
     s = ':'.join(s.rsplit('.', 1))  # replace last period with ':'
     return s
 
@@ -188,20 +192,21 @@ class ParlaiParser(argparse.ArgumentParser):
     """
 
     def __init__(
-        self,
-        add_parlai_args=True,
-        add_model_args=False,
-        description='ParlAI parser',
+        self, add_parlai_args=True, add_model_args=False, description='ParlAI parser'
     ):
         """Initialize the ParlAI argparser."""
-        super().__init__(description=description, allow_abbrev=False,
-                         conflict_handler='resolve',
-                         formatter_class=CustomHelpFormatter)
+        super().__init__(
+            description=description,
+            allow_abbrev=False,
+            conflict_handler='resolve',
+            formatter_class=CustomHelpFormatter,
+        )
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
         self.register('type', 'class', str2class)
-        self.parlai_home = (os.path.dirname(os.path.dirname(os.path.dirname(
-                            os.path.realpath(__file__)))))
+        self.parlai_home = os.path.dirname(
+            os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        )
         os.environ['PARLAI_HOME'] = self.parlai_home
 
         self.add_arg = self.add_argument
@@ -220,121 +225,195 @@ class ParlaiParser(argparse.ArgumentParser):
         if argument_group is None:
             argument_group = self
         argument_group.add_argument(
-            '-dp', '--datapath', default=None,
-            help='path to datasets, defaults to {parlai_dir}/data')
+            '-dp',
+            '--datapath',
+            default=None,
+            help='path to datasets, defaults to {parlai_dir}/data',
+        )
 
     def add_mturk_args(self):
         """Add standard mechanical turk arguments."""
         mturk = self.add_argument_group('Mechanical Turk')
         default_log_path = os.path.join(self.parlai_home, 'logs', 'mturk')
         mturk.add_argument(
-            '--mturk-log-path', default=default_log_path,
-            help='path to MTurk logs, defaults to {parlai_dir}/logs/mturk')
+            '--mturk-log-path',
+            default=default_log_path,
+            help='path to MTurk logs, defaults to {parlai_dir}/logs/mturk',
+        )
         mturk.add_argument(
-            '-t', '--task',
-            help='MTurk task, e.g. "qa_data_collection" or "model_evaluator"')
+            '-t',
+            '--task',
+            help='MTurk task, e.g. "qa_data_collection" or "model_evaluator"',
+        )
         mturk.add_argument(
-            '-nc', '--num-conversations', default=1, type=int,
-            help='number of conversations you want to create for this task')
+            '-nc',
+            '--num-conversations',
+            default=1,
+            type=int,
+            help='number of conversations you want to create for this task',
+        )
         mturk.add_argument(
-            '--unique', dest='unique_worker', default=False,
-            action='store_true',
-            help='enforce that no worker can work on your task twice')
-        mturk.add_argument(
-            '--max-hits-per-worker', dest='max_hits_per_worker', default=0, type=int,
-            help='Max number of hits each worker can perform during current group run')
-        mturk.add_argument(
-            '--unique-qual-name', dest='unique_qual_name',
-            default=None, type=str,
-            help='qualification name to use for uniqueness between HITs')
-        mturk.add_argument(
-            '-r', '--reward', default=0.05, type=float,
-            help='reward for each worker for finishing the conversation, '
-                 'in US dollars')
-        mturk.add_argument(
-            '--sandbox', dest='is_sandbox', action='store_true',
-            help='submit the HITs to MTurk sandbox site')
-        mturk.add_argument(
-            '--live', dest='is_sandbox', action='store_false',
-            help='submit the HITs to MTurk live site')
-        mturk.add_argument(
-            '--debug', dest='is_debug', action='store_true',
-            help='print and log all server interactions and messages')
-        mturk.add_argument(
-            '--verbose', dest='verbose', action='store_true',
-            help='print all messages sent to and from Turkers')
-        mturk.add_argument(
-            '--hard-block', dest='hard_block', action='store_true',
+            '--unique',
+            dest='unique_worker',
             default=False,
-            help='Hard block disconnecting Turkers from all of your HITs')
+            action='store_true',
+            help='enforce that no worker can work on your task twice',
+        )
         mturk.add_argument(
-            '--log-level', dest='log_level', type=int, default=20,
+            '--max-hits-per-worker',
+            dest='max_hits_per_worker',
+            default=0,
+            type=int,
+            help='Max number of hits each worker can perform during current group run',
+        )
+        mturk.add_argument(
+            '--unique-qual-name',
+            dest='unique_qual_name',
+            default=None,
+            type=str,
+            help='qualification name to use for uniqueness between HITs',
+        )
+        mturk.add_argument(
+            '-r',
+            '--reward',
+            default=0.05,
+            type=float,
+            help='reward for each worker for finishing the conversation, '
+            'in US dollars',
+        )
+        mturk.add_argument(
+            '--sandbox',
+            dest='is_sandbox',
+            action='store_true',
+            help='submit the HITs to MTurk sandbox site',
+        )
+        mturk.add_argument(
+            '--live',
+            dest='is_sandbox',
+            action='store_false',
+            help='submit the HITs to MTurk live site',
+        )
+        mturk.add_argument(
+            '--debug',
+            dest='is_debug',
+            action='store_true',
+            help='print and log all server interactions and messages',
+        )
+        mturk.add_argument(
+            '--verbose',
+            dest='verbose',
+            action='store_true',
+            help='print all messages sent to and from Turkers',
+        )
+        mturk.add_argument(
+            '--hard-block',
+            dest='hard_block',
+            action='store_true',
+            default=False,
+            help='Hard block disconnecting Turkers from all of your HITs',
+        )
+        mturk.add_argument(
+            '--log-level',
+            dest='log_level',
+            type=int,
+            default=20,
             help='importance level for what to put into the logs. the lower '
-                 'the level the more that gets logged. values are 0-50')
+            'the level the more that gets logged. values are 0-50',
+        )
         mturk.add_argument(
-            '--disconnect-qualification', dest='disconnect_qualification',
+            '--disconnect-qualification',
+            dest='disconnect_qualification',
             default=None,
             help='Qualification to use for soft blocking users for '
-                 'disconnects. By default '
-                 'turkers are never blocked, though setting this will allow '
-                 'you to filter out turkers that have disconnected too many '
-                 'times on previous HITs where this qualification was set.')
+            'disconnects. By default '
+            'turkers are never blocked, though setting this will allow '
+            'you to filter out turkers that have disconnected too many '
+            'times on previous HITs where this qualification was set.',
+        )
         mturk.add_argument(
-            '--block-qualification', dest='block_qualification', default=None,
+            '--block-qualification',
+            dest='block_qualification',
+            default=None,
             help='Qualification to use for soft blocking users. This '
-                 'qualification is granted whenever soft_block_worker is '
-                 'called, and can thus be used to filter workers out from a '
-                 'single task or group of tasks by noted performance.')
+            'qualification is granted whenever soft_block_worker is '
+            'called, and can thus be used to filter workers out from a '
+            'single task or group of tasks by noted performance.',
+        )
         mturk.add_argument(
-            '--count-complete', dest='count_complete',
-            default=False, action='store_true',
+            '--count-complete',
+            dest='count_complete',
+            default=False,
+            action='store_true',
             help='continue until the requested number of conversations are '
-                 'completed rather than attempted')
+            'completed rather than attempted',
+        )
         mturk.add_argument(
-            '--allowed-conversations', dest='allowed_conversations',
-            default=0, type=int,
+            '--allowed-conversations',
+            dest='allowed_conversations',
+            default=0,
+            type=int,
             help='number of concurrent conversations that one mturk worker '
-                 'is able to be involved in, 0 is unlimited')
+            'is able to be involved in, 0 is unlimited',
+        )
         mturk.add_argument(
-            '--max-connections', dest='max_connections',
-            default=30, type=int,
+            '--max-connections',
+            dest='max_connections',
+            default=30,
+            type=int,
             help='number of HITs that can be launched at the same time, 0 is '
-                 'unlimited.'
+            'unlimited.',
         )
         mturk.add_argument(
-            '--min-messages', dest='min_messages',
-            default=0, type=int,
+            '--min-messages',
+            dest='min_messages',
+            default=0,
+            type=int,
             help='number of messages required to be sent by MTurk agent when '
-                 'considering whether to approve a HIT in the event of a '
-                 'partner disconnect. I.e. if the number of messages '
-                 'exceeds this number, the turker can submit the HIT.'
+            'considering whether to approve a HIT in the event of a '
+            'partner disconnect. I.e. if the number of messages '
+            'exceeds this number, the turker can submit the HIT.',
         )
         mturk.add_argument(
-            '--local', dest='local', default=False, action='store_true',
+            '--local',
+            dest='local',
+            default=False,
+            action='store_true',
             help='Run the server locally on this server rather than setting up'
-                 ' a heroku server.'
+            ' a heroku server.',
         )
         mturk.add_argument(
-            '--hobby', dest='hobby', default=False, action='store_true',
-            help='Run the heroku server on the hobby tier.'
+            '--hobby',
+            dest='hobby',
+            default=False,
+            action='store_true',
+            help='Run the heroku server on the hobby tier.',
         )
         mturk.add_argument(
-            '--max-time', dest='max_time', default=0, type=int,
+            '--max-time',
+            dest='max_time',
+            default=0,
+            type=int,
             help='Maximum number of seconds per day that a worker is allowed '
-                 'to work on this assignment'
+            'to work on this assignment',
         )
         mturk.add_argument(
-            '--max-time-qual', dest='max_time_qual', default=None,
+            '--max-time-qual',
+            dest='max_time_qual',
+            default=None,
             help='Qualification to use to share the maximum time requirement '
-                 'with other runs from other machines.'
+            'with other runs from other machines.',
         )
         mturk.add_argument(
-            '--heroku-team', dest='heroku_team', default=None,
-            help='Specify Heroku team name to use for launching Dynos.'
+            '--heroku-team',
+            dest='heroku_team',
+            default=None,
+            help='Specify Heroku team name to use for launching Dynos.',
         )
         mturk.add_argument(
-            '--tmp-dir', dest='tmp_dir', default=None,
-            help='Specify location to use for scratch builds and such.'
+            '--tmp-dir',
+            dest='tmp_dir',
+            default=None,
+            help='Specify location to use for scratch builds and such.',
         )
 
         mturk.set_defaults(is_sandbox=True)
@@ -345,29 +424,52 @@ class ParlaiParser(argparse.ArgumentParser):
         """Add Facebook Messenger arguments."""
         messenger = self.add_argument_group('Facebook Messenger')
         messenger.add_argument(
-            '--debug', dest='is_debug', action='store_true',
-            help='print and log all server interactions and messages')
+            '--debug',
+            dest='is_debug',
+            action='store_true',
+            help='print and log all server interactions and messages',
+        )
         messenger.add_argument(
-            '--verbose', dest='verbose', action='store_true',
-            help='print all messages sent to and from Turkers')
+            '--verbose',
+            dest='verbose',
+            action='store_true',
+            help='print all messages sent to and from Turkers',
+        )
         messenger.add_argument(
-            '--log-level', dest='log_level', type=int, default=20,
+            '--log-level',
+            dest='log_level',
+            type=int,
+            default=20,
             help='importance level for what to put into the logs. the lower '
-                 'the level the more that gets logged. values are 0-50')
+            'the level the more that gets logged. values are 0-50',
+        )
         messenger.add_argument(
-            '--force-page-token', dest='force_page_token', action='store_true',
-            help='override the page token stored in the cache for a new one')
+            '--force-page-token',
+            dest='force_page_token',
+            action='store_true',
+            help='override the page token stored in the cache for a new one',
+        )
         messenger.add_argument(
-            '--password', dest='password', type=str, default=None,
-            help='Require a password for entry to the bot')
+            '--password',
+            dest='password',
+            type=str,
+            default=None,
+            help='Require a password for entry to the bot',
+        )
         messenger.add_argument(
-            '--bypass-server-setup', dest='bypass_server_setup',
-            action='store_true', default=False,
-            help='should bypass traditional server and socket setup')
+            '--bypass-server-setup',
+            dest='bypass_server_setup',
+            action='store_true',
+            default=False,
+            help='should bypass traditional server and socket setup',
+        )
         messenger.add_argument(
-            '--local', dest='local', action='store_true', default=False,
+            '--local',
+            dest='local',
+            action='store_true',
+            default=False,
             help='Run the server locally on this server rather than setting up'
-                 ' a heroku server.'
+            ' a heroku server.',
         )
 
         messenger.set_defaults(is_debug=False)
@@ -377,19 +479,32 @@ class ParlaiParser(argparse.ArgumentParser):
         """Add common ParlAI args across all scripts."""
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
-            '-v', '--show-advanced-args', action='store_true',
-            help='Show hidden command line options (advanced users only)'
+            '-o',
+            '--init-opt',
+            default=None,
+            help='Path to json file of options. '
+            'Note: Further Command-line arguments override file-based options.',
         )
         parlai.add_argument(
-            '-t', '--task',
-            help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"')
+            '-v',
+            '--show-advanced-args',
+            action='store_true',
+            help='Show hidden command line options (advanced users only)',
+        )
         parlai.add_argument(
-            '--download-path', default=None,
+            '-t', '--task', help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"'
+        )
+        parlai.add_argument(
+            '--download-path',
+            default=None,
             hidden=True,
             help='path for non-data dependencies to store any needed files.'
-                 'defaults to {parlai_dir}/downloads')
+            'defaults to {parlai_dir}/downloads',
+        )
         parlai.add_argument(
-            '-dt', '--datatype', default='train',
+            '-dt',
+            '--datatype',
+            default='train',
             choices=[
                 'train',
                 'train:stream',
@@ -404,46 +519,66 @@ class ParlaiParser(argparse.ArgumentParser):
                 'valid',
                 'valid:stream',
                 'test',
-                'test:stream'
+                'test:stream',
             ],
             help='choose from: train, train:ordered, valid, test. to stream '
-                 'data add ":stream" to any option (e.g., train:stream). '
-                 'by default: train is random with replacement, '
-                 'valid is ordered, test is ordered.')
-        parlai.add_argument(
-            '-im', '--image-mode', default='raw', type=str,
-            help='image preprocessor to use. default is "raw". set to "none" '
-                 'to skip image loading.',
-            hidden=True)
-        parlai.add_argument(
-            '-nt', '--numthreads', default=1, type=int,
-            help='number of threads. Used for hogwild if batchsize is 1, else '
-                 'for number of threads in threadpool loading,')
-        parlai.add_argument(
-            '--hide-labels', default=False, type='bool',
-            hidden=True,
-            help='default (False) moves labels in valid and test sets to the '
-                 'eval_labels field. If True, they are hidden completely.')
-        parlai.add_argument(
-            '-mtw', '--multitask-weights', type='floats', default=[1],
-            help='list of floats, one for each task, specifying '
-            'the probability of drawing the task in multitask case',
-            hidden=True
+            'data add ":stream" to any option (e.g., train:stream). '
+            'by default: train is random with replacement, '
+            'valid is ordered, test is ordered.',
         )
         parlai.add_argument(
-            '-bs', '--batchsize', default=1, type=int,
-            help='batch size for minibatch training schemes')
+            '-im',
+            '--image-mode',
+            default='raw',
+            type=str,
+            help='image preprocessor to use. default is "raw". set to "none" '
+            'to skip image loading.',
+            hidden=True,
+        )
+        parlai.add_argument(
+            '-nt',
+            '--numthreads',
+            default=1,
+            type=int,
+            help='number of threads. Used for hogwild if batchsize is 1, else '
+            'for number of threads in threadpool loading,',
+        )
+        parlai.add_argument(
+            '--hide-labels',
+            default=False,
+            type='bool',
+            hidden=True,
+            help='default (False) moves labels in valid and test sets to the '
+            'eval_labels field. If True, they are hidden completely.',
+        )
+        parlai.add_argument(
+            '-mtw',
+            '--multitask-weights',
+            type='floats',
+            default=[1],
+            help='list of floats, one for each task, specifying '
+            'the probability of drawing the task in multitask case',
+            hidden=True,
+        )
+        parlai.add_argument(
+            '-bs',
+            '--batchsize',
+            default=1,
+            type=int,
+            help='batch size for minibatch training schemes',
+        )
         self.add_parlai_data_path(parlai)
 
     def add_distributed_training_args(self):
         """Add CLI args for distributed training."""
         grp = self.add_argument_group('Distributed Training')
         grp.add_argument(
-            '--distributed-world-size', type=int,
-            help='Number of workers.'
+            '--distributed-world-size', type=int, help='Number of workers.'
         )
         grp.add_argument(
-            '--verbose', type='bool', default=False,
+            '--verbose',
+            type='bool',
+            default=False,
             help='All workers print output.',
             hidden=True,
         )
@@ -453,84 +588,129 @@ class ParlaiParser(argparse.ArgumentParser):
         """Add CLI args for PytorchDataTeacher."""
         pytorch = self.add_argument_group('PytorchData Arguments')
         pytorch.add_argument(
-            '-pyt', '--pytorch-teacher-task',
+            '-pyt',
+            '--pytorch-teacher-task',
             help='Use the PytorchDataTeacher for multiprocessed '
-                 'data loading with a standard ParlAI task, e.g. "babi:Task1k"')
+            'data loading with a standard ParlAI task, e.g. "babi:Task1k"',
+        )
         pytorch.add_argument(
-            '-pytd', '--pytorch-teacher-dataset',
+            '-pytd',
+            '--pytorch-teacher-dataset',
             help='Use the PytorchDataTeacher for multiprocessed '
-                 'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"')
+            'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"',
+        )
         pytorch.add_argument(
-            '--pytorch-datapath', type=str, default=None,
+            '--pytorch-datapath',
+            type=str,
+            default=None,
             help='datapath for pytorch data loader'
-                 '(note: only specify if the data does not reside'
-                 'in the normal ParlAI datapath)',
-            hidden=True)
+            '(note: only specify if the data does not reside'
+            'in the normal ParlAI datapath)',
+            hidden=True,
+        )
         pytorch.add_argument(
-            '-nw', '--numworkers', type=int, default=4,
+            '-nw',
+            '--numworkers',
+            type=int,
+            default=4,
             help='how many workers the Pytorch dataloader should use',
-            hidden=True)
+            hidden=True,
+        )
         pytorch.add_argument(
-            '--pytorch-preprocess', type='bool', default=False,
+            '--pytorch-preprocess',
+            type='bool',
+            default=False,
             help='Whether the agent should preprocess the data while building'
-                 'the pytorch data',
-            hidden=True)
+            'the pytorch data',
+            hidden=True,
+        )
         pytorch.add_argument(
-            '-pybsrt', '--pytorch-teacher-batch-sort',
-            type='bool', default=False,
+            '-pybsrt',
+            '--pytorch-teacher-batch-sort',
+            type='bool',
+            default=False,
             help='Whether to construct batches of similarly sized episodes'
             'when using the PytorchDataTeacher (either via specifying `-pyt`',
-            hidden=True)
+            hidden=True,
+        )
         pytorch.add_argument(
-            '--batch-sort-cache-type', type=str,
-            choices=['pop', 'index', 'none'], default='pop',
+            '--batch-sort-cache-type',
+            type=str,
+            choices=['pop', 'index', 'none'],
+            default='pop',
             help='how to build up the batch cache',
-            hidden=True)
+            hidden=True,
+        )
         pytorch.add_argument(
-            '--batch-length-range', type=int, default=5,
+            '--batch-length-range',
+            type=int,
+            default=5,
             help='degree of variation of size allowed in batch',
-            hidden=True)
+            hidden=True,
+        )
         pytorch.add_argument(
-            '--shuffle', type='bool', default=False,
+            '--shuffle',
+            type='bool',
+            default=False,
             help='Whether to shuffle the data',
-            hidden=True)
+            hidden=True,
+        )
         pytorch.add_argument(
-            '--batch-sort-field', type=str, default='text',
+            '--batch-sort-field',
+            type=str,
+            default='text',
             help='What field to use when determining the length of an episode',
-            hidden=True)
+            hidden=True,
+        )
         pytorch.add_argument(
-            '-pyclen', '--pytorch-context-length', default=-1, type=int,
+            '-pyclen',
+            '--pytorch-context-length',
+            default=-1,
+            type=int,
             help='Number of past utterances to remember when building flattened '
-                 'batches of data in multi-example episodes.'
-                 '(For use with PytorchDataTeacher)',
-            hidden=True)
+            'batches of data in multi-example episodes.'
+            '(For use with PytorchDataTeacher)',
+            hidden=True,
+        )
         pytorch.add_argument(
-            '-pyincl', '--pytorch-include-labels',
-            default=True, type='bool',
+            '-pyincl',
+            '--pytorch-include-labels',
+            default=True,
+            type='bool',
             help='Specifies whether or not to include labels as past utterances when '
-                 'building flattened batches of data in multi-example episodes.'
-                 '(For use with PytorchDataTeacher)',
-            hidden=True)
+            'building flattened batches of data in multi-example episodes.'
+            '(For use with PytorchDataTeacher)',
+            hidden=True,
+        )
 
     def add_model_args(self):
         """Add arguments related to models such as model files."""
         model_args = self.add_argument_group('ParlAI Model Arguments')
         model_args.add_argument(
-            '-m', '--model', default=None,
+            '-m',
+            '--model',
+            default=None,
             help='the model class name. can match parlai/agents/<model> for '
-                 'agents in that directory, or can provide a fully specified '
-                 'module for `from X import Y` via `-m X:Y` '
-                 '(e.g. `-m parlai.agents.seq2seq.seq2seq:Seq2SeqAgent`)')
+            'agents in that directory, or can provide a fully specified '
+            'module for `from X import Y` via `-m X:Y` '
+            '(e.g. `-m parlai.agents.seq2seq.seq2seq:Seq2SeqAgent`)',
+        )
         model_args.add_argument(
-            '-mf', '--model-file', default=None,
-            help='model file name for loading and saving models')
+            '-mf',
+            '--model-file',
+            default=None,
+            help='model file name for loading and saving models',
+        )
         model_args.add_argument(
-            '-im', '--init-model', default=None, type=str,
-            help='load model weights and dict from this file')
+            '-im',
+            '--init-model',
+            default=None,
+            type=str,
+            help='load model weights and dict from this file',
+        )
         model_args.add_argument(
-            '--dict-class',
-            hidden=True,
-            help='the class of the dictionary agent uses')
+            '--dict-class', hidden=True, help='the class of the dictionary agent uses'
+        )
 
     def add_model_subargs(self, model):
         """Add arguments specific to a particular model."""
@@ -563,6 +743,7 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_pyt_dataset_args(self, opt):
         """Add arguments specific to specified pytorch dataset."""
         from parlai.core.pytorch_data_teacher import get_dataset_classes
+
         dataset_classes = get_dataset_classes(opt)
         for dataset, _, _ in dataset_classes:
             try:
@@ -576,12 +757,20 @@ class ParlaiParser(argparse.ArgumentParser):
         """Add additional arguments for handling images."""
         try:
             parlai = self.add_argument_group('ParlAI Image Preprocessing Arguments')
-            parlai.add_argument('--image-size', type=int, default=256,
-                                help='resizing dimension for images',
-                                hidden=True)
-            parlai.add_argument('--image-cropsize', type=int, default=224,
-                                help='crop dimension for images',
-                                hidden=True)
+            parlai.add_argument(
+                '--image-size',
+                type=int,
+                default=256,
+                help='resizing dimension for images',
+                hidden=True,
+            )
+            parlai.add_argument(
+                '--image-cropsize',
+                type=int,
+                default=224,
+                help='crop dimension for images',
+                hidden=True,
+            )
         except argparse.ArgumentError:
             # already added
             pass
@@ -589,6 +778,9 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
+        # Also load extra args options if a file is given.
+        if parsed.get('init_opt', None) is not None:
+            self._load_known_opts(parsed.get('init_opt'), parsed)
         parsed = self._infer_datapath(parsed)
 
         # find which image mode specified if any, and add additional arguments
@@ -623,8 +815,10 @@ class ParlaiParser(argparse.ArgumentParser):
         try:
             self.set_defaults(**self._defaults)
         except AttributeError:
-            raise RuntimeError('Please file an issue on github that argparse '
-                               'got an attribute error when parsing.')
+            raise RuntimeError(
+                'Please file an issue on github that argparse '
+                'got an attribute error when parsing.'
+            )
 
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
         """Parse known args to ignore help flag."""
@@ -637,6 +831,31 @@ class ParlaiParser(argparse.ArgumentParser):
             # ignore help
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
+
+    def _load_known_opts(self, optfile, parsed):
+        """
+        _load_known_opts is called before args are parsed, to pull in the cmdline args
+        for the proper models/tasks/etc.
+        _load_opts (below) is for actually overriding opts after they are parsed.
+        """
+        new_opt = load_opt_file(optfile)
+        for key, value in new_opt.items():
+            # existing command line parameters take priority.
+            if key not in parsed or parsed[key] is None:
+                parsed[key] = value
+
+    def _load_opts(self, opt):
+        optfile = opt.get('init_opt')
+        new_opt = load_opt_file(optfile)
+        for key, value in new_opt.items():
+            # existing command line parameters take priority.
+            if key not in opt:
+                raise RuntimeError(
+                    'Trying to set opt from file that does not exist: ' + str(key)
+                )
+            if key not in opt['override']:
+                opt[key] = value
+                opt['override'][key] = value
 
     def _infer_datapath(self, opt):
         """
@@ -676,10 +895,9 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
-
         self.opt = self._infer_datapath(self.opt)
 
-        # set all arguments specified in commandline as overridable
+        # set all arguments specified in command line as overridable
         option_strings_dict = {}
         store_true = []
         store_false = []
@@ -696,31 +914,37 @@ class ParlaiParser(argparse.ArgumentParser):
         for i in range(len(self.cli_args)):
             if self.cli_args[i] in option_strings_dict:
                 if self.cli_args[i] in store_true:
-                    self.overridable[option_strings_dict[self.cli_args[i]]] = \
-                        True
+                    self.overridable[option_strings_dict[self.cli_args[i]]] = True
                 elif self.cli_args[i] in store_false:
-                    self.overridable[option_strings_dict[self.cli_args[i]]] = \
-                        False
+                    self.overridable[option_strings_dict[self.cli_args[i]]] = False
                 elif i < len(self.cli_args) - 1 and self.cli_args[i + 1][:1] != '-':
                     key = option_strings_dict[self.cli_args[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
 
+        # load opts if a file is provided.
+        if self.opt.get('init_opt', None) is not None:
+            self._load_opts(self.opt)
+
         # map filenames that start with 'zoo:' to point to the model zoo dir
         if self.opt.get('model_file') is not None:
-            self.opt['model_file'] = modelzoo_path(self.opt.get('datapath'),
-                                                   self.opt['model_file'])
+            self.opt['model_file'] = modelzoo_path(
+                self.opt.get('datapath'), self.opt['model_file']
+            )
         if self.opt['override'].get('model_file') is not None:
             # also check override
             self.opt['override']['model_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['override']['model_file'])
+                self.opt.get('datapath'), self.opt['override']['model_file']
+            )
         if self.opt.get('dict_file') is not None:
-            self.opt['dict_file'] = modelzoo_path(self.opt.get('datapath'),
-                                                  self.opt['dict_file'])
+            self.opt['dict_file'] = modelzoo_path(
+                self.opt.get('datapath'), self.opt['dict_file']
+            )
         if self.opt['override'].get('dict_file') is not None:
             # also check override
             self.opt['override']['dict_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['override']['dict_file'])
+                self.opt.get('datapath'), self.opt['override']['dict_file']
+            )
 
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
@@ -740,8 +964,7 @@ class ParlaiParser(argparse.ArgumentParser):
             values[str(key)] = str(value)
         for group in self._action_groups:
             group_dict = {
-                a.dest: getattr(self.args, a.dest, None)
-                for a in group._group_actions
+                a.dest: getattr(self.args, a.dest, None) for a in group._group_actions
             }
             namespace = argparse.Namespace(**group_dict)
             count = 0
@@ -782,8 +1005,7 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_argument(self, *args, **kwargs):
         """Override to convert underscores to hyphens for consistency."""
         return super().add_argument(
-            *fix_underscores(args),
-            **self._handle_hidden_args(kwargs)
+            *fix_underscores(args), **self._handle_hidden_args(kwargs)
         )
 
     def add_argument_group(self, *args, **kwargs):
@@ -793,8 +1015,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         def ag_add_argument(*args, **kwargs):
             return original_add_arg(
-                *fix_underscores(args),
-                **self._handle_hidden_args(kwargs)
+                *fix_underscores(args), **self._handle_hidden_args(kwargs)
             )
 
         arg_group.add_argument = ag_add_argument  # override _ => -
