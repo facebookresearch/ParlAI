@@ -8,7 +8,7 @@ desired to increase the pool of tasks, models, and baselines.
 We actively welcome your pull requests.
 
 1. Fork the repo and create your branch from `master`. Set up your environment
-   and run `pre-commit` once.
+   and run `pre-commit install` once.
 2. If you've added code that should be tested, add tests.
 3. If you've changed APIs, update the documentation.
 4. Black your code (`black`), and make sure your code lints (`bash tests/lint_changed.sh`).
