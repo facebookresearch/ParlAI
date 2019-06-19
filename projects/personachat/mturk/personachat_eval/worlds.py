@@ -441,7 +441,7 @@ class PersonaChatEvalWorld(MultiAgentDialogWorld):
                 + ' chat turns</b>, \
                     after that you can click the "Done" button to end the chat. \n \
                     <b>You can track your character description on the left.</b> \
-		    \n <span style="color:blue"><b>Please try to speak to the other person as if you are the character assigned.</b></span> \n \
+                    \n <span style="color:blue"><b>Please try to speak to the other person as if you are the character assigned.</b></span> \n \
                     <span style="color:blue"><b>Do not trivially copy the character descriptions into the message.</b></span>'
             )
 
