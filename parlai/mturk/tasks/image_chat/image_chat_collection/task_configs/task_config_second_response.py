@@ -27,8 +27,9 @@ task_config['hit_keywords'] = 'comment'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-    '''
+task_config[
+    'task_description'
+] = '''
 <h2><b>Description</b></h2>
 In this task, you will imagine that you are speaking with your
 friend about 5 separate images.

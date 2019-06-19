@@ -14,11 +14,20 @@ def main():
     It's important to make sure you keep a requester reputation up.
     """
     parser = argparse.ArgumentParser(description='Bonus workers directly')
-    parser.add_argument('--sandbox', dest='sandbox', default=False,
-                        action='store_true', help='Test bonus in sandbox')
-    parser.add_argument('--hit-id', dest='use_hit_id', default=False,
-                        action='store_true',
-                        help='Use HIT id instead of assignment id')
+    parser.add_argument(
+        '--sandbox',
+        dest='sandbox',
+        default=False,
+        action='store_true',
+        help='Test bonus in sandbox',
+    )
+    parser.add_argument(
+        '--hit-id',
+        dest='use_hit_id',
+        default=False,
+        action='store_true',
+        help='Use HIT id instead of assignment id',
+    )
     opt = parser.parse_args()
     sandbox = opt.sandbox
 
@@ -50,14 +59,13 @@ def main():
         reason = input("Enter reason: ")
         input(
             "Press enter to bonus {} to worker {} for reason '{}' on "
-            "assignment {}.".format(bonus_amount, worker_id,
-                                    reason, assignment_id)
+            "assignment {}.".format(bonus_amount, worker_id, reason, assignment_id)
         )
         resp = client.send_bonus(
             WorkerId=worker_id,
             BonusAmount=str(bonus_amount),
             AssignmentId=assignment_id,
-            Reason=reason
+            Reason=reason,
         )
         print(resp)
 

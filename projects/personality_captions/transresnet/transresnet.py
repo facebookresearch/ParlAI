@@ -36,28 +36,44 @@ class TransresnetAgent(Agent):
         """Add command line args."""
         arg_group = argparser.add_argument_group('Transresnet Arguments')
         TransresnetModel.add_cmdline_args(argparser)
-        argparser.add_argument('--freeze-patience', type=int, default=-1,
-                               help='How long to freeze text encoders')
-        argparser.add_argument('--one-cand-set', type='bool', default=False,
-                               help='True if each example has one set of shared '
-                               'label candidates')
-        argparser.add_argument('--fixed-cands-path', type=str, default=None,
-                               help='path to text file with candidates')
-        argparser.add_argument('--pretrained', type='bool', default=False,
-                               help='True if pretrained model')
+        argparser.add_argument(
+            '--freeze-patience',
+            type=int,
+            default=-1,
+            help='How long to freeze text encoders',
+        )
+        argparser.add_argument(
+            '--one-cand-set',
+            type='bool',
+            default=False,
+            help='True if each example has one set of shared ' 'label candidates',
+        )
+        argparser.add_argument(
+            '--fixed-cands-path',
+            type=str,
+            default=None,
+            help='path to text file with candidates',
+        )
+        argparser.add_argument(
+            '--pretrained', type='bool', default=False, help='True if pretrained model'
+        )
         DictionaryAgent.add_cmdline_args(argparser)
         return arg_group
 
     def __init__(self, opt, shared=None):
         if opt.get('numthreads', 1) > 1:
-            raise RuntimeError('Warning: You cannot use multithreading with '
-                               'this agent, as the current metrics do not '
-                               'support sharing of lists (for median rank '
-                               'calculation). Please set --numthreads to 1')
-        self.metrics = {'hits@1/100': 0.0,
-                        'loss': 0.0,
-                        'num_samples': 0,
-                        'med_rank': []}
+            raise RuntimeError(
+                'Warning: You cannot use multithreading with '
+                'this agent, as the current metrics do not '
+                'support sharing of lists (for median rank '
+                'calculation). Please set --numthreads to 1'
+            )
+        self.metrics = {
+            'hits@1/100': 0.0,
+            'loss': 0.0,
+            'num_samples': 0,
+            'med_rank': [],
+        }
         self.blank_image_features = torch.FloatTensor(
             opt.get('image_features_dim')
         ).fill_(0)
@@ -115,11 +131,7 @@ class TransresnetAgent(Agent):
         elif path is not None:
             init_model_path = path
         print('Creating or loading model')
-        self.model = TransresnetModel(
-            self.opt,
-            self.personalities_list,
-            self.dict
-        )
+        self.model = TransresnetModel(self.opt, self.personalities_list, self.dict)
         if init_model_path is not None:
             self.load(init_model_path)
         if self.use_cuda:
@@ -141,12 +153,17 @@ class TransresnetAgent(Agent):
                 print('Extracting cand encodings')
                 self.model.eval()
                 pbar = tqdm.tqdm(
-                    total=len(self.fixed_cands), unit='cand', unit_scale=True,
-                    desc='Extracting candidate encodings'
+                    total=len(self.fixed_cands),
+                    unit='cand',
+                    unit_scale=True,
+                    desc='Extracting candidate encodings',
                 )
                 fixed_cands_enc = []
                 for _, batch in enumerate(
-                    [self.fixed_cands[i:i + 50] for i in range(0, len(self.fixed_cands)-50, 50)]
+                    [
+                        self.fixed_cands[i : i + 50]
+                        for i in range(0, len(self.fixed_cands) - 50, 50)
+                    ]
                 ):
                     embedding = self.model(None, None, batch)[1].detach()
                     fixed_cands_enc.append(embedding)
@@ -157,8 +174,7 @@ class TransresnetAgent(Agent):
     def load_personalities(self):
         """Load and return the list of personalities."""
         personality_path = os.path.join(
-            self.opt['datapath'],
-            'personality_captions/personalities.txt'
+            self.opt['datapath'], 'personality_captions/personalities.txt'
         )
         if 'yfcc_path' not in self.opt:
             self.opt['yfcc_path'] = 'temp_path'
@@ -199,9 +215,7 @@ class TransresnetAgent(Agent):
         """
         comments = [random.choice(v['labels']) for v in valid_obs]
         loss, num_correct, num_examples = self.model.train_batch(
-            image_feats,
-            personalities,
-            comments
+            image_feats, personalities, comments
         )
         return loss, num_correct, num_examples
 
@@ -234,17 +248,15 @@ class TransresnetAgent(Agent):
             else:
                 candidates = [v['label_candidates'] for v in valid_obs]
                 if self.one_cand_set:
-                    candidates_encoded = self.model(
-                        None,
-                        None,
-                        candidates[0]
-                    )[1].detach()
+                    candidates_encoded = self.model(None, None, candidates[0])[
+                        1
+                    ].detach()
             chosen_captions = self.model.choose_best_caption(
                 image_feats,
                 personalities,
                 candidates,
                 candidates_encoded=candidates_encoded,
-                k=-1 if self.fixed_cands is None else 100
+                k=-1 if self.fixed_cands is None else 100,
             )
             # calculate median ranks
             num_examples = len(chosen_captions)
@@ -260,15 +272,15 @@ class TransresnetAgent(Agent):
                         lowest_rank = min(lowest_rank, c_list.index(c) + 1)
                     med_rank.append(lowest_rank)
                 num_correct = sum(
-                    [1 if chosen_captions[i][0] in chosen_captions[i]
-                     else 0 for i in range(len(chosen_captions))]
+                    [
+                        1 if chosen_captions[i][0] in chosen_captions[i] else 0
+                        for i in range(len(chosen_captions))
+                    ]
                 )
         else:
             comments = [random.choice(v['eval_labels']) for v in valid_obs]
             loss, num_correct, num_examples = self.model.eval_batch(
-                image_feats,
-                personalities,
-                comments
+                image_feats, personalities, comments
             )
 
         return loss, num_correct, num_examples, med_rank, chosen_captions
@@ -284,10 +296,7 @@ class TransresnetAgent(Agent):
             A list of acts, one for each observation
         """
         is_training = any(['labels' in obs for obs in observations])
-        valid_obs, valid_indexes = self.filter_valid_obs(
-            observations,
-            is_training
-        )
+        valid_obs, valid_indexes = self.filter_valid_obs(observations, is_training)
         image_feats = self.extract_image_feats(valid_obs)
         personalities = [v.get('text', '') for v in valid_obs]
 
@@ -303,8 +312,9 @@ class TransresnetAgent(Agent):
             )
 
         self.update_metrics(loss, num_correct, num_examples, med_rank)
-        result = [{'text': 'No Response During Training'}
-                  for _ in range(len(observations))]
+        result = [
+            {'text': 'No Response During Training'} for _ in range(len(observations))
+        ]
         if chosen_captions is not None:
             for i, index_obs in enumerate(valid_indexes):
                 result[index_obs]['text'] = chosen_captions[i][0]
@@ -386,7 +396,7 @@ class TransresnetAgent(Agent):
                 val = self.dict.tok2ind[key]
                 if val - 4 >= 0:
                     new_tok2ind[key] = val - 4
-                    new_ind2tok[val-4] = key
+                    new_ind2tok[val - 4] = key
             self.dict.null_token = '<PAD>'
             self.dict.unk_token = '<UNK>'
             self.dict.tok2ind = new_tok2ind
@@ -414,9 +424,10 @@ class TransresnetAgent(Agent):
                 print('Growing impatience for unfreezing')
                 if self.freeze_impatience >= self.freeze_patience:
                     self.is_frozen = False
-                    print('Reached impatience for fine tuning. '
-                          'Reloading the best model so far.'
-                          )
+                    print(
+                        'Reached impatience for fine tuning. '
+                        'Reloading the best model so far.'
+                    )
                     self._build_model(self.model_file)
                     if self.use_cuda:
                         self.model = self.model.cuda()
@@ -447,12 +458,10 @@ class TransresnetAgent(Agent):
         m = {}
         if self.metrics['num_samples'] > 0:
             m['hits@1/100'] = round_sigfigs(
-                self.metrics['hits@1/100'] / self.metrics['num_samples'],
-                4
+                self.metrics['hits@1/100'] / self.metrics['num_samples'], 4
             )
             m['loss'] = round_sigfigs(
-                self.metrics['loss'] / self.metrics['num_samples'],
-                4
+                self.metrics['loss'] / self.metrics['num_samples'], 4
             )
             if 'med_rank' in self.metrics:
                 m['med_rank'] = np.median(self.metrics['med_rank'])

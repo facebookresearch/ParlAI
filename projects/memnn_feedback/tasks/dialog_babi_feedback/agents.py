@@ -3,13 +3,13 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-# 
+#
 # Accessing the tasks can be done with something like:
 #
-#   python examples/train_model.py --setting 'RBI' -m "projects.memnn_feedback.agent.memnn_feedback:MemnnFeedbackAgent" 
+#   python examples/train_model.py --setting 'RBI' -m "projects.memnn_feedback.agent.memnn_feedback:MemnnFeedbackAgent"
 # -t "projects.memnn_feedback.tasks.dialog_babi_feedback.agents:taskTeacher:1_p0.5:feedback"
 #
-# which specifies task 1, and policy with 0.5 answers correct with reward-based learning, see the papers 
+# which specifies task 1, and policy with 0.5 answers correct with reward-based learning, see the papers
 # for more details: https://arxiv.org/abs/1604.06045 and https://arxiv.org/abs/1605.07683
 
 from parlai.core.teachers import FbDialogTeacher
@@ -24,14 +24,16 @@ tasks[3] = 'rl3_options_with_ans'
 tasks[4] = 'rl4_phone_address_with_ans'
 tasks[5] = 'rl5_full_dialogs_with_ans'
 
+
 def _path(task, opt):
     # Build the data if it doesn't exist.
     build(opt)
-    task_name = '%s_%s' % (task.split('_')[1],
-                           tasks[int(task.split('_')[0])])
+    task_name = '%s_%s' % (task.split('_')[1], tasks[int(task.split('_')[0])])
     task = task.split('_')[0]
     task_name = 'dialog-babi_' + task_name
-    prefix = os.path.join(opt['datapath'], 'dialog-bAbI-feedback', 'dialog-bAbI-feedback')
+    prefix = os.path.join(
+        opt['datapath'], 'dialog-bAbI-feedback', 'dialog-bAbI-feedback'
+    )
     suffix = ''
     dt = opt['datatype'].split(':')[0]
     if dt == 'train':
@@ -40,19 +42,24 @@ def _path(task, opt):
         suffix = 'tst'
     elif dt == 'valid':
         suffix = 'dev'
-    datafile = os.path.join(prefix,
-            '{task}_{type}.txt'.format(task=task_name, type=suffix))
+    datafile = os.path.join(
+        prefix, '{task}_{type}.txt'.format(task=task_name, type=suffix)
+    )
 
     cands_datafile = os.path.join(prefix, 'dialog-babi-candidates.txt')
     return datafile, cands_datafile
+
 
 # The knowledge base of facts that can be used to answer questions.
 class KBTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
-        opt['datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI-feedback',
-                                       'dialog-bAbI-feedback-tasks',
-                                       'dialog-babi-kb-all.txt')
+        opt['datafile'] = os.path.join(
+            opt['datapath'],
+            'dialog-bAbI-feedback',
+            'dialog-bAbI-feedback-tasks',
+            'dialog-babi-kb-all.txt',
+        )
         super().__init__(opt, shared)
 
 
@@ -115,7 +122,7 @@ class TaskTeacher(FbDialogTeacher):
                 # split line into constituent parts, if available:
                 # x<tab>y<tab>reward<tab>label_candidates
                 # where y, reward, and label_candidates are optional
-                split = line[space_idx + 1:].split('\t')
+                split = line[space_idx + 1 :].split('\t')
 
                 # remove empty items and strip each one
                 for i in range(len(split)):

@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from parlai.mturk.tasks.dealnodeal.worlds import \
-    MTurkDealNoDealDialogWorld
+from parlai.mturk.tasks.dealnodeal.worlds import MTurkDealNoDealDialogWorld
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from parlai.core.agents import create_agent
 from task_config import task_config
@@ -19,9 +18,12 @@ def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('--two_mturk_agents', dest='two_mturk_agents',
-                           action='store_true', help='data collection mode '
-                           'with converations between two MTurk agents')
+    argparser.add_argument(
+        '--two_mturk_agents',
+        dest='two_mturk_agents',
+        action='store_true',
+        help='data collection mode ' 'with converations between two MTurk agents',
+    )
 
     opt = argparser.parse_args()
     opt['task'] = 'dealnodeal'
@@ -33,10 +35,7 @@ def main():
     if opt['two_mturk_agents']:
         mturk_agent_ids.append('mturk_agent_2')
 
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
 
     mturk_manager.setup_server()
 
@@ -69,10 +68,7 @@ def main():
 
             opt["batchindex"] = mturk_manager.started_conversations
 
-            world = MTurkDealNoDealDialogWorld(
-                opt=opt,
-                agents=agents
-            )
+            world = MTurkDealNoDealDialogWorld(opt=opt, agents=agents)
 
             while not world.episode_done():
                 world.parley()
@@ -82,7 +78,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

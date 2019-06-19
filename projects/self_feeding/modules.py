@@ -16,24 +16,48 @@ class SelfFeedingModel(nn.Module):
     def add_cmdline_args(cls, argparser):
         model = argparser.add_argument_group('Self Feeding Model')
 
-        model.add_argument('-shl', '--sen-head-layers', type=int,
-                           default=1, help="The number of linear layers in the "
-                           "sentiment task head")
-        model.add_argument('-sexpemb', '--share-exp-embeddings', type='bool',
-                           default=True, help="If True, the explanation task shares "
-                           "the dialog embeddings")
-        model.add_argument('-sexpxenc', '--share-exp-x-encoder', type='bool',
-                           default=True, help="If True, the explanation task shares "
-                           "the dialog x encoder")
-        model.add_argument('-sexpyenc', '--share-exp-y-encoder', type='bool',
-                           default=True, help="If True, the explanation task shares "
-                           "the dialog y encoder")
-        model.add_argument('-ssenemb', '--share-sen-embeddings', type='bool',
-                           default=False, help="If True, the sentiment task shares the "
-                           "dialog embeddings")
-        model.add_argument('-ssenenc', '--share-sen-encoder', type='bool',
-                           default=False,
-                           help="If True, the sentiment task shares the dialog encoder")
+        model.add_argument(
+            '-shl',
+            '--sen-head-layers',
+            type=int,
+            default=1,
+            help="The number of linear layers in the " "sentiment task head",
+        )
+        model.add_argument(
+            '-sexpemb',
+            '--share-exp-embeddings',
+            type='bool',
+            default=True,
+            help="If True, the explanation task shares " "the dialog embeddings",
+        )
+        model.add_argument(
+            '-sexpxenc',
+            '--share-exp-x-encoder',
+            type='bool',
+            default=True,
+            help="If True, the explanation task shares " "the dialog x encoder",
+        )
+        model.add_argument(
+            '-sexpyenc',
+            '--share-exp-y-encoder',
+            type='bool',
+            default=True,
+            help="If True, the explanation task shares " "the dialog y encoder",
+        )
+        model.add_argument(
+            '-ssenemb',
+            '--share-sen-embeddings',
+            type='bool',
+            default=False,
+            help="If True, the sentiment task shares the " "dialog embeddings",
+        )
+        model.add_argument(
+            '-ssenenc',
+            '--share-sen-encoder',
+            type='bool',
+            default=False,
+            help="If True, the sentiment task shares the dialog encoder",
+        )
 
     def __init__(self, opt, dictionary):
         super().__init__()
@@ -79,8 +103,9 @@ class SelfFeedingModel(nn.Module):
                 self.x_sen_encoder = self.x_dia_encoder
             else:
                 self.x_sen_encoder = self.build_encoder(opt, self.sen_embeddings)
-            self.x_sen_head = self.build_head(opt, outdim=1,
-                                              num_layers=self.opt['sen_head_layers'])
+            self.x_sen_head = self.build_head(
+                opt, outdim=1, num_layers=self.opt['sen_head_layers']
+            )
 
     def forward(self):
         raise NotImplementedError
@@ -131,14 +156,13 @@ class SelfFeedingModel(nn.Module):
         if cand_h.dim() == 2:
             scores = torch.matmul(context_h, cand_h.t())
         elif cand_h.dim() == 3:
-            scores = torch.bmm(
-                context_h.unsqueeze(1),
-                cand_h.transpose(
-                    1,
-                    2)).squeeze(1)
+            scores = torch.bmm(context_h.unsqueeze(1), cand_h.transpose(1, 2)).squeeze(
+                1
+            )
         else:
-            raise RuntimeError('Unexpected candidate dimensions {}'
-                               ''.format(cand_h.dim()))
+            raise RuntimeError(
+                'Unexpected candidate dimensions {}' ''.format(cand_h.dim())
+            )
 
         return self.normalize_scores(scores)
 
@@ -154,9 +178,7 @@ class SelfFeedingModel(nn.Module):
 
     def init_embeddings(self):
         embeddings = nn.Embedding(
-            self.vocab_size,
-            self.opt['embedding_size'],
-            padding_idx=self.pad_idx
+            self.vocab_size, self.opt['embedding_size'], padding_idx=self.pad_idx
         )
         nn.init.normal_(
             embeddings.weight, mean=0, std=self.opt['embedding_size'] ** -0.5

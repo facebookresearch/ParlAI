@@ -32,18 +32,30 @@ def setup_args(parser=None, hidden=True):
         parser = ParlaiParser(True, True, 'Build a dictionary.')
     parser.add_pytorch_datateacher_args()
     dict_loop = parser.add_argument_group('Dictionary Loop Arguments')
-    dict_loop.add_argument('--dict-maxexs', default=-1, type=int,
-                           help='max number of examples to build dict on',
-                           hidden=hidden)
-    dict_loop.add_argument('--dict-include-valid', default=False, type='bool',
-                           help='Include validation set in dictionary building '
-                                'for task.',
-                           hidden=hidden)
-    dict_loop.add_argument('--dict-include-test', default=False, type='bool',
-                           help='Include test set in dictionary building for task.',
-                           hidden=hidden)
-    dict_loop.add_argument('-ltim', '--log-every-n-secs', type=float, default=2,
-                           hidden=hidden)
+    dict_loop.add_argument(
+        '--dict-maxexs',
+        default=-1,
+        type=int,
+        help='max number of examples to build dict on',
+        hidden=hidden,
+    )
+    dict_loop.add_argument(
+        '--dict-include-valid',
+        default=False,
+        type='bool',
+        help='Include validation set in dictionary building ' 'for task.',
+        hidden=hidden,
+    )
+    dict_loop.add_argument(
+        '--dict-include-test',
+        default=False,
+        type='bool',
+        help='Include test set in dictionary building for task.',
+        hidden=hidden,
+    )
+    dict_loop.add_argument(
+        '-ltim', '--log-every-n-secs', type=float, default=2, hidden=hidden
+    )
     partial, _ = parser.parse_known_args(nohelp=True)
     if vars(partial).get('dict_class'):
         str2class(vars(partial).get('dict_class')).add_cmdline_args(parser)
@@ -57,8 +69,10 @@ def build_dict(opt, skip_if_built=False):
         print('[ Deprecated Warning: should be passed opt not Parser ]')
         opt = opt.parse_args()
     if not opt.get('dict_file'):
-        print('Tried to build dictionary but `--dict-file` is not set. Set ' +
-              'this param so the dictionary can be saved.')
+        print(
+            'Tried to build dictionary but `--dict-file` is not set. Set '
+            + 'this param so the dictionary can be saved.'
+        )
         return
     if skip_if_built and os.path.isfile(opt['dict_file']):
         # Dictionary already built, skip all loading or setup
@@ -66,9 +80,7 @@ def build_dict(opt, skip_if_built=False):
         return None
 
     if is_distributed():
-        raise ValueError(
-            'Dictionaries should be pre-built before distributed train.'
-        )
+        raise ValueError('Dictionaries should be pre-built before distributed train.')
 
     if opt.get('dict_class'):
         # Custom dictionary class
@@ -114,8 +126,7 @@ def build_dict(opt, skip_if_built=False):
         log_every_n_secs = opt.get('log_every_n_secs', None)
         if log_every_n_secs:
             pbar = tqdm.tqdm(
-                total=total, desc='Building dictionary', unit='ex',
-                unit_scale=True
+                total=total, desc='Building dictionary', unit='ex', unit_scale=True
             )
         else:
             pbar = None
@@ -132,8 +143,11 @@ def build_dict(opt, skip_if_built=False):
             pbar.close()
 
     dictionary.save(opt['dict_file'], sort=True)
-    print('[ dictionary built with {} tokens in {}s ]'.format(
-        len(dictionary), round(log_time.total_time(), 2)))
+    print(
+        '[ dictionary built with {} tokens in {}s ]'.format(
+            len(dictionary), round(log_time.total_time(), 2)
+        )
+    )
     return dictionary
 
 

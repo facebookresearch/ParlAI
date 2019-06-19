@@ -51,12 +51,13 @@ def build(opt):
         build_data.download_from_google_drive(gd_id, os.path.join(dpath, fname))
         build_data.untar(dpath, fname)
 
-        create_fb_format(dpath, 'train',
-                         os.path.join(dpath, 'cnn', 'questions', 'training'))
-        create_fb_format(dpath, 'valid',
-                         os.path.join(dpath, 'cnn', 'questions', 'validation'))
-        create_fb_format(dpath, 'test',
-                         os.path.join(dpath, 'cnn', 'questions', 'test'))
+        create_fb_format(
+            dpath, 'train', os.path.join(dpath, 'cnn', 'questions', 'training')
+        )
+        create_fb_format(
+            dpath, 'valid', os.path.join(dpath, 'cnn', 'questions', 'validation')
+        )
+        create_fb_format(dpath, 'test', os.path.join(dpath, 'cnn', 'questions', 'test'))
 
         # Mark the data as built.
         build_data.mark_done(dpath, version)

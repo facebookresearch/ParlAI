@@ -10,14 +10,18 @@ task_config = {}
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
 """
-task_config['hit_title'] = 'Navigating New York City v2 -- 40c bonus upon successful completion.'
+task_config[
+    'hit_title'
+] = 'Navigating New York City v2 -- 40c bonus upon successful completion.'
 
 
 """A description includes detailed information about the kind of task the HIT contains.
 On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
 view of search results, and in the HIT and assignment screens.
 """
-task_config['hit_description'] = 'You\'ll be playing the role of a Tourist or a Guide, navigating New York City. Bonus of 40c upon successful completion. You can keep accepting new HITs.'
+task_config[
+    'hit_description'
+] = 'You\'ll be playing the role of a Tourist or a Guide, navigating New York City. Bonus of 40c upon successful completion. You can keep accepting new HITs.'
 
 
 """One or more words or phrases that describe the HIT, separated by commas.

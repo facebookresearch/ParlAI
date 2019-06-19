@@ -47,12 +47,16 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        url = ('https://worksheets.codalab.org/rest/bundles/' +
-               '0x4a763f8cde224c2da592b75f29e2f5c2/contents/blob/')
+        url = (
+            'https://worksheets.codalab.org/rest/bundles/'
+            + '0x4a763f8cde224c2da592b75f29e2f5c2/contents/blob/'
+        )
         build_data.download(url, dpath, 'train.json')
 
-        url = ('https://worksheets.codalab.org/rest/bundles/' +
-               '0xe7bac352fce7448c9ef238fb0a297ec2/contents/blob/')
+        url = (
+            'https://worksheets.codalab.org/rest/bundles/'
+            + '0xe7bac352fce7448c9ef238fb0a297ec2/contents/blob/'
+        )
         build_data.download(url, dpath, 'test.json')
 
         create_fb_format(dpath, 'train', os.path.join(dpath, 'train.json'))

@@ -11,6 +11,7 @@ class QADataCollectionOnboardWorld(MTurkOnboardWorld):
     '''Example onboarding world. Sends a message from the world to the
     worker and then exits as complete
     '''
+
     def parley(self):
         ad = {}
         ad['id'] = 'System'
@@ -53,8 +54,9 @@ class QADataCollectionWorld(MTurkTaskWorld):
             self.context = '\n'.join(qa['text'].split('\n')[:-1])
 
             # Wrap the context with a prompt telling the turker what to do next
-            ad['text'] = (self.context +
-                          '\n\nPlease provide a question given this context.')
+            ad['text'] = (
+                self.context + '\n\nPlease provide a question given this context.'
+            )
 
             self.mturk_agent.observe(validate(ad))
             self.question = self.mturk_agent.act()
@@ -90,7 +92,4 @@ class QADataCollectionWorld(MTurkTaskWorld):
         # brings important data together for the task, to later be used for
         # creating the dataset. If data requires pickling, put it in a field
         # called 'needs-pickle'.
-        return {
-            'context': self.context,
-            'acts': [self.question, self.answer],
-        }
+        return {'context': self.context, 'acts': [self.question, self.answer]}

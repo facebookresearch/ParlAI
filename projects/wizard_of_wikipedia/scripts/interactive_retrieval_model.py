@@ -6,8 +6,7 @@
 """Interact with a pre-trained retrieval model.
 """
 from parlai.scripts.interactive import setup_args, interactive
-from parlai.zoo.wizard_of_wikipedia\
-    .full_dialogue_retrieval_model import download
+from parlai.zoo.wizard_of_wikipedia.full_dialogue_retrieval_model import download
 
 
 if __name__ == '__main__':
@@ -16,7 +15,7 @@ if __name__ == '__main__':
         model='projects:wizard_of_wikipedia:interactive_retrieval',
         retriever_model_file='models:wikipedia_full/tfidf_retriever/model',
         responder_model_file='models:wizard_of_wikipedia/'
-                             'full_dialogue_retrieval_model/model',
+        'full_dialogue_retrieval_model/model',
     )
     opt = parser.parse_args(print_args=False)
     download(opt['datapath'])

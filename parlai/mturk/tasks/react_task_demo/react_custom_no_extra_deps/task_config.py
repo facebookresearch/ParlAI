@@ -20,8 +20,9 @@ task_config['hit_title'] = 'Ask, answer, and evaluate numeric questions'
 On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
 view of search results, and in the HIT and assignment screens.
 """
-task_config['hit_description'] = \
-    'Perform one of three roles to get accurate numeric questions.'
+task_config[
+    'hit_description'
+] = 'Perform one of three roles to get accurate numeric questions.'
 
 
 """One or more words or phrases that describe the HIT, separated by commas.
@@ -33,7 +34,9 @@ task_config['hit_keywords'] = 'chat,question,answer'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = '''
+task_config[
+    'task_description'
+] = '''
 In this task, you'll need to ask, answer, or evaluate numeric questions.<br><br>
 <b>As the asker:</b> please only ask questions that can be answered with a
 number. Prefer to use natural language questions rather than typed

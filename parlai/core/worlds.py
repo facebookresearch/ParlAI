@@ -289,6 +289,7 @@ class DialogPartnerWorld(World):
 
     def report(self):
         """Report all metrics of all subagents."""
+
         def show(metric):
             if (
                 'all' in self.show_metrics

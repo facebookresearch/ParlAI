@@ -23,8 +23,10 @@ def build(opt):
 
         # Download the data from github
         fname = 'negotiation.zip'
-        url = ('https://github.com/facebookresearch/end-to-end-negotiator/'
-               'archive/master.zip')
+        url = (
+            'https://github.com/facebookresearch/end-to-end-negotiator/'
+            'archive/master.zip'
+        )
         print('[downloading data from: ' + url + ']')
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)

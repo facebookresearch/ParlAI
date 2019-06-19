@@ -31,10 +31,12 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], SNLI,
-                             SNLI_PREFIX + SNLI_VERSION,
-                             SNLI_PREFIX + SNLI_VERSION +
-                             '_' + suffix + '.jsonl')
+    data_path = os.path.join(
+        opt['datapath'],
+        SNLI,
+        SNLI_PREFIX + SNLI_VERSION,
+        SNLI_PREFIX + SNLI_VERSION + '_' + suffix + '.jsonl',
+    )
 
     return data_path
 

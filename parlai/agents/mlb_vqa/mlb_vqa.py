@@ -72,21 +72,25 @@ def unescape(s):
 
 
 class VqaDictionaryAgent(Agent):
-
     @staticmethod
     def add_cmdline_args(argparser):
         dictionary = argparser.add_argument_group('Dictionary Arguments')
         dictionary.add_argument(
             '--dict-file',
-            help='if set, the dictionary will automatically save to this path' +
-                 ' during shutdown')
+            help='if set, the dictionary will automatically save to this path'
+            + ' during shutdown',
+        )
         dictionary.add_argument(
             '--dict-initpath',
-            help='path to a saved dictionary to load tokens / counts from to ' +
-                 'seed the dictionary with initial tokens and/or frequencies')
+            help='path to a saved dictionary to load tokens / counts from to '
+            + 'seed the dictionary with initial tokens and/or frequencies',
+        )
         dictionary.add_argument(
-            '--dict-maxexs', default=300000, type=int,
-            help='max number of examples to build dict on')
+            '--dict-maxexs',
+            default=300000,
+            type=int,
+            help='max number of examples to build dict on',
+        )
         dictionary.add_argument('-smp', '--samplingans', type='bool', default=True)
         dictionary.add_argument('--nans', type=int, default=2000)
         dictionary.add_argument('--maxlength', type=int, default=16)
@@ -167,8 +171,20 @@ class VqaDictionaryAgent(Agent):
 
     def tokenize_mcb(self, s):
         t_str = s.lower()
-        for i in [r'\?', r'\!', r'\'', r'\"', r'\$', r'\:', r'\@', r'\(',
-                  r'\)', r'\,', r'\.', r'\;']:
+        for i in [
+            r'\?',
+            r'\!',
+            r'\'',
+            r'\"',
+            r'\$',
+            r'\:',
+            r'\@',
+            r'\(',
+            r'\)',
+            r'\,',
+            r'\.',
+            r'\;',
+        ]:
             t_str = re.sub(i, '', t_str)
         for i in [r'\-', r'\/']:
             t_str = re.sub(i, ' ', t_str)
@@ -177,10 +193,17 @@ class VqaDictionaryAgent(Agent):
         return q_list
 
     def split_tokenize(self, s):
-        return (s.lower().replace('.', ' . ').replace('. . .', '...')
-                .replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ')
-                .replace('!', ' ! ').replace('?', ' ? ')
-                .split())
+        return (
+            s.lower()
+            .replace('.', ' . ')
+            .replace('. . .', '...')
+            .replace(',', ' , ')
+            .replace(';', ' ; ')
+            .replace(':', ' : ')
+            .replace('!', ' ! ')
+            .replace('?', ' ? ')
+            .split()
+        )
 
     def act(self):
         """Add any words passed in the 'text' field of the observation to this
@@ -279,7 +302,7 @@ class VqaDictionaryAgent(Agent):
         saving.
         """
         cw = sorted([(count, w) for w, count in self.ansfreq.items()], reverse=True)
-        final_exs = cw[:self.opt.get('nans', 2000)]
+        final_exs = cw[: self.opt.get('nans', 2000)]
         final_list = dict([(w, c) for c, w in final_exs])
         self.ansfreq = defaultdict(int)
         for ans, ques in self.ans2ques.items():
@@ -312,7 +335,6 @@ class VqaDictionaryAgent(Agent):
 
 
 class MlbVqaAgent(Agent):
-
     @staticmethod
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
@@ -339,18 +361,28 @@ class MlbVqaAgent(Agent):
         agent.add_argument('--num_glimpses', type=int, default=4)
         agent.add_argument('--original_att', action='store_true')
         agent.add_argument('--lr', type=float, default=0.0001)
-        agent.add_argument('--no-cuda', action='store_true',
-                           help='disable GPUs even if available')
-        agent.add_argument('--gpu', type=int, default=0,
-                           help='which GPU device to use')
-        agent.add_argument('--no-data-parallel', action='store_true',
-                           help='disable pytorch parallel data processing')
-        agent.add_argument('--use-hdf5', type='bool', default=False,
-                           help='specify whether to use a single hdf5 file to load \
-                           images')
-        agent.add_argument('--no-metrics', action='store_true',
-                           help='specify to not compute f1 or accuracy during \
-                           training (speeds up training)')
+        agent.add_argument(
+            '--no-cuda', action='store_true', help='disable GPUs even if available'
+        )
+        agent.add_argument('--gpu', type=int, default=0, help='which GPU device to use')
+        agent.add_argument(
+            '--no-data-parallel',
+            action='store_true',
+            help='disable pytorch parallel data processing',
+        )
+        agent.add_argument(
+            '--use-hdf5',
+            type='bool',
+            default=False,
+            help='specify whether to use a single hdf5 file to load \
+                           images',
+        )
+        agent.add_argument(
+            '--no-metrics',
+            action='store_true',
+            help='specify to not compute f1 or accuracy during \
+                           training (speeds up training)',
+        )
         MlbVqaAgent.dictionary_class().add_cmdline_args(argparser)
 
     @staticmethod
@@ -493,18 +525,12 @@ class MlbVqaAgent(Agent):
             'batchsize': batchsize,
             'labels': labels[0],
             'episode_done': ep_dones[0],
-            'preprocessed': True
+            'preprocessed': True,
         }
         if not testing:
             data['answer'] = answer
-        return [
-            data
-        ] + [
-            {
-                'labels': ex_label,
-                'episode_done': ep_done,
-                'preprocessed': True
-            }
+        return [data] + [
+            {'labels': ex_label, 'episode_done': ep_done, 'preprocessed': True}
             for ex_label, ep_done in zip(labels[1:], ep_dones[1:])
         ]
 
@@ -623,14 +649,28 @@ class MlbVqaAgent(Agent):
         Print out each added key and each overriden key.
         Only override args specific to the model.
         """
-        model_args = {'dim_v', 'dim_q', 'dim_h', 'dim_att_h',
-                      'dropout_cls', 'dropout_st', 'dropout_q',
-                      'dropout_v', 'dropout_att_mm',
-                      'dropout_att_q', 'dropout_att_v',
-                      'activation_cls', 'activation_q',
-                      'activation_v', 'activation_att_mm',
-                      'activation_att_q', 'activation_att_v',
-                      'num_glimpses', 'use_bayesian', 'attention'}
+        model_args = {
+            'dim_v',
+            'dim_q',
+            'dim_h',
+            'dim_att_h',
+            'dropout_cls',
+            'dropout_st',
+            'dropout_q',
+            'dropout_v',
+            'dropout_att_mm',
+            'dropout_att_q',
+            'dropout_att_v',
+            'activation_cls',
+            'activation_q',
+            'activation_v',
+            'activation_att_mm',
+            'activation_att_q',
+            'activation_att_v',
+            'num_glimpses',
+            'use_bayesian',
+            'attention',
+        }
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -638,8 +678,11 @@ class MlbVqaAgent(Agent):
             if k not in self.opt:
                 print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
             elif self.opt[k] != v:
-                print('Overriding option [ {k}: {old} => {v}]'.format(
-                      k=k, old=self.opt[k], v=v))
+                print(
+                    'Overriding option [ {k}: {old} => {v}]'.format(
+                        k=k, old=self.opt[k], v=v
+                    )
+                )
             self.opt[k] = v
         return self.opt
 

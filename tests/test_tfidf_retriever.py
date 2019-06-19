@@ -17,7 +17,7 @@ import logging
 SKIP_TESTS = False
 try:
     from parlai.agents.tfidf_retriever.tfidf_retriever import (  # noqa: F401
-        TfidfRetrieverAgent
+        TfidfRetrieverAgent,
     )
 except ImportError:
     SKIP_TESTS = True
@@ -41,9 +41,9 @@ class TestTfidfRetriever(unittest.TestCase):
                 task='babi:task1k:1',
                 model_file=MODEL_FILE,
                 retriever_numworkers=4,
-                retriever_hashsize=2**8,
+                retriever_hashsize=2 ** 8,
                 datatype='train:ordered',
-                num_epochs=1
+                num_epochs=1,
             )
             opt = parser.parse_args(print_args=False)
             with contextlib.redirect_stdout(io.StringIO()):
@@ -58,7 +58,7 @@ class TestTfidfRetriever(unittest.TestCase):
                     'Mary moved to the bathroom. John went to the hallway. '
                     'Where is Mary?'
                 ),
-                'episode_done': True
+                'episode_done': True,
             }
             agent.observe(obs)
             reply = agent.act()
@@ -67,10 +67,10 @@ class TestTfidfRetriever(unittest.TestCase):
             ANS = 'The one true label.'
             new_example = {
                 'text': 'A bunch of new words that are not in the other task, '
-                        'which the model should be able to use to identify '
-                        'this label.',
+                'which the model should be able to use to identify '
+                'this label.',
                 'labels': [ANS],
-                'episode_done': True
+                'episode_done': True,
             }
             agent.observe(new_example)
             reply = agent.act()

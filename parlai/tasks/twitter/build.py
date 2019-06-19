@@ -24,8 +24,7 @@ def replace_emoji(x):
 
 def split_punctuation(x):
     return (
-        x
-        .replace('.', ' . ')
+        x.replace('.', ' . ')
         .replace('. . .', '...')
         .replace(',', ' , ')
         .replace(';', ' ; ')
@@ -95,6 +94,7 @@ def build(opt):
         build_data.cat(file1, file2, outzipfile)
 
         import gzip
+
         with gzip.open(outzipfile, 'r') as f:
             file_content = bytes.decode(f.read())
         data = file_content.split('\n')[2:]

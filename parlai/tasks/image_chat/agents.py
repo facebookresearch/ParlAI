@@ -26,11 +26,11 @@ def _path(opt):
     build(opt)
     dt = opt['datatype'].split(':')[0]
     if dt in ['train', 'valid', 'test']:
-        data_path = os.path.join(opt['datapath'],
-                                 'image_chat/{}.json'.format(dt))
+        data_path = os.path.join(opt['datapath'], 'image_chat/{}.json'.format(dt))
 
-    personalities_data_path = os.path.join(opt['datapath'],
-                                           'image_chat/personalities.json')
+    personalities_data_path = os.path.join(
+        opt['datapath'], 'image_chat/personalities.json'
+    )
     image_path = ''
     if opt.get('yfcc_path'):
         image_path = opt['yfcc_path']
@@ -42,6 +42,7 @@ def _path(opt):
 
 class DefaultDataset(Dataset):
     """A Pytorch Dataset"""
+
     def __init__(self, opt):
         self.opt = opt
         opt['image_load_task'] = 'image_chat'
@@ -121,6 +122,7 @@ class ImageChatTeacher(FixedDialogTeacher):
         To specify your own path to the YFCC100m images, please use the
         `--yfcc-path` command line argument.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
@@ -142,18 +144,32 @@ class ImageChatTeacher(FixedDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('Personality-Captions arguments')
-        agent.add_argument('--include-personality', type='bool',
-                           default=True,
-                           help='Whether to provide personality to agent')
-        agent.add_argument('--include-image', type='bool',
-                           default=True,
-                           help='Whether to provide image to agent')
-        agent.add_argument('--yfcc-path', type=str, default=None,
-                           help='Path to yfcc images (if not downloaded '
-                                'via the provided download script)')
-        agent.add_argument('--num-cands', type=str, default='100',
-                           choices=['100', '1000'],
-                           help='how many candidates to provide agent')
+        agent.add_argument(
+            '--include-personality',
+            type='bool',
+            default=True,
+            help='Whether to provide personality to agent',
+        )
+        agent.add_argument(
+            '--include-image',
+            type='bool',
+            default=True,
+            help='Whether to provide image to agent',
+        )
+        agent.add_argument(
+            '--yfcc-path',
+            type=str,
+            default=None,
+            help='Path to yfcc images (if not downloaded '
+            'via the provided download script)',
+        )
+        agent.add_argument(
+            '--num-cands',
+            type=str,
+            default='100',
+            choices=['100', '1000'],
+            help='how many candidates to provide agent',
+        )
 
     def _setup_data(self, data_path, personalities_data_path):
         print('loading: ' + data_path)
@@ -174,9 +190,9 @@ class ImageChatTeacher(FixedDialogTeacher):
 
     def submit_load_request(self, image_id):
         img_path = os.path.join(self.image_path, '{}.jpg'.format(image_id))
-        self.data_loader.request_load(self.receive_data,
-                                      self.image_loader.load,
-                                      (img_path,))
+        self.data_loader.request_load(
+            self.receive_data, self.image_loader.load, (img_path,)
+        )
 
     def get(self, episode_idx, entry_idx=0):
         data = self.data[episode_idx]

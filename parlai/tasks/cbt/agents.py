@@ -25,7 +25,8 @@ def _path(task, opt):
         suffix = 'valid_2000ex'
 
     return os.path.join(
-        opt['datapath'], 'CBT', 'CBTest', 'data', task + '_' + suffix + '.txt')
+        opt['datapath'], 'CBT', 'CBTest', 'data', task + '_' + suffix + '.txt'
+    )
 
 
 class NETeacher(FbDialogTeacher):

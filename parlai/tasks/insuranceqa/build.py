@@ -40,8 +40,8 @@ class ParseInsuranceQA(object):
                 fields = line.rstrip('\n').split("\t")
                 if len(fields) != 2:
                     raise ValueError(
-                        "vocab file (%s) corrupted. Line (%s)" %
-                        (repr(line), vocab_path)
+                        "vocab file (%s) corrupted. Line (%s)"
+                        % (repr(line), vocab_path)
                     )
                 else:
                     wid, word = fields
@@ -57,8 +57,8 @@ class ParseInsuranceQA(object):
             fields = line.rstrip("\n").split("\t")
             if len(fields) != 2:
                 raise ValueError(
-                    "label2answer file (%s) corrupted. Line (%s)" %
-                    (repr(line), label2answer_path_gz)
+                    "label2answer file (%s) corrupted. Line (%s)"
+                    % (repr(line), label2answer_path_gz)
                 )
             else:
                 aid, s_wids = fields
@@ -139,8 +139,12 @@ class ParseInsuranceQAV1(ParseInsuranceQA):
                 bad_ans = [d_label_answer[aid_] for aid_ in s_bad_aids.split()]
                 # save good answers and candidates
                 s = (
-                    '1 ' + q + '\t' + "|".join(good_ans) + '\t\t' +
-                    "|".join(good_ans + bad_ans)
+                    '1 '
+                    + q
+                    + '\t'
+                    + "|".join(good_ans)
+                    + '\t\t'
+                    + "|".join(good_ans + bad_ans)
                 )
                 fout.write(s + '\n')
         fout.close()
@@ -153,9 +157,18 @@ class ParseInsuranceQAV2(ParseInsuranceQA):
     @classmethod
     def write_data_files(cls, dpext, out_path, d_vocab, d_label_answer):
         data_fnames_tmpl = [
-            ("train.%s", "InsuranceQA.question.anslabel.token.%s.pool.solr.train.encoded.gz"),  # noqa: E501
-            ("valid.%s", "InsuranceQA.question.anslabel.token.%s.pool.solr.valid.encoded.gz"),  # noqa: E501
-            ("test.%s", "InsuranceQA.question.anslabel.token.%s.pool.solr.test.encoded.gz")  # noqa: E501
+            (
+                "train.%s",
+                "InsuranceQA.question.anslabel.token.%s.pool.solr.train.encoded.gz",
+            ),  # noqa: E501
+            (
+                "valid.%s",
+                "InsuranceQA.question.anslabel.token.%s.pool.solr.valid.encoded.gz",
+            ),  # noqa: E501
+            (
+                "test.%s",
+                "InsuranceQA.question.anslabel.token.%s.pool.solr.test.encoded.gz",
+            ),  # noqa: E501
         ]
         for n_cands in [100, 500, 1000, 1500]:
             for dtype_tmp, data_fname_tmp in data_fnames_tmpl:
@@ -185,8 +198,12 @@ class ParseInsuranceQAV2(ParseInsuranceQA):
                 bad_ans = [d_label_answer[aid_] for aid_ in s_bad_aids.split()]
                 # save
                 s = (
-                    '1 ' + q + '\t' + "|".join(good_ans) + '\t\t' +
-                    "|".join(good_ans + bad_ans)
+                    '1 '
+                    + q
+                    + '\t'
+                    + "|".join(good_ans)
+                    + '\t\t'
+                    + "|".join(good_ans + bad_ans)
                 )
                 fout.write(s + '\n')
         fout.close()

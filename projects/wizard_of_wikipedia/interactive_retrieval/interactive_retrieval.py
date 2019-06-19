@@ -12,8 +12,9 @@ NOTE: this model only works for eval, it assumes all training is already done.
 """
 
 from parlai.core.agents import Agent, create_agent
-from projects.wizard_of_wikipedia.wizard_transformer_ranker.\
-    wizard_transformer_ranker import WizardTransformerRankerAgent
+from projects.wizard_of_wikipedia.wizard_transformer_ranker.wizard_transformer_ranker import (
+    WizardTransformerRankerAgent,
+)
 
 import json
 import os
@@ -26,9 +27,12 @@ class InteractiveRetrievalAgent(Agent):
         self.get_unique = opt['get_unique']
         if self.get_unique:
             self.used_messages = []
-        self.model_path = os.path.join(opt['datapath'], 'models',
-                                       'wizard_of_wikipedia',
-                                       'full_dialogue_retrieval_model')
+        self.model_path = os.path.join(
+            opt['datapath'],
+            'models',
+            'wizard_of_wikipedia',
+            'full_dialogue_retrieval_model',
+        )
 
         if not shared:
             # Create retriever
@@ -52,24 +56,32 @@ class InteractiveRetrievalAgent(Agent):
         parser = argparser.add_argument_group('WizardRetrievalInteractive Arguments')
         parser.add_argument('--retriever-model-file', type=str, default=None)
         parser.add_argument('--responder-model-file', type=str, default=None)
-        parser.add_argument('--get-unique', type='bool', default=True,
-                            help='get unique responses from the bot')
-        parser.add_argument('--num-retrieved', type=int, default=7,
-                            help='how many passages to retrieve for each'
-                                 'category')
+        parser.add_argument(
+            '--get-unique',
+            type='bool',
+            default=True,
+            help='get unique responses from the bot',
+        )
+        parser.add_argument(
+            '--num-retrieved',
+            type=int,
+            default=7,
+            help='how many passages to retrieve for each' 'category',
+        )
         parser.add_argument('--debug', type='bool', default=False)
         return parser
 
     def _set_up_retriever(self, opt):
-        retriever_opt = {'model_file': opt['retriever_model_file'],
-                         'remove_title': False,
-                         'datapath': opt['datapath'],
-                         'override': {'remove_title': False}}
+        retriever_opt = {
+            'model_file': opt['retriever_model_file'],
+            'remove_title': False,
+            'datapath': opt['datapath'],
+            'override': {'remove_title': False},
+        }
         self.retriever = create_agent(retriever_opt)
 
         self._set_up_sent_tok()
-        wiki_map_path = os.path.join(self.model_path,
-                                     'chosen_topic_to_passage.json')
+        wiki_map_path = os.path.join(self.model_path, 'chosen_topic_to_passage.json')
         self.wiki_map = json.load(open(wiki_map_path, 'r'))
 
     def _set_up_responder(self, opt):
@@ -79,8 +91,7 @@ class InteractiveRetrievalAgent(Agent):
             'model_file': opt['responder_model_file'],
             'datapath': opt['datapath'],
             'model': 'projects:wizard_of_wikipedia:wizard_transformer_ranker',
-            'fixed_candidates_path': os.path.join(self.model_path,
-                                                  'wizard_cands.txt'),
+            'fixed_candidates_path': os.path.join(self.model_path, 'wizard_cands.txt'),
             'eval_candidates': 'fixed',
             'n_heads': 6,
             'ffn_size': 1200,
@@ -123,9 +134,7 @@ class InteractiveRetrievalAgent(Agent):
                     if total >= 10:
                         break
                     if len(sent) > 0:
-                        retrieved_txt_format.append(
-                            ' '.join([chosen_topic, sent])
-                        )
+                        retrieved_txt_format.append(' '.join([chosen_topic, sent]))
                         total += 1
 
         if len(retrieved_txt_format) > 0:
@@ -142,7 +151,7 @@ class InteractiveRetrievalAgent(Agent):
         retrieved_txt = act.get('text', '')
         cands = act.get('text_candidates', [])
         if len(cands) > 0:
-            retrieved_txts = cands[:self.opt['num_retrieved']]
+            retrieved_txts = cands[: self.opt['num_retrieved']]
         else:
             retrieved_txts = [retrieved_txt]
 
@@ -152,9 +161,7 @@ class InteractiveRetrievalAgent(Agent):
             if len(paragraphs) > 2:
                 sentences = self.sent_tok.tokenize(paragraphs[2])
                 for sent in sentences:
-                    retrieved_txt_format.append(
-                        ' '.join([paragraphs[0], sent])
-                    )
+                    retrieved_txt_format.append(' '.join([paragraphs[0], sent]))
 
         if len(retrieved_txt_format) > 0:
             passages = '\n'.join(retrieved_txt_format)
@@ -172,7 +179,7 @@ class InteractiveRetrievalAgent(Agent):
         chosen_topic_txts = None
         if self.ret_history.get('chosen_topic'):
             chosen_topic_txts = self.get_chosen_topic_passages(
-                self.ret_history['chosen_topic'],
+                self.ret_history['chosen_topic']
             )
 
         # retrieve on apprentice
@@ -180,7 +187,7 @@ class InteractiveRetrievalAgent(Agent):
         if self.ret_history.get('apprentice'):
             apprentice_act = {
                 'text': self.ret_history['apprentice'],
-                'episode_done': True
+                'episode_done': True,
             }
             self.retriever.observe(apprentice_act)
             apprentice_txts = self.get_passages(self.retriever.act())
@@ -188,10 +195,7 @@ class InteractiveRetrievalAgent(Agent):
         # retrieve on wizard
         wizard_txts = None
         if self.ret_history.get('wizard'):
-            wizard_act = {
-                'text': self.ret_history['wizard'],
-                'episode_done': True
-            }
+            wizard_act = {'text': self.ret_history['wizard'], 'episode_done': True}
             self.retriever.observe(wizard_act)
             wizard_txts = self.get_passages(self.retriever.act())
 
@@ -200,9 +204,9 @@ class InteractiveRetrievalAgent(Agent):
         if chosen_topic_txts:
             combined_txt += chosen_topic_txts
         if wizard_txts:
-            combined_txt += ('\n' + wizard_txts)
+            combined_txt += '\n' + wizard_txts
         if apprentice_txts:
-            combined_txt += ('\n' + apprentice_txts)
+            combined_txt += '\n' + apprentice_txts
 
         return combined_txt
 

@@ -40,16 +40,17 @@ def next_word_probability(self, partial_out):
 
 from parlai.core.agents import Agent
 
-from parlai.scripts.eval_ppl import eval_ppl as run_eval_ppl, setup_args as setup_ppl_args
+from parlai.scripts.eval_ppl import (
+    eval_ppl as run_eval_ppl,
+    setup_args as setup_ppl_args,
+)
 from projects.convai2.build_dict import build_dict
 
 
 def setup_args(parser=None):
     parser = setup_ppl_args(parser)
     parser.set_defaults(
-        task='convai2:self:no_cands',
-        datatype='valid',
-        dict_tokenizer='split',
+        task='convai2:self:no_cands', datatype='valid', dict_tokenizer='split'
     )
     return parser
 
@@ -61,6 +62,7 @@ class WordFrequencyEntry(Agent):
     It builds the official dictionary first, so that it can provide a minimum
     probablity for each word as well as use the official tokenizer.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         if not shared:
@@ -106,5 +108,7 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     eval_ppl(opt)
     if opt['model'] == 'projects.convai2.eval_ppl:WordFrequencyEntry':
-        print('This run just used the example filler model. To get better '
-              'results, try implementing your own!')
+        print(
+            'This run just used the example filler model. To get better '
+            'results, try implementing your own!'
+        )

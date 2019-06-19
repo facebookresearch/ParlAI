@@ -13,8 +13,8 @@ from copy import deepcopy
 import os
 import pickle
 
-class DefaultTeacher(Teacher):
 
+class DefaultTeacher(Teacher):
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
         self.terminate = opt['terminate']
@@ -27,8 +27,20 @@ class DefaultTeacher(Teacher):
             datapath = join(opt['datapath'], 'graph_world2', opt['datatype'])
             self.data = self._setup_data(datapath)
             if hasattr(self, 'valid_weights'):
-                assert len(self.valid_weights) == len(self.data), (len(self.valid_weights), len(self.data))
-            self.stats = {'loss': 0, 'cnt': 0, 'acc': 0, 'f1': 0, 'acc_len': dd(float), 'cnt_len': dd(float), 'correct_data': [], 'wrong_data': []}
+                assert len(self.valid_weights) == len(self.data), (
+                    len(self.valid_weights),
+                    len(self.data),
+                )
+            self.stats = {
+                'loss': 0,
+                'cnt': 0,
+                'acc': 0,
+                'f1': 0,
+                'acc_len': dd(float),
+                'cnt_len': dd(float),
+                'correct_data': [],
+                'wrong_data': [],
+            }
         else:
             self.data = shared['data']
             self.stats = shared['stats']
@@ -69,7 +81,13 @@ class DefaultTeacher(Teacher):
             self.episode_index %= self.len
             if self.random and self.episode_index == opt['batchsize'] - 1:
                 random.shuffle(self.data)
-        return {'text': return_example[2], 'actions': return_example[3], 'graph': return_example[1], 'episode_done': True, 'weight': return_weight}
+        return {
+            'text': return_example[2],
+            'actions': return_example[3],
+            'graph': return_example[1],
+            'episode_done': True,
+            'weight': return_weight,
+        }
 
     def observe(self, observation):
         self.observation = observation

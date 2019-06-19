@@ -30,8 +30,7 @@ class MockTurkAgent(MTurkAgent):
             pkt = self.unread_messages.pop(0)
             send_messages.append(pkt.data)
         done_text = None
-        if self.state.is_final() and \
-                self.get_status() != AssignState.STATUS_DONE:
+        if self.state.is_final() and self.get_status() != AssignState.STATUS_DONE:
             done_text = self.state.get_inactive_command_text()[0]
         return {
             'new_messages': send_messages,
@@ -69,15 +68,15 @@ class MockTurkAgent(MTurkAgent):
         to return for the act call
         """
         shared_utils.print_and_log(
-            logging.INFO,
-            '{} timed out before sending.'.format(self.id)
+            logging.INFO, '{} timed out before sending.'.format(self.id)
         )
         self.timed_out = True
         return self._get_episode_done_msg(TIMEOUT_MESSAGE)
 
     def request_message(self):
-        if not (self.disconnected or self.some_agent_disconnected or
-                self.hit_is_expired):
+        if not (
+            self.disconnected or self.some_agent_disconnected or self.hit_is_expired
+        ):
             self.wants_message = True
 
     def act(self, timeout=None, blocking=True):
@@ -101,16 +100,17 @@ class MockTurkAgent(MTurkAgent):
         print('[mock] Worker {} approved'.format(self.worker_id))
 
     def reject_work(self, reason='unspecified'):
-        print('[mock] Worker {} rejected for reason {}'.format(
-            self.worker_id, reason))
+        print('[mock] Worker {} rejected for reason {}'.format(self.worker_id, reason))
 
     def block_worker(self, reason='unspecified'):
-        print('[mock] Worker {} blocked for reason {}'.format(
-            self.worker_id, reason))
+        print('[mock] Worker {} blocked for reason {}'.format(self.worker_id, reason))
 
     def pay_bonus(self, bonus_amount, reason='unspecified'):
-        print('[mock] Worker {} bonused {} for reason {}'.format(
-            self.worker_id, bonus_amount, reason))
+        print(
+            '[mock] Worker {} bonused {} for reason {}'.format(
+                self.worker_id, bonus_amount, reason
+            )
+        )
 
     def email_worker(self, subject, message_text):
         return True

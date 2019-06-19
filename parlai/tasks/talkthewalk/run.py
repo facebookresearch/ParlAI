@@ -36,10 +36,14 @@ def setup_args(parser=None):
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.add_argument('--metrics', type=str, default="all",
-                        help="list of metrics to show/compute, e.g. "
-                             "ppl,f1,accuracy,hits@1."
-                             "If 'all' is specified [default] all are shown.")
+    parser.add_argument(
+        '--metrics',
+        type=str,
+        default="all",
+        help="list of metrics to show/compute, e.g. "
+        "ppl,f1,accuracy,hits@1."
+        "If 'all' is specified [default] all are shown.",
+    )
     TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')
     return parser
@@ -76,8 +80,9 @@ def run(opt):
 
     if world.epoch_done():
         print("EPOCH DONE")
-    print('finished evaluating task using datatype {}'.format(
-          opt.get('datatype', 'N/A')))
+    print(
+        'finished evaluating task using datatype {}'.format(opt.get('datatype', 'N/A'))
+    )
     report = world.report()
     print(report)
     return report
