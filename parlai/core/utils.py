@@ -174,6 +174,16 @@ class Opt(dict):
         self.history.setdefault(key, []).append((loc, val))
         super().__setitem__(key, val)
 
+    def __getstate__(self):
+        return (self.history, self.deepcopies, dict(self))
+
+    def __setstate__(self, state):
+        self.history, self.deepcopies, data = state
+        self.update(data)
+
+    def __reduce__(self):
+        return (Opt, (), self.__getstate__())
+
     def __deepcopy__(self, memo):
         """Override deepcopy so that history is copied over to new object."""
         # track location of deepcopy

@@ -195,6 +195,21 @@ task_list = [
         ),
     },
     {
+        "id": "HotpotQA",
+        "display_name": "HotpotQA",
+        "task": "hotpotqa",
+        "tags": ["All", "QA"],
+        "description": (
+            "HotpotQA is a dataset for multi-hop question answering."
+            "The overall setting is that given some context paragraphs"
+            "(e.g., a few paragraphs, or the entire Web) and a question,"
+            "a QA system answers the question by extracting a span of text"
+            "from the context. It is necessary to perform multi-hop reasoning"
+            "to correctly answer the question."
+            "Link: https://arxiv.org/pdf/1809.09600.pdf"
+        ),
+    },
+    {
         "id": "LIGHT-Dialogue",
         "display_name": "LIGHT-Dialogue",
         "task": "light_dialog",
