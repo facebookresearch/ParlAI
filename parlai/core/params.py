@@ -832,8 +832,7 @@ class ParlaiParser(argparse.ArgumentParser):
         return super().parse_known_args(args, namespace)
 
     def _load_known_opts(self, optfile, parsed):
-        with open(optfile, 'r', encoding='utf-8') as handle:
-            new_opt = json.load(handle)
+        new_opt = load_opt_file(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
@@ -841,8 +840,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
-        with open(optfile, 'r', encoding='utf-8') as handle:
-            new_opt = json.load(handle)
+        new_opt = load_opt_file(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt['override']:
