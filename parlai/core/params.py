@@ -836,7 +836,7 @@ class ParlaiParser(argparse.ArgumentParser):
         with open(optfile, 'r', encoding='utf-8') as handle:
             new_opt = json.load(handle)
         for key, value in new_opt.items():
-            # existing commandline parameters take priority.
+            # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
                 parsed[key] = value
 
@@ -845,7 +845,7 @@ class ParlaiParser(argparse.ArgumentParser):
         with open(optfile, 'r', encoding='utf-8') as handle:
             new_opt = json.load(handle)
         for key, value in new_opt.items():
-            # existing commandline parameters take priority.
+            # existing command line parameters take priority.
             if key not in self.opt['override']:
                 self.opt[key] = value
                 self.opt['override'][key] = value
@@ -890,7 +890,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.opt['parlai_home'] = self.parlai_home
         self.opt = self._infer_datapath(self.opt)
 
-        # set all arguments specified in commandline as overridable
+        # set all arguments specified in command line as overridable
         option_strings_dict = {}
         store_true = []
         store_false = []
