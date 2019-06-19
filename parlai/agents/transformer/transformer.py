@@ -84,6 +84,9 @@ class TransformerRankerAgent(TorchRankerAgent):
         # model specific arguments
         agent.add_argument('--normalize-sent-emb', type='bool', default=False)
         agent.add_argument('--share-encoders', type='bool', default=True)
+        argparser.add_argument('--share-word-embeddings', type='bool', default=True,
+                               help='Share word embeddings table for candidate and context'
+                               'in the memory network')
         agent.add_argument('--learn-embeddings', type='bool', default=True,
                            help='learn embeddings')
         agent.add_argument('--data-parallel', type='bool', default=False,
