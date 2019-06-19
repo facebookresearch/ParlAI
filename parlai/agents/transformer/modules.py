@@ -32,7 +32,7 @@ except ImportError:
     warn_once("Installing APEX can give a significant speed boost.")
     from torch.nn import LayerNorm
 
-LAYER_NORM_EPS = 1e-12  # Epsilon for layer norm.
+LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
 
 
 def _normalize(tensor, norm_layer):
