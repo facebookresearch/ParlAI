@@ -7,13 +7,11 @@
 
 import argparse
 import importlib
-from copy import deepcopy
 import os
 import pickle
 import json
 import sys as _sys
 import datetime
-import traceback
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
