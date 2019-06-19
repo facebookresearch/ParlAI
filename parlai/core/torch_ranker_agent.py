@@ -22,6 +22,7 @@ from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 from parlai.core.distributed_utils import is_distributed
+import pdb
 
 
 class TorchRankerAgent(TorchAgent):
@@ -827,7 +828,8 @@ class TorchRankerAgent(TorchAgent):
                 cand_encs.append(self.encode_candidates(vec_batch))
         return torch.cat(cand_encs, 0)
 
-    def vectorize_fixed_candidates(self, cands_batch):
+    def vectorize_fixed_candidates(self, cands_batch, add_start=False,
+                                   add_end=False):
         """
         Convert a batch of candidates from text to vectors.
 
@@ -842,7 +844,8 @@ class TorchRankerAgent(TorchAgent):
         """
         return [
             self._vectorize_text(
-                cand, truncate=self.label_truncate, truncate_left=False
+                cand, truncate=self.label_truncate, truncate_left=False,
+                add_start=add_start, add_end=add_end
             )
             for cand in cands_batch
         ]

@@ -67,7 +67,7 @@ class PolyencoderAgent(TorchRankerAgent):
         return self.model
 
     def vectorize(self, *args, **kwargs):
-        """ Add the start and end token to the text.
+        """ Add the start and end token to the labels.
         """
         kwargs['add_start'] = True
         kwargs['add_end'] = True
@@ -83,13 +83,37 @@ class PolyencoderAgent(TorchRankerAgent):
                                                          True,
                                                          True)
 
+    def vectorize_fixed_candidates(self,  *args, **kwargs):
+        """ Add the start and end token when computing the candidate encodings
+            in interactive mode.
+        """
+        kwargs['add_start'] = True
+        kwargs['add_end'] = True
+        return super().vectorize_fixed_candidates(*args, **kwargs)
+
+    def _make_candidate_encs(self, vecs, path):
+        """ (used in interactive mode only) The polyencoder module expects
+            cand vecs to be 3D while torch_ranker_agent expects it to be 2D.
+            This requires a little adjustment
+        """
+        rep = super()._make_candidate_encs(vecs, path)
+        return rep.transpose(0, 1).contiguous()
+
+    def encode_candidates(self, padded_cands):
+        padded_cands = padded_cands.unsqueeze(1)
+        _, _, cand_rep = self.model(cand_tokens=padded_cands)
+        return cand_rep
+
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         bsz = batch.text_vec.size(0)
         ctxt_rep, ctxt_rep_mask, _ = self.model(ctxt_tokens=batch.text_vec)
 
         if cand_encs is not None:
-            raise Exception('cand_encs is not yet taken into account')
-        if len(cand_vecs.shape) == 3:
+            if bsz == 1:
+                cand_rep = cand_encs
+            else:
+                cand_rep = cand_encs.expand(bsz, cand_encs.size(1), -1)
+        elif len(cand_vecs.shape) == 3:
             _, _, cand_rep = self.model(cand_tokens=cand_vecs)
         elif len(cand_vecs.shape) == 2:
             _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
