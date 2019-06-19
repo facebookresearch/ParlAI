@@ -112,7 +112,7 @@ python projects/convai2/interactive.py -mf models:convai2/kvmemnn/model
 
 ## Requirements
 
-ParlAI currently requires Python3.
+ParlAI currently requires Python3.6 or higher.
 
 Dependencies of the core modules are listed in requirement.txt.
 
