@@ -30,7 +30,8 @@ then
     then
         command -v black >/dev/null || \
             ( echo "Please install black." && false )
-        exec black -q --check $CHANGED_FILES
+        # only output if something needs to change
+        black --check $CHANGED_FILES
     else
         flake8 --version | grep '^3\.[6-9]\.' >/dev/null || \
             ( echo "Please install flake8 >=3.6.0." && false )

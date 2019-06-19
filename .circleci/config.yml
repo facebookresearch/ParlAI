@@ -140,12 +140,6 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - run:
-          name: JS Lint
-          working_directory: ~/ParlAI/parlai/mturk
-          command: |
-            npm install
-            npm run lint
-      - run:
           name: black
           working_directory: ~/ParlAI
           command: |
