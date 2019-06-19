@@ -38,7 +38,6 @@ class CrossencoderAgent(TorchRankerAgent):
                     'Cannot combine --data-parallel and distributed mode'
                 )
             self.model = torch.nn.DataParallel(self.model)
-        self.START_IDX = self.END_IDX
 
 
     def build_model(self, states=None):
@@ -46,13 +45,15 @@ class CrossencoderAgent(TorchRankerAgent):
         return self.model
 
     def vectorize(self, *args, **kwargs):
+        """ Add the start and end token to the text.
+        """
         kwargs['add_start'] = True
         kwargs['add_end'] = True
         obs = super().vectorize(*args, **kwargs)
         return obs
 
     def _set_text_vec(self, *args, **kwargs):
-        """ Add start and end tokens for set_text_vec()
+        """ Add the start and end token to the text.
         """
         obs = super()._set_text_vec(*args, **kwargs)
         if 'text_vec' in obs:
@@ -91,6 +92,9 @@ class CrossencoderAgent(TorchRankerAgent):
 
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
+        if cand_encs is not None:
+            raise Exception('Candidate pre-computation is impossible on the '
+                            'crossencoder')
         num_cands_per_sample = cand_vecs.size(1)
         bsz =  cand_vecs.size(0)
         text_idx = (batch.text_vec.unsqueeze(1)

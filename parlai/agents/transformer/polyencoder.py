@@ -64,7 +64,6 @@ class PolyencoderAgent(TorchRankerAgent):
                     'Cannot combine --data-parallel and distributed mode'
                 )
             self.model = torch.nn.DataParallel(self.model)
-        self.START_IDX = self.END_IDX
 
 
     def build_model(self, states=None):
@@ -72,13 +71,15 @@ class PolyencoderAgent(TorchRankerAgent):
         return self.model
 
     def vectorize(self, *args, **kwargs):
+        """ Add the start and end token to the text.
+        """
         kwargs['add_start'] = True
         kwargs['add_end'] = True
         obs = super().vectorize(*args, **kwargs)
         return obs
 
     def _set_text_vec(self, *args, **kwargs):
-        """ Add start and end tokens for set_text_vec()
+        """ Add the start and end token to the text.
         """
         obs = super()._set_text_vec(*args, **kwargs)
         if 'text_vec' in obs:
@@ -103,7 +104,7 @@ class PolyencoderAgent(TorchRankerAgent):
         return scores
 
 class PolyEncoderModule(torch.nn.Module):
-    """ Allow to reproduce the experiments from the polypaper.
+    """ See https://arxiv.org/abs/1905.01969
     """
 
     def __init__(self, opt, dict, null_idx):
@@ -183,14 +184,14 @@ class PolyEncoderModule(torch.nn.Module):
             :param ctxt_tokens:
                 2D long tensor, batchsize x sent_len
             :param cand_tokens:
-                3D long tensor, batchsize x sent_len
+                3D long tensor, batchsize x num_cands x sent_len
                 Note this will actually view it as a 2D tensor
             :returns: (ctxt_rep, ctxt_mask, cand_rep)
                 - ctxt_rep 3D float tensor, batchsize x n_codes x dim
                 - ctxt_mask byte:  batchsize x n_codes (all 1 in case
                     of polyencoder with code. Which are the vectors to use
                     in the ctxt_rep)
-                - cand_rep (2D float tensor) batchsize x dim
+                - cand_rep (3D float tensor) batchsize x num_cands x dim
         """
         if ctxt_tokens is not None:
             assert len(ctxt_tokens.shape) == 2
@@ -264,4 +265,4 @@ class PolyEncoderModule(torch.nn.Module):
             return self.encode(ctxt_tokens, cand_tokens)
         elif ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None:
             return self.score(ctxt_rep, ctxt_rep_mask, cand_rep)
-        raise Exception('Unsupported operation: %s' % operation_type)
+        raise Exception('Unsupported operation')
