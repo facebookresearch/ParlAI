@@ -15,7 +15,7 @@ import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.utils import Opt
+from parlai.core.utils import Opt, load_opt_file
 
 
 def print_announcements(opt):
@@ -479,6 +479,13 @@ class ParlaiParser(argparse.ArgumentParser):
         """Add common ParlAI args across all scripts."""
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
+            '-o',
+            '--init-opt',
+            default=None,
+            help='Path to json file of options. '
+            'Note: Further Command-line arguments override file-based options.',
+        )
+        parlai.add_argument(
             '-v',
             '--show-advanced-args',
             action='store_true',
@@ -771,6 +778,9 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
+        # Also load extra args options if a file is given.
+        if parsed.get('init_opt', None) is not None:
+            self._load_known_opts(parsed.get('init_opt'), parsed)
         parsed = self._infer_datapath(parsed)
 
         # find which image mode specified if any, and add additional arguments
@@ -822,6 +832,31 @@ class ParlaiParser(argparse.ArgumentParser):
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
 
+    def _load_known_opts(self, optfile, parsed):
+        """
+        _load_known_opts is called before args are parsed, to pull in the cmdline args
+        for the proper models/tasks/etc.
+        _load_opts (below) is for actually overriding opts after they are parsed.
+        """
+        new_opt = load_opt_file(optfile)
+        for key, value in new_opt.items():
+            # existing command line parameters take priority.
+            if key not in parsed or parsed[key] is None:
+                parsed[key] = value
+
+    def _load_opts(self, opt):
+        optfile = opt.get('init_opt')
+        new_opt = load_opt_file(optfile)
+        for key, value in new_opt.items():
+            # existing command line parameters take priority.
+            if key not in opt:
+                raise RuntimeError(
+                    'Trying to set opt from file that does not exist: ' + str(key)
+                )
+            if key not in opt['override']:
+                opt[key] = value
+                opt['override'][key] = value
+
     def _infer_datapath(self, opt):
         """
         Set the value for opt['datapath'] and opt['download_path'].
@@ -860,10 +895,9 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
-
         self.opt = self._infer_datapath(self.opt)
 
-        # set all arguments specified in commandline as overridable
+        # set all arguments specified in command line as overridable
         option_strings_dict = {}
         store_true = []
         store_false = []
@@ -887,6 +921,10 @@ class ParlaiParser(argparse.ArgumentParser):
                     key = option_strings_dict[self.cli_args[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
+
+        # load opts if a file is provided.
+        if self.opt.get('init_opt', None) is not None:
+            self._load_opts(self.opt)
 
         # map filenames that start with 'zoo:' to point to the model zoo dir
         if self.opt.get('model_file') is not None:

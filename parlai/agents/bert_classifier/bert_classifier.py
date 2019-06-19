@@ -9,7 +9,7 @@ from parlai.agents.bert_ranker.helpers import (
     get_bert_optimizer,
     MODEL_PATH
 )
-from parlai.core.agents import _load_opt_file
+from parlai.core.utils import load_opt_file
 from parlai.core.torch_agent import History
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
 from parlai.core.utils import warn_once
@@ -92,7 +92,7 @@ class BertClassifierAgent(TorchClassifierAgent):
         model_opt = opt['model_file'] + '.opt'
         if not os.path.isfile(model_opt):
             return
-        old_opt = _load_opt_file(model_opt)
+        old_opt = load_opt_file(model_opt)
         if 'add_cls_token' not in old_opt:
             # old model, make this default to False
             warn_once(

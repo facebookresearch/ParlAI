@@ -42,12 +42,10 @@ This module also provides a utility method:
 """
 
 from parlai.core.build_data import modelzoo_path
-from parlai.core.utils import Opt, warn_once
+from parlai.core.utils import warn_once, load_opt_file
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
-import json
-import pickle
 import random
 import os
 
@@ -365,7 +363,7 @@ def compare_init_model_opts(opt, curr_opt):
     optfile = opt['init_model'] + '.opt'
     if not os.path.isfile(optfile):
         return
-    init_model_opt = _load_opt_file(optfile)
+    init_model_opt = load_opt_file(optfile)
 
     extra_opts = {}
     different_opts = {}
@@ -416,18 +414,6 @@ def compare_init_model_opts(opt, curr_opt):
         print('*' * 75)
 
 
-def _load_opt_file(optfile):
-    try:
-        # try json first
-        with open(optfile, 'r') as handle:
-            opt = json.load(handle)
-    except UnicodeDecodeError:
-        # oops it's pickled
-        with open(optfile, 'rb') as handle:
-            opt = pickle.load(handle)
-    return Opt(opt)
-
-
 def load_agent_module(opt):
     """
     Load agent options and module from file if opt file exists.
@@ -442,7 +428,7 @@ def load_agent_module(opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
-        new_opt = _load_opt_file(optfile)
+        new_opt = load_opt_file(optfile)
         # TODO we need a better way to say these options are never copied...
         if 'datapath' in new_opt:
             # never use the datapath from an opt dump
