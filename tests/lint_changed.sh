@@ -8,15 +8,9 @@
 # It's much more strict than our check for lint across the entire code base.
 
 set -e
-flake8 --version | grep '^3\.[6-9]\.' >/dev/null || \
-    ( echo "Please install flake8 >=3.6.0." && false )
 
-command -v black >/dev/null || \
-    ( echo "Please install black." && false )
-
-
+CMD="flake8"
 CHANGED_FILES="$(git diff --name-only master... | grep '\.py$' | tr '\n' ' ')"
-
 while getopts bi opt; do
   case $opt in
     i)
@@ -34,8 +28,13 @@ if [ "$CHANGED_FILES" != "" ]
 then
     if [[ "$CMD" == "black" ]]
     then
+        command -v black >/dev/null || \
+            ( echo "Please install black." && false )
         exec black -q --check $CHANGED_FILES
     else
+        flake8 --version | grep '^3\.[6-9]\.' >/dev/null || \
+            ( echo "Please install flake8 >=3.6.0." && false )
+
         # soft complaint on too-long-lines
         flake8 --select=E501 --show-source $CHANGED_FILES
         # hard complaint on really long lines
