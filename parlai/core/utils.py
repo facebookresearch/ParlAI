@@ -166,6 +166,18 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
     return cands
 
 
+def load_opt_file(optfile):
+    try:
+        # try json first
+        with open(optfile, 'r') as handle:
+            opt = json.load(handle)
+    except UnicodeDecodeError:
+        # oops it's pickled
+        with open(optfile, 'rb') as handle:
+            opt = pickle.load(handle)
+    return Opt(opt)
+
+
 class Opt(dict):
     """
     Class for tracking options.

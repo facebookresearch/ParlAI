@@ -15,8 +15,7 @@ import datetime
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.utils import Opt
-
+from parlai.core.utils import Opt, load_opt_file
 
 def print_announcements(opt):
     """
@@ -846,9 +845,9 @@ class ParlaiParser(argparse.ArgumentParser):
             new_opt = json.load(handle)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
-            if key not in self.opt['override']:
-                self.opt[key] = value
-                self.opt['override'][key] = value
+            if key not in opt['override']:
+                opt[key] = value
+                opt['override'][key] = value
                 
     def _infer_datapath(self, opt):
         """
