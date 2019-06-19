@@ -59,8 +59,7 @@ class CrossencoderAgent(TorchRankerAgent):
                                        self.END_IDX)
         return obs
 
-    def concat_without_padding(self, text_idx, cand_idx,
-                               null_idx=0, segments_idx=[0, 1]):
+    def concat_without_padding(self, text_idx, cand_idx, null_idx=0):
         """ if text_idx = [[1, 2, 3, 4, 0, 0  ]]
             and cand_idx = [[5, 6, 7, 8, 0, 0 ]]
             then result = (tokens, segments) where
@@ -70,6 +69,7 @@ class CrossencoderAgent(TorchRankerAgent):
         assert text_idx.size(0) == cand_idx.size(0)
         assert len(text_idx.size()) == 2
         assert len(cand_idx.size()) == 2
+        segments_idx = [0, 1]
         text_idx = text_idx.cpu()
         cand_idx = cand_idx.cpu()
         cand_len = cand_idx.size(1)
