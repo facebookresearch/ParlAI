@@ -845,8 +845,11 @@ class ParlaiParser(argparse.ArgumentParser):
         with open(optfile, 'r', encoding='utf-8') as handle:
             new_opt = json.load(handle)
         for key, value in new_opt.items():
-            self.opt[key] = value
-
+            # existing commandline parameters take priority.
+            if key not in self.opt['override']:
+                self.opt[key] = value
+                self.opt['override'][key] = value
+                
     def _infer_datapath(self, opt):
         """
         Set the value for opt['datapath'] and opt['download_path'].
@@ -883,13 +886,8 @@ class ParlaiParser(argparse.ArgumentParser):
         self.args = super().parse_args(args=args)
         self.opt = Opt(vars(self.args))
 
-        # load opts if a file is provided.
-        if self.opt.get('init_opt', None) is not None:
-            self._load_opts(self.opt)
-
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
-
         self.opt = self._infer_datapath(self.opt)
 
         # set all arguments specified in commandline as overridable
@@ -916,7 +914,11 @@ class ParlaiParser(argparse.ArgumentParser):
                     key = option_strings_dict[self.cli_args[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
-
+        
+        # load opts if a file is provided.
+        if self.opt.get('init_opt', None) is not None:
+            self._load_opts(self.opt)
+        
         # map filenames that start with 'zoo:' to point to the model zoo dir
         if self.opt.get('model_file') is not None:
             self.opt['model_file'] = modelzoo_path(
