@@ -6,12 +6,10 @@
 from .modules import TransformerEncoder
 from .modules import get_n_positions_from_options
 from .modules import surround
-from parlai.core.agents import Agent
-from parlai.core.utils import warn_once
-from parlai.core.utils import padded_3d
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .transformer import TransformerRankerAgent
 import torch
+
 
 class CrossencoderAgent(TorchRankerAgent):
     """ Equivalent of bert_ranker/crossencoder but does not rely on an external
@@ -39,7 +37,6 @@ class CrossencoderAgent(TorchRankerAgent):
                 )
             self.model = torch.nn.DataParallel(self.model)
 
-
     def build_model(self, states=None):
         self.model = CrossEncoderModule(self.opt, self.dict, self.NULL_IDX)
         return self.model
@@ -63,7 +60,7 @@ class CrossencoderAgent(TorchRankerAgent):
         return obs
 
     def concat_without_padding(self, text_idx, cand_idx,
-                               null_idx= 0, segments_idx=[0, 1]):
+                               null_idx=0, segments_idx=[0, 1]):
         """ if text_idx = [[1, 2, 3, 4, 0, 0  ]]
             and cand_idx = [[5, 6, 7, 8, 0, 0 ]]
             then result = (tokens, segments) where
@@ -90,13 +87,12 @@ class CrossencoderAgent(TorchRankerAgent):
             segments = segments.cuda()
         return tokens, segments
 
-
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         if cand_encs is not None:
             raise Exception('Candidate pre-computation is impossible on the '
                             'crossencoder')
         num_cands_per_sample = cand_vecs.size(1)
-        bsz =  cand_vecs.size(0)
+        bsz = cand_vecs.size(0)
         text_idx = (batch.text_vec.unsqueeze(1)
                                   .expand(-1, num_cands_per_sample, -1)
                                   .contiguous()
@@ -107,6 +103,7 @@ class CrossencoderAgent(TorchRankerAgent):
         scores = self.model(tokens, segments)
         scores = scores.view(bsz, num_cands_per_sample)
         return scores
+
 
 class CrossEncoderModule(torch.nn.Module):
     """ A simple wrapper around the transformer encoder which adds a linear
@@ -136,13 +133,13 @@ class CrossEncoderModule(torch.nn.Module):
             padding_idx=null_idx,
             learn_positional_embeddings=opt['learn_positional_embeddings'],
             embeddings_scale=opt['embeddings_scale'],
-            reduction_type= opt.get('reduction_type', 'first'),
+            reduction_type=opt.get('reduction_type', 'first'),
             n_positions=n_positions,
             n_segments=2,
             activation=opt['activation'],
             variant=opt['variant'],
             output_scaling=opt['output_scaling'])
-        self.linear_layer = torch.nn.Linear(opt['embedding_size'],1)
+        self.linear_layer = torch.nn.Linear(opt['embedding_size'], 1)
 
     def forward(self, tokens, segments):
         """ Scores each concatenation text + candidate.

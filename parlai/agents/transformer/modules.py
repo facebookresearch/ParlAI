@@ -21,12 +21,14 @@ def _normalize(tensor, norm_layer):
     size = tensor.size()
     return norm_layer(tensor.view(-1, size[-1])).view(size)
 
+
 def surround(idx_vector, start_idx, end_idx):
     """ Surround the vector by start_idx and end_idx.
     """
     start_tensor = idx_vector.new_tensor([start_idx])
     end_tensor = idx_vector.new_tensor([end_idx])
     return torch.cat([start_tensor, idx_vector, end_tensor], 0)
+
 
 def _create_embeddings(dictionary, embedding_size, padding_idx):
     """Create and initialize word embeddings."""
@@ -61,6 +63,7 @@ def _build_encoder(
         output_scaling=opt['output_scaling']
     )
 
+
 def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
                    n_positions=1024, n_segments=0):
     return TransformerDecoder(
@@ -86,6 +89,7 @@ def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
 def gelu(tensor):
     return 0.5 * tensor * (1.0 + torch.erf(tensor / math.sqrt(2.0)))
 
+
 def get_n_positions_from_options(opt):
     if opt is None:
         return 1024
@@ -96,14 +100,13 @@ def get_n_positions_from_options(opt):
     else:
         # else, use the worst case from truncate
         n_positions = max(
-            opt.get('truncate') or  0,
+            opt.get('truncate') or 0,
             opt.get('text_truncate') or 0,
             opt.get('label_truncate') or 0
         )
         if n_positions == 0:
             n_positions = 1024
     return n_positions
-
 
 
 class TransformerMemNetModel(nn.Module):
@@ -722,8 +725,8 @@ class BasicAttention(nn.Module):
             self.cosine = nn.CosineSimilarity(dim=dim)
         self.attn = attn
         self.dim = dim
-        self.get_weights=get_weights
-        self.residual=residual
+        self.get_weights = get_weights
+        self.residual = residual
 
     def forward(self, xs, ys, mask_ys=None):
         """ xs: B x query_len x dim
@@ -742,7 +745,7 @@ class BasicAttention(nn.Module):
                 l1 = l1 / math.sqrt(d_k)
         if mask_ys is not None:
             attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
-            attn_mask = attn_mask.repeat(1,x_len,1)
+            attn_mask = attn_mask.repeat(1, x_len, 1)
             l1.masked_fill_(attn_mask, -float('inf'))
         l2 = self.softmax(l1)
         lhs_emb = torch.bmm(l2, ys)

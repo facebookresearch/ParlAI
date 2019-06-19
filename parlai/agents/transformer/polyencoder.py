@@ -6,13 +6,11 @@
 from .modules import TransformerEncoder
 from .modules import get_n_positions_from_options
 from .modules import surround
-from parlai.core.agents import Agent
-from parlai.core.utils import warn_once
-from parlai.core.utils import padded_3d
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .transformer import TransformerRankerAgent
 from .modules import BasicAttention, MultiHeadAttention
 import torch
+
 
 class PolyencoderAgent(TorchRankerAgent):
     """ Equivalent of bert_ranker/polyencoder and biencoder_multiple_output
@@ -65,7 +63,6 @@ class PolyencoderAgent(TorchRankerAgent):
                 )
             self.model = torch.nn.DataParallel(self.model)
 
-
     def build_model(self, states=None):
         self.model = PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
         return self.model
@@ -97,11 +94,12 @@ class PolyencoderAgent(TorchRankerAgent):
             _, _, cand_rep = self.model(cand_tokens=cand_vecs)
         elif len(cand_vecs.shape) == 2:
             _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
-            cand_rep = cand_rep.expand(bsz, bsz, -1).transpose(0,1).contiguous()
+            cand_rep = cand_rep.expand(bsz, bsz, -1).transpose(0, 1).contiguous()
         scores = self.model(ctxt_rep=ctxt_rep,
                             ctxt_rep_mask=ctxt_rep_mask,
                             cand_rep=cand_rep)
         return scores
+
 
 class PolyEncoderModule(torch.nn.Module):
     """ See https://arxiv.org/abs/1905.01969
@@ -124,7 +122,7 @@ class PolyEncoderModule(torch.nn.Module):
         # In case it's a polyencoder with code.
         if self.type == 'codes':
             # experimentally it seems that random with size = 1 was good.
-            codes = torch.empty(self.n_codes,embed_dim)
+            codes = torch.empty(self.n_codes, embed_dim)
             codes = torch.nn.init.uniform_(codes)
             self.codes = torch.nn.Parameter(codes)
 
@@ -172,14 +170,14 @@ class PolyEncoderModule(torch.nn.Module):
             padding_idx=null_idx,
             learn_positional_embeddings=opt['learn_positional_embeddings'],
             embeddings_scale=opt['embeddings_scale'],
-            reduction_type= reduction_type,
+            reduction_type=reduction_type,
             n_positions=n_positions,
             n_segments=2,
             activation=opt['activation'],
             variant=opt['variant'],
             output_scaling=opt['output_scaling'])
 
-    def encode(self,ctxt_tokens, cand_tokens):
+    def encode(self, ctxt_tokens, cand_tokens):
         """
             :param ctxt_tokens:
                 2D long tensor, batchsize x sent_len
@@ -216,7 +214,7 @@ class PolyEncoderModule(torch.nn.Module):
 
             if self.type == 'codes':
                 # Basic Attention and MultiHeadAttention share the same API.
-                ctxt_rep = self.code_attention(self.codes.repeat(bsz,1,1),
+                ctxt_rep = self.code_attention(self.codes.repeat(bsz, 1, 1),
                                                ctxt_out,
                                                ctxt_mask)
                 ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
@@ -255,7 +253,7 @@ class PolyEncoderModule(torch.nn.Module):
         return scores
 
     def forward(self, ctxt_tokens=None, cand_tokens=None,
-                      ctxt_rep=None, ctxt_rep_mask=None, cand_rep=None):
+                ctxt_rep=None, ctxt_rep_mask=None, cand_rep=None):
         """ Due to a limitation of parlai, we have to have one single model
             in the agent. And because we want to be able to use data-parallel,
             we need to have one single forward() method.
