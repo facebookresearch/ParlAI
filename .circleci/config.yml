@@ -132,6 +132,26 @@ jobs:
           name: Unit tests (py37)
           command: python setup.py test -s tests.suites.unittests -v
 
+  black:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - run:
+          name: JS Lint
+          working_directory: ~/ParlAI/parlai/mturk
+          command: |
+            npm install
+            npm run lint
+      - run:
+          name: black
+          working_directory: ~/ParlAI
+          command: |
+            pip install gitpython black  # only what's needd to lint
+            bash ./tests/lint_changed.sh -b
+
   lint:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
@@ -261,6 +281,7 @@ workflows:
   version: 2
   commit:
     jobs:
+      - black
       - lint
       - unittests_37
       - unittests_36
