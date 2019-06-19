@@ -17,6 +17,7 @@ from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.utils import Opt, load_opt_file
 
+
 def print_announcements(opt):
     """
     Output any announcements the ParlAI team wishes to make to users.
@@ -832,6 +833,11 @@ class ParlaiParser(argparse.ArgumentParser):
         return super().parse_known_args(args, namespace)
 
     def _load_known_opts(self, optfile, parsed):
+        """
+        _load_known_opts is called before args are parsed, to pull in the cmdline args
+        for the proper models/tasks/etc.
+        _load_opts (below) is for actually overriding opts after they are parsed.
+        """
         new_opt = load_opt_file(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
@@ -845,13 +851,12 @@ class ParlaiParser(argparse.ArgumentParser):
             # existing command line parameters take priority.
             if key not in opt:
                 raise RuntimeError(
-                    'Trying to set opt from file that does not exist: '  +
-                    str(key)
+                    'Trying to set opt from file that does not exist: ' + str(key)
                 )
             if key not in opt['override']:
                 opt[key] = value
                 opt['override'][key] = value
-                
+
     def _infer_datapath(self, opt):
         """
         Set the value for opt['datapath'] and opt['download_path'].
@@ -916,11 +921,11 @@ class ParlaiParser(argparse.ArgumentParser):
                     key = option_strings_dict[self.cli_args[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
-        
+
         # load opts if a file is provided.
         if self.opt.get('init_opt', None) is not None:
             self._load_opts(self.opt)
-        
+
         # map filenames that start with 'zoo:' to point to the model zoo dir
         if self.opt.get('model_file') is not None:
             self.opt['model_file'] = modelzoo_path(
