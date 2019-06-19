@@ -46,7 +46,6 @@ from parlai.core.utils import warn_once, load_opt_file
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
-import json
 import random
 import os
 
