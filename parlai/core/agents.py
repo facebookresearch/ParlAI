@@ -42,12 +42,11 @@ This module also provides a utility method:
 """
 
 from parlai.core.build_data import modelzoo_path
-from parlai.core.utils import Opt, warn_once, load_opt_file
+from parlai.core.utils import warn_once, load_opt_file
 from .metrics import Metrics, aggregate_metrics
 import copy
 import importlib
 import json
-import pickle
 import random
 import os
 
