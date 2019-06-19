@@ -7,11 +7,13 @@
 
 import argparse
 import importlib
+from copy import deepcopy
 import os
 import pickle
 import json
 import sys as _sys
 import datetime
+import traceback
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
@@ -479,6 +481,13 @@ class ParlaiParser(argparse.ArgumentParser):
         """Add common ParlAI args across all scripts."""
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
+            '-o',
+            '--init-opt',
+            default=None,
+            help='Path to json file of options. '
+            'Note: Further Command-line arguments override file-based options.',
+        )
+        parlai.add_argument(
             '-v',
             '--show-advanced-args',
             action='store_true',
@@ -771,6 +780,9 @@ class ParlaiParser(argparse.ArgumentParser):
     def add_extra_args(self, args=None):
         """Add more args depending on how known args are set."""
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
+        # Also load extra args options if a file is given.
+        if parsed.get('init_opt', None) is not None:
+            self._load_known_opts(parsed.get('init_opt'), parsed)
         parsed = self._infer_datapath(parsed)
 
         # find which image mode specified if any, and add additional arguments
@@ -822,6 +834,21 @@ class ParlaiParser(argparse.ArgumentParser):
             args = [a for a in args if a != '-h' and a != '--help']
         return super().parse_known_args(args, namespace)
 
+    def _load_known_opts(self, optfile, parsed):
+        with open(optfile, 'r', encoding='utf-8') as handle:
+            new_opt = json.load(handle)
+        for key, value in new_opt.items():
+            # existing commandline parameters take priority.
+            if key not in parsed or parsed[key] is None:
+                parsed[key] = value
+
+    def _load_opts(self, opt):
+        optfile = opt.get('init_opt')
+        with open(optfile, 'r', encoding='utf-8') as handle:
+            new_opt = json.load(handle)
+        for key, value in new_opt.items():
+            self.opt[key] = value
+
     def _infer_datapath(self, opt):
         """
         Set the value for opt['datapath'] and opt['download_path'].
@@ -857,6 +884,10 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_extra_args(args)
         self.args = super().parse_args(args=args)
         self.opt = Opt(vars(self.args))
+
+        # load opts if a file is provided.
+        if self.opt.get('init_opt', None) is not None:
+            self._load_opts(self.opt)
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
