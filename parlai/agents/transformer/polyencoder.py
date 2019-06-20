@@ -200,6 +200,17 @@ class PolyEncoderModule(torch.nn.Module):
             variant=opt['variant'],
             output_scaling=opt['output_scaling'])
 
+    def attend(self, attention_layer, queries, keys, mask):
+        """ Unify the API of MultiHeadAttention and
+            BasicAttention that are slighlty different
+        """
+        if isinstance(attention_layer, BasicAttention):
+            return attention_layer(queries, keys, mask)
+        elif isinstance(attention_layer, MultiHeadAttention):
+            return attention_layer(queries, keys, None, mask)
+        else:
+            raise Exception('Unrecognized type of attention')
+
     def encode(self, ctxt_tokens, cand_tokens):
         """
             :param ctxt_tokens:
@@ -236,10 +247,10 @@ class PolyEncoderModule(torch.nn.Module):
             dim = ctxt_out.size(2)
 
             if self.type == 'codes':
-                # Basic Attention and MultiHeadAttention share the same API.
-                ctxt_rep = self.code_attention(self.codes.repeat(bsz, 1, 1),
-                                               ctxt_out,
-                                               ctxt_mask)
+                ctxt_rep = self.attend(self.code_attention,
+                                       self.codes.repeat(bsz, 1, 1),
+                                       ctxt_out,
+                                       ctxt_mask)
                 ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
 
             elif self.type == 'n_first':
@@ -269,9 +280,10 @@ class PolyEncoderModule(torch.nn.Module):
         """
 
         # reduces the context representation to a 3D tensor bsz x num_cands x dim
-        ctxt_final_rep = self.attention(cand_embed,
-                                        ctxt_rep,
-                                        ctxt_rep_mask)
+        ctxt_final_rep = self.attend(self.attention,
+                                     cand_embed,
+                                     ctxt_rep,
+                                     ctxt_rep_mask)
         scores = torch.sum(ctxt_final_rep * cand_embed, 2)
         return scores
 
