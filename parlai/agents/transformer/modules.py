@@ -109,8 +109,6 @@ def gelu(tensor):
 
 
 def get_n_positions_from_options(opt):
-    if opt is None:
-        return 1024
     n_positions = 1024
     if opt.get('n_positions'):
         # if the number of positions is explicitly provided, use that
@@ -139,10 +137,6 @@ class TransformerMemNetModel(nn.Module):
         self.embeddings = _create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
-        if not opt.get('share_word_embeddings'):
-            self.cand_embeddings = _create_embeddings(
-                dictionary, opt['embedding_size'], self.pad_idx
-            )
 
         self.share_word_embedding = opt.get('share_word_embeddings', True)
         if not self.share_word_embedding:
