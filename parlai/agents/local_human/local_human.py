@@ -12,15 +12,22 @@ from parlai.core.utils import display_messages, load_cands
 
 
 class LocalHumanAgent(Agent):
-
     def add_cmdline_args(argparser):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('Local Human Arguments')
-        agent.add_argument('-fixedCands', '--local-human-candidates-file',
-                           default=None, type=str,
-                           help='File of label_candidates to send to other agent')
-        agent.add_argument('--single_turn', type='bool', default=False,
-                           help='If on, assumes single turn episodes.')
+        agent.add_argument(
+            '-fixedCands',
+            '--local-human-candidates-file',
+            default=None,
+            type=str,
+            help='File of label_candidates to send to other agent',
+        )
+        agent.add_argument(
+            '--single_turn',
+            type='bool',
+            default=False,
+            help='If on, assumes single turn episodes.',
+        )
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
@@ -29,9 +36,13 @@ class LocalHumanAgent(Agent):
         self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
 
     def observe(self, msg):
-        print(display_messages([msg],
-                               ignore_fields=self.opt.get('display_ignore_fields', ''),
-                               prettify=self.opt.get('display_prettify', False)))
+        print(
+            display_messages(
+                [msg],
+                ignore_fields=self.opt.get('display_ignore_fields', ''),
+                prettify=self.opt.get('display_prettify', False),
+            )
+        )
 
     def act(self):
         reply = {}

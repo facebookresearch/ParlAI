@@ -3,9 +3,12 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from worlds import \
-    MTurkPersonalityCaptionsStackRankWorld, RoleOnboardWorld, \
-    ExampleGenerator, CHOOSER
+from worlds import (
+    MTurkPersonalityCaptionsStackRankWorld,
+    RoleOnboardWorld,
+    ExampleGenerator,
+    CHOOSER,
+)
 from parlai.tasks.personality_captions.agents import PersonalityCaptionsTeacher
 from task_config import task_config
 import os
@@ -55,28 +58,58 @@ def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('-mx_rsp_time', '--max_resp_time', default=1800,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('-mx_onb_time', '--max_onboard_time', type=int,
-                           default=300, help='time limit for turker'
-                           'in onboarding')
-    argparser.add_argument('-ni', '--num_images', type=int,
-                           default=10, help='number of images to show \
-                           to turker')
-    argparser.add_argument('--data-path', type=str,
-                           default='', help='where to save data')
-    argparser.add_argument('--eval-data-path', type=str, default='',
-                           help='where to load data to rank from. Leave '
-                                'blank to use Personality-Captions data')
-    argparser.add_argument('-ck1', '--compare-key-1', type=str,
-                           default='comment',
-                           help='key of first option to compare')
-    argparser.add_argument('-ck2', '--compare-key-2', type=str,
-                           default='comment',
-                           help='key of second option to compare')
-    argparser.add_argument('--show-personality', default=True, type='bool',
-                           help='whether to show the personality')
+    argparser.add_argument(
+        '-mx_rsp_time',
+        '--max_resp_time',
+        default=1800,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '-mx_onb_time',
+        '--max_onboard_time',
+        type=int,
+        default=300,
+        help='time limit for turker' 'in onboarding',
+    )
+    argparser.add_argument(
+        '-ni',
+        '--num_images',
+        type=int,
+        default=10,
+        help='number of images to show \
+                           to turker',
+    )
+    argparser.add_argument(
+        '--data-path', type=str, default='', help='where to save data'
+    )
+    argparser.add_argument(
+        '--eval-data-path',
+        type=str,
+        default='',
+        help='where to load data to rank from. Leave '
+        'blank to use Personality-Captions data',
+    )
+    argparser.add_argument(
+        '-ck1',
+        '--compare-key-1',
+        type=str,
+        default='comment',
+        help='key of first option to compare',
+    )
+    argparser.add_argument(
+        '-ck2',
+        '--compare-key-2',
+        type=str,
+        default='comment',
+        help='key of second option to compare',
+    )
+    argparser.add_argument(
+        '--show-personality',
+        default=True,
+        type='bool',
+        help='whether to show the personality',
+    )
     PersonalityCaptionsTeacher.add_cmdline_args(argparser)
     opt = argparser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
@@ -85,15 +118,12 @@ def main():
         opt['data_path'] = os.getcwd() + '/data/' + opt['task']
     if opt.get('eval_data_path') == '':
         opt['eval_data_path'] = os.path.join(
-            opt['datapath'],
-            'personality_captions/train.json')
+            opt['datapath'], 'personality_captions/train.json'
+        )
     opt.update(task_config)
 
     mturk_agent_ids = [CHOOSER]
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
 
     example_generator = ExampleGenerator(opt)
     mturk_manager.setup_server(task_directory_path=directory_path)
@@ -122,9 +152,7 @@ def main():
             agents = workers[:]
             conv_idx = mturk_manager.conversation_index
             world = MTurkPersonalityCaptionsStackRankWorld(
-                opt,
-                agents=agents,
-                world_tag='conversation t_{}'.format(conv_idx),
+                opt, agents=agents, world_tag='conversation t_{}'.format(conv_idx)
             )
             while not world.episode_done():
                 world.parley()
@@ -136,7 +164,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

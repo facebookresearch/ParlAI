@@ -8,8 +8,8 @@
 from parlai.core.worlds import ExecutableWorld
 from projects.mastering_the_dungeon.tasks.graph_world2.graph import construct_graph
 
-class GraphWorld2(ExecutableWorld):
 
+class GraphWorld2(ExecutableWorld):
     def init_world(self):
         self.g = construct_graph(self.opt)
         for a in self.agents:
@@ -20,9 +20,9 @@ class GraphWorld2(ExecutableWorld):
             msg = {}
             msg['text'] = self.g.get_text(agent.id).rstrip('\n')
             msg['id'] = 'world'
-            msg['graph'] = self.g # preferably agents don't use the graph directly,
-                                  # but we make available here.
-            return msg            
+            msg['graph'] = self.g  # preferably agents don't use the graph directly,
+            # but we make available here.
+            return msg
         else:
             return None
 
@@ -33,4 +33,4 @@ class GraphWorld2(ExecutableWorld):
             valid = self.g.parse_exec(agent.id, act['text'])
             if not valid:
                 self.g.send_msg(agent.id, 'Invalid action.\n')
-        self.g.update_world() # other NPCs can move, etc.
+        self.g.update_world()  # other NPCs can move, etc.

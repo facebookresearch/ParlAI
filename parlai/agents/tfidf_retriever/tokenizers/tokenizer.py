@@ -11,6 +11,7 @@ import copy
 
 class Tokens(object):
     """A class to represent a list of tokenized text."""
+
     TEXT = 0
     TEXT_WS = 1
     SPAN = 2
@@ -30,7 +31,7 @@ class Tokens(object):
     def slice(self, i=None, j=None):
         """Return a view of the list of tokens from [i, j)."""
         new_tokens = copy.copy(self)
-        new_tokens.data = self.data[i: j]
+        new_tokens.data = self.data[i:j]
         return new_tokens
 
     def untokenize(self):
@@ -86,16 +87,19 @@ class Tokens(object):
               True or False to keep or not keep the ngram
             as_string: return the ngram as a string vs list
         """
+
         def _skip(gram):
             if not filter_fn:
                 return False
             return filter_fn(gram)
 
         words = self.words(uncased)
-        ngrams = [(s, e + 1)
-                  for s in range(len(words))
-                  for e in range(s, min(s + n, len(words)))
-                  if not _skip(words[s:e + 1])]
+        ngrams = [
+            (s, e + 1)
+            for s in range(len(words))
+            for e in range(s, min(s + n, len(words)))
+            if not _skip(words[s : e + 1])
+        ]
 
         # Concatenate into strings
         if as_strings:
@@ -117,7 +121,7 @@ class Tokens(object):
             if ner_tag != non_ent:
                 # Chomp the sequence
                 start = idx
-                while (idx < len(entities) and entities[idx] == ner_tag):
+                while idx < len(entities) and entities[idx] == ner_tag:
                     idx += 1
                 groups.append((self.slice(start, idx).untokenize(), ner_tag))
             else:
@@ -129,6 +133,7 @@ class Tokenizer(object):
     """Base tokenizer class.
     Tokenizers implement tokenize, which should return a Tokens class.
     """
+
     def tokenize(self, text):
         raise NotImplementedError
 

@@ -21,8 +21,16 @@ class Parley(object):
         memories: (list) of strings in order (if it matters)
     """
 
-    def __init__(self, context, response='', reward=0, candidates=[], memories=[],
-                 episode_done=False, **kwargs):
+    def __init__(
+        self,
+        context,
+        response='',
+        reward=0,
+        candidates=[],
+        memories=[],
+        episode_done=False,
+        **kwargs,
+    ):
         self.context = context
         self.response = response if response is not None else ''
         self.reward = reward
@@ -45,10 +53,7 @@ class Parley(object):
                 'episode_done': self.episode_done,
             }
         else:
-            pdict = {
-                'context': self.context,
-                'response': self.response,
-            }
+            pdict = {'context': self.context, 'response': self.response}
             if self.reward:
                 pdict['reward'] = self.reward
             if self.candidates:
@@ -89,8 +94,8 @@ def sanitize_parley(parley):
         parley.context = text
         parley.memories = mems
     parley.response = parley.response[0]
-    assert(isinstance(parley.candidates, list))
-    assert(isinstance(parley.memories, list))
+    assert isinstance(parley.candidates, list)
+    assert isinstance(parley.memories, list)
     return parley
 
 
@@ -116,16 +121,13 @@ def add_person_tokens(responses, first_speaker=None, last_speaker=1):
     text = ''
     for response in responses:
         tag = f"__p{speaker}__"
-        text += (' ' + tag + ' ' + response)
+        text += ' ' + tag + ' ' + response
         speaker = 1 if speaker == 2 else 2
     return text.strip()
 
 
 def extract_fb_episodes(datafile):
-    opt = {
-        'datatype': 'train',
-        'datafile': datafile,
-    }
+    opt = {'datatype': 'train', 'datafile': datafile}
     episode = None
     for parley in FbDialogTeacher(opt).setup_data(datafile):
         fields, is_new_episode = parley

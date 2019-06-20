@@ -14,7 +14,6 @@ import regex
 
 
 class RetrieverReaderAgent(Agent):
-
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'RetrieverReaderAgent'
@@ -33,11 +32,15 @@ class RetrieverReaderAgent(Agent):
         agent = argparser.add_argument_group('RetrieverReader Arguments')
         agent.add_argument('--retriever-model-file', type=str, default=None)
         agent.add_argument('--reader-model-file', type=str, default=None)
-        agent.add_argument('--num-retrieved', type=int, default=5,
-                           help='how many passages to retrieve')
-        agent.add_argument('--split-paragraphs', type='bool', default=True,
-                           help='Whether to split the retrieved passages into '
-                           'paragraphs')
+        agent.add_argument(
+            '--num-retrieved', type=int, default=5, help='how many passages to retrieve'
+        )
+        agent.add_argument(
+            '--split-paragraphs',
+            type='bool',
+            default=True,
+            help='Whether to split the retrieved passages into ' 'paragraphs',
+        )
         return agent
 
     def observe(self, obs):
@@ -74,7 +77,7 @@ class RetrieverReaderAgent(Agent):
         retrieved_txt = act_retriever.get('text', '')
         cands = act_retriever.get('text_candidates', [])
         if len(cands) > 0:
-            retrieved_txts = cands[:self.opt['num_retrieved']]
+            retrieved_txts = cands[: self.opt['num_retrieved']]
         else:
             retrieved_txts = [retrieved_txt]
         text = obs['text']

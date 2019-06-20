@@ -225,7 +225,7 @@ class MyHandler(BaseHTTPRequestHandler):
         """Handle GET."""
         paths = {
             '/': {'status': 200},
-            '/favicon.ico': {'status': 202},    # Need for chrome
+            '/favicon.ico': {'status': 202},  # Need for chrome
         }
         if self.path in paths:
             self.respond(paths[self.path])
@@ -237,10 +237,7 @@ class MyHandler(BaseHTTPRequestHandler):
         self.send_response(status_code)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        content = WEB_HTML.format(
-            STYLE_SHEET,
-            FONT_AWESOME,
-        )
+        content = WEB_HTML.format(STYLE_SHEET, FONT_AWESOME)
         return bytes(content, 'UTF-8')
 
     def respond(self, opts):

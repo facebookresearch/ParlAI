@@ -23,23 +23,42 @@ def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('--replay', action='store_true',
-                           help='Set to replay old interactions')
-    argparser.add_argument('--replay-log-file', type=str, default='',
-                           help='location of log to use if replay')
-    argparser.add_argument('--real-time', action='store_true',
-                           help='Set to replay in real time ')
-    argparser.add_argument('--replay-bot', action='store_true',
-                           help='Set to replay bot actions instead of human')
-    argparser.add_argument('--model-file', type=str, default='',
-                           help='language generator model file')
-    argparser.add_argument('--world-idx', type=int, default=-1,
-                           help='specify world to load')
-    argparser.add_argument('--start-idx', type=int, default=0,
-                           help='where to start replay, if replaying actions')
-    argparser.add_argument('--bot-type', type=str, default='discrete',
-                           choices=['discrete', 'natural'],
-                           help='which bot log to use')
+    argparser.add_argument(
+        '--replay', action='store_true', help='Set to replay old interactions'
+    )
+    argparser.add_argument(
+        '--replay-log-file',
+        type=str,
+        default='',
+        help='location of log to use if replay',
+    )
+    argparser.add_argument(
+        '--real-time', action='store_true', help='Set to replay in real time '
+    )
+    argparser.add_argument(
+        '--replay-bot',
+        action='store_true',
+        help='Set to replay bot actions instead of human',
+    )
+    argparser.add_argument(
+        '--model-file', type=str, default='', help='language generator model file'
+    )
+    argparser.add_argument(
+        '--world-idx', type=int, default=-1, help='specify world to load'
+    )
+    argparser.add_argument(
+        '--start-idx',
+        type=int,
+        default=0,
+        help='where to start replay, if replaying actions',
+    )
+    argparser.add_argument(
+        '--bot-type',
+        type=str,
+        default='discrete',
+        choices=['discrete', 'natural'],
+        help='which bot log to use',
+    )
     opt = argparser.parse_args()
     opt.update(task_config)
 
@@ -49,8 +68,7 @@ def main():
     task_directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(task_directory_path)
     opt['data_path'] = os.getcwd() + '/data/' + opt['task']
-    mturk_manager = MTurkManager(opt=opt,
-                                 mturk_agent_ids=mturk_agent_ids)
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
     mturk_manager.setup_server(task_directory_path=task_directory_path)
 
     try:
@@ -82,9 +100,9 @@ def main():
             mturk_agent_1 = workers[0]
             mturk_agent_2 = workers[1]
             conv_idx = mturk_manager.conversation_index
-            world = TalkTheWalkWorld(opt=opt,
-                                     agents=[mturk_agent_1, mturk_agent_2],
-                                     world_tag=conv_idx)
+            world = TalkTheWalkWorld(
+                opt=opt, agents=[mturk_agent_1, mturk_agent_2], world_tag=conv_idx
+            )
 
             while not world.episode_done():
                 world.parley()
@@ -96,7 +114,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
     except Exception:
         raise

@@ -42,8 +42,7 @@ class TestInheritence(unittest.TestCase):
         """Verify that class A does contain the super args."""
         parser = ParlaiParser(add_model_args=True)
         opt = parser.parse_args(
-            args=['--model', 'tests.test_ta_inheritence:SubClassA'],
-            print_args=False
+            args=['--model', 'tests.test_ta_inheritence:SubClassA'], print_args=False
         )
         self.assertEqual('a', opt.get('withclassinheritence'))
         # make sure we have the dictionary arg
@@ -57,8 +56,7 @@ class TestInheritence(unittest.TestCase):
         """Verify that class B does not contain the super args."""
         parser = ParlaiParser(add_model_args=True)
         opt = parser.parse_args(
-            args=['--model', 'tests.test_ta_inheritence:SubClassB'],
-            print_args=False
+            args=['--model', 'tests.test_ta_inheritence:SubClassB'], print_args=False
         )
         self.assertEqual('b', opt.get('withoutclassinheritence'))
         # make sure we don't have the dictionary now

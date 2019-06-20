@@ -24,9 +24,7 @@ import requests
 # )
 
 from parlai.mturk.core.agents import AssignState
-from parlai.mturk.core.socket_manager import (
-    Packet, SocketManager, StaticSocketManager
-)
+from parlai.mturk.core.socket_manager import Packet, SocketManager, StaticSocketManager
 from parlai.mturk.core.worker_manager import WorkerManager
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 from parlai.core.params import print_announcements
@@ -69,14 +67,15 @@ SNS_ASSIGN_RETURNED = 'AssignmentReturned'
 PARLAI_MTURK_NOTICE_URL = 'http://mturk.parl.ai/mturk/mturk_notice/'
 PARLAI_MTURK_UPLOAD_URL = 'http://mturk.parl.ai/mturk/mturk_stats/'
 PARLAI_CRED_DIR = os.path.expanduser('~/.parlai')
-PARLAI_MTURK_LOG_PERMISSION_FILE = \
-    os.path.join(PARLAI_CRED_DIR, 'mturk_log_permission.pickle')
+PARLAI_MTURK_LOG_PERMISSION_FILE = os.path.join(
+    PARLAI_CRED_DIR, 'mturk_log_permission.pickle'
+)
 TWO_WEEKS = 60 * 60 * 24 * 7 * 2
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-class LockFile():
+class LockFile:
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
 
     def __init__(self, filename):
@@ -98,16 +97,16 @@ class LockFile():
         os.remove(self.filename)
 
 
-class MTurkManager():
+class MTurkManager:
     """Manages interactions between MTurk agents as well as direct interactions
     between a world and the MTurk server.
     """
 
-    STATE_CREATED = 0             # object created
-    STATE_SERVER_ALIVE = 1        # heroku server running
-    STATE_INIT_RUN = 2            # run initialized
-    STATE_ACCEPTING_WORKERS = 3   # Socket ready to recieve workers
-    STATE_HITS_MADE = 4           # hits created
+    STATE_CREATED = 0  # object created
+    STATE_SERVER_ALIVE = 1  # heroku server running
+    STATE_INIT_RUN = 2  # run initialized
+    STATE_ACCEPTING_WORKERS = 3  # Socket ready to recieve workers
+    STATE_HITS_MADE = 4  # hits created
 
     def __init__(self, opt, mturk_agent_ids, is_test=False, use_db=False):
         """Create an MTurkManager using the given setup opts and a list of
@@ -116,6 +115,7 @@ class MTurkManager():
         if not is_test:
             try:
                 import parlai_internal.mturk.configs as local_configs
+
                 opt = local_configs.apply_default_opts(opt)
             except Exception:
                 # not all users will be drawing configs from internal settings
@@ -124,8 +124,10 @@ class MTurkManager():
         self.opt = opt
         if self.opt['unique_worker']:
             self.opt['allowed_conversations'] = 1
-        elif self.opt['max_hits_per_worker'] != 0 and \
-                self.opt['allowed_conversations'] == 0:
+        elif (
+            self.opt['max_hits_per_worker'] != 0
+            and self.opt['allowed_conversations'] == 0
+        ):
             self.opt['allowed_conversations'] = self.opt['max_hits_per_worker']
         self.server_url = None
         self.topic_arn = None
@@ -147,12 +149,9 @@ class MTurkManager():
                 self.hit_mult = hit_mult
                 break
 
-        self.required_hits = math.ceil(
-            base_required_hits * self.hit_mult
-        )
+        self.required_hits = math.ceil(base_required_hits * self.hit_mult)
         self.minimum_messages = opt.get('min_messages', 0)
-        self.auto_approve_delay = \
-            opt.get('auto_approve_delay', 4 * 7 * 24 * 3600)
+        self.auto_approve_delay = opt.get('auto_approve_delay', 4 * 7 * 24 * 3600)
         self.has_time_limit = opt.get('max_time', 0) > 0
         self.socket_manager = None
         self.worker_manager = WorkerManager(self, opt)
@@ -199,7 +198,7 @@ class MTurkManager():
                 '[OPT CONFIGURATION ISSUE] '
                 'allow_reviews is currently only supported on 2 person tasks, '
                 'overriding this value to false.',
-                should_print=True
+                should_print=True,
             )
             self.opt['allow_reviews'] = False
         if self.opt.get('frontend_version', 0) < 1:
@@ -213,7 +212,7 @@ class MTurkManager():
                         '{} only works when using the react frontend '
                         '(frontend_version >= 1), so this option will be '
                         'ignored'.format(feat),
-                        should_print=True
+                        should_print=True,
                     )
 
     def _init_state(self):
@@ -268,7 +267,8 @@ class MTurkManager():
             'health of the platform. If you accept we\'ll collect this data '
             'on all of your future runs. We\'d ask before collecting anything '
             'else, but currently we have no plans to. You can decline to '
-            'snooze this request for 2 weeks.')
+            'snooze this request for 2 weeks.'
+        )
         selected = ''
         while selected not in ['y', 'Y', 'n', 'N']:
             selected = input('Share worker rates? (y/n): ')
@@ -276,10 +276,7 @@ class MTurkManager():
                 print('Must type one of (Y/y/N/n)')
         if selected in ['y', 'Y']:
             print('Thanks for helping us make the platform better!')
-        permissions = {
-            'allowed': selected in ['y', 'Y'],
-            'asked_time': time.time()
-        }
+        permissions = {'allowed': selected in ['y', 'Y'], 'asked_time': time.time()}
 
         with open(PARLAI_MTURK_LOG_PERMISSION_FILE, 'wb+') as perm_file:
             pickle.dump(permissions, perm_file)
@@ -310,13 +307,17 @@ class MTurkManager():
                     for hit_id in self.hit_id_list.copy():
                         hit = self.get_hit(hit_id)
                         hit_data = hit['HIT']
-                        if hit_data['HITStatus'] in \
-                                ['Reviewable', 'Reviewing', 'Disposed']:
+                        if hit_data['HITStatus'] in [
+                            'Reviewable',
+                            'Reviewing',
+                            'Disposed',
+                        ]:
                             self.hit_id_list.remove(hit_id)
                 time.sleep(10)
 
         hit_status_thread = threading.Thread(
-            target=update_status, name='Hit-Status-Thread', daemon=True)
+            target=update_status, name='Hit-Status-Thread', daemon=True
+        )
         hit_status_thread.start()
 
     def _should_use_time_logs(self):
@@ -338,22 +339,22 @@ class MTurkManager():
                     # Initial loads should only reset if it's been a day,
                     # otherwise only need to check an hour for safety
                     compare_time = 24 * 60 * 60 if init_load else 60 * 60
-                    if time.time() - existing_times['last_reset'] < \
-                            compare_time and not force:
+                    if (
+                        time.time() - existing_times['last_reset'] < compare_time
+                        and not force
+                    ):
                         return  # do nothing if it's been less than a day
                     reset_workers = list(existing_times.keys())
                     reset_workers.remove('last_reset')
                     if len(reset_workers) != 0:
-                        self.worker_manager.un_time_block_workers(
-                            reset_workers)
+                        self.worker_manager.un_time_block_workers(reset_workers)
 
                 # Reset the time logs
                 os.remove(file_path)
             # new time logs
             with open(file_path, 'wb+') as time_log_file:
                 time_logs = {'last_reset': time.time()}
-                pickle.dump(time_logs, time_log_file,
-                            pickle.HIGHEST_PROTOCOL)
+                pickle.dump(time_logs, time_log_file, pickle.HIGHEST_PROTOCOL)
 
     def _log_working_time(self, mturk_agent):
         if not self._should_use_time_logs():
@@ -373,8 +374,7 @@ class MTurkManager():
                 existing_times[worker_id] = total_work_time
             os.remove(file_path)
             with open(file_path, 'wb+') as time_log_file:
-                pickle.dump(existing_times, time_log_file,
-                            pickle.HIGHEST_PROTOCOL)
+                pickle.dump(existing_times, time_log_file, pickle.HIGHEST_PROTOCOL)
 
         if total_work_time > int(self.opt.get('max_time')):
             self.worker_manager.time_block_worker(worker_id)
@@ -395,15 +395,14 @@ class MTurkManager():
             if self.accepting_workers:
                 # Move the worker into a waiting world
                 self.worker_manager.change_agent_conversation(
-                    agent=agent,
-                    conversation_id=conversation_id,
-                    new_agent_id='waiting',
+                    agent=agent, conversation_id=conversation_id, new_agent_id='waiting'
                 )
             else:
                 self.force_expire_hit(worker_id, assignment_id)
 
     def _expire_onboarding_pool(self):
         """Expire any agent that is in an onboarding thread"""
+
         def expire_func(agent):
             self.force_expire_hit(agent.worker_id, agent.assignment_id)
 
@@ -446,7 +445,7 @@ class MTurkManager():
                 if agent not in self.agent_pool:
                     shared_utils.print_and_log(
                         logging.DEBUG,
-                        "Adding worker {} to pool.".format(agent.worker_id)
+                        "Adding worker {} to pool.".format(agent.worker_id),
                     )
                     self.agent_pool.append(agent)
 
@@ -462,7 +461,8 @@ class MTurkManager():
         his conversation that a partner has disconnected.
         """
         self.worker_manager.handle_agent_disconnect(
-            worker_id, assignment_id, self._handle_partner_disconnect)
+            worker_id, assignment_id, self._handle_partner_disconnect
+        )
 
     def _handle_partner_disconnect(self, agent):
         """Send a message to an agent notifying them that a partner has
@@ -471,8 +471,9 @@ class MTurkManager():
         if agent is not None and not agent.is_final():
             # Update the assignment state
             agent.some_agent_disconnected = True
-            agent_messages = [m for m in agent.get_messages()
-                              if 'id' in m and m['id'] == agent.id]
+            agent_messages = [
+                m for m in agent.get_messages() if 'id' in m and m['id'] == agent.id
+            ]
             if len(agent_messages) < self.minimum_messages:
                 agent.set_status(AssignState.STATUS_PARTNER_DISCONNECT_EARLY)
             else:
@@ -482,11 +483,11 @@ class MTurkManager():
             data = agent.get_inactive_command_data()
 
             def disconnect_agent(*args):
-                self.socket_manager.close_channel(
-                    agent.get_connection_id())
+                self.socket_manager.close_channel(agent.get_connection_id())
 
-            self.send_command(agent.worker_id, agent.assignment_id, data,
-                              ack_func=disconnect_agent)
+            self.send_command(
+                agent.worker_id, agent.assignment_id, data, ack_func=disconnect_agent
+            )
 
     def _restore_agent_state(self, worker_id, assignment_id):
         """Send a command to restore the state of an agent who reconnected"""
@@ -510,8 +511,8 @@ class MTurkManager():
                     agent.request_message()
 
             state_thread = threading.Thread(
-                name='restore-agent-{}'.format(agent.worker_id),
-                target=send_state_data)
+                name='restore-agent-{}'.format(agent.worker_id), target=send_state_data
+            )
             state_thread.daemon = True
             state_thread.start()
 
@@ -524,10 +525,11 @@ class MTurkManager():
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a socket_manager with defined callbacks"""
-        assert self.task_state >= self.STATE_INIT_RUN, \
-            'socket cannot be set up until run is started'
+        assert (
+            self.task_state >= self.STATE_INIT_RUN
+        ), 'socket cannot be set up until run is started'
         socket_server_url = self.server_url
-        if (self.opt['local']):  # skip some hops for local stuff
+        if self.opt['local']:  # skip some hops for local stuff
             socket_server_url = "https://localhost"
         self.socket_manager = SocketManager(
             socket_server_url,
@@ -545,10 +547,7 @@ class MTurkManager():
         alive packet. This asks the socket manager to open a new channel and
         then handles ensuring the worker state is consistent
         """
-        shared_utils.print_and_log(
-            logging.DEBUG,
-            'on_agent_alive: {}'.format(pkt)
-        )
+        shared_utils.print_and_log(logging.DEBUG, 'on_agent_alive: {}'.format(pkt))
         worker_id = pkt.data['worker_id']
         hit_id = pkt.data['hit_id']
         assign_id = pkt.data['assignment_id']
@@ -558,7 +557,7 @@ class MTurkManager():
             # invalid assignment_id is an auto-fail
             shared_utils.print_and_log(
                 logging.WARN,
-                'Agent ({}) with no assign_id called alive'.format(worker_id)
+                'Agent ({}) with no assign_id called alive'.format(worker_id),
             )
             return
 
@@ -570,17 +569,21 @@ class MTurkManager():
 
         if self.db_logger is not None:
             self.db_logger.log_worker_note(
-                worker_id, assign_id,
+                worker_id,
+                assign_id,
                 'Reconnected with conversation_id {} at {}'.format(
-                    conversation_id, time.time()))
+                    conversation_id, time.time()
+                ),
+            )
 
         if not worker_state.has_assignment(assign_id):
             # New connection for the worker. First ensure that this connection
             # isn't violating our uniqueness constraints
             completed_assignments = worker_state.completed_assignments()
             max_hits = self.max_hits_per_worker
-            if ((self.is_unique and completed_assignments > 0) or
-                    (max_hits != 0 and completed_assignments > max_hits)):
+            if (self.is_unique and completed_assignments > 0) or (
+                max_hits != 0 and completed_assignments > max_hits
+            ):
                 text = (
                     'You have already participated in this HIT the maximum '
                     'number of times. This HIT is now expired. '
@@ -598,21 +601,20 @@ class MTurkManager():
             convs = worker_state.active_conversation_count()
             allowed_convs = self.opt['allowed_conversations']
             if allowed_convs > 0 and convs >= allowed_convs:
-                text = ('You can participate in only {} of these HITs at '
-                        'once. Please return this HIT and finish your '
-                        'existing HITs before accepting more.'.format(
-                            allowed_convs
-                        ))
+                text = (
+                    'You can participate in only {} of these HITs at '
+                    'once. Please return this HIT and finish your '
+                    'existing HITs before accepting more.'.format(allowed_convs)
+                )
                 self.force_expire_hit(worker_id, assign_id, text)
                 return
 
             # Initialize a new agent for this worker
-            self.worker_manager.assign_task_to_worker(
-                hit_id, assign_id, worker_id
-            )
+            self.worker_manager.assign_task_to_worker(hit_id, assign_id, worker_id)
             if self.db_logger is not None:
                 self.db_logger.log_worker_accept_assignment(
-                    worker_id, assign_id, hit_id)
+                    worker_id, assign_id, hit_id
+                )
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             self._onboard_new_agent(agent)
         else:
@@ -620,8 +622,7 @@ class MTurkManager():
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             agent.log_reconnect()
             agent.alived = True
-            if agent.conversation_id is not None and \
-                    conversation_id is not None:
+            if agent.conversation_id is not None and conversation_id is not None:
                 # agent.conversation_id is None is used in testing.
                 # conversation_id is None on a fresh reconnect event, where
                 # we need to restore state somehow and shouldn't just inherit
@@ -673,21 +674,21 @@ class MTurkManager():
                 # should resend the messages already in the conversation
                 if not conversation_id:
                     self._restore_agent_state(worker_id, assign_id)
-            elif (agent.get_status() == AssignState.STATUS_DISCONNECT or
-                  agent.get_status() == AssignState.STATUS_DONE or
-                  agent.get_status() == AssignState.STATUS_EXPIRED or
-                  agent.get_status() == AssignState.STATUS_RETURNED or
-                  agent.get_status() == AssignState.STATUS_PARTNER_DISCONNECT):
+            elif (
+                agent.get_status() == AssignState.STATUS_DISCONNECT
+                or agent.get_status() == AssignState.STATUS_DONE
+                or agent.get_status() == AssignState.STATUS_EXPIRED
+                or agent.get_status() == AssignState.STATUS_RETURNED
+                or agent.get_status() == AssignState.STATUS_PARTNER_DISCONNECT
+            ):
                 # inform the connecting user in all of these cases that the
                 # task is no longer workable, use appropriate message
                 data = agent.get_inactive_command_data()
 
                 def disconnect_agent(*args):
-                    self.socket_manager.close_channel(
-                        agent.get_connection_id())
+                    self.socket_manager.close_channel(agent.get_connection_id())
 
-                self.send_command(worker_id, assign_id, data,
-                                  ack_func=disconnect_agent)
+                self.send_command(worker_id, assign_id, data, ack_func=disconnect_agent)
 
     def _handle_mturk_message(self, pkt):
         assignment_id = pkt.assignment_id
@@ -733,10 +734,8 @@ class MTurkManager():
         shared_utils.print_and_log(
             logging.DEBUG,
             'Worker {} disconnected from {} in status {}'.format(
-                worker_id,
-                agent.conversation_id,
-                agent.get_status()
-            )
+                worker_id, agent.conversation_id, agent.get_status()
+            ),
         )
 
         if agent.get_status() == AssignState.STATUS_NONE:
@@ -787,16 +786,18 @@ class MTurkManager():
                     new_agent_id='onboarding',
                 )
                 # Wait for turker to be in onboarding status
-                did_arrive = \
-                    mturk_agent.wait_for_status(AssignState.STATUS_ONBOARDING)
+                did_arrive = mturk_agent.wait_for_status(AssignState.STATUS_ONBOARDING)
                 if not did_arrive:
                     return
                 # call onboarding function
                 save_data = self.onboard_function(mturk_agent)
                 if save_data is not None:
                     MTurkDataHandler.save_world_data(
-                        save_data, self.task_group_id,
-                        conversation_id, sandbox=self.is_sandbox)
+                        save_data,
+                        self.task_group_id,
+                        conversation_id,
+                        sandbox=self.is_sandbox,
+                    )
                 mturk_agent.clear_messages()
 
             # once onboarding is done, move into a waiting world
@@ -814,7 +815,7 @@ class MTurkManager():
         onboard_thread = threading.Thread(
             target=_onboard_function,
             args=(mturk_agent,),
-            name='onboard-{}-{}'.format(worker_id, assignment_id)
+            name='onboard-{}-{}'.format(worker_id, assignment_id),
         )
         onboard_thread.daemon = True
         onboard_thread.start()
@@ -825,8 +826,7 @@ class MTurkManager():
     def _no_agents_incomplete(self, agents):
         """Return True if all the given agents completed their task"""
         for agent in agents:
-            if not agent.is_final() or agent.get_status() != \
-                    AssignState.STATUS_DONE:
+            if not agent.is_final() or agent.get_status() != AssignState.STATUS_DONE:
                 return False
         return True
 
@@ -857,29 +857,25 @@ class MTurkManager():
             self.task_files_to_copy = []
         if not task_directory_path:
             task_directory_path = os.path.join(
-                self.opt['parlai_home'],
-                'parlai',
-                'mturk',
-                'tasks',
-                self.opt['task']
+                self.opt['parlai_home'], 'parlai', 'mturk', 'tasks', self.opt['task']
             )
         self.task_files_to_copy.append(
-            os.path.join(task_directory_path, 'html', 'cover_page.html'))
+            os.path.join(task_directory_path, 'html', 'cover_page.html')
+        )
         try:
-            for file_name in os.listdir(os.path.join(
-                    task_directory_path, 'html')):
-                self.task_files_to_copy.append(os.path.join(
-                    task_directory_path, 'html', file_name
-                ))
+            for file_name in os.listdir(os.path.join(task_directory_path, 'html')):
+                self.task_files_to_copy.append(
+                    os.path.join(task_directory_path, 'html', file_name)
+                )
         except FileNotFoundError:  # noqa F821 we don't support python2
             # No html dir exists
             pass
         for mturk_agent_id in self.mturk_agent_ids + ['onboarding']:
-            self.task_files_to_copy.append(os.path.join(
-                task_directory_path,
-                'html',
-                '{}_index.html'.format(mturk_agent_id)
-            ))
+            self.task_files_to_copy.append(
+                os.path.join(
+                    task_directory_path, 'html', '{}_index.html'.format(mturk_agent_id)
+                )
+            )
 
     def populate_task_files(self, task_directory_path):
         # Poplulate files to copy over to the server
@@ -892,29 +888,31 @@ class MTurkManager():
             }
         if not task_directory_path:
             task_directory_path = os.path.join(
-                self.opt['parlai_home'],
-                'parlai',
-                'mturk',
-                'tasks',
-                self.opt['task']
+                self.opt['parlai_home'], 'parlai', 'mturk', 'tasks', self.opt['task']
             )
-        self.task_files_to_copy['static'].append(os.path.join(
-            task_directory_path, 'frontend', 'static', 'cover_page.html'))
+        self.task_files_to_copy['static'].append(
+            os.path.join(task_directory_path, 'frontend', 'static', 'cover_page.html')
+        )
         try:
             frontend_contents = os.listdir(
-                os.path.join(task_directory_path, 'frontend'))
+                os.path.join(task_directory_path, 'frontend')
+            )
             if 'package.json' in frontend_contents:
                 # We take a package file to mean that this component will
                 # need to be built separately before importing
-                self.task_files_to_copy['needs_build'] = \
-                    os.path.join(task_directory_path, 'frontend')
+                self.task_files_to_copy['needs_build'] = os.path.join(
+                    task_directory_path, 'frontend'
+                )
             for dir in frontend_contents:
                 if dir in self.task_files_to_copy:
-                    for file_name in os.listdir(os.path.join(
-                            task_directory_path, 'frontend', dir)):
-                        self.task_files_to_copy[dir].append(os.path.join(
-                            task_directory_path, 'frontend', dir, file_name
-                        ))
+                    for file_name in os.listdir(
+                        os.path.join(task_directory_path, 'frontend', dir)
+                    ):
+                        self.task_files_to_copy[dir].append(
+                            os.path.join(
+                                task_directory_path, 'frontend', dir, file_name
+                            )
+                        )
         except FileNotFoundError:  # noqa F821 we don't support python2
             # No frontend dir exists
             pass
@@ -978,12 +976,13 @@ class MTurkManager():
         }
         total_cost = mturk_utils.calculate_mturk_cost(payment_opt=payment_opt)
         if not mturk_utils.check_mturk_balance(
-                balance_needed=total_cost,
-                is_sandbox=self.opt['is_sandbox']):
+            balance_needed=total_cost, is_sandbox=self.opt['is_sandbox']
+        ):
             raise SystemExit('Insufficient funds')
 
-        if ((not self.opt['is_sandbox']) and
-                (total_cost > 100 or self.opt['reward'] > 1)):
+        if (not self.opt['is_sandbox']) and (
+            total_cost > 100 or self.opt['reward'] > 1
+        ):
             confirm_string = '$%.2f' % total_cost
             expected_cost = total_cost / self.hit_mult
             expected_string = '$%.2f' % expected_cost
@@ -998,12 +997,12 @@ class MTurkManager():
                     confirm_string,
                     confirm_string,
                     confirm_string,
-                    expected_string
+                    expected_string,
                 ),
-                should_print=True
+                should_print=True,
             )
             check = input('Enter here: ')
-            if (check != confirm_string and ('$' + check) != confirm_string):
+            if check != confirm_string and ('$' + check) != confirm_string:
                 raise SystemExit('Cancelling')
 
         # Check to see if there are any additional notices on the parlai site
@@ -1011,11 +1010,13 @@ class MTurkManager():
             shared_utils.print_and_log(
                 logging.INFO,
                 'Querying the parlai website for possible notices...',
-                should_print=True)
+                should_print=True,
+            )
             endpoint = 'sandbox' if self.is_sandbox else 'live'
             notice_url = PARLAI_MTURK_NOTICE_URL + endpoint
             try:
                 import parlai_internal.mturk.configs as local_configs
+
                 notice_url = local_configs.get_true_url(notice_url)
             except Exception:
                 # not all users will be drawing configs from internal settings
@@ -1036,21 +1037,23 @@ class MTurkManager():
 
         self.logging_permitted = self._logging_permission_check()
 
-        shared_utils.print_and_log(logging.INFO, 'Setting up MTurk server...',
-                                   should_print=True)
+        shared_utils.print_and_log(
+            logging.INFO, 'Setting up MTurk server...', should_print=True
+        )
         self.is_unique = self.opt['unique_worker']
         self.max_hits_per_worker = self.opt.get('max_hits_per_worker', 0)
         mturk_utils.create_hit_config(
             opt=self.opt,
             task_description=self.opt['task_description'],
             unique_worker=self.is_unique,
-            is_sandbox=self.opt['is_sandbox']
+            is_sandbox=self.opt['is_sandbox'],
         )
 
         # Setup the server with a likely-unique app-name
         task_name = '{}-{}'.format(str(uuid.uuid4())[:8], self.opt['task'])
-        self.server_task_name = \
-            ''.join(e for e in task_name.lower() if e.isalnum() or e == '-')
+        self.server_task_name = ''.join(
+            e for e in task_name.lower() if e.isalnum() or e == '-'
+        )
         if 'heroku_team' in self.opt:
             heroku_team = self.opt['heroku_team']
         else:
@@ -1059,35 +1062,43 @@ class MTurkManager():
         if self.opt.get('frontend_version', 0) < 1:
             self.populate_legacy_task_files(task_directory_path)
             self.server_url = server_utils.setup_legacy_server(
-                self.server_task_name, self.task_files_to_copy,
-                self.opt['local'], heroku_team, self.opt['hobby'],
-                tmp_dir=self.opt['tmp_dir'])
+                self.server_task_name,
+                self.task_files_to_copy,
+                self.opt['local'],
+                heroku_team,
+                self.opt['hobby'],
+                tmp_dir=self.opt['tmp_dir'],
+            )
         else:
             self.populate_task_files(task_directory_path)
             self.server_url = server_utils.setup_server(
-                self.server_task_name, self.task_files_to_copy,
-                self.opt['local'], heroku_team, self.opt['hobby'],
-                tmp_dir=self.opt['tmp_dir'])
+                self.server_task_name,
+                self.task_files_to_copy,
+                self.opt['local'],
+                heroku_team,
+                self.opt['hobby'],
+                tmp_dir=self.opt['tmp_dir'],
+            )
 
         shared_utils.print_and_log(logging.INFO, self.server_url)
 
-        shared_utils.print_and_log(logging.INFO, "MTurk server setup done.\n",
-                                   should_print=True)
+        shared_utils.print_and_log(
+            logging.INFO, "MTurk server setup done.\n", should_print=True
+        )
         self.task_state = self.STATE_SERVER_ALIVE
 
     def start_new_run(self):
         """Clear state to prepare for a new run"""
-        assert self.task_state >= self.STATE_SERVER_ALIVE, \
-            'Cannot start a run before having a running server using ' \
+        assert self.task_state >= self.STATE_SERVER_ALIVE, (
+            'Cannot start a run before having a running server using '
             '`mturk_manager.setup_server()` first.'
+        )
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
         self._init_state()
         try:
             self.topic_arn = mturk_utils.setup_sns_topic(
-                self.opt['task'],
-                self.server_url,
-                self.task_group_id
+                self.opt['task'], self.server_url, self.task_group_id
             )
         except Exception as e:
             self.topic_arn = None
@@ -1095,7 +1106,7 @@ class MTurkManager():
                 logging.WARN,
                 'Botocore couldn\'t subscribe to HIT events, '
                 'perhaps you tried to register to localhost?',
-                should_print=True
+                should_print=True,
             )
             print(repr(e))
         if self.db_logger is not None:
@@ -1104,15 +1115,15 @@ class MTurkManager():
 
     def ready_to_accept_workers(self, timeout_seconds=None):
         """Set up socket to start communicating to workers"""
-        assert self.task_state >= self.STATE_INIT_RUN, \
-            'Cannot be ready to accept workers before starting a run with ' \
+        assert self.task_state >= self.STATE_INIT_RUN, (
+            'Cannot be ready to accept workers before starting a run with '
             '`mturk_manager.start_new_run()` first.'
-        shared_utils.print_and_log(logging.INFO,
-                                   'Local: Setting up WebSocket...',
-                                   not self.is_test)
+        )
+        shared_utils.print_and_log(
+            logging.INFO, 'Local: Setting up WebSocket...', not self.is_test
+        )
         self._setup_socket(timeout_seconds=timeout_seconds)
-        shared_utils.print_and_log(logging.INFO, 'WebSocket set up!',
-                                   should_print=True)
+        shared_utils.print_and_log(logging.INFO, 'WebSocket set up!', should_print=True)
         # Just in case create_hits was called first. To be removed when that
         # workflow is no longer supported
         if self.STATE_ACCEPTING_WORKERS > self.task_state:
@@ -1121,27 +1132,23 @@ class MTurkManager():
     def set_onboard_function(self, onboard_function):
         self.onboard_function = onboard_function
 
-    def start_task(self, eligibility_function, assign_role_function,
-                   task_function):
+    def start_task(self, eligibility_function, assign_role_function, task_function):
         """Handle running a task by checking to see when enough agents are
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
         """
-        assert self.task_state >= self.STATE_HITS_MADE, \
-            'Must have launched HITs with `mturk_manager.create_hits`' \
+        assert self.task_state >= self.STATE_HITS_MADE, (
+            'Must have launched HITs with `mturk_manager.create_hits`'
             ' to start the task'
+        )
         if callable(eligibility_function):
             # Convert legacy eligibility_functions to the new format
-            eligibility_function = {
-                'multiple': False,
-                'func': eligibility_function,
-            }
+            eligibility_function = {'multiple': False, 'func': eligibility_function}
         else:
             # Ensure the eligibility function is valid
             if 'func' not in eligibility_function:
                 shared_utils.print_and_log(
-                    logging.CRITICAL,
-                    "eligibility_function has no 'func'. Cancelling."
+                    logging.CRITICAL, "eligibility_function has no 'func'. Cancelling."
                 )
                 raise Exception(
                     'eligibility_function dict must contain a `func` field '
@@ -1150,7 +1157,7 @@ class MTurkManager():
             elif not callable(eligibility_function['func']):
                 shared_utils.print_and_log(
                     logging.CRITICAL,
-                    "eligibility_function['func'] not a function. Cancelling."
+                    "eligibility_function['func'] not a function. Cancelling.",
                 )
                 raise Exception(
                     "eligibility_function['func'] must contain a function. "
@@ -1166,12 +1173,10 @@ class MTurkManager():
         def _task_function(opt, agents, conversation_id):
             """Wait for agents to join the world, then run task function"""
             shared_utils.print_and_log(
-                logging.INFO,
-                'Starting task {}...'.format(conversation_id)
+                logging.INFO, 'Starting task {}...'.format(conversation_id)
             )
             shared_utils.print_and_log(
-                logging.DEBUG,
-                'Waiting for all agents to join the conversation...'
+                logging.DEBUG, 'Waiting for all agents to join the conversation...'
             )
             start_time = time.time()
             while True:
@@ -1190,7 +1195,7 @@ class MTurkManager():
                         logging.INFO,
                         'Timeout waiting for {}, move back to waiting'.format(
                             conversation_id
-                        )
+                        ),
                     )
                     self._move_agents_to_waiting(agents)
                     return
@@ -1198,18 +1203,18 @@ class MTurkManager():
 
             shared_utils.print_and_log(
                 logging.INFO,
-                'All agents joined the conversation {}!'.format(
-                    conversation_id
-                )
+                'All agents joined the conversation {}!'.format(conversation_id),
             )
             self.started_conversations += 1
-            save_data = \
-                task_function(mturk_manager=self, opt=opt, workers=agents)
+            save_data = task_function(mturk_manager=self, opt=opt, workers=agents)
 
             if save_data is not None:
                 MTurkDataHandler.save_world_data(
-                    save_data, self.task_group_id, conversation_id,
-                    sandbox=self.is_sandbox)
+                    save_data,
+                    self.task_group_id,
+                    conversation_id,
+                    sandbox=self.is_sandbox,
+                )
 
             # Delete extra state data that is now unneeded
             for agent in agents:
@@ -1236,8 +1241,7 @@ class MTurkManager():
                 if len(valid_agents) >= needed_agents:
                     # enough agents in pool to start new conversation
                     self.conversation_index += 1
-                    new_conversation_id = \
-                        't_{}'.format(self.conversation_index)
+                    new_conversation_id = 't_{}'.format(self.conversation_index)
 
                     # Add the required number of valid agents to the conv
                     agents = [a for a in valid_agents[:needed_agents]]
@@ -1258,7 +1262,7 @@ class MTurkManager():
                     task_thread = threading.Thread(
                         target=_task_function,
                         args=(self.opt, agents, new_conversation_id),
-                        name='task-{}'.format(new_conversation_id)
+                        name='task-{}'.format(new_conversation_id),
                     )
                     task_thread.daemon = True
                     task_thread.start()
@@ -1266,7 +1270,7 @@ class MTurkManager():
 
             # Once we've had enough conversations, finish and break
             compare_count = self.started_conversations
-            if (self.opt['count_complete']):
+            if self.opt['count_complete']:
                 compare_count = self.completed_conversations
             if compare_count >= self.num_conversations:
                 self.accepting_workers = False
@@ -1286,12 +1290,9 @@ class MTurkManager():
         """
         start_time = time.time()
         min_wait = self.opt['assignment_duration_in_seconds']
-        while time.time() - start_time < min_wait and \
-                len(self.hit_id_list) > 0:
+        while time.time() - start_time < min_wait and len(self.hit_id_list) > 0:
             self.expire_all_unassigned_hits()
-            time.sleep(
-                max(self.opt['assignment_duration_in_seconds'] / 60, 0.1)
-            )
+            time.sleep(max(self.opt['assignment_duration_in_seconds'] / 60, 0.1))
 
     def shutdown(self, force=False):
         """Handle any mturk client shutdown cleanup."""
@@ -1310,18 +1311,18 @@ class MTurkManager():
             pass
         finally:
             if self.server_task_name is not None:
-                server_utils.delete_server(self.server_task_name,
-                                           self.opt['local'],
-                                           tmp_dir=self.opt['tmp_dir'])
+                server_utils.delete_server(
+                    self.server_task_name,
+                    self.opt['local'],
+                    tmp_dir=self.opt['tmp_dir'],
+                )
             if self.topic_arn is not None:
                 mturk_utils.delete_sns_topic(self.topic_arn)
             if self.opt['unique_worker'] and not self.opt['unique_qual_name']:
-                mturk_utils.delete_qualification(self.unique_qual_id,
-                                                 self.is_sandbox)
+                mturk_utils.delete_qualification(self.unique_qual_id, self.is_sandbox)
             if self.socket_manager is not None:
                 self.socket_manager.shutdown()
-            if self.logging_permitted and not self.is_sandbox and \
-                    not self.is_test:
+            if self.logging_permitted and not self.is_sandbox and not self.is_test:
                 self._upload_worker_data()
             if self.worker_manager is not None:
                 self.worker_manager.shutdown()
@@ -1343,19 +1344,22 @@ class MTurkManager():
             agent.hit_is_expired = True
 
         if ack_func is None:
+
             def use_ack_func(*args):
-                self.socket_manager.close_channel(
-                    '{}_{}'.format(worker_id, assign_id))
+                self.socket_manager.close_channel('{}_{}'.format(worker_id, assign_id))
+
         else:
+
             def use_ack_func(*args):
                 ack_func(*args)
-                self.socket_manager.close_channel(
-                    '{}_{}'.format(worker_id, assign_id))
+                self.socket_manager.close_channel('{}_{}'.format(worker_id, assign_id))
 
         # Send the expiration command
         if text is None:
-            text = ('This HIT is expired, please return and take a new '
-                    'one if you\'d want to work on this task.')
+            text = (
+                'This HIT is expired, please return and take a new '
+                'one if you\'d want to work on this task.'
+            )
         data = {'text': data_model.COMMAND_EXPIRE_HIT, 'inactive_text': text}
         self.send_command(worker_id, assign_id, data, ack_func=use_ack_func)
 
@@ -1364,18 +1368,21 @@ class MTurkManager():
         within the expected window.
         """
         # Expire the hit for the disconnected user
-        text = ('You haven\'t entered a message in too long. As these HITs '
-                ' often require real-time interaction, this hit has '
-                'been expired and you have been considered disconnected. '
-                'Disconnect too frequently and you will be blocked from '
-                'working on these HITs in the future.')
+        text = (
+            'You haven\'t entered a message in too long. As these HITs '
+            ' often require real-time interaction, this hit has '
+            'been expired and you have been considered disconnected. '
+            'Disconnect too frequently and you will be blocked from '
+            'working on these HITs in the future.'
+        )
         self.force_expire_hit(worker_id, assign_id, text)
 
         # Send the disconnect event to all workers in the convo
         self._handle_agent_disconnect(worker_id, assign_id)
 
-    def send_message(self, receiver_id, assignment_id, data,
-                     blocking=True, ack_func=None):
+    def send_message(
+        self, receiver_id, assignment_id, data, blocking=True, ack_func=None
+    ):
         """Send a message through the socket manager,
         update conversation state
         """
@@ -1398,13 +1405,13 @@ class MTurkManager():
             data,
             conversation_id=conversation_id,
             blocking=blocking,
-            ack_func=ack_func
+            ack_func=ack_func,
         )
 
         shared_utils.print_and_log(
             logging.INFO,
             'Manager sending: {}'.format(packet),
-            should_print=self.opt['verbose']
+            should_print=self.opt['verbose'],
         )
         # Push outgoing message to the message thread to be able to resend
         # on a reconnect event
@@ -1413,8 +1420,9 @@ class MTurkManager():
         self.socket_manager.queue_packet(packet)
         return data['message_id']
 
-    def send_command(self, receiver_id, assignment_id, data, blocking=True,
-                     ack_func=None):
+    def send_command(
+        self, receiver_id, assignment_id, data, blocking=True, ack_func=None
+    ):
         """Sends a command through the socket manager,
         update conversation state
         """
@@ -1428,13 +1436,15 @@ class MTurkManager():
             assignment_id,
             data,
             blocking=blocking,
-            ack_func=ack_func
+            ack_func=ack_func,
         )
 
         agent = self.worker_manager._get_agent(receiver_id, assignment_id)
-        if (data['text'] != data_model.COMMAND_CHANGE_CONVERSATION and
-                data['text'] != data_model.COMMAND_RESTORE_STATE and
-                agent is not None):
+        if (
+            data['text'] != data_model.COMMAND_CHANGE_CONVERSATION
+            and data['text'] != data_model.COMMAND_RESTORE_STATE
+            and agent is not None
+        ):
             # Append last command, as it might be necessary to restore state
             agent.set_last_command(packet.data)
 
@@ -1444,23 +1454,21 @@ class MTurkManager():
         """Mark a group of agents as done to keep state consistent"""
         for agent in workers:
             if self.is_unique:
-                assert self.unique_qual_name is not None, \
-                    'Unique qual name must not be none to use is_unique'
-                self.give_worker_qualification(
-                    agent.worker_id,
-                    self.unique_qual_name,
-                )
+                assert (
+                    self.unique_qual_name is not None
+                ), 'Unique qual name must not be none to use is_unique'
+                self.give_worker_qualification(agent.worker_id, self.unique_qual_name)
             if not agent.is_final():
                 agent.set_status(AssignState.STATUS_DONE)
             if self.max_hits_per_worker > 0:
                 worker_state = self.worker_manager._get_worker(agent.worker_id)
                 completed_assignments = worker_state.completed_assignments()
-                assert self.unique_qual_name is not None, 'Unique qual name ' \
-                    'must not be none to use max_hits_per_worker'
+                assert self.unique_qual_name is not None, (
+                    'Unique qual name ' 'must not be none to use max_hits_per_worker'
+                )
                 if completed_assignments >= self.max_hits_per_worker:
                     self.give_worker_qualification(
-                        agent.worker_id,
-                        self.unique_qual_name,
+                        agent.worker_id, self.unique_qual_name
                     )
             if self.has_time_limit:
                 self._log_working_time(agent)
@@ -1485,8 +1493,10 @@ class MTurkManager():
         if not self.is_sandbox and not self.is_test:
             try:
                 import parlai_internal.mturk.configs as local_configs
-                qualifications = \
-                    local_configs.set_default_qualifications(qualifications)
+
+                qualifications = local_configs.set_default_qualifications(
+                    qualifications
+                )
             except Exception:
                 # not all users will be drawing configs from internal settings
                 pass
@@ -1503,11 +1513,13 @@ class MTurkManager():
                 'Hits could not be created as disconnect qualification could '
                 'not be acquired. Shutting down server.'
             )
-            qualifications.append({
-                'QualificationTypeId': block_qual_id,
-                'Comparator': 'DoesNotExist',
-                'ActionsGuarded': 'DiscoverPreviewAndAccept'
-            })
+            qualifications.append(
+                {
+                    'QualificationTypeId': block_qual_id,
+                    'Comparator': 'DoesNotExist',
+                    'ActionsGuarded': 'DiscoverPreviewAndAccept',
+                }
+            )
 
         # Add the soft block qualification if it has been specified
         if self.opt['block_qualification'] is not None:
@@ -1522,11 +1534,13 @@ class MTurkManager():
                 'Hits could not be created as block qualification could not be'
                 ' acquired. Shutting down server.'
             )
-            qualifications.append({
-                'QualificationTypeId': block_qual_id,
-                'Comparator': 'DoesNotExist',
-                'ActionsGuarded': 'DiscoverPreviewAndAccept'
-            })
+            qualifications.append(
+                {
+                    'QualificationTypeId': block_qual_id,
+                    'Comparator': 'DoesNotExist',
+                    'ActionsGuarded': 'DiscoverPreviewAndAccept',
+                }
+            )
 
         if self.has_time_limit:
             block_qual_name = '{}-max-daily-time'.format(self.task_group_id)
@@ -1544,11 +1558,13 @@ class MTurkManager():
                 'Hits could not be created as a time block qualification could'
                 ' not be acquired. Shutting down server.'
             )
-            qualifications.append({
-                'QualificationTypeId': block_qual_id,
-                'Comparator': 'DoesNotExist',
-                'ActionsGuarded': 'DiscoverPreviewAndAccept'
-            })
+            qualifications.append(
+                {
+                    'QualificationTypeId': block_qual_id,
+                    'Comparator': 'DoesNotExist',
+                    'ActionsGuarded': 'DiscoverPreviewAndAccept',
+                }
+            )
 
         if self.is_unique or self.max_hits_per_worker > 0:
             self.unique_qual_name = self.opt.get('unique_qual_name')
@@ -1559,11 +1575,13 @@ class MTurkManager():
                 'Prevents workers from completing a task too frequently',
                 self.is_sandbox,
             )
-            qualifications.append({
-                'QualificationTypeId': self.unique_qual_id,
-                'Comparator': 'DoesNotExist',
-                'ActionsGuarded': 'DiscoverPreviewAndAccept'
-            })
+            qualifications.append(
+                {
+                    'QualificationTypeId': self.unique_qual_id,
+                    'Comparator': 'DoesNotExist',
+                    'ActionsGuarded': 'DiscoverPreviewAndAccept',
+                }
+            )
 
         self.qualifications = qualifications
         return qualifications.copy()
@@ -1572,49 +1590,45 @@ class MTurkManager():
         """Handle creation for a specific number of hits/assignments
         Put created HIT ids into the hit_id_list
         """
-        shared_utils.print_and_log(logging.INFO,
-                                   'Creating {} hits...'.format(num_hits))
+        shared_utils.print_and_log(logging.INFO, 'Creating {} hits...'.format(num_hits))
 
         qualifications = self.get_qualification_list(qualifications)
 
         self.opt['assignment_duration_in_seconds'] = self.opt.get(
-            'assignment_duration_in_seconds', 30 * 60)
+            'assignment_duration_in_seconds', 30 * 60
+        )
         hit_type_id = mturk_utils.create_hit_type(
             hit_title=self.opt['hit_title'],
-            hit_description='{} (ID: {})'.format(self.opt['hit_description'],
-                                                 self.task_group_id),
+            hit_description='{} (ID: {})'.format(
+                self.opt['hit_description'], self.task_group_id
+            ),
             hit_keywords=self.opt['hit_keywords'],
             hit_reward=self.opt['reward'],
             # Set to 30 minutes by default
             assignment_duration_in_seconds=self.opt.get(
-                'assignment_duration_in_seconds', 30 * 60),
+                'assignment_duration_in_seconds', 30 * 60
+            ),
             is_sandbox=self.opt['is_sandbox'],
             qualifications=qualifications,
             auto_approve_delay=self.auto_approve_delay,
         )
         mturk_chat_url = '{}/chat_index?task_group_id={}'.format(
-            self.server_url,
-            self.task_group_id
+            self.server_url, self.task_group_id
         )
         shared_utils.print_and_log(logging.INFO, mturk_chat_url)
         mturk_page_url = None
 
         if self.topic_arn is not None:
-            mturk_utils.subscribe_to_hits(
-                hit_type_id,
-                self.is_sandbox,
-                self.topic_arn
-            )
+            mturk_utils.subscribe_to_hits(hit_type_id, self.is_sandbox, self.topic_arn)
 
         for _i in range(num_hits):
-            mturk_page_url, hit_id, mturk_response = \
-                mturk_utils.create_hit_with_hit_type(
-                    opt=self.opt,
-                    page_url=mturk_chat_url,
-                    hit_type_id=hit_type_id,
-                    num_assignments=1,
-                    is_sandbox=self.is_sandbox
-                )
+            mturk_page_url, hit_id, mturk_response = mturk_utils.create_hit_with_hit_type(
+                opt=self.opt,
+                page_url=mturk_chat_url,
+                hit_type_id=hit_type_id,
+                num_assignments=1,
+                is_sandbox=self.is_sandbox,
+            )
             if self.db_logger is not None:
                 self.db_logger.log_hit_status(mturk_response)
             self.hit_id_list.append(hit_id)
@@ -1630,13 +1644,12 @@ class MTurkManager():
                 'You should be calling `ready_to_accept_workers` before '
                 '`create_hits` to ensure that the socket is connected before'
                 'hits are added. This will be enforced in future versions.',
-                True
+                True,
             )
 
         if self.opt['max_connections'] == 0:
             mturk_page_url = self.create_additional_hits(
-                num_hits=self.required_hits,
-                qualifications=qualifications,
+                num_hits=self.required_hits, qualifications=qualifications
             )
         else:
             mturk_page_url = self.create_additional_hits(
@@ -1644,14 +1657,14 @@ class MTurkManager():
                 qualifications=qualifications,
             )
 
-        shared_utils.print_and_log(logging.INFO,
-                                   'Link to HIT: {}\n'.format(mturk_page_url),
-                                   should_print=True)
+        shared_utils.print_and_log(
+            logging.INFO, 'Link to HIT: {}\n'.format(mturk_page_url), should_print=True
+        )
         shared_utils.print_and_log(
             logging.INFO,
             'Waiting for Turkers to respond... (Please don\'t close'
             ' your laptop or put your computer into sleep or standby mode.)\n',
-            should_print=True
+            should_print=True,
         )
         self.task_state = self.STATE_HITS_MADE
         return mturk_page_url
@@ -1685,9 +1698,11 @@ class MTurkManager():
         HITs, though this only immediately expires those that aren't assigned.
         """
         # TODO note and mark assigned hits as ones to be expired later
-        shared_utils.print_and_log(logging.INFO,
-                                   'Expiring all unassigned HITs...',
-                                   should_print=not self.is_test)
+        shared_utils.print_and_log(
+            logging.INFO,
+            'Expiring all unassigned HITs...',
+            should_print=not self.is_test,
+        )
         completed_ids = self.worker_manager.get_complete_hits()
         for hit_id in self.hit_id_list:
             if hit_id not in completed_ids:
@@ -1698,28 +1713,23 @@ class MTurkManager():
         """approve work for a given assignment through the mturk client"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         client.approve_assignment(
-            AssignmentId=assignment_id, OverrideRejection=override_rejection)
+            AssignmentId=assignment_id, OverrideRejection=override_rejection
+        )
         if self.db_logger is not None:
             self.db_logger.log_approve_assignment(assignment_id)
         shared_utils.print_and_log(
-            logging.INFO,
-            'Assignment {} approved.'
-            ''.format(assignment_id),
+            logging.INFO, 'Assignment {} approved.' ''.format(assignment_id)
         )
 
     def reject_work(self, assignment_id, reason):
         """reject work for a given assignment through the mturk client"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
-        client.reject_assignment(
-            AssignmentId=assignment_id,
-            RequesterFeedback=reason
-        )
+        client.reject_assignment(AssignmentId=assignment_id, RequesterFeedback=reason)
         if self.db_logger is not None:
             self.db_logger.log_reject_assignment(assignment_id)
         shared_utils.print_and_log(
             logging.INFO,
-            'Assignment {} rejected for reason {}.'
-            ''.format(assignment_id, reason),
+            'Assignment {} rejected for reason {}.' ''.format(assignment_id, reason),
         )
 
     def approve_assignments_for_hit(self, hit_id, override_rejection=False):
@@ -1730,8 +1740,9 @@ class MTurkManager():
         assignments = self.get_assignments_for_hit(hit_id)
         for assignment in assignments:
             assignment_id = assignment['AssignmentId']
-            client.approve_assignment(AssignmentId=assignment_id,
-                                      OverrideRejection=override_rejection)
+            client.approve_assignment(
+                AssignmentId=assignment_id, OverrideRejection=override_rejection
+            )
 
     def block_worker(self, worker_id, reason):
         """Block a worker by id using the mturk client, passes reason along"""
@@ -1739,23 +1750,24 @@ class MTurkManager():
         client.create_worker_block(WorkerId=worker_id, Reason=reason)
         shared_utils.print_and_log(
             logging.INFO,
-            'Worker {} blocked for reason {}.'
-            ''.format(worker_id, reason),
+            'Worker {} blocked for reason {}.' ''.format(worker_id, reason),
         )
 
     def soft_block_worker(self, worker_id, qual='block_qualification'):
         """Soft block a worker by giving the worker the block qualification"""
         qual_name = self.opt.get(qual, None)
-        assert qual_name is not None, ('No qualification {} has been specified'
-                                       'in opt'.format(qual))
+        assert (
+            qual_name is not None
+        ), 'No qualification {} has been specified' 'in opt'.format(qual)
         self.give_worker_qualification(worker_id, qual_name)
 
     def un_soft_block_worker(self, worker_id, qual='block_qualification'):
         """Remove a soft block from a worker by removing a block qualification
             from the worker"""
         qual_name = self.opt.get(qual, None)
-        assert qual_name is not None, ('No qualification {} has been specified'
-                                       'in opt'.format(qual))
+        assert (
+            qual_name is not None
+        ), 'No qualification {} has been specified' 'in opt'.format(qual)
         self.remove_worker_qualification(worker_id, qual_name)
 
     def give_worker_qualification(self, worker_id, qual_name, qual_value=None):
@@ -1767,15 +1779,16 @@ class MTurkManager():
                 'Could not give worker {} qualification {}, as the '
                 'qualification could not be found to exist.'
                 ''.format(worker_id, qual_name),
-                should_print=True
+                should_print=True,
             )
             return
-        mturk_utils.give_worker_qualification(worker_id, qual_id, qual_value,
-                                              self.is_sandbox)
+        mturk_utils.give_worker_qualification(
+            worker_id, qual_id, qual_value, self.is_sandbox
+        )
         shared_utils.print_and_log(
             logging.INFO,
             'gave {} qualification {}'.format(worker_id, qual_name),
-            should_print=True
+            should_print=True,
         )
 
     def remove_worker_qualification(self, worker_id, qual_name, reason=''):
@@ -1787,16 +1800,17 @@ class MTurkManager():
                 'Could not remove from worker {} qualification {}, as the '
                 'qualification could not be found to exist.'
                 ''.format(worker_id, qual_name),
-                should_print=True
+                should_print=True,
             )
             return
         try:
-            mturk_utils.remove_worker_qualification(worker_id, qual_id,
-                                                    self.is_sandbox, reason)
+            mturk_utils.remove_worker_qualification(
+                worker_id, qual_id, self.is_sandbox, reason
+            )
             shared_utils.print_and_log(
                 logging.INFO,
                 'removed {}\'s qualification {}'.format(worker_id, qual_name),
-                should_print=True
+                should_print=True,
             )
         except Exception as e:
             shared_utils.print_and_log(
@@ -1804,46 +1818,46 @@ class MTurkManager():
                 'removing {}\'s qualification {} failed with error {}. This '
                 'can be because the worker didn\'t have that qualification.'
                 ''.format(worker_id, qual_name, repr(e)),
-                should_print=True
+                should_print=True,
             )
 
-    def create_qualification(self, qualification_name, description,
-                             can_exist=True):
+    def create_qualification(self, qualification_name, description, can_exist=True):
         """Create a new qualification. If can_exist is set, simply return
         the ID of the existing qualification rather than throw an error
         """
         if not can_exist:
-            qual_id = mturk_utils.find_qualification(qualification_name,
-                                                     self.is_sandbox)
+            qual_id = mturk_utils.find_qualification(
+                qualification_name, self.is_sandbox
+            )
             if qual_id is not None:
                 shared_utils.print_and_log(
                     logging.WARN,
                     'Could not create qualification {}, as it existed'
                     ''.format(qualification_name),
-                    should_print=True
+                    should_print=True,
                 )
                 return None
         return mturk_utils.find_or_create_qualification(
-            qualification_name,
-            description,
-            self.is_sandbox
+            qualification_name, description, self.is_sandbox
         )
 
-    def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason,
-                  unique_request_token):
+    def pay_bonus(
+        self, worker_id, bonus_amount, assignment_id, reason, unique_request_token
+    ):
         """Handles paying bonus to a turker, fails for insufficient funds.
         Returns True on success and False on failure
         """
         total_cost = mturk_utils.calculate_mturk_cost(
             payment_opt={'type': 'bonus', 'amount': bonus_amount}
         )
-        if not mturk_utils.check_mturk_balance(balance_needed=total_cost,
-                                               is_sandbox=self.is_sandbox):
+        if not mturk_utils.check_mturk_balance(
+            balance_needed=total_cost, is_sandbox=self.is_sandbox
+        ):
             shared_utils.print_and_log(
                 logging.WARN,
                 'Cannot pay bonus. Reason: Insufficient '
                 'funds in your MTurk account.',
-                should_print=True
+                should_print=True,
             )
             return False
 
@@ -1854,17 +1868,15 @@ class MTurkManager():
             BonusAmount=str(bonus_amount),
             AssignmentId=assignment_id,
             Reason=reason,
-            UniqueRequestToken=unique_request_token
+            UniqueRequestToken=unique_request_token,
         )
         if self.db_logger is not None:
             self.db_logger.log_pay_extra_bonus(
-                worker_id, assignment_id, bonus_amount, reason)
+                worker_id, assignment_id, bonus_amount, reason
+            )
         shared_utils.print_and_log(
             logging.INFO,
-            'Paid ${} bonus to WorkerId: {}'.format(
-                bonus_amount,
-                worker_id
-            )
+            'Paid ${} bonus to WorkerId: {}'.format(bonus_amount, worker_id),
         )
         return True
 
@@ -1872,9 +1884,7 @@ class MTurkManager():
         """Send an email to a worker through the mturk client"""
         client = mturk_utils.get_mturk_client(self.is_sandbox)
         response = client.notify_workers(
-            Subject=subject,
-            MessageText=message_text,
-            WorkerIds=[worker_id]
+            Subject=subject, MessageText=message_text, WorkerIds=[worker_id]
         )
         if len(response['NotifyWorkersFailureStatuses']) > 0:
             failure_message = response['NotifyWorkersFailureStatuses'][0]
@@ -1908,7 +1918,7 @@ class StaticMTurkManager(MTurkManager):
                 logging.WARN,
                 '[OPT CONFIGURATION ISSUE] '
                 'allow_reviews is not supported on single person tasks.',
-                should_print=True
+                should_print=True,
             )
             self.opt['allow_reviews'] = False
         if self.opt.get('frontend_version', 0) < 1:
@@ -1916,16 +1926,17 @@ class StaticMTurkManager(MTurkManager):
                 logging.WARN,
                 '[OPT CONFIGURATION ISSUE] '
                 'Static tasks must use the react version of the frontend.',
-                should_print=True
+                should_print=True,
             )
             raise Exception('Invalid mturk manager options')
 
     def _setup_socket(self, timeout_seconds=None):
         """Set up a static task socket_manager with defined callbacks"""
-        assert self.task_state >= self.STATE_INIT_RUN, \
-            'socket cannot be set up until run is started'
+        assert (
+            self.task_state >= self.STATE_INIT_RUN
+        ), 'socket cannot be set up until run is started'
         socket_server_url = self.server_url
-        if (self.opt['local']):  # skip some hops for local stuff
+        if self.opt['local']:  # skip some hops for local stuff
             socket_server_url = "https://localhost"
         self.socket_manager = StaticSocketManager(
             socket_server_url,
@@ -1943,10 +1954,7 @@ class StaticMTurkManager(MTurkManager):
         should only be called once per task. If it's called again, the
         task world will re-send the task details.
         """
-        shared_utils.print_and_log(
-            logging.DEBUG,
-            'on_agent_alive: {}'.format(pkt)
-        )
+        shared_utils.print_and_log(logging.DEBUG, 'on_agent_alive: {}'.format(pkt))
         worker_id = pkt.data['worker_id']
         hit_id = pkt.data['hit_id']
         assign_id = pkt.data['assignment_id']
@@ -1956,7 +1964,7 @@ class StaticMTurkManager(MTurkManager):
             # invalid assignment_id is an auto-fail
             shared_utils.print_and_log(
                 logging.WARN,
-                'Agent ({}) with no assign_id called alive'.format(worker_id)
+                'Agent ({}) with no assign_id called alive'.format(worker_id),
             )
             return
 
@@ -1968,17 +1976,21 @@ class StaticMTurkManager(MTurkManager):
 
         if self.db_logger is not None:
             self.db_logger.log_worker_note(
-                worker_id, assign_id,
+                worker_id,
+                assign_id,
                 'Reconnected with conversation_id {} at {}'.format(
-                    conversation_id, time.time()))
+                    conversation_id, time.time()
+                ),
+            )
 
         if not worker_state.has_assignment(assign_id):
             # New connection for the worker. First ensure that this connection
             # isn't violating our uniqueness constraints
             completed_assignments = worker_state.completed_assignments()
             max_hits = self.max_hits_per_worker
-            if ((self.is_unique and completed_assignments > 0) or
-                    (max_hits != 0 and completed_assignments > max_hits)):
+            if (self.is_unique and completed_assignments > 0) or (
+                max_hits != 0 and completed_assignments > max_hits
+            ):
                 text = (
                     'You have already participated in this HIT the maximum '
                     'number of times. This HIT is now expired. '
@@ -1996,21 +2008,20 @@ class StaticMTurkManager(MTurkManager):
             convs = worker_state.active_conversation_count()
             allowed_convs = self.opt['allowed_conversations']
             if allowed_convs > 0 and convs >= allowed_convs:
-                text = ('You can participate in only {} of these HITs at '
-                        'once. Please return this HIT and finish your '
-                        'existing HITs before accepting more.'.format(
-                            allowed_convs
-                        ))
+                text = (
+                    'You can participate in only {} of these HITs at '
+                    'once. Please return this HIT and finish your '
+                    'existing HITs before accepting more.'.format(allowed_convs)
+                )
                 self.force_expire_hit(worker_id, assign_id, text)
                 return
 
             # Initialize a new agent for this worker
-            self.worker_manager.assign_task_to_worker(
-                hit_id, assign_id, worker_id
-            )
+            self.worker_manager.assign_task_to_worker(hit_id, assign_id, worker_id)
             if self.db_logger is not None:
                 self.db_logger.log_worker_accept_assignment(
-                    worker_id, assign_id, hit_id)
+                    worker_id, assign_id, hit_id
+                )
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             self._add_agent_to_pool(agent)
             # TODO agents are added directly to the pool, but their liveliness
@@ -2022,8 +2033,7 @@ class StaticMTurkManager(MTurkManager):
             agent = self.worker_manager._get_agent(worker_id, assign_id)
             agent.log_reconnect()
             agent.alived = True
-            if agent.conversation_id is not None and \
-                    conversation_id is not None:
+            if agent.conversation_id is not None and conversation_id is not None:
                 # agent.conversation_id is None is used in testing.
                 # conversation_id is None on a fresh reconnect event, where
                 # we need to restore state somehow and shouldn't just inherit
@@ -2046,18 +2056,18 @@ class StaticMTurkManager(MTurkManager):
                 # should resend the messages already in the conversation
                 if not conversation_id:
                     self._restore_agent_state(worker_id, assign_id)
-            elif (agent.get_status() == AssignState.STATUS_DISCONNECT or
-                  agent.get_status() == AssignState.STATUS_DONE or
-                  agent.get_status() == AssignState.STATUS_EXPIRED or
-                  agent.get_status() == AssignState.STATUS_RETURNED or
-                  agent.get_status() == AssignState.STATUS_PARTNER_DISCONNECT):
+            elif (
+                agent.get_status() == AssignState.STATUS_DISCONNECT
+                or agent.get_status() == AssignState.STATUS_DONE
+                or agent.get_status() == AssignState.STATUS_EXPIRED
+                or agent.get_status() == AssignState.STATUS_RETURNED
+                or agent.get_status() == AssignState.STATUS_PARTNER_DISCONNECT
+            ):
                 # inform the connecting user in all of these cases that the
                 # task is no longer workable, use appropriate message
                 data = agent.get_inactive_command_data()
 
                 def disconnect_agent(*args):
-                    self.socket_manager.close_channel(
-                        agent.get_connection_id())
+                    self.socket_manager.close_channel(agent.get_connection_id())
 
-                self.send_command(worker_id, assign_id, data,
-                                  ack_func=disconnect_agent)
+                self.send_command(worker_id, assign_id, data, ack_func=disconnect_agent)

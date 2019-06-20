@@ -21,12 +21,12 @@ if __name__ == '__main__':
         model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
         model_file='models:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model',
         datatype='test',
-        numthreads=8
+        numthreads=8,
     )
     opt = parser.parse_args()
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
-    opt['model_type'] = 'kvmemnn' # for builder
+    opt['model_type'] = 'kvmemnn'  # for builder
     download_models(opt, fnames, 'personachat')
 
     # add additional model args

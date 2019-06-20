@@ -14,12 +14,29 @@ import numpy as np
 from torch.autograd import Variable
 import torch
 from copy import deepcopy
-from projects.mastering_the_dungeon.tasks.graph_world2.graph import DEFAULT_ROOMS, DEFAULT_CONTAINERS, DEFAULT_AGENTS, DEDUP_OBJECTS, DEDUP_PROPS
+from projects.mastering_the_dungeon.tasks.graph_world2.graph import (
+    DEFAULT_ROOMS,
+    DEFAULT_CONTAINERS,
+    DEFAULT_AGENTS,
+    DEDUP_OBJECTS,
+    DEDUP_PROPS,
+)
 
 nlp = spacy.load('en')
 
+
 def parse_action_tuple(insts):
-    if insts[0] in ['go', 'drop', 'wear', 'wield', 'eat', 'drink', 'remove', 'unwield', 'hit']:
+    if insts[0] in [
+        'go',
+        'drop',
+        'wear',
+        'wield',
+        'eat',
+        'drink',
+        'remove',
+        'unwield',
+        'hit',
+    ]:
         return insts[0], ' '.join(insts[1:])
     if insts[0] == 'get':
         args = ' '.join(insts[1:]).split(' from ')
@@ -38,10 +55,21 @@ def parse_action_tuple(insts):
         return 'put', args[0], args[1]
     assert False, insts
 
+
 def reverse_parse_action(action_tuple):
     if action_tuple[0] == 'stop':
         return 'STOP'
-    if action_tuple[0] in ['go', 'drop', 'wear', 'wield', 'eat', 'drink', 'remove', 'unwield', 'hit']:
+    if action_tuple[0] in [
+        'go',
+        'drop',
+        'wear',
+        'wield',
+        'eat',
+        'drink',
+        'remove',
+        'unwield',
+        'hit',
+    ]:
         return '{} {}'.format(action_tuple[0], action_tuple[1])
     if action_tuple[0] == 'get':
         if len(action_tuple) == 2:
@@ -56,8 +84,8 @@ def reverse_parse_action(action_tuple):
         return 'put {} in {}'.format(action_tuple[1], action_tuple[2])
     assert False, action_tuple
 
-class DataAgentBase(Agent):
 
+class DataAgentBase(Agent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -80,12 +108,13 @@ class DataAgentBase(Agent):
     def build(self):
         opt = self.opt
         word2cnt = [(k, v) for k, v in self.word2cnt.items()]
-        word2cnt.sort(key = lambda x: x[1], reverse=True)
+        word2cnt.sort(key=lambda x: x[1], reverse=True)
         word_offset, word2index = 2, {}
         word2index['PAD'] = 0
         word2index['UNK'] = 1
         for i in range(opt['vocab_size'] - word_offset):
-            if i >= len(word2cnt): break
+            if i >= len(word2cnt):
+                break
             word = word2cnt[i][0]
             word2index[word] = i + word_offset
         self.word2index = word2index
@@ -134,7 +163,8 @@ class DataAgentBase(Agent):
 
         for ent_i in DEDUP_OBJECTS + DEFAULT_CONTAINERS:
             for ent_j in DEFAULT_CONTAINERS:
-                if ent_i == ent_j: continue
+                if ent_i == ent_j:
+                    continue
                 action2id[('put', ent_i, ent_j)] = offset
                 offset += 1
                 action2id[('get', ent_i, ent_j)] = offset
@@ -142,7 +172,8 @@ class DataAgentBase(Agent):
 
         for ent_i in DEDUP_OBJECTS + DEFAULT_CONTAINERS:
             for ent_j in DEFAULT_AGENTS:
-                if ent_j == 'dragon': continue
+                if ent_j == 'dragon':
+                    continue
                 action2id[('give', ent_i, ent_j)] = offset
                 offset += 1
                 action2id[('take', ent_i, ent_j)] = offset
@@ -153,7 +184,7 @@ class DataAgentBase(Agent):
                 action2id[('hit', ent)] = offset
                 offset += 1
 
-        action2id[('stop', )] = offset
+        action2id[('stop',)] = offset
         offset += 1
 
         self.y_dim = offset
@@ -165,26 +196,28 @@ class DataAgentBase(Agent):
             self.id2action[v] = k
 
     def build_action_key(self):
-        action_key = np.zeros((self.y_dim, ), dtype=np.int64)
+        action_key = np.zeros((self.y_dim,), dtype=np.int64)
         for i in range(self.y_dim):
             action_tuple = self.get_action_tuple(i)
-            if len(action_tuple) <= 1: continue
+            if len(action_tuple) <= 1:
+                continue
             my_key = action_tuple[1]
             action_key[i] = self._get_word_index(my_key.replace(' ', '_'))
         self.action_key = action_key
 
     def build_second_action_key(self):
-        second_action_key = np.zeros((self.y_dim, ), dtype=np.int64)
+        second_action_key = np.zeros((self.y_dim,), dtype=np.int64)
         for i in range(self.y_dim):
             action_tuple = self.get_action_tuple(i)
-            if len(action_tuple) <= 2: continue
+            if len(action_tuple) <= 2:
+                continue
             my_key = action_tuple[2]
             second_action_key[i] = self._get_word_index(my_key.replace(' ', '_'))
         self.second_action_key = second_action_key
 
     def build_action_type(self):
         action_types = deepcopy(self.ACTION_TYPES)
-        action_type = np.zeros((self.y_dim, ), dtype=np.int64)
+        action_type = np.zeros((self.y_dim,), dtype=np.int64)
         for i in range(self.y_dim):
             action_tuple = self.get_action_tuple(i)
             my_type = action_tuple[0]
@@ -211,7 +244,10 @@ class DataAgentBase(Agent):
         check_mapping = np.zeros((self.y_dim, self.y_dim), dtype=np.float32)
         for i in range(self.y_dim):
             for j in range(self.y_dim):
-                if self.get_action_tuple(j) in key_to_check[check_to_key[self.get_action_tuple(i)]]:
+                if (
+                    self.get_action_tuple(j)
+                    in key_to_check[check_to_key[self.get_action_tuple(i)]]
+                ):
                     check_mapping[i, j] = 1.0
         self.check_mapping = check_mapping
 
@@ -233,7 +269,8 @@ class DataAgentBase(Agent):
             action_tuple = parse_action_tuple(action.split())
             action_id = self.get_action_id(action_tuple)
             mask[action_id] = 1.0
-        mask[self.get_action_id(('stop', ))] = 1.0
+        mask[self.get_action_id(('stop',))] = 1.0
+
 
 class ObjectChecklistDataAgent(DataAgentBase):
     def __init__(self, opt, shared=None):
@@ -244,19 +281,38 @@ class ObjectChecklistDataAgent(DataAgentBase):
         self.num_npcs = len(DEFAULT_AGENTS) - 1
 
     def build(self):
-        self.ACTION_TYPES = ['go', 'get', 'drop', 'eat', 'drink', 'wear', 'wield', 'remove', 'unwield', 'give', 'take', 'put', 'hit', 'stop']
+        self.ACTION_TYPES = [
+            'go',
+            'get',
+            'drop',
+            'eat',
+            'drink',
+            'wear',
+            'wield',
+            'remove',
+            'unwield',
+            'give',
+            'take',
+            'put',
+            'hit',
+            'stop',
+        ]
         super().build()
         self.build_action_id()
         self.build_action_key()
         self.build_second_action_key()
         self.build_action_type()
-        self.build_check_mapping()    
+        self.build_check_mapping()
 
     def get_room(self, g):
-        return self._get_word_index(g.node_to_desc_raw(g.node_contained_in('dragon')).replace(' ', '_'))
+        return self._get_word_index(
+            g.node_to_desc_raw(g.node_contained_in('dragon')).replace(' ', '_')
+        )
 
     def _tokenize(self, text, lower=True):
-        tokenized = ' '.join(list(map(lambda x: x.lower_ if lower else x.orth_, list(nlp(text)))))
+        tokenized = ' '.join(
+            list(map(lambda x: x.lower_ if lower else x.orth_, list(nlp(text))))
+        )
         for ent in DEFAULT_ROOMS + DEFAULT_CONTAINERS + DEFAULT_AGENTS + DEDUP_OBJECTS:
             tokenized = tokenized.replace(ent, ent.replace(' ', '_'))
         return tokenized.split()
@@ -267,13 +323,17 @@ class ObjectChecklistDataAgent(DataAgentBase):
         seq_in, seq_out = 0, 0
         tokens_list, inst_list, symb_points_list = [], [], []
         for observation in observations:
-            graph, text, actions = observation['graph'], observation['text'], observation['actions']
+            graph, text, actions = (
+                observation['graph'],
+                observation['text'],
+                observation['actions'],
+            )
             tokens_list.append(self._tokenize(text))
             seq_in = max(seq_in, len(tokens_list[-1]))
 
             graph = observation['graph']
             inst, symb_points = graph.parse(actions)
-            seq_out = max(seq_out, len(symb_points) - 1 + 1) # +1 for stop
+            seq_out = max(seq_out, len(symb_points) - 1 + 1)  # +1 for stop
             inst_list.append(inst)
             symb_points_list.append(symb_points)
 
@@ -297,7 +357,8 @@ class ObjectChecklistDataAgent(DataAgentBase):
 
         for i in range(batch_size):
             for j, token in enumerate(tokens_list[i]):
-                if j >= seq_in: break
+                if j >= seq_in:
+                    break
                 x[i, j] = self._get_word_index(token)
 
             inst = inst_list[i]
@@ -307,14 +368,14 @@ class ObjectChecklistDataAgent(DataAgentBase):
             action_tuples = []
             for j in range(len_plus_one - 1):
                 k, l = symb_points_list[i][j], symb_points_list[i][j + 1]
-                action_tuples.append(parse_action_tuple(inst[k: l]))
+                action_tuples.append(parse_action_tuple(inst[k:l]))
 
             for j in range(len_plus_one):
                 if j < len_plus_one - 1:
                     cur_tuple = action_tuples[j]
                     y[i, j, self.get_action_id(cur_tuple)] = 1.0
                 else:
-                    stop_tuple = ('stop', )
+                    stop_tuple = ('stop',)
                     y[i, j, self.get_action_id(stop_tuple)] = 1.0
 
                 current_room[i, j] = self.get_room(g)
@@ -323,9 +384,11 @@ class ObjectChecklistDataAgent(DataAgentBase):
 
                 if j < len_plus_one - 1:
                     k, l = symb_points_list[i][j], symb_points_list[i][j + 1]
-                    parse_success = g.parse_exec(' '.join(inst[k: l]))
+                    parse_success = g.parse_exec(' '.join(inst[k:l]))
                     if assert_:
-                        assert parse_success, ' '.join(inst[k: l]) + '  ' + ' '.join(inst)
+                        assert parse_success, (
+                            ' '.join(inst[k:l]) + '  ' + ' '.join(inst)
+                        )
 
                     counter_feat[i, j + 1] = counter_feat[i, j]
                     cur_tuple = action_tuples[j]
@@ -334,11 +397,37 @@ class ObjectChecklistDataAgent(DataAgentBase):
                         counter_feat[i, j + 1, action_id] += 1
 
         counter_feat = np.clip(counter_feat, None, opt['counter_max'])
-        return x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat
+        return (
+            x,
+            action_key,
+            second_action_key,
+            action_type,
+            current_room,
+            checked,
+            y,
+            y_mask,
+            counter_feat,
+        )
+
 
 class Seq2SeqDataAgent(DataAgentBase):
     def build(self):
-        self.ACTION_TYPES = ['go', 'get', 'drop', 'eat', 'drink', 'wear', 'wield', 'remove', 'unwield', 'give', 'take', 'put', 'hit', 'stop']
+        self.ACTION_TYPES = [
+            'go',
+            'get',
+            'drop',
+            'eat',
+            'drink',
+            'wear',
+            'wield',
+            'remove',
+            'unwield',
+            'give',
+            'take',
+            'put',
+            'hit',
+            'stop',
+        ]
         super().build()
         self.build_action_id()
 
@@ -348,13 +437,17 @@ class Seq2SeqDataAgent(DataAgentBase):
         seq_in, seq_out = 0, 0
         tokens_list, inst_list, symb_points_list = [], [], []
         for observation in observations:
-            graph, text, actions = observation['graph'], observation['text'], observation['actions']
+            graph, text, actions = (
+                observation['graph'],
+                observation['text'],
+                observation['actions'],
+            )
             tokens_list.append(self._tokenize(text))
             seq_in = max(seq_in, len(tokens_list[-1]))
 
             graph = observation['graph']
             inst, symb_points = graph.parse(actions)
-            seq_out = max(seq_out, len(symb_points) - 1 + 1) # +1 for stop
+            seq_out = max(seq_out, len(symb_points) - 1 + 1)  # +1 for stop
             inst_list.append(inst)
             symb_points_list.append(symb_points)
 
@@ -368,7 +461,8 @@ class Seq2SeqDataAgent(DataAgentBase):
 
         for i in range(batch_size):
             for j, token in enumerate(tokens_list[i]):
-                if j >= seq_in: break
+                if j >= seq_in:
+                    break
                 x[i, j] = self._get_word_index(token)
 
             inst = inst_list[i]
@@ -378,7 +472,7 @@ class Seq2SeqDataAgent(DataAgentBase):
             action_tuples = []
             for j in range(len_plus_one - 1):
                 k, l = symb_points_list[i][j], symb_points_list[i][j + 1]
-                action_tuples.append(parse_action_tuple(inst[k: l]))
+                action_tuples.append(parse_action_tuple(inst[k:l]))
 
             for j in range(len_plus_one):
                 if j < len_plus_one - 1:
@@ -387,19 +481,18 @@ class Seq2SeqDataAgent(DataAgentBase):
                     y[i, j, self.get_action_id(cur_tuple)] = 1.0
 
                 else:
-                    stop_tuple = ('stop', )
+                    stop_tuple = ('stop',)
                     y[i, j, self.get_action_id(stop_tuple)] = 1.0
 
                 if j < len_plus_one - 1:
                     k, l = symb_points_list[i][j], symb_points_list[i][j + 1]
-                    parse_success = g.parse_exec(' '.join(inst[k: l]))
+                    parse_success = g.parse_exec(' '.join(inst[k:l]))
                     if assert_:
-                        assert parse_success, ' '.join(inst[k: l])
+                        assert parse_success, ' '.join(inst[k:l])
         return x, y
 
 
 class ModelAgentBase(Agent):
-
     def __init__(self, opt, shared=None, data_agent=None):
         super().__init__(opt, shared)
         if not shared:
@@ -437,12 +530,13 @@ class ModelAgentBase(Agent):
             if token not in tokens_2:
                 fn += 1
         prec = 1.0 * tp / (tp + fp) if tp + fp > 0 else 0.0
-        recall = 1.0 * tp / (tp + fn) if tp + fn  > 0 else 0.0
+        recall = 1.0 * tp / (tp + fn) if tp + fn > 0 else 0.0
         f1 = 2.0 * prec * recall / (prec + recall) if prec + recall > 0 else 0.0
         return f1
 
     def act(self):
         return self.batch_act([self.observation])[0]
+
 
 class ObjectChecklistModelAgent(ModelAgentBase):
     def __init__(self, opt, shared=None, data_agent=None):
@@ -454,10 +548,32 @@ class ObjectChecklistModelAgent(ModelAgentBase):
         ori_len = len(observations)
         observations = [obv for obv in observations if 'text' in obv]
         if self.opt['datatype'] == 'train' or self.opt['datatype'] == 'pretrain':
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = self.data_agent.get_data(observations)
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = self._get_variable(x), self._get_variable(action_key), self._get_variable(second_action_key), self._get_variable(action_type), self._get_variable(current_room), self._get_variable(checked), self._get_variable(y), self._get_variable(y_mask), self._get_variable(counter_feat)
+            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = self.data_agent.get_data(
+                observations
+            )
+            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = (
+                self._get_variable(x),
+                self._get_variable(action_key),
+                self._get_variable(second_action_key),
+                self._get_variable(action_type),
+                self._get_variable(current_room),
+                self._get_variable(checked),
+                self._get_variable(y),
+                self._get_variable(y_mask),
+                self._get_variable(counter_feat),
+            )
 
-            loss = self.model.forward_loss(x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat)
+            loss = self.model.forward_loss(
+                x,
+                action_key,
+                second_action_key,
+                action_type,
+                current_room,
+                checked,
+                y,
+                y_mask,
+                counter_feat,
+            )
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
@@ -465,33 +581,85 @@ class ObjectChecklistModelAgent(ModelAgentBase):
             reply = [{'loss': loss.data[0]} for _ in range(ori_len)]
             return reply
         else:
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = self.data_agent.get_data(observations, 'valid')
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = self._get_variable(x, True), self._get_variable(action_key, True), self._get_variable(second_action_key, True), self._get_variable(action_type, True), self._get_variable(current_room, True), self._get_variable(checked, True), self._get_variable(y, True), self._get_variable(y_mask, True), self._get_variable(counter_feat)
+            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = self.data_agent.get_data(
+                observations, 'valid'
+            )
+            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = (
+                self._get_variable(x, True),
+                self._get_variable(action_key, True),
+                self._get_variable(second_action_key, True),
+                self._get_variable(action_type, True),
+                self._get_variable(current_room, True),
+                self._get_variable(checked, True),
+                self._get_variable(y, True),
+                self._get_variable(y_mask, True),
+                self._get_variable(counter_feat),
+            )
 
-            loss = self.model.forward_loss(x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat, False)
-            reply = [{'loss': 0.0, 'cnt': 0.0, 'acc': 0, 'len': 0, 'f1': 0, 'correct_data': [], 'wrong_data': []} for _ in range(ori_len)]
+            loss = self.model.forward_loss(
+                x,
+                action_key,
+                second_action_key,
+                action_type,
+                current_room,
+                checked,
+                y,
+                y_mask,
+                counter_feat,
+                False,
+            )
+            reply = [
+                {
+                    'loss': 0.0,
+                    'cnt': 0.0,
+                    'acc': 0,
+                    'len': 0,
+                    'f1': 0,
+                    'correct_data': [],
+                    'wrong_data': [],
+                }
+                for _ in range(ori_len)
+            ]
 
             check_mapping = self.data_agent.get_check_mapping()
             check_mapping = self._get_variable(check_mapping, True)
-            text_out = self.model.forward_predict(x, action_key, second_action_key, action_type, check_mapping, checked, [obv['graph'] for obv in observations], self.data_agent)
+            text_out = self.model.forward_predict(
+                x,
+                action_key,
+                second_action_key,
+                action_type,
+                check_mapping,
+                checked,
+                [obv['graph'] for obv in observations],
+                self.data_agent,
+            )
 
             for i in range(len(observations)):
-                data_rep = '{} ||| {} ||| {}'.format(observations[i]['actions'], ' '.join(text_out[i][: -1]), observations[i]['text'])
+                data_rep = '{} ||| {} ||| {}'.format(
+                    observations[i]['actions'],
+                    ' '.join(text_out[i][:-1]),
+                    observations[i]['text'],
+                )
 
-                graph_a, graph_b = observations[i]['graph'].copy(), observations[i]['graph'].copy()
+                graph_a, graph_b = (
+                    observations[i]['graph'].copy(),
+                    observations[i]['graph'].copy(),
+                )
                 graph_a.parse_exec(observations[i]['actions'])
-                graph_b.parse_exec(' '.join(text_out[i][: -1]))
+                graph_b.parse_exec(' '.join(text_out[i][:-1]))
                 if graph_a == graph_b:
                     reply[i]['acc'] = 1.0
                     reply[i]['correct_data'].append(data_rep)
                 else:
                     reply[i]['wrong_data'].append(data_rep)
 
-                inst, symb_points = observations[i]['graph'].parse(observations[i]['actions'])
+                inst, symb_points = observations[i]['graph'].parse(
+                    observations[i]['actions']
+                )
                 text_gt = []
                 for j in range(len(symb_points) - 1):
                     k, l = symb_points[j], symb_points[j + 1]
-                    text_gt.append(' '.join(inst[k: l]))
+                    text_gt.append(' '.join(inst[k:l]))
                 reply[i]['f1'] = self._get_f1(text_gt, text_out[i])
 
                 reply[i]['loss'] = loss.data[0]
@@ -499,6 +667,7 @@ class ObjectChecklistModelAgent(ModelAgentBase):
                 reply[i]['len'] = len(text_gt)
 
             return reply
+
 
 class Seq2SeqModelAgent(ModelAgentBase):
     def __init__(self, opt, shared=None, data_agent=None):
@@ -512,7 +681,7 @@ class Seq2SeqModelAgent(ModelAgentBase):
         if self.opt['datatype'] == 'train':
             x, y = self.data_agent.get_data(observations)
             x, y = self._get_variable(x), self._get_variable(y)
-            
+
             loss = self.model.forward_loss(x, y)
             self.optimizer.zero_grad()
             loss.backward()
@@ -526,27 +695,49 @@ class Seq2SeqModelAgent(ModelAgentBase):
             x, y = self._get_variable(x), self._get_variable(y)
 
             loss = self.model.forward_loss(x, y)
-            reply = [{'loss': 0.0, 'cnt': 0.0, 'acc': 0, 'len': 0, 'f1': 0, 'correct_data': [], 'wrong_data': []} for _ in range(ori_len)]
+            reply = [
+                {
+                    'loss': 0.0,
+                    'cnt': 0.0,
+                    'acc': 0,
+                    'len': 0,
+                    'f1': 0,
+                    'correct_data': [],
+                    'wrong_data': [],
+                }
+                for _ in range(ori_len)
+            ]
 
-            text_out = self.model.forward_predict(x, [obv['graph'] for obv in observations], self.data_agent)
+            text_out = self.model.forward_predict(
+                x, [obv['graph'] for obv in observations], self.data_agent
+            )
 
             for i in range(len(observations)):
-                data_rep = '{} ||| {} ||| {}'.format(observations[i]['actions'], ' '.join(text_out[i][: -1]), observations[i]['text'])
+                data_rep = '{} ||| {} ||| {}'.format(
+                    observations[i]['actions'],
+                    ' '.join(text_out[i][:-1]),
+                    observations[i]['text'],
+                )
 
-                graph_a, graph_b = observations[i]['graph'].copy(), observations[i]['graph'].copy()
+                graph_a, graph_b = (
+                    observations[i]['graph'].copy(),
+                    observations[i]['graph'].copy(),
+                )
                 graph_a.parse_exec(observations[i]['actions'])
-                graph_b.parse_exec(' '.join(text_out[i][: -1]))
+                graph_b.parse_exec(' '.join(text_out[i][:-1]))
                 if graph_a == graph_b:
                     reply[i]['acc'] = 1.0
                     reply[i]['correct_data'].append(data_rep)
                 else:
                     reply[i]['wrong_data'].append(data_rep)
 
-                inst, symb_points = observations[i]['graph'].parse(observations[i]['actions'])
+                inst, symb_points = observations[i]['graph'].parse(
+                    observations[i]['actions']
+                )
                 text_gt = []
                 for j in range(len(symb_points) - 1):
                     k, l = symb_points[j], symb_points[j + 1]
-                    text_gt.append(' '.join(inst[k: l]))
+                    text_gt.append(' '.join(inst[k:l]))
                 reply[i]['f1'] = self._get_f1(text_gt, text_out[i])
 
                 reply[i]['loss'] = loss.data[0]
@@ -554,4 +745,3 @@ class Seq2SeqModelAgent(ModelAgentBase):
                 reply[i]['len'] = len(text_gt)
 
             return reply
-

@@ -30,8 +30,9 @@ task_config['hit_keywords'] = 'chat,math'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-'''\'\'\'
+task_config[
+    'task_description'
+] = '''\'\'\'
 In this task, you will be given a math question to answer. Please answer numerically.<br><br>
 Only take one task at a time <br><br>
 

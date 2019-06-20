@@ -5,9 +5,13 @@ from parlai.core.agents import create_task_agent_from_taskname, create_agent
 from parlai.core.params import ParlaiParser
 from parlai.core.utils import AttrDict
 from parlai.mturk.core.mturk_manager import MTurkManager
-from worlds import \
-    MTurkWizardOfWikipediaWorld, RoleOnboardWorld, PersonasGenerator, \
-    WIZARD, APPRENTICE
+from worlds import (
+    MTurkWizardOfWikipediaWorld,
+    RoleOnboardWorld,
+    PersonasGenerator,
+    WIZARD,
+    APPRENTICE,
+)
 from task_config import task_config
 from parlai.core.dict import DictionaryAgent
 import os
@@ -48,8 +52,7 @@ def setup_title_to_passage(opt):
             for i in range(1, len(persona)):
                 p_i = persona[i]
                 if 'https' in p_i:
-                    topic = unquote(p_i[p_i.rfind('/') + 1:]).replace('_',
-                                                                      ' ')
+                    topic = unquote(p_i[p_i.rfind('/') + 1 :]).replace('_', ' ')
                     topics.append(topic)
     ordered_opt = opt.copy()
     ordered_opt['datatype'] = 'train:ordered:stream'
@@ -102,31 +105,65 @@ def main():
     DictionaryAgent.add_cmdline_args(argparser)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('-min_t', '--min_turns', default=3, type=int,
-                           help='minimum number of turns')
-    argparser.add_argument('-max_t', '--max_turns', default=5, type=int,
-                           help='maximal number of chat turns')
-    argparser.add_argument('-mx_rsp_time', '--max_resp_time', default=120,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('-mx_onb_time', '--max_onboard_time', type=int,
-                           default=300, help='time limit for turker'
-                           'in onboarding')
-    argparser.add_argument('--persona-type', default='both', type=str,
-                           choices=['both', 'self', 'other'],
-                           help='Which personas to load from personachat')
-    argparser.add_argument('--auto-approve-delay', type=int,
-                           default=3600 * 24 * 1, help='how long to wait for  \
-                           auto approval')
-    argparser.add_argument('--word-overlap-threshold', type=int, default=2,
-                           help='How much word overlap we want between message \
-                           and checked sentence')
-    argparser.add_argument('--num-good-sentence-threshold', type=int, default=2,
-                           help='How many good sentences with sufficient overlap \
-                           are necessary for turker to be considered good.')
-    argparser.add_argument('--num-passages-retrieved', type=int, default=7,
-                           help='How many passages to retrieve per dialog \
-                           message')
+    argparser.add_argument(
+        '-min_t', '--min_turns', default=3, type=int, help='minimum number of turns'
+    )
+    argparser.add_argument(
+        '-max_t',
+        '--max_turns',
+        default=5,
+        type=int,
+        help='maximal number of chat turns',
+    )
+    argparser.add_argument(
+        '-mx_rsp_time',
+        '--max_resp_time',
+        default=120,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '-mx_onb_time',
+        '--max_onboard_time',
+        type=int,
+        default=300,
+        help='time limit for turker' 'in onboarding',
+    )
+    argparser.add_argument(
+        '--persona-type',
+        default='both',
+        type=str,
+        choices=['both', 'self', 'other'],
+        help='Which personas to load from personachat',
+    )
+    argparser.add_argument(
+        '--auto-approve-delay',
+        type=int,
+        default=3600 * 24 * 1,
+        help='how long to wait for  \
+                           auto approval',
+    )
+    argparser.add_argument(
+        '--word-overlap-threshold',
+        type=int,
+        default=2,
+        help='How much word overlap we want between message \
+                           and checked sentence',
+    )
+    argparser.add_argument(
+        '--num-good-sentence-threshold',
+        type=int,
+        default=2,
+        help='How many good sentences with sufficient overlap \
+                           are necessary for turker to be considered good.',
+    )
+    argparser.add_argument(
+        '--num-passages-retrieved',
+        type=int,
+        default=7,
+        help='How many passages to retrieve per dialog \
+                           message',
+    )
 
     opt = argparser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
@@ -139,10 +176,7 @@ def main():
     mturk_agent_ids = [APPRENTICE, WIZARD]
     opt['min_messages'] = 2
 
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
     setup_personas_with_wiki_links(opt)
     ir_agent, task = setup_retriever(opt)
     persona_generator = PersonasGenerator(opt)
@@ -188,10 +222,7 @@ def main():
                     break
             return valid_workers.values() if len(valid_workers) == 2 else []
 
-        eligibility_function = {
-            'func': check_workers_eligibility,
-            'multiple': True,
-        }
+        eligibility_function = {'func': check_workers_eligibility, 'multiple': True}
 
         def assign_worker_roles(workers):
             if opt['is_sandbox']:
@@ -213,15 +244,13 @@ def main():
                 world_tag='conversation t_{}'.format(conv_idx),
                 ir_agent=ir_agent,
                 wiki_title_to_passage=wiki_title_to_passage,
-                task=task
+                task=task,
             )
             world.reset_random()
             while not world.episode_done():
                 world.parley()
             world.save_data()
-            if (world.convo_finished and
-                    not world.good_wiz and
-                    not opt['is_sandbox']):
+            if world.convo_finished and not world.good_wiz and not opt['is_sandbox']:
                 mturk_manager.soft_block_worker(world.wizard_worker)
             world.shutdown()
             world.review_work()
@@ -229,7 +258,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

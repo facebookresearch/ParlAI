@@ -73,19 +73,15 @@ ENGAGINGNESS_MSGS = [
 ]
 ENGAGINGNESS_CHOICES = ['not at all', 'a little', 'somewhat', 'a lot']
 
-INTERESTINGNESS_MSGS = [
-    'How interesting or boring did you find this conversation?',
-]
+INTERESTINGNESS_MSGS = ['How interesting or boring did you find this conversation?']
 INTERESTINGNESS_CHOICES = [
     'Very boring',
     'A little boring',
     'A little interesting',
-    'Very interesting'
+    'Very interesting',
 ]
 
-LISTENING_MSGS = [
-    'How much did the user seem to pay attention to what you said?'
-]
+LISTENING_MSGS = ['How much did the user seem to pay attention to what you said?']
 LISTENING_CHOICES = [
     'Always ignored what I said',
     'Mostly ignored what I said',
@@ -93,9 +89,7 @@ LISTENING_CHOICES = [
     'Always paid attention to what I said',
 ]
 
-INQUISITIVENESS_MSGS = [
-    'How much did the user try to get to know you?',
-]
+INQUISITIVENESS_MSGS = ['How much did the user try to get to know you?']
 INQUISITIVENESS_CHOICES = [
     "Didn't ask about me at all",
     "Asked about me some",
@@ -105,7 +99,7 @@ INQUISITIVENESS_CHOICES = [
 
 REPETITIVENESS_MSGS = [
     'How repetitive was this user?',
-    'Please select the sentences that you found repetitive:'
+    'Please select the sentences that you found repetitive:',
 ]
 REPETITIVENESS_CHOICES = [
     'Repeated themselves over and over',
@@ -116,30 +110,28 @@ REPETITIVENESS_CHOICES = [
 # Fluency
 FLUENCY_MSGS = [
     "How naturally did this user speak English?",
-    'Please select the sentences containing unnatural English:'
+    'Please select the sentences containing unnatural English:',
 ]
 FLUENCY_CHOICES = [
     'Very unnatural',
     'Mostly unnatural',
     'Mostly natural',
-    'Very natural'
+    'Very natural',
 ]
 
 # Consistency
 CONSISTENCY_MSGS = [
     "How often did this user say something which did <b>NOT</b> make sense?",
-    ("Please select the sentences which did <b>NOT</b> make sense:")
+    ("Please select the sentences which did <b>NOT</b> make sense:"),
 ]
 CONSISTENCY_CHOICES = [
     'Everything made perfect sense',
     "Some responses didn't make sense",
     "Most responses didn't make sense",
-    'Never made any sense'
+    'Never made any sense',
 ]
 
-HUMANNESS_MSGS = [
-    'Do you think this user is a bot or a human?'
-]
+HUMANNESS_MSGS = ['Do you think this user is a bot or a human?']
 HUMANNESS_CHOICES = [
     'Definitely a bot',
     'Probably a bot',
@@ -149,8 +141,8 @@ HUMANNESS_CHOICES = [
 
 # Persona
 PERSONA_MSG = (
-    'Which prompt (character) do you think the other user was ' +
-    'given for this conversation?  \n 1.<br> {} <br> 2.<br> {}'
+    'Which prompt (character) do you think the other user was '
+    + 'given for this conversation?  \n 1.<br> {} <br> 2.<br> {}'
 )
 PERSONA_CHOICES = ['1', '2']
 
@@ -184,9 +176,11 @@ class PersonasGenerator(object):
         datatype = opt['persona_datatype'].split(':')[0]
         dt = datatype + '_' + persona
         if datatype == 'test':
-            return os.path.join(opt['parlai_home'],
-                                'parlai_internal/projects/convai2/test_set',
-                                dt + '_original_no_cands.txt')
+            return os.path.join(
+                opt['parlai_home'],
+                'parlai_internal/projects/convai2/test_set',
+                dt + '_original_no_cands.txt',
+            )
         return os.path.join(opt['datapath'], 'ConvAI2', dt + '_original_no_cands.txt')
 
     def extract_personas(self):
@@ -211,6 +205,7 @@ class PersonasGenerator(object):
 
 class PersonaAssignWorld(MTurkOnboardWorld):
     """A world that assigns a persona to an agent."""
+
     def __init__(self, opt, mturk_agent):
         self.max_persona_time = opt['max_persona_time']
         self.human_eval = opt['human_eval']
@@ -223,19 +218,22 @@ class PersonaAssignWorld(MTurkOnboardWorld):
             # get model personas
             model_personas = self.mturk_agent.personas_generator.get_persona()
             while model_personas == personas:
-                model_personas = \
-                    self.mturk_agent.personas_generator.get_persona()
+                model_personas = self.mturk_agent.personas_generator.get_persona()
             self.mturk_agent.model_personas = model_personas
 
         persona_text = ''
         for persona in personas:
-            persona_text += '<b><span style="color:blue">' \
-                            '{}\n</span></b>'.format(persona.strip())
+            persona_text += '<b><span style="color:blue">' '{}\n</span></b>'.format(
+                persona.strip()
+            )
 
-        self.mturk_agent.observe({
-            'id': 'SYSTEM',
-            'show_persona': True,
-            'text': ONBOARD_MSG + '<br>' + persona_text + '<br>'})
+        self.mturk_agent.observe(
+            {
+                'id': 'SYSTEM',
+                'show_persona': True,
+                'text': ONBOARD_MSG + '<br>' + persona_text + '<br>',
+            }
+        )
 
         act = self.mturk_agent.act(timeout=self.max_persona_time)
         timed_out = self.check_timeout(act)
@@ -245,20 +243,28 @@ class PersonaAssignWorld(MTurkOnboardWorld):
 
     def check_timeout(self, act):
         if 'text' in act:
-            if ((act['text'] == '[TIMEOUT]') or (act['text'] == '[RETURNED]') or
-                    (act['text'] == '[DISCONNECT]')):
+            if (
+                (act['text'] == '[TIMEOUT]')
+                or (act['text'] == '[RETURNED]')
+                or (act['text'] == '[DISCONNECT]')
+            ):
                 return True
         return False
 
 
 class ControllableDialogEval(MultiAgentDialogWorld):
-    def __init__(self, opt, agents=None, shared=None,
-                 num_turns=6,
-                 max_resp_time=120,
-                 model_agent_opt=None,
-                 world_tag='',
-                 agent_timeout_shutdown=120,
-                 model_config=None):
+    def __init__(
+        self,
+        opt,
+        agents=None,
+        shared=None,
+        num_turns=6,
+        max_resp_time=120,
+        model_agent_opt=None,
+        world_tag='',
+        agent_timeout_shutdown=120,
+        model_config=None,
+    ):
 
         # TURN CONTROL
         self.opt = opt
@@ -305,9 +311,9 @@ class ControllableDialogEval(MultiAgentDialogWorld):
         if self.model_agent is not None:
             self.eval_agent = self.agents[0]
             self.model_personas = self.agents[0].model_personas
-            self.model_persona_text = '\n'.join([
-                'your persona: ' + pers for pers in self.model_personas
-            ])
+            self.model_persona_text = '\n'.join(
+                ['your persona: ' + pers for pers in self.model_personas]
+            )
         else:
             self.model_personas = None
             for idx in range(len(self.agents)):
@@ -326,13 +332,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
         return act
 
     def format_model_reply(self, text):
-        switch_list = [
-            (' .', '.'),
-            (' ,', ','),
-            (' ?', '?'),
-            (' !', '!'),
-            (" ' ", "'"),
-        ]
+        switch_list = [(' .', '.'), (' ,', ','), (' ?', '?'), (' !', '!'), (" ' ", "'")]
         # add the spaces so that
         new_text = text.lower()
 
@@ -365,9 +365,16 @@ class ControllableDialogEval(MultiAgentDialogWorld):
     def format_personachat_text(self, text):
         new_text = text.lower()
 
-        switch_list = [("we're", "were"), ("let's", "lets"), ("it's", "its"),
-                       ("who's", "whos"), ("you're", "youre"),
-                       ("you've", "youve"), ("he'd", "hed"), ("he'll", "hell")]
+        switch_list = [
+            ("we're", "were"),
+            ("let's", "lets"),
+            ("it's", "its"),
+            ("who's", "whos"),
+            ("you're", "youre"),
+            ("you've", "youve"),
+            ("he'd", "hed"),
+            ("he'll", "hell"),
+        ]
         for tup in switch_list:
             new_text = new_text.replace(tup[0], tup[1])
 
@@ -386,8 +393,10 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             for idx, agent in enumerate(self.agents):
                 persona_text = ''
                 for s in self.personas[idx]:
-                    persona_text += '<b><span style="color:blue">' \
-                                    '{}\n</span></b>'.format(s.strip())
+                    persona_text += (
+                        '<b><span style="color:blue">'
+                        '{}\n</span></b>'.format(s.strip())
+                    )
                 control_msg = self.get_control_msg()
                 control_msg['persona_text'] = persona_text
                 control_msg['text'] = self.get_instruction(
@@ -404,10 +413,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
         if self.turn_idx == self.n_turn + 1:
             for idx, agent in enumerate(self.agents):
                 control_msg = self.get_control_msg()
-                control_msg['text'] = self.get_instruction(
-                    idx,
-                    tag='exceed_min_turns'
-                )
+                control_msg['text'] = self.get_instruction(idx, tag='exceed_min_turns')
                 control_msg['exceed_min_turns'] = True
                 agent.observe(validate(control_msg))
 
@@ -416,9 +422,10 @@ class ControllableDialogEval(MultiAgentDialogWorld):
         if self.other_first and self.turn_idx == 1:
             if self.model_agent is not None:
                 # Model must observe its persona
-                persona_act = {'text': '\n'.join([self.model_persona_text,
-                                                  '__SILENCE__']),
-                               'episode_done': False}
+                persona_act = {
+                    'text': '\n'.join([self.model_persona_text, '__SILENCE__']),
+                    'episode_done': False,
+                }
                 self.model_agent.observe(persona_act)
                 self.bot_seen_persona = True
                 model_act = copy.deepcopy(self.model_agent.act())
@@ -456,15 +463,13 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             if self.turn_idx >= self.n_turn:
                 if not self.other_first:
                     self.dialog_list = [
-                        '\n'.join(
-                            [self.dialog[i][1], self.dialog[i + 1][1]]
-                        ) for i in range(0, len(self.dialog), 2)
+                        '\n'.join([self.dialog[i][1], self.dialog[i + 1][1]])
+                        for i in range(0, len(self.dialog), 2)
                     ]
                 else:
                     self.dialog_list = [' \n' + self.dialog[0][1]] + [
-                        '\n'.join(
-                            [self.dialog[i][1], self.dialog[i + 1][1]]
-                        ) for i in range(1, len(self.dialog) - 1, 2)
+                        '\n'.join([self.dialog[i][1], self.dialog[i + 1][1]])
+                        for i in range(1, len(self.dialog) - 1, 2)
                     ]
                 self.parallel_eval_mode()
 
@@ -545,14 +550,12 @@ class ControllableDialogEval(MultiAgentDialogWorld):
         return self._evaluate_characteristic(
             INTERESTINGNESS_MSGS[0],
             INTERESTINGNESS_CHOICES,
-            self.interestingness_scores
+            self.interestingness_scores,
         )
 
     def evaluate_listening(self):
         return self._evaluate_characteristic(
-            LISTENING_MSGS[0],
-            LISTENING_CHOICES,
-            self.listening_scores
+            LISTENING_MSGS[0], LISTENING_CHOICES, self.listening_scores
         )
 
     def evaluate_repetitiveness(self):
@@ -591,9 +594,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
 
     def evaluate_humanness(self):
         return self._evaluate_characteristic(
-            HUMANNESS_MSGS[0],
-            HUMANNESS_CHOICES,
-            self.humanness_scores,
+            HUMANNESS_MSGS[0], HUMANNESS_CHOICES, self.humanness_scores
         )
 
     def evaluate_fluency(self):
@@ -618,9 +619,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             if timeout:
                 return False
             if 'text' in act:
-                self.fluency_scores.append(
-                    [int(x) - 1 for x in act['text'].split(',')]
-                )
+                self.fluency_scores.append([int(x) - 1 for x in act['text'].split(',')])
         return True
 
     def evaluate_consistency(self):
@@ -667,16 +666,12 @@ class ControllableDialogEval(MultiAgentDialogWorld):
                 is_correct = False
             _text = ''
             for s in dt:
-                _text += '<b><span style="color:blue">' + \
-                    s.strip() + '</span></b><br>'
+                _text += '<b><span style="color:blue">' + s.strip() + '</span></b><br>'
             cand_text.append((is_correct, _text))
         random.shuffle(cand_text)
 
         control_msg = self.get_control_msg()
-        control_msg['text'] = PERSONA_MSG.format(
-            cand_text[0][1],
-            cand_text[1][1]
-        )
+        control_msg['text'] = PERSONA_MSG.format(cand_text[0][1], cand_text[1][1])
         control_msg['button_choices'] = '</ROUND>'.join(PERSONA_CHOICES)
         self.eval_agent.observe(validate(control_msg))
         act = self.eval_agent.act(timeout=self.max_resp_time)
@@ -692,6 +687,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
         to do the evaluation if their are two agents. If there is only
         one agent, it performs the evaluation.
         """
+
         def eval_or_shutdown(agent):
             if self.model_agent is None and agent == self.other_agent:
                 control_msg = self.get_control_msg()
@@ -746,7 +742,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
     def save_data(self):
         convo_finished = True
         bad_workers = []
-        if (self.dialog == [] or self.persona_scores == []):
+        if self.dialog == [] or self.persona_scores == []:
             convo_finished = False
 
         self.convo_finished = convo_finished
@@ -755,11 +751,12 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             os.makedirs(data_path)
         if convo_finished:
             filename = os.path.join(
-                data_path, '{}_{}_{}.json'.format(
+                data_path,
+                '{}_{}_{}.json'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type
-                )
+                    self.task_type,
+                ),
             )
         else:
             filename = os.path.join(
@@ -767,40 +764,40 @@ class ControllableDialogEval(MultiAgentDialogWorld):
                 '{}_{}_{}_incomplete.json'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type
-                )
+                    self.task_type,
+                ),
             )
-        json.dump({
-            'dialog': self.dialog,
-            'dialog_list': self.dialog_list,
-            'other_first': self.other_first,
-            'bot_went_first': self.other_first,
-            'start_time': self.start_time,
-            'timestamp': time.time(),
-            'total_time': time.time() - self.start_time,
-            'workers': [ag.worker_id for ag in self.agents],
-            'hit_id': [ag.hit_id for ag in self.agents],
-            'assignment_id': [ag.assignment_id for ag in self.agents],
-            'human_personas': [ag.personas for ag in self.agents],
-            'model_personas': self.model_personas,
-            'bad_workers': bad_workers,
-            'n_turn': self.n_turn,
-            'engagingness': self.engagingness_scores,
-            'interestingness': self.interestingness_scores,
-            'listening': self.listening_scores,
-            'consistency': self.consistency_scores,
-            'inquisitiveness': self.inquisitiveness_scores,
-            'repetitiveness': self.repetitiveness_scores,
-            'humanness': self.humanness_scores,
-            'fluency': self.fluency_scores,
-            'persona': self.persona_scores,
-            'opt': self.opt,
-            'model_config': self.model_config,
-        }, open(filename, 'w'))
-        print(
-            self.world_tag,
-            ': Data successfully saved at {}.'.format(filename)
+        json.dump(
+            {
+                'dialog': self.dialog,
+                'dialog_list': self.dialog_list,
+                'other_first': self.other_first,
+                'bot_went_first': self.other_first,
+                'start_time': self.start_time,
+                'timestamp': time.time(),
+                'total_time': time.time() - self.start_time,
+                'workers': [ag.worker_id for ag in self.agents],
+                'hit_id': [ag.hit_id for ag in self.agents],
+                'assignment_id': [ag.assignment_id for ag in self.agents],
+                'human_personas': [ag.personas for ag in self.agents],
+                'model_personas': self.model_personas,
+                'bad_workers': bad_workers,
+                'n_turn': self.n_turn,
+                'engagingness': self.engagingness_scores,
+                'interestingness': self.interestingness_scores,
+                'listening': self.listening_scores,
+                'consistency': self.consistency_scores,
+                'inquisitiveness': self.inquisitiveness_scores,
+                'repetitiveness': self.repetitiveness_scores,
+                'humanness': self.humanness_scores,
+                'fluency': self.fluency_scores,
+                'persona': self.persona_scores,
+                'opt': self.opt,
+                'model_config': self.model_config,
+            },
+            open(filename, 'w'),
         )
+        print(self.world_tag, ': Data successfully saved at {}.'.format(filename))
 
     def is_msg_tooshortlong(self, act, ag, th_min=3, th_max=20):
         if act['episode_done']:
@@ -826,13 +823,15 @@ class ControllableDialogEval(MultiAgentDialogWorld):
         if act is None:
             self.chat_done = True
             return True
-        if ((act['text'] == '[TIMEOUT]') or (act['text'] == '[RETURNED]') or
-                (act['text'] == '[DISCONNECT]')):
+        if (
+            (act['text'] == '[TIMEOUT]')
+            or (act['text'] == '[RETURNED]')
+            or (act['text'] == '[DISCONNECT]')
+        ):
             control_msg = self.get_control_msg()
             control_msg['episode_done'] = True
             control_msg['text'] = self.get_instruction(
-                agent_id=act['id'],
-                tag='timeout'
+                agent_id=act['id'], tag='timeout'
             )
             for ag in self.agents:
                 if ag.id != act['id']:

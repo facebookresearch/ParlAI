@@ -19,7 +19,7 @@ import parlai.mturk.core.shared_utils as shared_utils
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-class MockTurkManager():
+class MockTurkManager:
     """Manages interactions between MTurk agents as well as direct interactions
     between a world and the MTurk server.
     """
@@ -52,9 +52,13 @@ class MockTurkManager():
         we instantiate x MockTurkAgents in onboarding"""
         self.id_to_agent = {
             agent_id: MockTurkAgent(
-                self.opt, self, 'hit_id_{}'.format(agent_id),
-                'assignment_id_{}'.format(agent_id), agent_id,
-            ) for agent_id in self.mturk_agent_ids
+                self.opt,
+                self,
+                'hit_id_{}'.format(agent_id),
+                'assignment_id_{}'.format(agent_id),
+                agent_id,
+            )
+            for agent_id in self.mturk_agent_ids
         }
         self.agents = list(self.id_to_agent.values())
         MockTurkManager.current_manager = self
@@ -64,8 +68,7 @@ class MockTurkManager():
         self.onboard_function = onboard_function
         print('[mock] set_onboard_function called')
 
-    def start_task(self, eligibility_function, assign_role_function,
-                   task_function):
+    def start_task(self, eligibility_function, assign_role_function, task_function):
         """Handle running a task by checking to see when enough agents are
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
@@ -73,16 +76,12 @@ class MockTurkManager():
         print('[mock] start_task called')
         if callable(eligibility_function):
             # Convert legacy eligibility_functions to the new format
-            eligibility_function = {
-                'multiple': False,
-                'func': eligibility_function,
-            }
+            eligibility_function = {'multiple': False, 'func': eligibility_function}
         else:
             # Ensure the eligibility function is valid
             if 'func' not in eligibility_function:
                 shared_utils.print_and_log(
-                    logging.CRITICAL,
-                    "eligibility_function has no 'func'. Cancelling."
+                    logging.CRITICAL, "eligibility_function has no 'func'. Cancelling."
                 )
                 raise Exception(
                     'eligibility_function dict must contain a `func` field '
@@ -91,7 +90,7 @@ class MockTurkManager():
             elif not callable(eligibility_function['func']):
                 shared_utils.print_and_log(
                     logging.CRITICAL,
-                    "eligibility_function['func'] not a function. Cancelling."
+                    "eligibility_function['func'] not a function. Cancelling.",
                 )
                 raise Exception(
                     "eligibility_function['func'] must contain a function. "
@@ -107,8 +106,7 @@ class MockTurkManager():
         valid_agents = [a for a in self.agents if a.mock_status == 'waiting']
         needed_agents = len(self.mturk_agent_ids)
         while len(valid_agents) < needed_agents:
-            valid_agents = [a for a in self.agents
-                            if a.mock_status == 'waiting']
+            valid_agents = [a for a in self.agents if a.mock_status == 'waiting']
 
         # Add the required number of valid agents to the conv
         agents = [a for a in valid_agents[:needed_agents]]
@@ -126,6 +124,7 @@ class MockTurkManager():
         except Exception as e:
             import sys
             import traceback
+
             print(e)
             traceback.print_exc(file=sys.stdout)
             raise e
@@ -165,14 +164,18 @@ class MockTurkManager():
             agent.set_status(AssignState.STATUS_ONBOARDING)
             self.onboard_new_agent(agent)
         else:
-            if agent.status in [AssignState.STATUS_ONBOARDING,
-                                AssignState.STATUS_IN_TASK]:
+            if agent.status in [
+                AssignState.STATUS_ONBOARDING,
+                AssignState.STATUS_IN_TASK,
+            ]:
                 pass
-            elif (agent.status == AssignState.STATUS_DISCONNECT or
-                  agent.status == AssignState.STATUS_DONE or
-                  agent.status == AssignState.STATUS_EXPIRED or
-                  agent.status == AssignState.STATUS_RETURNED or
-                  agent.status == AssignState.STATUS_PARTNER_DISCONNECT):
+            elif (
+                agent.status == AssignState.STATUS_DISCONNECT
+                or agent.status == AssignState.STATUS_DONE
+                or agent.status == AssignState.STATUS_EXPIRED
+                or agent.status == AssignState.STATUS_RETURNED
+                or agent.status == AssignState.STATUS_PARTNER_DISCONNECT
+            ):
                 # reconnect is an inactive command
                 data = agent.get_inactive_command_data()
                 self.send_command(worker_id, assign_id, data)
@@ -201,7 +204,7 @@ class MockTurkManager():
         onboard_thread = threading.Thread(
             target=_onboard_function,
             args=(agent,),
-            name='onboard-{}-{}'.format(worker_id, assignment_id)
+            name='onboard-{}-{}'.format(worker_id, assignment_id),
         )
         onboard_thread.daemon = True
         onboard_thread.start()
@@ -209,8 +212,9 @@ class MockTurkManager():
 
     # MTurk Agent Interaction Functions #
 
-    def send_message(self, receiver_id, assignment_id, data,
-                     blocking=True, ack_func=None):
+    def send_message(
+        self, receiver_id, assignment_id, data, blocking=True, ack_func=None
+    ):
         """'Send' a message directly by updating the queue of messages not
         yet recieved that the agent can pull from
         """
@@ -232,21 +236,22 @@ class MockTurkManager():
             data,
             conversation_id=conversation_id,
             blocking=blocking,
-            ack_func=ack_func
+            ack_func=ack_func,
         )
 
         shared_utils.print_and_log(
             logging.INFO,
             'Manager sending: {}'.format(packet),
-            should_print=self.opt['verbose']
+            should_print=self.opt['verbose'],
         )
         # Push message to restore queue and incoming queue
         agent.append_message(packet.data)
         agent.unread_messages.append(packet)
         return data['message_id']
 
-    def send_command(self, receiver_id, assignment_id, data, blocking=True,
-                     ack_func=None):
+    def send_command(
+        self, receiver_id, assignment_id, data, blocking=True, ack_func=None
+    ):
         """Commands aren't actually sent this way, as state updates are read"""
         return None
 
@@ -292,15 +297,13 @@ class MockTurkManager():
         print('[mock] Assignment {} approved'.format(assignment_id))
 
     def reject_work(self, assignment_id, reason):
-        print('[mock] Assignment {} rejected for {}'.format(
-            assignment_id, reason))
+        print('[mock] Assignment {} rejected for {}'.format(assignment_id, reason))
 
     def approve_assignments_for_hit(self, hit_id, override_rejection=False):
         print('[mock] HIT {} approved'.format(hit_id))
 
     def block_worker(self, worker_id, reason):
-        print('[mock] Worker {} blocked for reason {}'.format(
-            worker_id, reason))
+        print('[mock] Worker {} blocked for reason {}'.format(worker_id, reason))
 
     def soft_block_worker(self, worker_id, qual='block_qualification'):
         print('[mock] Worker {} given qual {}'.format(worker_id, qual))
@@ -314,12 +317,12 @@ class MockTurkManager():
     def remove_worker_qualification(self, worker_id, qual_name, reason=''):
         print('[mock] Worker {} revoked qual {}'.format(worker_id, qual_name))
 
-    def create_qualification(self, qualification_name, description,
-                             can_exist=True):
+    def create_qualification(self, qualification_name, description, can_exist=True):
         pass
 
-    def pay_bonus(self, worker_id, bonus_amount, assignment_id, reason,
-                  unique_request_token):
+    def pay_bonus(
+        self, worker_id, bonus_amount, assignment_id, reason, unique_request_token
+    ):
         print('[mock] Worker {} paid bonus {}'.format(worker_id, bonus_amount))
 
     def email_worker(self, worker_id, subject, message_text):

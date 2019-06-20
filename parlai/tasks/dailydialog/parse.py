@@ -23,13 +23,7 @@ FOLD_OUT = "valid"
 # FOLD = "test"
 # FOLD_OUT = "test"
 
-ACTS = [
-    'no_act',
-    'inform',
-    'question',
-    'directive',
-    'commissive',
-]
+ACTS = ['no_act', 'inform', 'question', 'directive', 'commissive']
 
 EMOTIONS = [
     'no_emotion',
@@ -106,7 +100,7 @@ for acts, emotions, raw_text in zip(f_acts, f_emotions, f_texts):
     # fix one topic lookup bug
     raw_text = raw_text.replace(
         "one here as well . I've been using",
-        "one here as well . __eou__ I've been using"
+        "one here as well . __eou__ I've been using",
     )
     if raw_text not in topic_map:
         continue
@@ -114,11 +108,7 @@ for acts, emotions, raw_text in zip(f_acts, f_emotions, f_texts):
         'fold': FOLD,
         'topic': topic_map[raw_text],
         'dialogue': [
-            {
-                'emotion': e,
-                'act': a,
-                'text': cleanup_text(t),
-            }
+            {'emotion': e, 'act': a, 'text': cleanup_text(t)}
             for e, a, t in zip(emotions, acts, texts)
         ],
     }

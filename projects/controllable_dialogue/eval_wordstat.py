@@ -41,12 +41,27 @@ def setup_args(parser=None):
     # These defaults can be overriden by both .opt file and user's command line flags
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.add_argument('-ed', '--external-dict', type=str, default=None,
-                        help='External dictionary for stat computation')
-    parser.add_argument('-fb', '--freq-bins', type=str, default='0,100,1000,10000',
-                        help='Bins boundaries for rare words stat')
-    parser.add_argument('-gr', '--gold-response', type=bool, default=False,
-                        help='Compute stats for gold response')
+    parser.add_argument(
+        '-ed',
+        '--external-dict',
+        type=str,
+        default=None,
+        help='External dictionary for stat computation',
+    )
+    parser.add_argument(
+        '-fb',
+        '--freq-bins',
+        type=str,
+        default='0,100,1000,10000',
+        help='Bins boundaries for rare words stat',
+    )
+    parser.add_argument(
+        '-gr',
+        '--gold-response',
+        type=bool,
+        default=False,
+        help='Compute stats for gold response',
+    )
 
     # These settings override .opt file but not user's command line flags
     parser.set_params(
@@ -118,8 +133,7 @@ def eval_wordstat(opt, print_parser=None):
     world = create_task(opt, agent)
 
     if opt.get('external_dict'):
-        print('[ Using external dictionary from: {} ]'.format(
-            opt['external_dict']))
+        print('[ Using external dictionary from: {} ]'.format(opt['external_dict']))
         dict_opt = copy.deepcopy(opt)
         dict_opt['dict_file'] = opt['external_dict']
         dictionary = DictionaryAgent(dict_opt)
@@ -146,28 +160,35 @@ def eval_wordstat(opt, print_parser=None):
         model_dir, _ = os.path.split(opt.get('model_file'))
         outfile = os.path.join(model_dir, 'goldresponse')
         if opt['use_reply'] != 'label':
-            raise ValueError('You should set --use-reply label (not --use-reply model) '
-                             'when measuring goldresponse stats')
+            raise ValueError(
+                'You should set --use-reply label (not --use-reply model) '
+                'when measuring goldresponse stats'
+            )
     else:
         outfile = "%s.%s.%s.%s" % (
             opt.get('model_file'),
             opt.get('datatype'),
             "use%sreply" % agent.opt['use_reply'],
             "beam%i" % agent.opt['beam_size'],
-            )
+        )
         if agent.opt['beam_size'] > 1:
             outfile += ".beamminnbest%i" % agent.opt['beam_min_n_best']
         if len(agent.control_settings) > 0:
             outfile += ".setcontrols:" + "_".join(
-              ["%s%s" % (c, str(agent.control_settings[c]['set_value']))
-               for c in sorted(agent.control_settings.keys())])
+                [
+                    "%s%s" % (c, str(agent.control_settings[c]['set_value']))
+                    for c in sorted(agent.control_settings.keys())
+                ]
+            )
         if agent.opt['beam_reorder'] not in ['none', False]:
             outfile += ".beamreorder_%s" % agent.opt['beam_reorder']
         if len(agent.wd_features) > 0:
-            sorted_bfw = sorted(list(zip(agent.wd_features, agent.wd_wts)),
-                                key=lambda x: x[0])
+            sorted_bfw = sorted(
+                list(zip(agent.wd_features, agent.wd_wts)), key=lambda x: x[0]
+            )
             outfile += ".WDfeatures:" + "_".join(
-              ["%s%s" % (f, str(w)) for f, w in sorted_bfw])
+                ["%s%s" % (f, str(w)) for f, w in sorted_bfw]
+            )
     if opt['num_examples'] != -1:
         outfile += ".numex%i" % opt['num_examples']
     outfile += ".wordstats.json"
@@ -181,7 +202,7 @@ def eval_wordstat(opt, print_parser=None):
         'word_cnt': 0,  # total number of words in all utterances
         'pred_list': [],  # list of generated utterances after applying normalize_answer
         'pure_pred_list': [],  # list of generated utterances
-        'context_list': []  # list of text inputs (persona and conversation history)
+        'context_list': [],  # list of text inputs (persona and conversation history)
     }
     bins = [int(i) for i in opt['freq_bins'].split(',')]
 
@@ -241,7 +262,7 @@ def eval_wordstat(opt, print_parser=None):
             break
     if world.epoch_done():
         print("EPOCH DONE")
-    print("Time to process %i examples: %f seconds" % (cnt, time.time()-t0))
+    print("Time to process %i examples: %f seconds" % (cnt, time.time() - t0))
 
     # Compute percent unique
     # Note this is w.r.t. normalized pred_list not original pure_pred_list
@@ -262,8 +283,9 @@ def eval_wordstat(opt, print_parser=None):
     data['unique_percent'] = unique_percent  # percent of all responses that are unique
     data['word_statistics'] = word_statistics  # word stats, as in orig eval_wordstat
     data['report'] = report  # the final report
-    data['histories'] = [(hist.persona_lines, hist.partner_utts, hist.own_utts)
-                         for hist in histories]  # history for each example
+    data['histories'] = [
+        (hist.persona_lines, hist.partner_utts, hist.own_utts) for hist in histories
+    ]  # history for each example
     data['sent_attrs'] = sent_attrs  # all sentence attribute values for responses
 
     # Write data to outfile

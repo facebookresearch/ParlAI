@@ -29,8 +29,9 @@ task_config['hit_keywords'] = 'chat,dialog,rating'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-'''\'\'\'
+task_config[
+    'task_description'
+] = '''\'\'\'
 In this task, you are going to read a dialog between two people, and you will need to give a rating on how good the response is.<br><br>
 Example:<br><br>
 ------------------- Task Begin ------------------- <br><br>

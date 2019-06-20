@@ -35,8 +35,7 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], AQUA,
-                             AQUA, prefix + '.tok.json')
+    data_path = os.path.join(opt['datapath'], AQUA, AQUA, prefix + '.tok.json')
 
     return data_path
 

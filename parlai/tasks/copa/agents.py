@@ -32,10 +32,13 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], COPA,
-                             COPA_RESOURCES_FOLDER_NAME,
-                             COPA_DATASETS_FOLDER_NAME,
-                             COPA_DATASET_PREFIX + suffix + '.xml')
+    data_path = os.path.join(
+        opt['datapath'],
+        COPA,
+        COPA_RESOURCES_FOLDER_NAME,
+        COPA_DATASETS_FOLDER_NAME,
+        COPA_DATASET_PREFIX + suffix + '.xml',
+    )
 
     return data_path
 

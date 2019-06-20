@@ -30,11 +30,10 @@ class TeacherTest(unittest.TestCase):
             (('Hello there!', ["Hey, what's up?"]), False),
             (('Nothing much. You?', ['Same.']), False),
             (('Some context', ['Hello there!']), True),
-            (("Hey, what's up?", ['Nothing much. You?']), False)
+            (("Hey, what's up?", ['Nothing much. You?']), False),
         ]
         self.assertListEqual(
-            [i for i in DefaultTeacher._data_generator(dialogs)],
-            correct_items
+            [i for i in DefaultTeacher._data_generator(dialogs)], correct_items
         )
 
 

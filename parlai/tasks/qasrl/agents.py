@@ -63,8 +63,12 @@ class QASRLTeacher(DialogTeacher):
 
             def parse_qa(qa_line):
                 qa_split = qa_line.split('\t?\t')
-                question = context + '\n' + qa_split[0].replace(
-                    '\t_', '').replace('\t', ' ') + '?'
+                question = (
+                    context
+                    + '\n'
+                    + qa_split[0].replace('\t_', '').replace('\t', ' ')
+                    + '?'
+                )
                 answers = qa_split[1].split(' ### ')
                 return [question, answers]
 

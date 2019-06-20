@@ -20,9 +20,7 @@ def _path(opt):
     questions_path = os.path.join(
         opt['datapath'], 'FVQA', 'new_dataset_release', 'all_qs_dict_release.json'
     )
-    trainset_path = os.path.join(
-        opt['datapath'], 'FVQA', 'Name_Lists'
-    )
+    trainset_path = os.path.join(opt['datapath'], 'FVQA', 'Name_Lists')
     image_path = os.path.join(
         opt['datapath'], 'FVQA', 'new_dataset_release', 'images', ''
     )
@@ -117,8 +115,8 @@ class SplitTeacher(Teacher):
             if self.datatype.startswith('train'):
                 action['labels'] = self.lastY[1]
             if (
-                self.datatype != 'train' and
-                self.episode_idx + self.step_size >= self.num_episodes()
+                self.datatype != 'train'
+                and self.episode_idx + self.step_size >= self.num_episodes()
             ):
                 self.epochDone = True
             return action
@@ -136,7 +134,7 @@ class SplitTeacher(Teacher):
         action = {
             'image': self.image_loader.load(img_path),
             'text': question,
-            'episode_done': False
+            'episode_done': False,
         }
 
         human_readable = qa['fact_surface'].replace('[', '').replace(']', '')

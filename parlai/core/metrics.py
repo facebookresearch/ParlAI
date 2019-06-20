@@ -38,6 +38,7 @@ re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
 
 def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
+
     def remove_articles(text):
         return re_art.sub(' ', text)
 
@@ -93,8 +94,7 @@ def aggregate_task_reports(reports, tasks, micro=True):
     # add a warning describing how metrics were averaged across tasks.
     total_report['warning'] = 'metrics are averaged across tasks'
     if micro:
-        total_report['warning'] += (' and weighted by the number of examples '
-                                    'per task')
+        total_report['warning'] += ' and weighted by the number of examples ' 'per task'
     return total_report
 
 
@@ -134,7 +134,7 @@ def _f1_score(guess, answers):
         return 0
     g_tokens = normalize_answer(guess).split()
     scores = [
-        _prec_recall_f1_score(g_tokens, normalize_answer(a).split())for a in answers
+        _prec_recall_f1_score(g_tokens, normalize_answer(a).split()) for a in answers
     ]
     return max(f1 for p, r, f1 in scores)
 
@@ -164,8 +164,10 @@ def _rouge(guess, answers):
         return None, None, None
     evaluator = rouge.Rouge(metrics=['rouge-n', 'rouge-l'], max_n=2)
     try:
-        scores = [evaluator.get_scores(normalize_answer(guess), normalize_answer(a))
-                  for a in answers]
+        scores = [
+            evaluator.get_scores(normalize_answer(guess), normalize_answer(a))
+            for a in answers
+        ]
     except LookupError:
         warn_once(
             'ROUGE requires nltk punkt tokenizer. Please run '
@@ -327,8 +329,15 @@ class Metrics(object):
         # User-reported metrics
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
-                if k not in ['correct', 'f1', 'hits@k', 'bleu', 'rouge-1',
-                             'rouge-2', 'rouge-L']:
+                if k not in [
+                    'correct',
+                    'f1',
+                    'hits@k',
+                    'bleu',
+                    'rouge-1',
+                    'rouge-2',
+                    'rouge-L',
+                ]:
                     if k in self.metrics_list:
                         with self._lock():
                             self.metrics[k] += v
@@ -361,25 +370,22 @@ class Metrics(object):
         if total > 0:
             if self.flags['print_prediction_metrics']:
                 m['accuracy'] = round_sigfigs(
-                    self.metrics['correct'] / max(1, self.metrics['correct_cnt']),
-                    4
+                    self.metrics['correct'] / max(1, self.metrics['correct_cnt']), 4
                 )
                 m['f1'] = round_sigfigs(
-                    self.metrics['f1'] / max(1, self.metrics['f1_cnt']),
-                    4
+                    self.metrics['f1'] / max(1, self.metrics['f1_cnt']), 4
                 )
             if self.flags['has_text_cands']:
                 for k in self.eval_pr:
                     m['hits@' + str(k)] = round_sigfigs(
-                        self.metrics['hits@' + str(k)] /
-                        max(1, self.metrics['hits@_cnt']),
-                        3
+                        self.metrics['hits@' + str(k)]
+                        / max(1, self.metrics['hits@_cnt']),
+                        3,
                     )
             for k in self.metrics_list:
                 if self.metrics[k + '_cnt'] > 0 and k != 'correct' and k != 'f1':
                     m[k] = round_sigfigs(
-                        self.metrics[k] / max(1, self.metrics[k + '_cnt']),
-                        4
+                        self.metrics[k] / max(1, self.metrics[k + '_cnt']), 4
                     )
         return m
 

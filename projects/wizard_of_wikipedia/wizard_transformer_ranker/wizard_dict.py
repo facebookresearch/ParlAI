@@ -24,12 +24,11 @@ class WizardDictAgent(DictionaryAgent):
         self.unk_token = '__UNK__'
         self.start_token = '__SOC__'
         self.tokenizer = opt.get('dict_tokenizer', 'whitespace')
-        self.lower = opt.get('dict_lower',
-                             DictionaryAgent.default_lower)
-        self.maxtokens = opt.get('dict_maxtokens',
-                                 DictionaryAgent.default_maxtokens)
-        self.textfields = opt.get('dict_textfields',
-                                  DictionaryAgent.default_textfields).split(",")
+        self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
+        self.maxtokens = opt.get('dict_maxtokens', DictionaryAgent.default_maxtokens)
+        self.textfields = opt.get(
+            'dict_textfields', DictionaryAgent.default_textfields
+        ).split(",")
 
         if shared:
             self.freq = shared.get('freq', {})
@@ -45,8 +44,9 @@ class WizardDictAgent(DictionaryAgent):
                 self.load(opt['dict_file'])
             elif opt.get('dict_initpath'):
                 # load seed dictionary
-                opt['dict_initpath'] = modelzoo_path(opt.get('datapath'),
-                                                     opt['dict_initpath'])
+                opt['dict_initpath'] = modelzoo_path(
+                    opt.get('datapath'), opt['dict_initpath']
+                )
                 self.load(opt['dict_initpath'])
 
             self.add_token(self.null_token)
@@ -69,10 +69,19 @@ class WizardDictAgent(DictionaryAgent):
         elif self.tokenizer == 'whitespace':
             return text.split(' ')
 
-        word_tokens = text.replace('.', ' . ').replace('. . .', '...')\
-            .replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ')\
-            .replace('!', ' ! ').replace('?', ' ? ').replace('  ', ' ')\
-            .replace('  ', ' ').strip().split(" ")
+        word_tokens = (
+            text.replace('.', ' . ')
+            .replace('. . .', '...')
+            .replace(',', ' , ')
+            .replace(';', ' ; ')
+            .replace(':', ' : ')
+            .replace('!', ' ! ')
+            .replace('?', ' ? ')
+            .replace('  ', ' ')
+            .replace('  ', ' ')
+            .strip()
+            .split(" ")
+        )
 
         return word_tokens
 

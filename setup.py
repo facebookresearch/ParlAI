@@ -28,8 +28,9 @@ setup(
     url='http://parl.ai/',
     license=license,
     python_requires='>=3.6',
-    packages=find_packages(exclude=(
-        'data', 'docs', 'downloads', 'examples', 'logs', 'tests')),
+    packages=find_packages(
+        exclude=('data', 'docs', 'downloads', 'examples', 'logs', 'tests')
+    ),
     install_requires=reqs.strip().split('\n'),
     include_package_data=True,
     test_suite='tests.suites.unittests',

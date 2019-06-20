@@ -23,8 +23,7 @@ def _path(opt):
 
     suffix = dt
 
-    data_path = os.path.join(opt['datapath'], 'NarrativeQA',
-                             'narrative_qa', suffix)
+    data_path = os.path.join(opt['datapath'], 'NarrativeQA', 'narrative_qa', suffix)
 
     return data_path
 
@@ -66,8 +65,7 @@ class SummariesTeacher(DialogTeacher):
 
                     if i == 0:
                         # Prepend start info in first question
-                        yield (info + '\n' + question,
-                               [answer1, answer2]), True
+                        yield (info + '\n' + question, [answer1, answer2]), True
                     else:
                         yield (question, [answer1, answer2]), False
 
@@ -90,8 +88,10 @@ class DefaultTeacher(DialogTeacher):
         stories_base_path = os.path.join(path, '..', 'stories')
         qa_pairs = dict()
 
-        print("%s stories found." %
-              len(glob.glob(os.path.join(stories_base_path, "*.content"))))
+        print(
+            "%s stories found."
+            % len(glob.glob(os.path.join(stories_base_path, "*.content")))
+        )
 
         with open(qa_path, 'r') as f:
             reader = csv.DictReader(f)
@@ -104,15 +104,15 @@ class DefaultTeacher(DialogTeacher):
             reader = csv.DictReader(f)
 
             for row in reader:
-                story_path = os.path.join(stories_base_path,
-                                          row['document_id'] + '.content')
+                story_path = os.path.join(
+                    stories_base_path, row['document_id'] + '.content'
+                )
 
                 if not os.path.exists(story_path):
                     continue
 
                 story = None
-                with open(story_path, 'r', encoding='utf-8',
-                          errors='ignore') as f:
+                with open(story_path, 'r', encoding='utf-8', errors='ignore') as f:
                     story = f.read().strip()
 
                 info = 'Title:  %s' % row['wiki_title']
@@ -129,7 +129,6 @@ class DefaultTeacher(DialogTeacher):
 
                     if i == 0:
                         # Prepend start info in first question
-                        yield (info + '\n' + question, [
-                               answer1, answer2]), True
+                        yield (info + '\n' + question, [answer1, answer2]), True
                     else:
                         yield (question, [answer1, answer2]), False

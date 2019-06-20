@@ -25,14 +25,18 @@ class VSEpp(nn.Module):
         super().__init__()
         self.opt = opt
         self.dict = dict
-        self.img_enc = EncoderImage(embed_size=opt['embed_size'],
-                                    finetune=opt['finetune'],
-                                    cnn_type=opt['cnn_type'],
-                                    no_imgnorm=opt['no_imgnorm'])
-        self.txt_enc = EncoderText(vocab_size=len(self.dict.tok2ind),
-                                   word_dim=opt['word_dim'],
-                                   embed_size=opt['embed_size'],
-                                   num_layers=opt['num_layers'])
+        self.img_enc = EncoderImage(
+            embed_size=opt['embed_size'],
+            finetune=opt['finetune'],
+            cnn_type=opt['cnn_type'],
+            no_imgnorm=opt['no_imgnorm'],
+        )
+        self.txt_enc = EncoderText(
+            vocab_size=len(self.dict.tok2ind),
+            word_dim=opt['word_dim'],
+            embed_size=opt['embed_size'],
+            num_layers=opt['num_layers'],
+        )
 
     def forward(self, images, captions, lengths):
         img_emb = self.img_enc(images) if images is not None else None
@@ -40,8 +44,7 @@ class VSEpp(nn.Module):
         return img_emb, cap_emb
 
     def get_optim(self):
-        kwargs = {'lr': float(self.opt['learning_rate']),
-                  'amsgrad': True}
+        kwargs = {'lr': float(self.opt['learning_rate']), 'amsgrad': True}
         params = list(self.txt_enc.parameters())
         params += list(self.img_enc.fc.parameters())
         if self.opt['finetune']:
@@ -70,6 +73,7 @@ class ContrastiveLoss(nn.Module):
     """
     Compute contrastive loss.
     """
+
     def __init__(self, use_cuda, margin=0, max_violation=True):
         super().__init__()
         self.use_cuda = use_cuda
@@ -114,8 +118,9 @@ class ContrastiveLoss(nn.Module):
 
 
 class EncoderImage(nn.Module):
-    def __init__(self, embed_size, finetune=False, cnn_type='resnet152',
-                 no_imgnorm=False):
+    def __init__(
+        self, embed_size, finetune=False, cnn_type='resnet152', no_imgnorm=False
+    ):
         """Load pretrained CNN and replace top fc layer."""
         super().__init__()
         self.embed_size = embed_size
@@ -130,10 +135,12 @@ class EncoderImage(nn.Module):
 
         # Replace the last fully connected layer of CNN with a new one
         if cnn_type.startswith('vgg'):
-            self.fc = nn.Linear(self.cnn.classifier._modules['6'].in_features,
-                                embed_size)
+            self.fc = nn.Linear(
+                self.cnn.classifier._modules['6'].in_features, embed_size
+            )
             self.cnn.classifier = nn.Sequential(
-                *list(self.cnn.classifier.children())[:-1])
+                *list(self.cnn.classifier.children())[:-1]
+            )
         elif cnn_type.startswith('resnet'):
             self.fc = nn.Linear(self.cnn.module.fc.in_features, embed_size)
             self.cnn.module.fc = nn.Sequential()
@@ -156,8 +163,7 @@ class EncoderImage(nn.Module):
     def init_weights(self):
         """Xavier initialization for the fully connected layer
         """
-        r = np.sqrt(6.) / np.sqrt(self.fc.in_features +
-                                  self.fc.out_features)
+        r = np.sqrt(6.0) / np.sqrt(self.fc.in_features + self.fc.out_features)
         self.fc.weight.data.uniform_(-r, r)
         self.fc.bias.data.fill_(0)
 

@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.light.light_chats.worlds import (
-    LightChatOnboardingWorld, LightChatTaskWorld
+    LightChatOnboardingWorld,
+    LightChatTaskWorld,
 )
 import parlai.mturk.core.mturk_utils as mturk_utils
 import parlai.mturk.tasks.light.light_chats.graph as graph
@@ -28,12 +29,12 @@ class GraphGenerator(object):
             self.db = pickle.load(picklefile)
 
         # Split rooms into seen and unseen
-        seen_rooms = {i: r
-                      for i, r in self.db['rooms'].items()
-                      if int(r['room_id']) < 703}
-        unseen_rooms = {i: r
-                        for i, r in self.db['rooms'].items()
-                        if int(r['room_id']) >= 703}
+        seen_rooms = {
+            i: r for i, r in self.db['rooms'].items() if int(r['room_id']) < 703
+        }
+        unseen_rooms = {
+            i: r for i, r in self.db['rooms'].items() if int(r['room_id']) >= 703
+        }
         if use_seen:
             self.rooms = seen_rooms
         else:
@@ -42,9 +43,7 @@ class GraphGenerator(object):
             room['id'] = i
 
         # only use annotated characters
-        self.chars = {i: c
-                      for i, c in self.db['characters'].items()
-                      if 'desc' in c}
+        self.chars = {i: c for i, c in self.db['characters'].items() if 'desc' in c}
         for i, char in self.chars.items():
             char['id'] = i
         self.rooms_list = list(self.rooms.values())
@@ -58,7 +57,7 @@ class GraphGenerator(object):
             'size': 1,
             'food_energy': 0,
             'value': 1,
-            'desc': random.choice(obj['descriptions'])
+            'desc': random.choice(obj['descriptions']),
         }
         if obj['is_surface'] > 0.5:
             props['container'] = True
@@ -80,15 +79,11 @@ class GraphGenerator(object):
             use_classes.append('not_gettable')
         if obj['is_wearable'] > 0.5:
             props['wearable'] = True
-            props['stats'] = {
-                'attack': 1
-            }
+            props['stats'] = {'attack': 1}
             use_classes.append('wearable')
         if obj['is_weapon'] > 0.5:
             props['weapon'] = True
-            props['stats'] = {
-                'attack': 1
-            }
+            props['stats'] = {'attack': 1}
             use_classes.append('weapon')
 
         props['classes'] = use_classes
@@ -130,7 +125,7 @@ class GraphGenerator(object):
                 'name_prefix': "the",
                 'surface_type': "in",
                 'classes': {'room'},
-            }
+            },
         )
 
         # Add items to the graph
@@ -139,8 +134,11 @@ class GraphGenerator(object):
             if random.random() > 0.5:
                 continue
             obj = self.db['objects'][item_id]
-            use_desc = obj['name'] if obj['is_plural'] == 0 \
+            use_desc = (
+                obj['name']
+                if obj['is_plural'] == 0
                 else random.choice(obj['base_form'])
+            )
             if len(use_desc.split(' ')) > 5:
                 continue  # Skip really long objects
             if use_desc.lower() in added_objs:
@@ -150,8 +148,11 @@ class GraphGenerator(object):
             g.move_object(obj_id, room_gid)
         for item_id in room['in_objects']:
             obj = self.db['objects'][item_id]
-            use_desc = obj['name'] if obj['is_plural'] == 0 \
+            use_desc = (
+                obj['name']
+                if obj['is_plural'] == 0
                 else random.choice(obj['base_form'])
+            )
             if len(use_desc.split(' ')) > 8:
                 continue  # Skip really long objects
             if use_desc.lower() in added_objs:
@@ -175,8 +176,11 @@ class GraphGenerator(object):
                 ignore_chance = 0.95
             if random.random() < ignore_chance:
                 continue
-            use_desc = char['name'] if char['is_plural'] == 0 \
+            use_desc = (
+                char['name']
+                if char['is_plural'] == 0
                 else random.choice(char['base_form'])
+            )
             use_desc = use_desc.lower()
             if use_desc in used_descs:
                 continue
@@ -189,8 +193,11 @@ class GraphGenerator(object):
             if char.get('char_type') == 'object':
                 if random.random() < 0.95:
                     continue  # highly downrank objects
-            use_desc = char['name'] if char['is_plural'] == 0 \
+            use_desc = (
+                char['name']
+                if char['is_plural'] == 0
                 else random.choice(char['base_form'])
+            )
             use_desc = use_desc.lower()
             if use_desc in used_descs:
                 continue
@@ -199,8 +206,11 @@ class GraphGenerator(object):
             create_characters.append((use_desc, char))
         while len(create_characters) < 2:
             char = random.choice(self.chars_list)
-            use_desc = char['name'] if char['is_plural'] == 0 \
+            use_desc = (
+                char['name']
+                if char['is_plural'] == 0
                 else random.choice(char['base_form'])
+            )
             use_desc = use_desc.lower()
             if use_desc in used_descs:
                 continue
@@ -213,16 +223,18 @@ class GraphGenerator(object):
 
         # Filter out characters that are in the room description
         # as they already exist in context
-        npc_characters = [(ud, c) for (ud, c) in npc_characters
-                          if ud not in in_characters]
+        npc_characters = [
+            (ud, c) for (ud, c) in npc_characters if ud not in in_characters
+        ]
 
         # only leave one npc character at most
         npc_characters = npc_characters[:1]
 
         # Add player characters to the world
         for use_desc, char in player_characters:
-            g_id = g.add_node(use_desc, self.props_from_char(char),
-                              is_player=True, uid=use_desc)
+            g_id = g.add_node(
+                use_desc, self.props_from_char(char), is_player=True, uid=use_desc
+            )
             g.move_object(g_id, room_gid)
             added_objs = []
             # add items to the player character
@@ -230,8 +242,11 @@ class GraphGenerator(object):
                 if random.random() > 0.5:
                     continue
                 obj = self.db['objects'][item_id]
-                use_desc = obj['name'] if obj['is_plural'] == 0 \
+                use_desc = (
+                    obj['name']
+                    if obj['is_plural'] == 0
                     else random.choice(obj['base_form'])
+                )
                 if len(use_desc.split(' ')) > 5:
                     continue  # Skip really long objects
                 if use_desc.lower() in added_objs:
@@ -243,8 +258,11 @@ class GraphGenerator(object):
                 if random.random() > 0.5:
                     continue
                 obj = self.db['objects'][item_id]
-                use_desc = obj['name'] if obj['is_plural'] == 0 \
+                use_desc = (
+                    obj['name']
+                    if obj['is_plural'] == 0
                     else random.choice(obj['base_form'])
+                )
                 if len(use_desc.split(' ')) > 5:
                     continue  # Skip really long objects
                 if use_desc.lower() in added_objs:
@@ -257,8 +275,11 @@ class GraphGenerator(object):
                 if random.random() > 0.5:
                     continue
                 obj = self.db['objects'][item_id]
-                use_desc = obj['name'] if obj['is_plural'] == 0 \
+                use_desc = (
+                    obj['name']
+                    if obj['is_plural'] == 0
                     else random.choice(obj['base_form'])
+                )
                 if len(use_desc.split(' ')) > 5:
                     continue  # Skip really long objects
                 if use_desc.lower() in added_objs:
@@ -270,8 +291,7 @@ class GraphGenerator(object):
 
         # add non player characters to the world
         for use_desc, char in npc_characters:
-            g_id = g.add_node(use_desc, self.props_from_char(char),
-                              uid=use_desc)
+            g_id = g.add_node(use_desc, self.props_from_char(char), uid=use_desc)
             g.move_object(g_id, room_gid)
 
         return g, room, player_characters
@@ -286,8 +306,11 @@ def main():
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
     argparser.add_argument(
-        '--light-unseen-rooms', default=False, type='bool',
-        help='Launch using rooms from the unseen set rather than the seen')
+        '--light-unseen-rooms',
+        default=False,
+        type='bool',
+        help='Launch using rooms from the unseen set rather than the seen',
+    )
     opt = argparser.parse_args()
 
     generator = GraphGenerator(opt, opt['light_unseen_rooms'])
@@ -307,12 +330,11 @@ def main():
     # Instantiate an MTurkManager with the given options and a maximum number
     # of agents per world of 1 (based on the length of mturk_agent_ids)
     mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_roles,
-        use_db=True,
+        opt=opt, mturk_agent_ids=mturk_agent_roles, use_db=True
     )
     mturk_manager.setup_server(
-        task_directory_path=os.path.dirname(os.path.abspath(__file__)))
+        task_directory_path=os.path.dirname(os.path.abspath(__file__))
+    )
 
     # Create an onboard_function, which will be run for workers who have
     # accepted your task and must be completed before they are put in the
@@ -336,10 +358,9 @@ def main():
     # with set_onboard_function(onboard_function=run_onboard)
     mturk_manager.set_onboard_function(onboard_function=run_onboard)
 
-    qualification_id = \
-        mturk_utils.find_qualification('adventure_chat_reject',
-                                       opt['is_sandbox'],
-                                       must_be_owned=False)
+    qualification_id = mturk_utils.find_qualification(
+        'adventure_chat_reject', opt['is_sandbox'], must_be_owned=False
+    )
     print('Found qualification: ', qualification_id)
 
     try:
@@ -349,11 +370,13 @@ def main():
         # Set up the sockets and threads to recieve workers
         mturk_manager.ready_to_accept_workers()
 
-        agent_qualifications = [{
-            'QualificationTypeId': qualification_id,
-            'Comparator': 'DoesNotExist',
-            'RequiredToPreview': True
-        }]
+        agent_qualifications = [
+            {
+                'QualificationTypeId': qualification_id,
+                'Comparator': 'DoesNotExist',
+                'RequiredToPreview': True,
+            }
+        ]
 
         # Create the hits as specified by command line arguments
         mturk_manager.create_hits(qualifications=agent_qualifications)
@@ -364,10 +387,7 @@ def main():
         def check_workers_eligibility(workers):
             return workers
 
-        eligibility_function = {
-            'func': check_workers_eligibility,
-            'multiple': True,
-        }
+        eligibility_function = {'func': check_workers_eligibility, 'multiple': True}
 
         # Assign worker roles is used to determine what the role each worker
         # in the given worker list will play. Setting `id` to None will return
@@ -391,11 +411,7 @@ def main():
                 except Exception as e:
                     print('error when creating graph:', repr(e))
             world = LightChatTaskWorld(
-                opt=opt,
-                mturk_agents=workers,
-                graph=g,
-                room=room,
-                characters=characters,
+                opt=opt, mturk_agents=workers, graph=g, room=room, characters=characters
             )
             # run the world to completion
             while not world.episode_done():
@@ -413,7 +429,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
     except BaseException:
         raise

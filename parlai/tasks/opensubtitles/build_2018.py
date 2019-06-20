@@ -136,10 +136,10 @@ def clean_text(words):
     words = normalize_whitespaces(sentence).split()
 
     if (
-        len(words) > 0 and
-        any(map(lambda k: re.search(r'\w', k) is not None, words)) and
-        len(words) >= MIN_WORD_LENGTH and
-        len(words) <= MAX_WORD_LENGTH
+        len(words) > 0
+        and any(map(lambda k: re.search(r'\w', k) is not None, words))
+        and len(words) >= MIN_WORD_LENGTH
+        and len(words) <= MAX_WORD_LENGTH
     ):
         return ' '.join(words)
     else:
@@ -147,19 +147,19 @@ def clean_text(words):
 
 
 def parse_time_str(time_value_str):
-    if not(
-        time_value_str is not None and
-        len(time_value_str) == 12 and
-        time_value_str[2] == ':' and
-        time_value_str[5] == ':' and
-        time_value_str[8] == ','
+    if not (
+        time_value_str is not None
+        and len(time_value_str) == 12
+        and time_value_str[2] == ':'
+        and time_value_str[5] == ':'
+        and time_value_str[8] == ','
     ):
         return None
     try:
         return (
-            int(time_value_str[0:2]) * 3600 +
-            int(time_value_str[3:5]) * 60 +
-            int(time_value_str[6:8])
+            int(time_value_str[0:2]) * 3600
+            + int(time_value_str[3:5]) * 60
+            + int(time_value_str[6:8])
         )
     except ValueError:
         return None
@@ -182,13 +182,13 @@ def extract_data_from_xml(xml_object):
                     continue
                 if node.get('id')[-1] == 'S':
                     start_time = (
-                        time_value if start_time is None
+                        time_value
+                        if start_time is None
                         else min(time_value, start_time)
                     )
                 elif node.get('id')[-1] == 'E':
                     end_time = (
-                        time_value if end_time is None
-                        else max(time_value, end_time)
+                        time_value if end_time is None else max(time_value, end_time)
                     )
                 else:
                     raise Exception('Unknown time-id for node: %s' % node)
@@ -204,8 +204,10 @@ def extract_data_from_xml(xml_object):
         end_time = end_time or previous_end_time
         # add to the conversation
         # flush and start new conversation
-        if (sentence is not None and
-                start_time - previous_end_time <= MAX_TIME_DIFFERENCE_S):
+        if (
+            sentence is not None
+            and start_time - previous_end_time <= MAX_TIME_DIFFERENCE_S
+        ):
             conversation.append(sentence)
         else:
             if len(conversation) > 1:
@@ -222,9 +224,9 @@ def conversation_to_fb_format(conversation):
     lines = []
     for i in range(0, len(conversation), 2):
         if i + 1 < len(conversation):
-            lines.append('%d %s\t%s' % (
-                i / 2 + 1, conversation[i], conversation[i + 1]
-            ))
+            lines.append(
+                '%d %s\t%s' % (i / 2 + 1, conversation[i], conversation[i + 1])
+            )
         else:
             lines.append('%d %s' % (i / 2 + 1, conversation[i]))
     return '\n'.join(lines)
@@ -280,12 +282,8 @@ def create_fb_format(inpath, outpath, use_history):
     total_movie_dirs = len(movie_dirs)
     total_files = sum([len(l) for l in movie_dirs.values()])
     print(
-        '[Found %d movie folders and %d subtitles within %s in %d seconds]' % (
-            total_movie_dirs,
-            total_files,
-            inpath,
-            time.time() - start_time,
-        )
+        '[Found %d movie folders and %d subtitles within %s in %d seconds]'
+        % (total_movie_dirs, total_files, inpath, time.time() - start_time)
     )
 
     assert total_movie_dirs == NUM_MOVIE_FOLDERS, 'Incorrect number of movies'
@@ -308,9 +306,8 @@ def create_fb_format(inpath, outpath, use_history):
     ftest.close()
 
     print(
-        '[Data has been successfully extracted in %d seconds]' % (
-            time.time() - start_time,
-        )
+        '[Data has been successfully extracted in %d seconds]'
+        % (time.time() - start_time,)
     )
 
 

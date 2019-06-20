@@ -19,8 +19,9 @@ logger = logging.getLogger(__name__)
 
 class RegexpTokenizer(Tokenizer):
     DIGIT = r'\p{Nd}+([:\.\,]\p{Nd}+)*'
-    TITLE = (r'(dr|esq|hon|jr|mr|mrs|ms|prof|rev|sr|st|rt|messrs|mmes|msgr)'
-             r'\.(?=\p{Z})')
+    TITLE = (
+        r'(dr|esq|hon|jr|mr|mrs|ms|prof|rev|sr|st|rt|messrs|mmes|msgr)' r'\.(?=\p{Z})'
+    )
     ABBRV = r'([\p{L}]\.){2,}(?=\p{Z}|$)'
     ALPHA_NUM = r'[\p{L}\p{N}\p{M}]++'
     HYPHEN = r'{A}([-\u058A\u2010\u2011]{A})+'.format(A=ALPHA_NUM)
@@ -46,17 +47,32 @@ class RegexpTokenizer(Tokenizer):
             '(?P<digit>%s)|(?P<title>%s)|(?P<abbr>%s)|(?P<neg>%s)|(?P<hyph>%s)|'
             '(?P<contr1>%s)|(?P<alphanum>%s)|(?P<contr2>%s)|(?P<sdquote>%s)|'
             '(?P<edquote>%s)|(?P<ssquote>%s)|(?P<esquote>%s)|(?P<dash>%s)|'
-            '(?<ellipses>%s)|(?P<punct>%s)|(?P<nonws>%s)' %
-            (self.DIGIT, self.TITLE, self.ABBRV, self.NEGATION, self.HYPHEN,
-             self.CONTRACTION1, self.ALPHA_NUM, self.CONTRACTION2,
-             self.START_DQUOTE, self.END_DQUOTE, self.START_SQUOTE,
-             self.END_SQUOTE, self.DASH, self.ELLIPSES, self.PUNCT,
-             self.NON_WS),
-            flags=regex.IGNORECASE + regex.UNICODE + regex.MULTILINE
+            '(?<ellipses>%s)|(?P<punct>%s)|(?P<nonws>%s)'
+            % (
+                self.DIGIT,
+                self.TITLE,
+                self.ABBRV,
+                self.NEGATION,
+                self.HYPHEN,
+                self.CONTRACTION1,
+                self.ALPHA_NUM,
+                self.CONTRACTION2,
+                self.START_DQUOTE,
+                self.END_DQUOTE,
+                self.START_SQUOTE,
+                self.END_SQUOTE,
+                self.DASH,
+                self.ELLIPSES,
+                self.PUNCT,
+                self.NON_WS,
+            ),
+            flags=regex.IGNORECASE + regex.UNICODE + regex.MULTILINE,
         )
         if len(kwargs.get('annotators', {})) > 0:
-            logger.warning('%s only tokenizes! Skipping annotators: %s' %
-                           (type(self).__name__, kwargs.get('annotators')))
+            logger.warning(
+                '%s only tokenizes! Skipping annotators: %s'
+                % (type(self).__name__, kwargs.get('annotators'))
+            )
         self.annotators = set()
         self.substitutions = kwargs.get('substitutions', True)
 
@@ -92,9 +108,5 @@ class RegexpTokenizer(Tokenizer):
                 end_ws = span[1]
 
             # Format data
-            data.append((
-                token,
-                text[start_ws: end_ws],
-                span,
-            ))
+            data.append((token, text[start_ws:end_ws], span))
         return Tokens(data, self.annotators)

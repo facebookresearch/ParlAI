@@ -31,6 +31,7 @@ class HalfTeacher(FbDialogTeacher):
     """This version of opensubtitles creates half of all possible dialog
     examples.
     """
+
     def __init__(self, opt, shared=None, version='2018', use_history=True):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, version, use_history)
@@ -47,6 +48,7 @@ class HalfTeacher(FbDialogTeacher):
 
 class FullTeacher(FbDialogTeacher):
     """This version of opensubtitles creates all possible dialog examples."""
+
     def __init__(self, opt, shared=None, version='2018', use_history=True):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, version, use_history)
@@ -91,6 +93,7 @@ class FullTeacher(FbDialogTeacher):
 
 class Task100kTeacher(HalfTeacher):
     """This version of opensubtitles only includes 100,000 dialogs."""
+
     def setup_data(self, path):
         cnt = 0
         for entry, new in super().setup_data(path):
@@ -104,6 +107,7 @@ class Task100kTeacher(HalfTeacher):
 
 class Task10kTeacher(HalfTeacher):
     """This version of opensubtitles only includes 10,000 dialogs."""
+
     def setup_data(self, path):
         cnt = 0
         for entry, new in super().setup_data(path):
@@ -157,23 +161,21 @@ class V2018Task10kTeacher(Task10kTeacher):
 
 class V2018NoHistoryTeacher(FullTeacher):
     def __init__(self, opt, shared=None):
-        super(V2018NoHistoryTeacher, self).__init__(
-            opt, shared, '2018', False)
+        super(V2018NoHistoryTeacher, self).__init__(opt, shared, '2018', False)
 
 
 class V2018NoHistoryTask100kTeacher(Task100kTeacher):
     """Note, these versions only uses two-turns dialog. This is more efficient
     due to movie-based deduplication, compared to the regular v2018 dataset.
     """
+
     def __init__(self, opt, shared=None):
-        super(V2018NoHistoryTask100kTeacher, self).__init__(
-            opt, shared, '2018', False)
+        super(V2018NoHistoryTask100kTeacher, self).__init__(opt, shared, '2018', False)
 
 
 class V2018NoHistoryTask10kTeacher(Task10kTeacher):
     def __init__(self, opt, shared=None):
-        super(V2018NoHistoryTask10kTeacher, self).__init__(
-            opt, shared, '2018', False)
+        super(V2018NoHistoryTask10kTeacher, self).__init__(opt, shared, '2018', False)
 
 
 # Defaults to full teacher (all possible examples)
