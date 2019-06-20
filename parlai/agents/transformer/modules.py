@@ -32,7 +32,7 @@ except ImportError:
     warn_once("Installing APEX can give a significant speed boost.")
     from torch.nn import LayerNorm
 
-SOFTMAX_CLAMP = 1e5  # multihead attention dots are clamped here
+SOFTMAX_CLAMP = 1e4  # multihead attention dots are clamped here
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
 
 
