@@ -366,6 +366,9 @@ class TorchGeneratorAgent(TorchAgent):
                 'num_tokens': 0,
                 'correct_tokens': 0,
                 'total_skipped_batches': 0,
+                'gnorm': 0.0,
+                'clip': 0,
+                'updates': 0,
             }
             # this is not a shared instance of this class, so do full init
             if self.beam_dot_log:

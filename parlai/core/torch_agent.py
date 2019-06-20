@@ -215,6 +215,13 @@ class History(object):
         self.history_strings = []
         self.history_vecs = []
 
+    def reset_metrics(self):
+        """Reset all TorchAgentMetrics."""
+        super().reset_metrics()
+        self.metrics['gnorm'] = 0.0
+        self.metrics['clip'] = 0.0
+        self.metrics['updates'] = 0
+
     def _update_strings(self, text):
         if self.size > 0:
             while len(self.history_strings) >= self.size:
@@ -941,6 +948,10 @@ class TorchAgent(ABC, Agent):
             current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
             metrics['lr'] = round_sigfigs(current_lr, 4)
         metrics['num_updates'] = self._number_training_updates
+
+        steps = max(1, self.metrics['updates'])  # prevent divide by zero
+        metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
+        metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
         return metrics
 
     def _is_lr_warming_up(self):
@@ -1710,12 +1721,15 @@ class TorchAgent(ABC, Agent):
 
         if self.opt.get('gradient_clip', -1) > 0:
             if self.fp16:
-                self.optimizer.clip_master_grads(self.opt['gradient_clip'])
+                grad_norm = self.optimizer.clip_master_grads(self.opt['gradient_clip'])
             else:
-                torch.nn.utils.clip_grad_norm_(
+                grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
+            self.metrics['gnorm'] += grad_norm
+            self.metrics['clip'] += int(grad_norm > self.opt['gradient_clip'])
 
+        self.metrics['updates'] += 1
         self.optimizer.step()
 
     def zero_grad(self):
