@@ -26,19 +26,10 @@ class Packet:
     STATUS_SENT = 1
     STATUS_FAIL = 2
 
-    def __init__(
-        self,
-        id,
-        type,
-        sender_id,
-        receiver_id,
-        assignment_id,
-        data,
-        conversation_id=None,
-        requires_ack=None,
-        blocking=None,
-        ack_func=None,
-    ):
+    #TODO remove unused attributes
+    def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
+                 conversation_id=None, requires_ack=None, blocking=None,
+                 ack_func=None):
         """
         Create a packet to be used for holding information before it is
         sent through the socket
@@ -526,6 +517,7 @@ class SocketManager:
             self.open_channels.remove(connection_id)
             with self.packet_map_lock:
                 packet_ids = list(self.packet_map.keys())
+                # Clear packets associated with this sender
                 for packet_id in packet_ids:
                     packet = self.packet_map[packet_id]
                     packet_conn_id = packet.get_receiver_connection_id()

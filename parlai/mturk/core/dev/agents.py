@@ -44,13 +44,11 @@ class AssignState:
             status = self.STATUS_NONE
         self.status = status
         self.messages = []
-        self.last_command = None
         self.message_ids = []
 
     def clear_messages(self):
         self.messages = []
         self.message_ids = []
-        self.last_command = None
 
     def append_message(self, message):
         """Appends a message to the list of messages, ensures that it is
@@ -60,13 +58,6 @@ class AssignState:
             return
         self.message_ids.append(message['message_id'])
         self.messages.append(message)
-
-    # TODO is this still needed?
-    def set_last_command(self, command):
-        self.last_command = command
-
-    def get_last_command(self):
-        return self.last_command
 
     def get_messages(self):
         return self.messages
@@ -182,6 +173,7 @@ class MTurkAgent(Agent):
         self.m_send_message = mturk_manager.send_message
         self.m_handle_turker_timeout = mturk_manager.handle_turker_timeout
         self.m_send_command = mturk_manager.send_command
+        # TODO update or remove this function
         self.m_get_agent_work_status = mturk_manager.get_agent_work_status
         self.m_approve_work = mturk_manager.approve_work
         self.m_reject_worker = mturk_manager.reject_worker
@@ -191,15 +183,16 @@ class MTurkAgent(Agent):
         self.m_free_workers = mturk_manager.free_workers
         self.m_mark_workers_done = mturk_manager.mark_workers_done
         self.m_force_expire_hit = mturk_manager.force_expire_hit
+        # TODO use this to register an agent to their conversation
+        self.m_register_worker = mturk_manager.worker_manager.register_to_conv
 
         # MTurkManager variables used by agents extracted here
         self.auto_approve_delay = mturk_manager.auto_approve_delay
-
-        # TODO does anything else still use agent.mturk_manager?
-        self.mturk_manager = mturk_manager
-
-        self.conversation_id = None
         self.db_logger = mturk_manager.db_logger
+        self.task_group_id = mturk_manager.task_group_id
+
+        # Initial state for the agent
+        self.conversation_id = None
         self.id = None
         self.state = AssignState()
         self.assignment_id = assignment_id
@@ -211,13 +204,10 @@ class MTurkAgent(Agent):
         self.hit_is_returned = False  # state from Amazon MTurk system
         self.hit_is_complete = False  # state from Amazon MTurk system
         self.disconnected = False
-        self.task_group_id = mturk_manager.task_group_id
         self.message_request_time = None
         self.recieved_packets = {}
         self.creation_time = time.time()
-        self.alived = True  # Used for restoring state after refresh
         self.feedback = None
-
         self.msg_queue = Queue()
 
     def _get_episode_done_msg(self, text):
@@ -234,13 +224,12 @@ class MTurkAgent(Agent):
             update_packet['conversation_id'] = conversation_id
         if agent_id is not None:
             update_packet['agent_id'] = agent_id
-        # TODO move this function to be an inherited member of agent, rather
-        # than directly needing to hold onto the mturk_manager
         self.m_send_state_change(
             self.worker_id,
             self.assignment_id,
             update_packet,
         )
+        # TODO handle cleanup for changing into a final state?
         if self.db_logger is not None:
             if status == AssignState.STATUS_ONBOARDING:
                 self.db_logger.log_start_onboard(
@@ -296,19 +285,6 @@ class MTurkAgent(Agent):
         """Determine if this agent is in a final state"""
         return self.state.is_final()
 
-    def append_message(self, message):
-        """Add a received message to the state"""
-        self.state.append_message(message)
-
-    # TODO remove last command stuff
-    def set_last_command(self, command):
-        """Changes the last command recorded as sent to the agent"""
-        self.state.set_last_command(command)
-
-    def get_last_command(self):
-        """Returns the last command to be sent to this agent"""
-        return self.state.get_last_command()
-
     # TODO re-examine message clearing
     def clear_messages(self):
         """Clears the message history for this agent"""
@@ -322,55 +298,19 @@ class MTurkAgent(Agent):
         """Returns an appropriate connection_id for this agent"""
         return "{}_{}".format(self.worker_id, self.assignment_id)
 
-    # TODO remove reconnect logging
-    def log_reconnect(self):
-        """Log a reconnect of this agent """
-        shared_utils.print_and_log(
-            logging.DEBUG,
-            'Agent ({})_({}) reconnected to {} with status {}'.format(
-                self.worker_id,
-                self.assignment_id,
-                self.conversation_id,
-                self.get_status(),
-            ),
-        )
-
-    def get_inactive_command_data(self):
-        """Get appropriate inactive command data to respond to a reconnect"""
-        text, command = self.state.get_inactive_command_text()
-        return {
-            'text': command,
-            'inactive_text': text,
-            'conversation_id': self.conversation_id,
-            'agent_id': self.worker_id,
-        }
-
-    # TODO remove wait_for_status
-    def wait_for_status(self, desired_status):
-        """Suspend a thread until a particular assignment state changes
-        to the desired state
-        """
-        while True:
-            if self.get_status() == desired_status:
-                return True
-            if self.is_final():
-                return False
-            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
-
-    # TODO replace with a status check
     def is_in_task(self):
-        """Use conversation_id to determine if an agent is in a task"""
-        if self.conversation_id:
-            return 't_' in self.conversation_id
-        return False
+        """Simple check for an agent being in a task"""
+        return self.get_status() == AssignState.STATUS_IN_TASK
 
     def observe(self, msg):
         """Send an agent a message through the mturk_manager"""
+        self.state.append_message(message)
         self.m_send_message(self.worker_id, self.assignment_id, msg)
 
     def put_data(self, id, data):
         """Put data into the message queue if it hasn't already been seen"""
         if id not in self.recieved_packets:
+            self.state.append_message(message)  # append to message history
             self.recieved_packets[id] = True
             self.msg_queue.put(data)
 
@@ -383,13 +323,14 @@ class MTurkAgent(Agent):
             messages.append(self.msg_queue.get())
         return messages
 
-    # TODO examine where this happens
+    # TODO Only call this from within the agent
     def reduce_state(self):
         """Cleans up resources related to maintaining complete state"""
         self.flush_msg_queue()
         self.msg_queue = None
         self.recieved_packets = None
 
+    # TODO replace episode dones with disconnect messages
     def get_new_act_message(self):
         """Get a new act message if one exists, return None otherwise"""
         # See if any agent has disconnected

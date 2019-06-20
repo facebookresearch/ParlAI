@@ -141,11 +141,7 @@ class WorkerManager:
                 'Manager received: {}'.format(pkt),
                 should_print=self.opt['verbose'],
             )
-            # Push the message to the message thread to send on a reconnect
-            agent.append_message(pkt.data)
-
-            # Clear the send message command, as a message was recieved
-            agent.set_last_command(None)
+            # Push the message to the agent
             agent.put_data(pkt.id, pkt.data)
 
     def map_over_agents(self, map_function, filter_func=None):
@@ -355,6 +351,7 @@ class WorkerManager:
         agent.flush_msg_queue()
         self.mturk_manager.send_state_change(agent.worker_id, agent.assignment_id, data)
         if conversation_id not in self.conv_to_agent:
+            # TODO handle this in the agent
             self.conv_to_agent[conversation_id] = []
         self.conv_to_agent[conversation_id].append(agent)
 

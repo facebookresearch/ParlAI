@@ -387,6 +387,7 @@ class MTurkManager:
             if self.accepting_workers:
                 # Move the worker into a waiting world
                 agent.set_status(AssignState.STATUS_WAITING)
+                # TODO remove
                 self.worker_manager.change_agent_conversation(
                     agent=agent, conversation_id=conversation_id, new_agent_id='waiting'
                 )
@@ -684,6 +685,7 @@ class MTurkManager:
             if self.onboard_function:
                 conversation_id = 'o_' + str(uuid.uuid4())
                 agent.set_status(AssignState.STATUS_ONBOARDING)
+                # TODO remove
                 self.worker_manager.change_agent_conversation(
                     agent=mturk_agent,
                     conversation_id=conversation_id,
@@ -1002,6 +1004,7 @@ class MTurkManager:
 
     def move_agent_to_task(self, agent, new_conversation_id):
         agent.set_status(AssignState.STATUS_IN_TASK)
+        # TODO remove
         self.worker_manager.change_agent_conversation(
             agent=agent, conversation_id=new_conversation_id, new_agent_id=agent.id
         )
@@ -1281,10 +1284,6 @@ class MTurkManager:
             'Manager sending: {}'.format(packet),
             should_print=self.opt['verbose'],
         )
-        # Push outgoing message to the message thread to be able to resend
-        # on a reconnect event
-        if agent is not None:
-            agent.append_message(packet.data)
         self.socket_manager.queue_packet(packet)
         return data['message_id']
 
