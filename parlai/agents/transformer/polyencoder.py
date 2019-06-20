@@ -225,23 +225,20 @@ class PolyEncoderModule(torch.nn.Module):
                     in the ctxt_rep)
                 - cand_rep (3D float tensor) batchsize x num_cands x dim
         """
-        if ctxt_tokens is not None:
-            assert len(ctxt_tokens.shape) == 2
-            bsz = ctxt_tokens.size(0)
-        if cand_tokens is not None:
-            assert len(cand_tokens.shape) == 3
-            bsz = cand_tokens.size(0)
-            num_cands = cand_tokens.size(1)
-
         cand_embed = None
         ctxt_rep = None
         ctxt_rep_mask = None
 
         if cand_tokens is not None:
+            assert len(cand_tokens.shape) == 3
+            bsz = cand_tokens.size(0)
+            num_cands = cand_tokens.size(1)
             cand_embed = self.encoder_cand(cand_tokens.view(bsz * num_cands, -1))
             cand_embed = cand_embed.view(bsz, num_cands, -1)
 
         if ctxt_tokens is not None:
+            assert len(ctxt_tokens.shape) == 2
+            bsz = ctxt_tokens.size(0)
             # get context_representation. Now that depends on the cases.
             ctxt_out, ctxt_mask = self.encoder_ctxt(ctxt_tokens)
             dim = ctxt_out.size(2)
