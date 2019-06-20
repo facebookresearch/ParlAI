@@ -123,6 +123,7 @@ class MTurkAgent(Agent):
 
         # MTurkManager variables used by agents extracted here
         self.auto_approve_delay = mturk_manager.auto_approve_delay
+
         self.db_logger = mturk_manager.db_logger
         self.task_group_id = mturk_manager.task_group_id
 
