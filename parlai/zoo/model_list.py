@@ -238,7 +238,7 @@ model_list = [
             "--eval-candidates fixed  "
             "--fixed-candidates-path data/models/pretrained_transformers/convai_trainset_cands.txt"
         ),
-        "result": ("Enter Your Message: your persona: i love to drink fancy tea.\n
+        "result": ("Enter Your Message: your persona: i love to drink fancy tea.\n"
                     "your persona: i have a big library at home.\n"
                     "your persona: i'm a museum tour guide.\n"
                     "hi how are you doing ?"
