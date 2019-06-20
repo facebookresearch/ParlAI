@@ -94,7 +94,7 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
             }
             self.mturk_agent.observe(validate(ad))
             answer = self.mturk_agent.act()
-            if answer == self.questions[self.curr_question][1]:
+            if answer['text'] == self.questions[self.curr_question][1]:
                 self.correct += 1
             self.curr_question += 1
 
