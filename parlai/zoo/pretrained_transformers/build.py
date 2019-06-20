@@ -19,11 +19,10 @@ def download(datapath):
     opt = {
         'datapath': datapath,
     }
-    fnames = ['pretrained_transformers.tar.gz']
+    fnames = ['pretrained_transformers_v1.tar.gz']
     download_models(
         opt, fnames,
         model_name,
-        path="http://localhost:8889/",
         version='v1.0',
         use_model_type=False,
     )
