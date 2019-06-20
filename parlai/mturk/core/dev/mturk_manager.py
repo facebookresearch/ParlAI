@@ -386,10 +386,10 @@ class MTurkManager:
             conversation_id = 'w_{}'.format(uuid.uuid4())
             if self.accepting_workers:
                 # Move the worker into a waiting world
-                agent.set_status(AssignState.STATUS_WAITING)
-                # TODO remove
-                self.worker_manager.change_agent_conversation(
-                    agent=agent, conversation_id=conversation_id, new_agent_id='waiting'
+                agent.set_status(
+                    AssignState.STATUS_WAITING,
+                    conversation_id=conversation_id,
+                    agent_id='waiting',
                 )
                 self._add_agent_to_pool(agent)
             else:
@@ -684,12 +684,10 @@ class MTurkManager:
             """Onboarding wrapper to set state to onboarding properly"""
             if self.onboard_function:
                 conversation_id = 'o_' + str(uuid.uuid4())
-                agent.set_status(AssignState.STATUS_ONBOARDING)
-                # TODO remove
-                self.worker_manager.change_agent_conversation(
-                    agent=mturk_agent,
+                agent.set_status(
+                    AssignState.STATUS_ONBOARDING,
                     conversation_id=conversation_id,
-                    new_agent_id='onboarding',
+                    agent_id='onboarding',
                 )
                 # call onboarding function
                 save_data = self.onboard_function(mturk_agent)
@@ -1003,10 +1001,10 @@ class MTurkManager:
         self.onboard_function = onboard_function
 
     def move_agent_to_task(self, agent, new_conversation_id):
-        agent.set_status(AssignState.STATUS_IN_TASK)
-        # TODO remove
-        self.worker_manager.change_agent_conversation(
-            agent=agent, conversation_id=new_conversation_id, new_agent_id=agent.id
+        agent.set_status(
+            AssignState.STATUS_IN_TASK,
+            conversation_id=new_conversation_id,
+            agent_id=agent.id,
         )
         # Remove selected agents from the pool
         self._remove_from_agent_pool(agent)
@@ -1336,10 +1334,8 @@ class MTurkManager:
                 ), 'Unique qual name must not be none to use is_unique'
                 self.give_worker_qualification(agent.worker_id, self.unique_qual_name)
             if not agent.is_final():
-                agent.set_status(AssignState.STATUS_DONE)
-                # TODO Remove change_agent_conversation, have it occur
-                # automatically on state changes
-                self.worker_manager.change_agent_conversation(agent, 'done', None)
+                agent.set_status(AssignState.STATUS_DONE, 'done', None)
+
             if self.max_hits_per_worker > 0:
                 worker_state = self.worker_manager._get_worker(agent.worker_id)
                 completed_assignments = worker_state.completed_assignments()
@@ -1577,7 +1573,8 @@ class MTurkManager:
         """Move through the whole hit_id list and attempt to expire the
         HITs, though this only immediately expires those that aren't assigned.
         """
-        # TODO note and mark assigned hits as ones to be expired later
+        # TODO note and mark assigned hits as ones to be expired later.
+        # this will improve the shutdown experience
         shared_utils.print_and_log(
             logging.INFO,
             'Expiring all unassigned HITs...',

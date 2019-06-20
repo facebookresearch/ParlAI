@@ -335,23 +335,11 @@ class WorkerManager:
             self._log_missing_agent(worker_id, assignment_id)
         return agent
 
-    # TODO this should no longer be used for anything
-    def change_agent_conversation(self, agent, conversation_id, new_agent_id):
-        """Handle changing a conversation for an agent, takes a callback for
-        when the command is acknowledged
+    def register_to_conv(self, agent, conversation_id):
+        """Handle registering an agent to a particular conversation.
+        Should be called by an agent whenever given a conversation id
         """
-        agent.id = new_agent_id
-        agent.conversation_id = conversation_id
-        data = {
-            'agent_status': agent.get_status(),
-            'conversation_id': conversation_id,
-            'agent_id': new_agent_id,
-        }
-
-        agent.flush_msg_queue()
-        self.mturk_manager.send_state_change(agent.worker_id, agent.assignment_id, data)
         if conversation_id not in self.conv_to_agent:
-            # TODO handle this in the agent
             self.conv_to_agent[conversation_id] = []
         self.conv_to_agent[conversation_id].append(agent)
 
