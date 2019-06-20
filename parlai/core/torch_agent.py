@@ -103,7 +103,7 @@ class Batch(AttrDict):
         candidate_vecs=None,
         image=None,
         observations=None,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(
             text_vec=text_vec,
@@ -116,7 +116,7 @@ class Batch(AttrDict):
             candidate_vecs=candidate_vecs,
             image=image,
             observations=observations,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -786,14 +786,12 @@ class TorchAgent(ABC, Agent):
             print('WARNING: not loading optim state since optim class changed.')
         elif optim_states:
             # check for any fp16/fp32 conversions we need to do
-            optimstate_fp16 = ('loss_scaler' in optim_states)
+            optimstate_fp16 = 'loss_scaler' in optim_states
             if self.fp16 and optimstate_fp16:
                 # previously trained in fp16, now we're training in fp16.
                 # ideally no action needed, but APEX broke backwards
                 # compatibility and this is the hack around it.
-                optim_states['loss_scaler'] = (
-                    self.optimizer.state_dict()['loss_scaler']
-                )
+                optim_states['loss_scaler'] = self.optimizer.state_dict()['loss_scaler']
             elif optimstate_fp16 and not self.fp16:
                 # old optimizer was fp16 but now we're doing fp32,
                 # drop the fp16 wrapper from the state_dict and just load
@@ -890,9 +888,11 @@ class TorchAgent(ABC, Agent):
 
         if (
             # there is already an old LR scheduler saved on disk
-            states and
+            states
+            and
             # and the old LR scheduler is different
-            states.get('lr_scheduler_type') != self.opt['lr_scheduler'] and
+            states.get('lr_scheduler_type') != self.opt['lr_scheduler']
+            and
             # and we're not already using a fresh scheduler
             not hard_reset
         ):
@@ -1434,8 +1434,11 @@ class TorchAgent(ABC, Agent):
         """
         # if the last observation was the end of an episode,
         # then we shouldn't use it as history
-        if (use_reply == 'none' or not self.observation or
-                self.observation['episode_done']):
+        if (
+            use_reply == 'none'
+            or not self.observation
+            or self.observation['episode_done']
+        ):
             return None
 
         if use_reply == 'label':
