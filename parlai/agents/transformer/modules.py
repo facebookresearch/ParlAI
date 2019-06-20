@@ -145,8 +145,6 @@ class TransformerMemNetModel(nn.Module):
             )
 
         if not opt.get('learn_embeddings'):
-            if not opt.get('share_word_embeddings'):
-                self.cand_embeddings.weight.requires_grad = False
             self.embeddings.weight.requires_grad = False
             if not self.share_word_embedding:
                 self.cand_embeddings.weight.requires_grad = False
