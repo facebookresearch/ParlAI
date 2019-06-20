@@ -12,6 +12,7 @@ import os
 import os.path
 import torch
 
+
 def download(datapath):
     model_name = 'pretrained_transformers'
     mdir = os.path.join(get_model_dir(datapath), model_name)
@@ -34,6 +35,7 @@ def download(datapath):
         create_bi_model(path_cross, path_bi)
         create_poly_model(path_cross, path_poly)
 
+
 def create_bi_model(path_to_crossmodel, path_output):
     """ Create a biencoder model from a crossencoder model (that's to save
         space in the tar.gz)
@@ -51,7 +53,8 @@ def create_bi_model(path_to_crossmodel, path_output):
             bi_model_params[k.replace('encoder.', 'cand_encoder.')] = v
             bi_model_params[k.replace('encoder.', 'context_encoder.')] = v
             bi_model_params[k.replace('encoder.', 'memory_transformer.')] = v
-    torch.save({'model':bi_model_params}, path_output)
+    torch.save({'model': bi_model_params}, path_output)
+
 
 def create_poly_model(path_to_crossmodel, path_output):
     """ Create a polyencoder model from a crossencoder model (that's to save
@@ -66,4 +69,4 @@ def create_poly_model(path_to_crossmodel, path_output):
         elif k.startswith('encoder.'):
             poly_model_params[k.replace('encoder.', 'encoder_cand.')] = v
             poly_model_params[k.replace('encoder.', 'encoder_ctxt.')] = v
-    torch.save({'model':poly_model_params}, path_output)
+    torch.save({'model': poly_model_params}, path_output)
