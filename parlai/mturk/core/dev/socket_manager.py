@@ -26,10 +26,20 @@ class Packet:
     STATUS_SENT = 1
     STATUS_FAIL = 2
 
-    #TODO remove unused attributes
-    def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
-                 conversation_id=None, requires_ack=None, blocking=None,
-                 ack_func=None):
+    # TODO remove unused attributes
+    def __init__(
+        self,
+        id,
+        type,
+        sender_id,
+        receiver_id,
+        assignment_id,
+        data,
+        conversation_id=None,
+        requires_ack=None,
+        blocking=None,
+        ack_func=None,
+    ):
         """
         Create a packet to be used for holding information before it is
         sent through the socket
