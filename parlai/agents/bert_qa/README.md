@@ -1,5 +1,5 @@
 BERT model for Question Answering (span extraction).
-This module is composed of the BERT model with a linear layer on top of the sequence output that computes start_logits and end_logits.
+This make use of a version of the BERT model equipped with a linear layer on top of the sequence output that computes start_logits and end_logits.
 
 ## Example usage:
 
