@@ -15,13 +15,6 @@ class CrossencoderAgent(TorchRankerAgent):
         library (hugging face).
     """
 
-    @classmethod
-    def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
-        TransformerRankerAgent.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Cross Arguments')
-        return agent
-
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
