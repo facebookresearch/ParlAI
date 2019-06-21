@@ -86,6 +86,19 @@ def add_common_cmdline_args(argparser):
         help='Nonlinear activation to use. AIAYN uses relu, but '
         'more recent papers prefer gelu.',
     )
+    argparser.add_argument(
+        '--output-scaling',
+        type=float,
+        default=1.0,
+        help='scale the output of every transformer by this quantity.',
+    )
+    argparser.add_argument(
+        '--share-word-embeddings',
+        type='bool',
+        default=True,
+        help='Share word embeddings table for candidate and context'
+        'in the memory network',
+    )
 
 
 class Transformer(Agent):
@@ -242,7 +255,6 @@ class TransformerRankerAgent(TorchRankerAgent):
 
         if cand_encs is not None:
             cands_h = cand_encs
-
         scores = self._score(context_h, cands_h)
 
         return scores

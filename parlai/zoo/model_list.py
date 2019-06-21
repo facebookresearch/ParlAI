@@ -227,4 +227,29 @@ model_list = [
         "result": "{'exs': 10000, 'accuracy': 0.5113, 'f1': 0.5951, 'hits@1': 0.511, 'hits@5': 0.816, "  # noqa: E501
         "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}",  # noqa: E501
     },
+    {
+        "title": "Pretrained large transformers",
+        "id": "pretrained_transformers",
+        "path": "models:pretrained_transformers/model_poly",
+        "agent": "transformer/polyencoder",  # noqa: E501
+        "task": "personality_captions",
+        "description": ("Polyencoder pretrained on Convai2 scoring 89+ hits@1/20"),
+        "example": (
+            "PYTHONPATH=. python examples/interactive.py -m transformer/polyencoder "
+            "-mf zoo:pretrained_transformers/model_poly --encode-candidate-vecs true "
+            "--eval-candidates fixed  "
+            "--fixed-candidates-path data/models/pretrained_transformers/convai_trainset_cands.txt"
+        ),
+        "result": (
+            "Enter Your Message: your persona: i love to drink fancy tea.\n"
+            "your persona: i have a big library at home.\n"
+            "your persona: i'm a museum tour guide.\n"
+            "hi how are you doing ?"
+            "[Polyencoder]: i am alright . i am back from the library .\n"
+            "Enter Your Message: oh, what do you do for a living?\n"
+            "[Polyencoder]: i work at the museum downtown . i love it there .\n"
+            "Enter Your Message: what is your favorite drink?\n"
+            "[Polyencoder]: i am more of a tea guy . i get my tea from china .\n"
+        ),
+    },
 ]

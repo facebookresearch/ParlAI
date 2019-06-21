@@ -76,6 +76,7 @@ def _build_encoder(
         n_segments=n_segments,
         activation=opt['activation'],
         variant=opt['variant'],
+        output_scaling=opt['output_scaling'],
     )
 
 
@@ -111,6 +112,22 @@ def gelu(tensor):
     return 0.5 * tensor * (1.0 + torch.erf(tensor / math.sqrt(2.0)))
 
 
+def get_n_positions_from_options(opt):
+    if opt.get('n_positions'):
+        # if the number of positions is explicitly provided, use that
+        n_positions = opt['n_positions']
+    else:
+        # else, use the worst case from truncate
+        n_positions = max(
+            opt.get('truncate') or 0,
+            opt.get('text_truncate') or 0,
+            opt.get('label_truncate') or 0,
+        )
+        if n_positions == 0:
+            n_positions = 1024
+    return n_positions
+
+
 class TransformerMemNetModel(nn.Module):
     """Model which takes context, memories, candidates and encodes them."""
 
@@ -135,19 +152,7 @@ class TransformerMemNetModel(nn.Module):
             if not self.share_word_embedding:
                 self.cand_embeddings.weight.requires_grad = False
 
-        if opt.get('n_positions'):
-            # if the number of positions is explicitly provided, use that
-            n_positions = opt['n_positions']
-        else:
-            # else, use the worst case from truncate
-            n_positions = max(
-                opt.get('truncate') or 0,
-                opt.get('text_truncate') or 0,
-                opt.get('label_truncate') or 0,
-            )
-            if n_positions == 0:
-                # default to 1024
-                n_positions = 1024
+        n_positions = get_n_positions_from_options(opt)
 
         if n_positions < 0:
             raise ValueError('n_positions must be positive')
@@ -192,7 +197,9 @@ class TransformerMemNetModel(nn.Module):
         else:
             self.memory_transformer = self.context_encoder
 
-        self.attender = BasicAttention(dim=2, attn=opt['memory_attention'])
+        self.attender = BasicAttention(
+            dim=2, attn=opt['memory_attention'], residual=True
+        )
 
     def encode_cand(self, words):
         """Encode the candidates."""
@@ -318,6 +325,8 @@ class TransformerEncoder(nn.Module):
     :param variant:
         Which transformer architecture to use. Could be AIAYN or XLM.
         Future versions may support things like GPT-2, ...
+    :param output_scaling:
+        Scale the outputs by a given scalar
     """
 
     def __init__(
@@ -339,6 +348,7 @@ class TransformerEncoder(nn.Module):
         activation='relu',
         variant='aiayn',
         n_segments=0,
+        output_scaling=1.0,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -414,6 +424,7 @@ class TransformerEncoder(nn.Module):
                     activation=activation,
                 )
             )
+        self.output_scaling = output_scaling
 
     def forward(self, input, positions=None, segments=None):
         """
@@ -457,6 +468,7 @@ class TransformerEncoder(nn.Module):
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
 
+        tensor *= self.output_scaling
         if self.reduction_type == 'first':
             return tensor[:, 0, :]
         elif self.reduction_type == 'max':
@@ -805,16 +817,24 @@ class TransformerGeneratorModel(TorchGeneratorModel):
 class BasicAttention(nn.Module):
     """Implements simple/classical attention."""
 
-    def __init__(self, dim=1, attn='cosine'):
+    def __init__(self, dim=1, attn='cosine', residual=False, get_weights=True):
         super().__init__()
         self.softmax = nn.Softmax(dim=dim)
         if attn == 'cosine':
             self.cosine = nn.CosineSimilarity(dim=dim)
         self.attn = attn
         self.dim = dim
+        self.get_weights = get_weights
+        self.residual = residual
 
-    def forward(self, xs, ys):
-        """Forward pass."""
+    def forward(self, xs, ys, mask_ys=None):
+        """ xs: B x query_len x dim
+            ys: B x key_len x dim
+            TODO: Document this
+        """
+        bsz = xs.size(0)
+        y_len = ys.size(1)
+        x_len = xs.size(1)
         if self.attn == 'cosine':
             l1 = self.cosine(xs, ys).unsqueeze(self.dim - 1)
         else:
@@ -822,12 +842,21 @@ class BasicAttention(nn.Module):
             if self.attn == 'sqrt':
                 d_k = ys.size(-1)
                 l1 = l1 / math.sqrt(d_k)
+        if mask_ys is not None:
+            attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
+            attn_mask = attn_mask.repeat(1, x_len, 1)
+            l1.masked_fill_(attn_mask, -float('inf'))
         l2 = self.softmax(l1)
         lhs_emb = torch.bmm(l2, ys)
-        # add back the query
-        lhs_emb = lhs_emb.add(xs)
 
-        return lhs_emb.squeeze(self.dim - 1), l2
+        # # add back the query
+        if self.residual:
+            lhs_emb = lhs_emb.add(xs)
+
+        if self.get_weights:
+            return lhs_emb.squeeze(self.dim - 1), l2
+        else:
+            return lhs_emb.squeeze(self.dim - 1)
 
 
 class MultiHeadAttention(nn.Module):

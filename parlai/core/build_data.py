@@ -222,6 +222,10 @@ def download_from_google_drive(gd_id, destination):
         response.close()
 
 
+def get_model_dir(datapath):
+    return os.path.join(datapath, 'models')
+
+
 def download_models(
     opt, fnames, model_folder, version='v1.0', path='aws', use_model_type=False
 ):
