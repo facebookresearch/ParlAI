@@ -26,6 +26,7 @@ QN_WORDS = ['who', 'what', 'where', 'why', 'when', 'how', 'which', 'whom', 'whos
 # LOADING NIDF MEASURES
 # ========================================
 
+
 class NIDFFeats(object):
     """
     An object to hold a vector containing the NIDF values for all words in the
@@ -54,9 +55,11 @@ class NIDFFeats(object):
             else:
                 # print("WARNING: word %s has no NIDF; marking it as NIDF=0" % word)
                 num_oovs += 1  # If we don't have NIDF for this word, set as 0
-        print('Done constructing NIDF feature vector; of %i words in dict there '
-              'were %i words with unknown NIDF; they were marked as NIDF=0.'
-              % (len(dict), num_oovs))
+        print(
+            'Done constructing NIDF feature vector; of %i words in dict there '
+            'were %i words with unknown NIDF; they were marked as NIDF=0.'
+            % (len(dict), num_oovs)
+        )
 
     def get_feat_vec(self, dict):
         """
@@ -109,6 +112,7 @@ def initialize_control_information(opt, build_task=True):
 # UTIL
 # ========================================
 
+
 def flatten(list_of_lists):
     """Flatten a list of lists"""
     return [item for sublist in list_of_lists for item in sublist]
@@ -122,7 +126,7 @@ def intrep_frac(lst):
     for idx in range(len(lst)):
         if lst[idx] in lst[:idx]:
             num_rep += 1
-    return num_rep/len(lst)
+    return num_rep / len(lst)
 
 
 def extrep_frac(lst1, lst2):
@@ -130,7 +134,7 @@ def extrep_frac(lst1, lst2):
     if len(lst1) == 0:
         return 0
     num_rep = len([x for x in lst1 if x in lst2])
-    return num_rep/len(lst1)
+    return num_rep / len(lst1)
 
 
 def get_ngrams(text, n):
@@ -142,7 +146,9 @@ def get_ngrams(text, n):
         list of strings (each is a ngram)
     """
     tokens = text.split()
-    return [" ".join(tokens[i:i+n]) for i in range(len(tokens)-(n-1))]  # list of str
+    return [
+        " ".join(tokens[i : i + n]) for i in range(len(tokens) - (n - 1))
+    ]  # list of str
 
 
 def matching_ngram_completions(comparison_seq, hypothesis, n):
@@ -159,13 +165,16 @@ def matching_ngram_completions(comparison_seq, hypothesis, n):
     Output:
         bad_words: list of integers
     """
-    if hypothesis is None or len(hypothesis) < n-1 or len(comparison_seq) < n:
+    if hypothesis is None or len(hypothesis) < n - 1 or len(comparison_seq) < n:
         return []
     hypothesis = [int(i) for i in hypothesis]  # cast to list of ints
     comparison_seq = [int(i) for i in comparison_seq]  # cast to list of ints
-    n_minus_1_gram = hypothesis[-(n-1):]  # list of ints length n-1
-    bad_words = [comparison_seq[i] for i in range(n-1, len(comparison_seq))
-                 if comparison_seq[i-(n-1):i] == n_minus_1_gram]  # list of ints
+    n_minus_1_gram = hypothesis[-(n - 1) :]  # list of ints length n-1
+    bad_words = [
+        comparison_seq[i]
+        for i in range(n - 1, len(comparison_seq))
+        if comparison_seq[i - (n - 1) : i] == n_minus_1_gram
+    ]  # list of ints
     return bad_words
 
 
@@ -191,6 +200,7 @@ def matching_ngram_completions(comparison_seq, hypothesis, n):
 #   feat: a vector length vocab_size. This is the feature vector, now with the new
 #     weighted decoding feature added (multiplied by wt).
 # ========================================
+
 
 def intrep_word_used_before(dict, hypothesis, history, wt, feat, remove_stopwords):
     """
@@ -226,8 +236,9 @@ def intrep_ngram_used_before(dict, hypothesis, history, wt, feat, n):
     return feat
 
 
-def extrep_word_used_before(dict, hypothesis, history, wt, feat, remove_stopwords,
-                            person):
+def extrep_word_used_before(
+    dict, hypothesis, history, wt, feat, remove_stopwords, person
+):
     """
     Weighted decoding feature function. See explanation above.
     This feature is 1 for words that have already been used earlier in the conversation;
@@ -278,8 +289,10 @@ def extrep_ngram_used_before(dict, hypothesis, history, wt, feat, n, person):
     if hypothesis is None:
         return feat
     prev_utts_wordidx = [dict.txt2vec(utt) for utt in prev_utts]  # list of list of ints
-    bad_words = [matching_ngram_completions(prev_utt, hypothesis, n)
-                 for prev_utt in prev_utts_wordidx]  # list of list of ints
+    bad_words = [
+        matching_ngram_completions(prev_utt, hypothesis, n)
+        for prev_utt in prev_utts_wordidx
+    ]  # list of list of ints
     bad_words = list(set(flatten(bad_words)))  # list of ints, no duplicates
     if len(bad_words) > 0:
         feat[bad_words] += wt
@@ -292,7 +305,7 @@ def nidf(dict, hypothesis, history, wt, feat):
     This feature is equal to the NIDF (normalized inverse document frequency) score for
     each word. The score is always between 0 and 1.
     """
-    feat += wt*nidf_feats.get_feat_vec(dict)
+    feat += wt * nidf_feats.get_feat_vec(dict)
     return feat
 
 
@@ -329,7 +342,7 @@ def lastutt_sim_arora_word(dict, hypothesis, history, wt, feat):
     # Get cosine similarities, which is a tensor shape (vocab_size)
     sims = sent_embedder.get_word_sims(last_utt, last_utt_emb, dict)
 
-    feat += wt*sims
+    feat += wt * sims
     return feat
 
 
@@ -337,88 +350,92 @@ def lastutt_sim_arora_word(dict, hypothesis, history, wt, feat):
 # functions with inputs (dict, hypothesis, history, wt, feat), that update the feature
 # vector feat.
 WDFEATURE2UPDATEFN = {
-
     # Use to reduce repeated words within an utterance. Not used in paper.
-    "intrep_word":
-    (lambda x: intrep_word_used_before(x[0], x[1], x[2], x[3], x[4],
-                                       remove_stopwords=False)),
-
+    "intrep_word": (
+        lambda x: intrep_word_used_before(
+            x[0], x[1], x[2], x[3], x[4], remove_stopwords=False
+        )
+    ),
     # Use to reduce repeated non-stopwords within an utterance. intrep_unigram in paper.
-    "intrep_nonstopword":
-    (lambda x: intrep_word_used_before(x[0], x[1], x[2], x[3], x[4],
-                                       remove_stopwords=True)),
-
+    "intrep_nonstopword": (
+        lambda x: intrep_word_used_before(
+            x[0], x[1], x[2], x[3], x[4], remove_stopwords=True
+        )
+    ),
     # Use to reduce repeated 2-grams within an utterance. intrep_bigram in paper.
-    "intrep_2gram":
-    (lambda x: intrep_ngram_used_before(x[0], x[1], x[2], x[3], x[4], n=2)),
-
+    "intrep_2gram": (
+        lambda x: intrep_ngram_used_before(x[0], x[1], x[2], x[3], x[4], n=2)
+    ),
     # Use to reduce repeated 3-grams within an utterance. Not used in paper.
-    "intrep_3gram":
-    (lambda x: intrep_ngram_used_before(x[0], x[1], x[2], x[3], x[4], n=3)),
-
+    "intrep_3gram": (
+        lambda x: intrep_ngram_used_before(x[0], x[1], x[2], x[3], x[4], n=3)
+    ),
     # Use to reduce repeating words already used in previous bot utterances.
     # Not used in paper.
-    "extrep_word":
-    (lambda x: extrep_word_used_before(x[0], x[1], x[2], x[3], x[4],
-                                       remove_stopwords=False, person='self')),
-
+    "extrep_word": (
+        lambda x: extrep_word_used_before(
+            x[0], x[1], x[2], x[3], x[4], remove_stopwords=False, person='self'
+        )
+    ),
     # Use to reduce repeating non-stopwords already used in previous bot utterances.
     # extrep_unigram in paper.
-    "extrep_nonstopword":
-    (lambda x: extrep_word_used_before(x[0], x[1], x[2], x[3], x[4],
-                                       remove_stopwords=True, person='self')),
-
+    "extrep_nonstopword": (
+        lambda x: extrep_word_used_before(
+            x[0], x[1], x[2], x[3], x[4], remove_stopwords=True, person='self'
+        )
+    ),
     # Use to reduce repeating 2-grams already used in previous bot utterances.
     # extrep_bigram in paper.
-    "extrep_2gram":
-    (lambda x: extrep_ngram_used_before(x[0], x[1], x[2], x[3], x[4],
-                                        n=2, person='self')),
-
+    "extrep_2gram": (
+        lambda x: extrep_ngram_used_before(
+            x[0], x[1], x[2], x[3], x[4], n=2, person='self'
+        )
+    ),
     # Use to reduce repeating 3-grams already used in previous bot utterances.
     # Not used in paper.
-    "extrep_3gram":
-    (lambda x: extrep_ngram_used_before(x[0], x[1], x[2], x[3], x[4],
-                                        n=3, person='self')),
-
+    "extrep_3gram": (
+        lambda x: extrep_ngram_used_before(
+            x[0], x[1], x[2], x[3], x[4], n=3, person='self'
+        )
+    ),
     # Use to reduce repeating words already used in previous partner utterances.
     # Not used in paper.
-    "partnerrep_word":
-    (lambda x: extrep_word_used_before(x[0], x[1], x[2], x[3], x[4],
-                                       remove_stopwords=False, person='partner')),
-
+    "partnerrep_word": (
+        lambda x: extrep_word_used_before(
+            x[0], x[1], x[2], x[3], x[4], remove_stopwords=False, person='partner'
+        )
+    ),
     # Use to reduce repeating non-stopwords already used in previous partner utterances.
     # Not used in paper.
-    "partnerrep_nonstopword":
-    (lambda x: extrep_word_used_before(x[0], x[1], x[2], x[3], x[4],
-                                       remove_stopwords=True, person='partner')),
-
+    "partnerrep_nonstopword": (
+        lambda x: extrep_word_used_before(
+            x[0], x[1], x[2], x[3], x[4], remove_stopwords=True, person='partner'
+        )
+    ),
     # Use to reduce repeating 2-grams already used in previous partner utterances.
     # partnerrep_bigram in paper.
-    "partnerrep_2gram":
-    (lambda x: extrep_ngram_used_before(x[0], x[1], x[2], x[3], x[4],
-                                        n=2, person='partner')),
-
+    "partnerrep_2gram": (
+        lambda x: extrep_ngram_used_before(
+            x[0], x[1], x[2], x[3], x[4], n=2, person='partner'
+        )
+    ),
     # Use to reduce repeating 3-grams already used in previous partner utterances.
     # Not used in paper.
-    "partnerrep_3gram":
-    (lambda x: extrep_ngram_used_before(x[0], x[1], x[2], x[3], x[4],
-                                        n=3, person='partner')),
-
+    "partnerrep_3gram": (
+        lambda x: extrep_ngram_used_before(
+            x[0], x[1], x[2], x[3], x[4], n=3, person='partner'
+        )
+    ),
     # Use to increase/decrease the probability of high-specificity (i.e. rare) words.
     # This is the NIDF(w) weighted decoding feature mentioned in the paper.
-    "nidf":
-    (lambda x: nidf(x[0], x[1], x[2], x[3], x[4])),
-
+    "nidf": (lambda x: nidf(x[0], x[1], x[2], x[3], x[4])),
     # Use to increase/decrease the probability of interrogative (i.e. question) words.
     # This is the is_qn_word(w) WD feature mentioned in the paper.
-    "question":
-    (lambda x: qn_words(x[0], x[1], x[2], x[3], x[4])),
-
+    "question": (lambda x: qn_words(x[0], x[1], x[2], x[3], x[4])),
     # Use to increase/decrease the probability of words with high response-relatedness
     # (i.e. similarity to the partner's last utterance).
     # This is the resp_rel(w) WD feature mentioned in the paper.
-    "lastuttsim":
-    (lambda x: lastutt_sim_arora_word(x[0], x[1], x[2], x[3], x[4])),
+    "lastuttsim": (lambda x: lastutt_sim_arora_word(x[0], x[1], x[2], x[3], x[4])),
 }
 
 
@@ -456,6 +473,7 @@ def get_wd_features(dict, hypothesis, history, wd_features, wd_weights):
 # Output:
 #   score: float. the value of the controllable attribute for utt.
 # ========================================
+
 
 def intrep_repeated_word_frac(utt, history, remove_stopwords):
     """
@@ -543,14 +561,18 @@ def avg_nidf(utt, history):
     problem_words = [w for w in words if w not in word2nidf]
     ok_words = [w for w in words if w in word2nidf]
     if len(ok_words) == 0:
-        print("WARNING: For all the words in the utterance '%s', we do not have the "
-              "NIDF score. Marking as avg_nidf=1." % utt)
+        print(
+            "WARNING: For all the words in the utterance '%s', we do not have the "
+            "NIDF score. Marking as avg_nidf=1." % utt
+        )
         return 1  # rarest possible sentence
     nidfs = [word2nidf[w] for w in ok_words]
-    avg_nidf = sum(nidfs)/len(nidfs)
+    avg_nidf = sum(nidfs) / len(nidfs)
     if len(problem_words) > 0:
-        print("WARNING: When calculating avg_nidf for the utterance '%s', we don't "
-              "know NIDF for the following words: %s" % (utt, str(problem_words)))
+        print(
+            "WARNING: When calculating avg_nidf for the utterance '%s', we don't "
+            "know NIDF for the following words: %s" % (utt, str(problem_words))
+        )
     assert avg_nidf >= 0 and avg_nidf <= 1
     return avg_nidf
 
@@ -608,80 +630,72 @@ def wordlist_frac(utt, history, word_list):
     """
     words = utt.split()
     num_in_list = len([w for w in words if w in word_list])
-    return num_in_list/len(words)
+    return num_in_list / len(words)
 
 
 # In this dict, the keys are the names of the sentence-level attributes, and the values
 # are functions with input (utt, history), returning the attribute value measured on utt
 ATTR2SENTSCOREFN = {
-
     # Proportion of words in utt that appear earlier in utt
-    "intrep_word":
-    (lambda x: intrep_repeated_word_frac(x[0], x[1], remove_stopwords=False)),
-
+    "intrep_word": (
+        lambda x: intrep_repeated_word_frac(x[0], x[1], remove_stopwords=False)
+    ),
     # Proportion of non-stopwords in utt that appear earlier in utt
-    "intrep_nonstopword":
-    (lambda x: intrep_repeated_word_frac(x[0], x[1], remove_stopwords=True)),
-
+    "intrep_nonstopword": (
+        lambda x: intrep_repeated_word_frac(x[0], x[1], remove_stopwords=True)
+    ),
     # Proportion of 2-grams in utt that appear earlier in utt
-    "intrep_2gram":
-    (lambda x: intrep_repeated_ngram_frac(x[0], x[1], n=2)),
-
+    "intrep_2gram": (lambda x: intrep_repeated_ngram_frac(x[0], x[1], n=2)),
     # Proportion of 3-grams in utt that appear earlier in utt
-    "intrep_3gram":
-    (lambda x: intrep_repeated_ngram_frac(x[0], x[1], n=3)),
-
+    "intrep_3gram": (lambda x: intrep_repeated_ngram_frac(x[0], x[1], n=3)),
     # Proportion of words in utt that appeared in a previous bot utterance
-    "extrep_word":
-    (lambda x: extrep_repeated_word_frac(x[0], x[1], remove_stopwords=False,
-                                         person='self')),
-
+    "extrep_word": (
+        lambda x: extrep_repeated_word_frac(
+            x[0], x[1], remove_stopwords=False, person='self'
+        )
+    ),
     # Proportion of non-stopwords in utt that appeared in a previous bot utterance
-    "extrep_nonstopword":
-    (lambda x: extrep_repeated_word_frac(x[0], x[1], remove_stopwords=True,
-                                         person='self')),
-
+    "extrep_nonstopword": (
+        lambda x: extrep_repeated_word_frac(
+            x[0], x[1], remove_stopwords=True, person='self'
+        )
+    ),
     # Proportion of 2-grams in utt that appeared in a previous bot utterance
-    "extrep_2gram":
-    (lambda x: extrep_repeated_ngram_frac(x[0], x[1], n=2, person='self')),
-
+    "extrep_2gram": (
+        lambda x: extrep_repeated_ngram_frac(x[0], x[1], n=2, person='self')
+    ),
     # Proportion of 3-grams in utt that appeared in a previous bot utterance
-    "extrep_3gram":
-    (lambda x: extrep_repeated_ngram_frac(x[0], x[1], n=3, person='self')),
-
+    "extrep_3gram": (
+        lambda x: extrep_repeated_ngram_frac(x[0], x[1], n=3, person='self')
+    ),
     # Proportion of words in utt that appeared in a previous partner utterance
-    "partnerrep_word":
-    (lambda x: extrep_repeated_word_frac(x[0], x[1], remove_stopwords=False,
-                                         person='partner')),
-
+    "partnerrep_word": (
+        lambda x: extrep_repeated_word_frac(
+            x[0], x[1], remove_stopwords=False, person='partner'
+        )
+    ),
     # Proportion of non-stopwords in utt that appeared in a previous partner utterance
-    "partnerrep_nonstopword":
-    (lambda x: extrep_repeated_word_frac(x[0], x[1], remove_stopwords=True,
-                                         person='partner')),
-
+    "partnerrep_nonstopword": (
+        lambda x: extrep_repeated_word_frac(
+            x[0], x[1], remove_stopwords=True, person='partner'
+        )
+    ),
     # Proportion of 2-grams in utt that appeared in a previous partner utterance
-    "partnerrep_2gram":
-    (lambda x: extrep_repeated_ngram_frac(x[0], x[1], n=2, person='partner')),
-
+    "partnerrep_2gram": (
+        lambda x: extrep_repeated_ngram_frac(x[0], x[1], n=2, person='partner')
+    ),
     # Proportion of 3-grams in utt that appeared in a previous partner utterance
-    "partnerrep_3gram":
-    (lambda x: extrep_repeated_ngram_frac(x[0], x[1], n=3, person='partner')),
-
+    "partnerrep_3gram": (
+        lambda x: extrep_repeated_ngram_frac(x[0], x[1], n=3, person='partner')
+    ),
     # Mean NIDF score of the words in utt
-    "avg_nidf":
-    (lambda x: avg_nidf(x[0], x[1])),
-
+    "avg_nidf": (lambda x: avg_nidf(x[0], x[1])),
     # 1 if utt contains '?', 0 otherwise
-    "question":
-    (lambda x: contains_qmark(x[0], x[1])),
-
+    "question": (lambda x: contains_qmark(x[0], x[1])),
     # Proportion of words in utt that are interrogative words
-    "qn_words":
-    (lambda x: wordlist_frac(x[0], x[1], word_list=QN_WORDS)),
-
+    "qn_words": (lambda x: wordlist_frac(x[0], x[1], word_list=QN_WORDS)),
     # Cosine similarity of utt to partner's last utterance
-    "lastuttsim":
-    (lambda x: lastutt_sim_arora_sent(x[0], x[1])),
+    "lastuttsim": (lambda x: lastutt_sim_arora_sent(x[0], x[1])),
 }
 
 
@@ -714,6 +728,7 @@ def eval_attr(utt, history, attr):
 # what bucket a given control variable value should go into.
 # ========================================
 
+
 def get_qn_bucket_probs():
     """
     Assuming we have 11 CT question buckets (0 to 10), compute P(bucket|question=1) and
@@ -724,7 +739,7 @@ def get_qn_bucket_probs():
       prob_bucket_given_qn: list of floats length 11; P(bucket|question=1)
       prob_bucket_given_notqn: list of floats length 11; P(bucket|question=0)
     """
-    prob_qn = 41101/131438  # P(question=1), computed across ConvAI2 dataset. ~31%
+    prob_qn = 41101 / 131438  # P(question=1), computed across ConvAI2 dataset. ~31%
 
     # Compute P(bucket), i.e. the total sizes of the buckets.
     # This is done by assuming that buckets 1 to 10 are equal in size, but bucket 0
@@ -733,17 +748,17 @@ def get_qn_bucket_probs():
     #               = prob_bucket_n * 0.1 + ... + prob_bucket_n * 1
     #               = 5.5 * prob_bucket_n
     # Thus we can derive the value for prob_bucket_n and prob_bucket_0:
-    prob_bucket_n = prob_qn/5.5  # P(bucket=n) for n=1,...,10
-    prob_bucket_0 = 1 - 10*prob_bucket_n  # P(bucket=0)
-    prob_bucket = [prob_bucket_0] + [prob_bucket_n]*10  # list length 11, P(bucket)
+    prob_bucket_n = prob_qn / 5.5  # P(bucket=n) for n=1,...,10
+    prob_bucket_0 = 1 - 10 * prob_bucket_n  # P(bucket=0)
+    prob_bucket = [prob_bucket_0] + [prob_bucket_n] * 10  # list length 11, P(bucket)
 
     # Compute P(bucket|qn=1) and P(bucket|qn=0) using Bayes Rule:
     # P(bucket|qn=1) = P(bucket) * P(qn=1|bucket) / P(qn=1)
     # P(bucket|qn=0) = P(bucket) * P(qn=0|bucket) / P(qn=0)
-    prob_bucket_given_qn = [pb * (i/10) / prob_qn
-                            for i, pb in enumerate(prob_bucket)]
-    prob_bucket_given_notqn = [pb * ((10-i)/10) / (1-prob_qn)
-                               for i, pb in enumerate(prob_bucket)]
+    prob_bucket_given_qn = [pb * (i / 10) / prob_qn for i, pb in enumerate(prob_bucket)]
+    prob_bucket_given_notqn = [
+        pb * ((10 - i) / 10) / (1 - prob_qn) for i, pb in enumerate(prob_bucket)
+    ]
 
     return prob_bucket_given_qn, prob_bucket_given_notqn
 
@@ -787,7 +802,7 @@ def sort_into_bucket(val, bucket_lbs):
       bucket_id: int in range(num_buckets); the bucket that val belongs to.
     """
     num_buckets = len(bucket_lbs)
-    for bucket_id in range(num_buckets-1, -1, -1):  # iterate descending
+    for bucket_id in range(num_buckets - 1, -1, -1):  # iterate descending
         lb = bucket_lbs[bucket_id]
         if val >= lb:
             return bucket_id
@@ -805,8 +820,10 @@ def bucket_contvar(ex, ctrl, num_buckets):
       num_buckets: int. The number of buckets for this control variable.
     """
     if ctrl not in ex.keys():
-        raise ValueError("Control %s not found in example. Available keys in "
-                         "this example: %s" % (ctrl, ', '.join(ex.keys())))
+        raise ValueError(
+            "Control %s not found in example. Available keys in "
+            "this example: %s" % (ctrl, ', '.join(ex.keys()))
+        )
 
     # Get the control variable value
     ctrl_val = ex[ctrl]  # string. the value of the control variable for this example
@@ -829,7 +846,7 @@ def bucket_contvar(ex, ctrl, num_buckets):
     bucket_lbs = CONTROL2BUCKETLBS[(ctrl, num_buckets)]  # lst len num_buckets of floats
     if ctrl == 'lastuttsim':
         # The 'bot goes first' bucket 10 has no lower bound
-        assert len(bucket_lbs) == num_buckets-1
+        assert len(bucket_lbs) == num_buckets - 1
     else:
         assert len(bucket_lbs) == num_buckets
 
@@ -838,11 +855,7 @@ def bucket_contvar(ex, ctrl, num_buckets):
 
 
 # The default embedding size for CT control variable embeddings
-CONTROL2DEFAULTEMBSIZE = {
-    'question': 10,
-    'avg_nidf': 10,
-    'lastuttsim': 10,
-}
+CONTROL2DEFAULTEMBSIZE = {'question': 10, 'avg_nidf': 10, 'lastuttsim': 10}
 
 # The default number of buckets for CT control variables
 CONTROL2DEFAULTNUMBUCKETS = {
@@ -861,21 +874,35 @@ CONTROL2BUCKETINGFN = {
 }
 
 # Bucket lowerbounds. These are produced using the get_bucket_lowerbounds.py script.
-AVG_NIDF_10BUCKET_LBS = [0.0, 0.1598414705378728, 0.17498045049881217,
-                         0.18658836637678175, 0.19671787445075514, 0.2070643776875113,
-                         0.2182630256396894, 0.23053753067016441, 0.24624559431359425,
-                         0.2707252238670671]
-LASTUTTSIM_10BUCKET_LBS = [-0.3870984613895416, -0.08026778697967529,
-                           -0.025567850098013878, 0.019155802205204964,
-                           0.06262511014938354, 0.10953287780284882,
-                           0.16335178911685944, 0.2319537252187729,
-                           0.3283223509788513, 0.4921867549419403]
+AVG_NIDF_10BUCKET_LBS = [
+    0.0,
+    0.1598414705378728,
+    0.17498045049881217,
+    0.18658836637678175,
+    0.19671787445075514,
+    0.2070643776875113,
+    0.2182630256396894,
+    0.23053753067016441,
+    0.24624559431359425,
+    0.2707252238670671,
+]
+LASTUTTSIM_10BUCKET_LBS = [
+    -0.3870984613895416,
+    -0.08026778697967529,
+    -0.025567850098013878,
+    0.019155802205204964,
+    0.06262511014938354,
+    0.10953287780284882,
+    0.16335178911685944,
+    0.2319537252187729,
+    0.3283223509788513,
+    0.4921867549419403,
+]
 
 
 # This dictionary maps from (CT control variable name, num_buckets) to the lower bounds
 CONTROL2BUCKETLBS = {
     ('avg_nidf', 10): AVG_NIDF_10BUCKET_LBS,
-
     # Note: For lastuttsim, the 11th bucket is for when the bot goes first; it doesn't
     # have a LB but it does have an embedding.
     ('lastuttsim', 11): LASTUTTSIM_10BUCKET_LBS,
@@ -913,12 +940,13 @@ def get_ctrl_vec(exs, history, control_settings):
                 bucket = set_val  # override with set_val, an int
             else:  # bucket the control val given in ex
                 if ctrl not in ex:
-                    raise ValueError("The CT control '%s' is not present as a key in "
-                                     "the message dictionary:\n%s\nIf training a CT "
-                                     "model, perhaps your training data is missing the "
-                                     "annotations. If talking interactively, perhaps "
-                                     "you forgot to set --set-controls."
-                                     % (ctrl, str(ex)))
+                    raise ValueError(
+                        "The CT control '%s' is not present as a key in "
+                        "the message dictionary:\n%s\nIf training a CT "
+                        "model, perhaps your training data is missing the "
+                        "annotations. If talking interactively, perhaps "
+                        "you forgot to set --set-controls." % (ctrl, str(ex))
+                    )
                 num_buckets = ctrl_info['num_buckets']
                 bucketing_fn = CONTROL2BUCKETINGFN[ctrl]  # bucketing fn for this ctrl
                 bucket = bucketing_fn(ex, ctrl, num_buckets)  # int

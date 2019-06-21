@@ -17,6 +17,7 @@ import io
 
 try:
     import torch
+
     TORCH_AVAILABLE = True
     GPU_AVAILABLE = torch.cuda.device_count() > 0
 except ImportError:
@@ -25,6 +26,7 @@ except ImportError:
 
 try:
     import git
+
     git_ = git.Git()
     GIT_AVAILABLE = True
 except ImportError:
@@ -82,6 +84,7 @@ class retry(object):
     def __call__(self, testfn):
         """Call testfn(), possibly multiple times on failureException."""
         from functools import wraps
+
         @wraps(testfn)
         def _wrapper(testself, *args, **kwargs):
             for _ in range(self.ntries - 1):
@@ -91,6 +94,7 @@ class retry(object):
                     pass
             # last time, actually throw any errors there may be
             return testfn(testself, *args, **kwargs)
+
         return _wrapper
 
 
@@ -139,9 +143,9 @@ def is_new_task_filename(filename):
     Used in tests and test triggers, and only here to avoid redundancy.
     """
     return (
-        'parlai/tasks' in filename and
-        'README' not in filename and
-        'task_list.py' not in filename
+        'parlai/tasks' in filename
+        and 'README' not in filename
+        and 'task_list.py' not in filename
     )
 
 
@@ -232,11 +236,7 @@ def train_model(opt):
             tl = tms.TrainLoop(popt)
             valid, test = tl.train()
 
-    return (
-        output.getvalue(),
-        valid,
-        test,
-    )
+    return (output.getvalue(), valid, test)
 
 
 def eval_model(opt, skip_valid=False, skip_test=False):
@@ -258,6 +258,7 @@ def eval_model(opt, skip_valid=False, skip_test=False):
     by disabling autocleanup
     """
     import parlai.scripts.eval_model as ems
+
     parser = ems.setup_args()
     parser.set_params(**opt)
     parser.set_params(log_every_n_secs=10)
@@ -272,11 +273,7 @@ def eval_model(opt, skip_valid=False, skip_test=False):
         popt['datatype'] = 'test'
         test = None if skip_test else ems.eval_model(popt)
 
-    return (
-        output.getvalue(),
-        valid,
-        test,
-    )
+    return (output.getvalue(), valid, test)
 
 
 def display_data(opt):
@@ -287,6 +284,7 @@ def display_data(opt):
     :rtype: (str, str, str)
     """
     import parlai.scripts.display_data as dd
+
     parser = dd.setup_args()
     parser.set_params(**opt)
     popt = parser.parse_args(print_args=False)
@@ -301,22 +299,19 @@ def display_data(opt):
         popt['datatype'] = 'test:stream'
         dd.display_data(popt)
 
-    return (
-        train_output.getvalue(),
-        valid_output.getvalue(),
-        test_output.getvalue(),
-    )
+    return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
 
 def download_unittest_models():
     """Download the unittest pretrained models."""
     from parlai.core.params import ParlaiParser
     from parlai.core.build_data import download_models
+
     opt = ParlaiParser().parse_args(print_args=False)
     model_filenames = [
         'seq2seq.tar.gz',
         'transformer_ranker.tar.gz',
-        'transformer_generator2.tar.gz'
+        'transformer_generator2.tar.gz',
     ]
     with capture_output() as _:
         download_models(opt, model_filenames, 'unittest', version='v2.0')

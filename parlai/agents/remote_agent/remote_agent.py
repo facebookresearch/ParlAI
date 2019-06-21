@@ -30,21 +30,25 @@ class RemoteAgentAgent(Agent):
     def add_cmdline_args(argparser):
         remote = argparser.add_argument_group('Remote Agent Args')
         remote.add_argument(
-            '--port', default=5555,
-            help='first port to connect to for remote agents')
+            '--port', default=5555, help='first port to connect to for remote agents'
+        )
         remote.add_argument(
-            '--remote-address', default='localhost',
-            help='address to connect to, defaults to localhost for ' +
-                 'connections, overriden with `*` if remote-host is set')
+            '--remote-address',
+            default='localhost',
+            help='address to connect to, defaults to localhost for '
+            + 'connections, overriden with `*` if remote-host is set',
+        )
         remote.add_argument(
-            '--remote-host', action='store_true',
-            help='whether or not this connection is the host or the client')
+            '--remote-host',
+            action='store_true',
+            help='whether or not this connection is the host or the client',
+        )
         remote.add_argument(
-            '--remote-cmd',
-            help='command to launch paired agent, if applicable')
+            '--remote-cmd', help='command to launch paired agent, if applicable'
+        )
         remote.add_argument(
-            '--remote-args',
-            help='optional arguments to pass to paired agent')
+            '--remote-args', help='optional arguments to pass to paired agent'
+        )
 
     def __init__(self, opt, shared=None):
         """Runs subprocess command to set up remote partner.
@@ -65,9 +69,11 @@ class RemoteAgentAgent(Agent):
             if 'port' in opt:
                 self.port = opt['port']
             else:
-                raise RuntimeError('You need to run RemoteAgent.' +
-                                   'add_cmdline_args(argparser) before ' +
-                                   'calling this class to set up options.')
+                raise RuntimeError(
+                    'You need to run RemoteAgent.'
+                    + 'add_cmdline_args(argparser) before '
+                    + 'calling this class to set up options.'
+                )
             if opt.get('remote_cmd'):
                 # if available, command to launch partner instance, passing on
                 # some shared parameters from ParlAI
@@ -75,9 +81,10 @@ class RemoteAgentAgent(Agent):
                 # in a different language than python
                 self.process = subprocess.Popen(
                     '{cmd} {port} {numthreads} {args}'.format(
-                        cmd=opt['remote_cmd'], port=opt['port'],
+                        cmd=opt['remote_cmd'],
+                        port=opt['port'],
                         numthreads=opt['numthreads'],
-                        args=opt.get('remote_args', '')
+                        args=opt.get('remote_args', ''),
                     ).split()
                 )
         self.connect()
@@ -190,8 +197,7 @@ class ParsedRemoteAgent(RemoteAgentAgent):
         you need to know where those are.
         """
         if split_lines:
-            return [self.dict.parse(line, vec_type=list)
-                    for line in s.split('\n')]
+            return [self.dict.parse(line, vec_type=list) for line in s.split('\n')]
         else:
             return self.dict.parse(s, vec_type=list)
 

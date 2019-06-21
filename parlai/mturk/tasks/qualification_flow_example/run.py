@@ -4,12 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
-from parlai.mturk.tasks.qualification_flow_example.worlds import \
-    QualificationFlowOnboardWorld, QualificationFlowSoloWorld
+from parlai.mturk.tasks.qualification_flow_example.worlds import (
+    QualificationFlowOnboardWorld,
+    QualificationFlowSoloWorld,
+)
 from parlai.mturk.core.mturk_manager import MTurkManager
 import parlai.mturk.core.mturk_utils as mturk_utils
-from parlai.mturk.tasks.qualification_flow_example.task_config import \
-    task_config
+from parlai.mturk.tasks.qualification_flow_example.task_config import task_config
 import os
 import random
 
@@ -24,20 +25,18 @@ def main():
     opt.update(task_config)
 
     mturk_agent_id = 'Worker'
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=[mturk_agent_id]
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=[mturk_agent_id])
     mturk_manager.setup_server()
     qual_name = 'ParlAIExcludeQual{}t{}'.format(
-        random.randint(10000, 99999), random.randint(10000, 99999))
+        random.randint(10000, 99999), random.randint(10000, 99999)
+    )
     qual_desc = (
         'Qualification for a worker not correctly completing the '
         'first iteration of a task. Used to filter to different task pools.'
     )
-    qualification_id = \
-        mturk_utils.find_or_create_qualification(qual_name, qual_desc,
-                                                 opt['is_sandbox'])
+    qualification_id = mturk_utils.find_or_create_qualification(
+        qual_name, qual_desc, opt['is_sandbox']
+    )
     print('Created qualification: ', qualification_id)
 
     def run_onboard(worker):
@@ -50,11 +49,13 @@ def main():
 
     try:
         mturk_manager.start_new_run()
-        agent_qualifications = [{
-            'QualificationTypeId': qualification_id,
-            'Comparator': 'DoesNotExist',
-            'RequiredToPreview': True
-        }]
+        agent_qualifications = [
+            {
+                'QualificationTypeId': qualification_id,
+                'Comparator': 'DoesNotExist',
+                'RequiredToPreview': True,
+            }
+        ]
         mturk_manager.create_hits(qualifications=agent_qualifications)
 
         mturk_manager.ready_to_accept_workers()
@@ -84,7 +85,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
     except BaseException:
         raise

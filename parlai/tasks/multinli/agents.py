@@ -37,10 +37,12 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], MULTINLI,
-                             MULTINLI_PREFIX + MULTINLI_VERSION,
-                             MULTINLI_PREFIX + MULTINLI_VERSION +
-                             '_' + suffix + '.jsonl')
+    data_path = os.path.join(
+        opt['datapath'],
+        MULTINLI,
+        MULTINLI_PREFIX + MULTINLI_VERSION,
+        MULTINLI_PREFIX + MULTINLI_VERSION + '_' + suffix + '.jsonl',
+    )
     return data_path
 
 

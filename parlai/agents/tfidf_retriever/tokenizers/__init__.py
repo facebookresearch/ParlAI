@@ -9,9 +9,7 @@ from .regexp_tokenizer import RegexpTokenizer
 from .simple_tokenizer import SimpleTokenizer
 
 # need DEFAULTS defined before this import
-DEFAULTS = {
-    'corenlp_classpath': os.getenv('CLASSPATH')
-}
+DEFAULTS = {'corenlp_classpath': os.getenv('CLASSPATH')}
 from .corenlp_tokenizer import CoreNLPTokenizer  # noqa: E402
 
 

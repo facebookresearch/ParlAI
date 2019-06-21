@@ -48,11 +48,7 @@ class IndexTeacher(FixedDialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        datapath = os.path.join(
-            opt['datapath'],
-            'SQuAD',
-            suffix + '-v1.1.json'
-        )
+        datapath = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
         self.data = self._setup_data(datapath)
 
         self.id = 'squad'
@@ -82,7 +78,7 @@ class IndexTeacher(FixedDialogTeacher):
             'text': context + '\n' + question,
             'labels': answers,
             'episode_done': True,
-            'answer_starts': answer_starts
+            'answer_starts': answer_starts,
         }
         return action
 
@@ -114,8 +110,7 @@ class DefaultTeacher(DialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD',
-                                       suffix + '-v1.1.json')
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
         self.id = 'squad'
         super().__init__(opt, shared)
 
@@ -148,8 +143,7 @@ class OpensquadTeacher(DialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD',
-                                       suffix + '-v1.1.json')
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
         self.id = 'squad'
         super().__init__(opt, shared)
 
@@ -196,10 +190,7 @@ class TitleTeacher(DefaultTeacher):
                     question = qa['question']
                     answers = (a['text'] for a in qa['answers'])
                     context = paragraph['context']
-                    yield (
-                        '\n'.join([title, context, question]),
-                        answers
-                    ), True
+                    yield ('\n'.join([title, context, question]), answers), True
 
 
 class FulldocTeacher(ParlAIDialogTeacher):
@@ -210,9 +201,9 @@ class FulldocTeacher(ParlAIDialogTeacher):
             suffix = 'train'
         else:
             suffix = 'valid'
-        datafile = os.path.join(opt['datapath'],
-                                'SQuAD-fulldoc',
-                                "squad_fulldocs." + suffix + ":ordered")
+        datafile = os.path.join(
+            opt['datapath'], 'SQuAD-fulldoc', "squad_fulldocs." + suffix + ":ordered"
+        )
         opt['parlaidialogteacher_datafile'] = datafile
         super().__init__(opt, shared)
         self.id = 'squad-fulldoc'
@@ -247,12 +238,13 @@ class SentenceTeacher(IndexTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group(
-            'SQuAD Sentence Teacher Arguments'
+        agent = argparser.add_argument_group('SQuAD Sentence Teacher Arguments')
+        agent.add_argument(
+            '--include-context',
+            type='bool',
+            default=False,
+            help='include context within text instead of as a ' 'separate field',
         )
-        agent.add_argument('--include-context', type='bool', default=False,
-                           help='include context within text instead of as a '
-                                'separate field')
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
@@ -268,8 +260,7 @@ class SentenceTeacher(IndexTeacher):
         # tokenization
         edited_answers = []
         for answer in answers:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             edited_answers.append(new_answer)
 
@@ -290,7 +281,7 @@ class SentenceTeacher(IndexTeacher):
             'labels': labels,
             'label_candidates': edited_sentences,
             'episode_done': True,
-            'answer_starts': label_starts
+            'answer_starts': label_starts,
         }
 
         if self.include_context:
@@ -327,25 +318,25 @@ class FulldocsentenceTeacher(FulldocTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group(
-            'SQuAD Fulldoc Sentence Teacher Arguments'
+        agent = argparser.add_argument_group('SQuAD Fulldoc Sentence Teacher Arguments')
+        agent.add_argument(
+            '--include-context',
+            type='bool',
+            default=False,
+            help='include context within text instead of as a ' 'separate field',
         )
-        agent.add_argument('--include-context', type='bool', default=False,
-                           help='include context within text instead of as a '
-                                'separate field')
 
     def get(self, episode_idx, entry_idx=None):
         action = {}
         episode = self.episodes[episode_idx][entry_idx]
-        context = ' '.join(
-            episode['text'].split('\n')[:-1]
-        ).replace('\xa0', ' ')  # get rid of non breaking space characters
+        context = ' '.join(episode['text'].split('\n')[:-1]).replace(
+            '\xa0', ' '
+        )  # get rid of non breaking space characters
         question = episode['text'].split('\n')[-1]
         label_field = 'labels' if 'labels' in episode else 'eval_labels'
         answers = []
         for answer in episode[label_field]:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             answers.append(new_answer)
         sentences = self.sent_tok.tokenize(context)
@@ -363,7 +354,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
             label_field: labels,
             'answer_starts': label_starts,
             'label_candidates': sentences,
-            'episode_done': episode['episode_done']
+            'episode_done': episode['episode_done'],
         }
 
         if self.include_context:

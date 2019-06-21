@@ -29,11 +29,7 @@ class IndexTeacher(FixedDialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        datapath = os.path.join(
-            opt['datapath'],
-            'SQuAD2',
-            suffix + '-v2.0.json'
-        )
+        datapath = os.path.join(opt['datapath'], 'SQuAD2', suffix + '-v2.0.json')
         self.data = self._setup_data(datapath)
 
         self.id = 'squad2'
@@ -66,7 +62,7 @@ class IndexTeacher(FixedDialogTeacher):
             'labels': answers,
             'plausible_answers': plausible,
             'episode_done': True,
-            'answer_starts': answer_starts
+            'answer_starts': answer_starts,
         }
         return action
 
@@ -98,8 +94,7 @@ class DefaultTeacher(DialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD2',
-                                       suffix + '-v2.0.json')
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD2', suffix + '-v2.0.json')
         self.id = 'squad2'
         super().__init__(opt, shared)
 
@@ -135,8 +130,7 @@ class OpenSquadTeacher(DialogTeacher):
             suffix = 'train'
         else:
             suffix = 'dev'
-        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD2',
-                                       suffix + '-v2.0.json')
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD2', suffix + '-v2.0.json')
         self.id = 'squad2'
         super().__init__(opt, shared)
 
@@ -189,16 +183,14 @@ class TitleTeacher(DefaultTeacher):
                         ans_iter = qa['answers']
                     answers = (a['text'] for a in ans_iter)
                     context = paragraph['context']
-                    yield (
-                        '\n'.join([title, context, question]),
-                        answers
-                    ), True
+                    yield ('\n'.join([title, context, question]), answers), True
 
 
 class SentenceIndexTeacher(IndexTeacher):
     """Index teacher where the labels are the sentences the contain the true
     answer.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -230,8 +222,7 @@ class SentenceIndexTeacher(IndexTeacher):
         # tokenization
         edited_answers = []
         for answer in answers:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             edited_answers.append(new_answer)
 
@@ -266,7 +257,7 @@ class SentenceIndexTeacher(IndexTeacher):
             'labels': labels,
             'plausible_answers': plausible,
             'episode_done': True,
-            'answer_starts': label_starts
+            'answer_starts': label_starts,
         }
         return action
 
@@ -278,6 +269,7 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
     Some punctuation may be removed from the context and the answer for
     tokenization purposes.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -297,8 +289,7 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
         # tokenization
         edited_answers = []
         for answer in answers:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             edited_answers.append(new_answer)
 
@@ -322,7 +313,7 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
             'labels': labels,
             'plausible_answers': plausible,
             'episode_done': True,
-            'answer_starts': label_starts
+            'answer_starts': label_starts,
         }
         return action
 
@@ -333,6 +324,7 @@ class SentenceLabelsTeacher(IndexTeacher):
 
     Some punctuation may be removed for tokenization purposes.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -364,8 +356,7 @@ class SentenceLabelsTeacher(IndexTeacher):
         # tokenization
         edited_answers = []
         for answer in answers:
-            new_answer = answer.replace(
-                '.', '').replace('?', '').replace('!', '')
+            new_answer = answer.replace('.', '').replace('?', '').replace('!', '')
             context = context.replace(answer, new_answer)
             edited_answers.append(new_answer)
 

@@ -47,7 +47,8 @@ def make_dataset(opt):
     for _ in range(num_examples):
         world.parley()
         world.acts[0]['labels'] = world.acts[0].get(
-            'labels', world.acts[0].pop('eval_labels', None))
+            'labels', world.acts[0].pop('eval_labels', None)
+        )
 
         # Need to get history in order to compute control values
         hist = ConvAI2History(world.acts[0]['text'], assume_persontokens=False)
@@ -89,19 +90,38 @@ if __name__ == '__main__':
     random.seed(42)
     # Get command line arguments
     parser = ParlaiParser()
-    parser.add_argument('-n', '--num-examples', default=-1, type=int,
-                        help='Total number of exs to convert, -1 to convert \
-                                all examples')
-    parser.add_argument('-of', '--outfile', default=None, type=str,
-                        help='Output file where to save, by default will be \
-                                created in /tmp')
-    parser.add_argument('-if', '--ignore-fields', default='id', type=str,
-                        help='Ignore these fields from the message (returned\
-                                with .act() )')
+    parser.add_argument(
+        '-n',
+        '--num-examples',
+        default=-1,
+        type=int,
+        help='Total number of exs to convert, -1 to convert \
+                                all examples',
+    )
+    parser.add_argument(
+        '-of',
+        '--outfile',
+        default=None,
+        type=str,
+        help='Output file where to save, by default will be \
+                                created in /tmp',
+    )
+    parser.add_argument(
+        '-if',
+        '--ignore-fields',
+        default='id',
+        type=str,
+        help='Ignore these fields from the message (returned\
+                                with .act() )',
+    )
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
 
-    parser.add_argument('--controls', type=str, default='',
-                        help='comma-separated controls to be included')
+    parser.add_argument(
+        '--controls',
+        type=str,
+        default='',
+        help='comma-separated controls to be included',
+    )
 
     parser.set_defaults(task="fromfile:parlaiformat")
     parser.set_defaults(datatype="train:stream")

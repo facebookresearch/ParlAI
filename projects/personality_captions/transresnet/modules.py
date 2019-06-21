@@ -20,35 +20,75 @@ class TransresnetModel(nn.Module):
         """Add command line arguments."""
         Transformer.add_common_cmdline_args(argparser)
         agent = argparser.add_argument_group('TransresnetModel arguments')
-        agent.add_argument('--truncate', type=int, default=32,
-                           help='Max amount of tokens allowed in a text sequence')
-        agent.add_argument('--image-features-dim', type=int, default=2048,
-                           help='dimensionality of image features')
-        agent.add_argument('--embedding-type', type=str, default=None,
-                           choices=[None, 'fasttext_cc'],
-                           help='Specify if using pretrained embeddings')
-        agent.add_argument('--load-encoder-from', type=str, default=None,
-                           help='Specify if using a pretrained transformer encoder')
-        agent.add_argument('--hidden-dim', type=int, default=300,
-                           help='Hidden dimesionality of personality and image encoder')
-        agent.add_argument('--num-layers-all', type=int, default=-1,
-                           help='If >= 1, number of layers for both the text '
-                           'and image encoders.')
-        agent.add_argument('--num-layers-text-encoder', type=int, default=1,
-                           help='Number of layers for the text encoder')
-        agent.add_argument('--num-layers-image-encoder', type=int, default=1,
-                           help='Number of layers for the image encoder')
-        agent.add_argument('--no-cuda', dest='no_cuda', action='store_true',
-                           help='If True, perform ops on CPU only')
-        agent.add_argument('--learningrate', type=float, default=0.0005,
-                           help='learning rate for optimizer')
-        agent.add_argument('--additional-layer-dropout', type=float, default=0.2,
-                           help='dropout for additional linear layer')
+        agent.add_argument(
+            '--truncate',
+            type=int,
+            default=32,
+            help='Max amount of tokens allowed in a text sequence',
+        )
+        agent.add_argument(
+            '--image-features-dim',
+            type=int,
+            default=2048,
+            help='dimensionality of image features',
+        )
+        agent.add_argument(
+            '--embedding-type',
+            type=str,
+            default=None,
+            choices=[None, 'fasttext_cc'],
+            help='Specify if using pretrained embeddings',
+        )
+        agent.add_argument(
+            '--load-encoder-from',
+            type=str,
+            default=None,
+            help='Specify if using a pretrained transformer encoder',
+        )
+        agent.add_argument(
+            '--hidden-dim',
+            type=int,
+            default=300,
+            help='Hidden dimesionality of personality and image encoder',
+        )
+        agent.add_argument(
+            '--num-layers-all',
+            type=int,
+            default=-1,
+            help='If >= 1, number of layers for both the text ' 'and image encoders.',
+        )
+        agent.add_argument(
+            '--num-layers-text-encoder',
+            type=int,
+            default=1,
+            help='Number of layers for the text encoder',
+        )
+        agent.add_argument(
+            '--num-layers-image-encoder',
+            type=int,
+            default=1,
+            help='Number of layers for the image encoder',
+        )
+        agent.add_argument(
+            '--no-cuda',
+            dest='no_cuda',
+            action='store_true',
+            help='If True, perform ops on CPU only',
+        )
+        agent.add_argument(
+            '--learningrate',
+            type=float,
+            default=0.0005,
+            help='learning rate for optimizer',
+        )
+        agent.add_argument(
+            '--additional-layer-dropout',
+            type=float,
+            default=0.2,
+            help='dropout for additional linear layer',
+        )
         argparser.set_params(
-            ffn_size=1200,
-            attention_dropout=0.2,
-            relu_dropout=0.2,
-            n_positions=1000,
+            ffn_size=1200, attention_dropout=0.2, relu_dropout=0.2, n_positions=1000
         )
 
     def __init__(self, opt, personalities_list, dictionary):
@@ -79,7 +119,7 @@ class TransresnetModel(nn.Module):
         # optimizer
         self.optimizer = optim.Adam(
             filter(lambda p: p.requires_grad, self.parameters()),
-            self.opt['learningrate']
+            self.opt['learningrate'],
         )
 
     def _build_personality_dictionary(self, personalities_list):
@@ -100,14 +140,14 @@ class TransresnetModel(nn.Module):
         :param n_layers_text:
             how many layers the transformer will have
         """
-        self.embeddings = nn.Embedding(
-            len(self.dictionary),
-            self.opt['embedding_size']
-        )
-        if (self.opt.get('load_encoder_from') is None and
-                self.opt['embedding_type'] == 'fasttext_cc'):
+        self.embeddings = nn.Embedding(len(self.dictionary), self.opt['embedding_size'])
+        if (
+            self.opt.get('load_encoder_from') is None
+            and self.opt['embedding_type'] == 'fasttext_cc'
+        ):
             self.embeddings = load_fasttext_embeddings(
-                self.dictionary, self.opt['embedding_size'], self.opt['datapath'])
+                self.dictionary, self.opt['embedding_size'], self.opt['datapath']
+            )
 
         self.text_encoder = TransformerEncoder(
             n_heads=self.opt['n_heads'],
@@ -125,7 +165,7 @@ class TransresnetModel(nn.Module):
             n_positions=self.opt['n_positions'],
             activation=self.opt['activation'],
             variant=self.opt['variant'],
-            n_segments=self.opt['n_segments']
+            n_segments=self.opt['n_segments'],
         )
         if self.opt.get('load_encoder_from') is not None:
             self._load_text_encoder_state()
@@ -133,7 +173,7 @@ class TransresnetModel(nn.Module):
         self.additional_layer = LinearWrapper(
             self.opt['embedding_size'],
             self.opt['hidden_dim'],
-            dropout=self.opt['additional_layer_dropout']
+            dropout=self.opt['additional_layer_dropout'],
         )
 
     def _build_image_encoder(self, n_layers_img):
@@ -146,13 +186,13 @@ class TransresnetModel(nn.Module):
         image_layers = [
             nn.BatchNorm1d(self.opt['image_features_dim']),
             nn.Dropout(p=self.opt['dropout']),
-            nn.Linear(self.opt['image_features_dim'], self.opt['hidden_dim'])
+            nn.Linear(self.opt['image_features_dim'], self.opt['hidden_dim']),
         ]
         for _ in range(n_layers_img - 1):
             image_layers += [
                 nn.ReLU(),
                 nn.Dropout(p=self.opt['dropout']),
-                nn.Linear(self.opt['hidden_dim'], self.opt['hidden_dim'])
+                nn.Linear(self.opt['hidden_dim'], self.opt['hidden_dim']),
             ]
         self.image_encoder = nn.Sequential(*image_layers)
 
@@ -160,7 +200,7 @@ class TransresnetModel(nn.Module):
         personality_layers = [
             nn.BatchNorm1d(self.num_personalities),
             nn.Dropout(p=self.opt['dropout']),
-            nn.Linear(self.num_personalities, self.opt['hidden_dim'])
+            nn.Linear(self.num_personalities, self.opt['hidden_dim']),
         ]
         self.personality_encoder = nn.Sequential(*personality_layers)
 
@@ -274,9 +314,7 @@ class TransresnetModel(nn.Module):
         self.zero_grad()
         self.train()
         context_encoded, captions_encoded = self.forward(
-            image_features,
-            personalities,
-            captions
+            image_features, personalities, captions
         )
         loss, num_correct = self.evaluate_one_batch(
             context_encoded, captions_encoded, during_train=True
@@ -348,24 +386,27 @@ class TransresnetModel(nn.Module):
         one_cand_set = True
         if candidates_encoded is None:
             one_cand_set = False
-            candidates_encoded = [self.forward(None, None, c)[1].detach()
-                                  for c in candidates]
+            candidates_encoded = [
+                self.forward(None, None, c)[1].detach() for c in candidates
+            ]
         chosen = []
         for img_index in range(len(context_encoded)):
-            context_encoding = context_encoded[img_index:img_index+1, :]
+            context_encoding = context_encoded[img_index : img_index + 1, :]
             scores = torch.mm(
-                candidates_encoded[img_index] if not one_cand_set
+                candidates_encoded[img_index]
+                if not one_cand_set
                 else candidates_encoded,
-                context_encoding.transpose(0, 1)
+                context_encoding.transpose(0, 1),
             )
             if k >= 1:
                 _, index_top = torch.topk(scores, k, dim=0)
             else:
                 _, index_top = torch.topk(scores, scores.size(0), dim=0)
             chosen.append(
-                [candidates[img_index][idx] if not one_cand_set
-                 else candidates[idx]
-                 for idx in index_top.unsqueeze(1)]
+                [
+                    candidates[img_index][idx] if not one_cand_set else candidates[idx]
+                    for idx in index_top.unsqueeze(1)
+                ]
             )
 
         return chosen
@@ -389,20 +430,17 @@ class TransresnetModel(nn.Module):
         total_ok = 0
         num_examples = 0
         for i in range(0, len(context_encoded), 100):
-            if i+100 > len(context_encoded):
+            if i + 100 > len(context_encoded):
                 break
             num_examples += 100
             loss, num_correct = self.evaluate_one_batch(
-                context_encoded[i:i+100, :],
-                captions_encoded[i:i+100, :]
+                context_encoded[i : i + 100, :], captions_encoded[i : i + 100, :]
             )
             total_loss += loss.data.cpu().item()
             total_ok += num_correct.data.cpu().item()
         return total_loss, total_ok, num_examples
 
-    def evaluate_one_batch(
-        self, context_encoded, captions_encoded, during_train=False
-    ):
+    def evaluate_one_batch(self, context_encoded, captions_encoded, during_train=False):
         """
         Compute loss - and number of correct examples - for one batch.
 
@@ -491,8 +529,8 @@ class TransresnetModel(nn.Module):
         )
         mask = torch.FloatTensor(len(captions), longest).fill_(0)
         for i, inds in enumerate(indexes):
-            res[i, 0:len(inds)] = torch.LongTensor(inds)
-            mask[i, 0:len(inds)] = torch.FloatTensor([1] * len(inds))
+            res[i, 0 : len(inds)] = torch.LongTensor(inds)
+            mask[i, 0 : len(inds)] = torch.FloatTensor([1] * len(inds))
         if self.use_cuda:
             res = res.cuda()
             mask = mask.cuda()
@@ -517,9 +555,12 @@ def load_fasttext_embeddings(dic, embedding_dim, datapath):
     """Load weights from fasttext_cc and put them in embeddings.weights."""
     print('Initializing embeddings from fasttext_cc')
     from parlai.zoo.fasttext_cc_vectors.build import download
+
     pretrained = download(datapath)
-    print('Done Loading vectors from fasttext. {} embeddings loaded.'.format(
-        len(pretrained))
+    print(
+        'Done Loading vectors from fasttext. {} embeddings loaded.'.format(
+            len(pretrained)
+        )
     )
     used = 0
     res = nn.Embedding(len(dic), embedding_dim)

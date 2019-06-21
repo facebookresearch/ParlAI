@@ -62,9 +62,11 @@ def setup_aws_credentials():
             aws_credentials_file.write(
                 'aws_secret_access_key={}\n'.format(aws_secret_access_key)
             )
-        print('AWS credentials successfully saved in {} file.\n'.format(
-            aws_credentials_file_path
-        ))
+        print(
+            'AWS credentials successfully saved in {} file.\n'.format(
+                aws_credentials_file_path
+            )
+        )
     os.environ['AWS_PROFILE'] = aws_profile_name
 
 
@@ -90,8 +92,7 @@ def calculate_mturk_cost(payment_opt):
     total_cost = 0
     if payment_opt['type'] == 'reward':
         mult = 1.2
-        total_cost = \
-            payment_opt['num_total_assignments'] * payment_opt['reward'] * mult
+        total_cost = payment_opt['num_total_assignments'] * payment_opt['reward'] * mult
     elif payment_opt['type'] == 'bonus':
         total_cost = payment_opt['amount'] * 1.2
     return total_cost
@@ -126,7 +127,8 @@ def check_mturk_balance(balance_needed, is_sandbox):
         print(
             'You might not have enough money in your MTurk account. Please go '
             'to https://requester.mturk.com/account and increase your balance '
-            'to at least ${}, and then try again.'.format(balance_needed))
+            'to at least ${}, and then try again.'.format(balance_needed)
+        )
         return False
     else:
         return True
@@ -164,21 +166,18 @@ def get_mturk_client(is_sandbox):
         client = boto3.client(
             service_name='mturk',
             region_name='us-east-1',
-            endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+            endpoint_url='https://mturk-requester-sandbox.us-east-1.amazonaws.com',
         )
         # Region is always us-east-1
         if not is_sandbox:
-            client = \
-                boto3.client(service_name='mturk', region_name='us-east-1')
+            client = boto3.client(service_name='mturk', region_name='us-east-1')
     return client
 
 
 def delete_qualification(qualification_id, is_sandbox):
     """Deletes a qualification by id"""
     client = get_mturk_client(is_sandbox)
-    client.delete_qualification_type(
-        QualificationTypeId=qualification_id
-    )
+    client.delete_qualification_type(QualificationTypeId=qualification_id)
 
 
 def find_qualification(qualification_name, is_sandbox, must_be_owned=True):
@@ -191,9 +190,7 @@ def find_qualification(qualification_name, is_sandbox, must_be_owned=True):
 
     # Search for the qualification owned by the current user
     response = client.list_qualification_types(
-        Query=qualification_name,
-        MustBeRequestable=True,
-        MustBeOwnedByCaller=True,
+        Query=qualification_name, MustBeRequestable=True, MustBeOwnedByCaller=True
     )
 
     for qualification in response['QualificationTypes']:
@@ -202,9 +199,7 @@ def find_qualification(qualification_name, is_sandbox, must_be_owned=True):
 
     # Qualification was not found to exist, check to see if someone else has it
     response = client.list_qualification_types(
-        Query=qualification_name,
-        MustBeRequestable=True,
-        MustBeOwnedByCaller=False,
+        Query=qualification_name, MustBeRequestable=True, MustBeOwnedByCaller=False
     )
 
     for qualification in response['QualificationTypes']:
@@ -220,16 +215,15 @@ def find_qualification(qualification_name, is_sandbox, must_be_owned=True):
     return None
 
 
-def find_or_create_qualification(qualification_name, description, is_sandbox,
-                                 must_be_owned=True):
+def find_or_create_qualification(
+    qualification_name, description, is_sandbox, must_be_owned=True
+):
     """Query amazon to find the existing qualification name, return the Id. If
     it exists and must_be_owned is true but we don't own it, this prints an
     error and returns none. If it doesn't exist, the qualification is created
     """
     qual_id = find_qualification(
-        qualification_name,
-        is_sandbox,
-        must_be_owned=must_be_owned
+        qualification_name, is_sandbox, must_be_owned=must_be_owned
     )
 
     if qual_id is False:
@@ -247,8 +241,7 @@ def find_or_create_qualification(qualification_name, description, is_sandbox,
     return response['QualificationType']['QualificationTypeId']
 
 
-def give_worker_qualification(worker_id, qualification_id, value=None,
-                              is_sandbox=True):
+def give_worker_qualification(worker_id, qualification_id, value=None, is_sandbox=True):
     """Give a qualification to the given worker"""
     client = get_mturk_client(is_sandbox)
 
@@ -257,33 +250,37 @@ def give_worker_qualification(worker_id, qualification_id, value=None,
             QualificationTypeId=qualification_id,
             WorkerId=worker_id,
             IntegerValue=value,
-            SendNotification=False
+            SendNotification=False,
         )
     else:
         client.associate_qualification_with_worker(
             QualificationTypeId=qualification_id,
             WorkerId=worker_id,
             IntegerValue=1,
-            SendNotification=False
+            SendNotification=False,
         )
 
 
-def remove_worker_qualification(worker_id, qualification_id,
-                                is_sandbox=True, reason=''):
+def remove_worker_qualification(
+    worker_id, qualification_id, is_sandbox=True, reason=''
+):
     """Give a qualification to the given worker"""
     client = get_mturk_client(is_sandbox)
     client.disassociate_qualification_from_worker(
-        QualificationTypeId=qualification_id,
-        WorkerId=worker_id,
-        Reason=reason
+        QualificationTypeId=qualification_id, WorkerId=worker_id, Reason=reason
     )
 
 
-def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
-                    assignment_duration_in_seconds, is_sandbox,
-                    qualifications=None,
-                    auto_approve_delay=7 * 24 * 3600,  # default 1 week
-                    ):
+def create_hit_type(
+    hit_title,
+    hit_description,
+    hit_keywords,
+    hit_reward,
+    assignment_duration_in_seconds,
+    is_sandbox,
+    qualifications=None,
+    auto_approve_delay=7 * 24 * 3600,  # default 1 week
+):
     """Create a HIT type to be used to generate HITs of the requested params"""
     client = get_mturk_client(is_sandbox)
 
@@ -298,18 +295,20 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
         locale_requirements += qualifications
 
     if not has_locale_qual:
-        locale_requirements.append({
-            'QualificationTypeId': '00000000000000000071',
-            'Comparator': 'In',
-            'LocaleValues': [
-                {'Country': 'US'},
-                {'Country': 'CA'},
-                {'Country': 'GB'},
-                {'Country': 'AU'},
-                {'Country': 'NZ'}
-            ],
-            'RequiredToPreview': True
-        })
+        locale_requirements.append(
+            {
+                'QualificationTypeId': '00000000000000000071',
+                'Comparator': 'In',
+                'LocaleValues': [
+                    {'Country': 'US'},
+                    {'Country': 'CA'},
+                    {'Country': 'GB'},
+                    {'Country': 'AU'},
+                    {'Country': 'NZ'},
+                ],
+                'RequiredToPreview': True,
+            }
+        )
 
     # Create the HIT type
     response = client.create_hit_type(
@@ -325,8 +324,7 @@ def create_hit_type(hit_title, hit_description, hit_keywords, hit_reward,
     return hit_type_id
 
 
-def create_hit_with_hit_type(opt, page_url, hit_type_id, num_assignments,
-                             is_sandbox):
+def create_hit_with_hit_type(opt, page_url, hit_type_id, num_assignments, is_sandbox):
     """Creates the actual HIT given the type and page to direct clients to"""
     page_url = page_url.replace('&', '&amp;')
     amazon_ext_url = (
@@ -335,8 +333,8 @@ def create_hit_with_hit_type(opt, page_url, hit_type_id, num_assignments,
     )
     question_data_struture = (
         '<ExternalQuestion xmlns="{}">'
-            '<ExternalURL>{}</ExternalURL>'  # noqa: E131
-            '<FrameHeight>{}</FrameHeight>'
+        '<ExternalURL>{}</ExternalURL>'  # noqa: E131
+        '<FrameHeight>{}</FrameHeight>'
         '</ExternalQuestion>'
         ''.format(amazon_ext_url, page_url, opt.get('frame_height', 650))
     )
@@ -360,8 +358,7 @@ def create_hit_with_hit_type(opt, page_url, hit_type_id, num_assignments,
     if not is_sandbox:
         url_target = 'www'
     hit_link = 'https://{}.mturk.com/mturk/preview?groupId={}'.format(
-        url_target,
-        hit_type_id
+        url_target, hit_type_id
     )
     return hit_link, hit_id, response
 
@@ -375,17 +372,14 @@ def expire_hit(is_sandbox, hit_id):
 
 def setup_sns_topic(task_name, server_url, task_group_id):
     # Create the topic and subscribe to it so that our server receives notifs
-    client = boto3.client('sns', region_name='us-east-1',)
+    client = boto3.client('sns', region_name='us-east-1')
     pattern = re.compile('[^a-zA-Z0-9_-]+')
     filtered_task_name = pattern.sub('', task_name)
     response = client.create_topic(Name=filtered_task_name)
     arn = response['TopicArn']
-    topic_sub_url = \
-        '{}/sns_posts?task_group_id={}'.format(server_url, task_group_id)
+    topic_sub_url = '{}/sns_posts?task_group_id={}'.format(server_url, task_group_id)
     client.subscribe(TopicArn=arn, Protocol='https', Endpoint=topic_sub_url)
-    response = client.get_topic_attributes(
-        TopicArn=arn
-    )
+    response = client.get_topic_attributes(TopicArn=arn)
     policy_json = '''{{
     "Version": "2008-10-17",
     "Id": "{}/MTurkOnlyPolicy",
@@ -399,11 +393,11 @@ def setup_sns_topic(task_name, server_url, task_group_id):
             "Action": "SNS:Publish",
             "Resource": "{}"
         }}
-    ]}}'''.format(arn, arn)
+    ]}}'''.format(
+        arn, arn
+    )
     client.set_topic_attributes(
-        TopicArn=arn,
-        AttributeName='Policy',
-        AttributeValue=policy_json
+        TopicArn=arn, AttributeName='Policy', AttributeValue=policy_json
     )
     return arn
 
@@ -417,10 +411,13 @@ def subscribe_to_hits(hit_type_id, is_sandbox, sns_arn):
             'Destination': sns_arn,
             'Transport': 'SNS',
             'Version': '2006-05-05',
-            'EventTypes': ['AssignmentAbandoned', 'AssignmentReturned',
-                           'AssignmentSubmitted']
+            'EventTypes': [
+                'AssignmentAbandoned',
+                'AssignmentReturned',
+                'AssignmentSubmitted',
+            ],
         },
-        Active=True
+        Active=True,
     )
 
 
@@ -431,13 +428,16 @@ def send_test_notif(topic_arn, event_type):
             'Destination': topic_arn,
             'Transport': 'SNS',
             'Version': '2006-05-05',
-            'EventTypes': ['AssignmentAbandoned', 'AssignmentReturned',
-                           'AssignmentSubmitted']
+            'EventTypes': [
+                'AssignmentAbandoned',
+                'AssignmentReturned',
+                'AssignmentSubmitted',
+            ],
         },
-        TestEventType=event_type
+        TestEventType=event_type,
     )
 
 
 def delete_sns_topic(topic_arn):
-    client = boto3.client('sns', region_name='us-east-1',)
+    client = boto3.client('sns', region_name='us-east-1')
     client.delete_topic(TopicArn=topic_arn)

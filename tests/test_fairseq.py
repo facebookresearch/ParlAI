@@ -25,47 +25,49 @@ class TestFairseq(unittest.TestCase):
     @testing_utils.skipUnlessGPU
     @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")
     def test_labelcands(self):
-        stdout, valid, test = testing_utils.train_model(dict(
-            task='integration_tests:candidate',
-            model='fairseq',
-            arch='lstm_wiseman_iwslt_de_en',
-            lr=LR,
-            batchsize=BATCH_SIZE,
-            num_epochs=NUM_EPOCHS,
-            rank_candidates=True,
-            skip_generation=True,
-        ))
+        stdout, valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:candidate',
+                model='fairseq',
+                arch='lstm_wiseman_iwslt_de_en',
+                lr=LR,
+                batchsize=BATCH_SIZE,
+                num_epochs=NUM_EPOCHS,
+                rank_candidates=True,
+                skip_generation=True,
+            )
+        )
 
         self.assertTrue(
             valid['hits@1'] > 0.95,
-            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout)
+            "valid hits@1 = {}\nLOG:\n{}".format(valid['hits@1'], stdout),
         )
         self.assertTrue(
             test['hits@1'] > 0.95,
-            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout)
+            "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout),
         )
 
     @testing_utils.skipUnlessGPU
     @unittest.skipIf(SKIP_TESTS, "Fairseq not installed")
     def test_generation(self):
-        stdout, valid, test = testing_utils.train_model(dict(
-            task='integration_tests:nocandidate',
-            model='fairseq',
-            arch='lstm_wiseman_iwslt_de_en',
-            lr=LR,
-            batchsize=BATCH_SIZE,
-            num_epochs=NUM_EPOCHS,
-            rank_candidates=False,
-            skip_generation=False,
-        ))
+        stdout, valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:nocandidate',
+                model='fairseq',
+                arch='lstm_wiseman_iwslt_de_en',
+                lr=LR,
+                batchsize=BATCH_SIZE,
+                num_epochs=NUM_EPOCHS,
+                rank_candidates=False,
+                skip_generation=False,
+            )
+        )
 
         self.assertTrue(
-            valid['ppl'] < 1.2,
-            "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+            valid['ppl'] < 1.2, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertTrue(
-            test['ppl'] < 1.2,
-            "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+            test['ppl'] < 1.2, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
 
 

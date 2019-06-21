@@ -64,11 +64,7 @@ class TestNewTasks(unittest.TestCase):
                     print("Got above exception in {}".format(subt))
                 for key in KEYS:
                     if log[key] != 0:
-                        print('There are {} {} in {}.'.format(
-                            log[key],
-                            key,
-                            subt,
-                        ))
+                        print('There are {} {} in {}.'.format(log[key], key, subt))
                         found_errors = True
 
         self.assertFalse(found_errors, "Errors were found.")

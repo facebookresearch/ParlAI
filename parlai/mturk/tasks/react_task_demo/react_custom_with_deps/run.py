@@ -4,12 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
-from parlai.mturk.tasks.react_task_demo.react_custom_with_deps.worlds import \
-    AskerOnboardingWorld, AnswererOnboardingWorld, EvaluatorOnboardingWorld, \
-    MultiRoleAgentWorld
+from parlai.mturk.tasks.react_task_demo.react_custom_with_deps.worlds import (
+    AskerOnboardingWorld,
+    AnswererOnboardingWorld,
+    EvaluatorOnboardingWorld,
+    MultiRoleAgentWorld,
+)
 from parlai.mturk.core.mturk_manager import MTurkManager
-from parlai.mturk.tasks.react_task_demo.react_custom_with_deps.task_config \
-    import task_config
+from parlai.mturk.tasks.react_task_demo.react_custom_with_deps.task_config import (
+    task_config,
+)
 import os
 
 
@@ -35,12 +39,11 @@ def main():
     # Instantiate an MTurkManager with the given options and a maximum number
     # of agents per world of 1 (based on the length of mturk_agent_ids)
     mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_roles,
-        use_db=True,
+        opt=opt, mturk_agent_ids=mturk_agent_roles, use_db=True
     )
     mturk_manager.setup_server(
-        task_directory_path=os.path.dirname(os.path.abspath(__file__)))
+        task_directory_path=os.path.dirname(os.path.abspath(__file__))
+    )
 
     role_index = 0
 
@@ -90,10 +93,7 @@ def main():
                     filled_roles.append(worker.demo_role)
             return use_workers
 
-        eligibility_function = {
-            'func': check_workers_eligibility,
-            'multiple': True,
-        }
+        eligibility_function = {'func': check_workers_eligibility, 'multiple': True}
 
         # Assign worker roles is used to determine what the role each worker
         # in the given worker list will play. Setting `id` to None will return
@@ -110,10 +110,7 @@ def main():
 
         def run_conversation(mturk_manager, opt, workers):
             # Create the task world
-            world = MultiRoleAgentWorld(
-                opt=opt,
-                mturk_agents=workers
-            )
+            world = MultiRoleAgentWorld(opt=opt, mturk_agents=workers)
             # run the world to completion
             while not world.episode_done():
                 world.parley()
@@ -130,7 +127,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
     except BaseException:
         raise

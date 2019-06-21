@@ -12,14 +12,24 @@ import torch.nn as nn
 class Starspace(nn.Module):
     def __init__(self, opt, num_features, dict):
         super().__init__()
-        self.lt = nn.Embedding(num_features, opt['embeddingsize'], 0,
-                               sparse=True, max_norm=opt['embeddingnorm'])
+        self.lt = nn.Embedding(
+            num_features,
+            opt['embeddingsize'],
+            0,
+            sparse=True,
+            max_norm=opt['embeddingnorm'],
+        )
         if not opt['tfidf']:
             dict = None
         self.encoder = Encoder(self.lt, dict)
         if not opt['share_embeddings']:
-            self.lt2 = nn.Embedding(num_features, opt['embeddingsize'], 0,
-                                    sparse=True, max_norm=opt['embeddingnorm'])
+            self.lt2 = nn.Embedding(
+                num_features,
+                opt['embeddingsize'],
+                0,
+                sparse=True,
+                max_norm=opt['embeddingnorm'],
+            )
             self.encoder2 = Encoder(self.lt2, dict)
         else:
             self.encoder2 = self.encoder

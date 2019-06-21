@@ -33,17 +33,13 @@ def _path(task, opt):
     elif dt == 'valid':
         suffix = 'dev'
     datafile = os.path.join(
-        prefix,
-        '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix)
+        prefix, '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix)
     )
 
     if opt['task'].split(':')[2] != '6':
         cands_datafile = os.path.join(prefix, 'dialog-babi-candidates.txt')
     else:
-        cands_datafile = os.path.join(
-            prefix,
-            'dialog-babi-task6-dstc2-candidates.txt'
-        )
+        cands_datafile = os.path.join(prefix, 'dialog-babi-task6-dstc2-candidates.txt')
 
     return datafile, cands_datafile
 
@@ -52,9 +48,12 @@ def _path(task, opt):
 class KBTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
-        opt['datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI',
-                                       'dialog-bAbI-tasks',
-                                       'dialog-babi-kb-all.txt')
+        opt['datafile'] = os.path.join(
+            opt['datapath'],
+            'dialog-bAbI',
+            'dialog-bAbI-tasks',
+            'dialog-babi-kb-all.txt',
+        )
         super().__init__(opt, shared)
 
 
@@ -70,6 +69,5 @@ class TaskTeacher(FbDialogTeacher):
 class DefaultTeacher(core_agents.MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['task'] = ','.join('dialog_babi:Task:%d' % (i + 1)
-                               for i in range(6))
+        opt['task'] = ','.join('dialog_babi:Task:%d' % (i + 1) for i in range(6))
         super().__init__(opt, shared)

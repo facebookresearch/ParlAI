@@ -23,9 +23,7 @@ from parlai.core.utils import round_sigfigs, warn_once, padded_tensor
 
 from parlai.agents.transformer.transformer import TransformerRankerAgent
 
-from .feedback_classifier.feedback_classifier import (
-    FeedbackClassifierRegex,
-)
+from .feedback_classifier.feedback_classifier import FeedbackClassifierRegex
 from .modules import SelfFeedingModel
 from .utils import add_person_tokens
 
@@ -39,12 +37,16 @@ RATING_REQUESTED = 4
 RATING_ACCEPTED = 5
 
 # Hardcoded responses
-RAT_REQUEST = ("Just checking: I'm not sure how positive/negative the response you "
-               "just gave was. Could you help me out? (Write positive, negative, or "
-               "neutral)")
+RAT_REQUEST = (
+    "Just checking: I'm not sure how positive/negative the response you "
+    "just gave was. Could you help me out? (Write positive, negative, or "
+    "neutral)"
+)
 CONTINUE = "And in response to what you were saying before"
-EXP_REQUEST = ("Oops! I think I messed up. Whether I messed up or not, what could I "
-               "have said (in response to <response>)?")
+EXP_REQUEST = (
+    "Oops! I think I messed up. Whether I messed up or not, what could I "
+    "have said (in response to <response>)?"
+)
 THANKS = "Thanks! I'll try to remember that."
 NEWTOPIC = "Can you pick a new topic for us to talk about now?"
 
@@ -57,73 +59,148 @@ class SelfFeedingAgent(TransformerRankerAgent):
         SelfFeedingModel.add_cmdline_args(argparser)
 
         agent = argparser.add_argument_group('Self-feeding Agent')
-        agent.add_argument('--request-rating', type='bool', default=False,
-                           help="If True, ocassionally request ratings")
-        agent.add_argument('--rating-frequency', type=float, default=0.01,
-                           help="The fraction of the time that a rating will be "
-                           "randomly requested, regardless of classifier confidence")
-        agent.add_argument('--rating-gap', type=float, default=0.05,
-                           help="A positivity rating must be within this amount of "
-                           "the rating-threshold to trigger the confidence-based "
-                           "rating request")
-
-        agent.add_argument('--request-explanation', type='bool', default=False,
-                           help="If True, recognize mistakes and request explanations")
-        agent.add_argument('--rating-threshold', type=float, default=0.5,
-                           help="Treat feedback below this threshold as negative")
-        agent.add_argument('--target-class', type=int, default=0,
-                           help="The label (in [0,1]) to treat as the target rarer "
-                           "class when calculating tp/fp/tn/fn")
-
-        agent.add_argument('--freeze-base', type='bool', default=False,
-                           help="If True, freeze all but the sentiment linear layer")
-        agent.add_argument('--partial-load', type='bool', default=False,
-                           help="If True, allow a model to be partially loaded (i.e., "
-                           "a model need not be a perfect match to be loaded")
-
-        agent.add_argument('-subtasks', '--subtasks', type=str,
-                           help="A comma-separated list of active subtasks")
-
-        agent.add_argument('--dia-weight', type=float, default=1.0,
-                           help="The dialog task loss is multiplied by this")
-        agent.add_argument('--exp-weight', type=float, default=1.0,
-                           help="The explanation task loss is multiplied by this")
-        agent.add_argument('--sen-weight', type=float, default=1.0,
-                           help="The sentiment task loss is multiplied by this")
         agent.add_argument(
-            '--prev-response-negatives', type='bool', default=False,
+            '--request-rating',
+            type='bool',
+            default=False,
+            help="If True, ocassionally request ratings",
+        )
+        agent.add_argument(
+            '--rating-frequency',
+            type=float,
+            default=0.01,
+            help="The fraction of the time that a rating will be "
+            "randomly requested, regardless of classifier confidence",
+        )
+        agent.add_argument(
+            '--rating-gap',
+            type=float,
+            default=0.05,
+            help="A positivity rating must be within this amount of "
+            "the rating-threshold to trigger the confidence-based "
+            "rating request",
+        )
+
+        agent.add_argument(
+            '--request-explanation',
+            type='bool',
+            default=False,
+            help="If True, recognize mistakes and request explanations",
+        )
+        agent.add_argument(
+            '--rating-threshold',
+            type=float,
+            default=0.5,
+            help="Treat feedback below this threshold as negative",
+        )
+        agent.add_argument(
+            '--target-class',
+            type=int,
+            default=0,
+            help="The label (in [0,1]) to treat as the target rarer "
+            "class when calculating tp/fp/tn/fn",
+        )
+
+        agent.add_argument(
+            '--freeze-base',
+            type='bool',
+            default=False,
+            help="If True, freeze all but the sentiment linear layer",
+        )
+        agent.add_argument(
+            '--partial-load',
+            type='bool',
+            default=False,
+            help="If True, allow a model to be partially loaded (i.e., "
+            "a model need not be a perfect match to be loaded",
+        )
+
+        agent.add_argument(
+            '-subtasks',
+            '--subtasks',
+            type=str,
+            help="A comma-separated list of active subtasks",
+        )
+
+        agent.add_argument(
+            '--dia-weight',
+            type=float,
+            default=1.0,
+            help="The dialog task loss is multiplied by this",
+        )
+        agent.add_argument(
+            '--exp-weight',
+            type=float,
+            default=1.0,
+            help="The explanation task loss is multiplied by this",
+        )
+        agent.add_argument(
+            '--sen-weight',
+            type=float,
+            default=1.0,
+            help="The sentiment task loss is multiplied by this",
+        )
+        agent.add_argument(
+            '--prev-response-negatives',
+            type='bool',
+            default=False,
             help="If True, during training add the previous agent response as a "
-                 "negative candidate for the current response (as a way to "
-                 "organically teach the model to not repeat itself). This option is "
-                 "ignored when candidate set is 'fixed' or 'vocab', as these already "
-                 "include all candidates")
+            "negative candidate for the current response (as a way to "
+            "organically teach the model to not repeat itself). This option is "
+            "ignored when candidate set is 'fixed' or 'vocab', as these already "
+            "include all candidates",
+        )
         agent.add_argument(
-            '--prev-response-filter', type='bool', default=False,
+            '--prev-response-filter',
+            type='bool',
+            default=False,
             help="If True and --interactive=True, do not allow the model to output its "
-                 "previous response. This is a hackier solution than using "
-                 "--prev-response-negatives, but MUCH faster/simpler")
+            "previous response. This is a hackier solution than using "
+            "--prev-response-negatives, but MUCH faster/simpler",
+        )
         agent.add_argument(
-            '--interactive', type='bool', default=False,
+            '--interactive',
+            type='bool',
+            default=False,
             help="Mark as true if you are in a setting where you are only doing "
-                 "evaluation, and always with the same fixed candidate set.")
+            "evaluation, and always with the same fixed candidate set.",
+        )
 
         variants = argparser.add_argument_group('Self-feeding Variants')
-        variants.add_argument('-rgx', '--regex', type='bool', default=False,
-                              help="If True, classify sentiment using regexes instead "
-                              "of model")
-        variants.add_argument('-up', '--uncertainty-predictor', type='bool',
-                              default=False,
-                              help="If True, classify sentiment using uncertainty of "
-                              "dialog models predictions instead of classifer"
-                              "model")
-        variants.add_argument('-ut', '--uncertainty-threshold', type=float, default=0.5,
-                              help="If model confidence is smaller than this number and"
-                              " --uncertainty-predictor=True, classify as bot mistake")
-        variants.add_argument('-us', '--uncertainty-style', type=str, default='gap',
-                              choices=['gap', 'mag'],
-                              help="Whether the uncertainty threshold measures the "
-                              "magnitude of the top confidence, or the gap between the "
-                              "two most confident answers")
+        variants.add_argument(
+            '-rgx',
+            '--regex',
+            type='bool',
+            default=False,
+            help="If True, classify sentiment using regexes instead " "of model",
+        )
+        variants.add_argument(
+            '-up',
+            '--uncertainty-predictor',
+            type='bool',
+            default=False,
+            help="If True, classify sentiment using uncertainty of "
+            "dialog models predictions instead of classifer"
+            "model",
+        )
+        variants.add_argument(
+            '-ut',
+            '--uncertainty-threshold',
+            type=float,
+            default=0.5,
+            help="If model confidence is smaller than this number and"
+            " --uncertainty-predictor=True, classify as bot mistake",
+        )
+        variants.add_argument(
+            '-us',
+            '--uncertainty-style',
+            type=str,
+            default='gap',
+            choices=['gap', 'mag'],
+            help="Whether the uncertainty threshold measures the "
+            "magnitude of the top confidence, or the gap between the "
+            "two most confident answers",
+        )
         return agent
 
     def __init__(self, opt, shared=None):
@@ -140,15 +217,19 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         if opt['prev_response_negatives']:
             if opt['candidates'] in ['fixed', 'vocab']:
-                msg = ("[ Option --prev-response-negatives=True is incompatible with "
-                       "--candidates=['fixed','vocab']. Overriding it to False. ]")
+                msg = (
+                    "[ Option --prev-response-negatives=True is incompatible with "
+                    "--candidates=['fixed','vocab']. Overriding it to False. ]"
+                )
                 warn_once(msg)
                 self.opt['prev_response_negatives'] = False
             self.prev_responses = None
         if opt['prev_response_filter']:
             if not opt['interactive']:
-                msg = ("[ Option --prev-response-filter=True can only be used when "
-                       "--interactive=True. Overriding it to False. ]")
+                msg = (
+                    "[ Option --prev-response-filter=True can only be used when "
+                    "--interactive=True. Overriding it to False. ]"
+                )
                 warn_once(msg)
                 self.opt['prev_response_filter'] = False
             self.prev_response = None
@@ -157,11 +238,11 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         self.status = NORMAL
         if self.opt['interactive']:
-            assert('dialog' in self.subtasks)
-            assert('sentiment' in self.subtasks)
+            assert 'dialog' in self.subtasks
+            assert 'sentiment' in self.subtasks
         else:
-            assert(not self.opt['request_explanation'])
-            assert(not self.opt['request_rating'])
+            assert not self.opt['request_explanation']
+            assert not self.opt['request_rating']
 
         self.task_weight = {
             'dialog': opt['dia_weight'],
@@ -185,9 +266,11 @@ class SelfFeedingAgent(TransformerRankerAgent):
     def build_model(self):
         self.model = SelfFeedingModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
-            for embeddings in [getattr(self.model, 'dia_embeddings', None),
-                               getattr(self.model, 'exp_embeddings', None),
-                               getattr(self.model, 'sen_embeddings', None)]:
+            for embeddings in [
+                getattr(self.model, 'dia_embeddings', None),
+                getattr(self.model, 'exp_embeddings', None),
+                getattr(self.model, 'sen_embeddings', None),
+            ]:
                 if embeddings is not None:
                     self._copy_embeddings(embeddings.weight, self.opt['embedding_type'])
         return self.model
@@ -219,7 +302,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 rating = self.extract_rating()
                 if rating == -1:
                     action = self.make_action(
-                        self.make_explanation_request(), reward=rating)
+                        self.make_explanation_request(), reward=rating
+                    )
                     self.status = EXPLANATION_REQUESTED
 
                 else:
@@ -253,7 +337,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         if len(self.history) > 0:
             observation['text'] = add_person_tokens(
-                self.history[-self.opt['history_size']:], last_speaker=1)
+                self.history[-self.opt['history_size'] :], last_speaker=1
+            )
 
         self.observation = observation
 
@@ -270,6 +355,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
             # Catch error here for debugging
             if len(set(subtasks)) > 1:
                 import pdb
+
                 pdb.set_trace()
             self.subtask = subtasks[0]
         # print(f"[ context ]: {observations[0]['text']}")
@@ -338,10 +424,12 @@ class SelfFeedingAgent(TransformerRankerAgent):
         batchsize = batch.text_vec.size(0)
         if self.model.training:
             cands, cand_vecs, label_inds = self._build_candidates(
-                batch, source=self.opt['candidates'], mode='train')
+                batch, source=self.opt['candidates'], mode='train'
+            )
         else:
             cands, cand_vecs, label_inds = self._build_candidates(
-                batch, source=self.opt['eval_candidates'], mode='eval')
+                batch, source=self.opt['eval_candidates'], mode='eval'
+            )
 
         scores = self.model.score_dialog(batch.text_vec, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
@@ -377,10 +465,12 @@ class SelfFeedingAgent(TransformerRankerAgent):
         warn_once("WARNING: explanation candidates are hardcoded to batch")
         if self.model.training:
             cands, cand_vecs, label_inds = self._build_candidates(
-                batch, source='batch', mode='train')
+                batch, source='batch', mode='train'
+            )
         else:
             cands, cand_vecs, label_inds = self._build_candidates(
-                batch, source='batch', mode='eval')
+                batch, source='batch', mode='eval'
+            )
 
         scores = self.model.score_explanation(batch.text_vec, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
@@ -433,7 +523,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
             for b in range(batchsize):
                 rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['dia_rank'] += 1 + rank
-                self.metrics['dia_correct'] += (rank == 0)
+                self.metrics['dia_correct'] += rank == 0
 
     def update_exp_metrics(self, loss, ranks, label_inds, batchsize):
         self.metrics['exp_exs'] += batchsize
@@ -442,7 +532,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
             for b in range(batchsize):
                 rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['exp_rank'] += 1 + rank
-                self.metrics['exp_correct'] += (rank == 0)
+                self.metrics['exp_correct'] += rank == 0
 
     def update_sen_metrics(self, loss, preds, labels, batchsize):
         # tp/fp/tn/fn are w/r/t the rarer class (negative responses)
@@ -450,8 +540,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
         self.metrics['sen_loss'] += loss.item()
         a = self.opt['target_class']
         b = not self.opt['target_class']
-        assert(a in [0, 1])
-        assert(b in [0, 1])
+        assert a in [0, 1]
+        assert b in [0, 1]
         self.metrics['sen_tp'] += ((preds == labels) * (labels == a)).sum().item()
         self.metrics['sen_fp'] += ((preds != labels) * (labels == b)).sum().item()
         self.metrics['sen_tn'] += ((preds == labels) * (labels == b)).sum().item()
@@ -505,7 +595,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 tn = self.metrics['sen_tn']
                 fp = self.metrics['sen_fp']
                 fn = self.metrics['sen_fn']
-                assert(tp + tn + fp + fn == self.metrics['sen_exs'])
+                assert tp + tn + fp + fn == self.metrics['sen_exs']
                 m['sen_loss'] = self.metrics['sen_loss'] / self.metrics['sen_exs']
                 m['sen_pr'] = tp / (tp + fp + EPS)
                 m['sen_re'] = tp / (tp + fn + EPS)
@@ -577,14 +667,14 @@ class SelfFeedingAgent(TransformerRankerAgent):
         # context.
 
         # pull out dialog candidates from text_vecs since this is a sentiment task
-        assert(self.opt['history_size'] > 2)
+        assert self.opt['history_size'] > 2
         text_vecs = []
         cand_vecs = []
         for vec in batch.text_vec:
             last_p1 = (vec == self.dict.txt2vec('__p1__')[0]).nonzero()[-1].item()
             last_p2 = (vec == self.dict.txt2vec('__p2__')[0]).nonzero()[-1].item()
             text_vecs.append(vec[:last_p2])
-            cand_vecs.append(vec[last_p2 + 1:last_p1])
+            cand_vecs.append(vec[last_p2 + 1 : last_p1])
         text_padded, _ = padded_tensor(text_vecs)
         cand_padded, _ = padded_tensor(cand_vecs)
         scores = self.model.score_dialog(text_padded, cand_padded)
@@ -621,19 +711,18 @@ class SelfFeedingAgent(TransformerRankerAgent):
         return preds
 
     def make_action(self, text, reward=0):
-        action = {
-            'id': self.id,
-            'text': text,
-        }
+        action = {'id': self.id, 'text': text}
         if reward:
             action['reward'] = reward
         return action
 
     def make_explanation_request(self):
         orig_prompt = self.history[-3]
-        return (f'Oops! I think I messed up. '
-                f'Whether I messed up or not, what could I have said '
-                f'(in response to "{orig_prompt}")?')
+        return (
+            f'Oops! I think I messed up. '
+            f'Whether I messed up or not, what could I have said '
+            f'(in response to "{orig_prompt}")?'
+        )
 
     def make_rating_request(self):
         # last_response = self.history[-2]
@@ -686,27 +775,32 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 self.model.load_state_dict(states['model'])
             except RuntimeError as e:
                 if self.opt['partial_load']:
-                    print("WARNING: could not load entire --init-model; "
-                          "loading partially instead.")
+                    print(
+                        "WARNING: could not load entire --init-model; "
+                        "loading partially instead."
+                    )
                     pretrained_state = states['model']
                     current_state = self.model.state_dict()
                     # 1. filter out unnecessary keys
                     pretrained_dict = {
-                        k: v for k, v in pretrained_state.items() if k in current_state}
+                        k: v for k, v in pretrained_state.items() if k in current_state
+                    }
                     # 2. overwrite entries in the existing state dict
                     current_state.update(pretrained_dict)
                     # 3. load the new state dict
                     self.model.load_state_dict(current_state)
                 else:
-                    raise Exception(f"The designated model could not be loaded. "
-                                    f"Consider using --partial-load=True.\n {e}")
+                    raise Exception(
+                        f"The designated model could not be loaded. "
+                        f"Consider using --partial-load=True.\n {e}"
+                    )
 
         if 'optimizer' in states and hasattr(self, 'optimizer'):
             self.optimizer.load_state_dict(states['optimizer'])
         return states
 
     def _add_prev_responses(self, batch, cands, cand_vecs, label_inds, source):
-        assert(source not in ['fixed', 'vocab'])
+        assert source not in ['fixed', 'vocab']
         self._extract_prev_responses(batch)
 
         # Add prev_responses as negatives
@@ -722,8 +816,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
             # Option 2: Just add all prev responses for the whole batch (doubles bs)
             cands += prev_cands
-            cand_vecs, _ = padded_tensor([vec for vec in cand_vecs] + prev_cand_vecs,
-                                         use_cuda=self.use_cuda)
+            cand_vecs, _ = padded_tensor(
+                [vec for vec in cand_vecs] + prev_cand_vecs, use_cuda=self.use_cuda
+            )
         elif source == 'inline':
             raise NotImplementedError
 
@@ -742,7 +837,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
             p1s = (text_vec == p1).nonzero()
             p2s = (text_vec == p2).nonzero()
             if len(p1s) and len(p2s):
-                response_vec = text_vec[p2s[-1] + 1:p1s[-1]]
+                response_vec = text_vec[p2s[-1] + 1 : p1s[-1]]
             else:
                 response_vec = [self.NULL_IDX]  # TODO: pull in actual N
             response = self.dict.vec2txt(response_vec)
@@ -752,5 +847,6 @@ class SelfFeedingAgent(TransformerRankerAgent):
         cands, cand_vecs, label_inds = super()._build_candidates(batch, source, mode)
         if self.opt['prev_response_negatives'] and mode == 'train':
             cands, cand_vecs = self._add_prev_responses(
-                batch, cands, cand_vecs, label_inds, source)
+                batch, cands, cand_vecs, label_inds, source
+            )
         return cands, cand_vecs, label_inds

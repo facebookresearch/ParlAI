@@ -391,10 +391,7 @@ class TorchRankerAgent(TorchAgent):
             cands_key = 'candidates'
         else:
             cands_key = 'eval_candidates'
-        if self.opt[cands_key] not in [
-            'inline',
-            'batch-all-cands',
-        ]:
+        if self.opt[cands_key] not in ['inline', 'batch-all-cands']:
             # vectorize label candidates if and only if we are using inline
             # candidates
             return obs
@@ -537,8 +534,8 @@ class TorchRankerAgent(TorchAgent):
                         self.NULL_IDX
                     )
                     if cand_vecs[i].size(1) < len(label_vec):
-                        label_vec = label_vec[0: cand_vecs[i].size(1)]
-                    label_vec_pad[0: label_vec.size(0)] = label_vec
+                        label_vec = label_vec[0 : cand_vecs[i].size(1)]
+                    label_vec_pad[0 : label_vec.size(0)] = label_vec
                     label_inds[i] = self._find_match(cand_vecs[i], label_vec_pad)
                     if label_inds[i] == -1:
                         bad_batch = True
@@ -574,8 +571,8 @@ class TorchRankerAgent(TorchAgent):
                         self.NULL_IDX
                     )
                     if cand_vecs[i].size(0) < len(label_vec):
-                        label_vec = label_vec[0: cand_vecs[i].size(1)]
-                    label_vec_pad[0: label_vec.size(0)] = label_vec
+                        label_vec = label_vec[0 : cand_vecs[i].size(1)]
+                    label_vec_pad[0 : label_vec.size(0)] = label_vec
                     label_inds[i] = self._find_match(cand_vecs, label_vec_pad)
                     if label_inds[i] == -1:
                         bad_batch = True
@@ -776,7 +773,7 @@ class TorchRankerAgent(TorchAgent):
 
     def _make_candidate_vecs(self, cands):
         """Prebuild cached vectors for fixed candidates."""
-        cand_batches = [cands[i: i + 512] for i in range(0, len(cands), 512)]
+        cand_batches = [cands[i : i + 512] for i in range(0, len(cands), 512)]
         print(
             "[ Vectorizing fixed candidate set ({} batch(es) of up to 512) ]"
             "".format(len(cand_batches))
@@ -817,7 +814,7 @@ class TorchRankerAgent(TorchAgent):
         """
 
         cand_encs = []
-        vec_batches = [vecs[i: i + 256] for i in range(0, len(vecs), 256)]
+        vec_batches = [vecs[i : i + 256] for i in range(0, len(vecs), 256)]
         print(
             "[ Vectorizing fixed candidates set from ({} batch(es) of up to 256) ]"
             "".format(len(vec_batches))

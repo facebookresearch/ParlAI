@@ -22,8 +22,10 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     if opt.get('model_file', '').startswith('models:convai2'):
         opt['model_type'] = 'seq2seq'
-        fnames = ['convai2_self_seq2seq_model.tgz',
-                  'convai2_self_seq2seq_model.dict',
-                  'convai2_self_seq2seq_model.opt']
+        fnames = [
+            'convai2_self_seq2seq_model.tgz',
+            'convai2_self_seq2seq_model.dict',
+            'convai2_self_seq2seq_model.opt',
+        ]
         download_models(opt, fnames, 'convai2', version='v3.0')
     interactive(opt)

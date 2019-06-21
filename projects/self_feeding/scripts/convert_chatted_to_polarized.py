@@ -24,12 +24,27 @@ def setup_args():
     parser = ArgumentParser()
     parser.add_argument('-if', '--infile', type=str)
     parser.add_argument('-of', '--outfile', type=str)
-    parser.add_argument('-histsz', '--history-size', type=int, default=-1,
-                        help="The number of turns to include in the prompt.")
-    parser.add_argument('-pos', '--positives', type=str, default='positive',
-                        help="A comma-separated list of ratings with positive label")
-    parser.add_argument('-neg', '--negatives', type=str, default='negative',
-                        help="A comma-separated list of ratings with negative label")
+    parser.add_argument(
+        '-histsz',
+        '--history-size',
+        type=int,
+        default=-1,
+        help="The number of turns to include in the prompt.",
+    )
+    parser.add_argument(
+        '-pos',
+        '--positives',
+        type=str,
+        default='positive',
+        help="A comma-separated list of ratings with positive label",
+    )
+    parser.add_argument(
+        '-neg',
+        '--negatives',
+        type=str,
+        default='negative',
+        help="A comma-separated list of ratings with negative label",
+    )
     opt = vars(parser.parse_args())
 
     return opt
@@ -46,7 +61,7 @@ def main(opt):
     examples = []
     positives = opt['positives'].split(',')
     negatives = opt['negatives'].split(',')
-    assert(len(set(positives).intersection(set(negatives))) == 0)
+    assert len(set(positives).intersection(set(negatives))) == 0
 
     num_episodes = 0
     num_parleys = 0
@@ -82,7 +97,7 @@ def main(opt):
                 elif opt['history_size'] == 0:
                     utterances = ['__null__']
                 else:
-                    utterances = history[-opt['history_size']:]
+                    utterances = history[-opt['history_size'] :]
                 context = add_person_tokens(utterances, last_speaker=1)
 
                 if parley.response in positives:
@@ -99,7 +114,7 @@ def main(opt):
             elif CONTINUE in parley.context:
                 # if response was negative, history will get blasted in EXP_REQUEST
                 # if we're here, response was neutral/positive, so continue the history
-                history.append(parley.context[parley.context.rindex(':') + 1:])
+                history.append(parley.context[parley.context.rindex(':') + 1 :])
                 history.append(parley.response)
             else:
                 history.append(parley.context)
@@ -109,9 +124,11 @@ def main(opt):
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 
-    print(f"Extracted {len(examples)} ratings out of {num_episodes} episodes "
-          f"({num_parleys} parleys) and wrote them to {opt['outfile']} with "
-          f"histsz == {opt['history_size']}.")
+    print(
+        f"Extracted {len(examples)} ratings out of {num_episodes} episodes "
+        f"({num_parleys} parleys) and wrote them to {opt['outfile']} with "
+        f"histsz == {opt['history_size']}."
+    )
 
 
 if __name__ == '__main__':

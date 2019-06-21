@@ -13,6 +13,7 @@ def _clear_cmdline_args(fn):
     a parlai call.
     """
     import sys
+
     sys.argv = sys.argv[:1]
     return fn
 

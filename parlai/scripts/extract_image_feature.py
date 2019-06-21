@@ -37,15 +37,27 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, False, 'Load/extract image features')
     parser.add_pytorch_datateacher_args()
     arg_group = parser.add_argument_group('Image Extraction')
-    arg_group.add_argument('--dataset', type=str, default=None,
-                           help='Pytorch Dataset; if specified, will save \
+    arg_group.add_argument(
+        '--dataset',
+        type=str,
+        default=None,
+        help='Pytorch Dataset; if specified, will save \
                            the images in one hdf5 file according to how \
-                           they are returned by the specified dataset')
-    arg_group.add_argument('-at', '--attention', action='store_true',
-                           help='Whether to extract image features with attention \
-                           (Note - this is specifically for the mlb_vqa model)')
-    arg_group.add_argument('--use-hdf5-extraction', type='bool', default=False,
-                           help='Whether to extract images into an hdf5 dataset')
+                           they are returned by the specified dataset',
+    )
+    arg_group.add_argument(
+        '-at',
+        '--attention',
+        action='store_true',
+        help='Whether to extract image features with attention \
+                           (Note - this is specifically for the mlb_vqa model)',
+    )
+    arg_group.add_argument(
+        '--use-hdf5-extraction',
+        type='bool',
+        default=False,
+        help='Whether to extract images into an hdf5 dataset',
+    )
 
     return parser
 
@@ -140,7 +152,7 @@ def extract_feats(opt):
             batch_size=bsz,
             shuffle=False,
             num_workers=nw,
-            collate_fn=lambda batch: batch[0]
+            collate_fn=lambda batch: batch[0],
         )
 
         dataset_shape = None
@@ -183,9 +195,8 @@ def extract_feats(opt):
                 else:
                     dataset_shape = (num_images, img.size(1))
                 hdf5_dataset = hdf5_file.create_dataset(
-                    'images',
-                    dataset_shape,
-                    dtype='f')
+                    'images', dataset_shape, dtype='f'
+                )
 
             hdf5_dataset[idx] = img
             idx += 1

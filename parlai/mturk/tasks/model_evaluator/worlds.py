@@ -38,9 +38,11 @@ class ModelEvaluatorWorld(MTurkTaskWorld):
         # to rate the response
         ad['id'] = self.__class__.evaluator_agent_id
         ad['text'] = (
-            self.task_world.get_acts()[0]['text'] + "\n\n" +
-            "How would you rate the following response (from 0 to 10):\n\n" +
-            self.task_world.get_acts()[1]['text'])
+            self.task_world.get_acts()[0]['text']
+            + "\n\n"
+            + "How would you rate the following response (from 0 to 10):\n\n"
+            + self.task_world.get_acts()[1]['text']
+        )
 
         # TODO: deal with multi-turn dialogs, for now we will just deal
         # with 1-turn dialogs in this task.

@@ -24,14 +24,15 @@ import os
 class FullTeacher(DialogTeacher):
     """Reads Wikipedia pages one at a time
     """
+
     def __init__(self, opt, shared=None):
         self.key_value = ':key-value' in opt['task']
         opt['task'] = 'wikipedia:all'
         build(opt)
         self.opt = opt
         opt['datafile'] = os.path.join(
-            opt['datapath'],
-            'wikipedia/full/wiki_full_extracted')
+            opt['datapath'], 'wikipedia/full/wiki_full_extracted'
+        )
         self.id = 'wikipedia'
         super().__init__(opt, shared)
 
@@ -67,7 +68,7 @@ class FullTeacher(DialogTeacher):
         ).format(
             download=self.opt['download_path'],
             wikifile=dpath + '/' + fname,
-            output=dpath + '/' + 'wiki_extracted'
+            output=dpath + '/' + 'wiki_extracted',
         )
 
         return instructions
@@ -76,13 +77,14 @@ class FullTeacher(DialogTeacher):
 class SummaryTeacher(DialogTeacher):
     """Reads Wikipedia pages one at a time, only uses summaries
     """
+
     def __init__(self, opt, shared=None):
         self.key_value = ':key-value' in opt['task']
         opt['task'] = 'wikipedia:summary'
         build(opt)
         opt['datafile'] = os.path.join(
-            opt['datapath'],
-            'wikipedia/summary/summaries.json')
+            opt['datapath'], 'wikipedia/summary/summaries.json'
+        )
         self.id = 'wikipedia'
         super().__init__(opt, shared)
 

@@ -21,9 +21,14 @@ def _path(opt):
         suffix = 'test'
     elif dt == 'valid':
         suffix = 'dev'
-    return os.path.join(opt['datapath'], 'WikiMovies', 'movieqa', 'questions',
-                        'wiki_entities',
-                        'wiki-entities_qa_{suffix}.txt'.format(suffix=suffix))
+    return os.path.join(
+        opt['datapath'],
+        'WikiMovies',
+        'movieqa',
+        'questions',
+        'wiki_entities',
+        'wiki-entities_qa_{suffix}.txt'.format(suffix=suffix),
+    )
 
 
 # The knowledge base of facts that can be used to answer questions.
@@ -43,18 +48,18 @@ class KBTeacher(FbDialogTeacher):
         kbs['kb'] = os.path.join('wiki_entities', 'wiki_entities_kb.txt')
         kbs['wiki'] = 'wiki.txt'
         kbs['ie'] = 'wiki_ie.txt'
-        opt['datafile'] = os.path.join(opt['datapath'], 'WikiMovies', 'movieqa',
-                                       'knowledge_source', kbs[kb])
+        opt['datafile'] = os.path.join(
+            opt['datapath'], 'WikiMovies', 'movieqa', 'knowledge_source', kbs[kb]
+        )
         super().__init__(opt, shared)
 
 
 class DefaultTeacher(FbDialogTeacher):
-
     def __init__(self, opt, shared=None):
         build(opt)
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt)
-        opt['cands_datafile'] = os.path.join(opt['datapath'], 'WikiMovies',
-                                             'movieqa', 'knowledge_source',
-                                             'entities.txt')
+        opt['cands_datafile'] = os.path.join(
+            opt['datapath'], 'WikiMovies', 'movieqa', 'knowledge_source', 'entities.txt'
+        )
         super().__init__(opt, shared)

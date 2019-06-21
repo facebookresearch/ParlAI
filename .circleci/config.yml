@@ -132,6 +132,24 @@ jobs:
           name: Unit tests (py37)
           command: python setup.py test -s tests.suites.unittests -v
 
+  black:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - run:
+          name: minimum black dependencies
+          working_directory: ~/ParlAI
+          command: |
+            pip install -q gitpython black  # only what's needd to lint
+      - run:
+          name: black
+          working_directory: ~/ParlAI
+          command: |
+            bash ./tests/lint_changed.sh -b
+
   lint:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
@@ -146,10 +164,14 @@ jobs:
             npm install
             npm run lint
       - run:
+          name: minimum lint dependencies
+          working_directory: ~/ParlAI
+          command: |
+            pip install -q flake8 gitpython flake8-bugbear  # only what's needd to lint
+      - run:
           name: Lint
           working_directory: ~/ParlAI
           command: |
-            pip install flake8 gitpython flake8-bugbear  # only what's needd to lint
             bash ./tests/lint_changed.sh
 
   nightly_gpu_tests:
@@ -261,6 +283,7 @@ workflows:
   version: 2
   commit:
     jobs:
+      - black
       - lint
       - unittests_37
       - unittests_36

@@ -7,10 +7,11 @@ desired to increase the pool of tasks, models, and baselines.
 ## Pull Requests
 We actively welcome your pull requests.
 
-1. Fork the repo and create your branch from `master`.
+1. Fork the repo and create your branch from `master`. Set up your environment
+   and run `pre-commit install` once.
 2. If you've added code that should be tested, add tests.
 3. If you've changed APIs, update the documentation.
-4. Make sure your code lints (`bash tests/lint_changed.sh`)
+4. Black your code (`black`), and make sure your code lints (`bash tests/lint_changed.sh`).
 5. Ensure the test suite passes. Run `python setup.py test`.
 6. If you've added a new dataset, you should also run
    `python setup.py test -s tests.suites.datatests`. Copy-paste the output into a

@@ -9,17 +9,28 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
+
 class Kvmemnn(nn.Module):
     def __init__(self, opt, num_features, dict):
         super().__init__()
-        self.lt = nn.Embedding(num_features, opt['embeddingsize'], 0,
-                               sparse=True, max_norm=opt['embeddingnorm'])
+        self.lt = nn.Embedding(
+            num_features,
+            opt['embeddingsize'],
+            0,
+            sparse=True,
+            max_norm=opt['embeddingnorm'],
+        )
         if not opt['tfidf']:
             dict = None
         self.encoder = Encoder(self.lt, dict)
         if not opt['share_embeddings']:
-            self.lt2 = nn.Embedding(num_features, opt['embeddingsize'], 0,
-                                   sparse=True, max_norm=opt['embeddingnorm'])
+            self.lt2 = nn.Embedding(
+                num_features,
+                opt['embeddingsize'],
+                0,
+                sparse=True,
+                max_norm=opt['embeddingnorm'],
+            )
             self.encoder2 = Encoder(self.lt2, dict)
         else:
             self.encoder2 = self.encoder
@@ -38,7 +49,7 @@ class Kvmemnn(nn.Module):
         self.cosineEmbedding = True
         if opt['loss'] == 'nll':
             self.cosineEmbedding = False
-            
+
     def forward(self, xs, mems, ys=None, cands=None):
         xs_enc = []
         xs_emb = self.encoder(xs)
@@ -102,7 +113,7 @@ class Kvmemnn(nn.Module):
         else:
             return torch.cat(xs_enc)
 
-        
+
 class Encoder(nn.Module):
     def __init__(self, shared_lt, dict):
         super().__init__()

@@ -25,6 +25,7 @@ import cProfile
 import io
 import pdb
 import pstats
+
 try:
     import torch
 except ImportError:
@@ -38,16 +39,22 @@ def setup_args(parser=None):
     parser = train_args(parser)
     profile = parser.add_argument_group('Profiler Arguments')
     profile.add_argument(
-        '--torch', type='bool', default=False,
-        help='If true, use the torch profiler. Otherwise use cProfile.'
+        '--torch',
+        type='bool',
+        default=False,
+        help='If true, use the torch profiler. Otherwise use cProfile.',
     )
     profile.add_argument(
-        '--torch-cuda', type='bool', default=False,
-        help='If true, use the torch cuda profiler. Otherwise use cProfile.'
+        '--torch-cuda',
+        type='bool',
+        default=False,
+        help='If true, use the torch cuda profiler. Otherwise use cProfile.',
     )
     profile.add_argument(
-        '--debug', type='bool', default=False,
-        help='If true, enter debugger at end of run.'
+        '--debug',
+        type='bool',
+        default=False,
+        help='If true, enter debugger at end of run.',
     )
     return parser
 
@@ -75,8 +82,10 @@ def profile(opt):
         cpu()
 
         if opt['debug']:
-            print('`cpu()` prints out cpu-sorted list, '
-                  '`cuda()` prints cuda-sorted list')
+            print(
+                '`cpu()` prints out cpu-sorted list, '
+                '`cuda()` prints cuda-sorted list'
+            )
 
             pdb.set_trace()
     else:

@@ -27,8 +27,7 @@ def universal_sentence_embedding(sentences, mask, sqrt=True):
     """
     # need to mask out the padded chars
     sentence_sums = th.bmm(
-        sentences.permute(0, 2, 1),
-        mask.float().unsqueeze(-1)
+        sentences.permute(0, 2, 1), mask.float().unsqueeze(-1)
     ).squeeze(-1)
     divisor = mask.sum(dim=1).view(-1, 1).float()
     if sqrt:

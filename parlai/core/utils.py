@@ -169,6 +169,7 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
 
 
 def load_opt_file(optfile):
+    """Load an Opt from disk."""
     try:
         # try json first
         with open(optfile, 'r') as handle:
@@ -224,6 +225,7 @@ class Opt(dict):
         return memo
 
     def display_deepcopies(self):
+        """Display all deepcopies."""
         if len(self.deepcopies) == 0:
             print('No deepcopies performed on this opt.')
             return

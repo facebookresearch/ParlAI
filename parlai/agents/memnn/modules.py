@@ -23,9 +23,15 @@ class MemNN(nn.Module):
     """Memory Network module."""
 
     def __init__(
-        self, num_features, embedding_size, hops=1,
-        memsize=32, time_features=False, position_encoding=False,
-        dropout=0, padding_idx=0,
+        self,
+        num_features,
+        embedding_size,
+        hops=1,
+        memsize=32,
+        time_features=False,
+        position_encoding=False,
+        dropout=0,
+        padding_idx=0,
     ):
         """Initialize memnn model.
 
@@ -37,9 +43,12 @@ class MemNN(nn.Module):
         self.hops = hops
 
         def embedding(use_extra_feats=True):
-            return Embed(num_features, embedding_size,
-                         position_encoding=position_encoding,
-                         padding_idx=padding_idx)
+            return Embed(
+                num_features,
+                embedding_size,
+                position_encoding=position_encoding,
+                padding_idx=padding_idx,
+            )
 
         # TODO: add token dropout?
         # TODO: add dropout
@@ -81,8 +90,9 @@ class MemNN(nn.Module):
             out_memory_embs = self.out_memory_lt(mems)
 
             for _ in range(self.hops):
-                state = self.memory_hop(state, in_memory_embs, out_memory_embs,
-                                        pad_mask)
+                state = self.memory_hop(
+                    state, in_memory_embs, out_memory_embs, pad_mask
+                )
 
         if cands is not None:
             # embed candidates
@@ -101,8 +111,7 @@ class Embed(nn.Embedding):
     Applies Position Encoding if enabled and currently applies BOW sum.
     """
 
-    def __init__(self, *args, position_encoding=False, reduction='mean',
-                 **kwargs):
+    def __init__(self, *args, position_encoding=False, reduction='mean', **kwargs):
         """
         Initialize custom Embedding layer.
 
@@ -123,12 +132,14 @@ class Embed(nn.Embedding):
         elif self.reduction == 'mean':
             # this is more fair than mean(-2) since mean includes null tokens
             sum = embs.sum(-2)
-            lens = input.ne(self.padding_idx).sum(-1).unsqueeze(-1).float()\
-                .clamp_(min=1)
+            lens = (
+                input.ne(self.padding_idx).sum(-1).unsqueeze(-1).float().clamp_(min=1)
+            )
             return sum / lens
         else:
             raise RuntimeError(
-                'reduction method {} not supported'.format(self.reduction))
+                'reduction method {} not supported'.format(self.reduction)
+            )
 
     def forward(self, input):
         """
