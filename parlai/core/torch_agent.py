@@ -394,14 +394,15 @@ class TorchAgent(ABC, Agent):
         agent.add_argument(
             '-i',
             '--interactive-mode',
-            type='bool', default=True,
+            type='bool',
+            default=True,
             help='Whether in full interactive mode or not,  which means generating text or '
             ' retrieving from a full set of candidates, which is necessary to actually '
             ' do full dialogue. However, during training or quick validation (e.g. PPL for '
             ' generation or ranking a few candidates for ranking models) you might want these '
             ' set to off. '
             ' Typically, scripts can set their preferred default behavior at the start, '
-            ' e.g. eval scripts.'
+            ' e.g. eval scripts.',
         )
         # pretrained embedding arguments
         agent.add_argument(
@@ -703,7 +704,7 @@ class TorchAgent(ABC, Agent):
         self.add_person_tokens = opt.get('person_tokens', False)
         # set interactive mode or not according to options.
         self.interactive_mode(opt['interactive_mode'])
-        
+
     def build_dictionary(self):
         """
         Return the constructed dictionary, which will be set to self.dict.
@@ -713,8 +714,8 @@ class TorchAgent(ABC, Agent):
         """
         d = self.dictionary_class()(self.opt)
         if self.opt.get('person_tokens'):
-            d[self.P1_TOKEN] = 999999999
-            d[self.P2_TOKEN] = 999999998
+            d[self.P1_TOKEN] = 999_999_999
+            d[self.P2_TOKEN] = 999_999_998
         return d
 
     def _get_init_model(self, opt, shared):

@@ -156,7 +156,7 @@ class TorchRankerAgent(TorchAgent):
         if self.use_cuda:
             self.model.cuda()
             self.rank_loss.cuda()
-            
+
         # Vectorize and save fixed/vocab candidates once upfront if applicable
         self.set_fixed_candidates(shared)
         self.set_vocab_candidates(shared)
@@ -187,7 +187,7 @@ class TorchRankerAgent(TorchAgent):
             self.eval_candidates = self.opt['eval_candidates']
             self.ignore_bad_candidates = self.opt['ignore_bad_candidates']
             self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
-            
+
     @abstractmethod
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """

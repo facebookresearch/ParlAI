@@ -351,7 +351,6 @@ class TorchGeneratorAgent(TorchAgent):
         self.beam_min_length = opt.get('beam_min_length', 3)
         self.beam_block_ngram = opt.get('beam_block_ngram', 0)
 
-
         if shared:
             # set up shared properties
             self.model = shared['model']
@@ -432,8 +431,7 @@ class TorchGeneratorAgent(TorchAgent):
             print("[" + self.id + ': full interactive mode on.' + ']')
         else:
             self.skip_generation = opt.get('skip_generation', False)
-        
-    
+
     @abstractmethod
     def build_model(self):
         """
