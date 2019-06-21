@@ -8,6 +8,8 @@
 
 import os
 import unittest
+import random
+from itertools import chain
 
 
 def _circleci_parallelism(suite):
@@ -19,7 +21,13 @@ def _circleci_parallelism(suite):
     # on all hosts.
     total = int(os.environ['CIRCLE_NODE_TOTAL'])
     index = int(os.environ['CIRCLE_NODE_INDEX'])
-    tests = [t for i, t in enumerate(suite._tests) if i % total == index]
+
+    # right now each test is corresponds to a /file/. Certain files are slower than
+    # others, so we want to flatten it
+    tests = [testfile._tests for testfile in suite._tests]
+    tests = list(chain.from_iterable(tests))
+    random.Random(42).shuffle(tests)
+    tests = [t for i, t in enumerate(tests) if i % total == index]
     return unittest.TestSuite(tests)
 
 
