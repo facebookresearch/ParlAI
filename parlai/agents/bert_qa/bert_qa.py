@@ -371,21 +371,21 @@ class BertQaAgent(TorchAgent):
             "bert-large-uncased, bert-base-cased, bert-large-cased, bert-base-multilingual-uncased, "
             "bert-base-multilingual-cased, bert-base-chinese.",
         )
-        # parser.add_argument(
-        #     "--warmup_proportion",
-        #     default=0.1,
-        #     type=float,
-        #     help="Proportion of training to perform linear learning rate warmup for. E.g., 0.1 = 10%% "
-        #     "of training.",
-        # )
-        # parser.add_argument(
-        #     "--loss_scale",
-        #     type=float,
-        #     default=0,
-        #     help="Loss scaling to improve fp16 numeric stability. Only used when fp16 set to True.\n"
-        #     "0 (default value): dynamic loss scaling.\n"
-        #     "Positive power of 2: static loss scaling value.\n",
-        # )
+        parser.add_argument(
+            "--warmup_proportion",
+            default=0.1,
+            type=float,
+            help="Proportion of training to perform linear learning rate warmup for. E.g., 0.1 = 10%% "
+            "of training.",
+        )
+        parser.add_argument(
+            "--loss_scale",
+            type=float,
+            default=0,
+            help="Loss scaling to improve fp16 numeric stability. Only used when fp16 set to True.\n"
+            "0 (default value): dynamic loss scaling.\n"
+            "Positive power of 2: static loss scaling value.\n",
+        )
         parser.add_argument(
             "--do-lower-case",
             action="store_true",
@@ -405,60 +405,60 @@ class BertQaAgent(TorchAgent):
             if self.n_gpu > 0:
                 self.model = torch.nn.DataParallel(self.model)
 
-    # def init_optim(self, params, optim_states=None, saved_optim_type=None):
-    #     # self.optimizer = get_bert_optimizer([self.model],
-    #     #                                     self.opt['type_optimization'],
-    #     #                                     self.opt['learningrate'])
+    def init_optim(self, params, optim_states=None, saved_optim_type=None):
+        # self.optimizer = get_bert_optimizer([self.model],
+        #                                     self.opt['type_optimization'],
+        #                                     self.opt['learningrate'])
 
-    #     param_optimizer = list(self.model.named_parameters())
+        param_optimizer = list(self.model.named_parameters())
 
-    #     # hack to remove pooler, which is not used
-    #     # thus it produce None grad that break apex
-    #     param_optimizer = [n for n in param_optimizer if "pooler" not in n[0]]
+        # hack to remove pooler, which is not used
+        # thus it produce None grad that break apex
+        param_optimizer = [n for n in param_optimizer if "pooler" not in n[0]]
 
-    #     no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
-    #     optimizer_grouped_parameters = [
-    #         {
-    #             "params": [
-    #                 p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
-    #             ],
-    #             "weight_decay": 0.01,
-    #         },
-    #         {
-    #             "params": [
-    #                 p for n, p in param_optimizer if any(nd in n for nd in no_decay)
-    #             ],
-    #             "weight_decay": 0.0,
-    #         },
-    #     ]
-    #     if self.fp16:
-    #         try:
-    #             from apex.optimizers import FP16_Optimizer
-    #             from apex.optimizers import FusedAdam
-    #         except ImportError:
-    #             raise ImportError(
-    #                 "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training."
-    #             )
+        no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+        optimizer_grouped_parameters = [
+            {
+                "params": [
+                    p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+                ],
+                "weight_decay": 0.01,
+            },
+            {
+                "params": [
+                    p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+                ],
+                "weight_decay": 0.0,
+            },
+        ]
+        if self.fp16:
+            try:
+                from apex.optimizers import FP16_Optimizer
+                from apex.optimizers import FusedAdam
+            except ImportError:
+                raise ImportError(
+                    "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training."
+                )
 
-    #         self.optimizer = FusedAdam(
-    #             optimizer_grouped_parameters,
-    #             lr=self.opt["learningrate"],
-    #             bias_correction=False,
-    #             max_grad_norm=1.0,
-    #         )
-    #         if self.opt["loss_scale"] == 0:
-    #             self.optimizer = FP16_Optimizer(self.optimizer, dynamic_loss_scale=True)
-    #         else:
-    #             self.optimizer = FP16_Optimizer(
-    #                 self.optimizer, static_loss_scale=self.opt["loss_scale"]
-    #             )
-    #         # warmup_linear = WarmupLinearSchedule(
-    #         #     warmup=opt["warmup_proportion"])
-    #         #     t_total=num_train_optimization_steps)
-    #     else:
-    #         self.optimizer = BertAdam(
-    #             optimizer_grouped_parameters,
-    #             lr=self.opt["learningrate"],
-    #             warmup=self.opt["warmup_proportion"],
-    #         )
-    #         # t_total=num_train_optimization_steps)
+            self.optimizer = FusedAdam(
+                optimizer_grouped_parameters,
+                lr=self.opt["learningrate"],
+                bias_correction=False,
+                max_grad_norm=1.0,
+            )
+            if self.opt["loss_scale"] == 0:
+                self.optimizer = FP16_Optimizer(self.optimizer, dynamic_loss_scale=True)
+            else:
+                self.optimizer = FP16_Optimizer(
+                    self.optimizer, static_loss_scale=self.opt["loss_scale"]
+                )
+            # warmup_linear = WarmupLinearSchedule(
+            #     warmup=opt["warmup_proportion"])
+            #     t_total=num_train_optimization_steps)
+        else:
+            self.optimizer = BertAdam(
+                optimizer_grouped_parameters,
+                lr=self.opt["learningrate"],
+                warmup=self.opt["warmup_proportion"],
+            )
+            # t_total=num_train_optimization_steps)
