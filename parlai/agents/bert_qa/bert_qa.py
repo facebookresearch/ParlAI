@@ -4,10 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.core.distributed_utils import is_distributed
-from parlai.agents.bert_ranker.helpers import get_bert_optimizer
 from .bert_span_dictionary import BertSpanDictionaryAgent
-import parlai.core.build_data as build_data
 from parlai.core.utils import round_sigfigs
 from parlai.zoo.bert.build import download
 import os
@@ -16,7 +13,7 @@ import collections
 
 try:
     from pytorch_pretrained_bert.modeling import BertForQuestionAnswering
-    from pytorch_pretrained_bert.optimization import BertAdam, WarmupLinearSchedule
+    from pytorch_pretrained_bert.optimization import BertAdam
 except ImportError:
     raise Exception(
         (
@@ -438,13 +435,9 @@ class BertQaAgent(TorchAgent):
                 self.optimizer = FP16_Optimizer(
                     self.optimizer, static_loss_scale=self.opt["loss_scale"]
                 )
-            # warmup_linear = WarmupLinearSchedule(
-            #     warmup=opt["warmup_proportion"])
-            #     t_total=num_train_optimization_steps)
         else:
             self.optimizer = BertAdam(
                 optimizer_grouped_parameters,
                 lr=self.opt["learningrate"],
                 warmup=self.opt["warmup_proportion"],
             )
-            # t_total=num_train_optimization_steps)
