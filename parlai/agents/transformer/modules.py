@@ -113,7 +113,6 @@ def gelu(tensor):
 
 
 def get_n_positions_from_options(opt):
-    n_positions = 1024
     if opt.get('n_positions'):
         # if the number of positions is explicitly provided, use that
         n_positions = opt['n_positions']
