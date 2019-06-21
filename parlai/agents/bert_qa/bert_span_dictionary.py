@@ -23,7 +23,7 @@ class BertSpanDictionaryAgent(BertDictionaryAgent):
         if char_start_position > 0:
             # label found in text
 
-            assert text[char_start_position : char_start_position + len(label)] == label
+            assert text[char_start_position:char_start_position + len(label)] == label
 
             # 1. Token words before the answer
             tokens = self.tokenizer.tokenize(text[:char_start_position])
@@ -31,14 +31,14 @@ class BertSpanDictionaryAgent(BertDictionaryAgent):
 
             # 2. Token words for the answer
             answer_tokens = self.tokenizer.tokenize(
-                text[char_start_position : char_start_position + len(label)]
+                text[char_start_position:char_start_position + len(label)]
             )
             end_position = start_position + len(answer_tokens)
             tokens.extend(answer_tokens)
 
             # 3. Token words after the answer
             tokens.extend(
-                self.tokenizer.tokenize(text[char_start_position + len(label) :])
+                self.tokenizer.tokenize(text[char_start_position + len(label):])
             )
 
             assert tokens[start_position:end_position] == answer_tokens
@@ -54,10 +54,3 @@ class BertSpanDictionaryAgent(BertDictionaryAgent):
             valid = False
 
         return tokens_id, start_position, end_position, valid
-
-    # def txt2vec(self, text, vec_type=list):
-    #     tokens = self.tokenizer.tokenize(text)
-    #     tokens_id = self.tokenizer.convert_tokens_to_ids(
-    #         [self.start_token] + tokens + [self.end_token]
-    #     )
-    #     return tokens_id

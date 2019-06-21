@@ -125,21 +125,11 @@ class BertQaAgent(TorchAgent):
             end_position = context_end_position + len(question_tokens_id) + 1
             tokens_ids = question_tokens_id + context_tokens_ids
 
-            # print(
-            #     self.dict.vec2txt(
-            #         torch.tensor(
-            #             tokens_ids[start_position:end_position], dtype=torch.long
-            #         ).to(self.device)
-            #     )
-            # )
-            # print(obs["labels"])
-            # input("...")
-
             if self.text_truncate > 0:
                 if len(tokens_ids) > self.text_truncate:
                     original_len = len(tokens_ids)
-                    tokens_ids = tokens_ids[-self.text_truncate :]
-                    segment_ids = segment_ids[-self.text_truncate :]
+                    tokens_ids = tokens_ids[-self.text_truncate:]
+                    segment_ids = segment_ids[-self.text_truncate:]
 
                     num_tokens_removed = original_len - len(tokens_ids) - 1
 
@@ -258,7 +248,7 @@ class BertQaAgent(TorchAgent):
 
             if pred.start_index > 0:  # this is a non-null prediction
                 answer_tokens = self.dict.vec2txt(
-                    input_ids[pred.start_index : pred.end_index]
+                    input_ids[pred.start_index:pred.end_index]
                 )
                 answer_text = self._clean_WordPieces(answer_tokens)
                 nbest.append(
@@ -406,10 +396,6 @@ class BertQaAgent(TorchAgent):
                 self.model = torch.nn.DataParallel(self.model)
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
-        # self.optimizer = get_bert_optimizer([self.model],
-        #                                     self.opt['type_optimization'],
-        #                                     self.opt['learningrate'])
-
         param_optimizer = list(self.model.named_parameters())
 
         # hack to remove pooler, which is not used
