@@ -240,14 +240,16 @@ model_list = [
             "--eval-candidates fixed  "
             "--fixed-candidates-path data/models/pretrained_transformers/convai_trainset_cands.txt"
         ),
-        "result": ("Enter Your Message: your persona: i love to drink fancy tea.\n"
-                    "your persona: i have a big library at home.\n"
-                    "your persona: i'm a museum tour guide.\n"
-                    "hi how are you doing ?"
-                    "[Polyencoder]: i am alright . i am back from the library .\n"
-                    "Enter Your Message: oh, what do you do for a living?\n"
-                    "[Polyencoder]: i work at the museum downtown . i love it there .\n"
-                    "Enter Your Message: what is your favorite drink?\n"
-                    "[Polyencoder]: i am more of a tea guy . i get my tea from china .\n")
+        "result": (
+            "Enter Your Message: your persona: i love to drink fancy tea.\n"
+            "your persona: i have a big library at home.\n"
+            "your persona: i'm a museum tour guide.\n"
+            "hi how are you doing ?"
+            "[Polyencoder]: i am alright . i am back from the library .\n"
+            "Enter Your Message: oh, what do you do for a living?\n"
+            "[Polyencoder]: i work at the museum downtown . i love it there .\n"
+            "Enter Your Message: what is your favorite drink?\n"
+            "[Polyencoder]: i am more of a tea guy . i get my tea from china .\n"
+        ),
     },
 ]
