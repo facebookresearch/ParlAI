@@ -703,7 +703,7 @@ class TorchAgent(ABC, Agent):
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
         # set interactive mode or not according to options.
-        self.interactive_mode(opt['interactive_mode'])
+        self.interactive_mode(opt['interactive_mode'], shared)
 
     def build_dictionary(self):
         """

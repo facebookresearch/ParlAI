@@ -177,17 +177,27 @@ class TorchRankerAgent(TorchAgent):
                 self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
             )
 
-    def interactive_mode(self, mode):
+    def interactive_mode(self, mode, shared=False):
         if mode:
-            print("[" + self.id + ': full interactive mode on.' + ']')
+            if not shared:
+                # Only print in the non-shared version.
+                print("[" + self.id + ': full interactive mode on.' + ']')
             self.eval_candidates = 'fixed'
             self.ignore_bad_candidates = True
             self.encode_candidate_vecs = True
+            if self.opt['fixed_candidates_path'] is None:
+                # Attempt to get a standard candidate set for the given task
+                # TODO(fill this bit in and built a cand set if it doesn't exist)
+                # path = self.task_candidate_set_path(self.opt['task'])
+                if not shared:
+                    print("[setting fixed_candidates path to: ] " + path)
+                self.fixed_candidates_path = path
         else:
             self.eval_candidates = self.opt['eval_candidates']
             self.ignore_bad_candidates = self.opt['ignore_bad_candidates']
             self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
-
+            self.fixed_candidates_path = self.opt['fixed_candidates_path']
+        
     @abstractmethod
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
@@ -719,7 +729,7 @@ class TorchRankerAgent(TorchAgent):
             self.fixed_candidate_encs = shared['fixed_candidate_encs']
         else:
             opt = self.opt
-            cand_path = opt['fixed_candidates_path']
+            cand_path = self.fixed_candidates_path
             if 'fixed' in (self.candidates, self.eval_candidates) and cand_path:
 
                 # Load candidates

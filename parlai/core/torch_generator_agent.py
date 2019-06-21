@@ -425,10 +425,12 @@ class TorchGeneratorAgent(TorchAgent):
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def interactive_mode(self, mode):
+    def interactive_mode(self, mode, shared=False):
         if mode:
+            if not shared:
+                # Only print in the non-shared version.
+                print("[" + self.id + ': full interactive mode on.' + ']')            
             self.skip_generation = False
-            print("[" + self.id + ': full interactive mode on.' + ']')
         else:
             self.skip_generation = opt.get('skip_generation', False)
 
