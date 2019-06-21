@@ -1,4 +1,4 @@
-# Copyright (c) Facebook, Inc. and its affiliates.
+sqrt# Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -31,7 +31,7 @@ class PolyencoderAgent(TorchRankerAgent):
                                 'in the case of n_first, those are the number'
                                 'of vectors that are considered.')
         agent.add_argument('--poly-attention-type', type=str, default='basic',
-                           choices=['basic', 'basic_sqrt', 'multihead'],
+                           choices=['basic', 'sqrt', 'multihead'],
                            help='Type of the top aggregation layer of the poly-'
                                 'encoder (where the candidate representation is'
                                 'the key)')
@@ -41,7 +41,7 @@ class PolyencoderAgent(TorchRankerAgent):
 
         # Those arguments are here in case where polyencoder type is 'code'
         agent.add_argument('--codes-attention-type', type=str, default='basic',
-                           choices=['basic', 'basic_sqrt', 'multihead'],
+                           choices=['basic', 'sqrt', 'multihead'],
                            help='Type ')
         agent.add_argument('--codes-attention-num-heads', type=int, default=4,
                            help='In case codes-attention-type is multihead, '
@@ -155,7 +155,7 @@ class PolyEncoderModule(torch.nn.Module):
                                         self.codes_attention_num_heads,
                                         embed_dim,
                                         opt['dropout'])
-            elif self.codes_attention_type == 'basic_sqrt':
+            elif self.codes_attention_type == 'sqrt':
                 self.code_attention = BasicAttention(dim=2, attn='sqrt', get_weights=False)
             elif self.codes_attention_type == 'basic':
                 self.code_attention = BasicAttention(dim=2, attn='basic', get_weights=False)
@@ -166,10 +166,10 @@ class PolyEncoderModule(torch.nn.Module):
                                 self.attention_num_heads,
                                 opt['embedding_size'],
                                 opt['dropout'])
-        elif self.attention_type == 'basic_sqrt':
-            self.attention = BasicAttention(dim=2, attn='sqrt', get_weights=False)
-        elif self.attention_type == 'basic':
-            self.attention = BasicAttention(dim=2, attn='basic', get_weights=False)
+        else:
+            self.attention = BasicAttention(dim=2,
+                                            attn=self.attention_type,
+                                            get_weights=False)
 
     def get_encoder(self, opt, dict, null_idx, reduction_type):
         n_positions = get_n_positions_from_options(opt)
