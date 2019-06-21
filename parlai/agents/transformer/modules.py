@@ -76,7 +76,7 @@ def _build_encoder(
         n_segments=n_segments,
         activation=opt['activation'],
         variant=opt['variant'],
-        output_scaling=opt['output_scaling']
+        output_scaling=opt['output_scaling'],
     )
 
 
@@ -121,7 +121,7 @@ def get_n_positions_from_options(opt):
         n_positions = max(
             opt.get('truncate') or 0,
             opt.get('text_truncate') or 0,
-            opt.get('label_truncate') or 0
+            opt.get('label_truncate') or 0,
         )
         if n_positions == 0:
             n_positions = 1024
@@ -197,8 +197,9 @@ class TransformerMemNetModel(nn.Module):
         else:
             self.memory_transformer = self.context_encoder
 
-        self.attender = BasicAttention(dim=2, attn=opt['memory_attention'],
-                                       residual=True)
+        self.attender = BasicAttention(
+            dim=2, attn=opt['memory_attention'], residual=True
+        )
 
     def encode_cand(self, words):
         """Encode the candidates."""

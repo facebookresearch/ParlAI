@@ -21,31 +21,55 @@ class PolyencoderAgent(TorchRankerAgent):
         """Add command-line arguments specifically for this agent."""
         TransformerRankerAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Polyencoder Arguments')
-        agent.add_argument('--polyencoder-type', type=str, default='codes',
-                           choices=['codes', 'n_first'],
-                           help='Type of polyencoder, either we compute'
-                                'vectors using codes + attention, or we '
-                                'simply take the first N vectors.')
-        agent.add_argument('--poly-n-codes', type=int, default=64,
-                           help='number of vectors used to represent the context'
-                                'in the case of n_first, those are the number'
-                                'of vectors that are considered.')
-        agent.add_argument('--poly-attention-type', type=str, default='basic',
-                           choices=['basic', 'sqrt', 'multihead'],
-                           help='Type of the top aggregation layer of the poly-'
-                                'encoder (where the candidate representation is'
-                                'the key)')
-        agent.add_argument('--poly-attention-num-heads', type=int, default=4,
-                           help='In case poly-attention-type is multihead, '
-                                'specify the number of heads')
+        agent.add_argument(
+            '--polyencoder-type',
+            type=str,
+            default='codes',
+            choices=['codes', 'n_first'],
+            help='Type of polyencoder, either we compute'
+            'vectors using codes + attention, or we '
+            'simply take the first N vectors.',
+        )
+        agent.add_argument(
+            '--poly-n-codes',
+            type=int,
+            default=64,
+            help='number of vectors used to represent the context'
+            'in the case of n_first, those are the number'
+            'of vectors that are considered.',
+        )
+        agent.add_argument(
+            '--poly-attention-type',
+            type=str,
+            default='basic',
+            choices=['basic', 'sqrt', 'multihead'],
+            help='Type of the top aggregation layer of the poly-'
+            'encoder (where the candidate representation is'
+            'the key)',
+        )
+        agent.add_argument(
+            '--poly-attention-num-heads',
+            type=int,
+            default=4,
+            help='In case poly-attention-type is multihead, '
+            'specify the number of heads',
+        )
 
         # Those arguments are here in case where polyencoder type is 'code'
-        agent.add_argument('--codes-attention-type', type=str, default='basic',
-                           choices=['basic', 'sqrt', 'multihead'],
-                           help='Type ')
-        agent.add_argument('--codes-attention-num-heads', type=int, default=4,
-                           help='In case codes-attention-type is multihead, '
-                                'specify the number of heads')
+        agent.add_argument(
+            '--codes-attention-type',
+            type=str,
+            default='basic',
+            choices=['basic', 'sqrt', 'multihead'],
+            help='Type ',
+        )
+        agent.add_argument(
+            '--codes-attention-num-heads',
+            type=int,
+            default=4,
+            help='In case codes-attention-type is multihead, '
+            'specify the number of heads',
+        )
         return agent
 
     def __init__(self, opt, shared=None):
@@ -56,10 +80,9 @@ class PolyencoderAgent(TorchRankerAgent):
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
             from parlai.core.distributed_utils import is_distributed
+
             if is_distributed():
-                raise ValueError(
-                    'Cannot combine --data-parallel and distributed mode'
-                )
+                raise ValueError('Cannot combine --data-parallel and distributed mode')
             self.model = torch.nn.DataParallel(self.model)
 
     def build_model(self, states=None):
@@ -79,11 +102,9 @@ class PolyencoderAgent(TorchRankerAgent):
         """
         obs = super()._set_text_vec(*args, **kwargs)
         if 'text_vec' in obs:
-            obs['text_vec'] = self._add_start_end_tokens(obs['text_vec'],
-                                                         True,
-                                                         True)
+            obs['text_vec'] = self._add_start_end_tokens(obs['text_vec'], True, True)
 
-    def vectorize_fixed_candidates(self,  *args, **kwargs):
+    def vectorize_fixed_candidates(self, *args, **kwargs):
         """ Add the start and end token when computing the candidate encodings
             in interactive mode.
         """
@@ -118,9 +139,9 @@ class PolyencoderAgent(TorchRankerAgent):
         elif len(cand_vecs.shape) == 2:
             _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
             cand_rep = cand_rep.expand(bsz, bsz, -1).transpose(0, 1).contiguous()
-        scores = self.model(ctxt_rep=ctxt_rep,
-                            ctxt_rep_mask=ctxt_rep_mask,
-                            cand_rep=cand_rep)
+        scores = self.model(
+            ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
+        )
         return scores
 
 
@@ -152,34 +173,33 @@ class PolyEncoderModule(torch.nn.Module):
             # The attention for the codes.
             if self.codes_attention_type == 'multihead':
                 self.code_attention = MultiHeadAttention(
-                                        self.codes_attention_num_heads,
-                                        embed_dim,
-                                        opt['dropout'])
+                    self.codes_attention_num_heads, embed_dim, opt['dropout']
+                )
             elif self.codes_attention_type == 'sqrt':
-                self.code_attention = BasicAttention(dim=2, attn='sqrt', get_weights=False)
+                self.code_attention = BasicAttention(
+                    dim=2, attn='sqrt', get_weights=False
+                )
             elif self.codes_attention_type == 'basic':
-                self.code_attention = BasicAttention(dim=2, attn='basic', get_weights=False)
+                self.code_attention = BasicAttention(
+                    dim=2, attn='basic', get_weights=False
+                )
 
         # The final attention (the one that takes the candidate as key)
         if self.attention_type == 'multihead':
             self.attention = MultiHeadAttention(
-                                self.attention_num_heads,
-                                opt['embedding_size'],
-                                opt['dropout'])
+                self.attention_num_heads, opt['embedding_size'], opt['dropout']
+            )
         else:
-            self.attention = BasicAttention(dim=2,
-                                            attn=self.attention_type,
-                                            get_weights=False)
+            self.attention = BasicAttention(
+                dim=2, attn=self.attention_type, get_weights=False
+            )
 
     def get_encoder(self, opt, dict, null_idx, reduction_type):
         n_positions = get_n_positions_from_options(opt)
         embeddings = torch.nn.Embedding(
-            len(dict),
-            opt['embedding_size'],
-            padding_idx=null_idx
+            len(dict), opt['embedding_size'], padding_idx=null_idx
         )
-        torch.nn.init.normal_(embeddings.weight, 0,
-                              opt['embedding_size'] ** -0.5)
+        torch.nn.init.normal_(embeddings.weight, 0, opt['embedding_size'] ** -0.5)
         return TransformerEncoder(
             n_heads=opt['n_heads'],
             n_layers=opt['n_layers'],
@@ -198,7 +218,8 @@ class PolyEncoderModule(torch.nn.Module):
             n_segments=2,
             activation=opt['activation'],
             variant=opt['variant'],
-            output_scaling=opt['output_scaling'])
+            output_scaling=opt['output_scaling'],
+        )
 
     def attend(self, attention_layer, queries, keys, mask):
         """ Unify the API of MultiHeadAttention and
@@ -244,10 +265,12 @@ class PolyEncoderModule(torch.nn.Module):
             dim = ctxt_out.size(2)
 
             if self.type == 'codes':
-                ctxt_rep = self.attend(self.code_attention,
-                                       self.codes.repeat(bsz, 1, 1),
-                                       ctxt_out,
-                                       ctxt_mask)
+                ctxt_rep = self.attend(
+                    self.code_attention,
+                    self.codes.repeat(bsz, 1, 1),
+                    ctxt_out,
+                    ctxt_mask,
+                )
                 ctxt_rep_mask = ctxt_rep.new_ones(bsz, self.n_codes).byte()
 
             elif self.type == 'n_first':
@@ -259,8 +282,8 @@ class PolyEncoderModule(torch.nn.Module):
                     extra_mask = ctxt_mask.new_zeros(bsz, difference)
                     ctxt_rep_mask = torch.cat([ctxt_mask, extra_mask], dim=1)
                 else:
-                    ctxt_rep = ctxt_out[:, 0:self.n_codes, :]
-                    ctxt_rep_mask = ctxt_mask[:, 0:self.n_codes]
+                    ctxt_rep = ctxt_out[:, 0 : self.n_codes, :]
+                    ctxt_rep_mask = ctxt_mask[:, 0 : self.n_codes]
 
         return ctxt_rep, ctxt_rep_mask, cand_embed
 
@@ -277,15 +300,20 @@ class PolyEncoderModule(torch.nn.Module):
         """
 
         # reduces the context representation to a 3D tensor bsz x num_cands x dim
-        ctxt_final_rep = self.attend(self.attention,
-                                     cand_embed,
-                                     ctxt_rep,
-                                     ctxt_rep_mask)
+        ctxt_final_rep = self.attend(
+            self.attention, cand_embed, ctxt_rep, ctxt_rep_mask
+        )
         scores = torch.sum(ctxt_final_rep * cand_embed, 2)
         return scores
 
-    def forward(self, ctxt_tokens=None, cand_tokens=None,
-                ctxt_rep=None, ctxt_rep_mask=None, cand_rep=None):
+    def forward(
+        self,
+        ctxt_tokens=None,
+        cand_tokens=None,
+        ctxt_rep=None,
+        ctxt_rep_mask=None,
+        cand_rep=None,
+    ):
         """ Due to a limitation of parlai, we have to have one single model
             in the agent. And because we want to be able to use data-parallel,
             we need to have one single forward() method.
@@ -293,6 +321,8 @@ class PolyEncoderModule(torch.nn.Module):
         """
         if ctxt_tokens is not None or cand_tokens is not None:
             return self.encode(ctxt_tokens, cand_tokens)
-        elif ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None:
+        elif (
+            ctxt_rep is not None and ctxt_rep_mask is not None and cand_rep is not None
+        ):
             return self.score(ctxt_rep, ctxt_rep_mask, cand_rep)
         raise Exception('Unsupported operation')

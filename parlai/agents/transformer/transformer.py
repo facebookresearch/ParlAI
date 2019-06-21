@@ -54,19 +54,10 @@ def add_common_cmdline_args(argparser):
         help='Dropout used after ReLU. From tensor2tensor.',
     )
     argparser.add_argument(
-        '--n-heads',
-        type=int,
-        default=2,
-        help='Number of multihead attention heads'
+        '--n-heads', type=int, default=2, help='Number of multihead attention heads'
     )
-    argparser.add_argument(
-        '--learn-positional-embeddings',
-        type='bool',
-        default=False)
-    argparser.add_argument(
-        '--embeddings-scale',
-        type='bool',
-        default=True)
+    argparser.add_argument('--learn-positional-embeddings', type='bool', default=False)
+    argparser.add_argument('--embeddings-scale', type='bool', default=True)
     argparser.add_argument(
         '--n-positions',
         type=int,
@@ -99,13 +90,15 @@ def add_common_cmdline_args(argparser):
         '--output-scaling',
         type=float,
         default=1.0,
-        help='scale the output of every transformer by this quantity.')
+        help='scale the output of every transformer by this quantity.',
+    )
     argparser.add_argument(
         '--share-word-embeddings',
         type='bool',
         default=True,
         help='Share word embeddings table for candidate and context'
-             'in the memory network')
+        'in the memory network',
+    )
 
 
 class Transformer(Agent):
