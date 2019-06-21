@@ -108,7 +108,6 @@ jobs:
 
   unittests_36:
     <<: *standard_cpu36
-    parallelism: 4
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -122,7 +121,6 @@ jobs:
 
   unittests_37:
     <<: *standard_cpu37
-    parallelism: 4
     working_directory: ~/ParlAI
     steps:
       - checkout
