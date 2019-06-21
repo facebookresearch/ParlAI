@@ -23,10 +23,9 @@ class CrossencoderAgent(TorchRankerAgent):
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
             from parlai.core.distributed_utils import is_distributed
+
             if is_distributed():
-                raise ValueError(
-                    'Cannot combine --data-parallel and distributed mode'
-                )
+                raise ValueError('Cannot combine --data-parallel and distributed mode')
             self.model = torch.nn.DataParallel(self.model)
 
     @classmethod
@@ -52,9 +51,7 @@ class CrossencoderAgent(TorchRankerAgent):
         """
         obs = super()._set_text_vec(*args, **kwargs)
         if 'text_vec' in obs:
-            obs['text_vec'] = self._add_start_end_tokens(obs['text_vec'],
-                                                         True,
-                                                         True)
+            obs['text_vec'] = self._add_start_end_tokens(obs['text_vec'], True, True)
         return obs
 
     def concat_without_padding(self, text_idx, cand_idx, null_idx=0):
@@ -78,8 +75,8 @@ class CrossencoderAgent(TorchRankerAgent):
             non_nuls = torch.sum(text_idx[i, :] != null_idx)
             tokens[i, 0:non_nuls] = text_idx[i, 0:non_nuls]
             segments[i, 0:non_nuls] = segments_idx[0]
-            tokens[i, non_nuls:non_nuls+cand_len] = cand_idx[i, :]
-            segments[i, non_nuls:non_nuls+cand_len] = segments_idx[1]
+            tokens[i, non_nuls : non_nuls + cand_len] = cand_idx[i, :]
+            segments[i, non_nuls : non_nuls + cand_len] = segments_idx[1]
         if self.use_cuda:
             tokens = tokens.cuda()
             segments = segments.cuda()
@@ -87,17 +84,21 @@ class CrossencoderAgent(TorchRankerAgent):
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         if cand_encs is not None:
-            raise Exception('Candidate pre-computation is impossible on the '
-                            'crossencoder')
+            raise Exception(
+                'Candidate pre-computation is impossible on the ' 'crossencoder'
+            )
         num_cands_per_sample = cand_vecs.size(1)
         bsz = cand_vecs.size(0)
-        text_idx = (batch.text_vec.unsqueeze(1)
-                                  .expand(-1, num_cands_per_sample, -1)
-                                  .contiguous()
-                                  .view(num_cands_per_sample * bsz, -1))
+        text_idx = (
+            batch.text_vec.unsqueeze(1)
+            .expand(-1, num_cands_per_sample, -1)
+            .contiguous()
+            .view(num_cands_per_sample * bsz, -1)
+        )
         cand_idx = cand_vecs.view(num_cands_per_sample * bsz, -1)
-        tokens, segments = self.concat_without_padding(text_idx, cand_idx,
-                                                       self.NULL_IDX)
+        tokens, segments = self.concat_without_padding(
+            text_idx, cand_idx, self.NULL_IDX
+        )
         scores = self.model(tokens, segments)
         scores = scores.view(bsz, num_cands_per_sample)
         return scores
@@ -112,12 +113,9 @@ class CrossEncoderModule(torch.nn.Module):
         super(CrossEncoderModule, self).__init__()
         n_positions = get_n_positions_from_options(opt)
         embeddings = torch.nn.Embedding(
-            len(dict),
-            opt['embedding_size'],
-            padding_idx=null_idx
+            len(dict), opt['embedding_size'], padding_idx=null_idx
         )
-        torch.nn.init.normal_(embeddings.weight, 0,
-                              opt['embedding_size'] ** -0.5)
+        torch.nn.init.normal_(embeddings.weight, 0, opt['embedding_size'] ** -0.5)
         self.encoder = TransformerEncoder(
             n_heads=opt['n_heads'],
             n_layers=opt['n_layers'],
@@ -136,7 +134,8 @@ class CrossEncoderModule(torch.nn.Module):
             n_segments=2,
             activation=opt['activation'],
             variant=opt['variant'],
-            output_scaling=opt['output_scaling'])
+            output_scaling=opt['output_scaling'],
+        )
         self.linear_layer = torch.nn.Linear(opt['embedding_size'], 1)
 
     def forward(self, tokens, segments):
