@@ -10,7 +10,8 @@ This directory contains:
 Run this command: (assumes your model zoo is in the default ./data/models)
 ```bash
 PYTHONPATH=. python examples/interactive.py -m transformer/polyencoder \
-    -mf zoo:pretrained_transformers/model_poly --encode-candidate-vecs true \
+    -mf zoo:pretrained_transformers/model_poly \
+    --encode-candidate-vecs true \
     --eval-candidates fixed  \
     --fixed-candidates-path data/models/pretrained_transformers/convai_trainset_cands.txt
 ```
@@ -37,7 +38,12 @@ Execute this to train a biencoder scoring 86+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
 
 ```
-python -u examples/train_model.py -pyt convai2 --batchsize 512 \
+python -u examples/train_model.py \
+    # Notice those 2 lines
+    --init-model zoo:pretrained_transformers/bi_model_huge_reddit.mdl \
+    --dict-file ./data/models/pretrained_transformers/model_bi.dict \
+    # Other parameters
+    --batchsize 512 -pyt convai2 \
     --shuffle true --model transformer/biencoder --eval-batchsize 6 \
     --warmup_updates 100 --lr-scheduler-patience 0 \
     --lr-scheduler-decay 0.4 -lr 5e-05 --data-parallel True \
@@ -48,7 +54,6 @@ python -u examples/train_model.py -pyt convai2 --batchsize 512 \
     --fp16 True --dict-file ./data/models/pretrained_transformers/model_bi.dict \
     --dict-tokenizer bpe --dict-lower True --optimizer adamax \
     --output-scaling 0.06 \
-    --init-model zoo:pretrained_transformers/bi_model_huge_reddit.mdl \
      --variant xlm --reduction-type mean --share-encoders False \
      --learn-positional-embeddings True --n-layers 12 --n-heads 12 \
      --ffn-size 3072 --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 \
@@ -64,7 +69,12 @@ Execute this to train a poly-encoder scoring 89+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
 
 ```
-PYTHONPATH=. python -u examples/train_model.py -pyt iconvai2 --shuffle true \
+PYTHONPATH=. python -u examples/train_model.py \
+  # Notice those 2 lines
+  --init-model zoo:pretrained_transformers/poly_model_huge_reddit.mdl \
+  --dict-file ./data/models/pretrained_transformers/model_bi.dict \
+  # Other parameters
+  -pyt convai2 --shuffle true \
   --model transformer/polyencoder --batchsize 256 --eval-batchsize 10 \
   --warmup_updates 100 --lr-scheduler-patience 0 --lr-scheduler-decay 0.4 \
   -lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 - \
@@ -73,7 +83,6 @@ PYTHONPATH=. python -u examples/train_model.py -pyt iconvai2 --shuffle true \
   --save-after-valid True --log_every_n_secs 20 --candidates batch --fp16 True \
   --dict-file ./data/models/pretrained_transformers/model_bi.dict \
   --dict-tokenizer bpe --dict-lower True --optimizer adamax --output-scaling 0.06 \
-  --init-model zoo:pretrained_transformers/poly_model_huge_reddit.mdl \
   --variant xlm --reduction-type mean --share-encoders False \
   --learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 \
   --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 --n-positions 1024 \
@@ -89,16 +98,19 @@ Execute this to train a cross-encoder scoring 90+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
 
 ```
-PYTHONPATH=. python -u examples/train_model.py -pyt convai2 --shuffle true \
+PYTHONPATH=. python -u examples/train_model.py
+  # Notice those 2 lines
+  --init-model zoo:pretrained_transformers/cross_model_huge_reddit.mdl \
+  --dict-file ./data/models/pretrained_transformers/model_bi.dict \
+  # Other parameters
+  -pyt convai2 --shuffle true \
   --model transformer/crossencoder --batchsize 16 --eval-batchsize 10 \
   --warmup_updates 1000 --lr-scheduler-patience 0 --lr-scheduler-decay 0.4 \
   -lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 \
   --text-truncate 360 --num-epochs 12.0 --max_train_time 200000 -veps 0.5 \
   -vme 2500 --validation-metric accuracy --validation-metric-mode max \
   --save-after-valid True --log_every_n_secs 20 --candidates inline --fp16 True \
-  --dict-file ./data/models/pretrained_transformers/model_bi.dict \
   --dict-tokenizer bpe --dict-lower True --optimizer adamax --output-scaling 0.06 \
-  --init-model zoo:pretrained_transformers/cross_model_huge_reddit.mdl \
   --variant xlm --reduction-type first --share-encoders False \
   --learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 \
   --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 --n-positions 1024 \
