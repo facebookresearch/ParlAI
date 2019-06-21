@@ -177,7 +177,7 @@ jobs:
   nightly_gpu_tests:
     <<: *gpu
     working_directory: ~/ParlAI
-    parallelism: 4
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
