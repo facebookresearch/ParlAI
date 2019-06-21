@@ -177,7 +177,7 @@ class TorchRankerAgent(TorchAgent):
                 self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
             )
 
-    def interactive_mode(self, mode, shared=False):
+    def set_interactive_mode(self, mode, shared=False):
         if mode:
             if not shared:
                 # Only print in the non-shared version.

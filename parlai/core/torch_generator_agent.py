@@ -424,8 +424,8 @@ class TorchGeneratorAgent(TorchAgent):
             elif i != self.START_IDX:
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
-
-    def interactive_mode(self, mode, shared=False):
+    
+    def set_interactive_mode(self, mode, shared=False):
         if mode:
             if not shared:
                 # Only print in the non-shared version.

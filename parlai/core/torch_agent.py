@@ -1633,9 +1633,9 @@ class TorchAgent(ABC, Agent):
         """[Abstract] Process one batch but do not train on it."""
         pass
 
-    @abstractmethod
-    def interactive_mode(self, mode):
-        """[Abstract] Set interactive mode on or off."""
+    def set_interactive_mode(self, mode, shared):
+        """ Set interactive mode on or off."""
+        # Base class is a no-op.
         pass
 
     def backward(self, loss):
