@@ -31,8 +31,8 @@ def build_cands(opt):
         )[1]
     else:
         outfile = opt['outfile']
-
-    if opt['num_examples'] == -1:
+        
+    if opt.get('num_examples', -1) == -1:
         num_examples = world.num_examples()
     else:
         num_examples = opt['num_examples']
@@ -43,7 +43,7 @@ def build_cands(opt):
     cands = []
     for _ in range(num_examples):
         world.parley()
-        acts = world.acts[0]
+        acts = world.get_acts()[0]
         if type(acts) == dict:
             # turn into a batch of 1 example.
             acts = [acts]

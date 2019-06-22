@@ -44,12 +44,11 @@ def dump_data(opt):
     fw = open(outfile, 'w')
     for _ in range(num_examples):
         world.parley()
-        world.acts[0]['labels'] = world.acts[0].get(
-            'labels', world.acts[0].pop('eval_labels', None)
-        )
-        txt = msg_to_str(world.acts[0], ignore_fields=ignorefields)
+        acts = world.get_acts()
+        acts[0]['labels'] = acts[0].get('labels', acts[0].pop('eval_labels', None))
+        txt = msg_to_str(acts[0], ignore_fields=ignorefields)
         fw.write(txt + '\n')
-        if world.acts[0].get('episode_done', False):
+        if acts[0].get('episode_done', False):
             fw.write('\n')
 
         if log_timer.time() > opt['log_every_n_secs']:
