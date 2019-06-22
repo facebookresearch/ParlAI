@@ -395,13 +395,13 @@ class TorchAgent(ABC, Agent):
             '-i',
             '--interactive-mode',
             type='bool',
-            default=True,
-            help='Whether in full interactive mode or not,  which means generating text or '
-            ' retrieving from a full set of candidates, which is necessary to actually '
-            ' do full dialogue. However, during training or quick validation (e.g. PPL for '
-            ' generation or ranking a few candidates for ranking models) you might want these '
-            ' set to off. '
-            ' Typically, scripts can set their preferred default behavior at the start, '
+            default=False,
+            help='Whether in full interactive mode or not,  which means generating text or'
+            ' retrieving from a full set of candidates, which is necessary to actually'
+            ' do full dialogue. However, during training or quick validation (e.g. PPL for'
+            ' generation or ranking a few candidates for ranking models) you might want these'
+            ' set to off.'
+            ' Typically, scripts can set their preferred default behavior at the start,'
             ' e.g. eval scripts.',
         )
         # pretrained embedding arguments
@@ -1549,7 +1549,12 @@ class TorchAgent(ABC, Agent):
                 with open(path + '.opt', 'w', encoding='utf-8') as handle:
                     if hasattr(self, 'model_version'):
                         self.opt['model_version'] = self.model_version()
-                    json.dump(self.opt, handle)
+                    saved_opts = deepcopy(self.opt)
+                    if 'interactive_mode' in saved_opts:
+                        # We do not save the state of interactive mode, it is only decided
+                        # by scripts or command line.
+                        del saved_opts['interactive_mode']
+                    json.dump(saved_opts, handle)
                     # for convenience of working with jq, make sure there's a newline
                     handle.write('\n')
 

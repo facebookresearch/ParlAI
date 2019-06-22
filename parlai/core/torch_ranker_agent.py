@@ -185,8 +185,9 @@ class TorchRankerAgent(TorchAgent):
             self.eval_candidates = 'fixed'
             self.ignore_bad_candidates = True
             self.encode_candidate_vecs = True
-            if (self.opt['fixed_candidates_path'] is None or
-                self.opt['fixed_candidates_path'] == ''):
+            self.fixed_candidates_path = self.opt['fixed_candidates_path']
+            if (self.fixed_candidates_path is None or
+                self.fixed_candidates_path == ''):
                 # Attempt to get a standard candidate set for the given task
                 path = self.get_task_candidates_path()
                 if path:
@@ -201,7 +202,7 @@ class TorchRankerAgent(TorchAgent):
 
 
     def get_task_candidates_path(self):
-        path = self.opt['model_file'] + '.cands-' + self.opt['task']
+        path = self.opt['model_file'] + '.cands-' + self.opt['task'] + '.cands'
         if os.path.isfile(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
             return path
         print("[ building candidates file as they do not exist: " + path + ' ]')
@@ -753,13 +754,12 @@ class TorchRankerAgent(TorchAgent):
                 print("[ Loading fixed candidate set from {} ]".format(cand_path))
                 with open(cand_path, 'r', encoding='utf-8') as f:
                     cands = [line.strip() for line in f.readlines()]
-
                 # Load or create candidate vectors
-                if os.path.isfile(opt['fixed_candidate_vecs']):
+                if os.path.isfile(self.opt['fixed_candidate_vecs']):
                     vecs_path = opt['fixed_candidate_vecs']
                     vecs = self.load_candidates(vecs_path)
                 else:
-                    setting = opt['fixed_candidate_vecs']
+                    setting = self.opt['fixed_candidate_vecs']
                     model_dir, model_file = os.path.split(self.opt['model_file'])
                     model_name = os.path.splitext(model_file)[0]
                     cands_name = os.path.splitext(os.path.basename(cand_path))[0]

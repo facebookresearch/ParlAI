@@ -38,8 +38,7 @@ def build_cands(opt):
         num_examples = opt['num_examples']
     log_timer = TimeLogger()
 
-    print('[ starting to build candidates from task.. (ex:' +
-          str(num_examples) + ')]')
+    print('[ starting to build candidates from task.. (ex:' + str(num_examples) + ')]')
     print('[ saving output to {} ]'.format(outfile))
     cands = []
     for _ in range(num_examples):
@@ -47,10 +46,12 @@ def build_cands(opt):
         acts = world.acts[0]
         if type(acts) == dict:
             # turn into a batch of 1 example.
-            acts = [ acts ]
+            acts = [acts]
         for a in acts:
-            candidate = a.get('labels', a.get('eval_labels', None))[0]
-            cands.append(candidate)
+            candidate = a.get('labels', a.get('eval_labels', None))
+            if candidate is not None:
+                candidate = candidate[0]
+                cands.append(candidate)
         if log_timer.time() > opt['log_every_n_secs']:
             text, _log = log_timer.log(world.total_parleys, world.num_examples())
             print(text)
@@ -71,16 +72,14 @@ def main():
         '--num-examples',
         default=-1,
         type=int,
-        help='Total number of exs to convert, -1 to convert \
-                                all examples',
+        help='Total number of exs to convert, -1 to convert all examples',
     )
     parser.add_argument(
         '-of',
         '--outfile',
         default=None,
         type=str,
-        help='Output file where to save, by default will be \
-                                created in /tmp',
+        help='Output file where to save, by default will be created in /tmp',
     )
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(datatype='train:evalmode')
