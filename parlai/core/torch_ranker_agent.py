@@ -196,7 +196,7 @@ class TorchRankerAgent(TorchAgent):
                     self.fixed_candidates_path = path
         else:
             self.eval_candidates = self.opt['eval_candidates']
-            self.ignore_bad_candidates = self.opt['ignore_bad_candidates']
+            self.ignore_bad_candidates = self.get('ignore_bad_candidates', False)
             self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
             self.fixed_candidates_path = self.opt['fixed_candidates_path']
 

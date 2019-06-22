@@ -18,6 +18,7 @@ See below for documentation on each specific tool.
 """
 
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from collections import deque
 import json
 import random

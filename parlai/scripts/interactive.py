@@ -61,6 +61,7 @@ def interactive(opt, print_parser=None):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
+    import pdb; pdb.set_trace()
 
     if print_parser:
         # Show arguments after loading model
