@@ -185,19 +185,36 @@ class TorchRankerAgent(TorchAgent):
             self.eval_candidates = 'fixed'
             self.ignore_bad_candidates = True
             self.encode_candidate_vecs = True
-            if self.opt['fixed_candidates_path'] is None:
+            if (self.opt['fixed_candidates_path'] is None or
+                self.opt['fixed_candidates_path'] == ''):
                 # Attempt to get a standard candidate set for the given task
-                # TODO(fill this bit in and built a cand set if it doesn't exist)
-                # path = self.task_candidate_set_path(self.opt['task'])
-                if not shared:
-                    print("[setting fixed_candidates path to: ] " + path)
-                self.fixed_candidates_path = path
+                path = self.get_task_candidates_path()
+                if path:
+                    if not shared:
+                        print("[setting fixed_candidates path to: " + path + " ]")
+                    self.fixed_candidates_path = path
         else:
             self.eval_candidates = self.opt['eval_candidates']
             self.ignore_bad_candidates = self.opt['ignore_bad_candidates']
             self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
             self.fixed_candidates_path = self.opt['fixed_candidates_path']
-        
+
+
+    def get_task_candidates_path(self):
+        path = self.opt['model_file'] + '.cands-' + self.opt['task']
+        if os.path.isfile(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
+            return path
+        print("[ building candidates file as they do not exist: " + path + ' ]')
+        from parlai.scripts.build_candidates import build_cands
+        from copy import deepcopy
+        opt = deepcopy(self.opt)
+        opt['outfile'] = path
+        opt['datatype'] = 'train:evalmode'
+        opt['batchsize'] = 1
+        build_cands(opt)
+        return path
+            
+            
     @abstractmethod
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
