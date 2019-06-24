@@ -177,7 +177,7 @@ class TorchRankerAgent(TorchAgent):
             )
 
     def set_interactive_mode(self, mode, shared=False):
-        self.candidates = opt['candidates']
+        self.candidates = self.opt['candidates']
         if mode:
             if not shared:
                 # Only print in the non-shared version.
@@ -186,8 +186,7 @@ class TorchRankerAgent(TorchAgent):
             self.ignore_bad_candidates = True
             self.encode_candidate_vecs = True
             self.fixed_candidates_path = self.opt['fixed_candidates_path']
-            if (self.fixed_candidates_path is None or
-                self.fixed_candidates_path == ''):
+            if self.fixed_candidates_path is None or self.fixed_candidates_path == '':
                 # Attempt to get a standard candidate set for the given task
                 path = self.get_task_candidates_path()
                 if path:
@@ -200,7 +199,6 @@ class TorchRankerAgent(TorchAgent):
             self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
             self.fixed_candidates_path = self.opt['fixed_candidates_path']
 
-
     def get_task_candidates_path(self):
         path = self.opt['model_file'] + '.cands-' + self.opt['task'] + '.cands'
         if os.path.isfile(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
@@ -208,14 +206,14 @@ class TorchRankerAgent(TorchAgent):
         print("[ *** building candidates file as they do not exist: " + path + ' *** ]')
         from parlai.scripts.build_candidates import build_cands
         from copy import deepcopy
+
         opt = deepcopy(self.opt)
         opt['outfile'] = path
         opt['datatype'] = 'train:evalmode'
         opt['batchsize'] = 1
         build_cands(opt)
         return path
-            
-            
+
     @abstractmethod
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
