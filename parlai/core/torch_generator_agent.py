@@ -432,7 +432,7 @@ class TorchGeneratorAgent(TorchAgent):
                 print("[" + self.id + ': full interactive mode on.' + ']')
             self.skip_generation = False
         else:
-            self.skip_generation = opt.get('skip_generation', False)
+            self.skip_generation = self.opt.get('skip_generation', False)
 
     @abstractmethod
     def build_model(self):
