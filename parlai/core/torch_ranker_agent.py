@@ -126,7 +126,6 @@ class TorchRankerAgent(TorchAgent):
         # (e.g., a .dict file)
         init_model, is_finetune = self._get_init_model(opt, shared)
         opt['rank_candidates'] = True
-        self.candidates = opt['candidates']
         super().__init__(opt, shared)
 
         if shared:
@@ -178,6 +177,7 @@ class TorchRankerAgent(TorchAgent):
             )
 
     def set_interactive_mode(self, mode, shared=False):
+        self.candidates = opt['candidates']
         if mode:
             if not shared:
                 # Only print in the non-shared version.
@@ -205,7 +205,7 @@ class TorchRankerAgent(TorchAgent):
         path = self.opt['model_file'] + '.cands-' + self.opt['task'] + '.cands'
         if os.path.isfile(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
             return path
-        print("[ building candidates file as they do not exist: " + path + ' ]')
+        print("[ *** building candidates file as they do not exist: " + path + ' *** ]')
         from parlai.scripts.build_candidates import build_cands
         from copy import deepcopy
         opt = deepcopy(self.opt)
