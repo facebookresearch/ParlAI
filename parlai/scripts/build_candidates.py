@@ -31,7 +31,7 @@ def build_cands(opt):
         )[1]
     else:
         outfile = opt['outfile']
-        
+
     if opt.get('num_examples', -1) == -1:
         num_examples = world.num_examples()
     else:
