@@ -43,9 +43,10 @@ def build_cands(opt):
     cands = []
     for _ in range(num_examples):
         world.parley()
+        # We get the acts of the first agent, which is the teacher.
         acts = world.get_acts()[0]
         if type(acts) == dict:
-            # turn into a batch of 1 example.
+            # We turn into a batch of 1 example, in case batching is being used.
             acts = [acts]
         for a in acts:
             candidate = a.get('labels', a.get('eval_labels', None))
