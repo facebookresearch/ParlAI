@@ -14,6 +14,7 @@ from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, no_lock
 from collections import Counter
 from parlai.core.utils import warn_once
+from numbers import Number
 
 import re
 
@@ -83,14 +84,15 @@ def aggregate_task_reports(reports, tasks, micro=True):
     total_exs = sum(exs.values())
     total_report['exs'] = total_exs
     for metric, task_vals in metrics.items():
-        if micro:
-            # average over the number of examples
-            vals = [task_vals[task] * exs[task] for task in tasks]
-            total_report[metric] = round_sigfigs(sum(vals) / total_exs, 4)
-        else:  # macro
-            # average over tasks
-            vals = task_vals.values()
-            total_report[metric] = round_sigfigs(sum(vals) / len(vals), 4)
+        if all([isinstance(v, Number) for v in task_vals.values()]):
+            if micro:
+                # average over the number of examples
+                vals = [task_vals[task] * exs[task] for task in tasks]
+                total_report[metric] = round_sigfigs(sum(vals) / total_exs, 4)
+            else:  # macro
+                # average over tasks
+                vals = task_vals.values()
+                total_report[metric] = round_sigfigs(sum(vals) / len(vals), 4)
     # add a warning describing how metrics were averaged across tasks.
     total_report['warning'] = 'metrics are averaged across tasks'
     if micro:
