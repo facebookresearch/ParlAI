@@ -3,29 +3,28 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Convert a dataset into the ParlAI text format.
+"""Build the candidate responses for a retrieval model.
 
 Examples
 --------
 
 .. code-block:: shell
 
-  python convert_data_to_parlai_format.py -t babi:task1k:1 --outfile /tmp/dump
+  python build_candidates.py -t convai2 --outfile /tmp/cands.txt
 """
 
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import msg_to_str, TimeLogger
+from parlai.core.utils import TimeLogger
 import random
 import tempfile
 
 
-def dump_data(opt):
+def build_cands(opt):
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
-    ignorefields = opt.get('ignore_fields', '')
     if opt['outfile'] is None:
         outfile = tempfile.mkstemp(
             prefix='{}_{}_'.format(opt['task'], opt['datatype']), suffix='.txt'
@@ -33,31 +32,35 @@ def dump_data(opt):
     else:
         outfile = opt['outfile']
 
-    if opt['num_examples'] == -1:
+    if opt.get('num_examples', -1) == -1:
         num_examples = world.num_examples()
     else:
         num_examples = opt['num_examples']
     log_timer = TimeLogger()
 
-    print('[ starting to convert.. ]')
+    print('[ starting to build candidates from task.. (ex:' + str(num_examples) + ')]')
     print('[ saving output to {} ]'.format(outfile))
-    fw = open(outfile, 'w')
+    cands = []
     for _ in range(num_examples):
         world.parley()
-        acts = world.get_acts()
-        acts[0]['labels'] = acts[0].get('labels', acts[0].pop('eval_labels', None))
-        txt = msg_to_str(acts[0], ignore_fields=ignorefields)
-        fw.write(txt + '\n')
-        if acts[0].get('episode_done', False):
-            fw.write('\n')
-
+        # We get the acts of the first agent, which is the teacher.
+        acts = world.get_acts()[0]
+        if type(acts) == dict:
+            # We turn into a batch of 1 example, in case batching is being used.
+            acts = [acts]
+        for a in acts:
+            candidate = a.get('labels', a.get('eval_labels', None))
+            if candidate is not None:
+                candidate = candidate[0]
+                cands.append(candidate)
         if log_timer.time() > opt['log_every_n_secs']:
             text, _log = log_timer.log(world.total_parleys, world.num_examples())
             print(text)
-
         if world.epoch_done():
             print('EPOCH DONE')
             break
+    fw = open(outfile, 'w')
+    fw.write('\n'.join(cands))
     fw.close()
 
 
@@ -70,29 +73,19 @@ def main():
         '--num-examples',
         default=-1,
         type=int,
-        help='Total number of exs to convert, -1 to convert \
-                                all examples',
+        help='Total number of exs to convert, -1 to convert all examples',
     )
     parser.add_argument(
         '-of',
         '--outfile',
         default=None,
         type=str,
-        help='Output file where to save, by default will be \
-                                created in /tmp',
-    )
-    parser.add_argument(
-        '-if',
-        '--ignore-fields',
-        default='id',
-        type=str,
-        help='Ignore these fields from the message (returned\
-                                with .act() )',
+        help='Output file where to save, by default will be created in /tmp',
     )
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.set_defaults(datatype='train:stream')
+    parser.set_defaults(datatype='train:evalmode')
     opt = parser.parse_args()
-    dump_data(opt)
+    build_cands(opt)
 
 
 if __name__ == '__main__':
