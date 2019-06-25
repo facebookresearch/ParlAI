@@ -87,9 +87,6 @@ class ImageLoader:
         else:
             raise RuntimeError('Image mode {} not supported'.format(self.image_mode))
 
-        # cut off the additional layer.
-        self.netCNN = nn.Sequential(*list(CNN(pretrained=True).children())[:layer_num])
-
         # initialize the transform function using torch vision.
         self.transform = transforms.Compose(
             [
