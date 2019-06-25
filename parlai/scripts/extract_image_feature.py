@@ -109,6 +109,7 @@ def extract_feats(opt):
             pbar.update()
         pbar.close()
     elif opt.get('use_hdf5_extraction', False):
+        # TODO Deprecate
         '''One can specify a Pytorch Dataset for custom image loading'''
         nw = opt.get('numworkers', 1)
         im = opt.get('image_mode', 'raw')
