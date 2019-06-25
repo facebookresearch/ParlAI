@@ -85,6 +85,7 @@ class SelfRevisedTeacher(FbDialogTeacher):
         opt['datafile'] = _path(opt, 'self_revised', use_cands)
         super().__init__(opt, shared)
 
+
 class DefaultTeacher(SelfOriginalTeacher):
     pass
 

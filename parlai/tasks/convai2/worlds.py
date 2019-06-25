@@ -12,13 +12,12 @@ from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 
-class InteractiveWorld(DialogPartnerWorld):
 
+class InteractiveWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         print("[ loading personas.. ]")
         self.load_personas()
-
 
     def load_personas(self):
         # Create ConvAI2 data so we can assign personas.
@@ -28,7 +27,7 @@ class InteractiveWorld(DialogPartnerWorld):
         convai2_agent = RepeatLabelAgent(convai2_opt)
         self.convai2_world = create_task(convai2_opt, convai2_agent)
         self.cnt = 0
-        
+
     def get_new_personas(self):
         # Find a new episode
         while True:
@@ -49,7 +48,6 @@ class InteractiveWorld(DialogPartnerWorld):
         print("Enter [DONE] if you want a new partner at any time.\n")
         return a1_persona, a2_persona
 
-    
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents."""
         if self.cnt == 0:
@@ -68,7 +66,7 @@ class InteractiveWorld(DialogPartnerWorld):
         if self.cnt == 0:
             # add the persona on to the first message to agent 1
             act = deepcopy(acts[0])
-            act['text'] = self.p2 + act.get('text', 'hi') 
+            act['text'] = self.p2 + act.get('text', 'hi')
             print("gave bot its persona!")
             agents[1].observe(validate(act))
         else:
@@ -82,5 +80,3 @@ class InteractiveWorld(DialogPartnerWorld):
             print("CHAT DONE ")
             print("\n... preparing new chat... \n")
             self.cnt = 0
-
-        
