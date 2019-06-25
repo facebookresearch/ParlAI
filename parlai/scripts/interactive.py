@@ -56,11 +56,11 @@ def interactive(opt, print_parser=None):
     if isinstance(opt, ParlaiParser):
         print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
         opt = opt.parse_args()
-    opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
-    world = create_task(opt, agent)
+    human_agent = LocalHumanAgent(opt)
+    world = create_task(opt, [human_agent, agent])
 
     if print_parser:
         # Show arguments after loading model

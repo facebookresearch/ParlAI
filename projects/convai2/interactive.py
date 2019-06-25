@@ -64,7 +64,7 @@ def interactive(opt, print_parser=None):
         # Show arguments after loading model
         print_parser.opt = agent.opt
         print_parser.print_args()
-
+        
     # Create ConvAI2 data so we can assign personas.
     convai2_opt = opt.copy()
     convai2_opt['task'] = 'convai2:both'
