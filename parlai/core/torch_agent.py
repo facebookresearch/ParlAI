@@ -1100,8 +1100,9 @@ class TorchAgent(ABC, Agent):
         Subclasses will likely want to share their model as well.
         """
         shared = super().share()
-        shared['opt'] = self.opt
         shared['dict'] = self.dict
+        shared['model'] = self.model
+        shared['opt'] = self.opt
         shared['replies'] = self.replies
         return shared
 
