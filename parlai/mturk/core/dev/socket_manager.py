@@ -26,6 +26,7 @@ class Packet:
     STATUS_SENT = 1
     STATUS_FAIL = 2
 
+    # TODO remove unused attributes
     def __init__(
         self,
         id,
@@ -526,6 +527,7 @@ class SocketManager:
             self.open_channels.remove(connection_id)
             with self.packet_map_lock:
                 packet_ids = list(self.packet_map.keys())
+                # Clear packets associated with this sender
                 for packet_id in packet_ids:
                     packet = self.packet_map[packet_id]
                     packet_conn_id = packet.get_receiver_connection_id()

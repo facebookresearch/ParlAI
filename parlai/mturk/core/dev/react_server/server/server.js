@@ -16,6 +16,9 @@ const task_directory_name = 'static';
 
 const PORT = process.env.PORT || 3000;
 
+import { get_message_for_status } from './constants/status_messages.js'
+import * as agent_states from './constants/agent_states.js'
+
 // Initialize app
 const app = express();
 app.use(bodyParser.text());
@@ -43,23 +46,13 @@ function uuidv4() {
 
 // ===================== <Agent state> ====================
 
-const STATUS_NONE = 'none';
-const STATUS_ONBOARDING = 'onboarding';
-const STATUS_WAITING = 'waiting';
-const STATUS_IN_TASK = 'in task';
-const STATUS_DONE = 'done';
-const STATUS_DISCONNECT = 'disconnect';
-const STATUS_PARTNER_DISCONNECT = 'partner disconnect';
-const STATUS_STATIC = 'static';
-const STATUS_EXPIRED = 'expired';
-const STATUS_RETURNED = 'returned';
-const STATUS_PARLAI_DISCONNECT = 'parlai_disconnect';
 const AGENT_TIMEOUT_TIME = 20000; // 20 seconds
 
 function is_final_status(status) {
   return [
-    STATUS_DONE, STATUS_DISCONNECT, STATUS_PARTNER_DISCONNECT,
-    STATUS_EXPIRED, STATUS_RETURNED, STATUS_PARLAI_DISCONNECT,
+    agent_states.STATUS_DONE, agent_states.STATUS_DISCONNECT,
+    agent_states.STATUS_PARTNER_DISCONNECT, agent_states.STATUS_EXPIRED,
+    agent_states.STATUS_RETURNED, agent_states.STATUS_PARLAI_DISCONNECT,
   ].includes(status);
 }
 
@@ -74,7 +67,7 @@ function is_final_status(status) {
 // cleanup)
 class LocalAgentState {
   constructor(connection_id) {
-    this.status = STATUS_NONE;
+    this.status = agent_states.STATUS_NONE;
     this.agent_id = null;
     this.conversation_id = null;
     this.unsent_messages = {};
@@ -105,11 +98,16 @@ class LocalAgentState {
   }
 
   get_reconnect_packet() {
+    let done_text = this.done_text;
+    if (!done_text && is_final_status(this.status)) {
+      done_text = get_message_for_status(this.status);
+    }
+
     return {
       conversation_id: this.conversation_id,
       messages: this.get_previous_messages_for(this.conversation_id),
       agent_status: this.status,
-      done_text: this.done_text,
+      done_text: done_text,
       agent_id: this.agent_id,
     }
   }
@@ -154,7 +152,7 @@ class LocalAgentState {
         this._cleanup_state();
       }
 
-      if (new_status == STATUS_STATIC) {
+      if (new_status == agent_states.STATUS_STATIC) {
         // Status static needs special cleanup to keep state but stop tracking
         let sendable_messages = this.get_sendable_messages()
         if (sendable_messages.length > 0) {
@@ -276,6 +274,7 @@ class LocalAgentState {
 // ======================= <Socket> =======================
 
 // Socket function types
+// TODO move to constants
 const AGENT_MESSAGE = 'agent message'  // Message from an agent
 const WORLD_MESSAGE = 'world message'  // Message from world to agent
 const HEARTBEAT = 'heartbeat'   // Heartbeat from agent, carries current state
@@ -579,7 +578,7 @@ function main_thread() {
   for (const connection_id of active_connections) {
     let agent_state = connection_id_to_agent_state[connection_id];
     // Non-static tasks should keep tabs on the sockets
-    if (agent_state.status != STATUS_STATIC) {
+    if (agent_state.status != agent_states.STATUS_STATIC) {
       let now = Date.now();
       if (now - agent_state.last_heartbeat > AGENT_TIMEOUT_TIME) {
         let msg = {
@@ -685,6 +684,16 @@ app.post('/submit_static', async function(req, res, next) {
   /// TODO on submit clean up static tasks  (must be by assign id)
 });
 
+// Sometimes worker ids are corrupted in arriving from mturk for
+// as of yet unknown reasons. We process those here
+function fix_worker_id(worker_id) {
+  if (worker_id) {
+    // The only common issue is a worker id being comma-joined with itself.
+    return worker_id.split(',')[0]
+  }
+  return worker_id
+}
+
 // Renders the chat page by setting up the template_context given the
 // sent params for the request
 app.get('/chat_index', async function(req, res) {
@@ -698,7 +707,7 @@ app.get('/chat_index', async function(req, res) {
 
   var params = req.query;
   var template_context = {
-    worker_id: params['workerId'],
+    worker_id: fix_worker_id(params['workerId']),
     hit_id: params['hitId'],
     task_group_id: params['task_group_id'],
     assignment_id: params['assignmentId'],
