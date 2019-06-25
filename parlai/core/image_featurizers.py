@@ -65,19 +65,27 @@ class ImageLoader:
             # cut off the additional layer.
             self.netCNN = nn.Sequential(
                 *list(CNN(pretrained=True).children())[:layer_num])
-        else:
+        elif 'resnext' in self.image_mode:
             try:
                 model = torch.hub.load('facebookresearch/WSL-Images', self.image_mode)
                 self.netCNN = nn.Sequential(
                     *list(model.children())[:-1])
             except RuntimeError as e:
+                # Perhaps specified one of the wrong model names
                 print('If you have specified one of the resnext101 wsl models, '
-                      'please make sure it is one of the following: '
-                      '\n["resnext101_32x8d_wsl", "resnext101_32x16d_wsl", '
-                      '"resnext101_32x32d_wsl", "resnext101_32x48d_wsl"]')
+                      'please make sure it is one of the following: \n'
+                      'resnext101_32x8d_wsl, resnext101_32x16d_wsl, '
+                      'resnext101_32x32d_wsl, resnext101_32x48d_wsl')
                 raise e
+            except AttributeError:
+                # E.g. "module 'torch' has no attribute 'hub'"
+                raise RuntimeError(
+                    'Please install the latest pytorch distribution to have access '
+                    'to the resnext101 wsl models')
             except Exception as e:
-                raise RuntimeError('Please install the latest pytorch distribution')
+                raise e
+        else:
+            raise RuntimeError('Image mode {} not supported'.format(self.image_mode))
 
         # cut off the additional layer.
         self.netCNN = nn.Sequential(*list(CNN(pretrained=True).children())[:layer_num])
