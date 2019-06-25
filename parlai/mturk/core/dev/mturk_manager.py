@@ -1807,7 +1807,7 @@ class StaticMTurkManager(MTurkManager):
             )
             raise Exception('Invalid mturk manager options')
 
-    def _onboard_new_agent(agent):
+    def _onboard_new_agent(self, agent):
         """Override onboarding to go straight to the pool
         for static stasks
         """
