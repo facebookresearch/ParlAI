@@ -18,10 +18,10 @@ from tqdm import tqdm
 import torch
 from torch import nn
 
-from parlai.core.torch_agent import TorchAgent, Output
-from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 from parlai.core.distributed_utils import is_distributed
+from parlai.core.thread_utils import SharedTable
+from parlai.core.torch_agent import TorchAgent, Output
+from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 
 
 class TorchRankerAgent(TorchAgent):
@@ -648,7 +648,6 @@ class TorchRankerAgent(TorchAgent):
     def share(self):
         """Share model parameters."""
         shared = super().share()
-        shared['model'] = self.model
         if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
             torch.set_num_threads(1)
             # move metrics and model to shared memory
