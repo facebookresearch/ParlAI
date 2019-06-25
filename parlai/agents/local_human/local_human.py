@@ -35,7 +35,7 @@ class LocalHumanAgent(Agent):
         self.episodeDone = False
         self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
         print("Enter [DONE] if you want to end the episode.\n")
-        
+
     def observe(self, msg):
         print(
             display_messages(
