@@ -649,6 +649,7 @@ class TorchRankerAgent(TorchAgent):
         """Share model parameters."""
         shared = super().share()
         if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
+            torch.set_num_threads(1)
             # move metrics and model to shared memory
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
