@@ -367,7 +367,14 @@ def compare_init_model_opts(opt, curr_opt):
 
     extra_opts = {}
     different_opts = {}
-    exempt_opts = ['model_file', 'dict_file', 'override', 'starttime', 'init_model']
+    exempt_opts = [
+        'model_file',
+        'dict_file',
+        'override',
+        'starttime',
+        'init_model',
+        'batchindex',
+    ]
 
     # search through init model opts
     for k, v in init_model_opt.items():
@@ -486,6 +493,9 @@ def load_agent_module(opt):
                     raise RuntimeError(
                         m.format(m='modelname', v=curr_version, c='ModelAgent')
                     )
+
+        if hasattr(model_class, 'upgrade_opt'):
+            new_opt = model_class.upgrade_opt(new_opt)
 
         # if we want to load weights from --init-model, compare opts with
         # loaded ones

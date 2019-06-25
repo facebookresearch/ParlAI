@@ -83,16 +83,8 @@ def get_model_name(opt):
             model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
             if os.path.isfile(optfile):
-                try:
-                    # try json first
-                    with open(optfile, 'r', encoding='utf-8') as handle:
-                        new_opt = json.load(handle)
-                        model = new_opt.get('model', None)
-                except UnicodeDecodeError:
-                    # oops it's pickled
-                    with open(optfile, 'rb') as handle:
-                        new_opt = pickle.load(handle)
-                        model = new_opt.get('model', None)
+                new_opt = load_opt_file(optfile)
+                model = new_opt.get('model', None)
     return model
 
 
@@ -834,9 +826,10 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_known_opts(self, optfile, parsed):
         """
-        _load_known_opts is called before args are parsed, to pull in the cmdline args
-        for the proper models/tasks/etc.
-        _load_opts (below) is for actually overriding opts after they are parsed.
+        Pull in CLI args for proper models/tasks/etc.
+
+        Called before args are parsed; ``_load_opts`` is used for actually
+        overriding opts after they are parsed.
         """
         new_opt = load_opt_file(optfile)
         for key, value in new_opt.items():

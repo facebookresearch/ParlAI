@@ -62,7 +62,6 @@ class BertClassifierAgent(TorchClassifierAgent):
             opt['datapath'], 'models', 'bert_models', MODEL_PATH
         )
         opt['pretrained_path'] = self.pretrained_path
-        self._upgrade_opt(opt)
         self.add_cls_token = opt.get('add_cls_token', True)
         self.sep_last_utt = opt.get('sep_last_utt', False)
         super().__init__(opt, shared)
@@ -108,16 +107,17 @@ class BertClassifierAgent(TorchClassifierAgent):
     def dictionary_class():
         return BertDictionaryAgent
 
-    def _upgrade_opt(self, opt):
-        model_opt = opt['model_file'] + '.opt'
-        if not os.path.isfile(model_opt):
-            return
-        old_opt = load_opt_file(model_opt)
-        if 'add_cls_token' not in old_opt:
-            # old model, make this default to False
+    @classmethod
+    def upgrade_opt(cls, opt_from_disk):
+        super(BertClassifierAgent, cls).upgrade_opt(opt_from_disk)
+
+        # 2019-06-25: previous versions of the model did not add a CLS token
+        # to the beginning of text_vec.
+        if 'add_cls_token' not in opt_on_disk:
             warn_once('Old model: overriding `add_cls_token` to False.')
-            opt['add_cls_token'] = False
-        return
+            opt_on_disk['add_cls_token'] = False
+
+        return opt_on_disk
 
     def build_model(self):
         num_classes = len(self.class_list)

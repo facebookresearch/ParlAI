@@ -690,6 +690,40 @@ class TorchAgent(ABC, Agent):
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
 
+    @classmethod
+    def upgrade_opt(cls, opt_on_disk):
+        """
+        Upgrade legacy options when loading an opt file from disk.
+
+        When loading a previously trained model file, we may wish to ensure
+        backwards compatibility. For example, we may introduce a new option
+        today that wasn't available initially, but we want the default on all
+        new models to be the new behavior.
+
+        ``upgrade_opt`` provides an opportunity for such checks for backwards
+        compatibility. It is called shortly after loading the opt file from
+        disk, and is called before the Agent is initialized.
+
+        Implementations of ``upgrade_opt`` should conform to high standards,
+        due to the risk of these methods becoming complicated. We recommend
+        the following behaviors:
+
+            1. ``upgrade_opt`` should only be used to provide backwards
+            compatibility.  Other behavior should find a different behavior.
+            2. Children should always call the parent's ``upgrade_opt`` first.
+            3. ``upgrade_opt`` should always warn when an option was overwritten.
+            4. Include Comments annotating the date and purpose of each upgrade.
+
+        :param Opt opt_on_disk:
+            The opt file, as loaded from the ``.opt`` file on disk.
+        :return:
+            The modified options
+        :rtype:
+            Opt
+        """
+        # Currently no-op for TorchAgente.
+        return opt_on_disk
+
     def build_dictionary(self):
         """
         Return the constructed dictionary, which will be set to self.dict.
@@ -1090,8 +1124,7 @@ class TorchAgent(ABC, Agent):
         return shared
 
     def _add_start_end_tokens(self, vec, add_start=False, add_end=False):
-        """ Can handle both a 1D tensor and a list
-        """
+        """Add start and end tokens to a list or tensor."""
         if isinstance(vec, torch.Tensor):
             if len(vec.shape) != 1:
                 raise Exception('_add_start_end_tokens expects a 1D tensor')
