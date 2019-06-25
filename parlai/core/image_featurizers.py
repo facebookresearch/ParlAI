@@ -57,10 +57,27 @@ class ImageLoader:
             print('[ Using CUDA ]')
             torch.cuda.set_device(opt.get('gpu', -1))
 
-        cnn_type, layer_num = self._image_mode_switcher()
+        if 'resnet' in self.image_mode:
+            cnn_type, layer_num = self._image_mode_switcher()
+            # initialize the pretrained CNN using pytorch.
+            CNN = getattr(torchvision.models, cnn_type)
 
-        # initialize the pretrained CNN using pytorch.
-        CNN = getattr(torchvision.models, cnn_type)
+            # cut off the additional layer.
+            self.netCNN = nn.Sequential(
+                *list(CNN(pretrained=True).children())[:layer_num])
+        else:
+            try:
+                model = torch.hub.load('facebookresearch/WSL-Images', self.image_mode)
+                self.netCNN = nn.Sequential(
+                    *list(model.children())[:-1])
+            except RuntimeError as e:
+                print('If you have specified one of the resnext101 wsl models, '
+                      'please make sure it is one of the following: '
+                      '\n["resnext101_32x8d_wsl", "resnext101_32x16d_wsl", '
+                      '"resnext101_32x32d_wsl", "resnext101_32x48d_wsl"]')
+                raise e
+            except Exception as e:
+                raise RuntimeError('Please install the latest pytorch distribution')
 
         # cut off the additional layer.
         self.netCNN = nn.Sequential(*list(CNN(pretrained=True).children())[:layer_num])
@@ -109,7 +126,8 @@ class ImageLoader:
         transform = self.transform(image).unsqueeze(0)
         if self.use_cuda:
             transform = transform.cuda()
-        feature = self.netCNN(transform)
+        with self.torch.no_grad():
+            feature = self.netCNN(transform)
         # save the feature
         if path is not None:
             self.torch.save(feature.cpu(), path)
