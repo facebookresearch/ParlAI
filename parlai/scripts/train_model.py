@@ -697,64 +697,63 @@ class TrainLoop:
             )
         opt = self.opt
         world = self.world
-        with world:
-            while True:
-                # do one example / batch of examples
-                world.parley()
-                self.parleys += 1
+        while True:
+            # do one example / batch of examples
+            world.parley()
+            self.parleys += 1
 
-                # get the total training examples done, compute epochs
-                self._total_epochs = (
-                    self._preempted_epochs
-                    + num_workers() * self.world.get_total_epochs()
+            # get the total training examples done, compute epochs
+            self._total_epochs = (
+                self._preempted_epochs
+                + num_workers() * self.world.get_total_epochs()
+            )
+            exs_per_epoch = self.world.num_examples()
+            self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))
+
+            # and use the primary worker's timings for everything
+            train_time, log_time, validate_time = sync_object(
+                (
+                    self.train_time.time(),
+                    self.log_time.time(),
+                    self.validate_time.time(),
                 )
-                exs_per_epoch = self.world.num_examples()
-                self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))
+            )
 
-                # and use the primary worker's timings for everything
-                train_time, log_time, validate_time = sync_object(
-                    (
-                        self.train_time.time(),
-                        self.log_time.time(),
-                        self.validate_time.time(),
+            # check counters and timers
+            if self._total_epochs >= self.max_num_epochs:
+                self.log()
+                print(
+                    '[ num_epochs completed:{} time elapsed:{}s ]'.format(
+                        self.max_num_epochs, train_time
                     )
                 )
-
-                # check counters and timers
-                if self._total_epochs >= self.max_num_epochs:
-                    self.log()
-                    print(
-                        '[ num_epochs completed:{} time elapsed:{}s ]'.format(
-                            self.max_num_epochs, train_time
-                        )
-                    )
+                break
+            if train_time > self.max_train_time:
+                print('[ max_train_time elapsed:{}s ]'.format(train_time))
+                break
+            if log_time > self.log_every_n_secs:
+                self.log()
+            if (
+                validate_time > self.val_every_n_secs
+                or self._total_epochs - self.last_valid_epoch
+                >= self.val_every_n_epochs
+            ):
+                stop_training = self.validate()
+                self.last_valid_epoch = self._total_epochs
+                if stop_training:
                     break
-                if train_time > self.max_train_time:
-                    print('[ max_train_time elapsed:{}s ]'.format(train_time))
-                    break
-                if log_time > self.log_every_n_secs:
-                    self.log()
-                if (
-                    validate_time > self.val_every_n_secs
-                    or self._total_epochs - self.last_valid_epoch
-                    >= self.val_every_n_epochs
-                ):
-                    stop_training = self.validate()
-                    self.last_valid_epoch = self._total_epochs
-                    if stop_training:
-                        break
-                if (
-                    self.save_time.time() > self.save_every_n_secs
-                    and opt.get('model_file')
-                    and is_primary_worker()
-                ):
-                    print(
-                        "[ saving model checkpoint: {}.checkpoint".format(
-                            opt['model_file']
-                        )
+            if (
+                self.save_time.time() > self.save_every_n_secs
+                and opt.get('model_file')
+                and is_primary_worker()
+            ):
+                print(
+                    "[ saving model checkpoint: {}.checkpoint".format(
+                        opt['model_file']
                     )
-                    self.save_model('.checkpoint')
-                    self.save_time.reset()
+                )
+                self.save_model('.checkpoint')
+                self.save_time.reset()
 
         if not self.saved and is_primary_worker():
             # save agent
