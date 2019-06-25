@@ -26,9 +26,10 @@ Examples
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 
+import json
 import numpy as np
 import os
-import json
+import signal
 
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.metrics import aggregate_task_reports
@@ -325,6 +326,11 @@ class TrainLoop:
     """TrainLoop contains the core training loop logic."""
 
     def __init__(self, opt):
+        # if python is called from a non-interactive shell, like a bash script,
+        # it will by-default ignore SIGINTs, and KeyboardInterrupt exceptions are
+        # not produced. This line brings them back
+        signal.signal(signal.SIGINT, signal.default_int_handler)
+
         if isinstance(opt, ParlaiParser):
             print('[ Deprecated Warning: TrainLoop should be passed opt not Parser ]')
             opt = opt.parse_args()
