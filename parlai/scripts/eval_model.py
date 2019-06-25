@@ -38,7 +38,7 @@ def setup_args(parser=None):
         '-micro',
         '--aggregate-micro',
         type='bool',
-        default=True,
+        default=False,
         help='If multitasking, average metrics over the '
         'number of examples. If false, averages over the '
         'number of tasks.',

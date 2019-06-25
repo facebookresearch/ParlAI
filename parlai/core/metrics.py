@@ -55,7 +55,7 @@ def normalize_answer(s):
     return white_space_fix(remove_articles(remove_punc(lower(s))))
 
 
-def aggregate_task_reports(reports, tasks, micro=True):
+def aggregate_task_reports(reports, tasks, micro=False):
     """
     Aggregate separate task reports into a single report.
 
