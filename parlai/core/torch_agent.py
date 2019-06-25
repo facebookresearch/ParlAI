@@ -1101,7 +1101,8 @@ class TorchAgent(ABC, Agent):
         """
         shared = super().share()
         shared['dict'] = self.dict
-        shared['model'] = self.model
+        if hasattr(self, 'model'):
+            shared['model'] = self.model
         shared['opt'] = self.opt
         shared['replies'] = self.replies
         return shared
