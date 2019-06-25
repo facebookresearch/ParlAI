@@ -42,6 +42,12 @@ def setup_args(parser=None):
         default='label_candidates,text_candidates',
         help='Do not display these fields',
     )
+    parser.add_argument(
+        '--interactive-task',
+        type='bool',
+        default=True,
+        help='Create interactive version of task',
+    )
     parser.set_defaults(interactive_mode=True)
     LocalHumanAgent.add_cmdline_args(parser)
     return parser

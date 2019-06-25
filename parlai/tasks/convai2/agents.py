@@ -95,8 +95,8 @@ class InteractiveTeacher(SelfOriginalTeacher):
 
 
 def create_agents(opt, task):
-    if 'interactive' not in opt['task']:
+    if not opt.get('interactive_task', False):
         return create_task_agent_from_taskname(opt)
     else:
-        # interactive task has no agents
+        # interactive task has no task agents (they are attached as user agents)
         return []
