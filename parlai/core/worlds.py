@@ -8,7 +8,7 @@ Worlds are the basic environments which define how agents interact with one anot
 
     ``World(object)`` provides a generic parent class, including ``__enter__``
     and ``__exit__`` statements which allow you to guarantee that the shutdown
-    method is called and KeyboardInterrupts are less noisy (if desired).
+    method is called.
 
     ``DialogPartnerWorld(World)`` provides a two-agent turn-based dialog setting.
 
@@ -186,9 +186,8 @@ class World(object):
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """After ``with`` statement, call shutdown."""
-        silent_exit = isinstance(exc_value, KeyboardInterrupt)
         self.shutdown()
-        return silent_exit
+        return False
 
     def num_examples(self):
         """Return the number of examples. Always 0 in the abstract world."""

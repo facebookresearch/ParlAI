@@ -26,10 +26,10 @@ Examples
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 
+import json
 import numpy as np
 import os
 import signal
-import json
 
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.metrics import aggregate_task_reports
