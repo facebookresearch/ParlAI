@@ -45,7 +45,6 @@ class InteractiveWorld(DialogPartnerWorld):
                 a1_persona += t.replace("partner's persona:", 'your persona:') + '\n'
             if t.startswith('your persona:'):
                 a2_persona += t + '\n'
-        print("Enter [DONE] if you want a new partner at any time.\n")
         return a1_persona, a2_persona
 
     def parley(self):
