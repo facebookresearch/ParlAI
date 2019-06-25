@@ -185,6 +185,7 @@ class World(object):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
+        """After ``with`` statement, call shutdown."""
         self.shutdown()
         return False
 
