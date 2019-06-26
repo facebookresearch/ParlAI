@@ -32,4 +32,4 @@ directions for the entire community.
 ## Messenger Link
 
 Send a message to <a href="https://www.facebook.com/Beat-The-Bot-212188996195556/">this page</a> 
-to start playing Beat the Bot:
+to start playing Beat the Bot!
