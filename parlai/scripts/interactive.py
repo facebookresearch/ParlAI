@@ -43,15 +43,13 @@ def setup_args(parser=None):
         help='Do not display these fields',
     )
     parser.add_argument(
-        '--interactive-task',
+        '-it', '--interactive-task',
         type='bool',
         default=True,
         help='Create interactive version of task',
     )
-    parser.add_argument(
-        '-t', '--task', type=str, default='interactive', help='(Interactive) task.'
-    )
-    parser.set_defaults(interactive_mode=True)
+    parser.set_defaults(interactive_mode=True,
+                        task='interactive')
     LocalHumanAgent.add_cmdline_args(parser)
     return parser
 

@@ -61,15 +61,15 @@ class InteractiveWorld(DialogPartnerWorld):
             act['episode_done'] = False
             act['id'] = 'persona'
             agents[0].observe(validate(act))
-        acts[0] = agents[0].act()
+        act = deepcopy(agents[0].act())
         if self.cnt == 0:
             # add the persona on to the first message to agent 1
-            act = deepcopy(acts[0])
             act['text'] = self.p2 + act.get('text', 'hi')
             print("gave bot its persona!")
+            print(act)
             agents[1].observe(validate(act))
         else:
-            agents[1].observe(validate(acts[0]))
+            agents[1].observe(validate(act))
         acts[1] = agents[1].act()
         agents[0].observe(validate(acts[1]))
         self.update_counters()
