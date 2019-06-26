@@ -49,10 +49,7 @@ def setup_args(parser=None):
         help='Create interactive version of task',
     )
     parser.add_argument(
-        '-t', '--task',
-        type=str,
-        default='interactive',
-        help='(Interactive) task.'
+        '-t', '--task', type=str, default='interactive', help='(Interactive) task.'
     )
     parser.set_defaults(interactive_mode=True)
     LocalHumanAgent.add_cmdline_args(parser)
