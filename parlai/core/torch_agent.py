@@ -852,7 +852,7 @@ class TorchAgent(ABC, Agent):
 
         warmup_updates = self.opt.get('warmup_updates', -1)
         updates_so_far = states.get('number_training_updates', 0)
-        if warmup_updates > 0 and updates_so_far < warmup_updates:
+        if warmup_updates > 0 and (updates_so_far < warmup_updates or hard_reset):
 
             def _warmup_lr(step):
                 start = self.opt['warmup_rate']
