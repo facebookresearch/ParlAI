@@ -5,11 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 
 
-class DefaultTeacher():
+class DefaultTeacher:
     # Dummy class.
     pass
 
-class InteractiveTeacher():
+
+class InteractiveTeacher:
     # Dummy class to add arguments for interactive world.
     pass
 

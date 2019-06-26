@@ -6,5 +6,6 @@
 
 from parlai.core.worlds import DialogPartnerWorld
 
+
 class InteractiveWorld(DialogPartnerWorld):
     pass
