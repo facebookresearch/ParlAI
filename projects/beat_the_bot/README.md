@@ -1,9 +1,6 @@
-# <img width="5%" src="beathebot_icon.png"/> Beat The Bot
+# <img width="8%" src="bot.png"/> Beat The Bot
 
 ### A Game for Agents that learn interactively
-
-
-<p align="center"><img width="90%" src="beatthebot.gif" /></p>
 
 
 Dialogue research today functions almost entirely based on extensive supervised learning from humans talking to one another
@@ -17,6 +14,10 @@ creating rich examples to help train models. Our goal with sharing this new tool
 with high-signal data from live interactions instead of fixed language data. We plan to continuously
 enhance this tool’s capabilities (for instance, adding image understanding) to help both improve our 
 latest dialogue models and further explore dialogue research.
+
+<p align="center"><img width="90%" src="beatthebot.gif" /></p>
+
+
 
 Beat the Bot is currently live: If you send a message to the page, you will be matched with a bot and another person. 
 Both you and the other person will see two responses for every message you send — one from your human partner and one
