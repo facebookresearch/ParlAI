@@ -121,9 +121,7 @@ class TestTransformerRanker(unittest.TestCase):
             )
             # make sure the learning rate is decreasing
             self.assertGreater(
-                valid2['lr'],
-                1e-5,
-                'Learning rate should not be that low when resuming',
+                valid2['lr'], 1e-5, 'Learning rate should not be that low when resuming'
             )
 
     def test_backcomp(self):
