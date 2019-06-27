@@ -85,6 +85,45 @@ class TestTransformerRanker(unittest.TestCase):
                 valid2['lr'], valid1['lr'], 'Learning rate is not decreasing'
             )
 
+    def test_resuming_reduce_on_plateau(self):
+        """ Reduce on Plateau can be tricky when combined
+            with warmup. See:
+            https://github.com/facebookresearch/ParlAI/pull/1812
+        """
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model')
+            stdout1, valid1, test1 = testing_utils.train_model(
+                dict(
+                    model_file=model_file,
+                    task='integration_tests:candidate',
+                    model='transformer/ranker',
+                    optimizer='adamax',
+                    learningrate=7e-3,
+                    batchsize=32,
+                    num_epochs=1,
+                    n_layers=1,
+                    n_heads=1,
+                    ffn_size=32,
+                    embedding_size=32,
+                    warmup_updates=1,
+                    lr_scheduler='reduceonplateau',
+                )
+            )
+
+            stdout2, valid2, test2 = testing_utils.train_model(
+                dict(
+                    model_file=model_file,
+                    task='integration_tests:candidate',
+                    model='transformer/ranker',
+                    num_epochs=1,
+                    lr_scheduler='reduceonplateau',
+                )
+            )
+            # make sure the learning rate is decreasing
+            self.assertGreater(
+                valid2['lr'], 1e-5, 'Learning rate should not be that low when resuming'
+            )
+
     def test_backcomp(self):
         """
         Tests that the transformer ranker model files continue to work over time.

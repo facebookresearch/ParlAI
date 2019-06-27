@@ -842,12 +842,17 @@ class TorchAgent(ABC, Agent):
         :param bool hard_reset: If true, the LR scheduler should ignore the
             state dictionary.
         """
+        # first make sure there are no null pointers
+        if states is None:
+            states = {}
         optimizer = self.optimizer
         if self.fp16:
             # lr schedulers don't work with apex, they expect the "real" optimizer
             optimizer = optimizer.optimizer
 
-        if self.opt.get('warmup_updates', -1) > 0:
+        warmup_updates = self.opt.get('warmup_updates', -1)
+        updates_so_far = states.get('number_training_updates', 0)
+        if warmup_updates > 0 and (updates_so_far < warmup_updates or hard_reset):
 
             def _warmup_lr(step):
                 start = self.opt['warmup_rate']
@@ -898,10 +903,6 @@ class TorchAgent(ABC, Agent):
             )
 
         # time to load LR state from the checkpoint, if possible.
-        if states is None:
-            # first make sure there are no null pointers
-            states = {}
-
         if (
             # there is already an old LR scheduler saved on disk
             states
