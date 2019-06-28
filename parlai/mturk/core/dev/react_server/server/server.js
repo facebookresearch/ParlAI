@@ -390,8 +390,6 @@ function handle_pong(data) {
 // and then forwarding the alive to the world if it came from a client. If
 // there is already an agent state for this agent, we handle the reconnection
 // event ourselves.
-// TODO handle specific agent alive messages sent after a task is already
-// completed
 function handle_alive(socket, data) {
   var sender_id = data['sender_id'];
   var in_connection_id = _get_from_conn_id(data);
@@ -512,7 +510,9 @@ wss.on('connection', function(socket) {
   // handles routing a packet to the desired recipient
   socket.on('message', function(data) {
     try {
-      // TODO add all of these to the data model, create them in SocketManager
+      // TODO(wish) It's somewhat annoying that these constants come up and
+      // redefined all over the place, would be useful to have a singular
+      // source for the API
       data = JSON.parse(data);
       if (data['type'] == AGENT_ALIVE) {
         handle_alive(socket, data['content']);

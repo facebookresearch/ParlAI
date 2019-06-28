@@ -14,7 +14,11 @@ import uuid
 import errno
 import requests
 
-from parlai.mturk.core.dev.agents import AssignState
+from parlai.mturk.core.dev.agents import (
+    AssignState,
+    AbsentAgentError,
+    AgentTimeoutError,
+)
 from parlai.mturk.core.dev.socket_manager import Packet, SocketManager
 from parlai.mturk.core.dev.worker_manager import WorkerManager
 from parlai.mturk.core.dev.mturk_data_handler import MTurkDataHandler
@@ -129,7 +133,7 @@ class MTurkManager:
         self.task_files_to_copy = None
         self.is_sandbox = opt['is_sandbox']
         self.agent_pool_change_condition = threading.Condition()
-        self.onboard_function = None
+        self.get_onboard_world = None
         self.num_conversations = opt['num_conversations']
 
         # Determine the correct number of hits to be launching
@@ -587,8 +591,6 @@ class MTurkManager:
             self._onboard_new_agent(agent)
         else:
             # Reconnecting worker should no longer happen
-            # TODO clean up code that was required to track whether a
-            # worker was reconnecting or not.
             shared_utils.print_and_log(
                 logging.WARN,
                 'Agent ({}) is reconnecting to {}'.format(worker_id, assign_id),
@@ -606,7 +608,7 @@ class MTurkManager:
             # Treat as a socket_dead event
             self._on_socket_dead(agent.worker_id, assignment_id)
         elif mturk_event_type == SNS_ASSIGN_ABANDONDED:
-            agent.set_hit_is_abandoned()
+            agent.DEPRECATED_set_hit_is_abandoned()
             agent.hit_is_returned = True
             # Treat as a socket_dead event
             self._on_socket_dead(agent.worker_id, assignment_id)
@@ -682,7 +684,7 @@ class MTurkManager:
 
         def _onboard_function(mturk_agent):
             """Onboarding wrapper to set state to onboarding properly"""
-            if self.onboard_function:
+            if self.get_onboard_world:
                 conversation_id = 'o_' + str(uuid.uuid4())
                 agent.set_status(
                     AssignState.STATUS_ONBOARDING,
@@ -690,7 +692,22 @@ class MTurkManager:
                     agent_id='onboarding',
                 )
                 # call onboarding function
-                save_data = self.onboard_function(mturk_agent)
+                try:
+                    world = self.get_onboard_world(mturk_agent)
+                    while not world.episode_done():
+                        world.parley()
+
+                except AgentTimeoutError:
+                    self.handle_turker_timeout(
+                        mturk_agent.worker_id, mturk_agent.assignment_id
+                    )
+                except AbsentAgentError:
+                    pass  # agent state already updated
+
+                world.shutdown()
+                world.review_work()
+
+                save_data = world.prep_save_data([mturk_agent])
                 if save_data is not None:
                     MTurkDataHandler.save_world_data(
                         save_data,
@@ -997,8 +1014,8 @@ class MTurkManager:
         if self.STATE_ACCEPTING_WORKERS > self.task_state:
             self.task_state = self.STATE_ACCEPTING_WORKERS
 
-    def set_onboard_function(self, onboard_function):
-        self.onboard_function = onboard_function
+    def set_get_onboard_world(self, get_onboard_world):
+        self.get_onboard_world = get_onboard_world
 
     def move_agent_to_task(self, agent, new_conversation_id):
         agent.set_status(
@@ -1009,7 +1026,7 @@ class MTurkManager:
         # Remove selected agents from the pool
         self._remove_from_agent_pool(agent)
 
-    def start_task(self, eligibility_function, assign_role_function, task_function):
+    def start_task(self, eligibility_function, assign_role_function, get_task_world):
         """Handle running a task by checking to see when enough agents are
         in the pool to start an instance of the task. Continue doing this
         until the desired number of conversations is had.
@@ -1084,7 +1101,23 @@ class MTurkManager:
                 'All agents joined the conversation {}!'.format(conversation_id),
             )
             self.started_conversations += 1
-            save_data = task_function(mturk_manager=self, opt=opt, workers=agents)
+            world = get_task_world(mturk_manager=self, opt=opt, workers=agents)
+
+            # run the world to completion or error
+            try:
+                while not world.episode_done():
+                    world.parley()
+            except AgentTimeoutError as e:
+                self.handle_turker_timeout(e.worker_id, e.assignment_id)
+            except AbsentAgentError:
+                pass  # disconnect already managed
+
+            # shutdown and review the work
+            world.shutdown()
+            world.review_work()
+
+            # Return the contents for saving
+            save_data = world.prep_save_data(agents)
 
             if save_data is not None:
                 MTurkDataHandler.save_world_data(
