@@ -7,7 +7,7 @@
 Pretrained model allowing to get the same performances as in
 https://arxiv.org/abs/1905.01969
 """
-from parlai.core.build_data import download_models, get_model_dir
+from parlai.core.build_data import built, download_models, get_model_dir
 import os
 import os.path
 import torch
@@ -16,16 +16,19 @@ import torch
 def download(datapath):
     model_name = 'pretrained_transformers'
     mdir = os.path.join(get_model_dir(datapath), model_name)
-    opt = {'datapath': datapath}
-    fnames = ['pretrained_transformers_v1.tar.gz']
-    download_models(opt, fnames, model_name, version='v1.0', use_model_type=False)
-    print('Creating base models for bi and polyencoders')
-    for pretrained_type in ['reddit', 'wikito']:
-        path_cross = os.path.join(mdir, 'cross_model_huge_%s.mdl' % pretrained_type)
-        path_bi = os.path.join(mdir, 'bi_model_huge_%s.mdl' % pretrained_type)
-        path_poly = os.path.join(mdir, 'poly_model_huge_%s.mdl' % pretrained_type)
-        create_bi_model(path_cross, path_bi)
-        create_poly_model(path_cross, path_poly)
+    version = 'v1.0'
+    models_built = built(mdir, version)
+    if not models_built:
+        opt = {'datapath': datapath}
+        fnames = ['pretrained_transformers_v1.tar.gz']
+        download_models(opt, fnames, model_name, version=version, use_model_type=False)
+        print('Creating base models for bi and polyencoders')
+        for pretrained_type in ['reddit', 'wikito']:
+            path_cross = os.path.join(mdir, 'cross_model_huge_%s.mdl' % pretrained_type)
+            path_bi = os.path.join(mdir, 'bi_model_huge_%s.mdl' % pretrained_type)
+            path_poly = os.path.join(mdir, 'poly_model_huge_%s.mdl' % pretrained_type)
+            create_bi_model(path_cross, path_bi)
+            create_poly_model(path_cross, path_poly)
 
 
 def create_bi_model(path_to_crossmodel, path_output):
