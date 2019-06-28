@@ -42,8 +42,8 @@ Now let's try to train a model on it (even on your laptop, this should train fas
 
 .. code-block:: bash
 
-  # train MemNN using batch size 8 and 4 threads for 5 epochs
-  python examples/train_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -bs 8 -nt 4 -eps 5 -m memnn --no-cuda
+  # train MemNN using batch size 1 and 4 threads for 5 epochs
+  python examples/train_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
 
 Let's print some of its predictions to make sure it's working.
 
