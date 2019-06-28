@@ -166,7 +166,7 @@ class TransformerRankerAgent(TorchRankerAgent):
             '--reduction-type',
             type=str,
             default='mean',
-            choices=['first', 'max', 'mean', 'none'],
+            choices=['first', 'max', 'mean'],
             help='Type of reduction at the end of transformer',
         )
 
