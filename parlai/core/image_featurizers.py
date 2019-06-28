@@ -40,7 +40,9 @@ class ImageLoader:
             elif 'resnext' in self.image_mode:
                 self._init_resnext_cnn()
             else:
-                raise RuntimeError('Image mode {} not supported'.format(self.image_mode))
+                raise RuntimeError(
+                    'Image mode {} not supported'.format(self.image_mode)
+                )
 
     def _lazy_import_torch(self):
         try:
@@ -84,7 +86,8 @@ class ImageLoader:
 
         # cut off the additional layer.
         self.netCNN = self.nn.Sequential(
-            *list(CNN(pretrained=True).children())[:layer_num])
+            *list(CNN(pretrained=True).children())[:layer_num]
+        )
 
         if self.use_cuda:
             self.netCNN.cuda()
@@ -97,20 +100,22 @@ class ImageLoader:
         try:
             model = self.torch.hub.load('facebookresearch/WSL-Images', self.image_mode)
             # cut off layer for ImageNet classification
-            self.netCNN = self.nn.Sequential(
-                *list(model.children())[:-1])
+            self.netCNN = self.nn.Sequential(*list(model.children())[:-1])
         except RuntimeError as e:
             # Perhaps specified one of the wrong model names
-            print('If you have specified one of the resnext101 wsl models, '
-                  'please make sure it is one of the following: \n'
-                  'resnext101_32x8d_wsl, resnext101_32x16d_wsl, '
-                  'resnext101_32x32d_wsl, resnext101_32x48d_wsl')
+            print(
+                'If you have specified one of the resnext101 wsl models, '
+                'please make sure it is one of the following: \n'
+                'resnext101_32x8d_wsl, resnext101_32x16d_wsl, '
+                'resnext101_32x32d_wsl, resnext101_32x48d_wsl'
+            )
             raise e
         except AttributeError:
             # E.g. "module 'torch' has no attribute 'hub'"
             raise RuntimeError(
                 'Please install the latest pytorch distribution to have access '
-                'to the resnext101 wsl models (pytorch 1.1.0, torchvision 0.3.0)')
+                'to the resnext101 wsl models (pytorch 1.1.0, torchvision 0.3.0)'
+            )
 
         if self.use_cuda:
             self.netCNN.cuda()
