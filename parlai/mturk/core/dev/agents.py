@@ -13,6 +13,7 @@ from parlai.core.agents import Agent
 import parlai.mturk.core.dev.data_model as data_model
 import parlai.mturk.core.dev.shared_utils as shared_utils
 
+
 # types of exceptions thrown when an agent exits the chat. These are thrown
 # on a failed MTurkAgent.act call. If one of these is thrown and not handled,
 # the world will die and enter cleanup. If you would like your task to be able
