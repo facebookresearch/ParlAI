@@ -507,8 +507,21 @@ class TorchAgent(ABC, Agent):
             '--lr-scheduler-decay',
             type=float,
             default=0.5,
-            help='Decay factor for LR scheduler, or how much LR is multiplied by '
-            'when it is lowered.',
+            help=(
+                'Decay factor for LR scheduler, or how much LR is multiplied by '
+                'when it is lowered (on plataue with --lr-scheduler reduceonplateau '
+                'and on periods in --lr-scheduler cosine)'
+            ),
+        )
+        lr_group.add_argument(
+            '--lr-period-mult',
+            type=int,
+            default=2,
+            hidden=True,
+            help=(
+                '(Cosine only) LR period multiplier. The period between LR resets '
+                'is lengthened by this factor each reset.'
+            ),
         )
         lr_group.add_argument(
             '--lr-period-updates',
@@ -870,9 +883,9 @@ class TorchAgent(ABC, Agent):
         else:
             self.warmup_scheduler = None
 
-        lr_period = self.opt.get('lr_period_updates')
-        if lr_period is None or lr_period <= 0:
-            lr_period = self.opt.get('warmup_updates', -1)
+        self._lr_period = self.opt.get('lr_period_updates')
+        if self._lr_period is None or self._lr_period <= 0:
+            self._lr_period = self.opt.get('warmup_updates', -1)
 
         patience = self.opt.get('lr_scheduler_patience', 3)
         decay = self.opt.get('lr_scheduler_decay', 0.5)
@@ -893,24 +906,26 @@ class TorchAgent(ABC, Agent):
         elif self.opt.get('lr_scheduler') == 'fixed':
             self.scheduler = optim.lr_scheduler.StepLR(optimizer, patience, gamma=decay)
         elif self.opt.get('lr_scheduler') == 'invsqrt':
-            if lr_period is None or lr_period <= 0:
+            if self._lr_period is None or self._lr_period <= 0:
                 raise ValueError(
                     '--lr-scheduler invsqrt requires setting --warmup-updates '
                     'or --lr-period-updates'
                 )
-            decay_factor = np.sqrt(max(1, lr_period))
+            decay_factor = np.sqrt(max(1, self._lr_period))
 
             def _invsqrt_lr(step):
                 return decay_factor / np.sqrt(max(1, step))
 
             self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, _invsqrt_lr)
         elif self.opt.get('lr_scheduler') == 'cosine':
-            if lr_period is None or lr_period <= 0:
+            if self._lr_period is None or self._lr_period <= 0:
                 raise ValueError(
                     '--lr-scheduler cosine requires setting --warmup-updates '
                     'or --lr-period-updates'
                 )
-            self.scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, lr_period)
+            self.scheduler = optim.lr_scheduler.CosineAnnealingLR(
+                optimizer, self._lr_period, eta_min=self.opt['warmup_rate']
+            )
         else:
             raise ValueError(
                 "Don't know what to do with lr_scheduler '{}'".format(
@@ -1706,22 +1721,54 @@ class TorchAgent(ABC, Agent):
             # training step scheduler
             self.scheduler.step(self._number_training_updates)
         elif self.opt.get('lr_scheduler') == 'cosine' and not self._is_lr_warming_up():
-            # how many steps since warmup?
-            step = self._number_training_updates - self.opt['warmup_updates']
-            # how long is the current cycle
-            cycle_len = self.opt['warmup_updates']
-            current_cycle = step // cycle_len
-            # where are we in the current cycle
-            cycle_step = step % cycle_len
+            # The cosine scheduler is a funny beast. It has the LR multiplier go
+            # from 1 .. 0 on a cosine half period. Then it jumps immediately back
+            # to 1 and goes down to 0 again. There are two additional
+            # modifications. On the end of the period, we do two things: we
+            # multiply the length of the period by --lr-period-mult and we
+            # multiply the maximum learning rate by --lr-decay-rate. You can
+            # see an illustration of --lr-period-mult here:
+            # https://cdn-images-1.medium.com/max/1600/1*dMvU26iOxbkQ9sTqhaWrsg.png
 
-            if cycle_step == 0:
-                mult_max = self.opt['lr_scheduler_decay'] ** current_cycle
+            if not hasattr(self, '_lr_period'):
+                raise RuntimeError('Looks like you forgot to call build_lr_scheduler')
+
+            # how many steps since warmup?
+            warmup_updates = max(0, self.opt['warmup_updates'])
+            cosine_steps = self._number_training_updates - warmup_updates
+
+            # factor we lengthen the cosine period by
+            lr_mult = self.opt['lr_period_mult']
+
+            # passes contains the number of periods we have iterated
+            # step contains the number of steps relative to the last reset
+            if lr_mult == 1:
+                # special case, do this
+                passes = cosine_steps // self._lr_period
+                step = cosine_steps % self._lr_period
+            else:
+                # total number of cycles completed
+                # see http://mathworld.wolfram.com/ExponentialSumFormulas.html
+                n = cosine_steps / self._lr_period
+                passes = np.floor(np.log((lr_mult - 1) * n + 1) / np.log(lr_mult))
+                last_reset_step = (
+                    self._lr_period * (1 - lr_mult ** passes) / (1 - lr_mult)
+                )
+                step = cosine_steps - last_reset_step
+                # cycle_steps contains the total length of this period
+                cycle_steps = self._lr_period * lr_mult ** passes
+                self.scheduler.T_max = cycle_steps
+
+            if step == 0:
+                # the height of the peak of the cosine wave is multiplied by
+                # decay every period
+                mult_max = self.opt['lr_scheduler_decay'] ** passes
                 lr = self.opt['learningrate']
                 self.scheduler.base_lrs = [
                     lr * mult_max for _ in self.scheduler.base_lrs
                 ]
 
-            self.scheduler.step(cycle_step)
+            self.scheduler.step(step)
 
         if self.fp16:
             # we've been accumulating grads in fp16 and delaying the fp32 copy update.
