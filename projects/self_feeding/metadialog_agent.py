@@ -90,6 +90,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
                            help="The explanation task loss is multiplied by this")
         agent.add_argument('--sen-weight', type=float, default=1.0,
                            help="The sentiment task loss is multiplied by this")
+
         agent.add_argument(
             '--prev-response-negatives', type='bool', default=False,
             help="If True, during training add the previous agent response as a "
@@ -243,6 +244,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
     def observe(self, observation):
         """Add to history, concatenate history-size utterances, and add person tokens"""
+        
         # If their response is a response to a rating request, no work required
         if self.status == RATING_REQUESTED:
             self.last_rating = observation['text']
@@ -268,16 +270,31 @@ class SelfFeedingAgent(TransformerRankerAgent):
             # Dialog is the default task; e.g., in interactive mode
             subtasks = [o.get('subtask', 'dialog') for o in observations]
             # Catch error here for debugging
-            if len(set(subtasks)) > 1:
-                import pdb
-                pdb.set_trace()
+            assert len(set(subtasks)) == 1
             self.subtask = subtasks[0]
-        # print(f"[ context ]: {observations[0]['text']}")
+        print(f"[ context ]: {observations[0]['text']}")
         return batch
+
+    def _set_text_vec(self, obs, history, truncate):
+        """
+        Set the 'text_vec' field in the observation.
+        """
+        if 'text' not in obs:
+            return obs
+
+        if 'text_vec' not in obs:
+            obs['text_vec'] = self.history.parse(obs["text"])
+
+        # check truncation
+        if 'text_vec' in obs:
+            obs['text_vec'] = torch.LongTensor(
+                self._check_truncate(obs['text_vec'], truncate, True)
+            )
+
+        return obs
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
-        import pdb; pdb.set_trace()
         if batch.text_vec is None:
             return
 
@@ -465,7 +482,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
     def reset_metrics(self):
         """Reset metrics."""
         super().reset_metrics()
-        # self.metrics['examples'] = 0
+        self.metrics['examples'] = 0
         if 'dialog' in self.subtasks:
             self.metrics['dia_exs'] = 0
             self.metrics['dia_loss'] = 0.0
@@ -487,8 +504,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
     def report(self):
         """Report metrics from model's perspective."""
         m = TorchAgent.report(self)  # Skip TorchRankerAgent; totally redundant
-        # examples = self.metrics['examples']
-        examples = self.metrics.get('exs', 0)
+        examples = self.metrics['examples']
         if examples > 0:
             m['examples'] = examples
             if 'dialog' in self.subtasks and self.metrics['dia_exs'] > 0:
