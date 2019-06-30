@@ -140,17 +140,7 @@ class SelfFeedingModel(nn.Module):
             raise RuntimeError('Unexpected candidate dimensions {}'
                                ''.format(cand_h.dim()))
 
-        return self.normalize_scores(scores)
-
-    def normalize_scores(self, scores):
-        if self.opt['scores_norm'] == 'dot':
-            return scores
-        elif self.opt['scores_norm'] == 'sqrt':
-            return scores / math.sqrt(self.opt['embedding_size'])
-        elif self.opt['scores_norm'] == 'dim':
-            return scores / self.opt['embedding_size']
-        else:
-            raise ValueError
+        return scores
 
     def init_embeddings(self):
         embeddings = nn.Embedding(
