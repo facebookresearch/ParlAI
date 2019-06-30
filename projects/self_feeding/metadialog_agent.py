@@ -178,7 +178,6 @@ class SelfFeedingAgent(TransformerRankerAgent):
             self.rating_classifier = FeedbackClassifierRegex()
 
         random.seed()
-        self.history = []  # Overwrite the deque; keep the whole history and slice
         self.reset()
 
     # NOTE: This is the only method of TransformerAgent being overwritten
@@ -226,19 +225,19 @@ class SelfFeedingAgent(TransformerRankerAgent):
                     action, reply = self.make_rating_response(rating)
                     self.status = RATING_ACCEPTED
                     # Store just the non-template part of the response in the history
-                    self.history.append(reply)
+                    self.history.update_history({"text": reply})
 
             elif self.status == EXPLANATION_REQUESTED:
                 action = self.make_action(THANKS + ' ' + NEWTOPIC)
                 self.status = NEWTOPIC_REQUESTED
-                self.history.clear()
+                self.history.reset()
 
             else:
                 raise Exception(f"Unrecognized status: {self.status}")
 
         if self.status == NORMAL:
             action = super().act()
-            self.history.append(action['text'])
+            self.history.update_history(action)
 
         return action
 
@@ -249,18 +248,19 @@ class SelfFeedingAgent(TransformerRankerAgent):
             self.last_rating = observation['text']
         else:
             if 'text' in observation:
-                self.history.append(observation['text'])
+                self.history.update_history(observation)
 
-        if len(self.history) > 0:
+        if len(self.history.history_strings) > 0:
+            # WARNING: Be suspicious of this; is history_size being applied correctly?
             observation['text'] = add_person_tokens(
-                self.history[-self.opt['history_size']:], last_speaker=1)
+                self.history.history_strings[-self.opt['history_size']:], last_speaker=1)
 
         self.observation = observation
 
         if observation.get('episode_done', True):
-            self.history.clear()
+            self.history.reset()
 
-        return self.vectorize(self.observation, truncate=self.truncate)
+        return self.vectorize(self.observation, self.history)
 
     def batchify(self, observations):
         batch = super().batchify(observations)
@@ -277,6 +277,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
+        import pdb; pdb.set_trace()
         if batch.text_vec is None:
             return
 
@@ -464,7 +465,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
     def reset_metrics(self):
         """Reset metrics."""
         super().reset_metrics()
-        self.metrics['examples'] = 0
+        # self.metrics['examples'] = 0
         if 'dialog' in self.subtasks:
             self.metrics['dia_exs'] = 0
             self.metrics['dia_loss'] = 0.0
@@ -486,7 +487,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
     def report(self):
         """Report metrics from model's perspective."""
         m = TorchAgent.report(self)  # Skip TorchRankerAgent; totally redundant
-        examples = self.metrics['examples']
+        # examples = self.metrics['examples']
+        examples = self.metrics.get('exs', 0)
         if examples > 0:
             m['examples'] = examples
             if 'dialog' in self.subtasks and self.metrics['dia_exs'] > 0:
@@ -525,7 +527,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
     def do_request_explanation(self, positivity):
         """Decide whether to request an explanation this turn"""
         # If --request-explanation=False, then don't request an explanation
-        if not self.opt['request_explanation'] or len(self.history) < 3:
+        if not self.opt['request_explanation'] or len(self.history.history_strings) < 3:
             return False
         else:
             return positivity < self.opt['rating_threshold']
@@ -536,7 +538,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         if not self.opt['request_rating']:
             return False
         # If no previous bot utterance is on record, can't ask about it
-        elif len(self.history) < 2:
+        elif len(self.history.history_strings) < 2:
             return False
         # Only request a rating a maximum of once per episode
         elif self.requested_rating:
@@ -630,7 +632,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         return action
 
     def make_explanation_request(self):
-        orig_prompt = self.history[-3]
+        orig_prompt = self.history.history_strings[-3]
         return (f'Oops! I think I messed up. '
                 f'Whether I messed up or not, what could I have said '
                 f'(in response to "{orig_prompt}")?')
@@ -645,7 +647,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         action = super().act()
         reply = str(action['text'])
         action['reward'] = rating
-        last_message = self.history[-1]
+        last_message = self.history.history_strings[-1]
         if rating == 0:
             action['text'] = f'Okay, thanks! {CONTINUE} ("{last_message}"): {reply}'
         elif rating == 1:
