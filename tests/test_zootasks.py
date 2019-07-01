@@ -26,7 +26,11 @@ class TestZooAndTasks(unittest.TestCase):
         from parlai.tasks.task_list import task_list
 
         self._check_directory(
-            "task_list", task_list, "parlai/tasks", "task", ignore=['fromfile']
+            "task_list",
+            task_list,
+            "parlai/tasks",
+            "task",
+            ignore=['fromfile', 'interactive'],
         )
 
     def test_zoolist(self):

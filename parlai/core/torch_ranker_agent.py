@@ -210,6 +210,7 @@ class TorchRankerAgent(TorchAgent):
         opt = deepcopy(self.opt)
         opt['outfile'] = path
         opt['datatype'] = 'train:evalmode'
+        opt['interactive_task'] = False
         opt['batchsize'] = 1
         build_cands(opt)
         return path
