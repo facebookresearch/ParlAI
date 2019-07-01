@@ -904,10 +904,11 @@ class TorchAgent(ABC, Agent):
                     '--lr-scheduler invsqrt requires setting --warmup-updates '
                     'or --lr-period-updates'
                 )
-            decay_factor = np.sqrt(max(1, self._lr_period))
+            coeff = max(1, self._lr_period)
+            warmup = max(0, self.opt['warmup_updates'])
 
             def _invsqrt_lr(step):
-                return decay_factor / np.sqrt(max(1, step))
+                return 1.0 / np.sqrt(1 + (max(1, step) - warmup) / coeff)
 
             self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, _invsqrt_lr)
         elif self.opt.get('lr_scheduler') == 'cosine':
@@ -917,7 +918,7 @@ class TorchAgent(ABC, Agent):
                     'or --lr-period-updates'
                 )
             self.scheduler = optim.lr_scheduler.CosineAnnealingLR(
-                optimizer, self._lr_period, eta_min=self.opt['warmup_rate']
+                optimizer, self._lr_period, eta_min=0
             )
         else:
             raise ValueError(
