@@ -4,6 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""Unit tests for TorchAgent."""
+
 import unittest
 from parlai.core.agents import Agent
 
@@ -55,6 +57,7 @@ class MockDict(Agent):
         pass
 
     def add_cmdline_args(self, *args, **kwargs):
+        """Add CLI args."""
         pass
 
     def txt2vec(self, txt):
@@ -73,21 +76,23 @@ class TorchAgent(TorchAgent):
 
     def train_step(self, batch):
         """Return confirmation of training."""
-        return Output([f'Training {i}!' for i in range(len(batch.text_vec))])
+        return Output(['Training {}!'.format(i) for i in range(len(batch.text_vec))])
 
     def eval_step(self, batch):
         """Return confirmation of evaluation."""
-        return Output([f'Evaluating {i}!' for i in range(len(batch.text_vec))])
+        return Output(['Evaluating {}!'.format(i) for i in range(len(batch.text_vec))])
 
 
 def get_agent(**kwargs):
-    """Return opt-initialized agent.
+    r"""
+    Return opt-initialized agent.
 
-    :param kwargs: any kwargs you want to set using parser.set_params(**kwargs)
+    :param kwargs: any kwargs you want to set using parser.set_params(\*\*kwargs)
     """
     if 'no_cuda' not in kwargs:
         kwargs['no_cuda'] = True
     from parlai.core.params import ParlaiParser
+
     parser = ParlaiParser()
     TorchAgent.add_cmdline_args(parser)
     parser.set_params(**kwargs)
@@ -127,78 +132,77 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(vec.tolist(), [1, 2, 3, MockDict.END_IDX])
         vec = agent._vectorize_text(text, add_start=True, add_end=True)
         self.assertEqual(len(vec), 5)
-        self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2, 3,
-                                        MockDict.END_IDX])
+        self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2, 3, MockDict.END_IDX])
 
         # now do it again with truncation=3
-        vec = agent._vectorize_text(text, add_start=False, add_end=False,
-                                    truncate=3)
+        vec = agent._vectorize_text(text, add_start=False, add_end=False, truncate=3)
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [1, 2, 3])
-        vec = agent._vectorize_text(text, add_start=True, add_end=False,
-                                    truncate=3)
+        vec = agent._vectorize_text(text, add_start=True, add_end=False, truncate=3)
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [1, 2, 3])
-        vec = agent._vectorize_text(text, add_start=False, add_end=True,
-                                    truncate=3)
+        vec = agent._vectorize_text(text, add_start=False, add_end=True, truncate=3)
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [2, 3, MockDict.END_IDX])
-        vec = agent._vectorize_text(text, add_start=True, add_end=True,
-                                    truncate=3)
+        vec = agent._vectorize_text(text, add_start=True, add_end=True, truncate=3)
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [2, 3, MockDict.END_IDX])
 
         # now do it again with truncation=2
-        vec = agent._vectorize_text(text, add_start=False, add_end=False,
-                                    truncate=2)
+        vec = agent._vectorize_text(text, add_start=False, add_end=False, truncate=2)
         self.assertEqual(len(vec), 2)
         self.assertEqual(vec.tolist(), [2, 3])
-        vec = agent._vectorize_text(text, add_start=True, add_end=False,
-                                    truncate=2)
+        vec = agent._vectorize_text(text, add_start=True, add_end=False, truncate=2)
         self.assertEqual(len(vec), 2)
         self.assertEqual(vec.tolist(), [2, 3])
-        vec = agent._vectorize_text(text, add_start=False, add_end=True,
-                                    truncate=2)
+        vec = agent._vectorize_text(text, add_start=False, add_end=True, truncate=2)
         self.assertEqual(len(vec), 2)
         self.assertEqual(vec.tolist(), [3, MockDict.END_IDX])
-        vec = agent._vectorize_text(text, add_start=True, add_end=True,
-                                    truncate=2)
+        vec = agent._vectorize_text(text, add_start=True, add_end=True, truncate=2)
         self.assertEqual(len(vec), 2)
         self.assertEqual(vec.tolist(), [3, MockDict.END_IDX])
 
         # now do it again with truncation=2, don't truncate_left
-        vec = agent._vectorize_text(text, add_start=False, add_end=False,
-                                    truncate=2, truncate_left=False)
+        vec = agent._vectorize_text(
+            text, add_start=False, add_end=False, truncate=2, truncate_left=False
+        )
         self.assertEqual(len(vec), 2)
         self.assertEqual(vec.tolist(), [1, 2])
-        vec = agent._vectorize_text(text, add_start=True, add_end=False,
-                                    truncate=2, truncate_left=False)
+        vec = agent._vectorize_text(
+            text, add_start=True, add_end=False, truncate=2, truncate_left=False
+        )
         self.assertEqual(len(vec), 2)
         self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1])
-        vec = agent._vectorize_text(text, add_start=False, add_end=True,
-                                    truncate=2, truncate_left=False)
+        vec = agent._vectorize_text(
+            text, add_start=False, add_end=True, truncate=2, truncate_left=False
+        )
         self.assertEqual(len(vec), 2)
         self.assertEqual(vec.tolist(), [1, 2])
-        vec = agent._vectorize_text(text, add_start=True, add_end=True,
-                                    truncate=2, truncate_left=False)
+        vec = agent._vectorize_text(
+            text, add_start=True, add_end=True, truncate=2, truncate_left=False
+        )
         self.assertEqual(len(vec), 2)
         self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1])
 
         # now do it again with truncation=3, don't truncate_left
-        vec = agent._vectorize_text(text, add_start=False, add_end=False,
-                                    truncate=3, truncate_left=False)
+        vec = agent._vectorize_text(
+            text, add_start=False, add_end=False, truncate=3, truncate_left=False
+        )
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [1, 2, 3])
-        vec = agent._vectorize_text(text, add_start=True, add_end=False,
-                                    truncate=3, truncate_left=False)
+        vec = agent._vectorize_text(
+            text, add_start=True, add_end=False, truncate=3, truncate_left=False
+        )
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2])
-        vec = agent._vectorize_text(text, add_start=False, add_end=True,
-                                    truncate=3, truncate_left=False)
+        vec = agent._vectorize_text(
+            text, add_start=False, add_end=True, truncate=3, truncate_left=False
+        )
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [1, 2, 3])
-        vec = agent._vectorize_text(text, add_start=True, add_end=True,
-                                    truncate=3, truncate_left=False)
+        vec = agent._vectorize_text(
+            text, add_start=True, add_end=True, truncate=3, truncate_left=False
+        )
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2])
 
@@ -222,8 +226,16 @@ class TestTorchAgent(unittest.TestCase):
         param options.
         """
         agent = get_agent()
-        obs_labs = {'text': 'No. Try not.', 'labels': ['Do.', 'Do not.']}
-        obs_elabs = {'text': 'No. Try not.', 'eval_labels': ['Do.', 'Do not.']}
+        obs_labs = {
+            'text': 'No. Try not.',
+            'labels': ['Do.', 'Do not.'],
+            'episode_done': True,
+        }
+        obs_elabs = {
+            'text': 'No. Try not.',
+            'eval_labels': ['Do.', 'Do not.'],
+            'episode_done': True,
+        }
 
         for obs in (obs_labs, obs_elabs):
             lab_key = 'labels' if 'labels' in obs else 'eval_labels'
@@ -234,8 +246,7 @@ class TestTorchAgent(unittest.TestCase):
             # test add_start=True, add_end=True
             agent.history.reset()
             agent.history.update_history(inp)
-            out = agent.vectorize(inp, agent.history, add_start=True,
-                                  add_end=True)
+            out = agent.vectorize(inp, agent.history, add_start=True, add_end=True)
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # note that label could be either label above
             self.assertEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
@@ -245,8 +256,7 @@ class TestTorchAgent(unittest.TestCase):
 
             # test add_start=True, add_end=False
             inp = obs.copy()
-            out = agent.vectorize(inp, agent.history, add_start=True,
-                                  add_end=False)
+            out = agent.vectorize(inp, agent.history, add_start=True, add_end=False)
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # note that label could be either label above
             self.assertEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
@@ -255,8 +265,7 @@ class TestTorchAgent(unittest.TestCase):
 
             # test add_start=False, add_end=True
             inp = obs.copy()
-            out = agent.vectorize(inp, agent.history, add_start=False,
-                                  add_end=True)
+            out = agent.vectorize(inp, agent.history, add_start=False, add_end=True)
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # note that label could be either label above
             self.assertNotEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
@@ -265,8 +274,7 @@ class TestTorchAgent(unittest.TestCase):
 
             # test add_start=False, add_end=False
             inp = obs.copy()
-            out = agent.vectorize(inp, agent.history, add_start=False,
-                                  add_end=False)
+            out = agent.vectorize(inp, agent.history, add_start=False, add_end=False)
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # note that label could be either label above
             self.assertNotEqual(out[lab_vec][0].item(), MockDict.BEG_IDX)
@@ -280,8 +288,7 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(out['text_vec'].tolist(), [1, 2, 3])
             # next: should truncate cached result
             prev_vec = out['text_vec']
-            out_again = agent.vectorize(out, agent.history,
-                                        text_truncate=1)
+            out_again = agent.vectorize(out, agent.history, text_truncate=1)
             self.assertIsNot(prev_vec, out_again['text_vec'])
             self.assertEqual(out['text_vec'].tolist(), [3])
 
@@ -289,38 +296,55 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent(split_lines=True)
         obs = {
             'text': 'Hello.\nMy name is Inogo Montoya.\n'
-                    'You killed my father.\nPrepare to die.',
+            'You killed my father.\nPrepare to die.',
+            'episode_done': True,
         }
         agent.history.update_history(obs)
         vecs = agent.history.get_history_vec_list()
-        self.assertEqual(vecs,
-                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
+        self.assertEqual(vecs, [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
 
         # check cache
         out_again = agent.vectorize(obs, agent.history)
         vecs = agent.history.get_history_vec_list()
-        self.assertEqual(vecs,
-                         [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
+        self.assertEqual(vecs, [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
 
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batchify(self):
         """Make sure the batchify function sets up the right fields."""
         agent = get_agent(rank_candidates=True)
         obs_labs = [
-            {'text': 'It\'s only a flesh wound.',
-             'labels': ['Yield!']},
-            {'text': 'The needs of the many outweigh...',
-             'labels': ['The needs of the few.']},
-            {'text': 'Hello there.',
-             'labels': ['General Kenobi.']},
+            {
+                'text': 'It\'s only a flesh wound.',
+                'labels': ['Yield!'],
+                'episode_done': True,
+            },
+            {
+                'text': 'The needs of the many outweigh...',
+                'labels': ['The needs of the few.'],
+                'episode_done': True,
+            },
+            {
+                'text': 'Hello there.',
+                'labels': ['General Kenobi.'],
+                'episode_done': True,
+            },
         ]
         obs_elabs = [
-            {'text': 'It\'s only a flesh wound.',
-             'eval_labels': ['Yield!']},
-            {'text': 'The needs of the many outweigh...',
-             'eval_labels': ['The needs of the few.']},
-            {'text': 'Hello there.',
-             'eval_labels': ['General Kenobi.']},
+            {
+                'text': 'It\'s only a flesh wound.',
+                'eval_labels': ['Yield!'],
+                'episode_done': True,
+            },
+            {
+                'text': 'The needs of the many outweigh...',
+                'eval_labels': ['The needs of the few.'],
+                'episode_done': True,
+            },
+            {
+                'text': 'Hello there.',
+                'eval_labels': ['General Kenobi.'],
+                'episode_done': True,
+            },
         ]
         for obs_batch in (obs_labs, obs_elabs):
             lab_key = 'labels' if 'labels' in obs_batch[0] else 'eval_labels'
@@ -341,12 +365,14 @@ class TestTorchAgent(unittest.TestCase):
             for o in obs_batch:
                 agent.history.reset()
                 agent.history.update_history(o)
-                obs_vecs.append(agent.vectorize(o, agent.history,
-                                                add_start=False, add_end=False))
+                obs_vecs.append(
+                    agent.vectorize(o, agent.history, add_start=False, add_end=False)
+                )
 
             # is_valid should map to nothing
             def is_valid(obs):
                 return False
+
             agent.is_valid = is_valid
 
             batch = agent.batchify(obs_batch)
@@ -363,6 +389,7 @@ class TestTorchAgent(unittest.TestCase):
             # is_valid should check for text_vec
             def is_valid(obs):
                 return 'text_vec' in obs
+
             agent.is_valid = is_valid
 
             batch = agent.batchify(obs_vecs)
@@ -378,30 +405,30 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.image)
 
             # contents of certain fields:
-            self.assertEqual(batch.text_vec.tolist(),
-                             [[1, 2, 3, 4, 5, 0],
-                              [1, 2, 3, 4, 5, 6],
-                              [1, 2, 0, 0, 0, 0]])
+            self.assertEqual(
+                batch.text_vec.tolist(),
+                [[1, 2, 3, 4, 5, 0], [1, 2, 3, 4, 5, 6], [1, 2, 0, 0, 0, 0]],
+            )
             self.assertEqual(batch.text_lengths, [5, 6, 2])
-            self.assertEqual(batch.label_vec.tolist(),
-                             [[1, 0, 0, 0, 0],
-                              [1, 2, 3, 4, 5],
-                              [1, 2, 0, 0, 0]])
+            self.assertEqual(
+                batch.label_vec.tolist(),
+                [[1, 0, 0, 0, 0], [1, 2, 3, 4, 5], [1, 2, 0, 0, 0]],
+            )
             self.assertEqual(batch.label_lengths, [1, 5, 2])
             self.assertEqual(batch.labels, [o[lab_key][0] for o in obs_batch])
             self.assertEqual(list(batch.valid_indices), [0, 1, 2])
 
             # now sort the batch, make sure fields are in sorted order
             batch = agent.batchify(obs_vecs, sort=True)
-            self.assertEqual(batch.text_vec.tolist(),
-                             [[1, 2, 3, 4, 5, 6],
-                              [1, 2, 3, 4, 5, 0],
-                              [1, 2, 0, 0, 0, 0]])
+            self.assertEqual(
+                batch.text_vec.tolist(),
+                [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 0], [1, 2, 0, 0, 0, 0]],
+            )
             self.assertEqual(batch.text_lengths, [6, 5, 2])
-            self.assertEqual(batch.label_vec.tolist(),
-                             [[1, 2, 3, 4, 5],
-                              [1, 0, 0, 0, 0],
-                              [1, 2, 0, 0, 0]])
+            self.assertEqual(
+                batch.label_vec.tolist(),
+                [[1, 2, 3, 4, 5], [1, 0, 0, 0, 0], [1, 2, 0, 0, 0]],
+            )
             self.assertEqual(batch.label_lengths, [5, 1, 2])
             labs = [o[lab_key][0] for o in obs_batch]
             self.assertEqual(batch.labels, [labs[i] for i in [1, 0, 2]])
@@ -415,6 +442,7 @@ class TestTorchAgent(unittest.TestCase):
 
             def is_valid(obs):
                 return 'labels_vec' in obs or 'eval_labels_vec' in obs
+
             agent.is_valid = is_valid
 
             batch = agent.batchify(new_vecs, sort=True)
@@ -422,10 +450,10 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.text_lengths)
             self.assertIsNotNone(batch.label_vec)
             self.assertIsNotNone(batch.label_lengths)
-            self.assertEqual(batch.label_vec.tolist(),
-                             [[1, 2, 3, 4, 5],
-                              [1, 2, 0, 0, 0],
-                              [1, 0, 0, 0, 0]])
+            self.assertEqual(
+                batch.label_vec.tolist(),
+                [[1, 2, 3, 4, 5], [1, 2, 0, 0, 0], [1, 0, 0, 0, 0]],
+            )
             self.assertEqual(batch.label_lengths, [5, 2, 1])
             labs = [o[lab_key][0] for o in new_vecs]
             self.assertEqual(batch.labels, [labs[i] for i in [1, 2, 0]])
@@ -434,6 +462,7 @@ class TestTorchAgent(unittest.TestCase):
             # test is_valid
             def is_valid(obs):
                 return 'text_vec' in obs and len(obs['text_vec']) < 3
+
             agent.is_valid = is_valid
 
             batch = agent.batchify(obs_vecs)
@@ -446,19 +475,20 @@ class TestTorchAgent(unittest.TestCase):
 
         agent.history.reset()
         obs_cands = [
-            agent.vectorize({'label_candidates': ['A', 'B', 'C']},
-                            agent.history),
-            agent.vectorize({'label_candidates': ['1', '2', '5', '3', 'Sir']},
-                            agent.history),
-            agent.vectorize({'label_candidates': ['Do', 'Re', 'Mi']},
-                            agent.history),
-            agent.vectorize({'label_candidates': ['Fa', 'So', 'La', 'Ti']},
-                            agent.history),
+            agent.vectorize({'label_candidates': ['A', 'B', 'C']}, agent.history),
+            agent.vectorize(
+                {'label_candidates': ['1', '2', '5', '3', 'Sir']}, agent.history
+            ),
+            agent.vectorize({'label_candidates': ['Do', 'Re', 'Mi']}, agent.history),
+            agent.vectorize(
+                {'label_candidates': ['Fa', 'So', 'La', 'Ti']}, agent.history
+            ),
         ]
 
         # is_valid should check for label candidates vecs
         def is_valid(obs):
             return 'label_candidates_vecs' in obs
+
         agent.is_valid = is_valid
 
         batch = agent.batchify(obs_cands)
@@ -472,8 +502,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertIsNotNone(batch.candidates)
         self.assertIsNotNone(batch.candidate_vecs)
         self.assertEqual(list(batch.valid_indices), [0, 1, 2, 3])
-        self.assertEqual(batch.candidates,
-                         [o['label_candidates'] for o in obs_cands])
+        self.assertEqual(batch.candidates, [o['label_candidates'] for o in obs_cands])
         self.assertEqual(len(batch.candidate_vecs), len(obs_cands))
         for i, cs in enumerate(batch.candidate_vecs):
             self.assertEqual(len(cs), len(obs_cands[i]['label_candidates']))
@@ -490,63 +519,103 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual([{}, {}, {}], reply)
 
         # try text in order
-        reply = agent.match_batch([{}, {}, {}], [0, 1, 2],
-                                  Output(['E.T.', 'Phone', 'Home']))
-        self.assertEqual(
-            [{'text': 'E.T.'}, {'text': 'Phone'}, {'text': 'Home'}], reply)
+        reply = agent.match_batch(
+            [{}, {}, {}], [0, 1, 2], Output(['E.T.', 'Phone', 'Home'])
+        )
+        self.assertEqual([{'text': 'E.T.'}, {'text': 'Phone'}, {'text': 'Home'}], reply)
 
         # try text out of order
-        reply = agent.match_batch([{}, {}, {}], [2, 0, 1],
-                                  Output(['Home', 'E.T.', 'Phone']))
-        self.assertEqual(
-            [{'text': 'E.T.'}, {'text': 'Phone'}, {'text': 'Home'}], reply)
+        reply = agent.match_batch(
+            [{}, {}, {}], [2, 0, 1], Output(['Home', 'E.T.', 'Phone'])
+        )
+        self.assertEqual([{'text': 'E.T.'}, {'text': 'Phone'}, {'text': 'Home'}], reply)
 
         # try text_candidates in order
-        reply = agent.match_batch([{}, {}], [0, 1],
-                                  Output(None, [['More human than human.',
-                                                 'Less human than human'],
-                                                ['Just walk into Mordor',
-                                                 'Just QWOP into Mordor.']]))
-        self.assertEqual(reply[0]['text_candidates'],
-                         ['More human than human.', 'Less human than human'])
-        self.assertEqual(reply[1]['text_candidates'],
-                         ['Just walk into Mordor', 'Just QWOP into Mordor.'])
+        reply = agent.match_batch(
+            [{}, {}],
+            [0, 1],
+            Output(
+                None,
+                [
+                    ['More human than human.', 'Less human than human'],
+                    ['Just walk into Mordor', 'Just QWOP into Mordor.'],
+                ],
+            ),
+        )
+        self.assertEqual(
+            reply[0]['text_candidates'],
+            ['More human than human.', 'Less human than human'],
+        )
+        self.assertEqual(
+            reply[1]['text_candidates'],
+            ['Just walk into Mordor', 'Just QWOP into Mordor.'],
+        )
         # try text_candidates out of order
-        reply = agent.match_batch([{}, {}], [1, 0],
-                                  Output(None, [['More human than human.',
-                                                 'Less human than human'],
-                                                ['Just walk into Mordor',
-                                                 'Just QWOP into Mordor.']]))
-        self.assertEqual(reply[0]['text_candidates'],
-                         ['Just walk into Mordor', 'Just QWOP into Mordor.'])
-        self.assertEqual(reply[1]['text_candidates'],
-                         ['More human than human.', 'Less human than human'])
+        reply = agent.match_batch(
+            [{}, {}],
+            [1, 0],
+            Output(
+                None,
+                [
+                    ['More human than human.', 'Less human than human'],
+                    ['Just walk into Mordor', 'Just QWOP into Mordor.'],
+                ],
+            ),
+        )
+        self.assertEqual(
+            reply[0]['text_candidates'],
+            ['Just walk into Mordor', 'Just QWOP into Mordor.'],
+        )
+        self.assertEqual(
+            reply[1]['text_candidates'],
+            ['More human than human.', 'Less human than human'],
+        )
 
         # try both text and text_candidates in order
         reply = agent.match_batch(
-            [{}, {}], [0, 1],
-            Output(['You shall be avenged...', 'Man creates dinosaurs...'],
-                   [['By Grabthar’s hammer.', 'By the suns of Worvan.'],
-                    ['Dinosaurs eat man.', 'Woman inherits the earth.']]))
+            [{}, {}],
+            [0, 1],
+            Output(
+                ['You shall be avenged...', 'Man creates dinosaurs...'],
+                [
+                    ['By Grabthar’s hammer.', 'By the suns of Worvan.'],
+                    ['Dinosaurs eat man.', 'Woman inherits the earth.'],
+                ],
+            ),
+        )
         self.assertEqual(reply[0]['text'], 'You shall be avenged...')
-        self.assertEqual(reply[0]['text_candidates'],
-                         ['By Grabthar’s hammer.', 'By the suns of Worvan.'])
+        self.assertEqual(
+            reply[0]['text_candidates'],
+            ['By Grabthar’s hammer.', 'By the suns of Worvan.'],
+        )
         self.assertEqual(reply[1]['text'], 'Man creates dinosaurs...')
-        self.assertEqual(reply[1]['text_candidates'],
-                         ['Dinosaurs eat man.', 'Woman inherits the earth.'])
+        self.assertEqual(
+            reply[1]['text_candidates'],
+            ['Dinosaurs eat man.', 'Woman inherits the earth.'],
+        )
 
         # try both text and text_candidates out of order
         reply = agent.match_batch(
-            [{}, {}], [1, 0],
-            Output(['You shall be avenged...', 'Man creates dinosaurs...'],
-                   [['By Grabthar’s hammer.', 'By the suns of Worvan.'],
-                    ['Dinosaurs eat man.', 'Woman inherits the earth.']]))
+            [{}, {}],
+            [1, 0],
+            Output(
+                ['You shall be avenged...', 'Man creates dinosaurs...'],
+                [
+                    ['By Grabthar’s hammer.', 'By the suns of Worvan.'],
+                    ['Dinosaurs eat man.', 'Woman inherits the earth.'],
+                ],
+            ),
+        )
         self.assertEqual(reply[0]['text'], 'Man creates dinosaurs...')
-        self.assertEqual(reply[0]['text_candidates'],
-                         ['Dinosaurs eat man.', 'Woman inherits the earth.'])
+        self.assertEqual(
+            reply[0]['text_candidates'],
+            ['Dinosaurs eat man.', 'Woman inherits the earth.'],
+        )
         self.assertEqual(reply[1]['text'], 'You shall be avenged...')
-        self.assertEqual(reply[1]['text_candidates'],
-                         ['By Grabthar’s hammer.', 'By the suns of Worvan.'])
+        self.assertEqual(
+            reply[1]['text_candidates'],
+            ['By Grabthar’s hammer.', 'By the suns of Worvan.'],
+        )
 
     def test__add_person_tokens(self):
         """Make sure person tokens are added to the write place in text."""
@@ -555,7 +624,8 @@ class TestTorchAgent(unittest.TestCase):
             "I've seen things you people wouldn't believe.\n"
             "Attack ships on fire off the shoulder of Orion.\n"
             "I watched C-beams glitter in the dark near the Tannhauser gate.\n"
-            "All those moments will be lost in time, like tears in rain.")
+            "All those moments will be lost in time, like tears in rain."
+        )
         prefix = 'PRE'
         out = agent.history._add_person_tokens(text, prefix, add_after_newln=False)
         self.assertEqual(out, prefix + ' ' + text)
@@ -567,8 +637,7 @@ class TestTorchAgent(unittest.TestCase):
         """Test different dialog history settings."""
         # try with unlimited history
         agent = get_agent(history_size=-1)
-        obs = {'text': 'I am Groot.', 'labels': ['I am Groot?'],
-               'episode_done': False}
+        obs = {'text': 'I am Groot.', 'labels': ['I am Groot?'], 'episode_done': False}
 
         # first exchange
         agent.history.update_history(obs)
@@ -585,8 +654,7 @@ class TestTorchAgent(unittest.TestCase):
         end_obs['episode_done'] = True
         agent.history.update_history(end_obs, add_next='I am Groot?')
         text = agent.history.get_history_str()
-        self.assertEqual(text,
-                         'I am Groot.\nI am Groot.\nI am Groot?\nI am Groot.')
+        self.assertEqual(text, 'I am Groot.\nI am Groot.\nI am Groot?\nI am Groot.')
 
         # because of episode_done, should be same as first exchange
         agent.history.update_history(obs)
@@ -646,74 +714,60 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent(history_size=3, person_tokens=True)
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
-        self.assertEqual(text, f'{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(text, '{} I am Groot.'.format(agent.P1_TOKEN))
 
         # second exchange, history should still contain the tokens
         agent.history.update_history(obs, add_next='I am Groot?')
         text = agent.history.get_history_str()
-        self.assertEqual(text,
-                         f'{agent.P1_TOKEN} I am Groot.\n'
-                         f'{agent.P2_TOKEN} I am Groot?\n'
-                         f'{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(
+            text,
+            '{} I am Groot.\n{} I am Groot?\n{} I am Groot.'.format(
+                agent.P1_TOKEN, agent.P2_TOKEN, agent.P1_TOKEN
+            ),
+        )
 
         # now add add_p1_after_newln
-        agent = get_agent(history_size=3, person_tokens=True,
-                          add_p1_after_newln=True)
+        agent = get_agent(history_size=3, person_tokens=True, add_p1_after_newln=True)
         ctx_obs = obs.copy()  # context then utterance in this text field
         ctx_obs['text'] = 'Groot is Groot.\nI am Groot.'
         agent.history.update_history(ctx_obs)
         text = agent.history.get_history_str()
-        self.assertEqual(text,
-                         f'Groot is Groot.\n{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(text, 'Groot is Groot.\n{} I am Groot.'.format(agent.P1_TOKEN))
 
         # second exchange, history should still contain context text
         agent.history.update_history(obs, add_next='I am Groot?')
         text = agent.history.get_history_str()
-        self.assertEqual(text,
-                         'Groot is Groot.\n'
-                         f'{agent.P1_TOKEN} I am Groot.\n'
-                         f'{agent.P2_TOKEN} I am Groot?\n'
-                         f'{agent.P1_TOKEN} I am Groot.')
+        self.assertEqual(
+            text,
+            'Groot is Groot.\n{} I am Groot.\n{} I am Groot?\n{} I am Groot.'.format(
+                agent.P1_TOKEN, agent.P2_TOKEN, agent.P1_TOKEN
+            ),
+        )
 
         # test history vecs
         agent.history.reset()
         agent.history.update_history(obs)
         vec = agent.history.get_history_vec()
-        self.assertEqual(
-            vec,
-            deque([2001, 1, 2, 3])
-        )
+        self.assertEqual(vec, deque([2001, 1, 2, 3]))
 
         # test history vec list
         agent.history.update_history(obs)
         vecs = agent.history.get_history_vec_list()
-        self.assertEqual(
-            vecs,
-            [[2001, 1, 2, 3], [2001, 1, 2, 3]]
-        )
+        self.assertEqual(vecs, [[2001, 1, 2, 3], [2001, 1, 2, 3]])
 
         # test clearing history
         agent.history.reset()
         text = agent.history.get_history_str()
         self.assertIsNone(text)
         vecs = agent.history.get_history_vec_list()
-        self.assertEqual(
-            vecs,
-            []
-        )
+        self.assertEqual(vecs, [])
 
         # test delimiter
-        agent = get_agent(
-            history_size=-1,
-            delimiter=' Groot! ',
-        )
+        agent = get_agent(history_size=-1, delimiter=' Groot! ')
         agent.history.update_history(obs)
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
-        self.assertEqual(
-            text,
-            'I am Groot. Groot! I am Groot.'
-        )
+        self.assertEqual(text, 'I am Groot. Groot! I am Groot.')
 
     def test_last_reply(self):
         """Make sure last reply returns expected values."""
@@ -729,8 +783,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent.last_reply(), None)
         # now agent should remember what it said
         agent.observation = {'episode_done': False}
-        self.assertEqual(agent.last_reply(),
-                         'It\'s okay! I\'m a leaf on the wind.')
+        self.assertEqual(agent.last_reply(), 'It\'s okay! I\'m a leaf on the wind.')
         # now set true observation
         agent.observation = {
             'text': 'Will that work?',
@@ -738,11 +791,13 @@ class TestTorchAgent(unittest.TestCase):
             'episode_done': False,
         }
         # now agent should remember true label
-        self.assertEqual(agent.last_reply(),
-                         'I\'m a leaf on the wind. Watch how I soar.')
+        self.assertEqual(
+            agent.last_reply(), 'I\'m a leaf on the wind. Watch how I soar.'
+        )
         # but not if we tell to use the model reply
-        self.assertEqual(agent.last_reply(use_reply='model'),
-                         'It\'s okay! I\'m a leaf on the wind.')
+        self.assertEqual(
+            agent.last_reply(use_reply='model'), 'It\'s okay! I\'m a leaf on the wind.'
+        )
         # if we don't want to use the last reply at all, it should be None
         self.assertIsNone(agent.last_reply(use_reply='none'))
 
@@ -750,18 +805,14 @@ class TestTorchAgent(unittest.TestCase):
     def test_observe(self):
         """Make sure agent stores and returns observation."""
         agent = get_agent()
-        obs = {
-            'text': 'I\'ll be back.',
-            'labels': ['I\'m back.'],
-            'episode_done': True
-        }
+        obs = {'text': "I'll be back.", 'labels': ["I'm back."], 'episode_done': True}
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
         self.assertIsNotNone(agent.observation)
-        self.assertEqual(out['text'], 'I\'ll be back.')
+        self.assertEqual(out['text'], "I'll be back.")
         # episode was done so shouldn't remember history
         out = agent.observe(obs.copy())
-        self.assertEqual(out['text'], 'I\'ll be back.')
+        self.assertEqual(out['text'], "I'll be back.")
         self.assertTrue('text_vec' in out, 'Text should be vectorized.')
 
         # now try with episode not done
@@ -769,11 +820,10 @@ class TestTorchAgent(unittest.TestCase):
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
         self.assertIsNotNone(agent.observation)
-        self.assertEqual(out['text'], 'I\'ll be back.')
+        self.assertEqual(out['text'], "I'll be back.")
         # should remember history
         out = agent.observe(obs.copy())
-        self.assertEqual(out['text'],
-                         'I\'ll be back.\nI\'m back.\nI\'ll be back.')
+        self.assertEqual(out['text'], "I'll be back.\nI'm back.\nI'll be back.")
 
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batch_act(self):
@@ -781,12 +831,21 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent()
 
         obs_labs = [
-            {'text': 'It\'s only a flesh wound.',
-             'labels': ['Yield!']},
-            {'text': 'The needs of the many outweigh...',
-             'labels': ['The needs of the few.']},
-            {'text': 'Hello there.',
-             'labels': ['General Kenobi.']},
+            {
+                'text': "It's only a flesh wound.",
+                'labels': ['Yield!'],
+                'episode_done': True,
+            },
+            {
+                'text': 'The needs of the many outweigh...',
+                'labels': ['The needs of the few.'],
+                'episode_done': True,
+            },
+            {
+                'text': 'Hello there.',
+                'labels': ['General Kenobi.'],
+                'episode_done': True,
+            },
         ]
         obs_labs_vecs = []
         for o in obs_labs:
@@ -795,15 +854,24 @@ class TestTorchAgent(unittest.TestCase):
             obs_labs_vecs.append(agent.vectorize(o, agent.history))
         reply = agent.batch_act(obs_labs_vecs)
         for i in range(len(obs_labs_vecs)):
-            self.assertEqual(reply[i]['text'], f'Training {i}!')
+            self.assertEqual(reply[i]['text'], 'Training {}!'.format(i))
 
         obs_elabs = [
-            {'text': 'It\'s only a flesh wound.',
-             'eval_labels': ['Yield!']},
-            {'text': 'The needs of the many outweigh...',
-             'eval_labels': ['The needs of the few.']},
-            {'text': 'Hello there.',
-             'eval_labels': ['General Kenobi.']},
+            {
+                'text': "It's only a flesh wound.",
+                'eval_labels': ['Yield!'],
+                'episode_done': True,
+            },
+            {
+                'text': 'The needs of the many outweigh...',
+                'eval_labels': ['The needs of the few.'],
+                'episode_done': True,
+            },
+            {
+                'text': 'Hello there.',
+                'eval_labels': ['General Kenobi.'],
+                'episode_done': True,
+            },
         ]
         obs_elabs_vecs = []
         for o in obs_elabs:
@@ -812,7 +880,7 @@ class TestTorchAgent(unittest.TestCase):
             obs_elabs_vecs.append(agent.vectorize(o, agent.history))
         reply = agent.batch_act(obs_elabs_vecs)
         for i in range(len(obs_elabs_vecs)):
-            self.assertEqual(reply[i]['text'], f'Evaluating {i}!')
+            self.assertEqual(reply[i]['text'], 'Evaluating {}!'.format(i))
 
 
 if __name__ == '__main__':

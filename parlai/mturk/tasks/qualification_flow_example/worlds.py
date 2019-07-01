@@ -43,6 +43,7 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
     second would require the passing qualification. The first world could then
     be runnable using the --unique flag.
     """
+
     test_set = [
         ['What is 1+1?', '2'],
         ['What is 3+2?', '5'],
@@ -71,10 +72,9 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
         for _ in range(num):
             num1 = random.randint(1, 20)
             num2 = random.randint(3, 16)
-            questions.append([
-                'What is {} + {}?'.format(num1, num2),
-                '{}'.format(num1 + num2)
-            ])
+            questions.append(
+                ['What is {} + {}?'.format(num1, num2), '{}'.format(num1 + num2)]
+            )
         return questions
 
     def parley(self):
@@ -94,7 +94,7 @@ class QualificationFlowSoloWorld(MTurkTaskWorld):
             }
             self.mturk_agent.observe(validate(ad))
             answer = self.mturk_agent.act()
-            if answer == self.questions[self.curr_question][1]:
+            if answer['text'] == self.questions[self.curr_question][1]:
                 self.correct += 1
             self.curr_question += 1
 

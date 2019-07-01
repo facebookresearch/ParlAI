@@ -16,7 +16,7 @@ _greyscale = '  .,:;crsA23hHG#98&@'
 _cache_size = 84000
 
 
-class ImageLoader():
+class ImageLoader:
     """Extract image feature using pretrained CNN network."""
 
     def __init__(self, opt):
@@ -35,9 +35,8 @@ class ImageLoader():
         """
         try:
             import torch
-            self.use_cuda = (
-                not opt.get('no_cuda', False) and torch.cuda.is_available()
-            )
+
+            self.use_cuda = not opt.get('no_cuda', False) and torch.cuda.is_available()
             self.torch = torch
         except ImportError:
             raise ImportError('Need to install Pytorch: go to pytorch.org')
@@ -48,7 +47,8 @@ class ImageLoader():
         if 'image_mode' not in opt or 'image_size' not in opt:
             raise RuntimeError(
                 'Need to add image arguments to opt. See '
-                'parlai.core.params.ParlaiParser.add_image_args')
+                'parlai.core.params.ParlaiParser.add_image_args'
+            )
         self.image_mode = opt['image_mode']
         self.image_size = opt['image_size']
         self.crop_size = opt['image_cropsize']
@@ -63,17 +63,19 @@ class ImageLoader():
         CNN = getattr(torchvision.models, cnn_type)
 
         # cut off the additional layer.
-        self.netCNN = nn.Sequential(
-            *list(CNN(pretrained=True).children())[:layer_num])
+        self.netCNN = nn.Sequential(*list(CNN(pretrained=True).children())[:layer_num])
 
         # initialize the transform function using torch vision.
-        self.transform = transforms.Compose([
-            transforms.Scale(self.image_size),
-            transforms.CenterCrop(self.crop_size),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
-        ])
+        self.transform = transforms.Compose(
+            [
+                transforms.Scale(self.image_size),
+                transforms.CenterCrop(self.crop_size),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
         if self.use_cuda:
             self.netCNN.cuda()
 
@@ -92,13 +94,14 @@ class ImageLoader():
         }
 
         if self.image_mode not in switcher:
-            raise NotImplementedError('image preprocessing mode' +
-                                      '{} not supported yet'.format(self.image_mode))
+            raise NotImplementedError(
+                'image preprocessing mode'
+                + '{} not supported yet'.format(self.image_mode)
+            )
 
         return switcher.get(self.image_mode)
 
-    def extract(self, image, path):
-        """Extract an image."""
+    def extract(self, image, path=None):
         # check whether initialize CNN network.
         if not self.netCNN:
             self.init_cnn(self.opt)
@@ -108,7 +111,8 @@ class ImageLoader():
             transform = transform.cuda()
         feature = self.netCNN(transform)
         # save the feature
-        self.torch.save(feature.cpu(), path)
+        if path is not None:
+            self.torch.save(feature.cpu(), path)
         return feature
 
     def _img_to_ascii(self, path):
@@ -136,7 +140,7 @@ class ImageLoader():
             is_zip = True
             sep = path.index('.zip') + 4
             zipname = path[:sep]
-            file_name = path[sep + 1:]
+            file_name = path[sep + 1 :]
             path = ZipFile(zipname, 'r').open(file_name)
             if opt['task'] != 'pytorch_teacher':
                 task = opt['task']

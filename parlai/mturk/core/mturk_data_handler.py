@@ -28,6 +28,7 @@ new_data_dir = os.path.join(mturk_dir, 'run_data')
 
 if os.path.exists(data_dir) and not os.path.exists(new_data_dir):
     import shutil
+
     acknowledge = input(
         'run_data is being permanently moved from `{}`'
         ' to `{}`. Enter anything to let this script copy '
@@ -45,8 +46,7 @@ data_dir = new_data_dir
 
 
 # Run data table:
-CREATE_RUN_DATA_SQL_TABLE = (
-    """CREATE TABLE IF NOT EXISTS runs (
+CREATE_RUN_DATA_SQL_TABLE = """CREATE TABLE IF NOT EXISTS runs (
         run_id string PRIMARY KEY,
         created integer NOT NULL,
         maximum integer NOT NULL,
@@ -55,12 +55,11 @@ CREATE_RUN_DATA_SQL_TABLE = (
         taskname string,
         launch_time int
     );
-    """)
+    """
 
 # Worker data table:
 # TODO add block status
-CREATE_WORKER_DATA_SQL_TABLE = (
-    """CREATE TABLE IF NOT EXISTS workers (
+CREATE_WORKER_DATA_SQL_TABLE = """CREATE TABLE IF NOT EXISTS workers (
         worker_id string PRIMARY KEY,
         accepted integer NOT NULL,
         disconnected integer NOT NULL,
@@ -69,11 +68,10 @@ CREATE_WORKER_DATA_SQL_TABLE = (
         approved integer NOT NULL,
         rejected integer NOT NULL
     );
-    """)
+    """
 
 # HIT data table:
-CREATE_HIT_DATA_SQL_TABLE = (
-    """CREATE TABLE IF NOT EXISTS hits (
+CREATE_HIT_DATA_SQL_TABLE = """CREATE TABLE IF NOT EXISTS hits (
         hit_id string PRIMARY KEY,
         expiration integer NOT NULL,
         hit_status string,
@@ -83,11 +81,10 @@ CREATE_HIT_DATA_SQL_TABLE = (
         run_id string,
         FOREIGN KEY (run_id) REFERENCES runs (run_id)
     );
-    """)
+    """
 
 # Assignment data table: (as one HIT can technically have multiple assignments)
-CREATE_ASSIGN_DATA_SQL_TABLE = (
-    """CREATE TABLE IF NOT EXISTS assignments (
+CREATE_ASSIGN_DATA_SQL_TABLE = """CREATE TABLE IF NOT EXISTS assignments (
         assignment_id string PRIMARY KEY,
         status string,
         approve_time int,
@@ -96,11 +93,10 @@ CREATE_ASSIGN_DATA_SQL_TABLE = (
         FOREIGN KEY (worker_id) REFERENCES workers (worker_id),
         FOREIGN KEY (hit_id) REFERENCES hits (hit_id)
     );
-    """)
+    """
 
 # pairing data table: (reflects one worker<->assignment pairing)
-CREATE_PAIRING_DATA_SQL_TABLE = (
-    """CREATE TABLE IF NOT EXISTS pairings (
+CREATE_PAIRING_DATA_SQL_TABLE = """CREATE TABLE IF NOT EXISTS pairings (
         status string,
         onboarding_start int,
         onboarding_end int,
@@ -121,13 +117,14 @@ CREATE_PAIRING_DATA_SQL_TABLE = (
         FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id),
         FOREIGN KEY (run_id) REFERENCES runs (run_id)
     );
-    """)
+    """
 
 
-class MTurkDataHandler():
+class MTurkDataHandler:
     """Handles logging data to and reading data from a SQLite3 table for
     observation across processes and for controlled restarts
     """
+
     def __init__(self, task_group_id=None, file_name='pmt_data.db'):
         self.db_path = os.path.join(data_dir, file_name)
         self.conn = {}
@@ -136,13 +133,13 @@ class MTurkDataHandler():
         self.create_default_tables()
 
     @staticmethod
-    def save_world_data(prepped_save_data, task_group_id,
-                        conversation_id, sandbox=False):
+    def save_world_data(
+        prepped_save_data, task_group_id, conversation_id, sandbox=False
+    ):
         target = 'sandbox' if sandbox else 'live'
         if task_group_id is None:
             return
-        target_dir = os.path.join(
-            data_dir, target, task_group_id, conversation_id)
+        target_dir = os.path.join(data_dir, target, task_group_id, conversation_id)
         custom_data = prepped_save_data['custom_data']
         if custom_data is not None:
             target_dir_custom = os.path.join(target_dir, 'custom')
@@ -160,8 +157,7 @@ class MTurkDataHandler():
         worker_data = prepped_save_data['worker_data']
         target_dir_workers = os.path.join(target_dir, 'workers')
         for worker_id, w_data in worker_data.items():
-            worker_file = os.path.join(
-                target_dir_workers, '{}.json'.format(worker_id))
+            worker_file = os.path.join(target_dir_workers, '{}.json'.format(worker_id))
             force_dir(worker_file)
             with open(worker_file, 'w') as outfile:
                 json.dump(w_data, outfile)
@@ -180,7 +176,8 @@ class MTurkDataHandler():
                 shared_utils.print_and_log(
                     logging.ERROR,
                     "Could not get db connection, failing: {}".format(repr(e)),
-                    should_print=True)
+                    should_print=True,
+                )
                 raise e
         return self.conn[curr_thread]
 
@@ -229,9 +226,10 @@ class MTurkDataHandler():
             task_group_id = self._force_task_group_id(task_group_id)
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('INSERT INTO runs VALUES (?,?,?,?,?,?,?);',
-                      (task_group_id, 0, target_hits, 0, 0,
-                       taskname, time.time()))
+            c.execute(
+                'INSERT INTO runs VALUES (?,?,?,?,?,?,?);',
+                (task_group_id, 0, target_hits, 0, 0, taskname, time.time()),
+            )
             conn.commit()
 
     def log_hit_status(self, mturk_hit_creation_response, task_group_id=None):
@@ -248,21 +246,32 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('SELECT COUNT(*) FROM hits WHERE hit_id = ?;', (id, ))
+            c.execute('SELECT COUNT(*) FROM hits WHERE hit_id = ?;', (id,))
             is_new_hit = c.fetchone()[0] == 0
             if is_new_hit:
-                c.execute("""UPDATE runs SET created = created + 1
+                c.execute(
+                    """UPDATE runs SET created = created + 1
                              WHERE run_id = ?;""",
-                          (task_group_id, ))
+                    (task_group_id,),
+                )
 
-            c.execute('REPLACE INTO hits VALUES (?,?,?,?,?,?,?);',
-                      (id, expiration, status, assignments_pending,
-                       assignments_available, assignments_complete,
-                       task_group_id))
+            c.execute(
+                'REPLACE INTO hits VALUES (?,?,?,?,?,?,?);',
+                (
+                    id,
+                    expiration,
+                    status,
+                    assignments_pending,
+                    assignments_available,
+                    assignments_complete,
+                    task_group_id,
+                ),
+            )
             conn.commit()
 
-    def log_worker_accept_assignment(self, worker_id, assignment_id, hit_id,
-                                     task_group_id=None):
+    def log_worker_accept_assignment(
+        self, worker_id, assignment_id, hit_id, task_group_id=None
+    ):
         """Log a worker accept, update assignment state and pairings to match
         the acceptance
         """
@@ -272,62 +281,99 @@ class MTurkDataHandler():
             c = conn.cursor()
 
             # Ensure worker exists, mark the accepted assignment
-            c.execute('SELECT COUNT(*) FROM workers WHERE worker_id = ?;',
-                      (worker_id, ))
+            c.execute('SELECT COUNT(*) FROM workers WHERE worker_id = ?;', (worker_id,))
             has_worker = c.fetchone()[0] > 0
             if not has_worker:
                 # Must instert a new worker into the database
-                c.execute('INSERT INTO workers VALUES (?,?,?,?,?,?,?);',
-                          (worker_id, 1, 0, 0, 0, 0, 0))
+                c.execute(
+                    'INSERT INTO workers VALUES (?,?,?,?,?,?,?);',
+                    (worker_id, 1, 0, 0, 0, 0, 0),
+                )
             else:
                 # Increment number of assignments the worker has accepted
-                c.execute("""UPDATE workers SET accepted = accepted + 1
+                c.execute(
+                    """UPDATE workers SET accepted = accepted + 1
                              WHERE worker_id = ?;""",
-                          (worker_id, ))
+                    (worker_id,),
+                )
 
             # Ensure the assignment exists, mark the current worker
-            c.execute('REPLACE INTO assignments VALUES (?,?,?,?,?)',
-                      (assignment_id, 'Accepted', None, worker_id, hit_id))
+            c.execute(
+                'REPLACE INTO assignments VALUES (?,?,?,?,?)',
+                (assignment_id, 'Accepted', None, worker_id, hit_id),
+            )
 
             # Create tracking for this specific pairing, as the assignment
             # may be reassigned
-            c.execute("""INSERT INTO pairings
+            c.execute(
+                """INSERT INTO pairings
                          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                      (AssignState.STATUS_NONE, None, None, None, None,
-                       None, 0, '', False, '', worker_id, assignment_id,
-                       task_group_id, None, 0, ''))
+                (
+                    AssignState.STATUS_NONE,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    0,
+                    '',
+                    False,
+                    '',
+                    worker_id,
+                    assignment_id,
+                    task_group_id,
+                    None,
+                    0,
+                    '',
+                ),
+            )
             conn.commit()
 
-    def log_complete_assignment(self, worker_id, assignment_id, approve_time,
-                                complete_type, task_group_id=None):
+    def log_complete_assignment(
+        self, worker_id, assignment_id, approve_time, complete_type, task_group_id=None
+    ):
         """Note that an assignment was completed"""
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
             # Update assign data to completed
-            c.execute("""UPDATE assignments SET status = ?, approve_time = ?
+            c.execute(
+                """UPDATE assignments SET status = ?, approve_time = ?
                          WHERE assignment_id = ?;""",
-                      ('Completed', approve_time, assignment_id))
+                ('Completed', approve_time, assignment_id),
+            )
 
             # Increment worker completed
-            c.execute("""UPDATE workers SET completed = completed + 1
+            c.execute(
+                """UPDATE workers SET completed = completed + 1
                          WHERE worker_id = ?;""",
-                      (worker_id, ))
+                (worker_id,),
+            )
 
             # update the payment data status
-            c.execute("""UPDATE pairings SET status = ?, task_end = ?
+            c.execute(
+                """UPDATE pairings SET status = ?, task_end = ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
-                      (complete_type, time.time(), worker_id, assignment_id))
+                (complete_type, time.time(), worker_id, assignment_id),
+            )
 
             # Update run data to have another completed
-            c.execute("""UPDATE runs SET completed = completed + 1
+            c.execute(
+                """UPDATE runs SET completed = completed + 1
                          WHERE run_id = ?;""",
-                      (task_group_id, ))
+                (task_group_id,),
+            )
             conn.commit()
 
-    def log_disconnect_assignment(self, worker_id, assignment_id, approve_time,
-                                  disconnect_type, task_group_id=None):
+    def log_disconnect_assignment(
+        self,
+        worker_id,
+        assignment_id,
+        approve_time,
+        disconnect_type,
+        task_group_id=None,
+    ):
         """Note that an assignment was disconnected from"""
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
@@ -335,27 +381,34 @@ class MTurkDataHandler():
             c = conn.cursor()
 
             # Update assign data to completed for this task (we can't track)
-            c.execute("""UPDATE assignments SET status = ?, approve_time = ?
+            c.execute(
+                """UPDATE assignments SET status = ?, approve_time = ?
                          WHERE assignment_id = ?;""",
-                      ('Disconnected', approve_time, assignment_id))
+                ('Disconnected', approve_time, assignment_id),
+            )
 
             # Increment worker disconnected
-            c.execute("""UPDATE workers SET disconnected = disconnected + 1
+            c.execute(
+                """UPDATE workers SET disconnected = disconnected + 1
                          WHERE worker_id = ?;""",
-                      (worker_id, ))
+                (worker_id,),
+            )
 
             # update the pairing status
-            c.execute("""UPDATE pairings SET status = ?, task_end = ?
+            c.execute(
+                """UPDATE pairings SET status = ?, task_end = ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
-                      (disconnect_type, time.time(), worker_id, assignment_id))
+                (disconnect_type, time.time(), worker_id, assignment_id),
+            )
 
             # Update run data to have another completed
-            c.execute('UPDATE runs SET failed = failed + 1 WHERE run_id = ?;',
-                      (task_group_id, ))
+            c.execute(
+                'UPDATE runs SET failed = failed + 1 WHERE run_id = ?;',
+                (task_group_id,),
+            )
             conn.commit()
 
-    def log_expire_assignment(self, worker_id, assignment_id,
-                              task_group_id=None):
+    def log_expire_assignment(self, worker_id, assignment_id, task_group_id=None):
         """Note that an assignment was expired by us"""
         task_group_id = self._force_task_group_id(task_group_id)
         with self.table_access_condition:
@@ -363,24 +416,31 @@ class MTurkDataHandler():
             c = conn.cursor()
 
             # Update assign data to expired
-            c.execute("""UPDATE assignments SET status = ?
+            c.execute(
+                """UPDATE assignments SET status = ?
                          WHERE assignment_id = ?;""",
-                      ('Expired', assignment_id))
+                ('Expired', assignment_id),
+            )
 
             # Increment worker completed
-            c.execute("""UPDATE workers SET expired = expired + 1
+            c.execute(
+                """UPDATE workers SET expired = expired + 1
                          WHERE worker_id = ?;""",
-                      (worker_id, ))
+                (worker_id,),
+            )
 
             # update the pairing status
-            c.execute("""UPDATE pairings SET status = ?, task_end = ?
+            c.execute(
+                """UPDATE pairings SET status = ?, task_end = ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
-                      (AssignState.STATUS_EXPIRED, time.time(), worker_id,
-                       assignment_id))
+                (AssignState.STATUS_EXPIRED, time.time(), worker_id, assignment_id),
+            )
 
             # Update run data to have another completed
-            c.execute('UPDATE runs SET failed = failed + 1 WHERE run_id = ?;',
-                      (task_group_id, ))
+            c.execute(
+                'UPDATE runs SET failed = failed + 1 WHERE run_id = ?;',
+                (task_group_id,),
+            )
             conn.commit()
 
     def log_submit_assignment(self, worker_id, assignment_id):
@@ -389,9 +449,11 @@ class MTurkDataHandler():
             conn = self._get_connection()
             c = conn.cursor()
             # update the assignment status to reviewable
-            c.execute("""UPDATE assignments SET status = ?
+            c.execute(
+                """UPDATE assignments SET status = ?
                          WHERE assignment_id = ?;""",
-                      ('Reviewable', assignment_id))
+                ('Reviewable', assignment_id),
+            )
             conn.commit()
 
     def log_abandon_assignment(self, worker_id, assignment_id):
@@ -400,13 +462,17 @@ class MTurkDataHandler():
             conn = self._get_connection()
             c = conn.cursor()
             # update the assignment status to reviewable
-            c.execute("""UPDATE assignments SET status = ?
+            c.execute(
+                """UPDATE assignments SET status = ?
                          WHERE assignment_id = ?;""",
-                      ('Abandoned', assignment_id))
+                ('Abandoned', assignment_id),
+            )
             # Increment worker completed
-            c.execute("""UPDATE workers SET disconnected = disconnected + 1
+            c.execute(
+                """UPDATE workers SET disconnected = disconnected + 1
                          WHERE worker_id = ?;""",
-                      (worker_id, ))
+                (worker_id,),
+            )
             conn.commit()
 
     def log_start_onboard(self, worker_id, assignment_id, conversation_id):
@@ -414,11 +480,18 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('''UPDATE pairings SET status = ?, onboarding_start = ?,
+            c.execute(
+                '''UPDATE pairings SET status = ?, onboarding_start = ?,
                          onboarding_id = ?
                          WHERE worker_id = ? AND assignment_id = ?;''',
-                      (AssignState.STATUS_ONBOARDING, time.time(),
-                       conversation_id, worker_id, assignment_id))
+                (
+                    AssignState.STATUS_ONBOARDING,
+                    time.time(),
+                    conversation_id,
+                    worker_id,
+                    assignment_id,
+                ),
+            )
             conn.commit()
 
     def log_finish_onboard(self, worker_id, assignment_id):
@@ -426,10 +499,11 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""UPDATE pairings SET status = ?, onboarding_end = ?
+            c.execute(
+                """UPDATE pairings SET status = ?, onboarding_end = ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
-                      (AssignState.STATUS_WAITING, time.time(), worker_id,
-                       assignment_id))
+                (AssignState.STATUS_WAITING, time.time(), worker_id, assignment_id),
+            )
             conn.commit()
 
     def log_start_task(self, worker_id, assignment_id, conversation_id):
@@ -437,11 +511,18 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""UPDATE pairings SET status = ?, task_start = ?,
+            c.execute(
+                """UPDATE pairings SET status = ?, task_start = ?,
                          conversation_id = ? WHERE worker_id = ?
                          AND assignment_id = ?;""",
-                      (AssignState.STATUS_IN_TASK, time.time(),
-                       conversation_id, worker_id, assignment_id))
+                (
+                    AssignState.STATUS_IN_TASK,
+                    time.time(),
+                    conversation_id,
+                    worker_id,
+                    assignment_id,
+                ),
+            )
             conn.commit()
 
     def log_award_amount(self, worker_id, assignment_id, amount, reason):
@@ -454,10 +535,12 @@ class MTurkDataHandler():
             reason = "${} for {}\n".format(amount, reason)
             # Bonus amount is stored in a cents int in the SQL table
             cent_amount = int(amount * 100)
-            c.execute("""UPDATE pairings SET bonus_amount = bonus_amount + ?,
+            c.execute(
+                """UPDATE pairings SET bonus_amount = bonus_amount + ?,
                         bonus_text = bonus_text || ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
-                      (cent_amount, reason, worker_id, assignment_id))
+                (cent_amount, reason, worker_id, assignment_id),
+            )
             conn.commit()
 
     def log_pay_extra_bonus(self, worker_id, assignment_id, amount, reason):
@@ -470,11 +553,13 @@ class MTurkDataHandler():
             reason = "${} for {}\n".format(amount, reason)
             # Bonus amount is stored in a cents int in the SQL table
             cent_amount = int(amount * 100)
-            c.execute("""UPDATE pairings
+            c.execute(
+                """UPDATE pairings
                         SET extra_bonus_amount = extra_bonus_amount + ?,
                         extra_bonus_text = extra_bonus_text || ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
-                      (cent_amount, reason, worker_id, assignment_id))
+                (cent_amount, reason, worker_id, assignment_id),
+            )
             conn.commit()
 
     def log_bonus_paid(self, worker_id, assignment_id):
@@ -484,9 +569,11 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""UPDATE pairings SET bonus_paid = ?
+            c.execute(
+                """UPDATE pairings SET bonus_paid = ?
                          WHERE worker_id = ? AND assignment_id = ?;""",
-                      (True, worker_id, assignment_id))
+                (True, worker_id, assignment_id),
+            )
             conn.commit()
 
     def log_approve_assignment(self, assignment_id):
@@ -497,8 +584,9 @@ class MTurkDataHandler():
             conn = self._get_connection()
             c = conn.cursor()
 
-            c.execute('SELECT * FROM assignments WHERE assignment_id = ?;',
-                      (assignment_id, ))
+            c.execute(
+                'SELECT * FROM assignments WHERE assignment_id = ?;', (assignment_id,)
+            )
             assignment = c.fetchone()
             if assignment is None:
                 return
@@ -508,20 +596,26 @@ class MTurkDataHandler():
                 return  # assign already approved
 
             # handle the approving part
-            c.execute("""UPDATE assignments SET status = ?
+            c.execute(
+                """UPDATE assignments SET status = ?
                          WHERE assignment_id = ?;""",
-                      ('Approved', assignment_id))
+                ('Approved', assignment_id),
+            )
 
             # This was a rejection override
             if status == 'Rejected':
-                c.execute("""UPDATE workers SET approved = approved + 1,
+                c.execute(
+                    """UPDATE workers SET approved = approved + 1,
                              rejected = rejected - 1
                              WHERE worker_id = ?;""",
-                          (worker_id, ))
+                    (worker_id,),
+                )
             else:
-                c.execute("""UPDATE workers SET approved = approved + 1
+                c.execute(
+                    """UPDATE workers SET approved = approved + 1
                              WHERE worker_id = ?;""",
-                          (worker_id, ))
+                    (worker_id,),
+                )
 
             conn.commit()
 
@@ -532,20 +626,26 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""UPDATE assignments SET status = ?
+            c.execute(
+                """UPDATE assignments SET status = ?
                          WHERE assignment_id = ? AND status != ?;""",
-                      ('Rejected', assignment_id, 'Rejected'))
+                ('Rejected', assignment_id, 'Rejected'),
+            )
             # If this reject actually happened, update worker's rejections
             if c.rowcount > 0:
-                c.execute('SELECT * FROM assignments WHERE assignment_id = ?;',
-                          (assignment_id, ))
+                c.execute(
+                    'SELECT * FROM assignments WHERE assignment_id = ?;',
+                    (assignment_id,),
+                )
                 assignment = c.fetchone()
                 if assignment is None:
                     return
                 worker_id = assignment['worker_id']
-                c.execute("""UPDATE workers SET rejected = rejected + 1
+                c.execute(
+                    """UPDATE workers SET rejected = rejected + 1
                              WHERE worker_id = ?;""",
-                          (worker_id, ))
+                    (worker_id,),
+                )
             conn.commit()
 
     def log_worker_note(self, worker_id, assignment_id, note):
@@ -557,9 +657,11 @@ class MTurkDataHandler():
             try:
                 conn = self._get_connection()
                 c = conn.cursor()
-                c.execute("""UPDATE pairings SET notes = notes || ?
+                c.execute(
+                    """UPDATE pairings SET notes = notes || ?
                              WHERE worker_id = ? AND assignment_id = ?;""",
-                          (note, worker_id, assignment_id))
+                    (note, worker_id, assignment_id),
+                )
                 conn.commit()
             except Exception as e:
                 print(repr(e))
@@ -569,8 +671,7 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('SELECT * FROM workers LIMIT ?,?;',
-                      (start, start + count))
+            c.execute('SELECT * FROM workers LIMIT ?,?;', (start, start + count))
             results = c.fetchall()
             return results
 
@@ -579,8 +680,7 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('SELECT * FROM workers WHERE worker_id = ?;',
-                      (worker_id, ))
+            c.execute('SELECT * FROM workers WHERE worker_id = ?;', (worker_id,))
             results = c.fetchone()
             return results
 
@@ -589,12 +689,14 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""SELECT assignments.* FROM assignments
+            c.execute(
+                """SELECT assignments.* FROM assignments
                          WHERE assignments.hit_id IN (
                            SELECT hits.hit_id FROM hits
                            WHERE hits.run_id = ?
                          );""",
-                      (task_group_id, ))
+                (task_group_id,),
+            )
             results = c.fetchall()
             return results
 
@@ -603,8 +705,9 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('SELECT * FROM assignments WHERE assignment_id = ?;',
-                      (assignment_id, ))
+            c.execute(
+                'SELECT * FROM assignments WHERE assignment_id = ?;', (assignment_id,)
+            )
             results = c.fetchone()
             return results
 
@@ -613,9 +716,11 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""SELECT * FROM pairings WHERE worker_id = ?
+            c.execute(
+                """SELECT * FROM pairings WHERE worker_id = ?
                          AND assignment_id = ?;""",
-                      (worker_id, assignment_id))
+                (worker_id, assignment_id),
+            )
             results = c.fetchone()
             return results
 
@@ -624,8 +729,7 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('SELECT * FROM runs LIMIT ?,?;',
-                      (start, start + count))
+            c.execute('SELECT * FROM runs LIMIT ?,?;', (start, start + count))
             results = c.fetchall()
             return results
 
@@ -636,8 +740,7 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('SELECT * FROM runs WHERE run_id = ?;',
-                      (task_group_id, ))
+            c.execute('SELECT * FROM runs WHERE run_id = ?;', (task_group_id,))
             results = c.fetchone()
             return results
 
@@ -646,7 +749,7 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("SELECT * FROM hits WHERE run_id = ?;", (run_id, ))
+            c.execute("SELECT * FROM hits WHERE run_id = ?;", (run_id,))
             results = c.fetchall()
             return results
 
@@ -655,7 +758,7 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("SELECT * FROM hits WHERE hit_id = ?;", (hit_id, ))
+            c.execute("SELECT * FROM hits WHERE hit_id = ?;", (hit_id,))
             results = c.fetchone()
             return results
 
@@ -664,8 +767,9 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("SELECT * FROM pairings WHERE assignment_id = ?;",
-                      (assignment_id, ))
+            c.execute(
+                "SELECT * FROM pairings WHERE assignment_id = ?;", (assignment_id,)
+            )
             results = c.fetchall()
             return results
 
@@ -674,13 +778,15 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""SELECT * FROM pairings
-                         WHERE run_id = ?;""", (task_group_id, ))
+            c.execute(
+                """SELECT * FROM pairings
+                         WHERE run_id = ?;""",
+                (task_group_id,),
+            )
             results = c.fetchall()
             return results
 
-    def get_pairings_for_conversation(self, conversation_id,
-                                      task_group_id=None):
+    def get_pairings_for_conversation(self, conversation_id, task_group_id=None):
         """get all pairings for a singular conversation in a run by
         conversation_id and task_group_id
         """
@@ -688,8 +794,11 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""SELECT * FROM pairings WHERE conversation_id = ?
-                         AND run_id = ?;""", (conversation_id, task_group_id))
+            c.execute(
+                """SELECT * FROM pairings WHERE conversation_id = ?
+                         AND run_id = ?;""",
+                (conversation_id, task_group_id),
+            )
             results = c.fetchall()
             return results
 
@@ -698,8 +807,7 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("SELECT * FROM assignments WHERE worker_id = ?;",
-                      (worker_id, ))
+            c.execute("SELECT * FROM assignments WHERE worker_id = ?;", (worker_id,))
             results = c.fetchall()
             return results
 
@@ -708,13 +816,11 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute('SELECT * FROM pairings WHERE worker_id = ?;',
-                      (worker_id, ))
+            c.execute('SELECT * FROM pairings WHERE worker_id = ?;', (worker_id,))
             results = c.fetchall()
             return results
 
-    def get_all_task_assignments_for_worker(self, worker_id,
-                                            task_group_id=None):
+    def get_all_task_assignments_for_worker(self, worker_id, task_group_id=None):
         """get all assignments for a particular worker within a
         particular run by worker_id and task_group_id
         """
@@ -722,14 +828,16 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""SELECT assignments.assignment_id, assignments.status,
+            c.execute(
+                """SELECT assignments.assignment_id, assignments.status,
                          assignments.approve_time, assignments.worker_id,
                          assignments.hit_id
                          FROM assignments
                          INNER JOIN hits on assignments.hit_id = hits.hit_id
                          WHERE assignments.worker_id = ? AND hits.run_id = ?;
                          """,
-                      (worker_id, task_group_id))
+                (worker_id, task_group_id),
+            )
             results = c.fetchall()
             return results
 
@@ -741,9 +849,11 @@ class MTurkDataHandler():
         with self.table_access_condition:
             conn = self._get_connection()
             c = conn.cursor()
-            c.execute("""SELECT * FROM pairings WHERE worker_id = ?
+            c.execute(
+                """SELECT * FROM pairings WHERE worker_id = ?
                          AND run_id = ?;""",
-                      (worker_id, task_group_id))
+                (worker_id, task_group_id),
+            )
             results = c.fetchall()
             return results
 
@@ -788,13 +898,9 @@ class MTurkDataHandler():
     def get_full_conversation_data(task_group_id, conv_id, is_sandbox):
         """Gets all conversation data saved for a world"""
         target = 'sandbox' if is_sandbox else 'live'
-        return_data = {
-            'custom_data': {},
-            'worker_data': {},
-        }
+        return_data = {'custom_data': {}, 'worker_data': {}}
 
-        target_dir = os.path.join(
-            data_dir, target, task_group_id, conv_id)
+        target_dir = os.path.join(data_dir, target, task_group_id, conv_id)
         target_dir_custom = os.path.join(target_dir, 'custom')
         custom_file = os.path.join(target_dir_custom, 'data.json')
         if os.path.exists(custom_file):

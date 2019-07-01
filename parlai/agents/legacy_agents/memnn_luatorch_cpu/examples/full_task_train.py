@@ -35,16 +35,21 @@ def main():
     parlai_home = os.environ['PARLAI_HOME']
     if '--remote-cmd' not in sys.argv:
         if os.system('which luajit') != 0:
-            raise RuntimeError('Could not detect torch luajit installed: ' +
-                               'please install torch from http://torch.ch ' +
-                               'or manually set --remote-cmd for this example.')
+            raise RuntimeError(
+                'Could not detect torch luajit installed: '
+                + 'please install torch from http://torch.ch '
+                + 'or manually set --remote-cmd for this example.'
+            )
         sys.argv.append('--remote-cmd')
-        sys.argv.append('luajit {}/parlai/agents/legacy_agents/'.format(
-            parlai_home) + 'memnn_luatorch_cpu/memnn_zmq_parsed.lua')
+        sys.argv.append(
+            'luajit {}/parlai/agents/legacy_agents/'.format(parlai_home)
+            + 'memnn_luatorch_cpu/memnn_zmq_parsed.lua'
+        )
     if '--remote-args' not in sys.argv:
         sys.argv.append('--remote-args')
-        sys.argv.append('{}/examples/'.format(parlai_home) +
-                        'memnn_luatorch_cpu/params_default.lua')
+        sys.argv.append(
+            '{}/examples/'.format(parlai_home) + 'memnn_luatorch_cpu/params_default.lua'
+        )
 
     opt = argparser.parse_args()
 
@@ -64,8 +69,7 @@ def main():
         while not world_dict.epoch_done():
             cnt += 1
             if cnt > opt['dict_max_exs'] and opt['dict_max_exs'] > 0:
-                print('Processed {} exs, moving on.'.format(
-                      opt['dict_max_exs']))
+                print('Processed {} exs, moving on.'.format(opt['dict_max_exs']))
                 # don't wait too long...
                 break
 

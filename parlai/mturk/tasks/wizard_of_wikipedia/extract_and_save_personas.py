@@ -26,12 +26,12 @@ def extract_and_save(opt, save=True):
             if opt.get('persona_type') == 'both':
                 persona_1 = [p for p in persona_text if 'your persona:' in p]
                 persona_2 = [p for p in persona_text if 'partner\'s persona:' in p]
-                persona_1 = [p[p.find(':')+1:] for p in persona_1]
-                persona_2 = [p[p.find(':')+1:] for p in persona_2]
+                persona_1 = [p[p.find(':') + 1 :] for p in persona_1]
+                persona_2 = [p[p.find(':') + 1 :] for p in persona_2]
                 personas += [persona_1, persona_2]
             else:
                 persona = [p for p in persona_text if 'persona:' in p]
-                persona = [p[p.find(':')+1:] for p in persona]
+                persona = [p[p.find(':') + 1 :] for p in persona]
                 personas.append(persona)
             new_episode = act.get('episode_done')
         else:
@@ -40,8 +40,7 @@ def extract_and_save(opt, save=True):
         for idx, persona in enumerate(personas):
             with open('{}/{}.pkl'.format(personas_path, idx), 'wb') as f:
                 pickle.dump(persona, f)
-        print('---Finished extracting and saving personas, to {}'.format(
-              personas_path))
+        print('---Finished extracting and saving personas, to {}'.format(personas_path))
     return personas
 
 
@@ -52,8 +51,8 @@ def main(opt):
     opt['task'] = teacher_name
     if 'personas_path' not in opt:
         personas_path = '{}/data/wizard_of_perZOna/personas-{}/'.format(
-            os.getcwd(),
-            opt['task'])
+            os.getcwd(), opt['task']
+        )
         opt['personas_path'] = personas_path
     opt['datatype'] = 'train:ordered:stream'
     opt['numthreads'] = 1
@@ -64,10 +63,15 @@ def main(opt):
 
 if __name__ == '__main__':
     parser = ParlaiParser()
-    parser.add_argument('--persona-type', default='both', type=str,
-                        choices=['both', 'self', 'other'],
-                        help='Which personas to load from personachat')
-    parser.add_argument('--revised', default=False, type='bool',
-                        help='Whether to use revised personas')
+    parser.add_argument(
+        '--persona-type',
+        default='both',
+        type=str,
+        choices=['both', 'self', 'other'],
+        help='Which personas to load from personachat',
+    )
+    parser.add_argument(
+        '--revised', default=False, type='bool', help='Whether to use revised personas'
+    )
     opt = parser.parse_args()
     personas = main(opt)

@@ -37,10 +37,22 @@ class WikiSQLTeacher(DialogTeacher):
 
         self.agg_ops = ['', 'MAX', 'MIN', 'COUNT', 'SUM', 'AVG']
         self.cond_ops = ['=', '>', '<', 'OP']
-        self.syms = ['SELECT', 'WHERE', 'AND', 'COL', 'TABLE', 'CAPTION', 'PAGE',
-                     'SECTION', 'OP', 'COND', 'QUESTION',
-                     'AGG',
-                     'AGGOPS', 'CONDOPS']
+        self.syms = [
+            'SELECT',
+            'WHERE',
+            'AND',
+            'COL',
+            'TABLE',
+            'CAPTION',
+            'PAGE',
+            'SECTION',
+            'OP',
+            'COND',
+            'QUESTION',
+            'AGG',
+            'AGGOPS',
+            'CONDOPS',
+        ]
 
         # store identifier for the teacher in the dialog
         self.id = 'wikisql'
@@ -56,8 +68,9 @@ class WikiSQLTeacher(DialogTeacher):
 
         new_episode = True
 
-        table_file_path = os.path.join(input_path, 'data',
-                                       '{}.tables.jsonl'.format(self.dt))
+        table_file_path = os.path.join(
+            input_path, 'data', '{}.tables.jsonl'.format(self.dt)
+        )
         qa_file_path = os.path.join(input_path, 'data', '{}.jsonl'.format(self.dt))
         with open(table_file_path) as table_file:
             table_data = [json.loads(jline) for jline in table_file]
@@ -70,13 +83,15 @@ class WikiSQLTeacher(DialogTeacher):
             header = table['header']
 
             sql_query = 'SELECT {agg} {sel} FROM table'.format(
-                agg=self.agg_ops[query['agg']],
-                sel=header[query['sel']],
+                agg=self.agg_ops[query['agg']], sel=header[query['sel']]
             )
             if query['conds']:
                 sql_query += ' WHERE ' + ' AND '.join(
-                    ['{} {} {}'.format(header[i], self.cond_ops[o], v) for i, o, v in
-                     query['conds']])
+                    [
+                        '{} {} {}'.format(header[i], self.cond_ops[o], v)
+                        for i, o, v in query['conds']
+                    ]
+                )
             return sql_query
 
         def table_into_context(table):
@@ -87,7 +102,8 @@ class WikiSQLTeacher(DialogTeacher):
                 return 'The table has column {}'.format(header[0])
             else:
                 return 'The table has column names {} and {}.'.format(
-                    ', '.join(header[:-1]), header[-1])
+                    ', '.join(header[:-1]), header[-1]
+                )
 
         for line in qa_data:
             id = line["table_id"]

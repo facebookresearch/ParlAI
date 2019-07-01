@@ -286,7 +286,7 @@ class IrBaselineAgent(Agent):
         if cands:
             hist_sz = self.opt.get('history_size', 1)
             left_idx = max(0, len(self.history) - hist_sz)
-            text = ' '.join(self.history[left_idx:len(self.history)])
+            text = ' '.join(self.history[left_idx : len(self.history)])
             rep = self.build_query_representation(text)
             reply['text_candidates'] = rank_candidates(
                 rep, cands, self.length_penalty, self.dictionary

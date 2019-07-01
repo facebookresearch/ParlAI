@@ -8,17 +8,48 @@ import json
 import os
 import random
 
-from parlai.projects.self_feeding.utils import (
-    extract_fb_episodes,
-    episode_to_examples,
-)
+from parlai.projects.self_feeding.utils import extract_fb_episodes, episode_to_examples
 
-FAMILY = ["wife", "husband", "spouse", "mom", "momma", "mommy", "mum", "mother", "dad",
-          "dadda", "daddy", "father", "parent", "grandparent", "grandma", "grandmom",
-          "grandmum", "grandmother", "nana", "grandpa", "grandad", "granddad",
-          "grandfather", "pappy", "brother", "sister", "sibling", "cousin", "aunt",
-          "auntie", "uncle", "child", "children", "kid", "son", "daughter", "inlaw",
-          "in-law"]
+FAMILY = [
+    "wife",
+    "husband",
+    "spouse",
+    "mom",
+    "momma",
+    "mommy",
+    "mum",
+    "mother",
+    "dad",
+    "dadda",
+    "daddy",
+    "father",
+    "parent",
+    "grandparent",
+    "grandma",
+    "grandmom",
+    "grandmum",
+    "grandmother",
+    "nana",
+    "grandpa",
+    "grandad",
+    "granddad",
+    "grandfather",
+    "pappy",
+    "brother",
+    "sister",
+    "sibling",
+    "cousin",
+    "aunt",
+    "auntie",
+    "uncle",
+    "child",
+    "children",
+    "kid",
+    "son",
+    "daughter",
+    "inlaw",
+    "in-law",
+]
 variants = []
 for word in FAMILY:
     variants.append(f"{word}s")
@@ -37,25 +68,43 @@ TOPIC_NAME = 'sports'  # ['family', 'sports']
 
 def setup_args():
     parser = ArgumentParser()
-    parser.add_argument('-if', '--infile', type=str,
-                        default='data/ConvAI2/valid_self_original.txt')
-    parser.add_argument('-of', '--outfile', type=str,
-                        default='data/convai2meta/dialog/valid.txt')
-    parser.add_argument('--min-unit', type=str, default='example',
-                        choices=['episode', 'example'],
-                        help="The minimal unit that must stay grouped together")
-    parser.add_argument('-shuf', '--shuffle', type=int, default=True,
-                        help="If True, shuffle the examples before writing them")
-    parser.add_argument('-histsz', '--history-size', type=int, default=-1,
-                        help="The number of turns to concatenate and include in the "
-                        "prompt. Default: include all turns and filter in the teacher.")
+    parser.add_argument(
+        '-if', '--infile', type=str, default='data/ConvAI2/valid_self_original.txt'
+    )
+    parser.add_argument(
+        '-of', '--outfile', type=str, default='data/convai2meta/dialog/valid.txt'
+    )
+    parser.add_argument(
+        '--min-unit',
+        type=str,
+        default='example',
+        choices=['episode', 'example'],
+        help="The minimal unit that must stay grouped together",
+    )
+    parser.add_argument(
+        '-shuf',
+        '--shuffle',
+        type=int,
+        default=True,
+        help="If True, shuffle the examples before writing them",
+    )
+    parser.add_argument(
+        '-histsz',
+        '--history-size',
+        type=int,
+        default=-1,
+        help="The number of turns to concatenate and include in the "
+        "prompt. Default: include all turns and filter in the teacher.",
+    )
     opt = vars(parser.parse_args())
     return opt
 
 
 def includes_topic(episode, topic):
-    episode_words = (' '.join([parley.context for parley in episode]).split() +
-                     ' '.join([parley.response for parley in episode]).split())
+    episode_words = (
+        ' '.join([parley.context for parley in episode]).split()
+        + ' '.join([parley.response for parley in episode]).split()
+    )
     if TOPIC_NAME == 'family':
         return any(w in episode_words for w in topic)
     elif TOPIC_NAME == 'sports':
@@ -92,9 +141,11 @@ def main(opt):
 
     total = len(on_topic_exs) + len(off_topic_exs)
     on_pct = len(on_topic_exs) / total
-    print(f"Separated {total} examples (from {num_episodes} episodes) into "
-          f"{len(off_topic_exs)} off-topic and {len(on_topic_exs)} "
-          f"({on_pct * 100:.1f}%) on-topic")
+    print(
+        f"Separated {total} examples (from {num_episodes} episodes) into "
+        f"{len(off_topic_exs)} off-topic and {len(on_topic_exs)} "
+        f"({on_pct * 100:.1f}%) on-topic"
+    )
 
     outfile_base, outfile_ext = os.path.splitext(opt['outfile'])
     unit_prefix = opt['min_unit'][:3]
@@ -110,7 +161,9 @@ def main(opt):
 
 
 if __name__ == '__main__':
-    print("WARNING: With inline candidates, family words are still being encoded; "
-          "DictAgent makes vocab from text,labels right now")
+    print(
+        "WARNING: With inline candidates, family words are still being encoded; "
+        "DictAgent makes vocab from text,labels right now"
+    )
     opt = setup_args()
     main(opt)

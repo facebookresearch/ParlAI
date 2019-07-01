@@ -5,16 +5,21 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
-from parlai.mturk.core.agents import \
-    MTURK_DISCONNECT_MESSAGE, RETURN_MESSAGE, TIMEOUT_MESSAGE
+from parlai.mturk.core.agents import (
+    MTURK_DISCONNECT_MESSAGE,
+    RETURN_MESSAGE,
+    TIMEOUT_MESSAGE,
+)
 
 import time
 
 
 def is_disconnected(act):
-    return 'text' in act and \
-            act['text'] in [MTURK_DISCONNECT_MESSAGE, RETURN_MESSAGE,
-                            TIMEOUT_MESSAGE]
+    return 'text' in act and act['text'] in [
+        MTURK_DISCONNECT_MESSAGE,
+        RETURN_MESSAGE,
+        TIMEOUT_MESSAGE,
+    ]
 
 
 class LightEvalTestWorld(MTurkOnboardWorld):
@@ -22,24 +27,42 @@ class LightEvalTestWorld(MTurkOnboardWorld):
     blocking qualification if the worker fails the test.
     '''
 
-    GESTURES = list(map(lambda x: 'gesture ' + x, [
-      'applaud', 'blush', 'cry', 'dance',
-      'frown', 'gasp', 'grin', 'groan', 'growl',
-      'yawn', 'laugh', 'nod', 'nudge', 'ponder', 'pout', 'scream',
-      'shrug', 'sigh', 'smile', 'stare', 'wave', 'wink',
-    ]))
+    GESTURES = list(
+        map(
+            lambda x: 'gesture ' + x,
+            [
+                'applaud',
+                'blush',
+                'cry',
+                'dance',
+                'frown',
+                'gasp',
+                'grin',
+                'groan',
+                'growl',
+                'yawn',
+                'laugh',
+                'nod',
+                'nudge',
+                'ponder',
+                'pout',
+                'scream',
+                'shrug',
+                'sigh',
+                'smile',
+                'stare',
+                'wave',
+                'wink',
+            ],
+        )
+    )
 
-    block_act = {
-        'id': 'System',
-        'text': "FAILED",
-        'task_data': {'turn': 'FAILED'},
-    }
+    block_act = {'id': 'System', 'text': "FAILED", 'task_data': {'turn': 'FAILED'}}
 
     def block_loop(self):
         print('Worker {} failed onboarding'.format(self.mturk_agent.worker_id))
         self.mturk_agent.observe(self.block_act)
-        self.mturk_agent.mturk_manager.soft_block_worker(
-            self.mturk_agent.worker_id)
+        self.mturk_agent.mturk_manager.soft_block_worker(self.mturk_agent.worker_id)
         act = self.mturk_agent.act()
         while not is_disconnected(act):
             self.mturk_agent.observe(self.block_act)
@@ -63,22 +86,19 @@ class LightEvalTestWorld(MTurkOnboardWorld):
                 'turn': 'FIRST_TURN',
                 'actions': self.GESTURES,
                 'agent_id': 'Guard',
-                'text':
-                    'Bahahaha that\'s a great one! Where\'d you get that from?',
-                'persona':
-                    'I\'m a guard of the royal family. I have a loud laugh, '
-                    'and people hear it often as I love jokes. I stand up for '
-                    'rightousness, and have a short temper when it comes to '
-                    'insults against the king. Sometimes you need to knock '
-                    'some sense into people.',
+                'text': 'Bahahaha that\'s a great one! Where\'d you get that from?',
+                'persona': 'I\'m a guard of the royal family. I have a loud laugh, '
+                'and people hear it often as I love jokes. I stand up for '
+                'rightousness, and have a short temper when it comes to '
+                'insults against the king. Sometimes you need to knock '
+                'some sense into people.',
                 'base_name': 'Guard',
                 'partner_name': 'Jester',
-                'setting':
-                    'You are in the servants\' quarters. Many people are '
-                    'sitting around waiting to be called for services. It\'s '
-                    'cozy, but not cramped. A chest is here. A Jester is here. '
-                    'You are carrying a spear.',
-            }
+                'setting': 'You are in the servants\' quarters. Many people are '
+                'sitting around waiting to be called for services. It\'s '
+                'cozy, but not cramped. A chest is here. A Jester is here. '
+                'You are carrying a spear.',
+            },
         }
         self.mturk_agent.observe(first_act)
         act = self.mturk_agent.act()
@@ -115,7 +135,7 @@ class LightEvalTestWorld(MTurkOnboardWorld):
                     'I just feel he doesn\'t have the best sense of humor...',
                     'Yeah landlubber, aye find this is a great hiding spot too.',
                     'If only you could say that to my face one more time. I\'ve missed you too much...',  # NOQA
-                    'One more beer for the gang? I feel like you would be the type to have plenty to drink.', # NOQA
+                    'One more beer for the gang? I feel like you would be the type to have plenty to drink.',  # NOQA
                     'The servants quarters are pretty tightly packed aren\'t they?',
                     'I hate being an archer...',
                     correct_phrase,
@@ -128,8 +148,8 @@ class LightEvalTestWorld(MTurkOnboardWorld):
                     'Aw sweetheart, I just want you to know how much I care.',
                     'I have no spells for you! My wizardry is just for me and my acolytes.',  # NOQA
                     'How did you find out the kinds of jokes that the king likes so much?',  # NOQA
-                ]
-            }
+                ],
+            },
         }
         self.mturk_agent.observe(second_act)
         act = self.mturk_agent.act()
@@ -154,9 +174,8 @@ class LightEvalTestWorld(MTurkOnboardWorld):
             'task_data': {
                 'wrong': 0,
                 'turn': 'THIRD_TURN',
-                'text':
-                    'You gotta get your senses straight. Hyah! '
-                    'Consider this a warning...',
+                'text': 'You gotta get your senses straight. Hyah! '
+                'Consider this a warning...',
                 'actions': [
                     'drop spear',
                     'wield spear',
@@ -165,8 +184,8 @@ class LightEvalTestWorld(MTurkOnboardWorld):
                     'get coins from chest',
                     'hit Jester',
                     'steal ball from Jester',
-                ]
-            }
+                ],
+            },
         }
         self.mturk_agent.observe(third_act)
         act = self.mturk_agent.act()
@@ -185,11 +204,13 @@ class LightEvalTestWorld(MTurkOnboardWorld):
                 return
 
         self.did_complete = True
-        self.mturk_agent.observe({
-            'id': 'System',
-            'text': 'FINAL_TURN',
-            'task_data': {'turn': 'FINAL_TURN', 'wrong': 0}
-        })
+        self.mturk_agent.observe(
+            {
+                'id': 'System',
+                'text': 'FINAL_TURN',
+                'task_data': {'turn': 'FINAL_TURN', 'wrong': 0},
+            }
+        )
         self.episodeDone = True
         time.sleep(3)
         return
@@ -208,8 +229,7 @@ class LightEvalTaskWorld(MTurkTaskWorld):
         self.completed = False
         self.selections = []
         self.corrects = [
-            ex['labels'][0] if 'labels' in ex else ex['eval_labels']
-            for ex in sample
+            ex['labels'][0] if 'labels' in ex else ex['eval_labels'] for ex in sample
         ]
         self.use_train = use_train
         self.max_wrong = max_wrong
@@ -219,7 +239,7 @@ class LightEvalTaskWorld(MTurkTaskWorld):
 
     def get_current_turn_context(self):
         all_lines = []
-        for act in self.sample_acts[:self.turn]:
+        for act in self.sample_acts[: self.turn]:
             lines = act['text'].split('\n')
             if lines[-1].startswith('_self'):
                 lines = lines[:-1]
@@ -269,16 +289,17 @@ class LightEvalTaskWorld(MTurkTaskWorld):
                     self_message = {}
                 if line.startswith('_partner_say'):
                     partner_message['id'] = partner_name
-                    partner_message['text'] = \
-                        self.extract_from_flag(line, '_partner_say')
+                    partner_message['text'] = self.extract_from_flag(
+                        line, '_partner_say'
+                    )
                 if line.startswith('_partner_act'):
                     partner_message['task_data'] = {
                         'action': self.extract_from_flag(line, '_partner_act')
                     }
                 if line.startswith('_partner_emote'):
                     partner_message['task_data'] = {
-                        'action': 'gesture ' +
-                                  self.extract_from_flag(line, '_partner_emote')
+                        'action': 'gesture '
+                        + self.extract_from_flag(line, '_partner_emote')
                     }
             elif line.startswith('_self'):
                 if 'id' in partner_message:
@@ -286,16 +307,15 @@ class LightEvalTaskWorld(MTurkTaskWorld):
                     partner_message = {}
                 if line.startswith('_self_say'):
                     self_message['id'] = self_name
-                    self_message['text'] = \
-                        self.extract_from_flag(line, '_self_say')
+                    self_message['text'] = self.extract_from_flag(line, '_self_say')
                 if line.startswith('_self_act'):
                     self_message['task_data'] = {
                         'action': self.extract_from_flag(line, '_self_act')
                     }
                 if line.startswith('_self_emote'):
                     self_message['task_data'] = {
-                        'action': 'gesture ' +
-                                  self.extract_from_flag(line, '_self_emote')
+                        'action': 'gesture '
+                        + self.extract_from_flag(line, '_self_emote')
                     }
 
         if 'id' in partner_message:
@@ -305,8 +325,7 @@ class LightEvalTaskWorld(MTurkTaskWorld):
             'id': 'System',
             'text': 'TASK_DATA',
             'task_data': {
-                'actions':
-                    sorted(self.sample_acts[self.turn]['label_candidates']),
+                'actions': sorted(self.sample_acts[self.turn]['label_candidates']),
                 'text': self_text,
                 'curr_message_context': {'action': self_act},
                 'agent_id': self_name,
@@ -315,8 +334,8 @@ class LightEvalTaskWorld(MTurkTaskWorld):
                 'partner_name': partner_name,
                 'setting': setting_desc,
                 'setting_name': setting_name,
-                'messages': messages
-            }
+                'messages': messages,
+            },
         }
         return act
 
@@ -340,7 +359,8 @@ class LightEvalTaskWorld(MTurkTaskWorld):
             if wrong > self.max_wrong:
                 self.completed = False
                 self.mturk_agent.mturk_manager.soft_block_worker(
-                    self.mturk_agent.worker_id)
+                    self.mturk_agent.worker_id
+                )
                 print('Worker failed in train', self.mturk_agent.worker_id)
 
     def episode_done(self):

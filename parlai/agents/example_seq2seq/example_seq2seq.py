@@ -29,8 +29,9 @@ class EncoderRNN(nn.Module):
         self.hidden_size = hidden_size
 
         self.embedding = nn.Embedding(input_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=numlayers,
-                          batch_first=True)
+        self.gru = nn.GRU(
+            hidden_size, hidden_size, num_layers=numlayers, batch_first=True
+        )
 
     def forward(self, input, hidden=None):
         """Return encoded state.
@@ -57,8 +58,9 @@ class DecoderRNN(nn.Module):
         self.hidden_size = hidden_size
 
         self.embedding = nn.Embedding(output_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=numlayers,
-                          batch_first=True)
+        self.gru = nn.GRU(
+            hidden_size, hidden_size, num_layers=numlayers, batch_first=True
+        )
         self.out = nn.Linear(hidden_size, output_size)
         self.softmax = nn.LogSoftmax(dim=2)
 
@@ -87,20 +89,39 @@ class ExampleSeq2seqAgent(TorchAgent):
         """Add command-line arguments specifically for this agent."""
         super(ExampleSeq2seqAgent, cls).add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Seq2Seq Arguments')
-        agent.add_argument('-hs', '--hiddensize', type=int, default=128,
-                           help='size of the hidden layers')
-        agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
-                           help='size of the token embeddings')
-        agent.add_argument('-nl', '--numlayers', type=int, default=2,
-                           help='number of hidden layers')
-        agent.add_argument('-lr', '--learningrate', type=float, default=1,
-                           help='learning rate')
-        agent.add_argument('-dr', '--dropout', type=float, default=0.1,
-                           help='dropout rate')
-        agent.add_argument('--gpu', type=int, default=-1,
-                           help='which GPU device to use')
-        agent.add_argument('-rf', '--report-freq', type=float, default=0.001,
-                           help='Report frequency of prediction during eval.')
+        agent.add_argument(
+            '-hs',
+            '--hiddensize',
+            type=int,
+            default=128,
+            help='size of the hidden layers',
+        )
+        agent.add_argument(
+            '-esz',
+            '--embeddingsize',
+            type=int,
+            default=128,
+            help='size of the token embeddings',
+        )
+        agent.add_argument(
+            '-nl', '--numlayers', type=int, default=2, help='number of hidden layers'
+        )
+        agent.add_argument(
+            '-lr', '--learningrate', type=float, default=1, help='learning rate'
+        )
+        agent.add_argument(
+            '-dr', '--dropout', type=float, default=0.1, help='dropout rate'
+        )
+        agent.add_argument(
+            '--gpu', type=int, default=-1, help='which GPU device to use'
+        )
+        agent.add_argument(
+            '-rf',
+            '--report-freq',
+            type=float,
+            default=0.001,
+            help='Report frequency of prediction during eval.',
+        )
         ExampleSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
@@ -189,8 +210,9 @@ class ExampleSeq2seqAgent(TorchAgent):
             return self.dict.vec2txt(output_tokens)
         elif vector.dim() == 2:
             return [self.v2t(vector[i]) for i in range(vector.size(0))]
-        raise RuntimeError('Improper input to v2t with dimensions {}'.format(
-            vector.size()))
+        raise RuntimeError(
+            'Improper input to v2t with dimensions {}'.format(vector.size())
+        )
 
     def vectorize(self, *args, **kwargs):
         """Call vectorize without adding start tokens to labels."""
@@ -224,8 +246,7 @@ class ExampleSeq2seqAgent(TorchAgent):
         # Teacher forcing: Feed the target as the next input
         y_in = ys.narrow(1, 0, ys.size(1) - 1)
         decoder_input = torch.cat([starts, y_in], 1)
-        decoder_output, decoder_hidden = self.decoder(decoder_input,
-                                                      encoder_hidden)
+        decoder_output, decoder_hidden = self.decoder(decoder_input, encoder_hidden)
 
         scores = decoder_output.view(-1, decoder_output.size(-1))
         loss = self.criterion(scores, ys.view(-1))
@@ -261,8 +282,7 @@ class ExampleSeq2seqAgent(TorchAgent):
 
         for _ in range(self.longest_label):
             # generate at most longest_label tokens
-            decoder_output, decoder_hidden = self.decoder(decoder_input,
-                                                          decoder_hidden)
+            decoder_output, decoder_hidden = self.decoder(decoder_input, decoder_hidden)
             _max_score, preds = decoder_output.max(2)
             predictions.append(preds)
             decoder_input = preds  # set input to next step

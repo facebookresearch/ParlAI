@@ -22,8 +22,9 @@ class DefaultTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
         build(opt)
-        opt['datafile'] = os.path.join(opt['datapath'], 'Ubuntu',
-                                       opt['datatype'].split(':')[0] + '.csv')
+        opt['datafile'] = os.path.join(
+            opt['datapath'], 'Ubuntu', opt['datatype'].split(':')[0] + '.csv'
+        )
         super().__init__(opt, shared)
 
     def setup_data(self, path):

@@ -69,9 +69,11 @@ def interactive_rank(opt, print_parser=None):
                     if choice >= 0 and choice < len(cands):
                         choice = cands[choice]
                     else:
-                        print('[ Try again: you selected {i} but the '
-                              'candidates are indexed from 0 to {j}. ]'
-                              ''.format(i=choice, j=len(cands) - 1))
+                        print(
+                            '[ Try again: you selected {i} but the '
+                            'candidates are indexed from 0 to {j}. ]'
+                            ''.format(i=choice, j=len(cands) - 1)
+                        )
                         choice = None
                 except (TypeError, ValueError):
                     print('[ Try again: you did not enter a valid index. ]')

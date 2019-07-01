@@ -10,16 +10,15 @@ from joblib import Parallel, delayed
 
 class MTurkMultiAgentDialogOnboardWorld(MTurkOnboardWorld):
     def parley(self):
-        self.mturk_agent.observe({
-            'id': 'System',
-            'text': 'Welcome onboard!'
-        })
+        self.mturk_agent.observe({'id': 'System', 'text': 'Welcome onboard!'})
         self.mturk_agent.act()
-        self.mturk_agent.observe({
-            'id': 'System',
-            'text': 'Thank you for your input! Please wait while '
-                    'we match you with another worker...'
-        })
+        self.mturk_agent.observe(
+            {
+                'id': 'System',
+                'text': 'Thank you for your input! Please wait while '
+                'we match you with another worker...',
+            }
+        )
         self.episodeDone = True
 
 
@@ -28,6 +27,7 @@ class MTurkMultiAgentDialogWorld(MTurkTaskWorld):
     receiving as input the actions of all other agents since that agent last
     acted.
     """
+
     def __init__(self, opt, agents=None, shared=None):
         # Add passed in agents directly.
         self.agents = agents
@@ -65,7 +65,7 @@ class MTurkMultiAgentDialogWorld(MTurkTaskWorld):
                 agent.shutdown(timeout=None)
             except Exception:
                 agent.shutdown()  # not MTurkAgent
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(shutdown_agent)(agent) for agent in self.agents)
+
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(shutdown_agent)(agent) for agent in self.agents
+        )

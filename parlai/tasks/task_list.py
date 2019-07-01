@@ -17,7 +17,7 @@ task_list = [
             "Dataset containing algebraic word problems with rationales for "
             "their answers. From Ling et. al. 2017, Link: "
             "https://arxiv.org/pdf/1705.04146.pdf"
-        )
+        ),
     },
     {
         "id": "bAbI-1k",
@@ -179,7 +179,6 @@ task_list = [
             "supporting fact is represented as a structural triplet, such as "
             "<Cat,CapableOf,ClimbingTrees>.  Link: "
             "https://arxiv.org/abs/1606.05433"
-
         ),
     },
     {
@@ -192,6 +191,21 @@ task_list = [
             "how to divide a set of items, with each agent assigning different "
             "values to each item. From Lewis et al. '17. Link: "
             "https://arxiv.org/abs/1706.05125"
+        ),
+    },
+    {
+        "id": "HotpotQA",
+        "display_name": "HotpotQA",
+        "task": "hotpotqa",
+        "tags": ["All", "QA"],
+        "description": (
+            "HotpotQA is a dataset for multi-hop question answering."
+            "The overall setting is that given some context paragraphs"
+            "(e.g., a few paragraphs, or the entire Web) and a question,"
+            "a QA system answers the question by extracting a span of text"
+            "from the context. It is necessary to perform multi-hop reasoning"
+            "to correctly answer the question."
+            "Link: https://arxiv.org/pdf/1809.09600.pdf"
         ),
     },
     {
@@ -394,7 +408,7 @@ task_list = [
             "feedback to improve the chatbot's abilities. "
             "From Hancock et al. 2019, Link: "
             "https://arxiv.org/abs/1901.05415"
-        )
+        ),
     },
     {
         "id": "SimpleQuestions",
@@ -697,9 +711,7 @@ task_list = [
         "display_name": "Wikipedia",
         "task": 'wikipedia',
         "tags": ["All"],
-        "description": (
-            "Dump of Wikipedia articles from 2/3/18"
-        ),
+        "description": ("Dump of Wikipedia articles from 2/3/18"),
         "notes": (
             "Specify ':full' for the full articles to be returned, otherwise "
             "defaults to ':summary', which provides the first paragraphs. To put "
@@ -735,9 +747,7 @@ task_list = [
         "display_name": "Integration Tests",
         "task": "integration_tests",
         "tags": ["All", "Debug"],
-        "description": (
-            "Artificial tasks for ensuring models perform as expected"
-        ),
+        "description": ("Artificial tasks for ensuring models perform as expected"),
     },
     {
         "id": "ConvAI2_wild_evaluation",
@@ -761,7 +771,7 @@ task_list = [
             "originally from Radford, et. al "
             "https://nlp.stanford.edu/sentiment/index.html "
             "https://github.com/openai/generating-reviews-discovering-sentiment/"
-        )
+        ),
     },
     {
         "id": "cnn_dm",
@@ -772,18 +782,17 @@ task_list = [
             "Dataset collected from CNN and the Daily Mail with summaries as labels, "
             "Implemented as part of the DecaNLP task"
             "Downloaded from https://cs.nyu.edu/~kcho/DMQA/"
-        )
-
+        ),
     },
     {
         "id": "qasrl",
         "display_name": "QA-SRL Semantic Role Labeling",
         "task": "qasrl",
         "tags": ["All", "decanlp"],
-        "description":(
+        "description": (
             "QA dataset implemented as part of the DecaNLP task. More info on the"
             "dataset can be found here: https://dada.cs.washington.edu/qasrl/"
-        )
+        ),
     },
     {
         "id": "qazre",
@@ -794,7 +803,7 @@ task_list = [
             "Zero Shot relation extraction task implemented as part of the DecaNLP "
             "task. More info on the dataset can be found here:"
             "http://nlp.cs.washington.edu/zeroshot/"
-        )
+        ),
     },
     {
         "id": "woz",
@@ -806,27 +815,26 @@ task_list = [
             "Implemented as part of the DecaNLP task, focused on the change "
             "in the dialogue state. Original paper: "
             "https://arxiv.org/abs/1604.04562"
-        )
+        ),
     },
     {
         "id": "wikisql",
         "display_name": "WikiSQL semantic parsing task",
         "task": "wikisql",
         "tags": ["All", "decanlp"],
-        "description":(
+        "description": (
             "Dataset for parsing sentences to SQL code, given a table. "
             "Implemented as part of the DecaNLP task. More info can be found here:"
             "https://github.com/salesforce/WikiSQL"
-        )
+        ),
     },
     {
         "id": "mwsc",
         "display_name": "MWSC pronoun resolution",
         "task": "mwsc",
         "tags": ["All", "decanlp"],
-        "description":
-            "Resolving possible ambiguous pronouns. Implemented as part of the DecaNLP"
-            "task, and can be found on the decaNLP github"
+        "description": "Resolving possible ambiguous pronouns. Implemented as part of the DecaNLP"
+        "task, and can be found on the decaNLP github",
     },
     {
         "id": "decanlp",
@@ -840,7 +848,7 @@ task_list = [
             "2016/2013test/2014test for train/dev/test as given in the DecaNLP paper. "
             "See paper https://arxiv.org/abs/1806.08730 for more information and "
             "github: https://github.com/salesforce/decaNLP for data sources"
-        )
+        ),
     },
     {
         "id": "Personality_Captions",
@@ -919,7 +927,7 @@ task_list = [
             "of every conversation, and uses the official train/valid/test splits "
             "from the original authors. See https://arxiv.org/abs/1710.03957 "
             "for more information."
-        )
+        ),
     },
     {
         "id": "EmpatheticDialogues",

@@ -83,8 +83,7 @@ class TfidfDocRanker(object):
     def parse(self, query):
         """Parse the query into tokens (either ngrams or tokens)."""
         tokens = self.tokenizer.tokenize(query)
-        return tokens.ngrams(n=self.ngrams, uncased=True,
-                             filter_fn=utils.filter_ngram)
+        return tokens.ngrams(n=self.ngrams, uncased=True, filter_fn=utils.filter_ngram)
 
     def text2spvec(self, query):
         """Create a sparse tfidf-weighted word vector from query.
@@ -116,8 +115,6 @@ class TfidfDocRanker(object):
 
         # One row, sparse csr matrix
         indptr = np.array([0, len(wids_unique)])
-        spvec = sp.csr_matrix(
-            (data, wids_unique, indptr), shape=(1, self.hash_size)
-        )
+        spvec = sp.csr_matrix((data, wids_unique, indptr), shape=(1, self.hash_size))
 
         return spvec

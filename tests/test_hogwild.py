@@ -33,22 +33,13 @@ class TestHogwild(unittest.TestCase):
                 opt['batchsize'] = bs
 
                 stdout, valid, test = testing_utils.train_model(opt)
-                self.assertEqual(
-                    valid['exs'],
-                    NUM_EXS,
-                    'LOG:\n{}'.format(stdout),
-                )
-                self.assertEqual(
-                    test['exs'],
-                    NUM_EXS,
-                    'LOG:\n{}'.format(stdout),
-                )
+                self.assertEqual(valid['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
+                self.assertEqual(test['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
 
     def test_hogwild_eval(self):
         """Test eval with numthreads > 1 and batchsize in [1,2,3]."""
         opt = dict(
-            task='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS),
-            model='repeat_label',
+            task='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS), model='repeat_label'
         )
         for nt in NUM_THREADS_CHOICES:
             for bs in BATCHSIZE_CHOICES:
@@ -56,16 +47,8 @@ class TestHogwild(unittest.TestCase):
                 opt['batchsize'] = bs
 
                 stdout, valid, test = testing_utils.eval_model(opt)
-                self.assertEqual(
-                    valid['exs'],
-                    NUM_EXS,
-                    'LOG:\n{}'.format(stdout),
-                )
-                self.assertEqual(
-                    test['exs'],
-                    NUM_EXS,
-                    'LOG:\n{}'.format(stdout),
-                )
+                self.assertEqual(valid['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
+                self.assertEqual(test['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
 
 
 if __name__ == '__main__':

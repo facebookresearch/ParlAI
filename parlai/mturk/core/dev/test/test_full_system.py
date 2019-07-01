@@ -57,14 +57,18 @@ ACT_1 = {'text': 'THIS IS A MESSAGE', 'id': AGENT_ID}
 ACT_2 = {'text': 'THIS IS A MESSAGE AGAIN', 'id': AGENT_ID}
 
 active_statuses = [
-    AssignState.STATUS_NONE, AssignState.STATUS_ONBOARDING,
-    AssignState.STATUS_WAITING, AssignState.STATUS_IN_TASK,
+    AssignState.STATUS_NONE,
+    AssignState.STATUS_ONBOARDING,
+    AssignState.STATUS_WAITING,
+    AssignState.STATUS_IN_TASK,
 ]
 complete_statuses = [
-    AssignState.STATUS_DONE, AssignState.STATUS_DISCONNECT,
+    AssignState.STATUS_DONE,
+    AssignState.STATUS_DISCONNECT,
     AssignState.STATUS_PARTNER_DISCONNECT,
     AssignState.STATUS_PARTNER_DISCONNECT_EARLY,
-    AssignState.STATUS_EXPIRED, AssignState.STATUS_RETURNED,
+    AssignState.STATUS_EXPIRED,
+    AssignState.STATUS_RETURNED,
 ]
 statuses = active_statuses + complete_statuses
 
@@ -73,8 +77,7 @@ TASK_GROUP_ID_1 = 'TASK_GROUP_ID_1'
 SocketManager.DEF_MISSED_PONGS = 1
 SocketManager.HEARTBEAT_RATE = 0.4
 SocketManager.DEF_DEAD_TIME = 0.4
-SocketManager.ACK_TIME = {Packet.TYPE_ALIVE: 0.4,
-                          Packet.TYPE_MESSAGE: 0.2}
+SocketManager.ACK_TIME = {Packet.TYPE_ALIVE: 0.4, Packet.TYPE_MESSAGE: 0.2}
 
 shared_utils.THREAD_SHORT_SLEEP = 0.05
 shared_utils.THREAD_MEDIUM_SLEEP = 0.15
@@ -92,12 +95,13 @@ FAKE_HIT_ID = 'fake_hit_id'
 def assert_equal_by(val_func, val, max_time):
     start_time = time.time()
     while val_func() != val:
-        assert time.time() - start_time < max_time, \
-            "Value was not attained in specified time"
+        assert (
+            time.time() - start_time < max_time
+        ), "Value was not attained in specified time"
         time.sleep(0.1)
 
 
-class MockSocket():
+class MockSocket:
     def __init__(self):
         self.last_messages = {}
         self.connected = False
@@ -133,21 +137,23 @@ class MockSocket():
                 return
             packet_dict = json.loads(message)
             if packet_dict['content']['id'] == 'WORLD_ALIVE':
-                self.ws.send_message(
-                    client, json.dumps({'type': 'conn_success'}))
+                self.ws.send_message(client, json.dumps({'type': 'conn_success'}))
                 self.connected = True
             elif packet_dict['content']['type'] == 'heartbeat':
                 pong = packet_dict['content'].copy()
                 pong['type'] = 'pong'
-                self.ws.send_message(client, json.dumps({
-                    'type': data_model.SOCKET_ROUTE_PACKET_STRING,
-                    'content': pong,
-                }))
+                self.ws.send_message(
+                    client,
+                    json.dumps(
+                        {'type': data_model.SOCKET_ROUTE_PACKET_STRING, 'content': pong}
+                    ),
+                )
             if 'receiver_id' in packet_dict['content']:
                 receiver_id = packet_dict['content']['receiver_id']
                 assignment_id = packet_dict['content']['assignment_id']
                 use_func = self.handlers.get(
-                    receiver_id + assignment_id, self.do_nothing)
+                    receiver_id + assignment_id, self.do_nothing
+                )
                 use_func(packet_dict['content'])
 
         def on_connect(client, server):
@@ -170,8 +176,7 @@ class MockSocket():
             self.ws.run_forever()
 
         self.listen_thread = threading.Thread(
-            target=run_socket,
-            name='Fake-Socket-Thread'
+            target=run_socket, name='Fake-Socket-Thread'
         )
         self.listen_thread.daemon = True
         self.listen_thread.start()
@@ -182,8 +187,8 @@ class MockAgent(object):
     webpage by simulating the same commands that are sent from the core.html
     file. Exposes methods to use for testing and checking status
     """
-    def __init__(self, hit_id, assignment_id, worker_id,
-                 task_group_id):
+
+    def __init__(self, hit_id, assignment_id, worker_id, task_group_id):
         self.conversation_id = None
         self.id = None
         self.assignment_id = assignment_id
@@ -204,11 +209,9 @@ class MockAgent(object):
     def send_packet(self, packet):
         def callback(*args):
             pass
+
         event_name = data_model.SOCKET_ROUTE_PACKET_STRING
-        self.ws.send(json.dumps({
-            'type': event_name,
-            'content': packet.as_dict(),
-        }))
+        self.ws.send(json.dumps({'type': event_name, 'content': packet.as_dict()}))
 
     def register_to_socket(self, ws):
         handler = self.make_packet_handler()
@@ -250,10 +253,10 @@ class MockAgent(object):
             elif pkt['type'] == Packet.TYPE_ALIVE:
                 raise Exception('Invalid alive packet {}'.format(pkt))
             else:
-                raise Exception('Invalid Packet type {} received in {}'.format(
-                    pkt['type'],
-                    pkt
-                ))
+                raise Exception(
+                    'Invalid Packet type {} received in {}'.format(pkt['type'], pkt)
+                )
+
         return handler_mock
 
     def build_and_send_packet(self, packet_type, data):
@@ -264,16 +267,13 @@ class MockAgent(object):
             'assignment_id': self.assignment_id,
             'conversation_id': self.conversation_id,
             'receiver_id': '[World_' + self.task_group_id + ']',
-            'data': data
+            'data': data,
         }
 
         event_name = data_model.SOCKET_ROUTE_PACKET_STRING
-        if (packet_type == Packet.TYPE_ALIVE):
+        if packet_type == Packet.TYPE_ALIVE:
             event_name = data_model.SOCKET_AGENT_ALIVE_STRING
-        self.ws.send(json.dumps({
-            'type': event_name,
-            'content': msg,
-        }))
+        self.ws.send(json.dumps({'type': event_name, 'content': msg}))
         return msg['id']
 
     def send_message(self, text):
@@ -281,7 +281,7 @@ class MockAgent(object):
             'text': text,
             'id': self.id,
             'message_id': str(uuid.uuid4()),
-            'episode_done': False
+            'episode_done': False,
         }
 
         self.wants_to_send = False
@@ -292,7 +292,7 @@ class MockAgent(object):
             'hit_id': self.hit_id,
             'assignment_id': self.assignment_id,
             'worker_id': self.worker_id,
-            'conversation_id': self.conversation_id
+            'conversation_id': self.conversation_id,
         }
         return self.build_and_send_packet(Packet.TYPE_ALIVE, data)
 
@@ -305,21 +305,21 @@ class MockAgent(object):
             'sender_id': self.worker_id,
             'conversation_id': self.conversation_id,
             'type': Packet.TYPE_HEARTBEAT,
-            'data': None
+            'data': None,
         }
-        self.ws.send(json.dumps({
-            'type': data_model.SOCKET_ROUTE_PACKET_STRING,
-            'content': hb,
-        }))
+        self.ws.send(
+            json.dumps({'type': data_model.SOCKET_ROUTE_PACKET_STRING, 'content': hb})
+        )
 
     def wait_for_alive(self):
         last_time = time.time()
         while not self.ready:
             self.send_alive()
             time.sleep(0.5)
-            assert time.time() - last_time < 10, \
-                'Timed out wating for server to acknowledge {} alive'.format(
-                    self.worker_id
+            assert (
+                time.time() - last_time < 10
+            ), 'Timed out wating for server to acknowledge {} alive'.format(
+                self.worker_id
             )
 
 
@@ -330,33 +330,36 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Mock functions that hit external APIs and such
         self.server_utils = MTurkManagerFile.server_utils
         self.mturk_utils = MTurkManagerFile.mturk_utils
-        self.server_utils.setup_server = \
-            mock.MagicMock(return_value='https://127.0.0.1')
-        self.server_utils.setup_legacy_server = \
-            mock.MagicMock(return_value='https://127.0.0.1')
+        self.server_utils.setup_server = mock.MagicMock(
+            return_value='https://127.0.0.1'
+        )
+        self.server_utils.setup_legacy_server = mock.MagicMock(
+            return_value='https://127.0.0.1'
+        )
         self.server_utils.delete_server = mock.MagicMock()
         self.mturk_utils.setup_aws_credentials = mock.MagicMock()
         self.mturk_utils.calculate_mturk_cost = mock.MagicMock(return_value=1)
-        self.mturk_utils.check_mturk_balance = \
-            mock.MagicMock(return_value=True)
+        self.mturk_utils.check_mturk_balance = mock.MagicMock(return_value=True)
         self.mturk_utils.create_hit_config = mock.MagicMock()
-        self.mturk_utils.setup_sns_topic = mock.MagicMock(
-            return_value=TOPIC_ARN)
+        self.mturk_utils.setup_sns_topic = mock.MagicMock(return_value=TOPIC_ARN)
         self.mturk_utils.delete_sns_topic = mock.MagicMock()
         self.mturk_utils.delete_qualification = mock.MagicMock()
         self.mturk_utils.find_or_create_qualification = mock.MagicMock(
-            return_value=QUALIFICATION_ID)
+            return_value=QUALIFICATION_ID
+        )
         self.mturk_utils.find_qualification = mock.MagicMock(
-            return_value=QUALIFICATION_ID)
+            return_value=QUALIFICATION_ID
+        )
         self.mturk_utils.give_worker_qualification = mock.MagicMock()
         self.mturk_utils.remove_worker_qualification = mock.MagicMock()
-        self.mturk_utils.create_hit_type = mock.MagicMock(
-            return_value=HIT_TYPE_ID)
+        self.mturk_utils.create_hit_type = mock.MagicMock(return_value=HIT_TYPE_ID)
         self.mturk_utils.subscribe_to_hits = mock.MagicMock()
         self.mturk_utils.create_hit_with_hit_type = mock.MagicMock(
-            return_value=(MTURK_PAGE_URL, FAKE_HIT_ID, 'MTURK_HIT_DATA'))
+            return_value=(MTURK_PAGE_URL, FAKE_HIT_ID, 'MTURK_HIT_DATA')
+        )
         self.mturk_utils.get_mturk_client = mock.MagicMock(
-            return_value=mock.MagicMock())
+            return_value=mock.MagicMock()
+        )
 
         self.onboarding_agents = {}
         self.worlds_agents = {}
@@ -380,9 +383,7 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         self.opt['num_conversations'] = 1
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
         self.mturk_manager = MTurkManager(
-            opt=self.opt,
-            mturk_agent_ids=self.mturk_agent_ids,
-            is_test=True,
+            opt=self.opt, mturk_agent_ids=self.mturk_agent_ids, is_test=True
         )
         self.mturk_manager.port = self.fake_socket.port
         self.mturk_manager.setup_server()
@@ -397,17 +398,21 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
         def run_task_wait():
             self.mturk_manager.start_task(
-                lambda w: True, assign_worker_roles, self.run_conversation)
+                lambda w: True, assign_worker_roles, self.run_conversation
+            )
 
         self.task_thread = threading.Thread(target=run_task_wait)
         self.task_thread.start()
 
-        self.agent_1 = MockAgent(TEST_HIT_ID_1, TEST_ASSIGNMENT_ID_1,
-                                 TEST_WORKER_ID_1, TASK_GROUP_ID_1)
-        self.agent_1_2 = MockAgent(TEST_HIT_ID_1, TEST_ASSIGNMENT_ID_3,
-                                   TEST_WORKER_ID_1, TASK_GROUP_ID_1)
-        self.agent_2 = MockAgent(TEST_HIT_ID_2, TEST_ASSIGNMENT_ID_2,
-                                 TEST_WORKER_ID_2, TASK_GROUP_ID_1)
+        self.agent_1 = MockAgent(
+            TEST_HIT_ID_1, TEST_ASSIGNMENT_ID_1, TEST_WORKER_ID_1, TASK_GROUP_ID_1
+        )
+        self.agent_1_2 = MockAgent(
+            TEST_HIT_ID_1, TEST_ASSIGNMENT_ID_3, TEST_WORKER_ID_1, TASK_GROUP_ID_1
+        )
+        self.agent_2 = MockAgent(
+            TEST_HIT_ID_2, TEST_ASSIGNMENT_ID_2, TEST_WORKER_ID_2, TASK_GROUP_ID_1
+        )
 
     def tearDown(self):
         self.agent_1.always_beat = False
@@ -420,8 +425,9 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
 
     def onboard_agent(self, worker):
         self.onboarding_agents[worker.worker_id] = False
-        while ((worker.worker_id in self.onboarding_agents) and
-                (self.onboarding_agents[worker.worker_id] is False)):
+        while (worker.worker_id in self.onboarding_agents) and (
+            self.onboarding_agents[worker.worker_id] is False
+        ):
             time.sleep(0.05)
         return
 
@@ -445,61 +451,67 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Alive first agent
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
-        assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1.assignment_id)
+            agent_1.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
-        self.assertEqual(
-            agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
-            agent_2.assignment_id)
+            agent_2.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
-        self.assertEqual(
-            agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Complete agents
         self.worlds_agents[agent_1.worker_id] = True
         self.worlds_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_DONE, 2)
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_DONE, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_DONE, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_DONE, 2)
 
         # Assert conversation is complete for manager and agents
         assert_equal_by(lambda: manager.completed_conversations, 1, 2)
-        assert_equal_by(lambda: len(
-            [p for p in agent_1.message_packet
-             if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON]
-        ), 1, 2)
-        assert_equal_by(lambda: len(
-            [p for p in agent_2.message_packet
-             if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_1.message_packet
+                    if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON
+                ]
+            ),
+            1,
+            2,
+        )
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_2.message_packet
+                    if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON
+                ]
+            ),
+            1,
+            2,
+        )
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 2, 2)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]), 2, 2
+        )
 
     def test_disconnect_end(self):
         manager = self.mturk_manager
@@ -507,66 +519,74 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Alive first agent
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
-        assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1.assignment_id)
+            agent_1.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
-        self.assertEqual(
-            agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
-            agent_2.assignment_id)
+            agent_2.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
-        self.assertEqual(
-            agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Disconnect agent
         agent_2.always_beat = False
-        assert_equal_by(agent_1_object.get_status,
-                        AssignState.STATUS_PARTNER_DISCONNECT, 3)
-        assert_equal_by(agent_2_object.get_status,
-                        AssignState.STATUS_DISCONNECT, 3)
+        assert_equal_by(
+            agent_1_object.get_status, AssignState.STATUS_PARTNER_DISCONNECT, 3
+        )
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_DISCONNECT, 3)
         self.worlds_agents[agent_1.worker_id] = True
         self.worlds_agents[agent_2.worker_id] = True
         agent_2.always_beat = True
         agent_2.send_alive()
 
         # Assert workers get the correct command
-        assert_equal_by(lambda: len(
-            [p for p in agent_1.message_packet
-             if p.data['text'] == data_model.COMMAND_INACTIVE_DONE]
-        ), 1, 2)
-        assert_equal_by(lambda: len(
-            [p for p in agent_2.message_packet
-             if p.data['text'] == data_model.COMMAND_INACTIVE_HIT]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_1.message_packet
+                    if p.data['text'] == data_model.COMMAND_INACTIVE_DONE
+                ]
+            ),
+            1,
+            2,
+        )
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_2.message_packet
+                    if p.data['text'] == data_model.COMMAND_INACTIVE_HIT
+                ]
+            ),
+            1,
+            2,
+        )
 
         # assert conversation not marked as complete
         self.assertEqual(manager.completed_conversations, 0)
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 2, 2)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]), 2, 2
+        )
 
     def test_expire_onboarding(self):
         manager = self.mturk_manager
@@ -574,30 +594,37 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Alive first agent
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
-        assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 10)
+        assert_equal_by(lambda: agent_1.worker_id in self.onboarding_agents, True, 10)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1.assignment_id)
+            agent_1.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
-        self.assertEqual(
-            agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
 
         manager._expire_onboarding_pool()
 
-        assert_equal_by(lambda: len(
-            [p for p in agent_1.message_packet
-             if p.data['text'] == data_model.COMMAND_EXPIRE_HIT]
-        ), 1, 10)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_1.message_packet
+                    if p.data['text'] == data_model.COMMAND_EXPIRE_HIT
+                ]
+            ),
+            1,
+            10,
+        )
 
         self.onboarding_agents[agent_1.worker_id] = True
 
-        self.assertEqual(
-            agent_1_object.get_status(), AssignState.STATUS_EXPIRED)
+        self.assertEqual(agent_1_object.get_status(), AssignState.STATUS_EXPIRED)
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 1, 10)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]),
+            1,
+            10,
+        )
 
     def test_reconnect_complete(self):
         manager = self.mturk_manager
@@ -605,36 +632,30 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Alive first agent
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
-        assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1.assignment_id)
+            agent_1.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
-        self.assertEqual(
-            agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
-            agent_2.assignment_id)
+            agent_2.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
-        self.assertEqual(
-            agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Simulate reconnect to task
@@ -644,36 +665,55 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_2.id = None
         agent_2.send_alive()
 
-        assert_equal_by(lambda: len(
-            [p for p in agent_2.message_packet
-             if p.data['text'] == data_model.COMMAND_RESTORE_STATE]
-        ), 1, 4)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_2.message_packet
+                    if p.data['text'] == data_model.COMMAND_RESTORE_STATE
+                ]
+            ),
+            1,
+            4,
+        )
         self.assertEqual(agent_2.id, stored_agent_id)
         self.assertEqual(agent_2.conversation_id, stored_conv_id)
 
         # Complete agents
         self.worlds_agents[agent_1.worker_id] = True
         self.worlds_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_DONE, 2)
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_DONE, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_DONE, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_DONE, 2)
 
         # Assert conversation is complete for manager and agents
         assert_equal_by(lambda: manager.completed_conversations, 1, 2)
-        assert_equal_by(lambda: len(
-            [p for p in agent_1.message_packet
-             if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON]
-        ), 1, 2)
-        assert_equal_by(lambda: len(
-            [p for p in agent_2.message_packet
-             if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_1.message_packet
+                    if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON
+                ]
+            ),
+            1,
+            2,
+        )
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_2.message_packet
+                    if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON
+                ]
+            ),
+            1,
+            2,
+        )
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 2, 2)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]), 2, 2
+        )
 
     def test_attempt_break_unique(self):
         manager = self.mturk_manager
@@ -685,90 +725,106 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Alive first agent
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
-        assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1.assignment_id)
+            agent_1.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
-        self.assertEqual(
-            agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
-            agent_2.assignment_id)
+            agent_2.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
-        self.assertEqual(
-            agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Complete agents
         self.worlds_agents[agent_1.worker_id] = True
         self.worlds_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_DONE, 2)
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_DONE, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_DONE, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_DONE, 2)
 
         # Assert conversation is complete for manager and agents
         assert_equal_by(lambda: manager.completed_conversations, 1, 2)
-        assert_equal_by(lambda: len(
-            [p for p in agent_1.message_packet
-             if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON]
-        ), 1, 2)
-        assert_equal_by(lambda: len(
-            [p for p in agent_2.message_packet
-             if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_1.message_packet
+                    if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON
+                ]
+            ),
+            1,
+            2,
+        )
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_2.message_packet
+                    if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON
+                ]
+            ),
+            1,
+            2,
+        )
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 2, 2)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]), 2, 2
+        )
 
         # ensure qualification was 'granted'
         self.mturk_utils.find_qualification.assert_called_with(
-            unique_worker_qual, manager.is_sandbox)
+            unique_worker_qual, manager.is_sandbox
+        )
         self.mturk_utils.give_worker_qualification.assert_any_call(
-            agent_1.worker_id, QUALIFICATION_ID, None, manager.is_sandbox)
+            agent_1.worker_id, QUALIFICATION_ID, None, manager.is_sandbox
+        )
         self.mturk_utils.give_worker_qualification.assert_any_call(
-            agent_2.worker_id, QUALIFICATION_ID, None, manager.is_sandbox)
+            agent_2.worker_id, QUALIFICATION_ID, None, manager.is_sandbox
+        )
 
         # Try to alive with the first agent a second time
         agent_1_2 = self.agent_1_2
         self.alive_agent(agent_1_2)
-        assert_equal_by(
-            lambda: agent_1_2.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_1_2.worker_id in self.onboarding_agents, True, 2)
         agent_1_2_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1_2.assignment_id)
+            agent_1_2.assignment_id
+        )
 
         # No worker should be created for a unique task
         self.assertIsNone(agent_1_2_object)
 
-        assert_equal_by(lambda: len(
-            [p for p in agent_1_2.message_packet
-             if p.data['text'] == data_model.COMMAND_EXPIRE_HIT]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_1_2.message_packet
+                    if p.data['text'] == data_model.COMMAND_EXPIRE_HIT
+                ]
+            ),
+            1,
+            2,
+        )
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 3, 2)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]), 3, 2
+        )
 
     def test_break_multi_convo(self):
         manager = self.mturk_manager
@@ -777,82 +833,95 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Alive first agent
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
-        assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1.assignment_id)
+            agent_1.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
-        self.assertEqual(
-            agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
-            agent_2.assignment_id)
+            agent_2.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
-        self.assertEqual(
-            agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents move to task
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.worlds_agents, True, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.worlds_agents, True, 2)
         self.assertIn(agent_1.worker_id, self.worlds_agents)
 
         # Attempt to start a new conversation with duplicate worker 1
         agent_1_2 = self.agent_1_2
         self.alive_agent(agent_1_2)
-        assert_equal_by(
-            lambda: agent_1_2.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_1_2.worker_id in self.onboarding_agents, True, 2)
         agent_1_2_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1_2.assignment_id)
+            agent_1_2.assignment_id
+        )
 
         # No worker should be created for a unique task
         self.assertIsNone(agent_1_2_object)
 
-        assert_equal_by(lambda: len(
-            [p for p in agent_1_2.message_packet
-             if p.data['text'] == data_model.COMMAND_EXPIRE_HIT]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_1_2.message_packet
+                    if p.data['text'] == data_model.COMMAND_EXPIRE_HIT
+                ]
+            ),
+            1,
+            2,
+        )
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]), 1, 2
+        )
 
         # Complete agents
         self.worlds_agents[agent_1.worker_id] = True
         self.worlds_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_DONE, 2)
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_DONE, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_DONE, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_DONE, 2)
 
         # Assert conversation is complete for manager and agents
-        assert_equal_by(lambda: len(
-            [p for p in agent_1.message_packet
-             if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON]
-        ), 1, 2)
-        assert_equal_by(lambda: len(
-            [p for p in agent_2.message_packet
-             if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_1.message_packet
+                    if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON
+                ]
+            ),
+            1,
+            2,
+        )
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_2.message_packet
+                    if p.data['text'] == data_model.COMMAND_SHOW_DONE_BUTTON
+                ]
+            ),
+            1,
+            2,
+        )
         assert_equal_by(lambda: manager.completed_conversations, 1, 2)
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 3, 2)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]), 3, 2
+        )
 
     def test_no_onboard_expire_waiting(self):
         manager = self.mturk_manager
@@ -862,21 +931,28 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1.assignment_id)
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
+            agent_1.assignment_id
+        )
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         manager._expire_agent_pool()
 
-        assert_equal_by(lambda: len(
-            [p for p in agent_1.message_packet
-             if p.data['text'] == data_model.COMMAND_EXPIRE_HIT]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len(
+                [
+                    p
+                    for p in agent_1.message_packet
+                    if p.data['text'] == data_model.COMMAND_EXPIRE_HIT
+                ]
+            ),
+            1,
+            2,
+        )
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 1, 2)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]), 1, 2
+        )
 
     def test_return_to_waiting_on_world_start(self):
         manager = self.mturk_manager
@@ -884,16 +960,14 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Alive first agent
         agent_1 = self.agent_1
         self.alive_agent(agent_1)
-        assert_equal_by(
-            lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_1.worker_id in self.onboarding_agents, True, 2)
         agent_1_object = manager.worker_manager.get_agent_for_assignment(
-            agent_1.assignment_id)
+            agent_1.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_1.worker_id])
-        self.assertEqual(
-            agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_1_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_1.worker_id] = True
-        assert_equal_by(
-            agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_1_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Make agent_1 no longer respond to change_conversation_requests
         def replace_on_msg(packet):
@@ -904,22 +978,18 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Alive second agent
         agent_2 = self.agent_2
         self.alive_agent(agent_2)
-        assert_equal_by(
-            lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
+        assert_equal_by(lambda: agent_2.worker_id in self.onboarding_agents, True, 2)
         agent_2_object = manager.worker_manager.get_agent_for_assignment(
-            agent_2.assignment_id)
+            agent_2.assignment_id
+        )
         self.assertFalse(self.onboarding_agents[agent_2.worker_id])
-        self.assertEqual(
-            agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
+        self.assertEqual(agent_2_object.get_status(), AssignState.STATUS_ONBOARDING)
         self.onboarding_agents[agent_2.worker_id] = True
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_WAITING, 2)
 
         # Assert agents attempt to move to task, but then move back to waiting
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
-        assert_equal_by(
-            agent_2_object.get_status, AssignState.STATUS_WAITING, 3)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_IN_TASK, 2)
+        assert_equal_by(agent_2_object.get_status, AssignState.STATUS_WAITING, 3)
         agent_1.always_beat = False
 
         # Assert no world ever started
@@ -929,9 +999,9 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         manager.shutdown()
 
         # Assert sockets are closed
-        assert_equal_by(lambda: len(
-            [x for x in manager.socket_manager.run.values() if not x]
-        ), 2, 2)
+        assert_equal_by(
+            lambda: len([x for x in manager.socket_manager.run.values() if not x]), 2, 2
+        )
 
 
 if __name__ == '__main__':

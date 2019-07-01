@@ -11,6 +11,7 @@ import parlai.core.testing_utils as testing_utils
 
 class TestDisplayData(unittest.TestCase):
     """Basic tests on the display_data.py example."""
+
     def test_output(self):
         """Does display_data reach the end of the loop?"""
         with testing_utils.capture_output() as stdout:

@@ -28,8 +28,8 @@ def dump_data(opt):
     ignorefields = opt.get('ignore_fields', '')
     if opt['outfile'] is None:
         outfile = tempfile.mkstemp(
-            prefix='{}_{}_'.format(opt['task'], opt['datatype']),
-            suffix='.txt')[1]
+            prefix='{}_{}_'.format(opt['task'], opt['datatype']), suffix='.txt'
+        )[1]
     else:
         outfile = opt['outfile']
 
@@ -44,11 +44,11 @@ def dump_data(opt):
     fw = open(outfile, 'w')
     for _ in range(num_examples):
         world.parley()
-        world.acts[0]['labels'] = world.acts[0].get(
-            'labels', world.acts[0].pop('eval_labels', None))
-        txt = msg_to_str(world.acts[0], ignore_fields=ignorefields)
+        acts = world.get_acts()
+        acts[0]['labels'] = acts[0].get('labels', acts[0].pop('eval_labels', None))
+        txt = msg_to_str(acts[0], ignore_fields=ignorefields)
         fw.write(txt + '\n')
-        if world.acts[0].get('episode_done', False):
+        if acts[0].get('episode_done', False):
             fw.write('\n')
 
         if log_timer.time() > opt['log_every_n_secs']:
@@ -65,15 +65,30 @@ def main():
     random.seed(42)
     # Get command line arguments
     parser = ParlaiParser()
-    parser.add_argument('-n', '--num-examples', default=-1, type=int,
-                        help='Total number of exs to convert, -1 to convert \
-                                all examples')
-    parser.add_argument('-of', '--outfile', default=None, type=str,
-                        help='Output file where to save, by default will be \
-                                created in /tmp')
-    parser.add_argument('-if', '--ignore-fields', default='id', type=str,
-                        help='Ignore these fields from the message (returned\
-                                with .act() )')
+    parser.add_argument(
+        '-n',
+        '--num-examples',
+        default=-1,
+        type=int,
+        help='Total number of exs to convert, -1 to convert \
+                                all examples',
+    )
+    parser.add_argument(
+        '-of',
+        '--outfile',
+        default=None,
+        type=str,
+        help='Output file where to save, by default will be \
+                                created in /tmp',
+    )
+    parser.add_argument(
+        '-if',
+        '--ignore-fields',
+        default='id',
+        type=str,
+        help='Ignore these fields from the message (returned\
+                                with .act() )',
+    )
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(datatype='train:stream')
     opt = parser.parse_args()

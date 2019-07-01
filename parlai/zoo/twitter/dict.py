@@ -16,10 +16,7 @@ def download(datapath):
     parser = setup_args(ParlaiParser())
     # first build on standard train and validation
     parser.set_defaults(
-        task='twitter',
-        dict_lower=True,
-        dict_file=DICT_PATH,
-        dict_maxtokens=30000,
+        task='twitter', dict_lower=True, dict_file=DICT_PATH, dict_maxtokens=30000
     )
     opt = parser.parse_args(args='')
     return main_build_dict(opt)

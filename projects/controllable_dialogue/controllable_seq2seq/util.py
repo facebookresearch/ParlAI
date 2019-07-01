@@ -45,7 +45,7 @@ class ConvAI2History(object):
         persona_lines = [fix_personaline_period(pl) for pl in persona_lines]
 
         # Identify the dialogue lines. It's assumed that p1 goes first.
-        utts = lines[len(persona_lines):]
+        utts = lines[len(persona_lines) :]
         p1_utts = [utts[i] for i in range(0, len(utts), 2)]
         p2_utts = [utts[i] for i in range(1, len(utts), 2)]
 
@@ -78,13 +78,13 @@ def remove_prefix(utt, prefix):
       new utt: utt with the prefix+" " removed.
     """
     try:
-        assert utt[:len(prefix)+1] == prefix+" "
+        assert utt[: len(prefix) + 1] == prefix + " "
     except AssertionError as e:
         print("ERROR: utterance '%s' does not start with '%s '" % (utt, prefix))
-        print(repr(utt[:len(prefix)+1]))
-        print(repr(prefix+" "))
+        print(repr(utt[: len(prefix) + 1]))
+        print(repr(prefix + " "))
         raise e
-    return utt[len(prefix)+1:]
+    return utt[len(prefix) + 1 :]
 
 
 def fix_personaline_period(line):

@@ -34,13 +34,24 @@ class MnistQATeacher(DialogTeacher):
     inherit basic metrics, a `act` function, and enables
     Hogwild training with shared memory with no extra work.
     """
+
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype'].split(':')[0]
         labels_path, self.image_path = _path(opt)
         opt['datafile'] = labels_path
         self.id = 'mnist_qa'
-        self.num_strs = ['zero', 'one', 'two', 'three', 'four',
-                         'five', 'six', 'seven', 'eight', 'nine']
+        self.num_strs = [
+            'zero',
+            'one',
+            'two',
+            'three',
+            'four',
+            'five',
+            'six',
+            'seven',
+            'eight',
+            'nine',
+        ]
 
         super().__init__(opt, shared)
 

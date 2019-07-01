@@ -15,18 +15,20 @@ def _path(opt):
     build(opt)
     dt = opt['datatype'].split(':')[0]
     opt['ttw_data'] = os.path.join(opt['datapath'], 'TalkTheWalk')
-    return opt['ttw_data'], os.path.join(opt['ttw_data'],
-                                         'talkthewalk.' + dt + '.json')
+    return opt['ttw_data'], os.path.join(opt['ttw_data'], 'talkthewalk.' + dt + '.json')
 
 
 class TTWBase(FixedDialogTeacher):
-
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('Talk the Walk Teacher Arguments')
-        agent.add_argument('--train-actions',
-                           type='bool', default=False, help='Train model to \
-                           take actions')
+        agent.add_argument(
+            '--train-actions',
+            type='bool',
+            default=False,
+            help='Train model to \
+                           take actions',
+        )
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -52,8 +54,7 @@ class TTWBase(FixedDialogTeacher):
 
     def _setup_episode(self, episode):
         """Process one episode in an example."""
-        raise NotImplementedError(
-            'Abstract class: user must implement _setup_episode')
+        raise NotImplementedError('Abstract class: user must implement _setup_episode')
 
     def _setup_data(self, datafile):
         self.episodes = json.load(open(datafile))
@@ -62,15 +63,25 @@ class TTWBase(FixedDialogTeacher):
 
         for episode in self.episodes:
             if episode:
-                init = {x: y for x, y in episode.items() if x in ['start_location',
-                        'neighborhood', 'boundaries', 'target_location']}
+                init = {
+                    x: y
+                    for x, y in episode.items()
+                    if x
+                    in [
+                        'start_location',
+                        'neighborhood',
+                        'boundaries',
+                        'target_location',
+                    ]
+                }
                 self.sim.init_sim(**init)
 
                 episode = self._setup_episode(episode)
 
                 if episode:
                     self.label_candidates = self.label_candidates.union(
-                            [x['labels'][0] for x in episode])
+                        [x['labels'][0] for x in episode]
+                    )
                     self.data.append(episode)
                     self.examples_count += len(episode)
         self.label_candidates = list(self.label_candidates)

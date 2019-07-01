@@ -35,55 +35,102 @@ class Seq2seqAgent(TorchGeneratorAgent):
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         agent = argparser.add_argument_group('Seq2Seq Arguments')
-        agent.add_argument('-hs', '--hiddensize', type=int, default=128,
-                           help='size of the hidden layers')
-        agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
-                           help='size of the token embeddings')
-        agent.add_argument('-nl', '--numlayers', type=int, default=2,
-                           help='number of hidden layers')
-        agent.add_argument('-dr', '--dropout', type=float, default=0.1,
-                           help='dropout rate')
-        agent.add_argument('-bi', '--bidirectional', type='bool',
-                           default=False,
-                           help='whether to encode the context with a '
-                                'bidirectional rnn')
-        agent.add_argument('-att', '--attention', default='none',
-                           choices=['none', 'concat', 'general', 'dot',
-                                    'local'],
-                           help='Choices: none, concat, general, local. '
-                                'If set local, also set attention-length. '
-                                '(see arxiv.org/abs/1508.04025)')
-        agent.add_argument('-attl', '--attention-length', default=48, type=int,
-                           help='Length of local attention.')
-        agent.add_argument('--attention-time', default='post',
-                           choices=['pre', 'post'],
-                           help='Whether to apply attention before or after '
-                                'decoding.')
-        agent.add_argument('-rnn', '--rnn-class', default='lstm',
-                           choices=Seq2seq.RNN_OPTS.keys(),
-                           help='Choose between different types of RNNs.')
-        agent.add_argument('-dec', '--decoder', default='same',
-                           choices=['same', 'shared'],
-                           help='Choose between different decoder modules. '
-                                'Default "same" uses same class as encoder, '
-                                'while "shared" also uses the same weights. '
-                                'Note that shared disabled some encoder '
-                                'options--in particular, bidirectionality.')
-        agent.add_argument('-lt', '--lookuptable', default='unique',
-                           choices=['unique', 'enc_dec', 'dec_out', 'all'],
-                           help='The encoder, decoder, and output modules can '
-                                'share weights, or not. '
-                                'Unique has independent embeddings for each. '
-                                'Enc_dec shares the embedding for the encoder '
-                                'and decoder. '
-                                'Dec_out shares decoder embedding and output '
-                                'weights. '
-                                'All shares all three weights.')
-        agent.add_argument('-soft', '--numsoftmax', default=1, type=int,
-                           help='default 1, if greater then uses mixture of '
-                                'softmax (see arxiv.org/abs/1711.03953).')
-        agent.add_argument('-idr', '--input-dropout', type=float, default=0.0,
-                           help='Probability of replacing tokens with UNK in training.')
+        agent.add_argument(
+            '-hs',
+            '--hiddensize',
+            type=int,
+            default=128,
+            help='size of the hidden layers',
+        )
+        agent.add_argument(
+            '-esz',
+            '--embeddingsize',
+            type=int,
+            default=128,
+            help='size of the token embeddings',
+        )
+        agent.add_argument(
+            '-nl', '--numlayers', type=int, default=2, help='number of hidden layers'
+        )
+        agent.add_argument(
+            '-dr', '--dropout', type=float, default=0.1, help='dropout rate'
+        )
+        agent.add_argument(
+            '-bi',
+            '--bidirectional',
+            type='bool',
+            default=False,
+            help='whether to encode the context with a ' 'bidirectional rnn',
+        )
+        agent.add_argument(
+            '-att',
+            '--attention',
+            default='none',
+            choices=['none', 'concat', 'general', 'dot', 'local'],
+            help='Choices: none, concat, general, local. '
+            'If set local, also set attention-length. '
+            '(see arxiv.org/abs/1508.04025)',
+        )
+        agent.add_argument(
+            '-attl',
+            '--attention-length',
+            default=48,
+            type=int,
+            help='Length of local attention.',
+        )
+        agent.add_argument(
+            '--attention-time',
+            default='post',
+            choices=['pre', 'post'],
+            help='Whether to apply attention before or after ' 'decoding.',
+        )
+        agent.add_argument(
+            '-rnn',
+            '--rnn-class',
+            default='lstm',
+            choices=Seq2seq.RNN_OPTS.keys(),
+            help='Choose between different types of RNNs.',
+        )
+        agent.add_argument(
+            '-dec',
+            '--decoder',
+            default='same',
+            choices=['same', 'shared'],
+            help='Choose between different decoder modules. '
+            'Default "same" uses same class as encoder, '
+            'while "shared" also uses the same weights. '
+            'Note that shared disabled some encoder '
+            'options--in particular, bidirectionality.',
+        )
+        agent.add_argument(
+            '-lt',
+            '--lookuptable',
+            default='unique',
+            choices=['unique', 'enc_dec', 'dec_out', 'all'],
+            help='The encoder, decoder, and output modules can '
+            'share weights, or not. '
+            'Unique has independent embeddings for each. '
+            'Enc_dec shares the embedding for the encoder '
+            'and decoder. '
+            'Dec_out shares decoder embedding and output '
+            'weights. '
+            'All shares all three weights.',
+        )
+        agent.add_argument(
+            '-soft',
+            '--numsoftmax',
+            default=1,
+            type=int,
+            help='default 1, if greater then uses mixture of '
+            'softmax (see arxiv.org/abs/1711.03953).',
+        )
+        agent.add_argument(
+            '-idr',
+            '--input-dropout',
+            type=float,
+            default=0.0,
+            help='Probability of replacing tokens with UNK in training.',
+        )
 
         super(Seq2seqAgent, cls).add_cmdline_args(argparser)
         return agent
@@ -114,23 +161,27 @@ class Seq2seqAgent(TorchGeneratorAgent):
 
         kwargs = opt_to_kwargs(opt)
         self.model = Seq2seq(
-            len(self.dict), opt['embeddingsize'], opt['hiddensize'],
-            padding_idx=self.NULL_IDX, start_idx=self.START_IDX,
-            end_idx=self.END_IDX, unknown_idx=self.dict[self.dict.unk_token],
+            len(self.dict),
+            opt['embeddingsize'],
+            opt['hiddensize'],
+            padding_idx=self.NULL_IDX,
+            start_idx=self.START_IDX,
+            end_idx=self.END_IDX,
+            unknown_idx=self.dict[self.dict.unk_token],
             longest_label=states.get('longest_label', 1),
-            **kwargs)
+            **kwargs,
+        )
 
-        if (opt.get('dict_tokenizer') == 'bpe' and
-                opt['embedding_type'] != 'random'):
+        if opt.get('dict_tokenizer') == 'bpe' and opt['embedding_type'] != 'random':
             print('skipping preinitialization of embeddings for bpe')
         elif not states and opt['embedding_type'] != 'random':
             # `not states`: only set up embeddings if not loading model
-            self._copy_embeddings(self.model.decoder.lt.weight,
-                                  opt['embedding_type'])
+            self._copy_embeddings(self.model.decoder.lt.weight, opt['embedding_type'])
             if opt['lookuptable'] in ['unique', 'dec_out']:
                 # also set encoder lt, since it's not shared
-                self._copy_embeddings(self.model.encoder.lt.weight,
-                                      opt['embedding_type'], log=False)
+                self._copy_embeddings(
+                    self.model.encoder.lt.weight, opt['embedding_type'], log=False
+                )
 
         if states:
             # set loaded states if applicable
@@ -154,11 +205,11 @@ class Seq2seqAgent(TorchGeneratorAgent):
     def build_criterion(self):
         # set up criteria
         if self.opt.get('numsoftmax', 1) > 1:
-            self.criterion = nn.NLLLoss(
-                ignore_index=self.NULL_IDX, size_average=False)
+            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX, size_average=False)
         else:
             self.criterion = nn.CrossEntropyLoss(
-                ignore_index=self.NULL_IDX, size_average=False)
+                ignore_index=self.NULL_IDX, size_average=False
+            )
 
         if self.use_cuda:
             self.criterion.cuda()

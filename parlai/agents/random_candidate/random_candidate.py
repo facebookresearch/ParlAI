@@ -22,8 +22,11 @@ class RandomCandidateAgent(Agent):
         """Add command line arguments for this agent."""
         parser = parser.add_argument_group('RandomCandidateAgent Arguments')
         parser.add_argument(
-            '--label_candidates_file', type=str, default=None,
-            help='file of candidate responses to choose from')
+            '--label_candidates_file',
+            type=str,
+            default=None,
+            help='file of candidate responses to choose from',
+        )
 
     def __init__(self, opt, shared=None):
         """Initialize this agent."""

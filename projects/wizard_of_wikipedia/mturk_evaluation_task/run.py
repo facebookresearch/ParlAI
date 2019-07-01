@@ -20,7 +20,7 @@ import sys
 MASTER_QUALIF = {
     'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
     'Comparator': 'Exists',
-    'RequiredToPreview': True
+    'RequiredToPreview': True,
 }
 
 
@@ -32,31 +32,57 @@ def main():
     argparser = ParlaiParser(False, add_model_args=True)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('-mt', '--max-turns', default=10, type=int,
-                           help='maximal number of chat turns')
-    argparser.add_argument('--max-resp-time', default=240,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('--max-choice-time', type=int,
-                           default=300, help='time limit for turker'
-                           'choosing the topic')
-    argparser.add_argument('--ag-shutdown-time', default=120,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('-rt', '--range-turn', default='3,5',
-                           help='sample range of number of turns')
-    argparser.add_argument('--human-eval', type='bool', default=False,
-                           help='human vs human eval, no models involved')
-    argparser.add_argument('--auto-approve-delay', type=int,
-                           default=3600 * 24 * 1,
-                           help='how long to wait for auto approval')
-    argparser.add_argument('--only-masters', type='bool', default=False,
-                           help='Set to true to use only master turks for '
-                                'this test eval')
-    argparser.add_argument('--unique-workers', type='bool', default=False,
-                           help='Each worker must be unique')
-    argparser.add_argument('--mturk-log', type=str,
-                           default='data/mturklogs/{}.log'.format(start_time))
+    argparser.add_argument(
+        '-mt', '--max-turns', default=10, type=int, help='maximal number of chat turns'
+    )
+    argparser.add_argument(
+        '--max-resp-time',
+        default=240,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '--max-choice-time',
+        type=int,
+        default=300,
+        help='time limit for turker' 'choosing the topic',
+    )
+    argparser.add_argument(
+        '--ag-shutdown-time',
+        default=120,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '-rt', '--range-turn', default='3,5', help='sample range of number of turns'
+    )
+    argparser.add_argument(
+        '--human-eval',
+        type='bool',
+        default=False,
+        help='human vs human eval, no models involved',
+    )
+    argparser.add_argument(
+        '--auto-approve-delay',
+        type=int,
+        default=3600 * 24 * 1,
+        help='how long to wait for auto approval',
+    )
+    argparser.add_argument(
+        '--only-masters',
+        type='bool',
+        default=False,
+        help='Set to true to use only master turks for ' 'this test eval',
+    )
+    argparser.add_argument(
+        '--unique-workers',
+        type='bool',
+        default=False,
+        help='Each worker must be unique',
+    )
+    argparser.add_argument(
+        '--mturk-log', type=str, default='data/mturklogs/{}.log'.format(start_time)
+    )
 
     def inject_override(opt, override_dict):
         opt['override'] = override_dict
@@ -67,8 +93,7 @@ def main():
         logger = logging.getLogger()
         logger.setLevel(logging.INFO)
 
-        fmt = logging.Formatter(
-            '%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
+        fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
         console = logging.StreamHandler()
         console.setFormatter(fmt)
         logger.addHandler(console)
@@ -87,8 +112,7 @@ def main():
     config = {
         'model': 'projects:wizard_of_wikipedia:interactive_retrieval',
         'retriever_model_file': 'models:wikipedia_full/tfidf_retriever/model',
-        'responder_model_file':
-            'models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
+        'responder_model_file': 'models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
     }
 
     argparser.add_model_subargs(config['model'])  # add model args to opt
@@ -112,14 +136,10 @@ def main():
     else:
         folder_name = '{}-{}'.format(start_opt['model'], start_time)
 
-    start_opt['task'] = os.path.basename(
-        os.path.dirname(os.path.abspath(__file__)))
+    start_opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
     if 'data_path' not in start_opt:
         start_opt['data_path'] = os.path.join(
-            os.getcwd(),
-            'data',
-            'wizard_eval',
-            folder_name
+            os.getcwd(), 'data', 'wizard_eval', folder_name
         )
     start_opt.update(task_config)
 
@@ -128,10 +148,7 @@ def main():
     else:
         mturk_agent_ids = ['PERSON_1', 'PERSON_2']
 
-    mturk_manager = MTurkManager(
-        opt=start_opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=start_opt, mturk_agent_ids=mturk_agent_ids)
 
     topics_generator = TopicsGenerator(start_opt)
     directory_path = os.path.dirname(os.path.abspath(__file__))
@@ -152,14 +169,14 @@ def main():
                     'Qualification to ensure each worker completes a maximum '
                     'of one of these chat/eval HITs'
                 )
-                qualification_id = \
-                    mturk_utils.find_or_create_qualification(qual_name, qual_desc,
-                                                             False)
+                qualification_id = mturk_utils.find_or_create_qualification(
+                    qual_name, qual_desc, False
+                )
                 print('Created qualification: ', qualification_id)
                 UNIQUE_QUALIF = {
                     'QualificationTypeId': qualification_id,
                     'Comparator': 'DoesNotExist',
-                    'RequiredToPreview': True
+                    'RequiredToPreview': True,
                 }
                 start_opt['unique_qualif_id'] = qualification_id
                 agent_qualifications.append(UNIQUE_QUALIF)
@@ -176,6 +193,7 @@ def main():
             world = TopicChooseWorld(start_opt, worker, role=role)
             world.parley()
             world.shutdown()
+
         mturk_manager.set_onboard_function(onboard_function=run_onboard)
         mturk_manager.ready_to_accept_workers()
 
@@ -220,8 +238,7 @@ def main():
             world = WizardEval(
                 opt=start_opt,
                 agents=workers,
-                range_turn=[int(s)
-                            for s in start_opt['range_turn'].split(',')],
+                range_turn=[int(s) for s in start_opt['range_turn'].split(',')],
                 max_turn=start_opt['max_turns'],
                 max_resp_time=start_opt['max_resp_time'],
                 model_agent_opt=shared_bot_params,
@@ -238,7 +255,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

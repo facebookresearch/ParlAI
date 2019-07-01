@@ -23,32 +23,82 @@ warn_once(
 
 
 def add_common_cmdline_args(argparser):
-    argparser.add_argument('-esz', '--embedding-size', type=int, default=300,
-                           help='Size of all embedding layers')
+    argparser.add_argument(
+        '-esz',
+        '--embedding-size',
+        type=int,
+        default=300,
+        help='Size of all embedding layers',
+    )
     argparser.add_argument('-nl', '--n-layers', type=int, default=2)
-    argparser.add_argument('-hid', '--ffn-size', type=int, default=300,
-                           help='Hidden size of the FFN layers')
-    argparser.add_argument('--dropout', type=float, default=0.0,
-                           help='Dropout used in Vaswani 2017.')
-    argparser.add_argument('--attention-dropout', type=float, default=0.0,
-                           help='Dropout used after attention softmax.')
-    argparser.add_argument('--relu-dropout', type=float, default=0.0,
-                           help='Dropout used after ReLU. From tensor2tensor.')
-    argparser.add_argument('--n-heads', type=int, default=2,
-                           help='Number of multihead attention heads')
+    argparser.add_argument(
+        '-hid',
+        '--ffn-size',
+        type=int,
+        default=300,
+        help='Hidden size of the FFN layers',
+    )
+    argparser.add_argument(
+        '--dropout', type=float, default=0.0, help='Dropout used in Vaswani 2017.'
+    )
+    argparser.add_argument(
+        '--attention-dropout',
+        type=float,
+        default=0.0,
+        help='Dropout used after attention softmax.',
+    )
+    argparser.add_argument(
+        '--relu-dropout',
+        type=float,
+        default=0.0,
+        help='Dropout used after ReLU. From tensor2tensor.',
+    )
+    argparser.add_argument(
+        '--n-heads', type=int, default=2, help='Number of multihead attention heads'
+    )
     argparser.add_argument('--learn-positional-embeddings', type='bool', default=False)
     argparser.add_argument('--embeddings-scale', type='bool', default=True)
-    argparser.add_argument('--n-positions', type=int, default=None, hidden=True,
-                           help='Number of positional embeddings to learn. Defaults '
-                                'to truncate or 1024 if not provided.')
-    argparser.add_argument('--n-segments', type=int, default=0,
-                           help='The number of segments that support the model. '
-                                'If zero no segment and no langs_embedding.')
-    argparser.add_argument('--variant', choices={'aiayn', 'xlm'}, default='aiayn',
-                           help='Chooses locations of layer norms, etc.')
-    argparser.add_argument('--activation', choices={'relu', 'gelu'}, default='relu',
-                           help='Nonlinear activation to use. AIAYN uses relu, but '
-                                'more recent papers prefer gelu.')
+    argparser.add_argument(
+        '--n-positions',
+        type=int,
+        default=None,
+        hidden=True,
+        help='Number of positional embeddings to learn. Defaults '
+        'to truncate or 1024 if not provided.',
+    )
+    argparser.add_argument(
+        '--n-segments',
+        type=int,
+        default=0,
+        help='The number of segments that support the model. '
+        'If zero no segment and no langs_embedding.',
+    )
+    argparser.add_argument(
+        '--variant',
+        choices={'aiayn', 'xlm'},
+        default='aiayn',
+        help='Chooses locations of layer norms, etc.',
+    )
+    argparser.add_argument(
+        '--activation',
+        choices={'relu', 'gelu'},
+        default='relu',
+        help='Nonlinear activation to use. AIAYN uses relu, but '
+        'more recent papers prefer gelu.',
+    )
+    argparser.add_argument(
+        '--output-scaling',
+        type=float,
+        default=1.0,
+        help='scale the output of every transformer by this quantity.',
+    )
+    argparser.add_argument(
+        '--share-word-embeddings',
+        type='bool',
+        default=True,
+        help='Share word embeddings table for candidate and context'
+        'in the memory network',
+    )
 
 
 class Transformer(Agent):
@@ -56,6 +106,7 @@ class Transformer(Agent):
     Placeholder class, which just throws an error telling the user to specify
     whether they want the ranker or the generator.
     """
+
     def __init__(self, opt, shared=None):
         raise RuntimeError(
             "`--model transformer` is not a valid choice. Please select either "
@@ -71,33 +122,55 @@ class TransformerRankerAgent(TorchRankerAgent):
         agent = argparser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
         # memory and knowledge arguments
-        agent.add_argument('--use-memories', type='bool', default=False,
-                           help='use memories: must implement the function '
-                                '`_vectorize_memories` to use this')
-        agent.add_argument('--wrap-memory-encoder', type='bool',
-                           default=False,
-                           help='wrap memory encoder with MLP')
-        agent.add_argument('--memory-attention', type=str, default='sqrt',
-                           choices=['cosine', 'dot', 'sqrt'],
-                           help='similarity for basic attention mechanism'
-                                'when using transformer to encode memories')
+        agent.add_argument(
+            '--use-memories',
+            type='bool',
+            default=False,
+            help='use memories: must implement the function '
+            '`_vectorize_memories` to use this',
+        )
+        agent.add_argument(
+            '--wrap-memory-encoder',
+            type='bool',
+            default=False,
+            help='wrap memory encoder with MLP',
+        )
+        agent.add_argument(
+            '--memory-attention',
+            type=str,
+            default='sqrt',
+            choices=['cosine', 'dot', 'sqrt'],
+            help='similarity for basic attention mechanism'
+            'when using transformer to encode memories',
+        )
         # model specific arguments
         agent.add_argument('--normalize-sent-emb', type='bool', default=False)
         agent.add_argument('--share-encoders', type='bool', default=True)
-        agent.add_argument('--learn-embeddings', type='bool', default=True,
-                           help='learn embeddings')
-        agent.add_argument('--data-parallel', type='bool', default=False,
-                           help='use model in data parallel, requires '
-                                'multiple gpus')
-        agent.add_argument('--reduction-type', type=str, default='mean',
-                           choices=['first', 'max', 'mean'],
-                           help='Type of reduction at the end of transformer')
-
-        argparser.set_defaults(
-            learningrate=0.0001,
-            optimizer='adamax',
-            truncate=1024,
+        argparser.add_argument(
+            '--share-word-embeddings',
+            type='bool',
+            default=True,
+            help='Share word embeddings table for candidate and context'
+            'in the memory network',
         )
+        agent.add_argument(
+            '--learn-embeddings', type='bool', default=True, help='learn embeddings'
+        )
+        agent.add_argument(
+            '--data-parallel',
+            type='bool',
+            default=False,
+            help='use model in data parallel, requires ' 'multiple gpus',
+        )
+        agent.add_argument(
+            '--reduction-type',
+            type=str,
+            default='mean',
+            choices=['first', 'max', 'mean'],
+            help='Type of reduction at the end of transformer',
+        )
+
+        argparser.set_defaults(learningrate=0.0001, optimizer='adamax', truncate=1024)
         cls.dictionary_class().add_cmdline_args(argparser)
 
         return agent
@@ -107,21 +180,20 @@ class TransformerRankerAgent(TorchRankerAgent):
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
             from parlai.core.distributed_utils import is_distributed
+
             if is_distributed():
-                raise ValueError(
-                    'Cannot combine --data-parallel and distributed mode'
-                )
+                raise ValueError('Cannot combine --data-parallel and distributed mode')
             self.model = torch.nn.DataParallel(self.model)
 
     def _score(self, output, cands):
         if cands.dim() == 2:
             return torch.matmul(output, cands.t())
         elif cands.dim() == 3:
-            return torch.bmm(output.unsqueeze(1),
-                             cands.transpose(1, 2)).squeeze(1)
+            return torch.bmm(output.unsqueeze(1), cands.transpose(1, 2)).squeeze(1)
         else:
-            raise RuntimeError('Unexpected candidate dimensions {}'
-                               ''.format(cands.dim()))
+            raise RuntimeError(
+                'Unexpected candidate dimensions {}' ''.format(cands.dim())
+            )
 
     def build_model(self, states=None):
         self.model = TransformerMemNetModel(self.opt, self.dict)
@@ -135,8 +207,7 @@ class TransformerRankerAgent(TorchRankerAgent):
         """Override so that we can add memories to the Batch object."""
         batch = super().batchify(obs_batch, sort)
         if self.opt['use_memories']:
-            valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if
-                         self.is_valid(ex)]
+            valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if self.is_valid(ex)]
             valid_inds, exs = zip(*valid_obs)
             mems = None
             if any('memory_vecs' in ex for ex in exs):
@@ -159,20 +230,20 @@ class TransformerRankerAgent(TorchRankerAgent):
         return obs
 
     def encode_candidates(self, padded_cands):
-        _, cands = self.model(
-            xs=None,
-            mems=None,
-            cands=padded_cands,
-        )
+        _, cands = self.model(xs=None, mems=None, cands=padded_cands)
 
         return cands
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         # convoluted check that not all memories are empty
-        if (self.opt['use_memories'] and batch.memory_vecs is not None and
-                sum(len(m) for m in batch.memory_vecs)):
-            mems = padded_3d(batch.memory_vecs, use_cuda=self.use_cuda,
-                             pad_idx=self.NULL_IDX)
+        if (
+            self.opt['use_memories']
+            and batch.memory_vecs is not None
+            and sum(len(m) for m in batch.memory_vecs)
+        ):
+            mems = padded_3d(
+                batch.memory_vecs, use_cuda=self.use_cuda, pad_idx=self.NULL_IDX
+            )
         else:
             mems = None
 
@@ -180,15 +251,10 @@ class TransformerRankerAgent(TorchRankerAgent):
             # we pre-encoded the candidates, do not re-encode here
             cand_vecs = None
 
-        context_h, cands_h = self.model(
-            xs=batch.text_vec,
-            mems=mems,
-            cands=cand_vecs,
-        )
+        context_h, cands_h = self.model(xs=batch.text_vec, mems=mems, cands=cand_vecs)
 
         if cand_encs is not None:
             cands_h = cand_encs
-
         scores = self._score(context_h, cands_h)
 
         return scores

@@ -55,18 +55,14 @@ def build(opt):
         build_data.untar(dpath, fname)
 
         dpext = os.path.join(dpath, 'WikiQACorpus')
-        create_fb_format(dpath, 'train',
-                         os.path.join(dpext, 'WikiQA-train.tsv'))
-        create_fb_format(dpath, 'valid',
-                         os.path.join(dpext, 'WikiQA-dev.tsv'))
-        create_fb_format(dpath, 'test',
-                         os.path.join(dpext, 'WikiQA-test.tsv'))
-        create_fb_format(dpath, 'train-filtered',
-                         os.path.join(dpext, 'WikiQA-train.tsv'))
-        create_fb_format(dpath, 'valid-filtered',
-                         os.path.join(dpext, 'WikiQA-dev.tsv'))
-        create_fb_format(dpath, 'test-filtered',
-                         os.path.join(dpext, 'WikiQA-test.tsv'))
+        create_fb_format(dpath, 'train', os.path.join(dpext, 'WikiQA-train.tsv'))
+        create_fb_format(dpath, 'valid', os.path.join(dpext, 'WikiQA-dev.tsv'))
+        create_fb_format(dpath, 'test', os.path.join(dpext, 'WikiQA-test.tsv'))
+        create_fb_format(
+            dpath, 'train-filtered', os.path.join(dpext, 'WikiQA-train.tsv')
+        )
+        create_fb_format(dpath, 'valid-filtered', os.path.join(dpext, 'WikiQA-dev.tsv'))
+        create_fb_format(dpath, 'test-filtered', os.path.join(dpext, 'WikiQA-test.tsv'))
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

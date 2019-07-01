@@ -31,9 +31,11 @@ def _path(exsz, task, opt):
     elif dt == 'valid':
         suffix = 'dev'
     return os.path.join(
-        opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
+        opt['datapath'],
+        'personalized-dialog',
+        'personalized-dialog-dataset',
         '{exsz}'.format(exsz=exsz),
-        '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix)
+        '{tsk}-{type}.txt'.format(tsk=tasks[int(task)], type=suffix),
     )
 
 
@@ -42,8 +44,10 @@ class KBTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
         opt['datafile'] = os.path.join(
-            opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
-            'personalized-dialog-kb-all.txt'
+            opt['datapath'],
+            'personalized-dialog',
+            'personalized-dialog-dataset',
+            'personalized-dialog-kb-all.txt',
         )
         super().__init__(opt, shared)
 
@@ -54,8 +58,10 @@ class FullTaskTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path('full', opt['task'].split(':')[2], opt)
         opt['cands_datafile'] = os.path.join(
-            opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
-            'personalized-dialog-candidates.txt'
+            opt['datapath'],
+            'personalized-dialog',
+            'personalized-dialog-dataset',
+            'personalized-dialog-candidates.txt',
         )
         super().__init__(opt, shared)
 
@@ -66,8 +72,10 @@ class SmallTaskTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path('small', opt['task'].split(':')[2], opt)
         opt['cands_datafile'] = os.path.join(
-            opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
-            'personalized-dialog-candidates.txt'
+            opt['datapath'],
+            'personalized-dialog',
+            'personalized-dialog-dataset',
+            'personalized-dialog-candidates.txt',
         )
         super().__init__(opt, shared)
 
@@ -77,11 +85,14 @@ class SmallTaskTeacher(FbDialogTeacher):
 class AllFullTeacher(core_agents.MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['task'] = ','.join('personalized_dialog:FullTask:%d' % (i + 1)
-                               for i in range(5))
+        opt['task'] = ','.join(
+            'personalized_dialog:FullTask:%d' % (i + 1) for i in range(5)
+        )
         opt['cands_datafile'] = os.path.join(
-            opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
-            'personalized-dialog-candidates.txt'
+            opt['datapath'],
+            'personalized-dialog',
+            'personalized-dialog-dataset',
+            'personalized-dialog-candidates.txt',
         )
         super().__init__(opt, shared)
 
@@ -91,11 +102,14 @@ class AllFullTeacher(core_agents.MultiTaskTeacher):
 class AllSmallTeacher(core_agents.MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['task'] = ','.join('personalized_dialog:SmallTask:%d' % (i + 1)
-                               for i in range(5))
+        opt['task'] = ','.join(
+            'personalized_dialog:SmallTask:%d' % (i + 1) for i in range(5)
+        )
         opt['cands_datafile'] = os.path.join(
-            opt['datapath'], 'personalized-dialog', 'personalized-dialog-dataset',
-            'personalized-dialog-candidates.txt'
+            opt['datapath'],
+            'personalized-dialog',
+            'personalized-dialog-dataset',
+            'personalized-dialog-candidates.txt',
         )
         super().__init__(opt, shared)
 

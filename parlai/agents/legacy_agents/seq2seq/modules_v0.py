@@ -18,10 +18,16 @@ import os
 def pad(tensor, length, dim=0):
     if tensor.size(dim) < length:
         return torch.cat(
-            [tensor, tensor.new(*tensor.size()[:dim],
-                                length - tensor.size(dim),
-                                *tensor.size()[dim + 1:]).zero_()],
-            dim=dim)
+            [
+                tensor,
+                tensor.new(
+                    *tensor.size()[:dim],
+                    length - tensor.size(dim),
+                    *tensor.size()[dim + 1 :],
+                ).zero_(),
+            ],
+            dim=dim,
+        )
     else:
         return tensor
 
@@ -29,8 +35,9 @@ def pad(tensor, length, dim=0):
 class Seq2seq(nn.Module):
     RNN_OPTS = {'rnn': nn.RNN, 'gru': nn.GRU, 'lstm': nn.LSTM}
 
-    def __init__(self, opt, num_features,
-                 padding_idx=0, start_idx=1, end_idx=2, longest_label=1):
+    def __init__(
+        self, opt, num_features, padding_idx=0, start_idx=1, end_idx=2, longest_label=1
+    ):
         super().__init__()
         self.opt = opt
 
@@ -44,31 +51,43 @@ class Seq2seq(nn.Module):
 
         rnn_class = Seq2seq.RNN_OPTS[opt['rnn_class']]
         self.decoder = Decoder(
-            num_features, padding_idx=self.NULL_IDX, rnn_class=rnn_class,
-            emb_size=opt['embeddingsize'], hidden_size=opt['hiddensize'],
-            num_layers=opt['numlayers'], dropout=opt['dropout'],
+            num_features,
+            padding_idx=self.NULL_IDX,
+            rnn_class=rnn_class,
+            emb_size=opt['embeddingsize'],
+            hidden_size=opt['hiddensize'],
+            num_layers=opt['numlayers'],
+            dropout=opt['dropout'],
             share_output=opt['lookuptable'] in ['dec_out', 'all'],
-            attn_type=opt['attention'], attn_length=opt['attention_length'],
+            attn_type=opt['attention'],
+            attn_length=opt['attention_length'],
             attn_time=opt.get('attention_time'),
             bidir_input=opt['bidirectional'],
             numsoftmax=opt.get('numsoftmax', 1),
-            softmax_layer_bias=opt.get('softmax_layer_bias', False))
+            softmax_layer_bias=opt.get('softmax_layer_bias', False),
+        )
 
-        shared_lt = (self.decoder.lt
-                     if opt['lookuptable'] in ['enc_dec', 'all'] else None)
+        shared_lt = (
+            self.decoder.lt if opt['lookuptable'] in ['enc_dec', 'all'] else None
+        )
         shared_rnn = self.decoder.rnn if opt['decoder'] == 'shared' else None
         self.encoder = Encoder(
-            num_features, padding_idx=self.NULL_IDX, rnn_class=rnn_class,
-            emb_size=opt['embeddingsize'], hidden_size=opt['hiddensize'],
-            num_layers=opt['numlayers'], dropout=opt['dropout'],
+            num_features,
+            padding_idx=self.NULL_IDX,
+            rnn_class=rnn_class,
+            emb_size=opt['embeddingsize'],
+            hidden_size=opt['hiddensize'],
+            num_layers=opt['numlayers'],
+            dropout=opt['dropout'],
             bidirectional=opt['bidirectional'],
-            shared_lt=shared_lt, shared_rnn=shared_rnn)
+            shared_lt=shared_lt,
+            shared_rnn=shared_rnn,
+        )
 
         if self.rank:
             self.ranker = Ranker(
-                self.decoder,
-                padding_idx=self.NULL_IDX,
-                attn_type=opt['attention'])
+                self.decoder, padding_idx=self.NULL_IDX, attn_type=opt['attention']
+            )
 
         self.beam_log_freq = opt.get('beam_log_freq', 0.0)
         if self.beam_log_freq > 0.0:
@@ -90,8 +109,10 @@ class Seq2seq(nn.Module):
         if isinstance(hidden, tuple):
             num_layers = hidden[0].size(0)
             hidden_size = hidden[0].size(-1)
-            return (hidden[0].view(num_layers, batch_size * beam_size, hidden_size),
-                hidden[1].view(num_layers, batch_size * beam_size, hidden_size))
+            return (
+                hidden[0].view(num_layers, batch_size * beam_size, hidden_size),
+                hidden[1].view(num_layers, batch_size * beam_size, hidden_size),
+            )
         else:  # GRU
             num_layers = hidden.size(0)
             hidden_size = hidden.size(-1)
@@ -101,8 +122,17 @@ class Seq2seq(nn.Module):
         hidden_size = enc_out.size(-1)
         return enc_out.view(batch_size * beam_size, -1, hidden_size)
 
-    def forward(self, xs, ys=None, cands=None, valid_cands=None, prev_enc=None,
-                rank_during_training=False, beam_size=1, topk=1):
+    def forward(
+        self,
+        xs,
+        ys=None,
+        cands=None,
+        valid_cands=None,
+        prev_enc=None,
+        rank_during_training=False,
+        beam_size=1,
+        topk=1,
+    ):
         """Get output predictions from the model.
 
         Arguments:
@@ -140,9 +170,13 @@ class Seq2seq(nn.Module):
             decode_params = (start, hidden, enc_out, attn_mask)
             if self.training:
                 if rank_during_training:
-                    cand_preds, cand_scores = self.ranker.forward(cands, valid_cands, decode_params=decode_params)
+                    cand_preds, cand_scores = self.ranker.forward(
+                        cands, valid_cands, decode_params=decode_params
+                    )
             else:
-                cand_preds, cand_scores = self.ranker.forward(cands, valid_cands, decode_params=decode_params)
+                cand_preds, cand_scores = self.ranker.forward(
+                    cands, valid_cands, decode_params=decode_params
+                )
 
         if ys is not None:
             y_in = ys.narrow(1, 0, ys.size(1) - 1)
@@ -166,7 +200,9 @@ class Seq2seq(nn.Module):
 
                 for _ in range(self.longest_label):
                     # generate at most longest_label tokens
-                    preds, score, hidden = self.decoder(xs, hidden, enc_out, attn_mask, topk)
+                    preds, score, hidden = self.decoder(
+                        xs, hidden, enc_out, attn_mask, topk
+                    )
                     scores.append(score)
                     xs = preds
                     predictions.append(preds)
@@ -184,11 +220,25 @@ class Seq2seq(nn.Module):
                         break
 
             elif beam_size > 1:
-                enc_out, hidden = encoder_states[0], encoder_states[1]  # take it from encoder
+                enc_out, hidden = (
+                    encoder_states[0],
+                    encoder_states[1],
+                )  # take it from encoder
                 enc_out = enc_out.unsqueeze(1).repeat(1, beam_size, 1, 1)
                 # create batch size num of beams
                 data_device = enc_out.device
-                beams = [Beam(beam_size, 3, 0, 1, 2, min_n_best=beam_size / 2, cuda=data_device) for _ in range(bsz)]
+                beams = [
+                    Beam(
+                        beam_size,
+                        3,
+                        0,
+                        1,
+                        2,
+                        min_n_best=beam_size / 2,
+                        cuda=data_device,
+                    )
+                    for _ in range(bsz)
+                ]
                 # init the input with start token
                 xs = starts
                 # repeat tensors to support batched beam
@@ -199,8 +249,12 @@ class Seq2seq(nn.Module):
 
                 if isinstance(hidden, tuple):
                     for i in range(len(hidden)):
-                        repeated_hidden.append(hidden[i].unsqueeze(2).repeat(1, 1, beam_size, 1))
-                    hidden = self.unbeamize_hidden(tuple(repeated_hidden), beam_size, bsz)
+                        repeated_hidden.append(
+                            hidden[i].unsqueeze(2).repeat(1, 1, beam_size, 1)
+                        )
+                    hidden = self.unbeamize_hidden(
+                        tuple(repeated_hidden), beam_size, bsz
+                    )
                 else:  # GRU
                     repeated_hidden = hidden.unsqueeze(2).repeat(1, 1, beam_size, 1)
                     hidden = self.unbeamize_hidden(repeated_hidden, beam_size, bsz)
@@ -214,33 +268,57 @@ class Seq2seq(nn.Module):
                     scores = scores.view(bsz, beam_size, -1)  # -1 is a vocab size
                     for i, b in enumerate(beams):
                         b.advance(F.log_softmax(scores[i, :], dim=-1))
-                    xs = torch.cat([b.get_output_from_current_step() for b in beams]).unsqueeze(-1)
+                    xs = torch.cat(
+                        [b.get_output_from_current_step() for b in beams]
+                    ).unsqueeze(-1)
                     permute_hidden_idx = torch.cat(
-                        [beam_size * i + b.get_backtrack_from_current_step() for i, b in enumerate(beams)])
+                        [
+                            beam_size * i + b.get_backtrack_from_current_step()
+                            for i, b in enumerate(beams)
+                        ]
+                    )
                     new_hidden = out[2]
                     if isinstance(hidden, tuple):
                         for i in range(len(hidden)):
-                            hidden[i].data.copy_(new_hidden[i].data.index_select(dim=1, index=permute_hidden_idx))
+                            hidden[i].data.copy_(
+                                new_hidden[i].data.index_select(
+                                    dim=1, index=permute_hidden_idx
+                                )
+                            )
                     else:  # GRU
-                        hidden.data.copy_(new_hidden.data.index_select(dim=1, index=permute_hidden_idx))
+                        hidden.data.copy_(
+                            new_hidden.data.index_select(
+                                dim=1, index=permute_hidden_idx
+                            )
+                        )
 
                 for b in beams:
                     b.check_finished()
-                beam_pred = [b.get_pretty_hypothesis(b.get_top_hyp()[0])[1:] for b in beams]
+                beam_pred = [
+                    b.get_pretty_hypothesis(b.get_top_hyp()[0])[1:] for b in beams
+                ]
                 # these beam scores are rescored with length penalty!
                 beam_scores = torch.stack([b.get_top_hyp()[1] for b in beams])
                 pad_length = max([t.size(0) for t in beam_pred])
-                beam_pred = torch.stack([pad(t, length=pad_length, dim=0) for t in beam_pred], dim=0)
+                beam_pred = torch.stack(
+                    [pad(t, length=pad_length, dim=0) for t in beam_pred], dim=0
+                )
 
                 #  prepare n best list for each beam
-                n_best_beam_tails = [b.get_rescored_finished(n_best=len(b.finished)) for b in beams]
+                n_best_beam_tails = [
+                    b.get_rescored_finished(n_best=len(b.finished)) for b in beams
+                ]
                 nbest_beam_scores = []
                 nbest_beam_preds = []
                 for i, beamtails in enumerate(n_best_beam_tails):
                     perbeam_preds = []
                     perbeam_scores = []
                     for tail in beamtails:
-                        perbeam_preds.append(beams[i].get_pretty_hypothesis(beams[i].get_hyp_from_finished(tail)))
+                        perbeam_preds.append(
+                            beams[i].get_pretty_hypothesis(
+                                beams[i].get_hyp_from_finished(tail)
+                            )
+                        )
                         perbeam_scores.append(tail.score)
                     nbest_beam_scores.append(perbeam_scores)
                     nbest_beam_preds.append(perbeam_preds)
@@ -249,7 +327,12 @@ class Seq2seq(nn.Module):
                     num_dump = round(bsz * self.beam_log_freq)
                     for i in range(num_dump):
                         dot_graph = beams[i].get_beam_dot(dictionary=self.dict)
-                        dot_graph.write_png(os.path.join(self.beam_dump_path, "{}.png".format(self.beam_dump_filecnt)))
+                        dot_graph.write_png(
+                            os.path.join(
+                                self.beam_dump_path,
+                                "{}.png".format(self.beam_dump_filecnt),
+                            )
+                        )
                         self.beam_dump_filecnt += 1
 
                 predictions = beam_pred
@@ -260,14 +343,32 @@ class Seq2seq(nn.Module):
         if isinstance(scores, list):
             scores = torch.cat(scores, 1)
 
-        return predictions, scores, cand_preds, cand_scores, encoder_states, nbest_beam_preds, nbest_beam_scores
+        return (
+            predictions,
+            scores,
+            cand_preds,
+            cand_scores,
+            encoder_states,
+            nbest_beam_preds,
+            nbest_beam_scores,
+        )
 
 
 class Encoder(nn.Module):
-    def __init__(self, num_features, padding_idx=0, rnn_class='lstm',
-                 emb_size=128, hidden_size=128, num_layers=2, dropout=0.1,
-                 bidirectional=False, shared_lt=None, shared_rnn=None,
-                 sparse=False):
+    def __init__(
+        self,
+        num_features,
+        padding_idx=0,
+        rnn_class='lstm',
+        emb_size=128,
+        hidden_size=128,
+        num_layers=2,
+        dropout=0.1,
+        bidirectional=False,
+        shared_lt=None,
+        shared_rnn=None,
+        sparse=False,
+    ):
         super().__init__()
 
         self.dropout = nn.Dropout(p=dropout)
@@ -276,16 +377,21 @@ class Encoder(nn.Module):
         self.hsz = hidden_size
 
         if shared_lt is None:
-            self.lt = nn.Embedding(num_features, emb_size,
-                                   padding_idx=padding_idx,
-                                   sparse=sparse)
+            self.lt = nn.Embedding(
+                num_features, emb_size, padding_idx=padding_idx, sparse=sparse
+            )
         else:
             self.lt = shared_lt
 
         if shared_rnn is None:
-            self.rnn = rnn_class(emb_size, hidden_size, num_layers,
-                                 dropout=dropout, batch_first=True,
-                                 bidirectional=bidirectional)
+            self.rnn = rnn_class(
+                emb_size,
+                hidden_size,
+                num_layers,
+                dropout=dropout,
+                batch_first=True,
+                bidirectional=bidirectional,
+            )
         elif bidirectional:
             raise RuntimeError('Cannot share decoder with bidir encoder.')
         else:
@@ -306,14 +412,15 @@ class Encoder(nn.Module):
 
         encoder_output, hidden = self.rnn(xes)
         if packed:
-            encoder_output, _ = pad_packed_sequence(encoder_output,
-                                                    batch_first=True)
+            encoder_output, _ = pad_packed_sequence(encoder_output, batch_first=True)
         if self.dirs > 1:
             # take elementwise max between forward and backward hidden states
             # NOTE: currently using max, but maybe should use Linear
             if isinstance(self.rnn, nn.LSTM):
-                hidden = (hidden[0].view(-1, self.dirs, bsz, self.hsz).max(1)[0],
-                          hidden[1].view(-1, self.dirs, bsz, self.hsz).max(1)[0])
+                hidden = (
+                    hidden[0].view(-1, self.dirs, bsz, self.hsz).max(1)[0],
+                    hidden[1].view(-1, self.dirs, bsz, self.hsz).max(1)[0],
+                )
             else:
                 hidden = hidden.view(-1, self.dirs, bsz, self.hsz).max(1)[0]
 
@@ -321,26 +428,43 @@ class Encoder(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, num_features, padding_idx=0, rnn_class='lstm',
-                 emb_size=128, hidden_size=128, num_layers=2, dropout=0.1,
-                 bidir_input=False, share_output=True,
-                 attn_type='none', attn_length=-1, attn_time='pre',
-                 sparse=False, numsoftmax=1, softmax_layer_bias=False):
+    def __init__(
+        self,
+        num_features,
+        padding_idx=0,
+        rnn_class='lstm',
+        emb_size=128,
+        hidden_size=128,
+        num_layers=2,
+        dropout=0.1,
+        bidir_input=False,
+        share_output=True,
+        attn_type='none',
+        attn_length=-1,
+        attn_time='pre',
+        sparse=False,
+        numsoftmax=1,
+        softmax_layer_bias=False,
+    ):
         super().__init__()
 
         if padding_idx != 0:
-            raise RuntimeError('This module\'s output layer needs to be fixed '
-                               'if you want a padding_idx other than zero.')
+            raise RuntimeError(
+                'This module\'s output layer needs to be fixed '
+                'if you want a padding_idx other than zero.'
+            )
 
         self.dropout = nn.Dropout(p=dropout)
         self.layers = num_layers
         self.hsz = hidden_size
         self.esz = emb_size
 
-        self.lt = nn.Embedding(num_features, emb_size, padding_idx=padding_idx,
-                               sparse=sparse)
-        self.rnn = rnn_class(emb_size, hidden_size, num_layers,
-                             dropout=dropout, batch_first=True)
+        self.lt = nn.Embedding(
+            num_features, emb_size, padding_idx=padding_idx, sparse=sparse
+        )
+        self.rnn = rnn_class(
+            emb_size, hidden_size, num_layers, dropout=dropout, batch_first=True
+        )
 
         # rnn output to embedding
         if hidden_size != emb_size and numsoftmax == 1:
@@ -352,18 +476,21 @@ class Decoder(nn.Module):
             self.o2e = lambda x: x
         # embedding to scores, use custom linear to possibly share weights
         shared_weight = self.lt.weight if share_output else None
-        self.e2s = Linear(emb_size, num_features, bias=softmax_layer_bias,
-                          shared_weight=shared_weight)
+        self.e2s = Linear(
+            emb_size, num_features, bias=softmax_layer_bias, shared_weight=shared_weight
+        )
         self.shared = shared_weight is not None
 
         self.attn_type = attn_type
         self.attn_time = attn_time
-        self.attention = AttentionLayer(attn_type=attn_type,
-                                        hidden_size=hidden_size,
-                                        emb_size=emb_size,
-                                        bidirectional=bidir_input,
-                                        attn_length=attn_length,
-                                        attn_time=attn_time)
+        self.attention = AttentionLayer(
+            attn_type=attn_type,
+            hidden_size=hidden_size,
+            emb_size=emb_size,
+            bidirectional=bidir_input,
+            attn_length=attn_length,
+            attn_time=attn_time,
+        )
 
         self.numsoftmax = numsoftmax
         if numsoftmax > 1:
@@ -405,8 +532,15 @@ class Decoder(nn.Module):
         if topk == 1:
             _max_score, idx = scores.narrow(2, 1, scores.size(2) - 1).max(2)
         elif topk > 1:
-            max_score, idx = torch.topk(F.softmax(scores.narrow(2, 1, scores.size(2) - 1), 2), topk, dim=2, sorted=False)
-            probs = F.softmax(scores.narrow(2, 1, scores.size(2) - 1).gather(2, idx), 2).squeeze(1)
+            max_score, idx = torch.topk(
+                F.softmax(scores.narrow(2, 1, scores.size(2) - 1), 2),
+                topk,
+                dim=2,
+                sorted=False,
+            )
+            probs = F.softmax(
+                scores.narrow(2, 1, scores.size(2) - 1).gather(2, idx), 2
+            ).squeeze(1)
             dist = torch.distributions.categorical.Categorical(probs)
             samples = dist.sample()
             idx = idx.gather(-1, samples.unsqueeze(1).unsqueeze(-1)).squeeze(-1)
@@ -454,8 +588,18 @@ class Ranker(object):
             else:
                 nl = hidden[0].size(0)
                 hsz = hidden[0].size(-1)
-                cur_hid = (hidden[0].select(1, i).unsqueeze(1).expand(nl, n_cs, hsz).contiguous(),
-                           hidden[1].select(1, i).unsqueeze(1).expand(nl, n_cs, hsz).contiguous())
+                cur_hid = (
+                    hidden[0]
+                    .select(1, i)
+                    .unsqueeze(1)
+                    .expand(nl, n_cs, hsz)
+                    .contiguous(),
+                    hidden[1]
+                    .select(1, i)
+                    .unsqueeze(1)
+                    .expand(nl, n_cs, hsz)
+                    .contiguous(),
+                )
 
             cur_enc, cur_mask = None, None
             if attn_mask is not None:
@@ -469,8 +613,7 @@ class Ranker(object):
                 xs, c_in = starts, curr_cs
             if self.attn_type == 'none':
                 preds, score, cur_hid = self.decoder(xs, cur_hid, cur_enc, cur_mask)
-                true_score = F.log_softmax(score, dim=2).gather(
-                    2, curr_cs.unsqueeze(2))
+                true_score = F.log_softmax(score, dim=2).gather(2, curr_cs.unsqueeze(2))
                 nonzero = curr_cs.ne(0).float()
                 scores = (true_score.squeeze(2) * nonzero).sum(1)
                 seqlens = nonzero.sum(1)
@@ -480,7 +623,8 @@ class Ranker(object):
                     ci = curr_cs.select(1, i)
                     preds, score, cur_hid = self.decoder(xi, cur_hid, cur_enc, cur_mask)
                     true_score = F.log_softmax(score, dim=2).gather(
-                        2, ci.unsqueeze(1).unsqueeze(2))
+                        2, ci.unsqueeze(1).unsqueeze(2)
+                    )
                     nonzero = ci.ne(0).float()
                     scores += true_score.squeeze(2).squeeze(1) * nonzero
                     seqlens += nonzero
@@ -498,8 +642,8 @@ class Linear(nn.Module):
     """Custom Linear layer which allows for sharing weights (e.g. with an
     nn.Embedding layer).
     """
-    def __init__(self, in_features, out_features, bias=True,
-                 shared_weight=None):
+
+    def __init__(self, in_features, out_features, bias=True, shared_weight=None):
         super().__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -509,8 +653,10 @@ class Linear(nn.Module):
         if not self.shared:
             self.weight = Parameter(torch.Tensor(out_features, in_features))
         else:
-            if (shared_weight.size(0) != out_features or
-                    shared_weight.size(1) != in_features):
+            if (
+                shared_weight.size(0) != out_features
+                or shared_weight.size(1) != in_features
+            ):
                 raise RuntimeError('wrong dimensions for shared weights')
             self.weight = shared_weight
 
@@ -522,7 +668,7 @@ class Linear(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        stdv = 1. / math.sqrt(self.weight.size(1))
+        stdv = 1.0 / math.sqrt(self.weight.size(1))
         if not self.shared:
             # weight is shared so don't overwrite it
             self.weight.data.uniform_(-stdv, stdv)
@@ -538,19 +684,26 @@ class Linear(nn.Module):
         return F.linear(input, weight, self.bias)
 
     def __repr__(self):
-        return self.__class__.__name__ + ' (' \
-            + str(self.in_features) + ' -> ' \
-            + str(self.out_features) + ')'
+        return (
+            self.__class__.__name__
+            + ' ('
+            + str(self.in_features)
+            + ' -> '
+            + str(self.out_features)
+            + ')'
+        )
 
 
 class RandomProjection(nn.Module):
     """Randomly project input to different dimensionality."""
+
     def __init__(self, in_features, out_features):
         super().__init__()
         self.in_features = in_features
         self.out_features = out_features
-        self.weight = Parameter(torch.Tensor(out_features, in_features),
-                                requires_grad=False)  # fix weights
+        self.weight = Parameter(
+            torch.Tensor(out_features, in_features), requires_grad=False
+        )  # fix weights
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -564,8 +717,15 @@ class RandomProjection(nn.Module):
 
 
 class AttentionLayer(nn.Module):
-    def __init__(self, attn_type, hidden_size, emb_size, bidirectional=False,
-                 attn_length=-1, attn_time='pre'):
+    def __init__(
+        self,
+        attn_type,
+        hidden_size,
+        emb_size,
+        bidirectional=False,
+        attn_length=-1,
+        attn_time='pre',
+    ):
         super().__init__()
         self.attention = attn_type
 
@@ -580,8 +740,7 @@ class AttentionLayer(nn.Module):
                 input_dim = hsz
             else:
                 raise RuntimeError('unsupported attention time')
-            self.attn_combine = nn.Linear(hszXdirs + input_dim, input_dim,
-                                          bias=False)
+            self.attn_combine = nn.Linear(hszXdirs + input_dim, input_dim, bias=False)
 
             if self.attention == 'local':
                 # local attention over fixed set of output states
@@ -618,9 +777,9 @@ class AttentionLayer(nn.Module):
         else:
             hid = last_hidden.unsqueeze(1)
             if self.attention == 'concat':
-                hid = hid.expand(last_hidden.size(0),
-                                 enc_out.size(1),
-                                 last_hidden.size(1))
+                hid = hid.expand(
+                    last_hidden.size(0), enc_out.size(1), last_hidden.size(1)
+                )
                 h_merged = torch.cat((enc_out, hid), 2)
                 active = F.tanh(self.attn(h_merged))
                 attn_w_premask = self.attn_v(active).squeeze(2)
@@ -628,12 +787,10 @@ class AttentionLayer(nn.Module):
                 if hid.size(2) != enc_out.size(2):
                     # enc_out has two directions, so double hid
                     hid = torch.cat([hid, hid], 2)
-                attn_w_premask = (
-                    torch.bmm(hid, enc_out.transpose(1, 2)).squeeze(1))
+                attn_w_premask = torch.bmm(hid, enc_out.transpose(1, 2)).squeeze(1)
             elif self.attention == 'general':
                 hid = self.attn(hid)
-                attn_w_premask = (
-                    torch.bmm(hid, enc_out.transpose(1, 2)).squeeze(1))
+                attn_w_premask = torch.bmm(hid, enc_out.transpose(1, 2)).squeeze(1)
             # calculate activation scores
             if attn_mask is not None:
                 # remove activation from NULL symbols

@@ -67,11 +67,9 @@ def build(opt):
             for idx in range(2):
                 answer = answers[idx]
                 question = questions[idx] + ' {} or {}?'.format(answers[0], answers[1])
-                examples.append({
-                    'context': contexts[idx],
-                    'question': question,
-                    'answer': answer
-                })
+                examples.append(
+                    {'context': contexts[idx], 'question': question, 'answer': answer}
+                )
 
         traindev = examples[:-100]
         test = examples[-100:]

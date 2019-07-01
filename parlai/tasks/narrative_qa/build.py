@@ -44,8 +44,7 @@ def divide_csv_into_sets(csv_filepath, sets=('train', 'valid', 'test')):
     base_path = os.path.dirname(csv_filepath)
 
     for s in sets:
-        path = os.path.join(base_path,
-                            base_filename + '_' + s + '.csv')
+        path = os.path.join(base_path, base_filename + '_' + s + '.csv')
         fh.seek(0)
         rows = get_rows_for_set(reader, s)
         write_dict_list_to_csv(rows, path)
@@ -66,7 +65,7 @@ def move_files(base_path, sets=('train', 'valid', 'test')):
     for f in source:
         for s in sets:
             if f.endswith('_' + s + '.csv'):
-                final_name = f[:-(len('_' + s + '.csv'))] + '.csv'
+                final_name = f[: -(len('_' + s + '.csv'))] + '.csv'
                 f = os.path.join(base_path, f)
                 shutil.move(f, os.path.join(base_path, s, final_name))
 
@@ -86,8 +85,7 @@ def try_downloading(directory, row):
         if kind == 'gutenberg':
             time.sleep(2)
 
-        build_data.download(story_url, directory,
-                            document_id + '.content')
+        build_data.download(story_url, directory, document_id + '.content')
     else:
         return True
 
@@ -95,8 +93,7 @@ def try_downloading(directory, row):
     file_type = file_type.decode('utf-8')
 
     if 'gzip compressed' in file_type:
-        gz_path = os.path.join(directory,
-                               document_id + '.content.gz')
+        gz_path = os.path.join(directory, document_id + '.content.gz')
         shutil.move(story_path, gz_path)
         build_data.untar(gz_path)
 
@@ -111,8 +108,7 @@ def download_stories(path):
     with open(documents_csv, 'r') as f:
         reader = csv.DictReader(f, delimiter=',')
         for row in reader:
-            print("Downloading %s (%s)" % (row['wiki_title'],
-                  row['document_id']))
+            print("Downloading %s (%s)" % (row['wiki_title'], row['document_id']))
             finished = try_downloading(tmp_dir, row)
             count = 0
             while not finished and count < 5:
@@ -149,15 +145,14 @@ def build(opt):
         download_stories(base_path)
 
         # move from tmp to stories
-        tmp_stories_path = os.path.join(base_path,
-                                        'tmp')
-        new_stories_path = os.path.join(base_path,
-                                        'stories')
+        tmp_stories_path = os.path.join(base_path, 'tmp')
+        new_stories_path = os.path.join(base_path, 'stories')
         shutil.move(tmp_stories_path, new_stories_path)
 
         # divide into train, valid and test for summaries
-        summaries_csv_path = os.path.join(base_path, 'third_party',
-                                          'wikipedia', 'summaries.csv')
+        summaries_csv_path = os.path.join(
+            base_path, 'third_party', 'wikipedia', 'summaries.csv'
+        )
         new_path = os.path.join(base_path, 'summaries.csv')
         shutil.move(summaries_csv_path, new_path)
 

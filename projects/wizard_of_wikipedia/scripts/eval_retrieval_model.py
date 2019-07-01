@@ -5,10 +5,10 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.scripts.eval_model import eval_model
-from parlai.zoo.wizard_of_wikipedia\
-    .full_dialogue_retrieval_model import download
-from projects.wizard_of_wikipedia.wizard_transformer_ranker\
-    .wizard_transformer_ranker import WizardTransformerRankerAgent
+from parlai.zoo.wizard_of_wikipedia.full_dialogue_retrieval_model import download
+from projects.wizard_of_wikipedia.wizard_transformer_ranker.wizard_transformer_ranker import (
+    WizardTransformerRankerAgent,
+)
 
 """Evaluate pre-trained retrieval model on the full Wizard Dialogue task.
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         embeddings_scale=False,
         delimiter=' __SOC__ ',
         n_positions=1000,
-        legacy=True
+        legacy=True,
     )
 
     opt = parser.parse_args()

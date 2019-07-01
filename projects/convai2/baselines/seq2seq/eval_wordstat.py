@@ -25,12 +25,16 @@ if __name__ == '__main__':
         numthreads=1,
     )
     opt = parser.parse_args(print_args=False)
-    if (opt.get('model_file', '')
-            .find('convai2/seq2seq/convai2_self_seq2seq_model') != -1):
+    if (
+        opt.get('model_file', '').find('convai2/seq2seq/convai2_self_seq2seq_model')
+        != -1
+    ):
         opt['model_type'] = 'seq2seq'
-        fnames = ['convai2_self_seq2seq_model.tgz',
-                  'convai2_self_seq2seq_model.dict',
-                  'convai2_self_seq2seq_model.opt']
+        fnames = [
+            'convai2_self_seq2seq_model.tgz',
+            'convai2_self_seq2seq_model.dict',
+            'convai2_self_seq2seq_model.opt',
+        ]
         download_models(opt, fnames, 'convai2', version='v3.0')
     build_dict()  # make sure true dictionary is built
     eval_wordstat(opt, print_parser=parser)

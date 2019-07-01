@@ -20,8 +20,7 @@ class FbformatTeacher(FbDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('-dp', '--fromfile-datapath', type=str,
-                           help="Data file")
+        agent.add_argument('-dp', '--fromfile-datapath', type=str, help="Data file")
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
@@ -39,8 +38,7 @@ class Fbformat2Teacher(FbDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('-dp', '--fromfile-datapath2', type=str,
-                           help="Data file")
+        agent.add_argument('-dp', '--fromfile-datapath2', type=str, help="Data file")
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
@@ -54,11 +52,11 @@ class ParlaiformatTeacher(ParlAIDialogTeacher):
     """This module provides access to data in the ParlAI Text Dialog format.
     See core/teachers.py for more info about the format.
     """
+
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('-dp', '--fromfile-datapath', type=str,
-                           help="Data file")
+        agent.add_argument('-dp', '--fromfile-datapath', type=str, help="Data file")
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -76,8 +74,7 @@ class Parlaiformat2Teacher(ParlAIDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('--fromfile-datapath2', type=str,
-                           help="Data file")
+        agent.add_argument('--fromfile-datapath2', type=str, help="Data file")
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)

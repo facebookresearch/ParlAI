@@ -28,8 +28,7 @@ def download(datapath, version='v1.0'):
         # Download the data.
         fnames = ['bert-base-uncased.tar.gz', 'bert-base-uncased-vocab.txt']
         for fname in fnames:
-            url = ('https://s3.amazonaws.com/models.huggingface.co/bert/' +
-                   fname)
+            url = 'https://s3.amazonaws.com/models.huggingface.co/bert/' + fname
             build_data.download(url, dpath, fname)
 
         # Mark the data as built.

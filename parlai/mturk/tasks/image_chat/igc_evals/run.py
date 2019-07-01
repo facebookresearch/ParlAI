@@ -3,9 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from worlds import \
-    MTurkIGCEvalWorld, RoleOnboardWorld, \
-    IGCExampleGenerator, RATER
+from worlds import MTurkIGCEvalWorld, RoleOnboardWorld, IGCExampleGenerator, RATER
 from task_configs.task_config_questions import task_config as tc_questions
 from task_configs.task_config_responses import task_config as tc_responses
 
@@ -45,32 +43,61 @@ def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('-min_t', '--min_turns', default=3, type=int,
-                           help='minimum number of turns')
-    argparser.add_argument('-mt', '--max_turns', default=5, type=int,
-                           help='maximal number of chat turns')
-    argparser.add_argument('-mx_rsp_time', '--max_resp_time', default=1800,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('-mx_onb_time', '--max_onboard_time', type=int,
-                           default=300, help='time limit for turker'
-                           'in onboarding')
-    argparser.add_argument('-ni', '--num_images', type=int,
-                           default=5, help='number of images to show \
-                           to turker')
-    argparser.add_argument('--auto-approve-delay', type=int,
-                           default=3600*24, help='how long to wait for  \
-                           auto approval')
-    argparser.add_argument('--data-path', type=str,
-                           default='', help='where to save data')
-    argparser.add_argument('--eval-data-path', type=str,
-                           default='', help='path to file with candidates to '
-                                            'evaluate')
-    argparser.add_argument('--image-path', type=str,
-                           default='', help='path to IGC images')
-    argparser.add_argument('-rnd', '--dialog-round', type=str, default='questions',
-                           choices=round_choices,
-                           help='which dialog round to show')
+    argparser.add_argument(
+        '-min_t', '--min_turns', default=3, type=int, help='minimum number of turns'
+    )
+    argparser.add_argument(
+        '-mt', '--max_turns', default=5, type=int, help='maximal number of chat turns'
+    )
+    argparser.add_argument(
+        '-mx_rsp_time',
+        '--max_resp_time',
+        default=1800,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '-mx_onb_time',
+        '--max_onboard_time',
+        type=int,
+        default=300,
+        help='time limit for turker' 'in onboarding',
+    )
+    argparser.add_argument(
+        '-ni',
+        '--num_images',
+        type=int,
+        default=5,
+        help='number of images to show \
+                           to turker',
+    )
+    argparser.add_argument(
+        '--auto-approve-delay',
+        type=int,
+        default=3600 * 24,
+        help='how long to wait for  \
+                           auto approval',
+    )
+    argparser.add_argument(
+        '--data-path', type=str, default='', help='where to save data'
+    )
+    argparser.add_argument(
+        '--eval-data-path',
+        type=str,
+        default='',
+        help='path to file with candidates to ' 'evaluate',
+    )
+    argparser.add_argument(
+        '--image-path', type=str, default='', help='path to IGC images'
+    )
+    argparser.add_argument(
+        '-rnd',
+        '--dialog-round',
+        type=str,
+        default='questions',
+        choices=round_choices,
+        help='which dialog round to show',
+    )
 
     opt = argparser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
@@ -84,10 +111,7 @@ def main():
         opt.update(tc_responses)
 
     mturk_agent_ids = [RATER]
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
 
     example_generator = IGCExampleGenerator(opt)
     mturk_manager.setup_server(task_directory_path=directory_path)
@@ -116,9 +140,7 @@ def main():
             agents = workers[:]
             conv_idx = mturk_manager.conversation_index
             world = MTurkIGCEvalWorld(
-                opt,
-                agents=agents,
-                world_tag='conversation t_{}'.format(conv_idx),
+                opt, agents=agents, world_tag='conversation t_{}'.format(conv_idx)
             )
             while not world.episode_done():
                 world.parley()
@@ -130,7 +152,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:
