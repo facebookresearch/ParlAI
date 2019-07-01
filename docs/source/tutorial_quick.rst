@@ -140,9 +140,11 @@ Open parrot.py and copy the following:
   from parlai.core.torch_agent import TorchAgent, Output
 
   class ParrotAgent(TorchAgent):
+      def train_step(self, batch):
+          pass
       def eval_step(self, batch):
-          # for each row in batch, convert tensor to string
-          return Output([str(row) for row in batch.text_vec])
+          # for each row in batch, convert tensor to back to text strings
+          return Output([self.dict.vec2txt(row) for row in batch.text_vec])
 
 Now let's test it out:
 
@@ -150,7 +152,7 @@ Now let's test it out:
 
   python examples/display_model.py -t babi:task10k:1 -m parrot
 
-You'll notice the model is always outputting the index for the "unknown" token.
+You'll notice the model is always outputting the "unknown" token.
 This token is automatically selected because the dictionary doesn't recognize any tokens,
 because we haven't built a dictionary yet. Let's do that now.
 
