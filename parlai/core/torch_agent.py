@@ -779,6 +779,8 @@ class TorchAgent(ABC, Agent):
         # set up optimizer args
         lr = opt['learningrate']
         kwargs = {'lr': lr}
+        if opt.get('weight_decay'):
+            kwargs['weight_decay'] = opt['weight_decay']
         if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop', 'qhm']:
             # turn on momentum for optimizers that use it
             kwargs['momentum'] = opt['momentum']
@@ -795,7 +797,7 @@ class TorchAgent(ABC, Agent):
         elif opt['optimizer'] == 'qhadam':
             # set nus for qhadam
             kwargs['nus'] = opt.get('nus', (0.7, 1.0))
-        if opt['optimizer'] in ['adam', 'sparseadam', 'adamax', 'qhadam']:
+        if opt['optimizer'] in ['adam', 'sparseadam', 'fused_adam', 'adamax', 'qhadam']:
             # set betas for optims that use it
             kwargs['betas'] = opt.get('betas', (0.9, 0.999))
 
