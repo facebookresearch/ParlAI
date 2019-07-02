@@ -48,6 +48,6 @@ Internal Agents, Tasks and More
 ###############################
 
 You can create a private folder in ParlAI with your own custom agents and tasks,
-create your own model zoo, and even manage it all with a separate git repository.
+create your own model zoo, and manage it all with a separate git repository.
 
 For more detailed instructions and features, see the `README <http://github.com/facebookresearch/ParlAI/blob/master/example_parlai_internal>`_
