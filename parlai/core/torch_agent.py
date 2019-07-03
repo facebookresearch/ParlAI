@@ -1574,21 +1574,12 @@ class TorchAgent(ABC, Agent):
                     # for convenience of working with jq, make sure there's a newline
                     handle.write('\n')
 
-    def remove_data_parallel(self, state_dict):
-        new_state_dict = {}
-        for k, v in state_dict.items():
-            if 'module.' in k:
-                k = k.replace('module.', '')
-            new_state_dict[k] = v
-        return new_state_dict
-
     def load_state_dict(self, state_dict):
         """
         Load the state dict into model.
 
         This is easily overridable to facilitate transfer of state dicts.
         """
-        state_dict = self.remove_data_parallel(state_dict)
         self.model.load_state_dict(state_dict)
 
     def load(self, path):
