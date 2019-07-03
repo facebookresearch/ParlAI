@@ -64,12 +64,12 @@ On a P100 GPU, these training commands take approximately 10 minutes to converge
 ### Train on the DIALOGUE (HH) examples
 Here is a minimal command for training on the DIALOGUE task using Human-Human (HH) examples:
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model projects.self_feeding.metadialog_agent:SelfFeedingAgent --model-file $PARLAIHOME/models/$MODEL -bs 128
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model projects.self_feeding.self_feeding_agent:SelfFeedingAgent --model-file $PARLAIHOME/models/$MODEL -bs 128
 ```
 
 Or to recreate the results in the paper for training on 131k HH examples with the same hyperparameters that we used, run the following:
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train -mf $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.metadialog_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train -mf $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
 ```
 
 ### Train on DIALOGUE (HH) + FEEDBACK examples
@@ -80,7 +80,7 @@ To train on more than one task (such as DIALOGUE and FEEDBACK), modify the previ
 
 Putting this all together, the command to recreate the 131k HH + 60k FB result from the paper is as follows (as reported in Table 9 in the paper, this setting had the same optimal hyperparameter settings as 131k HH):
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:diafee:train -mf $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.metadialog_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:diafee:train -mf $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
 ```
 
 ### Train on DIALOGUE (HH) + DIALOGUE (HB) examples
