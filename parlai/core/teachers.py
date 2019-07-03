@@ -1231,7 +1231,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=None):
         """Get a specific example from the dataset."""
-        return self.episodes[episode_idx][entry_idx].copy()
+        return self.episodes[episode_idx][entry_idx]
 
     def _setup_data(self, path):
         print("[loading parlAI text data:" + path + "]")

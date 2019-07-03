@@ -32,10 +32,11 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (
     AttrDict,
     argsort,
+    fp16_optimizer_wrapper,
+    Message,
     padded_tensor,
     warn_once,
     round_sigfigs,
-    fp16_optimizer_wrapper,
 )
 from parlai.core.distributed_utils import is_primary_worker
 
@@ -1187,7 +1188,7 @@ class TorchAgent(ABC, Agent):
 
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
-            obs['text'] = history.get_history_str()
+            obs['full_text'] = history.get_history_str()
             if obs['text'] is not None:
                 obs['text_vec'] = history.get_history_vec()
 
@@ -1573,12 +1574,21 @@ class TorchAgent(ABC, Agent):
                     # for convenience of working with jq, make sure there's a newline
                     handle.write('\n')
 
+    def remove_data_parallel(self, state_dict):
+        new_state_dict = {}
+        for k, v in state_dict.items():
+            if 'module.' in k:
+                k = k.replace('module.', '')
+            new_state_dict[k] = v
+        return new_state_dict
+
     def load_state_dict(self, state_dict):
         """
         Load the state dict into model.
 
         This is easily overridable to facilitate transfer of state dicts.
         """
+        state_dict = self.remove_data_parallel(state_dict)
         self.model.load_state_dict(state_dict)
 
     def load(self, path):
@@ -1618,7 +1628,7 @@ class TorchAgent(ABC, Agent):
         """
         batch_size = len(observations)
         # initialize a list of replies with this agent's id
-        batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
+        batch_reply = [Message({'id': self.getID()}) for _ in range(batch_size)]
 
         # check if there are any labels available, if so we will train on them
         self.is_training = any('labels' in obs for obs in observations)

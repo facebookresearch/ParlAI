@@ -181,6 +181,34 @@ def load_opt_file(optfile):
     return Opt(opt)
 
 
+class Message(dict):
+    """
+    Class for observations and actions.
+
+    Functions like a dict, but warns when writing to certain fields.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.special_fields = [
+            'text',
+            'labels',
+            'eval_labels',
+            'label_candidates',
+            'episode_done'
+        ]
+
+    def __setitem__(self, key, val):
+        if key in self and key in self.special_fields:
+            warn_once(
+                'Message already contains key `{}`. Please make sure '
+                'this change is intentional.'.format(key)
+            )
+        super().__setitem__(key, val)
+
+    def copy(self):
+        return Message(self)
+
+
 class Opt(dict):
     """
     Class for tracking options.
@@ -1011,7 +1039,7 @@ def str_to_msg(txt, ignore_fields=''):
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
     msg['episode_done'] = msg.get('episode_done', False)
-    return msg
+    return Message(msg)
 
 
 def msg_to_str(msg, ignore_fields=''):
