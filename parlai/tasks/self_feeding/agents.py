@@ -23,14 +23,14 @@ def _path(opt, filename, add_suffix=False):
         subtask = opt['subtask']
         if subtask == 'dialog':
             suffix = 'hh'
-        elif subtask == 'sentiment':
+        elif subtask == 'satisfaction':
             suffix = 'st'
         elif subtask == 'feedback':
             suffix = 'fb'
         else:
             raise ValueError(f"Unrecognized subtask: {subtask}")
         filename += f"_{suffix}.txt"
-    dp = os.path.join(opt['datapath'], 'self_feeding', 'self_feeding_v01')
+    dp = os.path.join(opt['datapath'], 'self_feeding', 'self_feeding_v02')
     return os.path.join(dp, filename)
 
 
@@ -84,20 +84,20 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
                              help='the filename to train on for the dialog task')
         project.add_argument('-fee-train', '--fee-train', type=str,
                              help='the filename to train on for the feedback task')
-        project.add_argument('-sen-train', '--sen-train', type=str,
-                             help='the filename to train on for the sentiment task')
+        project.add_argument('-sat-train', '--sat-train', type=str,
+                             help='the filename to train on for the satisfaction task')
         project.add_argument('-dia-valid', '--dia-valid', type=str,
                              help='the filename to eval on for the dialog task')
         project.add_argument('-fee-valid', '--fee-valid', type=str,
                              help='the filename to eval on for the feedback task')
-        project.add_argument('-sen-valid', '--sen-valid', type=str,
-                             help='the filename to eval on for the sentiment task')
+        project.add_argument('-sat-valid', '--sat-valid', type=str,
+                             help='the filename to eval on for the satisfaction task')
         project.add_argument('-dia-test', '--dia-test', type=str,
                              help='the filename to eval on for the dialog task')
         project.add_argument('-fee-test', '--fee-test', type=str,
                              help='the filename to eval on for the feedback task')
-        project.add_argument('-sen-test', '--sen-test', type=str,
-                             help='the filename to eval on for the sentiment task')
+        project.add_argument('-sat-test', '--sat-test', type=str,
+                             help='the filename to eval on for the satisfaction task')
         project.add_argument('-trial', '--trial', type=int, default=0,
                              help='the index of a repeated trial (not used in code)')
         project.add_argument('-mt', '--max-train', type=int, default=0,
@@ -240,10 +240,10 @@ class FeedbackTeacher(SelfFeedingTeacher):
         SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class SentimentTeacher(SelfFeedingTeacher):
+class SatisfactionTeacher(SelfFeedingTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['subtask'] = 'sentiment'
+        opt['subtask'] = 'satisfaction'
         super().__init__(opt, shared)
 
     @staticmethod
@@ -268,12 +268,12 @@ class DiafeeTeacher(SelfFeedingMTLTeacher):
         SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class DiasenTeacher(SelfFeedingMTLTeacher):
+class DiasatTeacher(SelfFeedingMTLTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['subtasks'] = ['dialog', 'sentiment']
+        opt['subtasks'] = ['dialog', 'satisfaction']
         # Expand abbreviated task name ('both') into full task names
-        train_files = [opt['dia_train'], opt['sen_train']]
+        train_files = [opt['dia_train'], opt['sat_train']]
         assert(len(opt['subtasks']) == len(train_files))
         tasks = [f'self_feeding:{subtask}:{train_file}' for subtask, train_file
                  in zip(opt['subtasks'], train_files)]
@@ -288,9 +288,9 @@ class DiasenTeacher(SelfFeedingMTLTeacher):
 class AllTeacher(SelfFeedingMTLTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['subtasks'] = ['dialog', 'feedback', 'sentiment']
+        opt['subtasks'] = ['dialog', 'feedback', 'satisfaction']
         # Expand abbreviated task name ('all') into full task names
-        train_files = [opt['dia_train'], opt['fee_train'], opt['sen_train']]
+        train_files = [opt['dia_train'], opt['fee_train'], opt['sat_train']]
         assert(len(opt['subtasks']) == len(train_files))
         tasks = [f'self_feeding:{subtask}:{train_file}' for subtask, train_file
                  in zip(opt['subtasks'], train_files)]

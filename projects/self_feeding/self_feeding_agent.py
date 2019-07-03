@@ -76,7 +76,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
                            "class when calculating tp/fp/tn/fn")
 
         agent.add_argument('--freeze-base', type='bool', default=False,
-                           help="If True, freeze all but the sentiment linear layer")
+                           help="If True, freeze all but the satisfaction linear layer")
         agent.add_argument('--partial-load', type='bool', default=False,
                            help="If True, allow a model to be partially loaded (i.e., "
                            "a model need not be a perfect match to be loaded")
@@ -88,8 +88,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
                            help="The dialog task loss is multiplied by this")
         agent.add_argument('--fee-weight', type=float, default=1.0,
                            help="The feedback task loss is multiplied by this")
-        agent.add_argument('--sen-weight', type=float, default=1.0,
-                           help="The sentiment task loss is multiplied by this")
+        agent.add_argument('--sat-weight', type=float, default=1.0,
+                           help="The satisfaction task loss is multiplied by this")
 
         agent.add_argument(
             '--prev-response-negatives', type='bool', default=False,
@@ -110,11 +110,11 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         variants = argparser.add_argument_group('Self-feeding Variants')
         variants.add_argument('-rgx', '--regex', type='bool', default=False,
-                              help="If True, classify sentiment using regexes instead "
+                              help="If True, classify satisfaction using regexes instead "
                               "of model")
         variants.add_argument('-up', '--uncertainty-predictor', type='bool',
                               default=False,
-                              help="If True, classify sentiment using uncertainty of "
+                              help="If True, classify satisfaction using uncertainty of "
                               "dialog models predictions instead of classifer"
                               "model")
         variants.add_argument('-ut', '--uncertainty-threshold', type=float, default=0.5,
@@ -159,7 +159,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         self.status = NORMAL
         if self.opt['interactive']:
             assert('dialog' in self.subtasks)
-            assert('sentiment' in self.subtasks)
+            assert('satisfaction' in self.subtasks)
         else:
             assert(not self.opt['request_feedback'])
             assert(not self.opt['request_rating'])
@@ -167,12 +167,12 @@ class SelfFeedingAgent(TransformerRankerAgent):
         self.task_weight = {
             'dialog': opt['dia_weight'],
             'feedback': opt['fee_weight'],
-            'sentiment': opt['sen_weight'],
+            'satisfaction': opt['sat_weight'],
         }
 
         # dialog/feedback tasks use self.rank_loss from TorchRankerAgent
         # Don't do BCEWithLogitsLoss since we need the probs from the sigmoid anyway
-        self.sentiment_criterion = nn.BCELoss(reduce=True, size_average=False)
+        self.satisfaction_criterion = nn.BCELoss(reduce=True, size_average=False)
 
         # Set rating classifier
         if opt['regex']:
@@ -187,7 +187,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         if self.opt['embedding_type'] != 'random':
             for embeddings in [getattr(self.model, 'dia_embeddings', None),
                                getattr(self.model, 'fee_embeddings', None),
-                               getattr(self.model, 'sen_embeddings', None)]:
+                               getattr(self.model, 'sat_embeddings', None)]:
                 if embeddings is not None:
                     self._copy_embeddings(embeddings.weight, self.opt['embedding_type'])
         return self.model
@@ -205,7 +205,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 self.status = NORMAL
 
             if self.status == NORMAL:
-                positivity = self.predict_sentiment(self.observation)
+                positivity = self.predict_satisfaction(self.observation)
                 # print(f"[ positivity ]: {positivity}")
                 if self.do_request_feedback(positivity):
                     action = self.make_action(self.make_feedback_request())
@@ -308,8 +308,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
             loss, preds, _ = self.dialog_step(batch)
         elif self.subtask == 'feedback':
             loss, preds, _ = self.feedback_step(batch)
-        elif self.subtask == 'sentiment':
-            loss, preds = self.sentiment_step(batch)
+        elif self.subtask == 'satisfaction':
+            loss, preds = self.satisfaction_step(batch)
             preds = [str(p) for p in preds]
 
         # Weight loss by task-weight
@@ -342,13 +342,13 @@ class SelfFeedingAgent(TransformerRankerAgent):
             loss, preds, cand_ranked = self.feedback_step(batch)
             return Output(preds, cand_ranked)
 
-        elif self.subtask == 'sentiment':
+        elif self.subtask == 'satisfaction':
             if self.opt['uncertainty_predictor']:
                 # Use uncertainty of dialog model to classify bot's previous utterance
-                preds = self.predict_sentiment_by_uncertainty(batch)
+                preds = self.predict_satisfaction_by_uncertainty(batch)
             else:
-                # Use sentiment of user response to classify bot's previous response
-                loss, preds = self.sentiment_step(batch)
+                # Use satisfaction of user response to classify bot's previous response
+                loss, preds = self.satisfaction_step(batch)
             preds = [str(p) for p in preds]
             return Output(preds)
 
@@ -421,7 +421,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
             self.update_fee_metrics(loss, ranks, label_inds, batchsize)
         return loss, preds, cand_ranked
 
-    def sentiment_step(self, batch):
+    def satisfaction_step(self, batch):
         batchsize = batch.text_vec.size(0)
         # probs is a [batchsize] torch.FloatTensor with values in [0, 1]
         if self.opt['regex']:
@@ -429,7 +429,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
             # HACK: --use-cuda flag
             probs = self.rating_classifier.predict_proba(contexts).cuda()
         else:
-            probs = self.model.score_sentiment(batch.text_vec)
+            probs = self.model.score_satisfaction(batch.text_vec)
         # preds is a [batchsize] torch.LongTensor with values in {0, 1}
         preds = (probs > self.opt['rating_threshold']).long()
 
@@ -439,8 +439,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
             # labels will be a [batchsize] torch.LongTensor with values in {0, 1}
             labels = torch.LongTensor([int(l) == 1 for l in batch.labels]).cuda()
 
-            loss = self.sentiment_criterion(probs, labels.float())
-            self.update_sen_metrics(loss, preds, labels, batchsize)
+            loss = self.satisfaction_criterion(probs, labels.float())
+            self.update_sat_metrics(loss, preds, labels, batchsize)
 
         return loss, preds
 
@@ -462,18 +462,18 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 self.metrics['fee_rank'] += 1 + rank
                 self.metrics['fee_correct'] += (rank == 0)
 
-    def update_sen_metrics(self, loss, preds, labels, batchsize):
+    def update_sat_metrics(self, loss, preds, labels, batchsize):
         # tp/fp/tn/fn are w/r/t the rarer class (negative responses)
-        self.metrics['sen_exs'] += batchsize
-        self.metrics['sen_loss'] += loss.item()
+        self.metrics['sat_exs'] += batchsize
+        self.metrics['sat_loss'] += loss.item()
         a = self.opt['target_class']
         b = not self.opt['target_class']
         assert(a in [0, 1])
         assert(b in [0, 1])
-        self.metrics['sen_tp'] += ((preds == labels) * (labels == a)).sum().item()
-        self.metrics['sen_fp'] += ((preds != labels) * (labels == b)).sum().item()
-        self.metrics['sen_tn'] += ((preds == labels) * (labels == b)).sum().item()
-        self.metrics['sen_fn'] += ((preds != labels) * (labels == a)).sum().item()
+        self.metrics['sat_tp'] += ((preds == labels) * (labels == a)).sum().item()
+        self.metrics['sat_fp'] += ((preds != labels) * (labels == b)).sum().item()
+        self.metrics['sat_tn'] += ((preds == labels) * (labels == b)).sum().item()
+        self.metrics['sat_fn'] += ((preds != labels) * (labels == a)).sum().item()
 
     def reset(self):
         super().reset()
@@ -493,13 +493,13 @@ class SelfFeedingAgent(TransformerRankerAgent):
             self.metrics['fee_loss'] = 0.0
             self.metrics['fee_rank'] = 0
             self.metrics['fee_correct'] = 0.0
-        if 'sentiment' in self.subtasks:
-            self.metrics['sen_exs'] = 0
-            self.metrics['sen_loss'] = 0
-            self.metrics['sen_tp'] = 0
-            self.metrics['sen_fp'] = 0
-            self.metrics['sen_tn'] = 0
-            self.metrics['sen_fn'] = 0
+        if 'satisfaction' in self.subtasks:
+            self.metrics['sat_exs'] = 0
+            self.metrics['sat_loss'] = 0
+            self.metrics['sat_tp'] = 0
+            self.metrics['sat_fp'] = 0
+            self.metrics['sat_tn'] = 0
+            self.metrics['sat_fn'] = 0
 
     def report(self):
         """Report metrics from model's perspective."""
@@ -518,20 +518,20 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 m['fee_acc'] = self.metrics['fee_correct'] / self.metrics['fee_exs']
                 m['fee_exs'] = self.metrics['fee_exs']
                 m['fee_exs'] = self.metrics['fee_exs']
-            if 'sentiment' in self.subtasks and self.metrics['sen_exs'] > 0:
-                tp = self.metrics['sen_tp']
-                tn = self.metrics['sen_tn']
-                fp = self.metrics['sen_fp']
-                fn = self.metrics['sen_fn']
-                assert(tp + tn + fp + fn == self.metrics['sen_exs'])
-                m['sen_loss'] = self.metrics['sen_loss'] / self.metrics['sen_exs']
-                m['sen_pr'] = tp / (tp + fp + EPS)
-                m['sen_re'] = tp / (tp + fn + EPS)
-                pr = m['sen_pr']
-                re = m['sen_re']
-                m['sen_f1'] = (2 * pr * re) / (pr + re) if (pr and re) else 0.0
-                m['sen_acc'] = (tp + tn) / self.metrics['sen_exs']
-                m['sen_exs'] = self.metrics['sen_exs']
+            if 'satisfaction' in self.subtasks and self.metrics['sat_exs'] > 0:
+                tp = self.metrics['sat_tp']
+                tn = self.metrics['sat_tn']
+                fp = self.metrics['sat_fp']
+                fn = self.metrics['sat_fn']
+                assert(tp + tn + fp + fn == self.metrics['sat_exs'])
+                m['sat_loss'] = self.metrics['sat_loss'] / self.metrics['sat_exs']
+                m['sat_pr'] = tp / (tp + fp + EPS)
+                m['sat_re'] = tp / (tp + fn + EPS)
+                pr = m['sat_pr']
+                re = m['sat_re']
+                m['sat_f1'] = (2 * pr * re) / (pr + re) if (pr and re) else 0.0
+                m['sat_acc'] = (tp + tn) / self.metrics['sat_exs']
+                m['sat_exs'] = self.metrics['sat_exs']
         for k, v in m.items():
             # clean up: rounds to sigfigs and converts tensors to floats
             if isinstance(v, float):
@@ -577,24 +577,24 @@ class SelfFeedingAgent(TransformerRankerAgent):
         else:
             return 0
 
-    def predict_sentiment(self, observation):
+    def predict_satisfaction(self, observation):
         if self.opt['regex']:
             prob = self.rating_classifier.predict_proba(observation['text_vec'])
         else:
-            prob = self.model.score_sentiment(observation['text_vec'].reshape(1, -1))
+            prob = self.model.score_satisfaction(observation['text_vec'].reshape(1, -1))
         return prob.item()
 
-    def predict_sentiment_by_uncertainty(self, batch):
+    def predict_satisfaction_by_uncertainty(self, batch):
         # Use the dialog model's confidence to predict the rating on previous response
         # HACK: this test is run using a model that was trained on dialog but is now
-        # being evaluated on sentiment. We use a sentiment dataset so that we have
-        # access to the sentiment labels. Therefore, we do a sloppy hack here to pull
+        # being evaluated on satisfaction. We use a satisfaction dataset so that we have
+        # access to the satisfaction labels. Therefore, we do a sloppy hack here to pull
         # out what would have been the candidates for the dialog task. We use histsz=4
         # and ignore the last response (the user's feedback) and use the penultimate
         # utterances as the candidates. The (up to) two utterances before that are
         # context.
 
-        # pull out dialog candidates from text_vecs since this is a sentiment task
+        # pull out dialog candidates from text_vecs since this is a satisfaction task
         assert(self.opt['history_size'] > 2)
         text_vecs = []
         cand_vecs = []
@@ -627,7 +627,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         preds = torch.LongTensor(preds)
         labels = torch.LongTensor([int(l) == 1 for l in batch.labels])
         batchsize = len(labels)
-        self.update_sen_metrics(loss, preds, labels, batchsize)
+        self.update_sat_metrics(loss, preds, labels, batchsize)
         return preds
 
     def check_prev_response(self, preds, cand_ranked):
@@ -685,10 +685,10 @@ class SelfFeedingAgent(TransformerRankerAgent):
         # Expand any abbreviations
         if subtasks[0] == 'diafee':
             subtasks = ['dialog', 'feedback']
-        elif subtasks[0] == 'diasen':
-            subtasks = ['dialog', 'sentiment']
+        elif subtasks[0] == 'diasat':
+            subtasks = ['dialog', 'satisfaction']
         elif subtasks[0] == 'all':
-            subtasks = ['dialog', 'feedback', 'sentiment']
+            subtasks = ['dialog', 'feedback', 'satisfaction']
 
         self.subtasks = subtasks
         opt['subtasks'] = subtasks  # Add to opt so that model module can see the list

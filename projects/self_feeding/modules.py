@@ -16,9 +16,9 @@ class SelfFeedingModel(nn.Module):
     def add_cmdline_args(cls, argparser):
         model = argparser.add_argument_group('Self Feeding Model')
 
-        model.add_argument('-shl', '--sen-head-layers', type=int,
+        model.add_argument('-shl', '--sat-head-layers', type=int,
                            default=1, help="The number of linear layers in the "
-                           "sentiment task head")
+                           "satisfaction task head")
         model.add_argument('-sfeeemb', '--share-fee-embeddings', type='bool',
                            default=True, help="If True, the feedback task shares "
                            "the dialog embeddings")
@@ -28,12 +28,13 @@ class SelfFeedingModel(nn.Module):
         model.add_argument('-sfeeyenc', '--share-fee-y-encoder', type='bool',
                            default=True, help="If True, the feedback task shares "
                            "the dialog y encoder")
-        model.add_argument('-ssenemb', '--share-sen-embeddings', type='bool',
-                           default=False, help="If True, the sentiment task shares the "
-                           "dialog embeddings")
-        model.add_argument('-ssenenc', '--share-sen-encoder', type='bool',
+        model.add_argument('-ssatemb', '--share-sat-embeddings', type='bool',
+                           default=False, help="If True, the satisfaction task shares "
+                           "the dialog embeddings")
+        model.add_argument('-ssatenc', '--share-sat-encoder', type='bool',
                            default=False,
-                           help="If True, the sentiment task shares the dialog encoder")
+                           help="If True, the satisfaction task shares the dialog "
+                           "encoder")
 
     def __init__(self, opt, dictionary):
         super().__init__()
@@ -69,18 +70,18 @@ class SelfFeedingModel(nn.Module):
                 self.y_fee_encoder = self.build_encoder(opt, self.fee_embeddings)
             self.y_fee_head = nn.Dropout(p=0)
 
-        # Build sentiment
-        if 'sentiment' in self.opt['subtasks']:
-            if self.opt['share_sen_embeddings']:
-                self.sen_embeddings = self.dia_embeddings
+        # Build satisfaction
+        if 'satisfaction' in self.opt['subtasks']:
+            if self.opt['share_sat_embeddings']:
+                self.sat_embeddings = self.dia_embeddings
             else:
-                self.sen_embeddings = self.init_embeddings()
-            if self.opt['share_sen_encoder']:
-                self.x_sen_encoder = self.x_dia_encoder
+                self.sat_embeddings = self.init_embeddings()
+            if self.opt['share_sat_encoder']:
+                self.x_sat_encoder = self.x_dia_encoder
             else:
-                self.x_sen_encoder = self.build_encoder(opt, self.sen_embeddings)
-            self.x_sen_head = self.build_head(opt, outdim=1,
-                                              num_layers=self.opt['sen_head_layers'])
+                self.x_sat_encoder = self.build_encoder(opt, self.sat_embeddings)
+            self.x_sat_head = self.build_head(opt, outdim=1,
+                                              num_layers=self.opt['sat_head_layers'])
 
     def forward(self):
         raise NotImplementedError
@@ -119,15 +120,15 @@ class SelfFeedingModel(nn.Module):
         y_enc = self.y_fee_head(self.y_fee_encoder(y_vecs))
         return self.score_similarity(x_enc, y_enc)
 
-    def score_sentiment(self, x_vecs):
-        return torch.sigmoid(self.x_sen_head(self.x_sen_encoder(x_vecs))).squeeze(1)
+    def score_satisfaction(self, x_vecs):
+        return torch.sigmoid(self.x_sat_head(self.x_sat_encoder(x_vecs))).squeeze(1)
 
     def score_similarity(self, context_h, cand_h):
         """Returns the dot product of encoded contexts and encoded candidates"""
         if self.opt['normalize_sent_emb']:
             context_h /= context_h.norm(2, dim=1, keepdim=True)
             cand_h /= cand_h.norm(2, dim=1, keepdim=True)
-
+        
         if cand_h.dim() == 2:
             scores = torch.matmul(context_h, cand_h.t())
         elif cand_h.dim() == 3:
