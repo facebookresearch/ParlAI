@@ -8,8 +8,8 @@ import os
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'dialogue_sf')
-    fname = 'dialogue_sf_v01.tgz'
+    dpath = os.path.join(opt['datapath'], 'self_feeding')
+    fname = 'self_feeding_v01.tgz'
     version = '1.0'
     if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')
@@ -17,7 +17,7 @@ def build(opt):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
-        url = 'http://parl.ai/downloads/dialogue_sf/' + fname
+        url = 'http://parl.ai/downloads/self_feeding/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
         build_data.mark_done(dpath, version)
