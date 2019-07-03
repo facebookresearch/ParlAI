@@ -187,19 +187,8 @@ class Message(dict):
 
     Functions like a dict, but warns when writing to certain fields.
     """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.special_fields = [
-            'text',
-            'labels',
-            'eval_labels',
-            'label_candidates',
-            'episode_done',
-        ]
-
     def __setitem__(self, key, val):
-        if key in self and key in self.special_fields:
+        if key in self:
             warn_once(
                 'Message already contains key `{}`. Please make sure '
                 'this change is intentional.'.format(key)
