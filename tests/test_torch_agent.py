@@ -823,7 +823,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(out['text'], "I'll be back.")
         # should remember history
         out = agent.observe(obs.copy())
-        self.assertEqual(out['text'], "I'll be back.\nI'm back.\nI'll be back.")
+        self.assertEqual(out['full_text'], "I'll be back.\nI'm back.\nI'll be back.")
 
     @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batch_act(self):

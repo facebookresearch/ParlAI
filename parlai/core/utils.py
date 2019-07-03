@@ -187,6 +187,7 @@ class Message(dict):
 
     Functions like a dict, but warns when writing to certain fields.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.special_fields = [
@@ -194,7 +195,7 @@ class Message(dict):
             'labels',
             'eval_labels',
             'label_candidates',
-            'episode_done'
+            'episode_done',
         ]
 
     def __setitem__(self, key, val):
