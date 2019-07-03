@@ -34,24 +34,63 @@ Once you have [installed ParlAI](https://github.com/facebookresearch/ParlAI/#ins
 ## Download the data
 
 Running the commands to train or chat with the models will automatically download the data for you. 
-Alternatively, you can manually download the data by running `python parlai/projects/self_feeding/download_data.py`. 
-This will download the following files to `data/dialogue_sf`:
-- `{train, valid, test}_hh.txt`: Human-Human (HH) conversations from the PersonaChat dataset, with one context and response per line (train: 131,438; valid: 2,000; test: 5,801).
-- `train_hb.txt`: Human-Bot conversations collected between crowdworkers and a trained chatbot, with only human utterances as responses (train: 131,923).
-- `{train, valid, test}_fb_a.txt`: Human-Bot conversations wherein all responses are the feedback given by a human in response to a request by the bot after it estimated that the human was dissatisfied with its previous response. (The turns where the bot messed up, the human expressed dissatisfaction, and the bot requested feedback are removed so that the context is primarily normal-looking conversation).
--`train_fb_b.txt`: The same as `train_fb_a.txt` but with a chatbot that was retrained using the additional feedback examples collected from the A set.
+Alternatively, you can manually download the data by running `python parlai/projects/self_feeding/download_data.py`. This will download the following files to `data/self_feeding/`:
 
-For more context on the scenarios in which these data were collected (including screenshots of crowdworker interfaces), refer to the paper.
+- `{train, valid, test}_hh.txt`: DIALOGUE Human-Human (HH) conversations from the PersonaChat dataset, with one context and response per line (train: 131,438; valid: 2,000; test: 5,801).
+- `train_hb.txt`: DIALOGUE Human-Bot (HB) conversations collected between crowdworkers and a trained chatbot, with only human utterances as responses (train: 131,923).
+- `train_fb_a.txt`: FEEDBACK Human-Bot conversations wherein all responses are the feedback given by a human in response to a request by the bot after it estimated that the human was dissatisfied with its previous response. (The turns where the bot messed up, the human expressed dissatisfaction, and the bot requested feedback are removed so that the context is primarily normal-looking conversation). (train: 40,082)
+-`train_fb_b.txt`: The same as `train_fb_a.txt` but with a chatbot that was retrained using the additional feedback examples collected from the A set (train: 21,257).
+-`{valid, test}_fb.txt`: FEEDBACK validation and test sets collected at the same time and with the same model as the `train_fb_a.txt` file.
 
-## Train a model from scratch
-To train a model from scratch, use the standard `ParlAI` protocol with `train_model.py`. For example, you might run the following from the root of the ParlAI directory:
+We also include two derivative files for convenience:
+- `train_fb.txt`: The result of `cat train_fb_a.txt train_fb_b.txt | shuf > train_fb.txt`
+- `train_hh_hb.txt`: The result of `cat train_hh.txt train_hb.txt | shuf > train_hh_hb.txt`
+
+For more context on the scenarios in which these data were collected (including screenshots of crowdworker interfaces), refer to the paper. 
+In this distribution, we include all data collected of each type.
+To recreate the exact datasets used in the paper, keep only the first X lines of each file such that the resulting sets match the sizes reported in Table 1.
+
+
+## Train a model
+To train a model, use the standard `ParlAI` protocol with `train_model.py`. 
+The following commands assume that you have set the following environment variables:
 ```
-export MODEL=model_from_scratch; python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train -mf $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.metadialog_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+export PARLAIHOME=/path/to/ParlAI
+export MODEL=my_model_name
 ```
 You may require a GPU to train a model to convergence in a reasonable amount of time.
+On a P100 GPU, these training commands take approximately 10 minutes to converge.
+
+### Train on the DIALOGUE (HH) examples
+Here is a minimal command for training on the DIALOGUE task using Human-Human (HH) examples:
+```
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model projects.self_feeding.metadialog_agent:SelfFeedingAgent --model-file $PARLAIHOME/models/$MODEL -bs 128
+```
+
+Or to recreate the results in the paper for training on 131k HH examples with the same hyperparameters that we used, run the following:
+```
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train -mf $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.metadialog_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+```
+
+### Train on DIALOGUE (HH) + FEEDBACK examples
+To train on more than one task (such as DIALOGUE and FEEDBACK), modify the previous command as follows:
+- Change `-t self_feeding:dialog:train` to `-t self_feeding:diafee:train`. This will result in a different "teacher" agent being used to train the chatbot, one with access to both 'dia\[logue\]' and 'fee\[dback\]`.
+- Append `,fee_acc,fee_loss` to the end of the `-tbmetrics` argument to include the accuracy and loss terms for the feedback task to the tensorboard logs.
+- Add `--fee-weight 1.0` to set a coefficient by which the loss for the `feedback` task will be multiplied (the default is 1.0 already).
+
+Putting this all together, the command to recreate the 131k HH + 60k FB result from the paper is as follows (as reported in Table 9 in the paper, this setting had the same optimal hyperparameter settings as 131k HH):
+```
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:diafee:train -mf $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.metadialog_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+```
+
+### Train on DIALOGUE (HH) + DIALOGUE (HB) examples
+To train on both HH and HB DIALOGUE examples, point the model to the train file that includes examples from both sets:
+```
+--dia-train train_hh_hb.txt
+```
 
 ## Load a pretrained model
-To load a model that's already been trained, repeat the previous command but with the model-file flag (`-mf`) pointing to an existing model path.
+To load and continue training a model that's already been trained, use the same run commands as above but with the model-file flag (`-mf`) pointing to an existing model directory (i.e., the same path like `$PARLAIHOME/models/$MODEL` that you used to train the model originally).
 
 ## Chat with a trained model
-To chat with a trained model, set `--interactive=1`
+TODO: Instructions coming soon.
