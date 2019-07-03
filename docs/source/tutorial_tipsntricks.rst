@@ -42,3 +42,12 @@ This can be done on the command line in the following way:
 
 That is, by adding a colon ":" followed by the flag name, an equals sign, and the value.
 You can add multiple flags, all separated by ":".
+
+
+Internal Agents, Tasks and More
+###############################
+
+You can create a private folder in ParlAI with your own custom agents and tasks,
+create your own model zoo, and manage it all with a separate git repository.
+
+For more detailed instructions and features, see the `README <http://github.com/facebookresearch/ParlAI/blob/master/example_parlai_internal>`_
