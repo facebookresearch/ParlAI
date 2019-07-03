@@ -185,7 +185,7 @@ class Message(dict):
     """
     Class for observations and actions.
 
-    Functions like a dict, but warns when writing to certain fields.
+    Functions like a dict, but warns when writing to fields that already exist.
     """
     def __setitem__(self, key, val):
         if key in self:
