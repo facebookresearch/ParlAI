@@ -89,8 +89,5 @@ To train on both HH and HB DIALOGUE examples, point the model to the train file 
 --dia-train train_hh_hb.txt
 ```
 
-## Load a pretrained model
-To load and continue training a model that's already been trained, use the same run commands as above but with the model-file flag (`-mf`) pointing to an existing model directory (i.e., the same path like `$PARLAIHOME/models/$MODEL` that you used to train the model originally).
-
-## Chat with a trained model
+### Chat with a trained model
 TODO: Instructions coming soon.
