@@ -4,12 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.utils import Timer
-from parlai.core.utils import round_sigfigs
-from parlai.core.utils import set_namedtuple_defaults
-from parlai.core.utils import padded_tensor
-from parlai.core.utils import argsort
-from parlai.core.utils import Opt
+from parlai.core.utils import (
+    Timer,
+    round_sigfigs,
+    set_namedtuple_defaults,
+    padded_tensor,
+    argsort,
+    Opt,
+    Message,
+)
+from parlai.core.testing_utils import capture_output
 from copy import deepcopy
 import time
 import unittest
@@ -121,6 +125,15 @@ class TestUtils(unittest.TestCase):
         assert argsort(keys, items, items2, descending=True) == [items, items2]
 
         assert np.all(argsort(torch_keys, torch_keys)[0].numpy() == np.arange(1, 6))
+
+    def test_message(self):
+        message = Message()
+        message['text'] = 'lol'
+        with capture_output() as out:
+            message['text'] = 'rofl'
+        assert 'UserWarning' in out.getvalue(), 'Message did not warn'
+        message_copy = message.copy()
+        assert type(message_copy) == Message, 'Message did not copy properly'
 
     def test_opt(self):
         opt = {'x': 0}
