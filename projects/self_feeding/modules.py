@@ -19,14 +19,14 @@ class SelfFeedingModel(nn.Module):
         model.add_argument('-shl', '--sen-head-layers', type=int,
                            default=1, help="The number of linear layers in the "
                            "sentiment task head")
-        model.add_argument('-sexpemb', '--share-exp-embeddings', type='bool',
-                           default=True, help="If True, the explanation task shares "
+        model.add_argument('-sfeeemb', '--share-fee-embeddings', type='bool',
+                           default=True, help="If True, the feedback task shares "
                            "the dialog embeddings")
-        model.add_argument('-sexpxenc', '--share-exp-x-encoder', type='bool',
-                           default=True, help="If True, the explanation task shares "
+        model.add_argument('-sfeexenc', '--share-fee-x-encoder', type='bool',
+                           default=True, help="If True, the feedback task shares "
                            "the dialog x encoder")
-        model.add_argument('-sexpyenc', '--share-exp-y-encoder', type='bool',
-                           default=True, help="If True, the explanation task shares "
+        model.add_argument('-sfeeyenc', '--share-fee-y-encoder', type='bool',
+                           default=True, help="If True, the feedback task shares "
                            "the dialog y encoder")
         model.add_argument('-ssenemb', '--share-sen-embeddings', type='bool',
                            default=False, help="If True, the sentiment task shares the "
@@ -51,23 +51,23 @@ class SelfFeedingModel(nn.Module):
 
         # Only build the parts of the network you will be using
         # This saves space (nbd) and prevents conflicts when loading
-        # Build explanation
-        if 'explanation' in self.opt['subtasks']:
-            if self.opt['share_exp_embeddings']:
-                self.exp_embeddings = self.dia_embeddings
+        # Build feedback
+        if 'feedback' in self.opt['subtasks']:
+            if self.opt['share_fee_embeddings']:
+                self.fee_embeddings = self.dia_embeddings
             else:
-                self.exp_embeddings = self.init_embeddings()
-            if self.opt['share_exp_x_encoder']:
-                self.x_exp_encoder = self.x_dia_encoder
+                self.fee_embeddings = self.init_embeddings()
+            if self.opt['share_fee_x_encoder']:
+                self.x_fee_encoder = self.x_dia_encoder
             else:
-                self.x_exp_encoder = self.build_encoder(opt, self.exp_embeddings)
-            self.x_exp_head = nn.Dropout(p=0)
+                self.x_fee_encoder = self.build_encoder(opt, self.fee_embeddings)
+            self.x_fee_head = nn.Dropout(p=0)
 
-            if self.opt['share_exp_y_encoder']:
-                self.y_exp_encoder = self.y_dia_encoder
+            if self.opt['share_fee_y_encoder']:
+                self.y_fee_encoder = self.y_dia_encoder
             else:
-                self.y_exp_encoder = self.build_encoder(opt, self.exp_embeddings)
-            self.y_exp_head = nn.Dropout(p=0)
+                self.y_fee_encoder = self.build_encoder(opt, self.fee_embeddings)
+            self.y_fee_head = nn.Dropout(p=0)
 
         # Build sentiment
         if 'sentiment' in self.opt['subtasks']:
@@ -114,9 +114,9 @@ class SelfFeedingModel(nn.Module):
             y_enc = y_enc.reshape(oldshape[0], oldshape[1], -1)
         return y_enc
 
-    def score_explanation(self, x_vecs, y_vecs):
-        x_enc = self.x_exp_head(self.x_exp_encoder(x_vecs))
-        y_enc = self.y_exp_head(self.y_exp_encoder(y_vecs))
+    def score_feedback(self, x_vecs, y_vecs):
+        x_enc = self.x_fee_head(self.x_fee_encoder(x_vecs))
+        y_enc = self.y_fee_head(self.y_fee_encoder(y_vecs))
         return self.score_similarity(x_enc, y_enc)
 
     def score_sentiment(self, x_vecs):
