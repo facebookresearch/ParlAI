@@ -910,7 +910,7 @@ class MultiHeadAttention(nn.Module):
         dot_prod.clamp_(-SOFTMAX_CLAMP, SOFTMAX_CLAMP)
         dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(dot_prod, dim=-1).type_as(query)
+        attn_weights = F.softmax(dot_prod, dim=-1, dtype=torch.float32).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
