@@ -59,9 +59,13 @@ WEB_HTML = """
                       </div>
                     </article>
                 </div>
-                <div class="hero-foot column is-three-fifths is-offset-one-fifth">
+                <div class="hero-foot column">
                   <form id = "interact">
                       <div class="field is-grouped">
+                      <p class="control">
+                        Type a message:
+                        <input class="input" form="interact" type="text" id="userIn" placeholder="Type in a message">
+                      </p>
                         <p class="control is-expanded">
                           Upload an image:
                           <input class="input" type="file" id="userInImage" accept="image/*">
@@ -70,10 +74,6 @@ WEB_HTML = """
                           Choose a personality:
                           <select name="pers_list" form="interact" id="pers_select">
                           </select>
-                        </p>
-                        <p class="control is-expanded">
-                          Type a message:
-                          <input class="input" form="interact" type="text" id="userIn" placeholder="Type in a message">
                         </p>
                         <p class="control">
                           <button id="respond" type="submit" class="button has-text-white-ter has-background-grey-dark">
@@ -325,7 +325,7 @@ if __name__ == '__main__':
     Handler = MyHandler
     Handler.protocol_version = 'HTTP/1.0'
     httpd = server_class((HOST_NAME, PORT), Handler)
-    print('http://{}:{}/'.format(HOST_NAME, PORT))
+    print('\nVisit http://{}:{}/ to chat with the model!'.format(HOST_NAME, PORT))
 
     try:
         httpd.serve_forever()

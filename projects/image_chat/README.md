@@ -41,6 +41,11 @@ Which yields the following results:
       'second_round': {'hits@1/100': 0.4558, 'loss': -0.002001, 'med_rank': 2.0},
       'third_round+': {'hits@1/100': 0.4147, 'loss': -0.002001, 'med_rank': 2.0}}
 
+Additionally, we provide an interactive script that you can use to view outputs of our pretrained model. Simply run the following command:
+
+      python projects/image_chat/interactive.py \
+      -mf models:image_chat/transresnet_multimodal/model
+
 ## Model Examples
 
 TODO
