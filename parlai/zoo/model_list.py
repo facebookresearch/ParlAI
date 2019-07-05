@@ -252,4 +252,21 @@ model_list = [
             "[Polyencoder]: i am more of a tea guy . i get my tea from china .\n"
         ),
     },
+    {
+        "title": "Image-Chat pretrained model",
+        "id": "image_chat",
+        "path": "models:image_chat/transresnet_multimodal",
+        "agent": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",  # noqa: E501
+        "task": "image_chat",
+        "description": ("Transresnet Multimodal Model pretrained on the Image-Chat task"),
+        "example": (
+            "python examples/eval_model.py -t image_chat "
+            "-mf models:image_chat/transresnet_multimodal/model -dt test"
+        ),
+        "result": "{'exs': 29991, 'accuracy': 0.4032, 'f1': 0.4432, 'hits@1': 0.403, 'hits@5': 0.672, 'hits@10': 0.779, 'hits@100': 1.0, 'bleu': 0.3923,"  # noqa: E501
+        "'first_round': {'hits@1/100': 0.3392, 'loss': -0.002001, 'med_rank': 3.0},"
+        "'second_round': {'hits@1/100': 0.4558, 'loss': -0.002001, 'med_rank': 2.0},"
+        "'third_round+': {'hits@1/100': 0.4147, 'loss': -0.002001, 'med_rank': 2.0}}"  # noqa: E501
+        "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}"  # noqa: E501
+    },
 ]
