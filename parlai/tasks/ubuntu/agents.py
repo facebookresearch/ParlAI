@@ -48,7 +48,7 @@ class DefaultTeacher(DialogTeacher):
                 yield (context, [response], None, cands), True
 
 
-class MultiTeacher(FixedDialogTeacher):
+class MultiturnTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
         opt['datafile'] = os.path.join(
@@ -56,16 +56,14 @@ class MultiTeacher(FixedDialogTeacher):
         )
         super().__init__(opt, shared)
 
-        self.opt = opt
         if shared:
             self.data = shared['data']
         else:
             build(opt)
-            # '/Users/shaojie/src/ParlAI/data/Ubuntu/train.csv'
             fold = opt.get('datatype', 'train').split(':')[0]
             self._setup_data(fold)
 
-        self.num_exs = sum(len(d) for d in self.data)
+        self.num_exs = 2 * sum(len(d) for d in self.data)
 
         # we learn from both sides of every conversation
         self.num_eps = 2 * len(self.data)
