@@ -484,7 +484,8 @@ task_list = [
         "tags": ["All", "ChitChat"],
         "description": (
             "Dialogs between an Ubuntu user and an expert trying to fix issue, "
-            "from Lowe et al. '15. Link: https://arxiv.org/abs/1506.08909"
+            "we use the V2 version, which cleaned the data to some extent. "
+            "From Lowe et al. '15. Link: https://arxiv.org/abs/1506.08909."
         ),
     },
     {
@@ -937,7 +938,20 @@ task_list = [
         "description": (
             "A dataset of 25k conversations grounded in emotional situations "
             "to facilitate training and evaluating dialogue systems. See "
-            "https://arxiv.org/abs/1811.00207 for more information."
+            "https://arxiv.org/abs/1811.00207 for more information. \n"
+            "=========================== \n"
+            "Dataset has been released under the CC BY-NC license. \n"
+            "EmpatheticDialogueTeacher returns examples like so: \n"
+            "- [text]:  context line (previous utterance by 'speaker') \n"
+            "- [labels]: label line  (current utterance by 'listener') \n"
+            "with additional task specific fields: \n"
+            "- [situation]: a 1-3 sentence description of the situation that the conversation is \n"
+            "- [emotion]: one of 32 emotion words \n"
+            "Other optional fields: \n"
+            "- [prepend_ctx]: fasttext prediction on context line - or None \n"
+            "- [prepend_cand]: fasttext prediction on label line (candidate) - or None \n"
+            "- [deepmoji_ctx]: vector encoding from deepmoji penultimate layer - or None \n"
+            "- [deepmoji_cand]: vector encoding from deepmoji penultimate layer for label line (candidate) - or None "
         ),
     },
 ]
