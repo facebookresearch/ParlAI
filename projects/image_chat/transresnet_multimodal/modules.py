@@ -7,10 +7,15 @@
 
 import torch
 from torch import nn
-from parlai.agents.transformer.modules import TransformerEncoder, \
-    create_position_codes, TransformerEncoderLayer
-from projects.personality_captions.transresnet.modules import TransresnetModel, \
-    load_fasttext_embeddings
+from parlai.agents.transformer.modules import (
+    TransformerEncoder,
+    create_position_codes,
+    TransformerEncoderLayer,
+)
+from projects.personality_captions.transresnet.modules import (
+    TransresnetModel,
+    load_fasttext_embeddings,
+)
 
 
 class TransresnetMultimodalModel(TransresnetModel):
@@ -20,54 +25,87 @@ class TransresnetMultimodalModel(TransresnetModel):
     def add_cmdline_args(argparser):
         """Override to include model-specific args."""
         TransresnetModel.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('TransresnetMultimodal task arguments')
-        agent.add_argument('--context-encoder-embedding-type', type=str, default=None,
-                           choices=[None, 'fasttext_cc'],
-                           help='Specify if using pretrained embeddings')
-        agent.add_argument('--load-context-encoder-from', type=str, default=None,
-                           help='Specify if using a pretrained transformer encoder')
-        agent.add_argument('--share-encoder', type='bool', default=False,
-                           help='Whether to share the text encoder for the '
-                           'labels and the dialogue history')
-        agent.add_argument('--num-layers-multimodal-encoder', type=int, default=1)
-        agent.add_argument('--multimodal', type='bool', default=False,
-                           help='If true, feed a query term into a separate '
-                           'transformer prior to computing final rank '
-                           'scores')
-        agent.add_argument('--multimodal-combo', type=str,
-                           choices=['concat', 'sum'], default='sum',
-                           help='How to combine the encoding for the '
-                           'multi-modal transformer')
-        agent.add_argument('--encode-image', type='bool', default=True,
-                           help='Whether to include the image encoding when '
-                           'retrieving a candidate response')
-        agent.add_argument('--encode-dialogue-history', type='bool', default=True,
-                           help='Whether to include the dialogue history '
-                           'encoding when retrieving a candidate response')
-        agent.add_argument('--encode-personality', type='bool', default=True,
-                           help='Whether to include the personality encoding '
-                           'when retrieving a candidate response')
+        agent = argparser.add_argument_group("TransresnetMultimodal task arguments")
+        agent.add_argument(
+            "--context-encoder-embedding-type",
+            type=str,
+            default=None,
+            choices=[None, "fasttext_cc"],
+            help="Specify if using pretrained embeddings",
+        )
+        agent.add_argument(
+            "--load-context-encoder-from",
+            type=str,
+            default=None,
+            help="Specify if using a pretrained transformer encoder",
+        )
+        agent.add_argument(
+            "--share-encoder",
+            type="bool",
+            default=False,
+            help="Whether to share the text encoder for the "
+            "labels and the dialogue history",
+        )
+        agent.add_argument("--num-layers-multimodal-encoder", type=int, default=1)
+        agent.add_argument(
+            "--multimodal",
+            type="bool",
+            default=False,
+            help="If true, feed a query term into a separate "
+            "transformer prior to computing final rank "
+            "scores",
+        )
+        agent.add_argument(
+            "--multimodal-combo",
+            type=str,
+            choices=["concat", "sum"],
+            default="sum",
+            help="How to combine the encoding for the " "multi-modal transformer",
+        )
+        agent.add_argument(
+            "--encode-image",
+            type="bool",
+            default=True,
+            help="Whether to include the image encoding when "
+            "retrieving a candidate response",
+        )
+        agent.add_argument(
+            "--encode-dialogue-history",
+            type="bool",
+            default=True,
+            help="Whether to include the dialogue history "
+            "encoding when retrieving a candidate response",
+        )
+        agent.add_argument(
+            "--encode-personality",
+            type="bool",
+            default=True,
+            help="Whether to include the personality encoding "
+            "when retrieving a candidate response",
+        )
 
     def __init__(self, opt, personalities_list, dictionary):
         super().__init__(opt, personalities_list, dictionary)
-        self.hidden_dim = self.opt['hidden_dim']
-        self.share_encoder = opt.get('share_encoder')
-        nlayers_mm = (opt['num_layers_all'] if opt['num_layers_all'] != -1
-                      else opt['num_layers_multimodal_encoder'])
+        self.hidden_dim = self.opt["hidden_dim"]
+        self.share_encoder = opt.get("share_encoder")
+        nlayers_mm = (
+            opt["num_layers_all"]
+            if opt["num_layers_all"] != -1
+            else opt["num_layers_multimodal_encoder"]
+        )
 
         # blank encoding (for concat)
-        self.blank_encoding = torch.Tensor(
-            opt['hidden_dim']).fill_(0).detach_()
+        self.blank_encoding = torch.Tensor(opt["hidden_dim"]).fill_(0).detach_()
         if self.use_cuda:
             self.blank_encoding = self.blank_encoding.cuda()
 
         # Encoders
-        self.encode_image = opt.get('encode_image', True)
-        self.encode_personality = opt.get('encode_personality', True)
-        self.encode_dialogue_history = opt.get('encode_dialogue_history', True)
-        assert any([self.encode_dialogue_history,
-                    self.encode_image,
-                    self.encode_personality])
+        self.encode_image = opt.get("encode_image", True)
+        self.encode_personality = opt.get("encode_personality", True)
+        self.encode_dialogue_history = opt.get("encode_dialogue_history", True)
+        assert any(
+            [self.encode_dialogue_history, self.encode_image, self.encode_personality]
+        )
 
         # Transformer 2
         self._build_multimodal_encoder(nlayers_mm)
@@ -85,59 +123,72 @@ class TransresnetMultimodalModel(TransresnetModel):
         :param n_layers_mm:
             number of layers for the transformer
         """
-        self.multimodal = self.opt.get('multimodal')
+        self.multimodal = self.opt.get("multimodal")
         if self.multimodal:
-            self.multimodal_combo = self.opt.get('multimodal_combo', 'sum')
-            nlayers_mm = (self.opt['num_layers_all'] if self.opt['num_layers_all'] != -1
-                          else self.opt['num_layers_multimodal_encoder'])
+            self.multimodal_combo = self.opt.get("multimodal_combo", "sum")
+            nlayers_mm = (
+                self.opt["num_layers_all"]
+                if self.opt["num_layers_all"] != -1
+                else self.opt["num_layers_multimodal_encoder"]
+            )
             self.multimodal_encoder = MultimodalCombiner(
-                n_heads=self.opt['n_heads'],
+                n_heads=self.opt["n_heads"],
                 n_layers=nlayers_mm,
-                hidden_dim=self.opt['hidden_dim'],
-                ffn_size=self.opt['embedding_size']*4,
-                attention_dropout=self.opt['attention_dropout'],
-                relu_dropout=self.opt['relu_dropout'],
-                learn_positional_embeddings=self.opt.get('learn_positional_embeddings',
-                                                         False),
-                reduction=True)
+                hidden_dim=self.opt["hidden_dim"],
+                ffn_size=self.opt["embedding_size"] * 4,
+                attention_dropout=self.opt["attention_dropout"],
+                relu_dropout=self.opt["relu_dropout"],
+                learn_positional_embeddings=self.opt.get(
+                    "learn_positional_embeddings", False
+                ),
+                reduction=True,
+            )
 
     def _build_context_encoder(self):
         """Build the context (i.e. dialogue history) encoder."""
-        if self.opt.get('share_encoder'):
+        if self.opt.get("share_encoder"):
             self.context_encoder = self.label_encoder
         else:
             if (
-                self.opt['load_context_encoder_from'] is None and
-                self.opt['context_encoder_embedding_type'] == 'fasttext_cc'
+                self.opt["load_context_encoder_from"] is None
+                and self.opt["context_encoder_embedding_type"] == "fasttext_cc"
             ):
                 embeddings = load_fasttext_embeddings(
-                    self.dictionary, self.opt['embedding_size'], self.opt['datapath'])
+                    self.dictionary, self.opt["embedding_size"], self.opt["datapath"]
+                )
             else:
-                embeddings = nn.Embedding(len(self.dictionary), self.opt['embedding_size'])
+                embeddings = nn.Embedding(
+                    len(self.dictionary), self.opt["embedding_size"]
+                )
             self.context_encoder = TransformerEncoder(
-                n_heads=self.opt['n_heads'],
-                n_layers=self.opt['n_layers'],
-                embedding_size=self.opt['embedding_size'],
-                ffn_size=self.opt['ffn_size'],
+                n_heads=self.opt["n_heads"],
+                n_layers=self.opt["n_layers"],
+                embedding_size=self.opt["embedding_size"],
+                ffn_size=self.opt["ffn_size"],
                 vocabulary_size=len(self.dictionary),
                 embedding=embeddings,
-                dropout=self.opt['dropout'],
-                attention_dropout=self.opt['attention_dropout'],
-                relu_dropout=self.opt['relu_dropout'],
+                dropout=self.opt["dropout"],
+                attention_dropout=self.opt["attention_dropout"],
+                relu_dropout=self.opt["relu_dropout"],
                 padding_idx=self.dictionary.tok2ind[self.dictionary.null_token],
-                learn_positional_embeddings=self.opt['learn_positional_embeddings'],
+                learn_positional_embeddings=self.opt["learn_positional_embeddings"],
                 embeddings_scale=False,
-                n_positions=self.opt['n_positions'],
-                activation=self.opt['activation'],
-                variant=self.opt['variant'],
-                n_segments=self.opt['n_segments']
+                n_positions=self.opt["n_positions"],
+                activation=self.opt["activation"],
+                variant=self.opt["variant"],
+                n_segments=self.opt["n_segments"],
             )
-            if self.opt.get('load_context_encoder_from') is not None:
+            if self.opt.get("load_context_encoder_from") is not None:
                 self._load_context_encoder_state()
 
     def forward(
-        self, image_features, personalities, dialogue_histories, labels, batchsize=None,
-        personalities_tensor=None
+        self,
+        image_features,
+        personalities,
+        dialogue_histories,
+        labels,
+        batchsize=None,
+        personalities_tensor=None,
     ):
         """
         Model forward pass.
@@ -160,16 +211,15 @@ class TransresnetMultimodalModel(TransresnetModel):
         # labels
         labels_encoded = self.forward_text_encoder(labels)
         # dialog history
-        d_hist_encoded = self.forward_text_encoder(dialogue_histories,
-                                                   dialogue_history=True,
-                                                   batchsize=batchsize)
+        d_hist_encoded = self.forward_text_encoder(
+            dialogue_histories, dialogue_history=True, batchsize=batchsize
+        )
         # images
         img_encoded = self.forward_image(image_features)
         # personalities
         pers_encoded = self.forward_personality(personalities, personalities_tensor)
         total_encoded = self.get_rep(
-            [img_encoded, d_hist_encoded, pers_encoded],
-            batchsize=batchsize
+            [img_encoded, d_hist_encoded, pers_encoded], batchsize=batchsize
         )
         loss, nb_ok = self.get_loss(total_encoded, labels_encoded)
 
@@ -190,10 +240,12 @@ class TransresnetMultimodalModel(TransresnetModel):
         """
         pers_encoded = None
         if not self.encode_personality:
-            if self.multimodal and self.multimodal_combo == 'concat':
+            if self.multimodal and self.multimodal_combo == "concat":
                 pers_encoded = self.blank_encoding
         else:
-            pers_encoded = super().forward_personality(personalities, personalities_tensor)
+            pers_encoded = super().forward_personality(
+                personalities, personalities_tensor
+            )
         return pers_encoded
 
     def forward_text_encoder(self, texts, dialogue_history=False, batchsize=None):
@@ -213,9 +265,14 @@ class TransresnetMultimodalModel(TransresnetModel):
         """
         texts_encoded = None
         if texts is None or (dialogue_history and not self.encode_dialogue_history):
-            if (self.multimodal and self.multimodal_combo == 'concat' and
-                    dialogue_history):
-                texts_encoded = torch.stack([self.blank_encoding for _ in range(batchsize)])
+            if (
+                self.multimodal
+                and self.multimodal_combo == "concat"
+                and dialogue_history
+            ):
+                texts_encoded = torch.stack(
+                    [self.blank_encoding for _ in range(batchsize)]
+                )
         else:
             encoder = self.context_encoder if dialogue_history else self.label_encoder
             indexes, mask = self.captions_to_tensor(texts)
@@ -238,7 +295,7 @@ class TransresnetMultimodalModel(TransresnetModel):
         """
         img_encoded = None
         if image_features is None or not self.encode_image:
-            if self.multimodal and self.multimodal_combo == 'concat':
+            if self.multimodal and self.multimodal_combo == "concat":
                 img_encoded = self.blank_encoding
         else:
             img_encoded = super().forward_image(image_features)
@@ -260,9 +317,9 @@ class TransresnetMultimodalModel(TransresnetModel):
         if not self.multimodal:
             rep = self.sum_encodings(encodings)
         else:
-            if self.multimodal_combo == 'sum':
+            if self.multimodal_combo == "sum":
                 encodings = self.sum_encodings(encodings).unsqueeze(1)
-            elif self.multimodal_combo == 'concat':
+            elif self.multimodal_combo == "concat":
                 encodings = self.cat_encodings(encodings)
             all_one_mask = torch.ones(encodings.size()[:2])
             if self.use_cuda:
@@ -273,8 +330,14 @@ class TransresnetMultimodalModel(TransresnetModel):
         return rep
 
     def choose_best_response(
-        self, image_features, personalities, dialogue_histories,
-        candidates, candidates_encoded=None, k=1, batchsize=None
+        self,
+        image_features,
+        personalities,
+        dialogue_histories,
+        candidates,
+        candidates_encoded=None,
+        k=1,
+        batchsize=None,
     ):
         """
         Choose the best response for each example.
@@ -298,17 +361,16 @@ class TransresnetMultimodalModel(TransresnetModel):
             a set of ranked candidates for each example
         """
         self.eval()
-        _, _, encoded = self.forward(image_features,
-                                     personalities,
-                                     dialogue_histories,
-                                     None,
-                                     batchsize=batchsize)
+        _, _, encoded = self.forward(
+            image_features, personalities, dialogue_histories, None, batchsize=batchsize
+        )
         encoded = encoded.detach()
         one_cand_set = True
         if candidates_encoded is None:
             one_cand_set = False
-            candidates_encoded = [self.forward_text_encoder(c).detach()
-                                  for c in candidates]
+            candidates_encoded = [
+                self.forward_text_encoder(c).detach() for c in candidates
+            ]
         chosen = [
             self.choose_topk(
                 idx if not one_cand_set else 0,
@@ -316,7 +378,7 @@ class TransresnetMultimodalModel(TransresnetModel):
                 candidates,
                 candidates_encoded,
                 one_cand_set,
-                k
+                k,
             )
             for idx in range(len(encoded))
         ]
@@ -344,18 +406,19 @@ class TransresnetMultimodalModel(TransresnetModel):
         :return:
             ranked list of k responses
         """
-        encoding = encoded[idx:idx + 1, :]
+        encoding = encoded[idx : idx + 1, :]
         scores = torch.mm(
             candidates_encoded[idx] if not one_cand_set else candidates_encoded,
-            encoding.transpose(0, 1)
+            encoding.transpose(0, 1),
         )
         if k >= 1:
             _, index_top = torch.topk(scores, k, dim=0)
         else:
             _, index_top = torch.topk(scores, scores.size(0), dim=0)
-        return [candidates[idx][idx2] if not one_cand_set
-                else candidates[idx2]
-                for idx2 in index_top.unsqueeze(1)]
+        return [
+            candidates[idx][idx2] if not one_cand_set else candidates[idx2]
+            for idx2 in index_top.unsqueeze(1)
+        ]
 
     def get_loss(self, total_encoded, labels_encoded):
         """
@@ -372,7 +435,9 @@ class TransresnetMultimodalModel(TransresnetModel):
         loss = None
         num_correct = None
         if labels_encoded is not None:
-            dot_products = total_encoded.mm(labels_encoded.t())  # batch_size * batch_size
+            dot_products = total_encoded.mm(
+                labels_encoded.t()
+            )  # batch_size * batch_size
             log_prob = torch.nn.functional.log_softmax(dot_products, dim=1)
             targets = torch.arange(0, len(total_encoded), dtype=torch.long)
             if self.use_cuda:
@@ -396,30 +461,30 @@ class TransresnetMultimodalModel(TransresnetModel):
 
     def _load_text_encoder_state(self):
         try:
-            state_file = self.opt.get('load_encoder_from')
+            state_file = self.opt.get("load_encoder_from")
             model = torch.load(state_file)
-            states = model['model']
+            states = model["model"]
             self.text_encoder.load_state_dict(states)
         except Exception as e:
             print(
-                'WARNING: Cannot load transformer state; please make sure '
-                'specified file is a dictionary with the states in `model`. '
-                'Additionally, make sure that the appropriate options are '
-                'specified. Error: {}'.format(e)
+                "WARNING: Cannot load transformer state; please make sure "
+                "specified file is a dictionary with the states in `model`. "
+                "Additionally, make sure that the appropriate options are "
+                "specified. Error: {}".format(e)
             )
 
     def _load_context_encoder_state(self):
         try:
-            state_file = self.opt.get('load_context_encoder_from')
+            state_file = self.opt.get("load_context_encoder_from")
             model = torch.load(state_file)
-            states = model['model']
+            states = model["model"]
             self.context_encoder.load_state_dict(states)
         except Exception as e:
             print(
-                'WARNING: Cannot load transformer state; please make sure '
-                'specified file is a dictionary with the states in `model`. '
-                'Additionally, make sure that the appropriate options are '
-                'specified. Error: {}'.format(e)
+                "WARNING: Cannot load transformer state; please make sure "
+                "specified file is a dictionary with the states in `model`. "
+                "Additionally, make sure that the appropriate options are "
+                "specified. Error: {}".format(e)
             )
 
 
@@ -435,7 +500,7 @@ class MultimodalCombiner(nn.Module):
         reduction=True,
         attention_dropout=0.0,
         relu_dropout=0.0,
-        learn_positional_embeddings=False
+        learn_positional_embeddings=False,
     ):
         super().__init__()
         self.ffn_size = ffn_size
@@ -444,8 +509,7 @@ class MultimodalCombiner(nn.Module):
         self.out_dim = hidden_dim
         self.dim = hidden_dim
         self.reduction = reduction
-        assert hidden_dim % n_heads == 0, \
-            'MM-Combiner dim must be multiple of n_heads'
+        assert hidden_dim % n_heads == 0, "MM-Combiner dim must be multiple of n_heads"
         n_positions = 1024
         self.position_embeddings = nn.Embedding(n_positions, hidden_dim)
         if not learn_positional_embeddings:
@@ -457,9 +521,11 @@ class MultimodalCombiner(nn.Module):
 
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
-            self.layers.append(TransformerEncoderLayer(
-                n_heads, hidden_dim, ffn_size, attention_dropout, relu_dropout
-            ))
+            self.layers.append(
+                TransformerEncoderLayer(
+                    n_heads, hidden_dim, ffn_size, attention_dropout, relu_dropout
+                )
+            )
 
     def forward(self, tensor, mask):
         """
