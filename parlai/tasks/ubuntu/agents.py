@@ -63,7 +63,7 @@ class MultiturnTeacher(FixedDialogTeacher):
             fold = opt.get('datatype', 'train').split(':')[0]
             self._setup_data(fold)
 
-        self.num_exs = 2 * sum(len(d) for d in self.data)
+        self.num_exs = sum(len(d) for d in self.data)
 
         # we learn from both sides of every conversation
         self.num_eps = 2 * len(self.data)
