@@ -104,11 +104,7 @@ class MultiturnTeacher(FixedDialogTeacher):
 
         episode_done = 1 + speaker_id + 2 * entry_idx >= len(full_eps) - 2
 
-        action = {
-            'text': their_turn,
-            'labels': [my_turn],
-            'episode_done': episode_done,
-        }
+        action = {'text': their_turn, 'labels': [my_turn], 'episode_done': episode_done}
         return action
 
     def share(self):
