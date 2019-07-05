@@ -92,7 +92,8 @@ class MultiTeacher(FixedDialogTeacher):
                 for field in fields:
                     if field != '':
                         dialog.append(field.replace('__eou__', '.').strip())
-                self.data.append(dialog)
+                if len(dialog) > 2:
+                    self.data.append(dialog)
 
     def get(self, episode_idx, entry_idx=0):
         # Sometimes we're speaker 1 and sometimes we're speaker 2
