@@ -48,7 +48,6 @@ Additionally, we provide an interactive script that you can use to view outputs 
 
 ## Model Examples
 
-TODO
 <p align="center"><img width="85%" src="Examples.png" /></p>
 
 ## Citation
