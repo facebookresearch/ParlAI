@@ -116,7 +116,7 @@ class TransresnetMultimodalAgent(TransresnetAgent):
                 fixed_cands_enc = []
                 for _, batch in enumerate(
                     [
-                        self.fixed_cands[i : i + 50]
+                        self.fixed_cands[i:i + 50]
                         for i in range(0, len(self.fixed_cands) - 50, 50)
                     ]
                 ):
