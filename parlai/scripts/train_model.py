@@ -585,6 +585,8 @@ class TrainLoop:
             else:
                 # all other cases, take the mean across the workers
                 finalized[k] = np.mean(values)
+                if all(isinstance(v, int) for v in values):
+                    finalized[k] = int(finalized[k])
         return finalized
 
     def _cleanup_inaccurate_metrics(self, metrics):
