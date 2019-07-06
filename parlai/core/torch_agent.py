@@ -1745,14 +1745,11 @@ class TorchAgent(ABC, Agent):
                 cycle_steps = self._lr_period * lr_mult ** passes
                 self.scheduler.T_max = cycle_steps
 
-            if step == 0:
-                # the height of the peak of the cosine wave is multiplied by
-                # decay every period
-                mult_max = self.opt['lr_scheduler_decay'] ** passes
-                lr = self.opt['learningrate']
-                self.scheduler.base_lrs = [
-                    lr * mult_max for _ in self.scheduler.base_lrs
-                ]
+            # the height of the peak of the cosine wave is multiplied by
+            # decay every period
+            mult_max = self.opt['lr_scheduler_decay'] ** passes
+            lr = self.opt['learningrate']
+            self.scheduler.base_lrs = [lr * mult_max for _ in self.scheduler.base_lrs]
 
             self.scheduler.step(step)
 
