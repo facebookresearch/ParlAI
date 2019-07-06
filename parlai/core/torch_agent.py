@@ -1791,24 +1791,6 @@ class TorchAgent(ABC, Agent):
         self.metrics['updates'] += 1
         self.optimizer.step()
 
-        # # check that everything got to the same point
-        # with torch.no_grad():
-        #     checksum = sum(
-        #         [p.sum().float() for p in self.model.parameters()]
-        #     ).item()
-        #     items = all_gather_list(checksum)
-        #     assert len(set(items)) == 1, "params out of sync: %s" % items
-        #     osd = self.optimizer.state_dict()
-        #     if 'optimizer_state_dict' in osd:
-        #         checksum = sum(
-        #             p.sum().float() for p in osd['optimizer_state_dict']['state'].values()
-        #             if torch.is_tensor(p)
-        #         )
-        #         if torch.is_tensor(checksum):
-        #             checksum = checksum.item()
-        #         items = all_gather_list(checksum)
-        #         assert len(set(items)) == 1, "momentums out of sync: %s" % items
-
     def zero_grad(self):
         """
         Zero out optimizer.
