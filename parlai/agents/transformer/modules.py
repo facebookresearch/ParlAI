@@ -908,8 +908,7 @@ class MultiHeadAttention(nn.Module):
         assert attn_mask.shape == dot_prod.shape
         dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        # attn_weights = F.softmax(dot_prod, dim=-1, dtype=torch.float32).type_as(query)
-        attn_weights = F.softmax(dot_prod, dim=-1).type_as(query)
+        attn_weights = F.softmax(dot_prod, dim=-1, dtype=torch.float32).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
