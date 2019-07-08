@@ -764,6 +764,13 @@ class TorchAgent(ABC, Agent):
                 # next check for 'model_file', this would override init_model
                 init_model = opt['model_file']
                 is_finetune = False
+            if opt.get('load_from_checkpoint') and opt.get('init_model', '').endswith(
+                '.checkpoint'
+            ):
+                # but if we're loading from a checkpoint, we should explicitly load
+                # from that point
+                init_model = opt['init_model']
+                is_finetune = False
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
@@ -812,6 +819,7 @@ class TorchAgent(ABC, Agent):
         if opt['optimizer'] in ['adam', 'sparseadam', 'fused_adam', 'adamax', 'qhadam']:
             # set betas for optims that use it
             kwargs['betas'] = opt.get('betas', (0.9, 0.999))
+            kwargs['eps'] = 1e-6
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
