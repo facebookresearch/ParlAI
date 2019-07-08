@@ -741,6 +741,15 @@ class TorchAgent(ABC, Agent):
                 # next check for 'model_file', this would override init_model
                 init_model = opt['model_file']
                 is_finetune = False
+            if (
+                opt.get('load_from_checkpoint')
+                and opt.get('init_model')
+                and opt['init_model'].endswith('.checkpoint')
+            ):
+                # but if we're loading from a checkpoint, we should explicitly load
+                # from that point
+                init_model = opt['init_model']
+                is_finetune = False
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
