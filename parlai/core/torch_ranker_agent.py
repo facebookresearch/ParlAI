@@ -178,6 +178,7 @@ class TorchRankerAgent(TorchAgent):
 
     def set_interactive_mode(self, mode, shared=False):
         self.candidates = self.opt['candidates']
+        print(mode)
         if mode:
             if not shared:
                 # Only print in the non-shared version.
@@ -194,6 +195,7 @@ class TorchRankerAgent(TorchAgent):
                         print("[setting fixed_candidates path to: " + path + " ]")
                     self.fixed_candidates_path = path
         else:
+            print(self.opt)
             self.eval_candidates = self.opt['eval_candidates']
             self.ignore_bad_candidates = self.opt.get('ignore_bad_candidates', False)
             self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
