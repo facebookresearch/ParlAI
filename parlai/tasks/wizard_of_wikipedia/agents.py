@@ -17,6 +17,7 @@
     E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
+from parlai.core.agents import create_task_agent_from_taskname
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 
@@ -225,6 +226,13 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             type='bool',
             default=False,
             help='include special __knowledge__ token between ' 'title and passage',
+        )
+        agent.add_argument(
+            '--num-topics',
+            type=int,
+            default=5,
+            help='in interactive mode, this is the number of topic choices'
+            'the human will have',
         )
 
     def len_episode(self, ep):
@@ -850,3 +858,11 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 
 class DefaultTeacher(WizardDialogKnowledgeTeacher):
     pass
+
+
+def create_agents(opt, task):
+    if not opt.get('interactive_task', False):
+        return create_task_agent_from_taskname(opt)
+    else:
+        # interactive task has no task agents (they are attached as user agents)
+        return []
