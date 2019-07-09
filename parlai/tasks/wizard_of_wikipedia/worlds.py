@@ -25,7 +25,7 @@ class InteractiveWorld(DialogPartnerWorld):
         super().__init__(opt, agents, shared)
         print('[ loading topics.. ]')
         self.load_topics(opt)
-        self.num_topics = 5
+        self.num_topics = opt['num_topics']
         self.cnt = 0
         self.human_agent = self.agents[0]
         self.model_agent = self.agents[1]
