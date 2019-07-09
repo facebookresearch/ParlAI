@@ -227,6 +227,13 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             default=False,
             help='include special __knowledge__ token between ' 'title and passage',
         )
+        agent.add_argument(
+            '--num-topics',
+            type=int,
+            default=5,
+            help='in interactive mode, this is the number of topic choices'
+            'the human will have'
+        )
 
     def len_episode(self, ep):
         d = self.data[ep]

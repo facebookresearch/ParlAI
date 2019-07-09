@@ -15,7 +15,6 @@ from parlai.core.agents import Agent, create_agent
 from projects.wizard_of_wikipedia.wizard_transformer_ranker.wizard_transformer_ranker import (
     WizardTransformerRankerAgent,
 )
-from parlai.zoo.wizard_of_wikipedia.full_dialogue_retrieval_model import download
 
 import json
 import os
