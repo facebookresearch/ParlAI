@@ -57,12 +57,12 @@ class InteractiveRetrievalAgent(Agent):
         parser.add_argument(
             '--retriever-model-file',
             type=str,
-            default='models:wikipedia_full/tfidf_retriever/model'
+            default='models:wikipedia_full/tfidf_retriever/model',
         )
         parser.add_argument(
             '--responder-model-file',
             type=str,
-            default='models:wizard_of_wikipedia/full_dialogue_retrieval_model/model'
+            default='models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
         )
         parser.add_argument(
             '--get-unique',

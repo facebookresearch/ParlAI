@@ -10,8 +10,6 @@ from parlai.scripts.interactive import setup_args, interactive
 
 if __name__ == '__main__':
     parser = setup_args()
-    parser.set_params(
-        model='projects:wizard_of_wikipedia:interactive_retrieval',
-    )
+    parser.set_params(model='projects:wizard_of_wikipedia:interactive_retrieval')
     opt = parser.parse_args(print_args=False)
     interactive(opt, print_parser=parser)
