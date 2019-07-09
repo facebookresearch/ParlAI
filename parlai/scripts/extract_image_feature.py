@@ -103,10 +103,13 @@ def extract_feats(opt):
         world = create_task(opt, agent)
 
         total_exs = world.num_examples()
-        # TODO: wrap in a tqdm
+        pbar = tqdm.tqdm(unit='ex', total=total_exs)
         while not world.epoch_done():
             world.parley()
+            pbar.update()
+        pbar.close()
     elif opt.get('use_hdf5_extraction', False):
+        # TODO Deprecate
         '''One can specify a Pytorch Dataset for custom image loading'''
         nw = opt.get('numworkers', 1)
         im = opt.get('image_mode', 'raw')
