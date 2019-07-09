@@ -185,14 +185,18 @@ class Message(dict):
     """
     Class for observations and actions.
 
-    Functions like a dict, but warns when writing to fields that already exist.
+    Functions like a dict, but breaks when writing to fields that already exist.
     """
+
     def __setitem__(self, key, val):
         if key in self:
-            warn_once(
-                'Message already contains key `{}`. Please make sure '
-                'this change is intentional.'.format(key)
+            raise RuntimeError(
+                'Message already contains key `{}`. If this was intentional, '
+                'please use the function `set_key(key, value)`.'.format(key)
             )
+        super().__setitem__(key, val)
+
+    def set_key(key, val):
         super().__setitem__(key, val)
 
     def copy(self):
