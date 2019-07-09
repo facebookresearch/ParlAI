@@ -15,6 +15,7 @@ from parlai.core.agents import Agent, create_agent
 from projects.wizard_of_wikipedia.wizard_transformer_ranker.wizard_transformer_ranker import (
     WizardTransformerRankerAgent,
 )
+from parlai.zoo.wizard_of_wikipedia.full_dialogue_retrieval_model import download
 
 import json
 import os
@@ -34,6 +35,9 @@ class InteractiveRetrievalAgent(Agent):
             'full_dialogue_retrieval_model',
         )
 
+        # Create responder
+        self._set_up_responder(opt)
+
         if not shared:
             # Create retriever
             self._set_up_retriever(opt)
@@ -43,9 +47,6 @@ class InteractiveRetrievalAgent(Agent):
             self.sent_tok = shared['sent_tok']
             self.wiki_map = shared['wiki_map']
 
-        # Create responder
-        self._set_up_responder(opt)
-
         self.id = 'WizardRetrievalInteractiveAgent'
         self.ret_history = {}
 
@@ -54,8 +55,16 @@ class InteractiveRetrievalAgent(Agent):
         """Add command-line arguments specifically for this agent."""
         WizardTransformerRankerAgent.add_cmdline_args(argparser)
         parser = argparser.add_argument_group('WizardRetrievalInteractive Arguments')
-        parser.add_argument('--retriever-model-file', type=str, default=None)
-        parser.add_argument('--responder-model-file', type=str, default=None)
+        parser.add_argument(
+            '--retriever-model-file',
+            type=str,
+            default='models:wikipedia_full/tfidf_retriever/model'
+        )
+        parser.add_argument(
+            '--responder-model-file',
+            type=str,
+            default='models:wizard_of_wikipedia/full_dialogue_retrieval_model/model'
+        )
         parser.add_argument(
             '--get-unique',
             type='bool',

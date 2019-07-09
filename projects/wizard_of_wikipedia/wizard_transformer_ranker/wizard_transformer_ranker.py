@@ -102,7 +102,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             # if `self.chosen_sentence` is True, only keep golden knowledge
             to_vectorize = [checked]
         elif (
-            self.knowledge_dropout == 0 or observation.get('eval_labels') is not None
+            self.knowledge_dropout == 0 or not self.is_training
         ) and knowledge:
             # during evaluation we use all of the knowledge
             to_vectorize = knowledge

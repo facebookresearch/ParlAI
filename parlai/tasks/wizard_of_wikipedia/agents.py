@@ -17,6 +17,7 @@
     E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
+from parlai.core.agents import create_task_agent_from_taskname
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 
@@ -850,3 +851,11 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 
 class DefaultTeacher(WizardDialogKnowledgeTeacher):
     pass
+
+
+def create_agents(opt, task):
+    if not opt.get('interactive_task', False):
+        return create_task_agent_from_taskname(opt)
+    else:
+        # interactive task has no task agents (they are attached as user agents)
+        return []
