@@ -38,7 +38,8 @@ class InteractiveWorld(DialogPartnerWorld):
             'topic_splits.json',
         )
         # Get training set topics
-        self.topic_list = json.load(open(topics_path, 'rb'))['train']
+        datatype = opt['datatype'].split(':')[0]
+        self.topic_list = json.load(open(topics_path, 'rb'))[datatype]
 
     def get_new_topic(self):
         random.seed()
