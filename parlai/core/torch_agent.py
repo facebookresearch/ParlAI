@@ -950,8 +950,9 @@ class TorchAgent(ABC, Agent):
         metrics['num_updates'] = self._number_training_updates
 
         steps = max(1, self.metrics['updates'])  # prevent divide by zero
-        metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
-        metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
+        if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
+            metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
+            metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
         return metrics
 
     def _is_lr_warming_up(self):
