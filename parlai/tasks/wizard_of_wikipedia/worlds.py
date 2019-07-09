@@ -33,7 +33,9 @@ class InteractiveWorld(DialogPartnerWorld):
     def load_topics(self, opt):
         # Load possible chosen topics
         topics_path = os.path.join(
-            opt['datapath'], 'wizard_of_wikipedia', 'topic_splits.json'
+            opt['datapath'],
+            'wizard_of_wikipedia',
+            'topic_splits.json',
         )
         # Get training set topics
         datatype = opt['datatype'].split(':')[0]
@@ -43,26 +45,24 @@ class InteractiveWorld(DialogPartnerWorld):
         random.seed()
         topics = random.sample(self.topic_list, self.num_topics - 1)
         topics.append(NO_TOPIC)
-        letters = list(string.ascii_uppercase)[: self.num_topics]
+        letters = list(string.ascii_uppercase)[:self.num_topics]
         topic_list = {x: y for x, y in zip(letters, topics)}
         topic_text = '\n'.join(['{}: {}'.format(k, v) for k, v in topic_list.items()])
 
         done = False
         while not done:
-            self.human_agent.observe(
-                {
-                    'text': '\nPlease choose one of the following topics by typing '
-                    'A, B, or C: \n\n{}\n'.format(topic_text)
-                }
-            )
+            self.human_agent.observe({
+                'text': '\nPlease choose one of the following topics by typing '
+                        'A, B, C, ..., etc. : \n\n{}\n'.format(topic_text)
+            })
             topic_act = self.human_agent.act()
             choice = topic_act['text'][0].upper()
             if choice in topic_list:
                 done = True
             else:
-                self.human_agent.observe(
-                    {'text': 'Invalid response, please try again.'}
-                )
+                self.human_agent.observe({
+                    'text': 'Invalid response, please try again.'
+                })
 
         chosen_topic = topic_list[choice]
         print('[ Your chosen topic is: {} ]'.format(chosen_topic))
