@@ -13,7 +13,6 @@ from parlai.core.utils import (
     Opt,
     Message,
 )
-from parlai.core.testing_utils import capture_output
 from copy import deepcopy
 import time
 import unittest
@@ -129,9 +128,12 @@ class TestUtils(unittest.TestCase):
     def test_message(self):
         message = Message()
         message['text'] = 'lol'
-        with capture_output() as out:
+        err = None
+        try:
             message['text'] = 'rofl'
-        assert 'UserWarning' in out.getvalue(), 'Message did not warn'
+        except RuntimeError as e:
+            err = e
+        assert err is not None, 'Message allowed override'
         message_copy = message.copy()
         assert type(message_copy) == Message, 'Message did not copy properly'
 
