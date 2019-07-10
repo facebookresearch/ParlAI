@@ -1019,6 +1019,7 @@ class ParlaiParser(argparse.ArgumentParser):
             )
 
         arg_group.add_argument = ag_add_argument  # override _ => -
+        arg_group.add_argument_group = self.add_argument_group
         return arg_group
 
     def error(self, message):
