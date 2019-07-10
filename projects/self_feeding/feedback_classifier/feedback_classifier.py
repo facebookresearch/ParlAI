@@ -25,7 +25,7 @@ class FeedbackClassifierRegex(object):
             UM: r"u(m|h)+\W",
             YOUWHAT: r"you.*what\?",
             WHATYOU: r"what.*you (?:mean|refer|talk).*\?",
-            WHATDO: r"what.*to do with.*\?"
+            WHATDO: r"what.*to do with.*\?",
         }
 
     def predict_proba(self, contexts):

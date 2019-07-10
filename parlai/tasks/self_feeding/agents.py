@@ -45,8 +45,10 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         if 'subtask' not in opt:
-            print('Warning: SelfFeedingteacher should be assigned subtask. '
-                  'Defaulting to dialog')
+            print(
+                'Warning: SelfFeedingteacher should be assigned subtask. '
+                'Defaulting to dialog'
+            )
             opt['subtask'] = 'dialog'
 
         # Use 'in' to also capture 'train:ordered:stream'
@@ -78,32 +80,82 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         project = argparser.add_argument_group('Self-Feeding Tasks')
-        project.add_argument('-st', '--subtasks', type=str,
-                             help='comma-separated list of tasks used by MTL teacher')
-        project.add_argument('-dia-train', '--dia-train', type=str,
-                             help='the filename to train on for the dialog task')
-        project.add_argument('-fee-train', '--fee-train', type=str,
-                             help='the filename to train on for the feedback task')
-        project.add_argument('-sat-train', '--sat-train', type=str,
-                             help='the filename to train on for the satisfaction task')
-        project.add_argument('-dia-valid', '--dia-valid', type=str,
-                             help='the filename to eval on for the dialog task')
-        project.add_argument('-fee-valid', '--fee-valid', type=str,
-                             help='the filename to eval on for the feedback task')
-        project.add_argument('-sat-valid', '--sat-valid', type=str,
-                             help='the filename to eval on for the satisfaction task')
-        project.add_argument('-dia-test', '--dia-test', type=str,
-                             help='the filename to eval on for the dialog task')
-        project.add_argument('-fee-test', '--fee-test', type=str,
-                             help='the filename to eval on for the feedback task')
-        project.add_argument('-sat-test', '--sat-test', type=str,
-                             help='the filename to eval on for the satisfaction task')
-        project.add_argument('-trial', '--trial', type=int, default=0,
-                             help='the index of a repeated trial (not used in code)')
-        project.add_argument('-mt', '--max-train', type=int, default=0,
-                             help='if non-zero, only the first max-train examples will '
-                             'be used if it is read by an instance of '
-                             'ParlaiDialogTeacher')
+        project.add_argument(
+            '-st',
+            '--subtasks',
+            type=str,
+            help='comma-separated list of tasks used by MTL teacher',
+        )
+        project.add_argument(
+            '-dia-train',
+            '--dia-train',
+            type=str,
+            help='the filename to train on for the dialog task',
+        )
+        project.add_argument(
+            '-fee-train',
+            '--fee-train',
+            type=str,
+            help='the filename to train on for the feedback task',
+        )
+        project.add_argument(
+            '-sat-train',
+            '--sat-train',
+            type=str,
+            help='the filename to train on for the satisfaction task',
+        )
+        project.add_argument(
+            '-dia-valid',
+            '--dia-valid',
+            type=str,
+            help='the filename to eval on for the dialog task',
+        )
+        project.add_argument(
+            '-fee-valid',
+            '--fee-valid',
+            type=str,
+            help='the filename to eval on for the feedback task',
+        )
+        project.add_argument(
+            '-sat-valid',
+            '--sat-valid',
+            type=str,
+            help='the filename to eval on for the satisfaction task',
+        )
+        project.add_argument(
+            '-dia-test',
+            '--dia-test',
+            type=str,
+            help='the filename to eval on for the dialog task',
+        )
+        project.add_argument(
+            '-fee-test',
+            '--fee-test',
+            type=str,
+            help='the filename to eval on for the feedback task',
+        )
+        project.add_argument(
+            '-sat-test',
+            '--sat-test',
+            type=str,
+            help='the filename to eval on for the satisfaction task',
+        )
+        project.add_argument(
+            '-trial',
+            '--trial',
+            type=int,
+            default=0,
+            help='the index of a repeated trial (not used in code)',
+        )
+        project.add_argument(
+            '-mt',
+            '--max-train',
+            type=int,
+            default=0,
+            help='if non-zero, only the first max-train examples will '
+            'be used if it is read by an instance of '
+            'ParlaiDialogTeacher',
+        )
         argparser.set_defaults(history_size=2)
 
     def _setup_data(self, path):  # Make private method for ParlAIDialogTeacher
@@ -127,7 +179,7 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
                     parley['context'] = '__null__'
                 elif self.opt['history_size'] > 0:
                     utterances = re.split(r'__p\d__', parley['context'])[1:]
-                    trimmed = utterances[-self.opt['history_size']:]
+                    trimmed = utterances[-self.opt['history_size'] :]
                     parley['context'] = add_person_tokens(trimmed, last_speaker=1)
 
                 # WARNING: STRIPPING AWAY MEMORIES
@@ -203,8 +255,7 @@ class SelfFeedingMTLTeacher(core_agents.MultiTaskTeacher):
 
     def get_task_index(self):
         if self.opt['datatype'] == 'train':
-            return np.random.choice(
-                range(len(self.tasks)), p=self.sampling_prob)
+            return np.random.choice(range(len(self.tasks)), p=self.sampling_prob)
         else:
             for i, subtask in enumerate(self.tasks):
                 if not subtask.epoch_done():
@@ -257,9 +308,11 @@ class DiafeeTeacher(SelfFeedingMTLTeacher):
         opt['subtasks'] = ['dialog', 'feedback']
         # Expand abbreviated task name ('both') into full task names
         train_files = [opt['dia_train'], opt['fee_train']]
-        assert(len(opt['subtasks']) == len(train_files))
-        tasks = [f'self_feeding:{subtask}:{train_file}' for subtask, train_file
-                 in zip(opt['subtasks'], train_files)]
+        assert len(opt['subtasks']) == len(train_files)
+        tasks = [
+            f'self_feeding:{subtask}:{train_file}'
+            for subtask, train_file in zip(opt['subtasks'], train_files)
+        ]
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
@@ -274,9 +327,11 @@ class DiasatTeacher(SelfFeedingMTLTeacher):
         opt['subtasks'] = ['dialog', 'satisfaction']
         # Expand abbreviated task name ('both') into full task names
         train_files = [opt['dia_train'], opt['sat_train']]
-        assert(len(opt['subtasks']) == len(train_files))
-        tasks = [f'self_feeding:{subtask}:{train_file}' for subtask, train_file
-                 in zip(opt['subtasks'], train_files)]
+        assert len(opt['subtasks']) == len(train_files)
+        tasks = [
+            f'self_feeding:{subtask}:{train_file}'
+            for subtask, train_file in zip(opt['subtasks'], train_files)
+        ]
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
@@ -291,9 +346,11 @@ class AllTeacher(SelfFeedingMTLTeacher):
         opt['subtasks'] = ['dialog', 'feedback', 'satisfaction']
         # Expand abbreviated task name ('all') into full task names
         train_files = [opt['dia_train'], opt['fee_train'], opt['sat_train']]
-        assert(len(opt['subtasks']) == len(train_files))
-        tasks = [f'self_feeding:{subtask}:{train_file}' for subtask, train_file
-                 in zip(opt['subtasks'], train_files)]
+        assert len(opt['subtasks']) == len(train_files)
+        tasks = [
+            f'self_feeding:{subtask}:{train_file}'
+            for subtask, train_file in zip(opt['subtasks'], train_files)
+        ]
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
