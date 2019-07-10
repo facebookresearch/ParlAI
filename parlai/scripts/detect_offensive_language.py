@@ -84,8 +84,12 @@ def detect(opt, printargs=None, print_parser=None):
 
     if world.epoch_done():
         print("EPOCH DONE")
-    print(str(cnt) + " offensive messages found out of " +
-          str(world.num_examples()) + " messages.")
+    print(
+        str(cnt)
+        + " offensive messages found out of "
+        + str(world.num_examples())
+        + " messages."
+    )
     return world.report()
 
 

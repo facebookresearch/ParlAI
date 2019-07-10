@@ -36,11 +36,13 @@ def get_pyt_dict_file(opt):
         opt.get('datapath', '.'),
         '{}_pyt_data'.format(opt['pytorch_teacher_task'].replace(':', '_')),
         opt['datatype'].split(':')[0],
-        'dict')
+        'dict',
+    )
 
 
 def setup_args():
     from parlai.core.params import ParlaiParser
+
     parser = ParlaiParser(True, True, 'Builds a pytorch data file.')
     parser.add_pytorch_datateacher_args()
     return dict_setup(parser)
@@ -56,9 +58,11 @@ def make_serializable(obj):
         elif isinstance(val, collections.Sequence):
             new_obj[key] = list(val)
         elif torch.is_tensor(val):
-            new_obj[key] = {'value': val.tolist(),
-                            'deserialized_tensor': True,
-                            'type': str(val.dtype)}
+            new_obj[key] = {
+                'value': val.tolist(),
+                'deserialized_tensor': True,
+                'type': str(val.dtype),
+            }
     return new_obj
 
 
@@ -84,8 +88,10 @@ def build_data(opt):
                 agent.getID() if opt.get('pytorch_preprocess', True) else ''
             )
         if not os.path.isfile(df):
-            raise Exception('Tried to find data but it is not built, please'
-                            'specify `--pytorch-teacher-task`')
+            raise Exception(
+                'Tried to find data but it is not built, please'
+                'specify `--pytorch-teacher-task`'
+            )
         else:
             return df
 
@@ -101,10 +107,11 @@ def build_data(opt):
     world_data = create_task(ordered_opt, agent)
     teacher = world_data.agents[0]
     agent = world_data.agents[1]
-    datapath = os.path.join(opt.get('datapath', '.'),
-                            '{}_pyt_data'.format(
-                                ordered_opt['task'].replace(':', '_')),
-                            dt)
+    datapath = os.path.join(
+        opt.get('datapath', '.'),
+        '{}_pyt_data'.format(ordered_opt['task'].replace(':', '_')),
+        dt,
+    )
     if preprocess:
         datapath += '_{}_preprocess'.format(agent.getID().replace(':', '_'))
     if os.path.isdir(datapath) and 'data_length' in os.listdir(datapath):
@@ -126,8 +133,7 @@ def build_data(opt):
     context = deque(maxlen=context_length if context_length > 0 else None)
     total_exs = world_data.num_examples()
     pbar = tqdm.tqdm(
-        total=total_exs, unit='ex', unit_scale=True,
-        desc='Building pytorch data'
+        total=total_exs, unit='ex', unit_scale=True, desc='Building pytorch data'
     )
     idx_to_char = []
     cumulative_char_len = 0
@@ -167,8 +173,7 @@ def build_data(opt):
     with open(os.path.join(datapath, 'char_index'), 'w') as char_index:
         json.dump(idx_to_char, char_index)
     with open(os.path.join(datapath, 'data_length'), 'w') as pytorch_data_len:
-        pytorch_data_len.write(json.dumps({'num_eps': num_eps,
-                                           'num_exs': num_exs}))
+        pytorch_data_len.write(json.dumps({'num_eps': num_eps, 'num_exs': num_exs}))
     if dictionary:
         dictionary.save(get_pyt_dict_file(opt), sort=True)
 

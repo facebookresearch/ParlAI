@@ -34,10 +34,12 @@ from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.webapp.run_mocks.mock_turk_manager import MockTurkManager
 from parlai import __path__ as parlai_path
+
 parlai_path = parlai_path[0]
 
 try:
     from parlai_internal import __path__ as parlai_int_path
+
     parlai_int_path = parlai_int_path[0]
 except Exception:
     parlai_int_path = None
@@ -55,7 +57,7 @@ tasks = {}
 
 
 def row_to_dict(row):
-    return (dict(zip(row.keys(), row)))
+    return dict(zip(row.keys(), row))
 
 
 def get_rand_id():
@@ -69,8 +71,7 @@ def force_dir(path):
 
 def get_path(filename):
     """Get the path to an asset."""
-    cwd = os.path.dirname(
-        os.path.abspath(inspect.getfile(inspect.currentframe())))
+    cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     return os.path.join(cwd, filename)
 
 
@@ -100,7 +101,7 @@ tornado_settings = {
     "debug": IS_DEBUG,
     "static_path": get_path('static'),
     "template_path": get_path('static'),
-    "compiled_template_cache": False
+    "compiled_template_cache": False,
 }
 
 
@@ -111,8 +112,7 @@ class PacketWrap(object):
 
 
 class Application(tornado.web.Application):
-    def __init__(self, port=DEFAULT_PORT, db_file=DEFAULT_DB_FILE,
-                 is_sandbox=False):
+    def __init__(self, port=DEFAULT_PORT, db_file=DEFAULT_DB_FILE, is_sandbox=False):
         self.state = {'is_sandbox': is_sandbox}
         self.subs = {}
         self.sources = {}
@@ -177,7 +177,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 params = {
                     'error': exc_info[1],
                     'trace_info': traceback.format_exception(*exc_info),
-                    'request': self.request.__dict__
+                    'request': self.request.__dict__,
                 }
 
                 self.render("error.html", **params)
@@ -251,15 +251,16 @@ class TaskListHandler(BaseHandler):
             try:
                 config = get_config_module(task_name)
                 frontend_version = config.task_config.get('frontend_version')
-                if (frontend_version is not None and frontend_version >= 1):
+                if frontend_version is not None and frontend_version >= 1:
                     results[task_name]['react_frontend'] = True
-                if os.path.isfile(os.path.join(
-                        directory, 'frontend', 'components', 'custom.jsx')):
+                if os.path.isfile(
+                    os.path.join(directory, 'frontend', 'components', 'custom.jsx')
+                ):
                     results[task_name]['has_custom'] = True
             except Exception as e:
-                print('Exception {} when loading task details for {}'.format(
-                    e, task_name
-                ))
+                print(
+                    'Exception {} when loading task details for {}'.format(e, task_name)
+                )
                 pass
             results[task_name]['active_runs'] = 'unimplemented'  # TODO
             results[task_name]['all_runs'] = 'unimplemented'  # TODO
@@ -276,8 +277,10 @@ def merge_assignments_with_pairings(assignments, pairings, log_id):
         pairing_dict = row_to_dict(res)
         assign_id = pairing_dict['assignment_id']
         if assign_id not in processed_assignments:
-            print('assignment {} missing from assign table for {}'
-                  ''.format(assign_id, log_id))
+            print(
+                'assignment {} missing from assign table for {}'
+                ''.format(assign_id, log_id)
+            )
         pairing_dict['world_status'] = pairing_dict['status']
         del pairing_dict['status']
         processed_assignments[assign_id].update(pairing_dict)
@@ -300,7 +303,8 @@ class RunHandler(BaseHandler):
         assignments = self.data_handler.get_assignments_for_run(task_target)
         pairings = self.data_handler.get_pairings_for_run(task_target)
         processed_assignments = merge_assignments_with_pairings(
-            assignments, pairings, 'task {}'.format(task_target))
+            assignments, pairings, 'task {}'.format(task_target)
+        )
 
         workers = set()
         # get feedback data and put into assignments if present
@@ -312,16 +316,16 @@ class RunHandler(BaseHandler):
             workers.add(worker_id)
             if conversation_id is not None:
                 task_data = MTurkDataHandler.get_conversation_data(
-                    run_id, conversation_id, worker_id,
-                    self.state['is_sandbox'])
+                    run_id, conversation_id, worker_id, self.state['is_sandbox']
+                )
                 if task_data['data'] is not None:
-                    assignment['received_feedback'] = \
-                        task_data['data'].get('received_feedback')
+                    assignment['received_feedback'] = task_data['data'].get(
+                        'received_feedback'
+                    )
 
         worker_data = {}
         for worker in workers:
-            worker_data[worker] = \
-                row_to_dict(self.data_handler.get_worker_data(worker))
+            worker_data[worker] = row_to_dict(self.data_handler.get_worker_data(worker))
 
         run_details = row_to_dict(self.data_handler.get_run_data(task_target))
         # TODO implement run status determination
@@ -362,18 +366,13 @@ class WorkerHandler(BaseHandler):
         self.data_handler = app.data_handler
 
     def get(self, worker_target):
-        assignments = self.data_handler.get_all_assignments_for_worker(
-            worker_target)
-        pairings = self.data_handler.get_all_pairings_for_worker(
-            worker_target)
+        assignments = self.data_handler.get_all_assignments_for_worker(worker_target)
+        pairings = self.data_handler.get_all_pairings_for_worker(worker_target)
         processed_assignments = merge_assignments_with_pairings(
-            assignments, pairings, 'task {}'.format(worker_target))
-        worker_details = row_to_dict(
-            self.data_handler.get_worker_data(worker_target))
-        data = {
-            'worker_details': worker_details,
-            'assignments': processed_assignments,
-        }
+            assignments, pairings, 'task {}'.format(worker_target)
+        )
+        worker_details = row_to_dict(self.data_handler.get_worker_data(worker_target))
+        data = {'worker_details': worker_details, 'assignments': processed_assignments}
 
         self.write(json.dumps(data))
 
@@ -388,12 +387,11 @@ class AssignmentHandler(BaseHandler):
 
     def get(self, assignment_target):
         # Extract assignment
-        assignments = [self.data_handler.get_assignment_data(
-            assignment_target)]
-        pairings = self.data_handler.get_pairings_for_assignment(
-            assignment_target)
+        assignments = [self.data_handler.get_assignment_data(assignment_target)]
+        pairings = self.data_handler.get_pairings_for_assignment(assignment_target)
         processed_assignments = merge_assignments_with_pairings(
-            assignments, pairings, 'assignment {}'.format(assignment_target))
+            assignments, pairings, 'assignment {}'.format(assignment_target)
+        )
         assignment = processed_assignments[0]
 
         # Get assignment details to retrieve assignment content
@@ -405,12 +403,14 @@ class AssignmentHandler(BaseHandler):
         onboard_data = None
         if onboarding_id is not None:
             onboard_data = MTurkDataHandler.get_conversation_data(
-                run_id, onboarding_id, worker_id, self.state['is_sandbox'])
+                run_id, onboarding_id, worker_id, self.state['is_sandbox']
+            )
 
         assignment_content = {
             'onboarding': onboard_data,
             'task': MTurkDataHandler.get_conversation_data(
-                run_id, conversation_id, worker_id, self.state['is_sandbox']),
+                run_id, conversation_id, worker_id, self.state['is_sandbox']
+            ),
             'task_name': '_'.join(run_id.split('_')[:-1]),
         }
 
@@ -438,9 +438,7 @@ class ApprovalHandler(BaseHandler):
 
     def post(self, assignment_target):
         self.mturk_manager.approve_work(assignment_target)
-        data = {
-            'status': True,
-        }
+        data = {'status': True}
         self.write(json.dumps(data))
 
 
@@ -451,9 +449,7 @@ class ReverseHandler(BaseHandler):
     def post(self, assignment_target):
         self.mturk_manager.approve_work(assignment_target, True)
         print('Assignment {} had rejection reversed'.format(assignment_target))
-        data = {
-            'status': True,
-        }
+        data = {'status': True}
         self.write(json.dumps(data))
 
 
@@ -466,9 +462,7 @@ class RejectionHandler(BaseHandler):
         reason = data['reason']
         self.mturk_manager.reject_work(assignment_target, reason)
         print('Rejected {} for reason {}'.format(assignment_target, reason))
-        data = {
-            'status': True,
-        }
+        data = {'status': True}
         self.write(json.dumps(data))
 
 
@@ -481,9 +475,7 @@ class BlockHandler(BaseHandler):
         reason = data['reason']
         self.mturk_manager.block_worker(worker_target, reason)
         print('Blocked {} for reason {}'.format(worker_target, reason))
-        data = {
-            'status': True,
-        }
+        data = {'status': True}
         self.write(json.dumps(data))
 
 
@@ -504,12 +496,14 @@ class BonusHandler(BaseHandler):
 
         dollar_amount = bonus_cents / 100.0
         self.mturk_manager.pay_bonus(
-            worker_target, dollar_amount, assignment_id, reason, token)
-        print('Bonused ${} to {} for reason {}'.format(
-            dollar_amount, worker_target, reason))
-        data = {
-            'status': True,
-        }
+            worker_target, dollar_amount, assignment_id, reason, token
+        )
+        print(
+            'Bonused ${} to {} for reason {}'.format(
+                dollar_amount, worker_target, reason
+            )
+        )
+        data = {'status': True}
         self.write(json.dumps(data))
 
 
@@ -532,11 +526,17 @@ class TaskSocketHandler(tornado.websocket.WebSocketHandler):
         asyncio.set_event_loop(asyncio.new_event_loop())
         while self.alive and self.app.task_manager is not None:
             try:
-                self.write_message(json.dumps({
-                    'data': [agent.get_update_packet()
-                             for agent in self.app.task_manager.agents],
-                    'command': 'sync'
-                }))
+                self.write_message(
+                    json.dumps(
+                        {
+                            'data': [
+                                agent.get_update_packet()
+                                for agent in self.app.task_manager.agents
+                            ],
+                            'command': 'sync',
+                        }
+                    )
+                )
                 time.sleep(0.2)
             except tornado.websocket.WebSocketClosedError:
                 self.alive = False
@@ -547,11 +547,9 @@ class TaskSocketHandler(tornado.websocket.WebSocketHandler):
         self.alive = True
         if self not in list(self.sources.values()):
             self.sources[self.sid] = self
-        logging.info('Opened task socket from ip: {}'.format(
-            self.request.remote_ip))
+        logging.info('Opened task socket from ip: {}'.format(self.request.remote_ip))
 
-        self.write_message(
-            json.dumps({'command': 'alive', 'data': 'socket_alive'}))
+        self.write_message(json.dumps({'command': 'alive', 'data': 'socket_alive'}))
 
         t = threading.Thread(target=self._run_socket)
         t.start()
@@ -572,7 +570,8 @@ class TaskSocketHandler(tornado.websocket.WebSocketHandler):
         t = threading.Thread(
             target=self.app.task_manager.on_new_message,
             args=(sender_id, PacketWrap(act)),
-            daemon=True)
+            daemon=True,
+        )
         t.start()
 
     def on_close(self):
@@ -609,8 +608,7 @@ class TaskRunHandler(BaseHandler):
             # Register the current manager, then alive the agents
             self.app.task_manager = manager
             for agent in manager.agents:
-                manager.worker_alive(
-                    agent.worker_id, agent.hit_id, agent.assignment_id)
+                manager.worker_alive(agent.worker_id, agent.hit_id, agent.assignment_id)
 
             # Tell frontend we're done, and give the initial packets.
             data = {
@@ -620,16 +618,18 @@ class TaskRunHandler(BaseHandler):
             }
             self.write(json.dumps(data))
         except Exception as e:
-            data = {
-                'error': e,
-            }
+            data = {'error': e}
             print(repr(e))
             print(traceback.format_exc())
             self.write(json.dumps(data))
 
 
-def start_server(port=DEFAULT_PORT, hostname=DEFAULT_HOSTNAME,
-                 db_file=DEFAULT_DB_FILE, is_sandbox=False):
+def start_server(
+    port=DEFAULT_PORT,
+    hostname=DEFAULT_HOSTNAME,
+    db_file=DEFAULT_DB_FILE,
+    is_sandbox=False,
+):
     print("It's Alive!")
     app = Application(port=port, db_file=db_file, is_sandbox=is_sandbox)
     app.listen(port, max_buffer_size=1024 ** 3)
@@ -669,8 +669,7 @@ def rebuild_source():
     tasks.update(crawl_dir_for_tasks(parlai_task_dir))
 
     if parlai_int_path is not None:
-        parlai_internal_task_dir = \
-            os.path.join(parlai_int_path, 'mturk', 'tasks')
+        parlai_internal_task_dir = os.path.join(parlai_int_path, 'mturk', 'tasks')
         tasks.update(crawl_dir_for_tasks(parlai_internal_task_dir))
 
     for task, task_dir in tasks.items():
@@ -684,14 +683,18 @@ def rebuild_source():
             os.chdir(task_dir)
             packages_installed = subprocess.call(['npm', 'install'])
             if packages_installed != 0:
-                raise Exception('please make sure npm is installed, otherwise '
-                                'view the above error for more info.')
+                raise Exception(
+                    'please make sure npm is installed, otherwise '
+                    'view the above error for more info.'
+                )
 
             webpack_complete = subprocess.call(['npm', 'run', 'dev'])
             if webpack_complete != 0:
-                raise Exception('Webpack appears to have failed to build your '
-                                'frontend. See the above error for more '
-                                'information.')
+                raise Exception(
+                    'Webpack appears to have failed to build your '
+                    'frontend. See the above error for more '
+                    'information.'
+                )
             was_built = True
 
         os.chdir(here)
@@ -699,49 +702,93 @@ def rebuild_source():
         shutil.copytree(task_dir, output_dir)
         # need to move built custom.jsx back into components
         if was_built:
-            shutil.copy2(os.path.join(output_dir, 'dist', 'custom.jsx'),
-                         os.path.join(output_dir, 'components', 'custom.jsx'))
+            shutil.copy2(
+                os.path.join(output_dir, 'dist', 'custom.jsx'),
+                os.path.join(output_dir, 'components', 'custom.jsx'),
+            )
         # Need to give a copy of core_components to have same dir
-        shutil.copy2(os.path.join(parlai_path, 'mturk', 'core', 'react_server',
-                                  'dev', 'components', 'core_components.jsx'),
-                     os.path.join(output_dir, 'components'))
+        shutil.copy2(
+            os.path.join(
+                parlai_path,
+                'mturk',
+                'core',
+                'react_server',
+                'dev',
+                'components',
+                'core_components.jsx',
+            ),
+            os.path.join(output_dir, 'components'),
+        )
 
     # Grab up to date version of core components
-    shutil.copy2(os.path.join(parlai_path, 'mturk', 'core', 'react_server',
-                              'dev', 'components', 'core_components.jsx'),
-                 'dev/task_components')
+    shutil.copy2(
+        os.path.join(
+            parlai_path,
+            'mturk',
+            'core',
+            'react_server',
+            'dev',
+            'components',
+            'core_components.jsx',
+        ),
+        'dev/task_components',
+    )
 
     # build the full react server
     packages_installed = subprocess.call(['npm', 'install'])
     if packages_installed != 0:
-        raise Exception('please make sure npm is installed, otherwise view '
-                        'the above error for more info.')
+        raise Exception(
+            'please make sure npm is installed, otherwise view '
+            'the above error for more info.'
+        )
 
     webpack_complete = subprocess.call(['npm', 'run', 'dev'])
     if webpack_complete != 0:
-        raise Exception('Webpack appears to have failed to build your '
-                        'frontend. See the above error for more information.')
+        raise Exception(
+            'Webpack appears to have failed to build your '
+            'frontend. See the above error for more information.'
+        )
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Start the ParlAI-MTurk task managing server.')
-    parser.add_argument('--port', metavar='port', type=int,
-                        default=DEFAULT_PORT,
-                        help='port to run the server on.')
-    parser.add_argument('--hostname', metavar='hostname', type=str,
-                        default=DEFAULT_HOSTNAME,
-                        help='host to run the server on.')
-    parser.add_argument('--sandbox', dest='sandbox',
-                        action='store_true', default=False,
-                        help='Run the server using sandbox data')
-    parser.add_argument('--db_file', metavar='db_file', type=str,
-                        default=DEFAULT_DB_FILE,
-                        help='name of database to use (in core/run_data)')
-    parser.add_argument('--logging_level', metavar='logger_level',
-                        default='INFO',
-                        help='logging level (default = INFO). Can take logging'
-                             ' level name or int (example: 20)')
+        description='Start the ParlAI-MTurk task managing server.'
+    )
+    parser.add_argument(
+        '--port',
+        metavar='port',
+        type=int,
+        default=DEFAULT_PORT,
+        help='port to run the server on.',
+    )
+    parser.add_argument(
+        '--hostname',
+        metavar='hostname',
+        type=str,
+        default=DEFAULT_HOSTNAME,
+        help='host to run the server on.',
+    )
+    parser.add_argument(
+        '--sandbox',
+        dest='sandbox',
+        action='store_true',
+        default=False,
+        help='Run the server using sandbox data',
+    )
+    parser.add_argument(
+        '--db_file',
+        metavar='db_file',
+        type=str,
+        default=DEFAULT_DB_FILE,
+        help='name of database to use (in core/run_data)',
+    )
+    parser.add_argument(
+        '--logging_level',
+        metavar='logger_level',
+        default='INFO',
+        help='logging level (default = INFO). Can take logging'
+        ' level name or int (example: 20)',
+    )
     FLAGS = parser.parse_args()
 
     if FLAGS.sandbox:
@@ -753,8 +800,12 @@ def main():
 
     rebuild_source()
 
-    start_server(port=FLAGS.port, hostname=FLAGS.hostname,
-                 db_file=FLAGS.db_file, is_sandbox=FLAGS.sandbox)
+    start_server(
+        port=FLAGS.port,
+        hostname=FLAGS.hostname,
+        db_file=FLAGS.db_file,
+        is_sandbox=FLAGS.sandbox,
+    )
 
 
 if __name__ == "__main__":

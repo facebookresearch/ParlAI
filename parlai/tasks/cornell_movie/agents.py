@@ -15,8 +15,7 @@ def _path(opt, filtered):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
-    return os.path.join(opt['datapath'], 'CornellMovie',
-                        dt + filtered + '.txt')
+    return os.path.join(opt['datapath'], 'CornellMovie', dt + filtered + '.txt')
 
 
 class DefaultTeacher(FbDialogTeacher):
@@ -31,6 +30,7 @@ class DoubleTeacher(DefaultTeacher):
     """This version creates text-label pairs from the perspective of both
     speakers.
     """
+
     def setup_data(self, path):
         """Adds additional perspectives.
         For example, in the conversation:
@@ -57,8 +57,12 @@ class DoubleTeacher(DefaultTeacher):
                 new_list.append(('', [entries[0][0]]))
 
                 # add all ( y_t => x_(t+1) ) pairs
-                new_list.extend([(entries[i][1][0], [entries[i + 1][0]])
-                                 for i in range(len(entries) - 1)])
+                new_list.extend(
+                    [
+                        (entries[i][1][0], [entries[i + 1][0]])
+                        for i in range(len(entries) - 1)
+                    ]
+                )
                 if len(entries[-1]) > 1 and entries[-1][1]:
                     # add y_n => '', if last y avail
                     new_list.append((entries[-1][1][0], None))

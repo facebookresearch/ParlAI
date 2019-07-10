@@ -11,10 +11,6 @@ standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.5-node
 
-standard_cpu35: &standard_cpu35
-  docker:
-    - image: circleci/python:3.5.7
-
 gpu: &gpu
   environment:
     CUDA_VERSION: "10.0"
@@ -60,12 +56,6 @@ installtorchgpu: &installtorchgpu
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
-
-installtorchcpu35: &installtorchcpu35
-  run:
-    name: Install torch CPU and dependencies
-    command: |
-      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp35-cp35m-linux_x86_64.whl
 
 installtorchcpu36: &installtorchcpu36
   run:
@@ -116,19 +106,6 @@ jobs:
           name: Data tests
           command: python setup.py test -s tests.suites.datatests -v
 
-  unittests_35:
-    <<: *standard_cpu35
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchcpu35
-      - run:
-          name: Unit tests (py35)
-          command: python setup.py test -s tests.suites.unittests -v
-
   unittests_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
@@ -155,6 +132,24 @@ jobs:
           name: Unit tests (py37)
           command: python setup.py test -s tests.suites.unittests -v
 
+  black:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - run:
+          name: minimum black dependencies
+          working_directory: ~/ParlAI
+          command: |
+            pip install -q gitpython black  # only what's needd to lint
+      - run:
+          name: black
+          working_directory: ~/ParlAI
+          command: |
+            bash ./tests/lint_changed.sh -b
+
   lint:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
@@ -169,15 +164,20 @@ jobs:
             npm install
             npm run lint
       - run:
+          name: minimum lint dependencies
+          working_directory: ~/ParlAI
+          command: |
+            pip install -q flake8 gitpython flake8-bugbear  # only what's needd to lint
+      - run:
           name: Lint
           working_directory: ~/ParlAI
           command: |
-            pip install flake8 gitpython flake8-bugbear  # only what's needd to lint
             bash ./tests/lint_changed.sh
 
   nightly_gpu_tests:
     <<: *gpu
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
@@ -284,10 +284,10 @@ workflows:
   version: 2
   commit:
     jobs:
+      - black
       - lint
       - unittests_37
       - unittests_36
-      - unittests_35
       - mturk_tests:
           filters:
             branches:
@@ -316,7 +316,6 @@ workflows:
               only:
                 - master
     jobs:
-      - unittests_35
       - unittests_36
       - unittests_37
       - mturk_tests

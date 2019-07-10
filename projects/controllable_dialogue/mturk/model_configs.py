@@ -78,22 +78,22 @@ interesting_model_ct_setting0 = {
 
 interesting_model_ct_setting3 = {
     **interesting_model_ct_setting0,
-    'set_controls': 'avg_niwf:3'
+    'set_controls': 'avg_niwf:3',
 }
 
 interesting_model_ct_setting5 = {
     **interesting_model_ct_setting0,
-    'set_controls': 'avg_niwf:5'
+    'set_controls': 'avg_niwf:5',
 }
 
 interesting_model_ct_setting7 = {
     **interesting_model_ct_setting0,
-    'set_controls': 'avg_niwf:7'
+    'set_controls': 'avg_niwf:7',
 }
 
 interesting_model_ct_setting9 = {
     **interesting_model_ct_setting0,
-    'set_controls': 'avg_niwf:9'
+    'set_controls': 'avg_niwf:9',
 }
 
 # comparable to interesting_model_ct_setting0
@@ -174,27 +174,27 @@ inquisitive_model_ct_setting10_better = {
 
 responsiveness_model_bfw_setting_minus_10 = {
     **baseline_model,
-    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20,lastuttsim:-10'
+    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20,lastuttsim:-10',
 }
 
 responsiveness_model_bfw_setting_00 = {
     **baseline_model,
-    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20'
+    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20',
 }
 
 responsiveness_model_bfw_setting_05 = {
     **baseline_model,
-    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20,lastuttsim:5'
+    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20,lastuttsim:5',
 }
 
 responsiveness_model_bfw_setting_10 = {
     **baseline_model,
-    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20,lastuttsim:10'
+    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20,lastuttsim:10',
 }
 
 responsiveness_model_bfw_setting_13 = {
     **baseline_model,
-    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20,lastuttsim:13'
+    'weighted_decoding': 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20,partnerrep_2gram:-1e20,intrep_2gram:-1e20,lastuttsim:13',
 }
 
 

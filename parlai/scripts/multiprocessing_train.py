@@ -17,6 +17,7 @@ TorchRankerAgents and TorchGeneratorAgents support this.
 """
 
 import torch
+
 try:
     # We need to run this *very first*, but subprocesses will throw an
     # exception when running it
@@ -65,8 +66,7 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     else:
         print_prefix = None
     distributed_utils.override_print(
-        suppress=(not opt.get('verbose') and rank != 0),
-        prefix=print_prefix
+        suppress=(not opt.get('verbose') and rank != 0), prefix=print_prefix
     )
 
     # perform distributed setup, ensuring all hosts are ready

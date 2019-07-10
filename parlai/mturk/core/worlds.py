@@ -12,16 +12,12 @@ class MTurkDataWorld(World):
         """This prepares data to be saved for later review, including
         chats from individual worker perspectives."""
         custom_data = self.get_custom_task_data()
-        save_data = {
-            'custom_data': custom_data,
-            'worker_data': {}
-        }
+        save_data = {'custom_data': custom_data, 'worker_data': {}}
 
         for agent in workers:
             messages = agent.get_messages()
             # filter out peer feedback
-            save_messages = [m for m in messages
-                             if m.get('text') != '[PEER_REVIEW]']
+            save_messages = [m for m in messages if m.get('text') != '[PEER_REVIEW]']
             save_data['worker_data'][agent.worker_id] = {
                 'worker_id': agent.worker_id,
                 'agent_id': agent.id,
@@ -56,6 +52,7 @@ class MTurkDataWorld(World):
 class MTurkOnboardWorld(MTurkDataWorld):
     """Generic world for onboarding a Turker and collecting
     information from them."""
+
     def __init__(self, opt, mturk_agent):
         """Init should set up resources for running the onboarding world"""
         self.mturk_agent = mturk_agent
@@ -75,6 +72,7 @@ class MTurkOnboardWorld(MTurkDataWorld):
 
 class MTurkTaskWorld(MTurkDataWorld):
     """Generic world for MTurk tasks."""
+
     def __init__(self, opt, mturk_agent):
         """Init should set up resources for running the task world"""
         self.mturk_agent = mturk_agent
@@ -134,6 +132,7 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
     """World for handling generic tasks that aim to use ParlAI as an MTurk
     interface, but don't need the server to be in the loop.
     """
+
     def __init__(self, opt, mturk_agent, task_data):
         """Init should be provided with the task_data that the worker needs
         to complete the task on the frontend.
@@ -158,11 +157,9 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
         """A static task parley is simply sending the task data and waiting
         for the response
         """
-        self.mturk_agent.observe({
-            'id': 'System',
-            'text': '[TASK_DATA]',
-            'task_data': self.task_data,
-        })
+        self.mturk_agent.observe(
+            {'id': 'System', 'text': '[TASK_DATA]', 'task_data': self.task_data}
+        )
         self.response = self.mturk_agent.act()
         self.episodeDone = True
 
@@ -170,10 +167,7 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
         """This prepares data to be saved for later review, including
         chats from individual worker perspectives."""
         custom_data = self.get_custom_task_data()
-        save_data = {
-            'custom_data': custom_data,
-            'worker_data': {}
-        }
+        save_data = {'custom_data': custom_data, 'worker_data': {}}
 
         agent = self.mturk_agent
         save_data['worker_data'][agent.worker_id] = {

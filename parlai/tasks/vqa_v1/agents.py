@@ -10,6 +10,7 @@ from parlai.scripts.extract_image_feature import extract_feats
 from .build import build
 from parlai.tasks.coco_caption.build_2014 import buildImage as buildImage_2014
 from parlai.tasks.coco_caption.build_2015 import buildImage as buildImage_2015
+
 try:
     import torch
 except ImportError:
@@ -45,20 +46,22 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], 'VQA-v1',
-                             ques_suffix + '_questions.json')
+    data_path = os.path.join(opt['datapath'], 'VQA-v1', ques_suffix + '_questions.json')
 
-    annotation_path = os.path.join(opt['datapath'], 'VQA-v1',
-                                   annotation_suffix + '_annotations.json')
+    annotation_path = os.path.join(
+        opt['datapath'], 'VQA-v1', annotation_suffix + '_annotations.json'
+    )
 
-    image_path = os.path.join(opt['datapath'],
-                              'COCO-IMG-{}'.format(img_version), img_suffix)
+    image_path = os.path.join(
+        opt['datapath'], 'COCO-IMG-{}'.format(img_version), img_suffix
+    )
 
     return data_path, annotation_path, image_path
 
 
 class VQADataset(Dataset):
     """A Pytorch Dataset utilizing streaming"""
+
     def __init__(self, opt):
         self.opt = opt
         self.use_att = opt.get('attention', False)
@@ -73,6 +76,7 @@ class VQADataset(Dataset):
         if self.use_hdf5:
             try:
                 import h5py
+
                 self.h5py = h5py
             except ImportError:
                 raise ImportError('Need to install h5py - `pip install h5py`')
@@ -177,6 +181,7 @@ class OeTeacher(FixedDialogTeacher):
     VQA Open-Ended teacher, which loads the json vqa data and implements its
     own `act` method for interacting with student agent.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         data_path, annotation_path, self.image_path = _path(opt)
@@ -216,11 +221,7 @@ class OeTeacher(FixedDialogTeacher):
         qa = self.ques['questions'][episode_idx]
         question = qa['question']
 
-        action = {
-            'text': question,
-            'image_id': qa['image_id'],
-            'episode_done': True
-        }
+        action = {'text': question, 'image_id': qa['image_id'], 'episode_done': True}
 
         if not self.datatype.startswith('test'):
             anno = self.annotation['annotations'][episode_idx]

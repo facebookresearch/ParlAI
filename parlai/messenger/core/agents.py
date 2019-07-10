@@ -40,7 +40,7 @@ class MessengerAgent(Agent):
                 self.id,
                 act['payload'],
                 act.get('quick_replies', None),
-                act.get('persona_id', None)
+                act.get('persona_id', None),
             )
         else:
             if act['id'] != '':
@@ -48,18 +48,17 @@ class MessengerAgent(Agent):
             else:
                 msg = act['text']
             resp = self.manager.observe_message(
-                self.id, msg,
+                self.id,
+                msg,
                 act.get('quick_replies', None),
-                act.get('persona_id', None)
+                act.get('persona_id', None),
             )
         try:
             mid = resp[0]['message_id']
             if mid not in self.observed_packets:
                 self.observed_packets[mid] = act
         except Exception:
-            print(
-                '{} could not be extracted to an observed message'.format(resp)
-            )
+            print('{} could not be extracted to an observed message'.format(resp))
 
     def observe_typing_on(self, persona_id=None):
         """Allow agent to observe typing indicator"""
@@ -70,19 +69,18 @@ class MessengerAgent(Agent):
         mid = message['message']['mid']
         seq = message['message'].get('seq', None)
         if 'text' not in message['message']:
-            print('Msg: {} could not be extracted to text format'.format(
-                message['message']))
+            print(
+                'Msg: {} could not be extracted to text format'.format(
+                    message['message']
+                )
+            )
             return
         text = message['message'].get('text')
         if text is None:
             text = message['message']['payload']
         img_attempt = True if 'image' in message['message'] else False
         if mid not in self.acted_packets:
-            self.acted_packets[mid] = {
-                'mid': mid,
-                'seq': seq,
-                'text': text,
-            }
+            self.acted_packets[mid] = {'mid': mid, 'seq': seq, 'text': text}
             # the fields 'report_sender' and 'sticker_sender' below are
             # internal features
             action = {
@@ -144,13 +142,16 @@ class MessengerAgent(Agent):
                 # Let agent know that they cannot send images if they
                 # attempted to send one
                 msg = None
-                act = {'id': 'SYSTEM',
-                       'text': 'Only text messages are supported at this time. '
-                               'Please try with a text-only message.',
-                       'episode_done': True}
+                act = {
+                    'id': 'SYSTEM',
+                    'text': 'Only text messages are supported at this time. '
+                    'Please try with a text-only message.',
+                    'episode_done': True,
+                }
                 self.observe(act)
-            elif (not msg.get('text')
-                  and not (msg.get('image_url') or msg.get('attachment_url'))):
+            elif not msg.get('text') and not (
+                msg.get('image_url') or msg.get('attachment_url')
+            ):
                 # Do not allow agent to send empty strings
                 msg = None
 

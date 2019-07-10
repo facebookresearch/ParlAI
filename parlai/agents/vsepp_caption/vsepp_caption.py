@@ -35,25 +35,48 @@ class VseppCaptionAgent(TorchAgent):
         """Add command-line arguments specifically for this agent."""
         TorchAgent.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Image Caption Model Arguments')
-        agent.add_argument('--word_dim', default=300, type=int,
-                           help='Dimensionality of the word embedding.')
-        agent.add_argument('--embed_size', default=1024, type=int,
-                           help='Dimensionality of the joint embedding.')
-        agent.add_argument('--num_layers', default=1, type=int,
-                           help='Number of GRU layers.')
-        agent.add_argument('--finetune', type='bool', default=False,
-                           help='Finetune the image encoder')
-        agent.add_argument('--cnn_type', default='resnet152',
-                           help="""The CNN used for image encoder
-                           (e.g. vgg19, resnet152)""")
-        agent.add_argument('--no_imgnorm', type='bool', default=False,
-                           help='Do not normalize the image embeddings.')
-        agent.add_argument('--margin', default=0.2, type=float,
-                           help='Rank loss margin.')
-        agent.add_argument('--max_violation', type='bool', default=True,
-                           help='Use max instead of sum in the rank loss.')
-        agent.add_argument('-lr', '--learning_rate', type=float,
-                           default=0.001, help='learning rate')
+        agent.add_argument(
+            '--word_dim',
+            default=300,
+            type=int,
+            help='Dimensionality of the word embedding.',
+        )
+        agent.add_argument(
+            '--embed_size',
+            default=1024,
+            type=int,
+            help='Dimensionality of the joint embedding.',
+        )
+        agent.add_argument(
+            '--num_layers', default=1, type=int, help='Number of GRU layers.'
+        )
+        agent.add_argument(
+            '--finetune', type='bool', default=False, help='Finetune the image encoder'
+        )
+        agent.add_argument(
+            '--cnn_type',
+            default='resnet152',
+            help="""The CNN used for image encoder
+                           (e.g. vgg19, resnet152)""",
+        )
+        agent.add_argument(
+            '--no_imgnorm',
+            type='bool',
+            default=False,
+            help='Do not normalize the image embeddings.',
+        )
+        agent.add_argument(
+            '--margin', default=0.2, type=float, help='Rank loss margin.'
+        )
+        agent.add_argument(
+            '--max_violation',
+            type='bool',
+            default=True,
+            help='Use max instead of sum in the rank loss.',
+        )
+        agent.add_argument(
+            '-lr', '--learning_rate', type=float, default=0.001, help='learning rate'
+        )
         VseppCaptionAgent.dictionary_class().add_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
@@ -65,13 +88,16 @@ class VseppCaptionAgent(TorchAgent):
             self.crop_size = opt['image_cropsize']
 
             # initialize the transform function using torch vision.
-            self.transform = transforms.Compose([
-                transforms.Scale(self.image_size),
-                transforms.RandomCrop(self.crop_size),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
-            ])
+            self.transform = transforms.Compose(
+                [
+                    transforms.Scale(self.image_size),
+                    transforms.RandomCrop(self.crop_size),
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
             self.model = VSEpp(opt, self.dict)
             self.metrics = {'loss': 0.0, 'r@': []}
 
@@ -94,8 +120,10 @@ class VseppCaptionAgent(TorchAgent):
                 try:
                     self.optimizer.load_state_dict(states['optimizer'])
                 except ValueError:
-                    print('WARNING: not loading optim state since model '
-                          'params changed.')
+                    print(
+                        'WARNING: not loading optim state since model '
+                        'params changed.'
+                    )
                 if self.use_cuda:
                     for state in self.optimizer.state.values():
                         for k, v in state.items():
@@ -132,14 +160,15 @@ class VseppCaptionAgent(TorchAgent):
         cand_lens = [cand_lens[k] for k in ind_sorted]
         cand_lens = torch.LongTensor(cand_lens)
 
-        padded_cands = torch.LongTensor(len(candidate_vecs),
-                                        max(cand_lens)).fill_(self.NULL_IDX)
+        padded_cands = torch.LongTensor(len(candidate_vecs), max(cand_lens)).fill_(
+            self.NULL_IDX
+        )
         if self.use_cuda:
             cand_lens = cand_lens.cuda()
             padded_cands = padded_cands.cuda()
 
         for i, cand in enumerate(cand_vecs):
-            padded_cands[i, :cand.shape[0]] = cand
+            padded_cands[i, : cand.shape[0]] = cand
 
         return (padded_cands, cands, cand_lens, truth_idx)
 
@@ -177,8 +206,9 @@ class VseppCaptionAgent(TorchAgent):
         # Need to collate then sort the captions by length
         cands = [
             self.candidate_helper(label_cands_vec, label_cands, self.mode == 'test')
-            for label_cands_vec, label_cands in
-            zip(batch.candidate_vecs, batch.candidates)
+            for label_cands_vec, label_cands in zip(
+                batch.candidate_vecs, batch.candidates
+            )
         ]
         self.model.eval()
         # Obtain the image embeddings
@@ -192,8 +222,7 @@ class VseppCaptionAgent(TorchAgent):
             # Hack to pass through the truth label's index to compute the
             # rank and top metrics
             offset = truth_idx if truth_idx is not None else 0
-            _, rank, top = self.criterion(img_embs[i, :].unsqueeze(0),
-                                          embs, offset)
+            _, rank, top = self.criterion(img_embs[i, :].unsqueeze(0), embs, offset)
             ranks += rank
             top1.append(top[0])
         self.metrics['r@'] += ranks

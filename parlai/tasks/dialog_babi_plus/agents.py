@@ -39,9 +39,12 @@ def _path(task, opt):
 class KBTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
-        opt['datafile'] = os.path.join(opt['datapath'], 'dialog-bAbI-plus',
-                                       'dialog-bAbI-plus-tasks',
-                                       'dialog-babi-kb-all.txt')
+        opt['datafile'] = os.path.join(
+            opt['datapath'],
+            'dialog-bAbI-plus',
+            'dialog-bAbI-plus-tasks',
+            'dialog-babi-kb-all.txt',
+        )
         super().__init__(opt, shared)
 
 

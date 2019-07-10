@@ -26,7 +26,7 @@ if logging_enabled:
         filemode='w',
         format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
         datefmt='%H:%M:%S',
-        level=logging.DEBUG
+        level=logging.DEBUG,
     )
     logger = logging.getLogger('mturk')
 
@@ -60,11 +60,13 @@ def generate_event_id(worker_id):
 
 def get_mturk_dir():
     import parlai.mturk
+
     return os.path.dirname(os.path.abspath(parlai.mturk.__file__))
 
 
 def get_core_dir():
     import parlai.mturk.core
+
     return os.path.dirname(os.path.abspath(parlai.mturk.core.dev.__file__))
 
 

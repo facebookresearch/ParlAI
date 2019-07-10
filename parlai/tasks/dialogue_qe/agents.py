@@ -21,6 +21,7 @@ class DefaultTeacher(DialogTeacher):
         import os
         import sys
         from parlai.tasks.dialogue_qe.build import build
+
         build(opt)
         dt = opt['datatype'].split(':')[0]
 
@@ -45,6 +46,7 @@ class DefaultTeacher(DialogTeacher):
     def setup_data(self, path):
         import json
         from functools import reduce
+
         print('loading: ' + path)
 
         if path is None:
@@ -58,14 +60,14 @@ class DefaultTeacher(DialogTeacher):
                 continue
             user_types = dict(map(lambda u: (u['id'], u['userType']), dialog['users']))
             str_threads = [
-                i for i in map(
+                i
+                for i in map(
                     lambda u: DefaultTeacher._transform_utterance(u, user_types),
-                    dialog["thread"])
+                    dialog["thread"],
+                )
             ]
             dialog_txt = reduce(
-                lambda u1, u2: u1 + '\n' + u2,
-                str_threads,
-                str_threads.pop(0)
+                lambda u1, u2: u1 + '\n' + u2, str_threads, str_threads.pop(0)
             )
             e1 = dialog['evaluation'][0]
             e2 = dialog['evaluation'][1]

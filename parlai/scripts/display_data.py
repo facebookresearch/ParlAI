@@ -55,9 +55,11 @@ def display_data(opt):
 
     try:
         # print dataset size if available
-        print('[ loaded {} episodes with a total of {} examples ]'.format(
-            world.num_episodes(), world.num_examples()
-        ))
+        print(
+            '[ loaded {} episodes with a total of {} examples ]'.format(
+                world.num_episodes(), world.num_examples()
+            )
+        )
     except Exception:
         pass
 

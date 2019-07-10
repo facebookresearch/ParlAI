@@ -29,23 +29,22 @@ tasks[8] = 'rl8_imitation_plus_rl'
 tasks[9] = 'rl9_ask_for_answer'
 tasks[10] = 'rl10_ask_for_sf'
 
-_suffixes = {
-    'train': 'train',
-    'test': 'test',
-    'valid': 'dev'
-}
+_suffixes = {'train': 'train', 'test': 'test', 'valid': 'dev'}
 
 
 def _path(subdir, task, opt, dt=''):
     build(opt)
     if dt == '':
         dt = opt['datatype'].split(':')[0]
-    task_name = '%s_%s' % (task.split('_')[1],
-                           tasks[int(task.split('_')[0])])
-    return os.path.join(opt['datapath'], 'DBLL', 'dbll',
-                        '{subdir}_{task}_{suffix}.txt'.format(
-                            subdir=subdir, task=task_name,
-                            suffix=_suffixes[dt]))
+    task_name = '%s_%s' % (task.split('_')[1], tasks[int(task.split('_')[0])])
+    return os.path.join(
+        opt['datapath'],
+        'DBLL',
+        'dbll',
+        '{subdir}_{task}_{suffix}.txt'.format(
+            subdir=subdir, task=task_name, suffix=_suffixes[dt]
+        ),
+    )
 
 
 class TaskTeacher(FbDialogTeacher):
@@ -53,8 +52,9 @@ class TaskTeacher(FbDialogTeacher):
         params = opt['task'].split(':')[2]
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(os.path.join('babi', 'babi1'), params, opt)
-        opt['cands_datafile'] = _path(os.path.join('babi', 'babi1'), params,
-                                      opt, 'train')
+        opt['cands_datafile'] = _path(
+            os.path.join('babi', 'babi1'), params, opt, 'train'
+        )
         super().__init__(opt, shared)
 
 
@@ -64,6 +64,5 @@ class DefaultTeacher(FbDialogTeacher):
         task = '2_p0.5'
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(os.path.join('babi', 'babi1'), task, opt)
-        opt['cands_datafile'] = _path(os.path.join('babi', 'babi1'), task,
-                                      opt, 'train')
+        opt['cands_datafile'] = _path(os.path.join('babi', 'babi1'), task, opt, 'train')
         super().__init__(opt, shared)

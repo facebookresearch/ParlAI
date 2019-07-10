@@ -20,7 +20,11 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download('https://dl.dropboxusercontent.com/s/iyz6l7jhbt6jb7q/new_dataset_release.zip', dpath, 'FVQA.zip')  # noqa: E501
+        build_data.download(
+            'https://dl.dropboxusercontent.com/s/iyz6l7jhbt6jb7q/new_dataset_release.zip',
+            dpath,
+            'FVQA.zip',
+        )  # noqa: E501
         build_data.untar(dpath, 'FVQA.zip')
 
         # Mark the data as built.

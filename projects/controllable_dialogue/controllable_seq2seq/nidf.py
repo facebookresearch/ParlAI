@@ -120,10 +120,7 @@ def learn_nidf(opt):
     # Write word2count and num_sents to file
     word2count_fp = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'word2count.pkl')
     print("Saving word count stats to %s..." % word2count_fp)
-    data = {
-        "word2count": word_counter,
-        "num_sents": num_sents
-    }
+    data = {"word2count": word_counter, "num_sents": num_sents}
     with open(word2count_fp, "wb") as f:
         pickle.dump(data, f)
 
@@ -145,8 +142,10 @@ def load_word2nidf(opt):
     word2count = data['word2count']
     min_c = min(word2count.values())  # max count
     max_c = max(word2count.values())  # min count
-    word2nidf = {w: (math.log(max_c)-math.log(c))/(math.log(max_c)-math.log(min_c))
-                 for w, c in word2count.items()}
+    word2nidf = {
+        w: (math.log(max_c) - math.log(c)) / (math.log(max_c) - math.log(min_c))
+        for w, c in word2count.items()
+    }
     print("Done loading word2nidf dictionary.")
     return word2nidf
 

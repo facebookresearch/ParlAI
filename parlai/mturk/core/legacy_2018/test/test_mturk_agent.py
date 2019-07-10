@@ -44,14 +44,18 @@ ACT_1 = {'text': 'THIS IS A MESSAGE', 'id': AGENT_ID}
 ACT_2 = {'text': 'THIS IS A MESSAGE AGAIN', 'id': AGENT_ID}
 
 active_statuses = [
-    AssignState.STATUS_NONE, AssignState.STATUS_ONBOARDING,
-    AssignState.STATUS_WAITING, AssignState.STATUS_IN_TASK,
+    AssignState.STATUS_NONE,
+    AssignState.STATUS_ONBOARDING,
+    AssignState.STATUS_WAITING,
+    AssignState.STATUS_IN_TASK,
 ]
 complete_statuses = [
-    AssignState.STATUS_DONE, AssignState.STATUS_DISCONNECT,
+    AssignState.STATUS_DONE,
+    AssignState.STATUS_DISCONNECT,
     AssignState.STATUS_PARTNER_DISCONNECT,
     AssignState.STATUS_PARTNER_DISCONNECT_EARLY,
-    AssignState.STATUS_EXPIRED, AssignState.STATUS_RETURNED,
+    AssignState.STATUS_EXPIRED,
+    AssignState.STATUS_RETURNED,
 ]
 statuses = active_statuses + complete_statuses
 
@@ -69,10 +73,7 @@ class TestAssignState(unittest.TestCase):
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         mturk_agent_ids = ['mturk_agent_1']
-        self.mturk_manager = MTurkManager(
-            opt=self.opt,
-            mturk_agent_ids=mturk_agent_ids
-        )
+        self.mturk_manager = MTurkManager(opt=self.opt, mturk_agent_ids=mturk_agent_ids)
         self.worker_manager = self.mturk_manager.worker_manager
 
     def tearDown(self):
@@ -151,14 +152,17 @@ class TestMTurkAgent(unittest.TestCase):
         self.opt['assignment_duration_in_seconds'] = 6
         mturk_agent_ids = ['mturk_agent_1']
         self.mturk_manager = MTurkManager(
-            opt=self.opt.copy(),
-            mturk_agent_ids=mturk_agent_ids
+            opt=self.opt.copy(), mturk_agent_ids=mturk_agent_ids
         )
         self.worker_manager = self.mturk_manager.worker_manager
 
         self.turk_agent = MTurkAgent(
-            self.opt.copy(), self.mturk_manager,
-            TEST_HIT_ID_1, TEST_ASSIGNMENT_ID_1, TEST_WORKER_ID_1)
+            self.opt.copy(),
+            self.mturk_manager,
+            TEST_HIT_ID_1,
+            TEST_ASSIGNMENT_ID_1,
+            TEST_WORKER_ID_1,
+        )
 
     def tearDown(self):
         self.mturk_manager.shutdown()
@@ -186,10 +190,7 @@ class TestMTurkAgent(unittest.TestCase):
         for status in statuses:
             self.turk_agent.set_status(status)
             self.assertEqual(self.turk_agent.get_status(), status)
-        for status in [
-            AssignState.STATUS_DONE,
-            AssignState.STATUS_PARTNER_DISCONNECT
-        ]:
+        for status in [AssignState.STATUS_DONE, AssignState.STATUS_PARTNER_DISCONNECT]:
             self.turk_agent.set_status(status)
             self.assertTrue(self.turk_agent.submitted_hit())
 
@@ -226,7 +227,8 @@ class TestMTurkAgent(unittest.TestCase):
     def test_connection_id(self):
         '''Ensure the connection_id hasn't changed'''
         connection_id = "{}_{}".format(
-            self.turk_agent.worker_id, self.turk_agent.assignment_id)
+            self.turk_agent.worker_id, self.turk_agent.assignment_id
+        )
         self.assertEqual(self.turk_agent.get_connection_id(), connection_id)
 
     def test_inactive_data(self):
@@ -236,8 +238,7 @@ class TestMTurkAgent(unittest.TestCase):
             data = self.turk_agent.get_inactive_command_data()
             self.assertIsNotNone(data['text'])
             self.assertIsNotNone(data['inactive_text'])
-            self.assertEqual(
-                data['conversation_id'], self.turk_agent.conversation_id)
+            self.assertEqual(data['conversation_id'], self.turk_agent.conversation_id)
             self.assertEqual(data['agent_id'], TEST_WORKER_ID_1)
 
     def test_status_change(self):
@@ -263,7 +264,8 @@ class TestMTurkAgent(unittest.TestCase):
         self.mturk_manager.send_message = mock.MagicMock()
         self.turk_agent.observe(ACT_1)
         self.mturk_manager.send_message.assert_called_with(
-            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1, ACT_1)
+            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1, ACT_1
+        )
 
         # First act comes through the queue and returns properly
         self.assertTrue(self.turk_agent.msg_queue.empty())
@@ -291,12 +293,12 @@ class TestMTurkAgent(unittest.TestCase):
         self.turk_agent.disconnected = True
         disconnect_message = self.turk_agent.get_new_act_message()
         self.turk_agent.disconnected = False
-        self.assertEqual(disconnect_message['text'],
-                         self.turk_agent.MTURK_DISCONNECT_MESSAGE)
+        self.assertEqual(
+            disconnect_message['text'], self.turk_agent.MTURK_DISCONNECT_MESSAGE
+        )
         self.turk_agent.hit_is_returned = True
         return_message = self.turk_agent.get_new_act_message()
-        self.assertEqual(
-            return_message['text'], self.turk_agent.RETURN_MESSAGE)
+        self.assertEqual(return_message['text'], self.turk_agent.RETURN_MESSAGE)
         self.turk_agent.hit_is_returned = False
 
         # Reduce state
@@ -329,8 +331,7 @@ class TestMTurkAgent(unittest.TestCase):
             returned_act = self.turk_agent.act(timeout=0.07, blocking=False)
         self.mturk_manager.send_command.assert_called_once()
         self.mturk_manager.handle_turker_timeout.assert_called_once()
-        self.assertEqual(
-            returned_act['text'], self.turk_agent.TIMEOUT_MESSAGE)
+        self.assertEqual(returned_act['text'], self.turk_agent.TIMEOUT_MESSAGE)
 
         # Blocking timeout check
         self.mturk_manager.send_command = mock.MagicMock()
@@ -338,8 +339,7 @@ class TestMTurkAgent(unittest.TestCase):
         returned_act = self.turk_agent.act(timeout=0.07)
         self.mturk_manager.send_command.assert_called_once()
         self.mturk_manager.handle_turker_timeout.assert_called_once()
-        self.assertEqual(
-            returned_act['text'], self.turk_agent.TIMEOUT_MESSAGE)
+        self.assertEqual(returned_act['text'], self.turk_agent.TIMEOUT_MESSAGE)
 
 
 if __name__ == '__main__':

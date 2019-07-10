@@ -17,8 +17,13 @@ def main():
     any server and are thus irrecoverable.
     """
     parser = argparse.ArgumentParser(description='Delete HITs by expiring')
-    parser.add_argument('--sandbox', dest='sandbox', default=False,
-                        action='store_true', help='Delete HITs from sandbox')
+    parser.add_argument(
+        '--sandbox',
+        dest='sandbox',
+        default=False,
+        action='store_true',
+        help='Delete HITs from sandbox',
+    )
     parser.add_argument(
         '--ignore-assigned',
         dest='ignore',
@@ -61,21 +66,25 @@ def main():
             'potentially being worked on by real Turkers right now'
         )
 
-    print('Getting HITs from amazon MTurk server, please wait...\n'
-          'or use CTRL-C to skip to expiring some of what is found.\n')
+    print(
+        'Getting HITs from amazon MTurk server, please wait...\n'
+        'or use CTRL-C to skip to expiring some of what is found.\n'
+    )
     mturk_utils.setup_aws_credentials()
     client = mturk_utils.get_mturk_client(sandbox)
     response = client.list_hits(MaxResults=100)
     try:
-        while (True):
+        while True:
             processed += response['NumResults']
             for hit in response['HITs']:
                 if ignore:
                     if hit['NumberOfAssignmentsAvailable'] == 0:
                         # Ignore hits with no assignable assignments
                         continue
-                    if hit['HITStatus'] != 'Assignable' and \
-                            hit['HITStatus'] != 'Unassignable':
+                    if (
+                        hit['HITStatus'] != 'Assignable'
+                        and hit['HITStatus'] != 'Unassignable'
+                    ):
                         # Ignore completed hits
                         continue
                 question = hit['Question']
@@ -100,20 +109,16 @@ def main():
 
             sys.stdout.write(
                 '\r{} HITs processed, {} active hits'
-                ' found amongst {} tasks. {}        '
-                .format(
+                ' found amongst {} tasks. {}        '.format(
                     processed,
                     found,
                     len(task_group_ids),
-                    spinner_vals[((int)(processed / 100)) % 4]
+                    spinner_vals[((int)(processed / 100)) % 4],
                 )
             )
             if 'NextToken' not in response:
                 break
-            response = client.list_hits(
-                NextToken=response['NextToken'],
-                MaxResults=100
-            )
+            response = client.list_hits(NextToken=response['NextToken'], MaxResults=100)
 
     except BaseException as e:
         print(e)
@@ -126,12 +131,19 @@ def main():
     else:
         print('\n\nTask group id - Active HITs - Reviewable')
         for group_id in task_group_ids:
-            print('{} - {} - {}'.format(
-                group_id,
-                len(group_to_hit[group_id]),
-                len([s for s in group_to_hit[group_id].values()
-                     if s == 'Reviewable']),
-            ))
+            print(
+                '{} - {} - {}'.format(
+                    group_id,
+                    len(group_to_hit[group_id]),
+                    len(
+                        [
+                            s
+                            for s in group_to_hit[group_id].values()
+                            if s == 'Reviewable'
+                        ]
+                    ),
+                )
+            )
 
     print(
         'To clear a task, please enter the task group id of the task that you '
@@ -142,7 +154,7 @@ def main():
         task_group_id = input("Enter task group id: ")
         if len(task_group_id) == 0:
             break
-        elif (task_group_id not in task_group_ids):
+        elif task_group_id not in task_group_ids:
             print('Sorry, the id you entered was not found, try again')
         else:
             num_hits = input(
@@ -152,35 +164,32 @@ def main():
                 hits_expired = 0
                 for hit_id, status in group_to_hit[task_group_id].items():
                     if approve:
-                        response = client.list_assignments_for_hit(
-                            HITId=hit_id,
-                        )
+                        response = client.list_assignments_for_hit(HITId=hit_id)
                         if response['NumResults'] == 0:
                             if verbose:
-                                print('No results for hit {} with status {}\n'
-                                      ''.format(hit_id, status))
+                                print(
+                                    'No results for hit {} with status {}\n'
+                                    ''.format(hit_id, status)
+                                )
                         else:
                             assignment = response['Assignments'][0]
                             assignment_id = assignment['AssignmentId']
-                            client.approve_assignment(
-                                AssignmentId=assignment_id)
+                            client.approve_assignment(AssignmentId=assignment_id)
                             if verbose:
-                                print('Approved assignment {}'.format(
-                                    assignment_id))
+                                print('Approved assignment {}'.format(assignment_id))
                     mturk_utils.expire_hit(sandbox, hit_id)
                     if verbose:
                         print('Expired hit {}'.format(hit_id))
                     hits_expired += 1
                     sys.stdout.write('\rExpired hits {}'.format(hits_expired))
-                print('\nAll hits for group {} have been expired.'.format(
-                    task_group_id
-                ))
+                print(
+                    '\nAll hits for group {} have been expired.'.format(task_group_id)
+                )
             else:
                 print(
                     'You entered {} but there are {} HITs to expire, please '
                     "try again to confirm you're ending the right task".format(
-                        num_hits,
-                        len(group_to_hit[task_group_id])
+                        num_hits, len(group_to_hit[task_group_id])
                     )
                 )
 

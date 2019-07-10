@@ -26,18 +26,37 @@ class ConvAIWorld(World):
     @staticmethod
     def add_cmdline_args(argparser):
         convai = argparser.add_argument_group('ConvAI Arguments')
-        convai.add_argument('-bi', '--bot-id', required=True,
-                            help='Id of local bot used to communicate with RouterBot')
-        convai.add_argument('-bc', '--bot-capacity', type=int, default=-1,
-                            help='The maximum number of open dialogs. Use -1 '
-                                 'for unlimited number of open dialogs')
-        convai.add_argument('-rbu', '--router-bot-url', required=True,
-                            help='Url of RouterBot')
-        convai.add_argument('-rbpd', '--router-bot-pull-delay', type=int, default=1,
-                            help='Delay before new request to RouterBot: minimum 1 sec')
-        convai.add_argument('-m', '--max-pull-delay', type=int, default=600,
-                            help='Maximum delay for new requests if case of server '
-                                 'unavailability')
+        convai.add_argument(
+            '-bi',
+            '--bot-id',
+            required=True,
+            help='Id of local bot used to communicate with RouterBot',
+        )
+        convai.add_argument(
+            '-bc',
+            '--bot-capacity',
+            type=int,
+            default=-1,
+            help='The maximum number of open dialogs. Use -1 '
+            'for unlimited number of open dialogs',
+        )
+        convai.add_argument(
+            '-rbu', '--router-bot-url', required=True, help='Url of RouterBot'
+        )
+        convai.add_argument(
+            '-rbpd',
+            '--router-bot-pull-delay',
+            type=int,
+            default=1,
+            help='Delay before new request to RouterBot: minimum 1 sec',
+        )
+        convai.add_argument(
+            '-m',
+            '--max-pull-delay',
+            type=int,
+            default=600,
+            help='Maximum delay for new requests if case of server ' 'unavailability',
+        )
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, shared)
@@ -106,28 +125,17 @@ class ConvAIWorld(World):
         if self._is_end_of_conversation(observation['text']):
             data = {
                 'text': '/end',
-                'evaluation': {
-                    'quality': 0,
-                    'breadth': 0,
-                    'engagement': 0
-                }
+                'evaluation': {'quality': 0, 'breadth': 0, 'engagement': 0},
             }
         else:
-            data = {
-                'text': observation['text'],
-                'evaluation': 0
-            }
-        message = {
-            'chat_id': chatID,
-            'text': json.dumps(data)
-        }
+            data = {'text': observation['text'], 'evaluation': 0}
+        message = {'chat_id': chatID, 'text': json.dumps(data)}
 
-        headers = {
-            'Content-Type': 'application/json'
-        }
+        headers = {'Content-Type': 'application/json'}
 
-        res = requests.post(self.bot_url + '/sendMessage',
-                            json=message, headers=headers)
+        res = requests.post(
+            self.bot_url + '/sendMessage', json=message, headers=headers
+        )
         if res.status_code != 200:
             print(res.text)
             res.raise_for_status()
@@ -215,25 +223,32 @@ class ConvAIWorld(World):
                     chatID = self._get_chat_id(msg)
 
                     if self.chats.get(chatID, None) is not None:
-                        print('Message was recognized as part of chat #%s'
-                              % chatID)
+                        print('Message was recognized as part of chat #%s' % chatID)
                         self.messages.append((chatID, text))
                     elif self._is_begin_of_conversation(text):
-                        print('Message was recognised as start of new chat #%s'
-                              % chatID)
-                        if self.bot_capacity == -1 or 0 <= self.bot_capacity > \
-                           (len(self.chats) - len(self.finished_chats)):
+                        print(
+                            'Message was recognised as start of new chat #%s' % chatID
+                        )
+                        if self.bot_capacity == -1 or 0 <= self.bot_capacity > (
+                            len(self.chats) - len(self.finished_chats)
+                        ):
                             self._init_chat(chatID)
                             text = self._strip_start_message(text)
                             self.messages.append((chatID, text))
-                            print('New world and agents for chat #%s are created.'
-                                  % chatID)
+                            print(
+                                'New world and agents for chat #%s are created.'
+                                % chatID
+                            )
                         else:
-                            print('Cannot start new chat #%s due to bot capacity'
-                                  'limit reached.' % chatID)
+                            print(
+                                'Cannot start new chat #%s due to bot capacity'
+                                'limit reached.' % chatID
+                            )
                     else:
-                        print('Message was not recognized as part of any chat.'
-                              'Message skipped.')
+                        print(
+                            'Message was not recognized as part of any chat.'
+                            'Message skipped.'
+                        )
                 if len(self.messages) > 0:
                     break
                 else:
@@ -264,7 +279,7 @@ class ConvAIWorld(World):
             msg = {
                 'id': 'MasterBot#%s' % chatID,
                 'text': text,
-                'episode_done': episode_done
+                'episode_done': episode_done,
             }
             local_agent.observe(msg)
             reply = local_agent.act()

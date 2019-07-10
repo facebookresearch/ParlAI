@@ -28,14 +28,17 @@ def rm(d, val):
         del d[val]
 
 
-def format_observation(self, graph, viewing_agent, action, telling_agent=None,
-                       is_constraint=False):
+def format_observation(
+    self, graph, viewing_agent, action, telling_agent=None, is_constraint=False
+):
     """Return the observation text to display for an action"""
     use_actors = action['actors']
     if is_constraint:
         use_actors = use_actors[1:]
-    descs = [graph.node_to_desc(a, from_id=action['room_id'], use_the=True)
-             for a in use_actors]
+    descs = [
+        graph.node_to_desc(a, from_id=action['room_id'], use_the=True)
+        for a in use_actors
+    ]
     try:
         # Replace viewer with you
         i = use_actors.index(viewing_agent)
@@ -84,9 +87,17 @@ class GraphFunction(object):
     are as set up by init, establishing a number to type relationship like:
     [Actor, item actor is carrying, container in same room as actor]
     """
-    def __init__(self, function_name, possible_arg_nums, arg_split_words,
-                 arg_find_type, arg_constraints, func_constraints,
-                 callback_triggers):
+
+    def __init__(
+        self,
+        function_name,
+        possible_arg_nums,
+        arg_split_words,
+        arg_find_type,
+        arg_constraints,
+        func_constraints,
+        callback_triggers,
+    ):
         """Create a new graph function
         args:
         function name - name or array of aliases for the function
@@ -125,25 +136,23 @@ class GraphFunction(object):
         args = [a.lower() for a in args]
         loc = graph.location(args[0])
         # convert the arguments supplied to text form
-        text_args = [
-            graph.node_to_desc_raw(i, from_id=loc).lower() for i in args]
+        text_args = [graph.node_to_desc_raw(i, from_id=loc).lower() for i in args]
         # ensure that those are valid from the parser perspective
         valid, args, _args = self.parse_descs_to_args(graph, text_args)
         if not valid:
             return False
         # ensure that they pass the function constraints
         valid, _cons_passed, _failure = self.evaluate_constraint_set(
-            graph,
-            args,
-            self.func_constraints,
+            graph, args, self.func_constraints
         )
         return valid
 
     def handle(self, graph, args):
         # if Callbacks.try_overrides(self, graph, args):
         #     return True
-        is_constrained, _cons_passed, failure_action = \
-            self.evaluate_constraint_set(graph, args, self.func_constraints)
+        is_constrained, _cons_passed, failure_action = self.evaluate_constraint_set(
+            graph, args, self.func_constraints
+        )
         if not is_constrained:
             func_failure_action = self.get_failure_action(graph, args)
             # What failed?
@@ -191,8 +200,12 @@ class GraphFunction(object):
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
         """Returns an action for if the resolution of this function fails"""
-        return {'caller': self.get_name(), 'name': spec_fail, 'actors': args,
-                'room_id': graph.location(args[0])}
+        return {
+            'caller': self.get_name(),
+            'name': spec_fail,
+            'actors': args,
+            'room_id': graph.location(args[0]),
+        }
 
     def get_find_fail_text(self, arg_idx):
         """Text displayed when an arg find during parse_text_to_args call
@@ -220,16 +233,16 @@ class GraphFunction(object):
                 cons_passed += 1
             else:
                 spec_fail = constraint.get('spec_fail', 'failed')
-                failure_action = \
-                    con_obj.get_failure_action(graph, con_args, spec_fail)
+                failure_action = con_obj.get_failure_action(graph, con_args, spec_fail)
                 break
         if failure_action is None:
             return True, cons_passed, None
         else:
             return False, cons_passed, failure_action
 
-    def check_possibilites_vs_constraints(self, graph, output_args, arg_idx,
-                                          possible_ids):
+    def check_possibilites_vs_constraints(
+        self, graph, output_args, arg_idx, possible_ids
+    ):
         """Iterate through the given possible ids for a particular arg index
         and see if any match all the constraints for that argument
 
@@ -241,8 +254,9 @@ class GraphFunction(object):
         final_failure_action = None
         for pos_id in possible_ids:
             output_args[arg_idx] = pos_id
-            success, cons_passed, failure_action = \
-                self.evaluate_constraint_set(graph, output_args, constraints)
+            success, cons_passed, failure_action = self.evaluate_constraint_set(
+                graph, output_args, constraints
+            )
             if success:
                 return True, pos_id
             else:
@@ -272,8 +286,10 @@ class GraphFunction(object):
                 c_arg.append(word)
         if len(c_arg) != 0:
             descs.append(' '.join(c_arg))
-        if len(descs) not in self.possible_arg_nums and \
-                'ALL' not in self.possible_arg_nums:
+        if (
+            len(descs) not in self.possible_arg_nums
+            and 'ALL' not in self.possible_arg_nums
+        ):
             return (None, self.get_improper_args_text(len(descs)), None)
         return self.parse_descs_to_args(graph, descs)
 
@@ -290,8 +306,7 @@ class GraphFunction(object):
 
                 # Get the possible IDs from the graph in the area
                 arg_text = args[arg_idx]
-                possible_ids = graph.desc_to_nodes(arg_text, nearbyid,
-                                                   'all+here')
+                possible_ids = graph.desc_to_nodes(arg_text, nearbyid, 'all+here')
                 # can't have reflexive actions with the same arg
                 for had_id in output_args:
                     if had_id in possible_ids:
@@ -309,8 +324,7 @@ class GraphFunction(object):
         #     return True, output_args, text_args
         return None, None, None
 
-    def parse_descs_to_args_helper(self, graph, args, output_args,
-                                   arg_find_idx=None):
+    def parse_descs_to_args_helper(self, graph, args, output_args, arg_find_idx=None):
         args = [a.lower() for a in args]
         for arg_idx, arg_id in enumerate(output_args):
             if arg_id is not None:  # This was processed in an earlier pass
@@ -339,8 +353,9 @@ class GraphFunction(object):
 
             # Get the possible IDs from the graph in the area
             arg_text = args[arg_idx]
-            possible_ids = graph.desc_to_nodes(arg_text, nearbyid,
-                                               arg_find_type['type'])
+            possible_ids = graph.desc_to_nodes(
+                arg_text, nearbyid, arg_find_type['type']
+            )
             # can't have reflexive actions with the same arg
             for had_id in output_args:
                 if had_id in possible_ids:
@@ -349,14 +364,14 @@ class GraphFunction(object):
             while len(possible_ids) > 0:
                 # See if any match the constraints
                 success, res = self.check_possibilites_vs_constraints(
-                    graph, output_args, arg_idx, possible_ids)
+                    graph, output_args, arg_idx, possible_ids
+                )
                 if success:
                     output_args[arg_idx] = res
                     possible_ids.remove(res)
-                    success_again, res, _args = \
-                        self.parse_descs_to_args_helper(graph, args,
-                                                        output_args,
-                                                        arg_find_idx)
+                    success_again, res, _args = self.parse_descs_to_args_helper(
+                        graph, args, output_args, arg_find_idx
+                    )
                     if success_again:
                         return True, None, output_args  # success!
                 elif res is not None:
@@ -376,8 +391,7 @@ class GraphFunction(object):
         # at runtime to avoid repeat passes through the loop and to prevent
         # circular dependencies
         args = [a.lower() for a in args]
-        success, output_args, text_args = \
-            self.try_callback_override_args(graph, args)
+        success, output_args, text_args = self.try_callback_override_args(graph, args)
         if success:
             return success, output_args, text_args
         output_args = [None] * (len(args))
@@ -394,19 +408,19 @@ class GraphFunction(object):
             while arg_find_idx < len(self.arg_find_type[0]) and not success:
                 output_args = [None] * (len(args))
                 output_args[0] = args[0]
-                success, res, output_args = \
-                    self.parse_descs_to_args_helper(graph, args,
-                                                    output_args, arg_find_idx)
+                success, res, output_args = self.parse_descs_to_args_helper(
+                    graph, args, output_args, arg_find_idx
+                )
                 arg_find_idx += 1
         else:
-            success, res, output_args = \
-                self.parse_descs_to_args_helper(graph, args, output_args)
+            success, res, output_args = self.parse_descs_to_args_helper(
+                graph, args, output_args
+            )
 
         if success:
             # Determine canonical arguments
             loc = graph.location(output_args[0])
-            text_args = \
-                [graph.node_to_desc_raw(i, from_id=loc) for i in output_args]
+            text_args = [graph.node_to_desc_raw(i, from_id=loc) for i in output_args]
             return True, output_args, text_args
         else:
             return success, res, output_args
@@ -424,14 +438,16 @@ class GraphFunction(object):
             # All is reserved for functions that take all arguments
             return ' '.join(args)
         loc = graph.location(args[0])
-        text_args = \
-            [graph.node_to_desc_raw(i, from_id=loc) for i in args]
+        text_args = [graph.node_to_desc_raw(i, from_id=loc) for i in args]
         if len(args) == 1:
             return self.get_name()
         if len(self.arg_split_words) == 0 or len(args) == 2:
             return self.get_name() + ' ' + text_args[1]
-        return (self.get_name() + ' ' +
-                (' ' + self.arg_split_words[0] + ' ').join(text_args[1:]))
+        return (
+            self.get_name()
+            + ' '
+            + (' ' + self.arg_split_words[0] + ' ').join(text_args[1:])
+        )
 
     def get_reverse(self, graph, args):
         """Function to parse the graph and args and return the reverse
@@ -441,19 +457,16 @@ class GraphFunction(object):
 
 class SayFunction(GraphFunction):
     """Output all the following arguments [Actor, raw text]"""
+
     def __init__(self):
         super().__init__(
             function_name='say',
             possible_arg_nums=['ALL'],
             arg_split_words=[],
             arg_find_type=[{}],
-            arg_constraints=[
-                [],  # no constraints on the actor
-            ],
+            arg_constraints=[[]],  # no constraints on the actor
             func_constraints=[],
-            callback_triggers=[
-                {'action': 'said', 'args': [0, 1]},
-            ]
+            callback_triggers=[{'action': 'said', 'args': [0, 1]}],
         )
 
     def func(self, graph, args):
@@ -465,15 +478,17 @@ class SayFunction(GraphFunction):
         room_id = graph.location(actor)
         agent_ids = graph.get_room_agents(room_id)
         said_action = {
-            'caller': self.get_name(), 'name': 'said', 'room_id': room_id,
-            'actors': [actor], 'present_agent_ids': agent_ids,
+            'caller': self.get_name(),
+            'name': 'said',
+            'room_id': room_id,
+            'actors': [actor],
+            'present_agent_ids': agent_ids,
             'content': words,
         }
         graph.broadcast_to_room(said_action, exclude_agents=[actor])
         return True
 
-    def format_observation(self, graph, viewing_agent, action,
-                           telling_agent=None):
+    def format_observation(self, graph, viewing_agent, action, telling_agent=None):
         """Parse the observations to recount, then return them"""
         actor = action['actors'][0]
         content = action['content']
@@ -488,6 +503,7 @@ class SayFunction(GraphFunction):
 
 class TellFunction(GraphFunction):
     """Output all the following arguments [Actor, Target, raw text]"""
+
     def __init__(self):
         super().__init__(
             function_name='tell',
@@ -496,9 +512,7 @@ class TellFunction(GraphFunction):
             arg_find_type=[{}, {'type': 'sameloc+players', 'from': 0}],
             arg_constraints=[[], []],
             func_constraints=[],
-            callback_triggers=[
-                {'action': 'told', 'args': [0, 1, 2]},
-            ]
+            callback_triggers=[{'action': 'told', 'args': [0, 1, 2]}],
         )
 
     def func(self, graph, args):
@@ -508,16 +522,18 @@ class TellFunction(GraphFunction):
         room_id = graph.location(actor)
         agent_ids = graph.get_room_agents(room_id)
         said_action = {
-            'caller': self.get_name(), 'name': 'said', 'room_id': room_id,
-            'actors': args[:2], 'present_agent_ids': agent_ids,
+            'caller': self.get_name(),
+            'name': 'said',
+            'room_id': room_id,
+            'actors': args[:2],
+            'present_agent_ids': agent_ids,
             'content': words,
         }
         graph.broadcast_to_room(said_action, exclude_agents=[actor])
         graph._last_tell_target[actor] = args[1]
         return True
 
-    def format_observation(self, graph, viewing_agent, action,
-                           telling_agent=None):
+    def format_observation(self, graph, viewing_agent, action, telling_agent=None):
         """Parse the observations to recount, then return them"""
         actor = action['actors'][0]
         target = action['actors'][1]
@@ -544,17 +560,16 @@ class TellFunction(GraphFunction):
         loc = graph.location(args[0])
         try:
             # convert the arguments supplied to text form
-            text_args = [graph.node_to_desc_raw(i, from_id=loc).lower()
-                         for i in args[:2]]
+            text_args = [
+                graph.node_to_desc_raw(i, from_id=loc).lower() for i in args[:2]
+            ]
             # ensure that those are valid from the parser perspective
             valid, args, _args = self.parse_descs_to_args(graph, text_args)
             if not valid:
                 return False
             # ensure that they pass the function constraints
             valid, _cons_passed, _failure = self.evaluate_constraint_set(
-                graph,
-                args,
-                self.func_constraints,
+                graph, args, self.func_constraints
             )
             return valid
         except BaseException:
@@ -563,11 +578,15 @@ class TellFunction(GraphFunction):
     def evaluate_constraint_set(self, graph, args, constraints):
         """Can't talk to yourself, only constraint"""
         if args[0] == args[1]:
-            return False, 0, {
-                'caller': None,
-                'room_id': self.location(args[0]),
-                'txt': 'If you talk to yourself, you might seem crazy...',
-            }
+            return (
+                False,
+                0,
+                {
+                    'caller': None,
+                    'room_id': self.location(args[0]),
+                    'txt': 'If you talk to yourself, you might seem crazy...',
+                },
+            )
         return True, 0, None
 
     def parse_text_to_args(self, graph, actor_id, text):
@@ -623,23 +642,29 @@ class UseFunction(GraphFunction):
             function_name='use',
             possible_arg_nums=[3],
             arg_split_words=['with'],
-            arg_find_type=[{},  # no constraints on the actor
-                           {'type': 'carrying', 'from': 0},
-                           {'type': 'all+here', 'from': 0}],
+            arg_find_type=[
+                {},  # no constraints on the actor
+                {'type': 'carrying', 'from': 0},
+                {'type': 'all+here', 'from': 0},
+            ],
             arg_constraints=[
                 [],  # no constraints on the actor
                 is_held_item(1),
-                [{'type': 'is_type', 'in_args': [2],
-                  'args': [['object'], 'Both have to be objects. ']}],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [2],
+                        'args': [['object'], 'Both have to be objects. '],
+                    }
+                ],
             ],
             func_constraints=[],
-            callback_triggers=[
-                {'action': 'agent_used_with', 'args': [0, 1, 2]},
-            ]
+            callback_triggers=[{'action': 'agent_used_with', 'args': [0, 1, 2]}],
         )
-        self.formats = {'cant_use_with': "{0} couldn't find out how to "
-                                         "use {1} with {2}. ",
-                        'failed': '{0} couldn\'t do that. '}
+        self.formats = {
+            'cant_use_with': "{0} couldn't find out how to " "use {1} with {2}. ",
+            'failed': '{0} couldn\'t do that. ',
+        }
 
     def get_find_fail_text(self, arg_idx):
         if arg_idx == 1:
@@ -668,8 +693,12 @@ class UseFunction(GraphFunction):
 
         agent_id = args[0]
         room_id = graph.location(agent_id)
-        cant_use_action = {'caller': self.get_name(), 'name': 'cant_use_with',
-                           'room_id': room_id, 'actors': args}
+        cant_use_action = {
+            'caller': self.get_name(),
+            'name': 'cant_use_with',
+            'room_id': room_id,
+            'actors': args,
+        }
         graph.send_action(args[0], cant_use_action)
         return False
 
@@ -681,34 +710,37 @@ class UseFunction(GraphFunction):
 
 class MoveAgentFunction(GraphFunction):
     """[actor, destination room or path name from actor's room]"""
+
     def __init__(self):
         super().__init__(
             function_name='go',
             possible_arg_nums=[2],
             arg_split_words=[],
-            arg_find_type=[{},  # no constraints on the actor
-                           {'type': 'path', 'from': 0}],
+            arg_find_type=[
+                {},  # no constraints on the actor
+                {'type': 'path', 'from': 0},
+            ],
             arg_constraints=[
                 [],  # no constraints on the actor
                 [
                     {'type': 'is_type', 'in_args': [1], 'args': ['room']},
                     {'type': 'is_locked', 'in_args': [1], 'args': [False]},
                     {'type': 'not_location_of', 'in_args': [1], 'args': []},
-                ]
+                ],
             ],
-            func_constraints=[
-                {'type': 'fits_in', 'in_args': [0, 1], 'args': []},
-            ],
+            func_constraints=[{'type': 'fits_in', 'in_args': [0, 1], 'args': []}],
             callback_triggers=[
                 {'action': 'moved_to', 'args': [0, 1]},
                 {'action': 'agent_entered', 'args': [0, 1]},
-            ]
+            ],
         )
-        self.formats = {'left': '{0} left towards {1}. ',
-                        'arrived': '{0} arrived from {1}. ',
-                        'failed': '{0} can\'t do that. ',
-                        'follow': '{0} follow. ',
-                        'followed': '{0} followed {1} here.'}
+        self.formats = {
+            'left': '{0} left towards {1}. ',
+            'arrived': '{0} arrived from {1}. ',
+            'failed': '{0} can\'t do that. ',
+            'follow': '{0} follow. ',
+            'followed': '{0} followed {1} here.',
+        }
 
     def follow_agent(self, graph, args, followed):
         """handler for all following actions"""
@@ -716,9 +748,12 @@ class MoveAgentFunction(GraphFunction):
         old_room_id = graph.location(agent_id)
         followers = graph.get_followers(agent_id)
         room_id = args[1]
-        leave_action = {'caller': self.get_name(), 'name': 'left',
-                        'room_id': old_room_id,
-                        'actors': [agent_id, room_id]}
+        leave_action = {
+            'caller': self.get_name(),
+            'name': 'left',
+            'room_id': old_room_id,
+            'actors': [agent_id, room_id],
+        }
         graph.broadcast_to_room(leave_action)
         graph.move_object(agent_id, room_id)
 
@@ -726,29 +761,31 @@ class MoveAgentFunction(GraphFunction):
         is_return = room_id in graph._visited_rooms[agent_id]
         if is_return or not graph.has_prop(room_id, 'first_desc'):
             if not graph.has_prop(room_id, 'short_desc'):
-                room_desc = \
-                    graph.get_classed_prop(room_id, 'desc', agent_id, None)
+                room_desc = graph.get_classed_prop(room_id, 'desc', agent_id, None)
             else:
-                room_desc = \
-                    graph.get_classed_prop(room_id, 'short_desc', agent_id)
+                room_desc = graph.get_classed_prop(room_id, 'short_desc', agent_id)
         else:
             room_desc = graph.get_classed_prop(room_id, 'first_desc', agent_id)
         if is_return:
-            agent_ids, agent_descs = \
-                graph.get_nondescribed_room_agents(room_id)
-            object_ids, object_descs = \
-                graph.get_nondescribed_room_objects(room_id)
+            agent_ids, agent_descs = graph.get_nondescribed_room_agents(room_id)
+            object_ids, object_descs = graph.get_nondescribed_room_objects(room_id)
             _room_ids, room_descs = graph.get_room_edges(room_id)
         else:
             agent_ids, agent_descs = [], []
             object_ids, object_descs = [], []
             room_descs = []
         list_room_action = {
-            'caller': 'look', 'name': 'list_room', 'room_id': room_id,
-            'actors': [args[0]], 'agent_ids': agent_ids,
-            'present_agent_ids': agent_ids, 'object_ids': object_ids,
-            'agent_descs': agent_descs, 'object_descs': object_descs,
-            'room_descs': room_descs, 'room_desc': room_desc,
+            'caller': 'look',
+            'name': 'list_room',
+            'room_id': room_id,
+            'actors': [args[0]],
+            'agent_ids': agent_ids,
+            'present_agent_ids': agent_ids,
+            'object_ids': object_ids,
+            'agent_descs': agent_descs,
+            'object_descs': object_descs,
+            'room_descs': room_descs,
+            'room_desc': room_desc,
             'returned': is_return,
         }
         graph.send_action(args[0], list_room_action)
@@ -760,18 +797,24 @@ class MoveAgentFunction(GraphFunction):
         for other_agent in list(followers):
             room2 = graph.location(other_agent)
             if old_room_id == room2:
-                follow_action = {'caller': self.get_name(), 'name': 'follow',
-                                 'room_id': old_room_id,
-                                 'actors': [other_agent]}
+                follow_action = {
+                    'caller': self.get_name(),
+                    'name': 'follow',
+                    'room_id': old_room_id,
+                    'actors': [other_agent],
+                }
                 graph.send_msg(other_agent, 'You follow.\n', follow_action)
                 new_args = args.copy()
                 new_args[0] = other_agent
                 self.follow_agent(graph, new_args, agent_id)
 
         # Now that everyone is here, handle arrivals
-        arrive_action = {'caller': self.get_name(), 'name': 'followed',
-                         'room_id': room_id,
-                         'actors': [agent_id, followed]}
+        arrive_action = {
+            'caller': self.get_name(),
+            'name': 'followed',
+            'room_id': room_id,
+            'actors': [agent_id, followed],
+        }
         graph.broadcast_to_room(arrive_action, exclude_agents=followers)
         # Callbacks.handle_callbacks(self, graph, args)
         return True
@@ -782,9 +825,12 @@ class MoveAgentFunction(GraphFunction):
         old_room_id = graph.location(agent_id)
         followers = graph.get_followers(agent_id)
         room_id = args[1]
-        leave_action = {'caller': self.get_name(), 'name': 'left',
-                        'room_id': old_room_id,
-                        'actors': [agent_id, room_id]}
+        leave_action = {
+            'caller': self.get_name(),
+            'name': 'left',
+            'room_id': old_room_id,
+            'actors': [agent_id, room_id],
+        }
         graph.broadcast_to_room(leave_action)
         graph.move_object(agent_id, room_id)
 
@@ -792,29 +838,31 @@ class MoveAgentFunction(GraphFunction):
         is_return = room_id in graph._visited_rooms[agent_id]
         if is_return or not graph.has_prop(room_id, 'first_desc'):
             if not graph.has_prop(room_id, 'short_desc'):
-                room_desc = \
-                    graph.get_classed_prop(room_id, 'desc', agent_id, None)
+                room_desc = graph.get_classed_prop(room_id, 'desc', agent_id, None)
             else:
-                room_desc = \
-                    graph.get_classed_prop(room_id, 'short_desc', agent_id)
+                room_desc = graph.get_classed_prop(room_id, 'short_desc', agent_id)
         else:
             room_desc = graph.get_classed_prop(room_id, 'first_desc', agent_id)
         if is_return or not graph.has_prop(room_id, 'first_desc'):
-            agent_ids, agent_descs = \
-                graph.get_nondescribed_room_agents(room_id)
-            object_ids, object_descs = \
-                graph.get_nondescribed_room_objects(room_id)
+            agent_ids, agent_descs = graph.get_nondescribed_room_agents(room_id)
+            object_ids, object_descs = graph.get_nondescribed_room_objects(room_id)
             _room_ids, room_descs = graph.get_room_edges(room_id)
         else:
             agent_ids, agent_descs = [], []
             object_ids, object_descs = [], []
             room_descs = []
         list_room_action = {
-            'caller': 'look', 'name': 'list_room', 'room_id': room_id,
-            'actors': [args[0]], 'agent_ids': agent_ids,
-            'present_agent_ids': agent_ids, 'object_ids': object_ids,
-            'agent_descs': agent_descs, 'object_descs': object_descs,
-            'room_descs': room_descs, 'room_desc': room_desc,
+            'caller': 'look',
+            'name': 'list_room',
+            'room_id': room_id,
+            'actors': [args[0]],
+            'agent_ids': agent_ids,
+            'present_agent_ids': agent_ids,
+            'object_ids': object_ids,
+            'agent_descs': agent_descs,
+            'object_descs': object_descs,
+            'room_descs': room_descs,
+            'room_desc': room_desc,
             'returned': is_return,
         }
         graph.send_action(args[0], list_room_action)
@@ -826,18 +874,24 @@ class MoveAgentFunction(GraphFunction):
         for other_agent in list(followers):
             room2 = graph.location(other_agent)
             if old_room_id == room2:
-                follow_action = {'caller': self.get_name(), 'name': 'follow',
-                                 'room_id': old_room_id,
-                                 'actors': [other_agent]}
+                follow_action = {
+                    'caller': self.get_name(),
+                    'name': 'follow',
+                    'room_id': old_room_id,
+                    'actors': [other_agent],
+                }
                 graph.send_msg(other_agent, 'You follow.\n', follow_action)
                 new_args = args.copy()
                 new_args[0] = other_agent
                 self.follow_agent(graph, new_args, agent_id)
 
         # Now that everyone is here, handle arrivals
-        arrive_action = {'caller': self.get_name(), 'name': 'arrived',
-                         'room_id': room_id,
-                         'actors': [agent_id, old_room_id]}
+        arrive_action = {
+            'caller': self.get_name(),
+            'name': 'arrived',
+            'room_id': room_id,
+            'actors': [agent_id, old_room_id],
+        }
         graph.broadcast_to_room(arrive_action, exclude_agents=followers)
         return True
 
@@ -852,7 +906,8 @@ class MoveAgentFunction(GraphFunction):
             if graph._last_rooms[actor_id] is None:
                 return None, 'Back where exactly? You\'ve just started!', None
             text[-1] = graph.node_to_desc_raw(
-                graph._last_rooms[actor_id], from_id=graph.location(actor_id))
+                graph._last_rooms[actor_id], from_id=graph.location(actor_id)
+            )
         return super().parse_text_to_args(graph, actor_id, text)
 
     def get_find_fail_text(self, arg_idx):
@@ -864,8 +919,14 @@ class MoveAgentFunction(GraphFunction):
                 return ''  # Don't tell someone where they just went
         return super().get_action_observation_format(action, descs)
 
-    REPLACEMENTS = {'e': 'east', 'w': 'west', 'n': 'north', 's': 'south',
-                    'u': 'up', 'd': 'down'}
+    REPLACEMENTS = {
+        'e': 'east',
+        'w': 'west',
+        'n': 'north',
+        's': 'south',
+        'u': 'up',
+        'd': 'down',
+    }
 
     def parse_descs_to_args(self, graph, args):
         # Replace shortcuts with full words for better matching
@@ -878,6 +939,7 @@ class MoveAgentFunction(GraphFunction):
 
 class FollowFunction(GraphFunction):
     """[Actor, agent actor should follow in same room]"""
+
     def __init__(self):
         super().__init__(
             function_name=['follow'],
@@ -886,16 +948,21 @@ class FollowFunction(GraphFunction):
             arg_find_type=[{}, {'type': 'sameloc', 'from': 0}],
             arg_constraints=[
                 [],  # no constraints on the actor
-                [{'type': 'is_type', 'in_args': [1],
-                  'args': [['agent'], 'You can\'t follow that.']}],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [1],
+                        'args': [['agent'], 'You can\'t follow that.'],
+                    }
+                ],
             ],
             func_constraints=[],
-            callback_triggers=[
-                {'action': 'followed', 'args': [0, 1]},
-            ]
+            callback_triggers=[{'action': 'followed', 'args': [0, 1]}],
         )
-        self.formats = {'followed': '{0} started following {1}. ',
-                        'failed': '{0} couldn\'t follow that. '}
+        self.formats = {
+            'followed': '{0} started following {1}. ',
+            'failed': '{0} couldn\'t follow that. ',
+        }
 
     def func(self, graph, args):
         """<actor> start following [<agent>] (unfollow if no agent supplied)"""
@@ -913,8 +980,10 @@ class FollowFunction(GraphFunction):
 
         graph.set_follow(agent_id, args[1])
         follow_action = {
-            'caller': self.get_name(), 'name': 'followed',
-            'room_id': room_id, 'actors': args,
+            'caller': self.get_name(),
+            'name': 'followed',
+            'room_id': room_id,
+            'actors': args,
         }
         graph.broadcast_to_room(follow_action)
         return True
@@ -925,6 +994,7 @@ class FollowFunction(GraphFunction):
 
 class HitFunction(GraphFunction):
     """[Actor, victim in same room]"""
+
     def __init__(self):
         super().__init__(
             function_name=['hit'],
@@ -933,25 +1003,35 @@ class HitFunction(GraphFunction):
             arg_find_type=[{}, {'type': 'sameloc', 'from': 0}],
             arg_constraints=[
                 [],  # no constraints on the actor
-                [{'type': 'is_type', 'in_args': [1],
-                  'args': [['agent'], 'You can\'t hit that.']},
-                 {'type': 'not_type', 'in_args': [1],
-                  'args': [['described'], 'You decide against attacking.']}],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [1],
+                        'args': [['agent'], 'You can\'t hit that.'],
+                    },
+                    {
+                        'type': 'not_type',
+                        'in_args': [1],
+                        'args': [['described'], 'You decide against attacking.'],
+                    },
+                ],
             ],
             func_constraints=[],
-            callback_triggers=[{'action': 'hit', 'args': [0, 1]}]
+            callback_triggers=[{'action': 'hit', 'args': [0, 1]}],
         )
-        self.formats = {'attacked': '{0} attacked {1}. ',
-                        'missed': '{0} attacked {1}, but missed. ',
-                        'blocked': '{0} attacked {1}, but '
-                                   '{1} blocked the attack. ',
-                        'failed': '{0} couldn\'t hit that. '}
+        self.formats = {
+            'attacked': '{0} attacked {1}. ',
+            'missed': '{0} attacked {1}, but missed. ',
+            'blocked': '{0} attacked {1}, but ' '{1} blocked the attack. ',
+            'failed': '{0} couldn\'t hit that. ',
+        }
 
     def handle(self, graph, args):
         # if Callbacks.try_overrides(self, graph, args):
         #     return True
-        is_constrained, _cons_passed, failure_action = \
-            self.evaluate_constraint_set(graph, args, self.func_constraints)
+        is_constrained, _cons_passed, failure_action = self.evaluate_constraint_set(
+            graph, args, self.func_constraints
+        )
         if not is_constrained:
             func_failure_action = self.get_failure_action(graph, args)
             # What failed?
@@ -971,9 +1051,7 @@ class HitFunction(GraphFunction):
         armor = graph.get_prop(victim_id, 'defense', 0)
         attack = random.randint(0, damage + 1)
         defend = random.randint(0, armor)
-        action = {
-            'caller': self.get_name(), 'room_id': room_id, 'actors': args,
-        }
+        action = {'caller': self.get_name(), 'room_id': room_id, 'actors': args}
         did_hit = False
         if damage == -1:  # It's not a very physical class
             if random.randint(0, 1):
@@ -1001,10 +1079,13 @@ class HitFunction(GraphFunction):
             elif energy < 4 and energy > 0:
                 # TODO move getting a health action to the health function
                 health_text = graph.health(victim_id)
-                my_health_action = {'caller': 'health', 'actors': [victim_id],
-                                    'name': 'display_health',
-                                    'room_id': room_id,
-                                    'add_descs': [health_text]}
+                my_health_action = {
+                    'caller': 'health',
+                    'actors': [victim_id],
+                    'name': 'display_health',
+                    'room_id': room_id,
+                    'add_descs': [health_text],
+                }
                 graph.send_action(victim_id, my_health_action)
             graph.set_prop(victim_id, 'health', energy)
         # else:
@@ -1017,6 +1098,7 @@ class HitFunction(GraphFunction):
 
 class HugFunction(GraphFunction):
     """[Actor, target in same room]"""
+
     def __init__(self):
         super().__init__(
             function_name=['hug'],
@@ -1025,20 +1107,26 @@ class HugFunction(GraphFunction):
             arg_find_type=[{}, {'type': 'sameloc', 'from': 0}],
             arg_constraints=[
                 [],  # no constraints on the actor
-                [{'type': 'is_type', 'in_args': [1],
-                  'args': [['agent'], 'You can\'t hug that.']}],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [1],
+                        'args': [['agent'], 'You can\'t hug that.'],
+                    }
+                ],
             ],
             func_constraints=[],
-            callback_triggers=[{'action': 'hug', 'args': [0, 1]}]
+            callback_triggers=[{'action': 'hug', 'args': [0, 1]}],
         )
-        self.formats = {'hug': '{0} hugged {1}. ',
-                        'failed': '{0} couldn\'t hug that. '}
+        self.formats = {'hug': '{0} hugged {1}. ', 'failed': '{0} couldn\'t hug that. '}
 
     def func(self, graph, args):
         """<Actor> hugs <target>"""
         room_id = graph.location(args[0])
         action = {
-            'caller': self.get_name(), 'room_id': room_id, 'actors': args,
+            'caller': self.get_name(),
+            'room_id': room_id,
+            'actors': args,
             'name': 'hug',
         }
         graph.broadcast_to_room(action)
@@ -1053,6 +1141,7 @@ class HugFunction(GraphFunction):
 
 class GetObjectFunction(GraphFunction):
     """[Actor, object attainable by actor, optional container for object]"""
+
     def __init__(self):
         super().__init__(
             function_name=['get', 'take'],
@@ -1060,36 +1149,55 @@ class GetObjectFunction(GraphFunction):
             arg_split_words=['from'],
             arg_find_type=[
                 [{}, {}],  # no constraints on the actor
-                [{'type': 'all+here', 'from': 0},
-                 {'type': 'carrying', 'from': 2}],
-                [{'type': 'contains', 'from': 1},
-                 {'type': 'all+here', 'from': 0}],
+                [{'type': 'all+here', 'from': 0}, {'type': 'carrying', 'from': 2}],
+                [{'type': 'contains', 'from': 1}, {'type': 'all+here', 'from': 0}],
             ],
             arg_constraints=[
                 [],  # no constraints on the actor
-                [{'type': 'is_type', 'in_args': [1], 'args': ['object']},
-                 {'type': 'not_type', 'in_args': [1],
-                  'args': [['not_gettable'], "That isn't something you can get"]},
-                 {'type': 'not_type', 'in_args': [1],
-                  'args': [['described'],
-                           "You choose not to take that and ruin "
-                           "this room's description"]}],
-                [{'type': 'is_type', 'in_args': [2],
-                  'args': [['container', 'room'], 'That\'s not a container.']},
-                 {'type': 'is_locked', 'in_args': [2], 'args': [False]}],
+                [
+                    {'type': 'is_type', 'in_args': [1], 'args': ['object']},
+                    {
+                        'type': 'not_type',
+                        'in_args': [1],
+                        'args': [['not_gettable'], "That isn't something you can get"],
+                    },
+                    {
+                        'type': 'not_type',
+                        'in_args': [1],
+                        'args': [
+                            ['described'],
+                            "You choose not to take that and ruin "
+                            "this room's description",
+                        ],
+                    },
+                ],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [2],
+                        'args': [['container', 'room'], 'That\'s not a container.'],
+                    },
+                    {'type': 'is_locked', 'in_args': [2], 'args': [False]},
+                ],
             ],
             func_constraints=[
-                {'type': 'fits_in', 'in_args': [1, 0], 'args': [],
-                 'spec_fail': 'cant_carry'},
+                {
+                    'type': 'fits_in',
+                    'in_args': [1, 0],
+                    'args': [],
+                    'spec_fail': 'cant_carry',
+                }
             ],
             callback_triggers=[
                 {'action': 'moved_to', 'args': [1, 0]},
                 {'action': 'agent_got', 'args': [0, 1]},
-            ]
+            ],
         )
-        self.formats = {'got': '{0} got {1}. ',
-                        'got_from': '{0} got {1} from {2}. ',
-                        'failed': '{0} couldn\'t get {1}. '}
+        self.formats = {
+            'got': '{0} got {1}. ',
+            'got_from': '{0} got {1} from {2}. ',
+            'failed': '{0} couldn\'t get {1}. ',
+        }
 
     def func(self, graph, args):
         """<Actor> gets <item> [from <container>]"""
@@ -1098,13 +1206,19 @@ class GetObjectFunction(GraphFunction):
         room_id = graph.location(agent_id)
         graph.move_object(object_id, agent_id)
         if 'room' in graph.get_prop(container_id, 'classes'):
-            get_action = {'caller': self.get_name(), 'name': 'got',
-                          'room_id': room_id,
-                          'actors': [agent_id, object_id]}
+            get_action = {
+                'caller': self.get_name(),
+                'name': 'got',
+                'room_id': room_id,
+                'actors': [agent_id, object_id],
+            }
         else:
-            get_action = {'caller': self.get_name(), 'name': 'got_from',
-                          'room_id': room_id,
-                          'actors': [agent_id, object_id, container_id]}
+            get_action = {
+                'caller': self.get_name(),
+                'name': 'got_from',
+                'room_id': room_id,
+                'actors': [agent_id, object_id, container_id],
+            }
         graph.broadcast_to_room(get_action)
         return True
 
@@ -1150,31 +1264,39 @@ class GetObjectFunction(GraphFunction):
 # TODO override get_canonical_form for on/in
 class PutObjectInFunction(GraphFunction):
     """[Actor, object actor is carrying, container]"""
+
     def __init__(self):
         super().__init__(
             function_name='put',
             possible_arg_nums=[3],
             arg_split_words=['in', 'into', 'on', 'onto'],
-            arg_find_type=[{},  # no constraints on the actor
-                           {'type': 'carrying', 'from': 0},
-                           {'type': 'all+here', 'from': 0}],
+            arg_find_type=[
+                {},  # no constraints on the actor
+                {'type': 'carrying', 'from': 0},
+                {'type': 'all+here', 'from': 0},
+            ],
             arg_constraints=[
                 [],  # no constraints on the actor
                 is_held_item(1),
-                [{'type': 'is_type', 'in_args': [2],
-                  'args': [['container'], 'That\'s not a container.']}],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [2],
+                        'args': [['container'], 'That\'s not a container.'],
+                    }
+                ],
             ],
-            func_constraints=[
-                {'type': 'fits_in', 'in_args': [1, 2], 'args': []},
-            ],
+            func_constraints=[{'type': 'fits_in', 'in_args': [1, 2], 'args': []}],
             callback_triggers=[
                 {'action': 'moved_to', 'args': [1, 2]},
                 {'action': 'agent_put_in', 'args': [0, 1, 2]},
-            ]
+            ],
         )
-        self.formats = {'put_in': '{0} put {1} into {2}. ',
-                        'put_on': '{0} put {1} onto {2}. ',
-                        'failed': '{0} couldn\'t put that. '}
+        self.formats = {
+            'put_in': '{0} put {1} into {2}. ',
+            'put_on': '{0} put {1} onto {2}. ',
+            'failed': '{0} couldn\'t put that. ',
+        }
 
     def func(self, graph, args):
         """<Actor> puts <object> in or on <container>"""
@@ -1182,9 +1304,12 @@ class PutObjectInFunction(GraphFunction):
         graph.move_object(object_id, container_id)
         act_name = 'put_' + graph.get_prop(container_id, 'surface_type', 'in')
         room_id = graph.location(agent_id)
-        put_action = {'caller': self.get_name(), 'name': act_name,
-                      'room_id': room_id,
-                      'actors': [agent_id, object_id, container_id]}
+        put_action = {
+            'caller': self.get_name(),
+            'name': act_name,
+            'room_id': room_id,
+            'actors': [agent_id, object_id, container_id],
+        }
         graph.broadcast_to_room(put_action)
         return True
 
@@ -1200,32 +1325,39 @@ class PutObjectInFunction(GraphFunction):
 
 class DropObjectFunction(GraphFunction):
     """[Actor, object actor is carrying]"""
+
     def __init__(self):
         super().__init__(
             function_name='drop',
             possible_arg_nums=[2],
             arg_split_words=[],
-            arg_find_type=[{},  # no constraints on the actor
-                           {'type': 'carrying', 'from': 0},
-                           {'type': 'all+here', 'from': 0}],
-            arg_constraints=[[], is_held_item(1), []],
-            func_constraints=[
-                {'type': 'fits_in', 'in_args': [1, 2], 'args': []},
+            arg_find_type=[
+                {},  # no constraints on the actor
+                {'type': 'carrying', 'from': 0},
+                {'type': 'all+here', 'from': 0},
             ],
+            arg_constraints=[[], is_held_item(1), []],
+            func_constraints=[{'type': 'fits_in', 'in_args': [1, 2], 'args': []}],
             callback_triggers=[
                 {'action': 'moved_to', 'args': [1, 2]},
                 {'action': 'agent_dropped', 'args': [0, 1]},
-            ]
+            ],
         )
-        self.formats = {'dropped': '{0} dropped {1}. ',
-                        'failed': '{0} couldn\'t drop that. '}
+        self.formats = {
+            'dropped': '{0} dropped {1}. ',
+            'failed': '{0} couldn\'t drop that. ',
+        }
 
     def func(self, graph, args):
         """<Actor> drops <object>"""
         agent_id, object_id, room_id = args[0], args[1], args[2]
         graph.move_object(object_id, room_id)
-        put_action = {'caller': self.get_name(), 'name': 'dropped',
-                      'room_id': room_id, 'actors': [agent_id, object_id]}
+        put_action = {
+            'caller': self.get_name(),
+            'name': 'dropped',
+            'room_id': room_id,
+            'actors': [agent_id, object_id],
+        }
         graph.broadcast_to_room(put_action)
         return True
 
@@ -1243,40 +1375,57 @@ class DropObjectFunction(GraphFunction):
 
 class GiveObjectFunction(GraphFunction):
     """[Actor, object actor is carrying, other agent in same room]"""
+
     def __init__(self):
         super().__init__(
             function_name='give',
             possible_arg_nums=[3],
             arg_split_words=['to'],
-            arg_find_type=[{},  # no constraints on the actor
-                           {'type': 'carrying', 'from': 0},
-                           {'type': 'sameloc', 'from': 0}],
+            arg_find_type=[
+                {},  # no constraints on the actor
+                {'type': 'carrying', 'from': 0},
+                {'type': 'sameloc', 'from': 0},
+            ],
             arg_constraints=[
                 [],  # no constraints on the actor
                 is_held_item(1),
-                [{'type': 'is_type', 'in_args': [2],
-                  'args': [['agent'], 'The recipient is a thing.']}],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [2],
+                        'args': [['agent'], 'The recipient is a thing.'],
+                    }
+                ],
             ],
             func_constraints=[
-                {'type': 'fits_in', 'in_args': [1, 2], 'args': [],
-                 'spec_fail': 'cant_carry'},
+                {
+                    'type': 'fits_in',
+                    'in_args': [1, 2],
+                    'args': [],
+                    'spec_fail': 'cant_carry',
+                }
             ],
             callback_triggers=[
                 {'action': 'moved_to', 'args': [1, 2]},
                 {'action': 'agent_received_from', 'args': [2, 1, 0]},
-            ]
+            ],
         )
-        self.formats = {'gave': '{0} gave {2} {1}. ',
-                        'failed': '{0} couldn\'t give that. '}
+        self.formats = {
+            'gave': '{0} gave {2} {1}. ',
+            'failed': '{0} couldn\'t give that. ',
+        }
 
     def func(self, graph, args):
         """<Actor> gives <object> to <agent>"""
         agent_id, object_id, receiver_id = args[0], args[1], args[2]
         graph.move_object(object_id, receiver_id)
         room_id = graph.location(agent_id)
-        give_action = {'caller': self.get_name(), 'name': 'gave',
-                       'room_id': room_id,
-                       'actors': [agent_id, object_id, receiver_id]}
+        give_action = {
+            'caller': self.get_name(),
+            'name': 'gave',
+            'room_id': room_id,
+            'actors': [agent_id, object_id, receiver_id],
+        }
         graph.broadcast_to_room(give_action)
         return True
 
@@ -1292,6 +1441,7 @@ class GiveObjectFunction(GraphFunction):
 
 class StealObjectFunction(GraphFunction):
     """[Actor, object other agent is carrying, other agent in same room]"""
+
     def __init__(self):
         super().__init__(
             function_name='steal',
@@ -1299,38 +1449,49 @@ class StealObjectFunction(GraphFunction):
             arg_split_words=['from'],
             arg_find_type=[
                 [{}, {}],  # no constraints on the actor
-                [{'type': 'all+here', 'from': 0},
-                 {'type': 'carrying', 'from': 2}],
-                [{'type': 'contains', 'from': 1},
-                 {'type': 'all+here', 'from': 0}],
+                [{'type': 'all+here', 'from': 0}, {'type': 'carrying', 'from': 2}],
+                [{'type': 'contains', 'from': 1}, {'type': 'all+here', 'from': 0}],
             ],
             arg_constraints=[
                 [],  # no constraints on the actor
                 is_held_item(1),
-                [{'type': 'is_type', 'in_args': [2],
-                  'args': [['agent'],
-                           'You can\'t steal from that.']}],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [2],
+                        'args': [['agent'], 'You can\'t steal from that.'],
+                    }
+                ],
             ],
             func_constraints=[
-                {'type': 'fits_in', 'in_args': [1, 0], 'args': [],
-                 'spec_fail': 'cant_carry'},
+                {
+                    'type': 'fits_in',
+                    'in_args': [1, 0],
+                    'args': [],
+                    'spec_fail': 'cant_carry',
+                }
             ],
             callback_triggers=[
                 {'action': 'moved_to', 'args': [1, 0]},
                 {'action': 'agent_stole_from', 'args': [0, 1, 2]},
-            ]
+            ],
         )
-        self.formats = {'stole': '{0} stole {1} from {2}. ',
-                        'failed': '{0} couldn\'t give that. '}
+        self.formats = {
+            'stole': '{0} stole {1} from {2}. ',
+            'failed': '{0} couldn\'t give that. ',
+        }
 
     def func(self, graph, args):
         """<Actor> steals <object> from <agent>"""
         agent_id, object_id, victim_id = args[0], args[1], args[2]
         graph.move_object(object_id, agent_id)
         room_id = graph.location(agent_id)
-        give_action = {'caller': self.get_name(), 'name': 'stole',
-                       'room_id': room_id,
-                       'actors': [agent_id, object_id, victim_id]}
+        give_action = {
+            'caller': self.get_name(),
+            'name': 'stole',
+            'room_id': room_id,
+            'actors': [agent_id, object_id, victim_id],
+        }
         graph.broadcast_to_room(give_action)
         return True
 
@@ -1365,8 +1526,10 @@ class StealObjectFunction(GraphFunction):
 
 class EquipObjectFunction(GraphFunction):
     """[Actor, object actor is carrying]"""
-    def __init__(self, function_name='equip', action='equipped',
-                 additional_constraints=None):
+
+    def __init__(
+        self, function_name='equip', action='equipped', additional_constraints=None
+    ):
         if additional_constraints is None:
             additional_constraints = []
         super().__init__(
@@ -1379,10 +1542,12 @@ class EquipObjectFunction(GraphFunction):
             callback_triggers=[
                 {'action': 'agent_' + action, 'args': [0, 1]},
                 {'action': action + '_by', 'args': [1, 0]},
-            ]
+            ],
         )
-        self.formats = {action: '{0} ' + action + ' {1}. ',
-                        'failed': '{0} couldn\'t ' + function_name + ' that. '}
+        self.formats = {
+            action: '{0} ' + action + ' {1}. ',
+            'failed': '{0} couldn\'t ' + function_name + ' that. ',
+        }
         self.action = action
 
     def func(self, graph, args):
@@ -1392,8 +1557,12 @@ class EquipObjectFunction(GraphFunction):
         for n, s in graph.get_prop(object_id, 'stats', {'defense': 1}).items():
             graph.inc_prop(agent_id, n, s)
         room_id = graph.location(agent_id)
-        equip_action = {'caller': self.get_name(), 'name': self.action,
-                        'room_id': room_id, 'actors': [agent_id, object_id]}
+        equip_action = {
+            'caller': self.get_name(),
+            'name': self.action,
+            'room_id': room_id,
+            'actors': [agent_id, object_id],
+        }
         graph.broadcast_to_room(equip_action)
         return True
 
@@ -1406,30 +1575,41 @@ class EquipObjectFunction(GraphFunction):
 
 class WearObjectFunction(EquipObjectFunction):
     """[Actor, object actor is carrying]"""
+
     def __init__(self):
         super().__init__(
-            function_name='wear', action='wore',
+            function_name='wear',
+            action='wore',
             additional_constraints=[
-                {'type': 'is_type', 'in_args': [1],
-                 'args': [['wearable'], 'That isn\'t wearable.']}
-            ]
+                {
+                    'type': 'is_type',
+                    'in_args': [1],
+                    'args': [['wearable'], 'That isn\'t wearable.'],
+                }
+            ],
         )
 
 
 class WieldObjectFunction(EquipObjectFunction):
     """[Actor, object actor is carrying]"""
+
     def __init__(self):
         super().__init__(
-            function_name='wield', action='wielded',
+            function_name='wield',
+            action='wielded',
             additional_constraints=[
-                {'type': 'is_type', 'in_args': [1],
-                 'args': [['weapon'], 'That isn\'t wieldable.']}
-            ]
+                {
+                    'type': 'is_type',
+                    'in_args': [1],
+                    'args': [['weapon'], 'That isn\'t wieldable.'],
+                }
+            ],
         )
 
 
 class RemoveObjectFunction(GraphFunction):
     """[Actor, object actor is carrying]"""
+
     def __init__(self):
         super().__init__(
             function_name=['remove', 'unwield'],
@@ -1441,10 +1621,12 @@ class RemoveObjectFunction(GraphFunction):
             callback_triggers=[
                 {'action': 'agent_removed', 'args': [0, 1]},
                 {'action': 'removed_by', 'args': [1, 0]},
-            ]
+            ],
         )
-        self.formats = {'removed': '{0} put {1} away. ',
-                        'failed': '{0} couldn\'t remove that. '}
+        self.formats = {
+            'removed': '{0} put {1} away. ',
+            'failed': '{0} couldn\'t remove that. ',
+        }
 
     def func(self, graph, args):
         """<Actor> unequips <object>"""
@@ -1453,8 +1635,12 @@ class RemoveObjectFunction(GraphFunction):
         for n, s in graph.get_prop(object_id, 'stats', {'defense': 1}).items():
             graph.inc_prop(agent_id, n, -s)
         room_id = graph.location(agent_id)
-        put_action = {'caller': self.get_name(), 'name': 'removed',
-                      'room_id': room_id, 'actors': [agent_id, object_id]}
+        put_action = {
+            'caller': self.get_name(),
+            'name': 'removed',
+            'room_id': room_id,
+            'actors': [agent_id, object_id],
+        }
         graph.broadcast_to_room(put_action)
         return True
 
@@ -1467,8 +1653,10 @@ class RemoveObjectFunction(GraphFunction):
 
 class IngestFunction(GraphFunction):
     """[Actor, object actor is carrying]"""
-    def __init__(self, function_name='ingest', action='ingested',
-                 additional_constraints=None):
+
+    def __init__(
+        self, function_name='ingest', action='ingested', additional_constraints=None
+    ):
         if additional_constraints is None:
             additional_constraints = []
         super().__init__(
@@ -1481,10 +1669,12 @@ class IngestFunction(GraphFunction):
             callback_triggers=[
                 {'action': 'agent_' + action, 'args': [0, 1]},
                 {'action': action + '_by', 'args': [1, 0]},
-            ]
+            ],
         )
-        self.formats = {action: '{0} ' + action + ' {1}. ',
-                        'failed': '{0} couldn\'t ' + function_name + ' that. '}
+        self.formats = {
+            action: '{0} ' + action + ' {1}. ',
+            'failed': '{0} couldn\'t ' + function_name + ' that. ',
+        }
         self.action = action
 
     def func(self, graph, args):
@@ -1494,9 +1684,13 @@ class IngestFunction(GraphFunction):
         thing_desc = graph.node_to_desc(object_id, use_the=True)
         room_id = graph.location(agent_id)
         graph.delete_node(object_id)
-        ingest_action = {'caller': self.get_name(), 'name': self.action,
-                         'room_id': room_id, 'actors': [agent_id],
-                         'add_descs': [thing_desc]}
+        ingest_action = {
+            'caller': self.get_name(),
+            'name': self.action,
+            'room_id': room_id,
+            'actors': [agent_id],
+            'add_descs': [thing_desc],
+        }
         graph.broadcast_to_room(ingest_action)
         if fe >= 0:
             graph.send_msg(agent_id, "Yum.\n")
@@ -1512,9 +1706,13 @@ class IngestFunction(GraphFunction):
             if energy <= 0:
                 self.die(agent_id)
             elif prev_health != new_health:
-                health_action = {'caller': 'health', 'name': 'changed',
-                                 'room_id': room_id, 'actors': [args[0]],
-                                 'add_descs': [prev_health, new_health]}
+                health_action = {
+                    'caller': 'health',
+                    'name': 'changed',
+                    'room_id': room_id,
+                    'actors': [args[0]],
+                    'add_descs': [prev_health, new_health],
+                }
                 graph.broadcast_to_room(health_action)
         return True
 
@@ -1524,52 +1722,72 @@ class IngestFunction(GraphFunction):
 
 class EatFunction(IngestFunction):
     """[Actor, object actor is carrying]"""
+
     def __init__(self):
         super().__init__(
-            function_name='eat', action='ate',
+            function_name='eat',
+            action='ate',
             additional_constraints=[
-                {'type': 'is_type', 'in_args': [1],
-                 'args': [['food'], 'That isn\'t food.']}
-            ]
+                {
+                    'type': 'is_type',
+                    'in_args': [1],
+                    'args': [['food'], 'That isn\'t food.'],
+                }
+            ],
         )
 
 
 class DrinkFunction(IngestFunction):
     """[Actor, object actor is carrying]"""
+
     def __init__(self):
         super().__init__(
-            function_name='drink', action='drank',
+            function_name='drink',
+            action='drank',
             additional_constraints=[
-                {'type': 'is_type', 'in_args': [1],
-                 'args': [['drink'], 'That isn\'t a drink.']}
-            ]
+                {
+                    'type': 'is_type',
+                    'in_args': [1],
+                    'args': [['drink'], 'That isn\'t a drink.'],
+                }
+            ],
         )
 
 
 class LockFunction(GraphFunction):
     """[Actor, lockable thing in same location, key actor is carrying]"""
+
     def __init__(self):
         super().__init__(
             function_name='lock',
             possible_arg_nums=[3],
             arg_split_words=['with'],
-            arg_find_type=[{},  # no constraints on the actor
-                           {'type': 'all+here', 'from': 0},
-                           {'type': 'carrying', 'from': 0}],
+            arg_find_type=[
+                {},  # no constraints on the actor
+                {'type': 'all+here', 'from': 0},
+                {'type': 'carrying', 'from': 0},
+            ],
             arg_constraints=[
                 [],  # no constraints on the actor
-                [{'type': 'is_lockable', 'in_args': [1], 'args':[True]}],
-                [{'type': 'is_type', 'in_args': [2],
-                  'args': [['key'], 'That isn\'t a key.']}],
+                [{'type': 'is_lockable', 'in_args': [1], 'args': [True]}],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [2],
+                        'args': [['key'], 'That isn\'t a key.'],
+                    }
+                ],
             ],
             func_constraints=[
-                {'type': 'is_locked', 'in_args': [1], 'args':[False]},
-                {'type': 'locked_with', 'in_args': [1, 2], 'args':[]},
+                {'type': 'is_locked', 'in_args': [1], 'args': [False]},
+                {'type': 'locked_with', 'in_args': [1, 2], 'args': []},
             ],
-            callback_triggers=[{'action': 'agent_unlocked', 'args': [0, 1]}]
+            callback_triggers=[{'action': 'agent_unlocked', 'args': [0, 1]}],
         )
-        self.formats = {'locked': '{0} locked {1}. ',
-                        'failed': '{0} couldn\'t lock that. '}
+        self.formats = {
+            'locked': '{0} locked {1}. ',
+            'failed': '{0} couldn\'t lock that. ',
+        }
 
     def get_improper_args_text(self, num_args):
         if num_args == 2:
@@ -1586,8 +1804,12 @@ class LockFunction(GraphFunction):
         else:
             # TODO implement lock_object
             graph.lock_object(target_id, key_id)
-        lock_action = {'caller': self.get_name(), 'name': 'locked',
-                       'room_id': room_id, 'actors': [actor_id, target_id]}
+        lock_action = {
+            'caller': self.get_name(),
+            'name': 'locked',
+            'room_id': room_id,
+            'actors': [actor_id, target_id],
+        }
         graph.broadcast_to_room(lock_action)
         return True
 
@@ -1597,28 +1819,38 @@ class LockFunction(GraphFunction):
 
 class UnlockFunction(GraphFunction):
     """[Actor, lockable thing in same location, key actor is carrying]"""
+
     def __init__(self):
         super().__init__(
             function_name='unlock',
             possible_arg_nums=[3],
             arg_split_words=['with'],
-            arg_find_type=[{},  # no constraints on the actor
-                           {'type': 'all+here', 'from': 0},
-                           {'type': 'carrying', 'from': 0}],
+            arg_find_type=[
+                {},  # no constraints on the actor
+                {'type': 'all+here', 'from': 0},
+                {'type': 'carrying', 'from': 0},
+            ],
             arg_constraints=[
                 [],  # no constraints on the actor
-                [{'type': 'is_lockable', 'in_args': [1], 'args':[True]}],
-                [{'type': 'is_type', 'in_args': [2],
-                  'args': [['key'], 'That isn\'t a key.']}],
+                [{'type': 'is_lockable', 'in_args': [1], 'args': [True]}],
+                [
+                    {
+                        'type': 'is_type',
+                        'in_args': [2],
+                        'args': [['key'], 'That isn\'t a key.'],
+                    }
+                ],
             ],
             func_constraints=[
-                {'type': 'is_locked', 'in_args': [1], 'args':[True]},
-                {'type': 'locked_with', 'in_args': [1, 2], 'args':[]},
+                {'type': 'is_locked', 'in_args': [1], 'args': [True]},
+                {'type': 'locked_with', 'in_args': [1, 2], 'args': []},
             ],
-            callback_triggers=[{'action': 'agent_unlocked', 'args': [0, 1]}]
+            callback_triggers=[{'action': 'agent_unlocked', 'args': [0, 1]}],
         )
-        self.formats = {'unlocked': '{0} unlocked {1}. ',
-                        'failed': '{0} couldn\'t unlock that. '}
+        self.formats = {
+            'unlocked': '{0} unlocked {1}. ',
+            'failed': '{0} couldn\'t unlock that. ',
+        }
 
     def func(self, graph, args):
         """<Actor> unlocks <object> using <key>"""
@@ -1629,8 +1861,12 @@ class UnlockFunction(GraphFunction):
         else:
             # TODO implement unlock_object
             graph.unlock_object(target_id, key_id)
-        lock_action = {'caller': self.get_name(), 'name': 'unlocked',
-                       'room_id': room_id, 'actors': [actor_id, target_id]}
+        lock_action = {
+            'caller': self.get_name(),
+            'name': 'unlocked',
+            'room_id': room_id,
+            'actors': [actor_id, target_id],
+        }
         graph.broadcast_to_room(lock_action)
         return True
 
@@ -1646,6 +1882,7 @@ class UnlockFunction(GraphFunction):
 
 class ExamineFunction(GraphFunction):
     """[Actor, anything accessible to the actor]"""
+
     def __init__(self):
         super().__init__(
             function_name=['examine', 'ex'],
@@ -1654,15 +1891,19 @@ class ExamineFunction(GraphFunction):
             arg_find_type=[{}, {'type': 'all+here', 'from': 0}],
             arg_constraints=[[], []],
             func_constraints=[],
-            callback_triggers=[{'action': 'agent_examined', 'args': [0, 1]}]
+            callback_triggers=[{'action': 'agent_examined', 'args': [0, 1]}],
         )
 
     def func(self, graph, args):
         """<Actor> examines <thing>"""
         agent_id, object_id = args[0], args[1]
         room_id = graph.location(agent_id)
-        examine_action = {'caller': self.get_name(), 'name': 'witnessed',
-                          'room_id': room_id, 'actors': [agent_id, object_id]}
+        examine_action = {
+            'caller': self.get_name(),
+            'name': 'witnessed',
+            'room_id': room_id,
+            'actors': [agent_id, object_id],
+        }
         graph.broadcast_to_room(examine_action, [agent_id])
 
         if 'room' in graph.get_prop(object_id, 'classes'):
@@ -1674,9 +1915,7 @@ class ExamineFunction(GraphFunction):
             graph.set_prop(object_id, 'examined', True)
             object_type = 'container'
             add_descs = []
-            add_descs.append(
-                graph.get_classed_prop(object_id, 'desc', agent_id)
-            )
+            add_descs.append(graph.get_classed_prop(object_id, 'desc', agent_id))
             if len(graph.node_contains(object_id)) > 0:
                 add_descs.append(graph.display_node(object_id))
         elif 'agent' in graph.get_prop(object_id, 'classes'):
@@ -1685,12 +1924,9 @@ class ExamineFunction(GraphFunction):
             add_descs = []
             inv_txt = graph.get_inventory_text_for(object_id, give_empty=False)
             if graph.has_prop(object_id, 'desc'):
-                add_descs.append(
-                    graph.get_classed_prop(object_id, 'desc', agent_id)
-                )
+                add_descs.append(graph.get_classed_prop(object_id, 'desc', agent_id))
             if inv_txt != '':
-                object_desc = graph.node_to_desc(object_id,
-                                                 use_the=True).capitalize()
+                object_desc = graph.node_to_desc(object_id, use_the=True).capitalize()
                 add_descs.append(object_desc + ' is ' + inv_txt)
         else:
             object_type = 'object'
@@ -1699,9 +1935,12 @@ class ExamineFunction(GraphFunction):
             add_descs = ['There is nothing special about it. ']
         add_descs = ['\n'.join(add_descs)]  # Compress the descriptions to one
         examine_object_action = {
-            'caller': self.get_name(), 'name': 'examine_object',
-            'room_id': room_id, 'actors': args, 'add_descs': add_descs,
-            'object_type': object_type
+            'caller': self.get_name(),
+            'name': 'examine_object',
+            'room_id': room_id,
+            'actors': args,
+            'add_descs': add_descs,
+            'object_type': object_type,
         }
         graph.send_action(agent_id, examine_object_action)
         return True
@@ -1731,6 +1970,7 @@ class ExamineFunction(GraphFunction):
 
 class SoloFunction(GraphFunction):
     """[Actor]"""
+
     def __init__(self, function_name, callback_triggers):
         super().__init__(
             function_name=function_name,
@@ -1739,7 +1979,7 @@ class SoloFunction(GraphFunction):
             arg_find_type=[{}],
             arg_constraints=[[]],
             func_constraints=[],
-            callback_triggers=callback_triggers
+            callback_triggers=callback_triggers,
         )
 
     def get_reverse(self, graph, args):
@@ -1750,9 +1990,7 @@ class WaitFunction(SoloFunction):
     def __init__(self):
         super().__init__(
             function_name='wait',
-            callback_triggers=[
-                {'action': 'agent_waited', 'args': [0]},
-            ]
+            callback_triggers=[{'action': 'agent_waited', 'args': [0]}],
         )
         self.formats = {'waited': '{0} waited. '}
 
@@ -1760,8 +1998,12 @@ class WaitFunction(SoloFunction):
         room_id = graph.location(args[0])
         graph.send_action(
             args[0],
-            {'caller': self.get_name(), 'name': 'waited',
-             'room_id': room_id, 'actors': [args[0]]}
+            {
+                'caller': self.get_name(),
+                'name': 'waited',
+                'room_id': room_id,
+                'actors': [args[0]],
+            },
         )
         return True
 
@@ -1770,9 +2012,7 @@ class InventoryFunction(SoloFunction):
     def __init__(self):
         super().__init__(
             function_name=['inventory', 'inv', 'i'],
-            callback_triggers=[
-                {'action': 'check_inventory', 'args': [0]},
-            ]
+            callback_triggers=[{'action': 'check_inventory', 'args': [0]}],
         )
 
     def get_action_observation_format(self, action, descs):
@@ -1795,9 +2035,13 @@ class InventoryFunction(SoloFunction):
     def func(self, graph, args):
         room_id = graph.location(args[0])
         inv_text = graph.get_inventory_text_for(args[0])
-        my_inv_action = {'caller': self.get_name(), 'name': 'list_inventory',
-                         'room_id': room_id, 'actors': [args[0]],
-                         'add_descs': [inv_text]}
+        my_inv_action = {
+            'caller': self.get_name(),
+            'name': 'list_inventory',
+            'room_id': room_id,
+            'actors': [args[0]],
+            'add_descs': [inv_text],
+        }
         graph.send_action(args[0], my_inv_action)
         return True
 
@@ -1806,9 +2050,7 @@ class HealthFunction(SoloFunction):
     def __init__(self):
         super().__init__(
             function_name=['health', 'status'],
-            callback_triggers=[
-                {'action': 'check_health', 'args': [0]},
-            ]
+            callback_triggers=[{'action': 'check_health', 'args': [0]}],
         )
 
     def get_action_observation_format(self, action, descs):
@@ -1837,10 +2079,13 @@ class HealthFunction(SoloFunction):
     def func(self, graph, args):
         room_id = graph.location(args[0])
         health_text = graph.health(args[0])
-        my_health_action = {'caller': self.get_name(),
-                            'name': 'display_health',
-                            'room_id': room_id, 'actors': [args[0]],
-                            'add_descs': [health_text]}
+        my_health_action = {
+            'caller': self.get_name(),
+            'name': 'display_health',
+            'room_id': room_id,
+            'actors': [args[0]],
+            'add_descs': [health_text],
+        }
         graph.send_action(args[0], my_health_action)
         return True
 
@@ -1849,9 +2094,7 @@ class LookFunction(SoloFunction):
     def __init__(self):
         super().__init__(
             function_name=['look', 'l'],
-            callback_triggers=[
-                {'action': 'looked', 'args': [0]},
-            ]
+            callback_triggers=[{'action': 'looked', 'args': [0]}],
         )
         self.formats = {'looked': '{0} looked around. '}
 
@@ -1866,35 +2109,41 @@ class LookFunction(SoloFunction):
             room_desc = graph.get_classed_prop(room_id, 'first_desc', args[0])
         graph._visited_rooms[args[0]].add(room_id)
         if is_return or not graph.has_prop(room_id, 'first_desc'):
-            agent_ids, agent_descs = \
-                graph.get_nondescribed_room_agents(room_id)
-            object_ids, object_descs = \
-                graph.get_nondescribed_room_objects(room_id)
+            agent_ids, agent_descs = graph.get_nondescribed_room_agents(room_id)
+            object_ids, object_descs = graph.get_nondescribed_room_objects(room_id)
             _room_ids, room_descs = graph.get_room_edges(room_id)
         else:
             agent_ids, agent_descs = [], []
             object_ids, object_descs = [], []
             room_descs = []
         list_room_action = {
-            'caller': self.get_name(), 'name': 'list_room', 'room_id': room_id,
-            'actors': [args[0]], 'agent_ids': agent_ids,
-            'present_agent_ids': agent_ids, 'object_ids': object_ids,
-            'agent_descs': agent_descs, 'object_descs': object_descs,
-            'room_descs': room_descs, 'room_desc': room_desc,
+            'caller': self.get_name(),
+            'name': 'list_room',
+            'room_id': room_id,
+            'actors': [args[0]],
+            'agent_ids': agent_ids,
+            'present_agent_ids': agent_ids,
+            'object_ids': object_ids,
+            'agent_descs': agent_descs,
+            'object_descs': object_descs,
+            'room_descs': room_descs,
+            'room_desc': room_desc,
             'returned': False,
         }
         graph.send_action(args[0], list_room_action)
         return True
 
-    def format_observation(self, graph, viewing_agent, action,
-                           telling_agent=None, is_constraint=False):
+    def format_observation(
+        self, graph, viewing_agent, action, telling_agent=None, is_constraint=False
+    ):
         """Return the observation text to display for an action for the case
         of look. Look is a special case, as the description can change more
         than just tense based on who or what was seen and who you tell it to.
         """
         if action['name'] != 'list_room':
-            return super().format_observation(graph, viewing_agent, action,
-                                              telling_agent, is_constraint)
+            return super().format_observation(
+                graph, viewing_agent, action, telling_agent, is_constraint
+            )
         room_desc = action['room_desc']
         object_descs = action['object_descs']
         object_ids = action['object_ids']
@@ -1955,9 +2204,9 @@ class LookFunction(SoloFunction):
             s = '{} in {}.\n'.format(actor_desc, graph.node_to_desc(room))
             if room_desc is not None:
                 s += room_desc + '\n'
-            s += graph.get_room_object_text(object_descs, ents,
-                                            past=not is_present,
-                                            give_empty=False)
+            s += graph.get_room_object_text(
+                object_descs, ents, past=not is_present, give_empty=False
+            )
             if viewing_agent in agent_ids:
                 # Replace viewing agent with you were
                 i = agent_ids.index(viewing_agent)
@@ -1973,12 +2222,12 @@ class UnfollowFunction(SoloFunction):
     def __init__(self):
         super().__init__(
             function_name=['unfollow'],
-            callback_triggers=[
-                {'action': 'stopped_following', 'args': [0]},
-            ]
+            callback_triggers=[{'action': 'stopped_following', 'args': [0]}],
         )
-        self.formats = {'unfollowed': '{0} stopped following {1}. ',
-                        'failed': '{0} couldn\'t follow that. '}
+        self.formats = {
+            'unfollowed': '{0} stopped following {1}. ',
+            'failed': '{0} couldn\'t follow that. ',
+        }
 
     def func(self, graph, args):
         agent_id = args[0]
@@ -1989,8 +2238,10 @@ class UnfollowFunction(SoloFunction):
         else:
             graph.set_follow(agent_id, None)
             unfollow_action = {
-                'caller': self.get_name(), 'name': 'unfollowed',
-                'room_id': room_id, 'actors': [args[0], following],
+                'caller': self.get_name(),
+                'name': 'unfollowed',
+                'room_id': room_id,
+                'actors': [args[0], following],
             }
             graph.broadcast_to_room(unfollow_action)
         return True
@@ -2001,10 +2252,11 @@ class GraphConstraint(object):
     """Stub class to define standard for graph constraints, implements shared
     code for executing them
     """
-    def format_observation(self, graph, viewing_agent, action,
-                           telling_agent=None):
-        return format_observation(self, graph, viewing_agent, action,
-                                  telling_agent, is_constraint=True)
+
+    def format_observation(self, graph, viewing_agent, action, telling_agent=None):
+        return format_observation(
+            self, graph, viewing_agent, action, telling_agent, is_constraint=True
+        )
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
         """Given the args, return an action to represent the failure of
@@ -2029,17 +2281,24 @@ class FitsConstraint(GraphConstraint):
         1 => object_id
         2 => container_id
     """
+
     name = 'fits_in'
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
         # Special case for being unable to lift room objects
         if graph.get_prop(args[1], 'size') >= 150:
-            return {'caller': self.name, 'name': 'cant_lift',
-                    'room_id': graph.location(args[0]),
-                    'actors': args}
-        return {'caller': self.name, 'name': spec_fail,
+            return {
+                'caller': self.name,
+                'name': 'cant_lift',
                 'room_id': graph.location(args[0]),
-                'actors': args}
+                'actors': args,
+            }
+        return {
+            'caller': self.name,
+            'name': spec_fail,
+            'room_id': graph.location(args[0]),
+            'actors': args,
+        }
 
     def get_action_observation_format(self, action, descs):
         if action['name'] == 'cant_carry':
@@ -2065,12 +2324,16 @@ class FitsConstraint(GraphConstraint):
 
 class IsTypeConstraint(GraphConstraint):
     """Determining if an object has inherited a particular type"""
+
     name = 'is_type'
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
-        action = {'caller': self.name, 'name': spec_fail,
-                  'room_id': graph.location(args[0]),
-                  'actors': args[:2]}
+        action = {
+            'caller': self.name,
+            'name': spec_fail,
+            'room_id': graph.location(args[0]),
+            'actors': args[:2],
+        }
         if len(args) == 4:
             action['add_descs'] = [args[3]]
         return action
@@ -2105,12 +2368,16 @@ class IsTypeConstraint(GraphConstraint):
 
 class NotTypeConstraint(GraphConstraint):
     """Determining if an object has inherited a particular type"""
+
     name = 'not_type'
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
-        action = {'caller': self.name, 'name': spec_fail,
-                  'room_id': graph.location(args[0]),
-                  'actors': args[:2]}
+        action = {
+            'caller': self.name,
+            'name': spec_fail,
+            'room_id': graph.location(args[0]),
+            'actors': args[:2],
+        }
         if len(args) == 4:
             action['add_descs'] = [args[3]]
         return action
@@ -2145,16 +2412,20 @@ class NotTypeConstraint(GraphConstraint):
 
 class HasPropConstraint(GraphConstraint):
     """Determining if an object doesn't have a prop it should have"""
+
     name = 'has_prop'
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
-        return {'caller': self.name, 'name': spec_fail,
-                'room_id': graph.location(args[0]),
-                'actors': args[:2], 'add_descs': [args[2]]}
+        return {
+            'caller': self.name,
+            'name': spec_fail,
+            'room_id': graph.location(args[0]),
+            'actors': args[:2],
+            'add_descs': [args[2]],
+        }
 
     spec_attribute_map = {
-        'equipped': ['{1} had to be equipped first. ',
-                     '{1} has to be equipped first. '],
+        'equipped': ['{1} had to be equipped first. ', '{1} has to be equipped first. ']
     }
 
     def get_action_observation_format(self, action, descs):
@@ -2180,16 +2451,20 @@ class HasPropConstraint(GraphConstraint):
 
 class NoPropConstraint(GraphConstraint):
     """Determining if an object has a prop it shouldn't have"""
+
     name = 'no_prop'
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
-        return {'caller': self.name, 'name': spec_fail,
-                'room_id': graph.location(args[0]),
-                'actors': args[:2], 'add_descs': [args[2]]}
+        return {
+            'caller': self.name,
+            'name': spec_fail,
+            'room_id': graph.location(args[0]),
+            'actors': args[:2],
+            'add_descs': [args[2]],
+        }
 
     spec_attribute_map = {
-        'equipped': ['{1} had to be put away first. ',
-                     '{1} has to be put away first. '],
+        'equipped': ['{1} had to be put away first. ', '{1} has to be put away first. ']
     }
 
     def get_action_observation_format(self, action, descs):
@@ -2221,12 +2496,17 @@ class LockableConstraint(GraphConstraint):
         1 => target_id
         2 => should be lockable
     """
+
     name = 'is_lockable'
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
-        return {'caller': self.name, 'name': spec_fail,
-                'room_id': graph.location(args[0]),
-                'actors': args[:2], 'add_descs': [args[2]]}
+        return {
+            'caller': self.name,
+            'name': spec_fail,
+            'room_id': graph.location(args[0]),
+            'actors': args[:2],
+            'add_descs': [args[2]],
+        }
 
     def get_action_observation_format(self, action, descs):
         if descs[2]:  # Failed when it was supposed to be lockable
@@ -2241,8 +2521,7 @@ class LockableConstraint(GraphConstraint):
         actor_id, target_id, want_lockable = args[0], args[1], args[2]
         if 'room' in graph.get_prop(target_id, 'classes'):
             room_id = graph.location(actor_id)
-            is_lockable = \
-                graph.get_path_locked_with(room_id, target_id) is not None
+            is_lockable = graph.get_path_locked_with(room_id, target_id) is not None
         else:
             is_lockable = graph.get_prop(target_id, 'lockable', False)
         return want_lockable == is_lockable
@@ -2256,12 +2535,17 @@ class LockedConstraint(GraphConstraint):
         1 => target_id
         2 => should be locked
     """
+
     name = 'is_locked'
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
-        return {'caller': self.name, 'name': spec_fail,
-                'room_id': graph.location(args[0]),
-                'actors': args[:2], 'add_descs': [args[2]]}
+        return {
+            'caller': self.name,
+            'name': spec_fail,
+            'room_id': graph.location(args[0]),
+            'actors': args[:2],
+            'add_descs': [args[2]],
+        }
 
     def get_action_observation_format(self, action, descs):
         if descs[2]:  # Failed when it was supposed to be locked
@@ -2278,8 +2562,7 @@ class LockedConstraint(GraphConstraint):
             room_id = graph.location(actor_id)
             if room_id == target_id:
                 return True
-            is_locked = \
-                graph.path_is_locked(room_id, target_id)
+            is_locked = graph.path_is_locked(room_id, target_id)
         else:
             is_locked = graph.get_prop(target_id, 'locked', False)
         return want_locked == is_locked
@@ -2293,13 +2576,18 @@ class LockedWithConstraint(GraphConstraint):
         1 => target_id
         2 => key_id
     """
+
     name = 'locked_with'
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
         item_desc = graph.node_to_desc(args[2])
-        return {'caller': self.name, 'name': spec_fail,
-                'room_id': graph.location(args[0]),
-                'actors': args[:2], 'add_descs': [item_desc]}
+        return {
+            'caller': self.name,
+            'name': spec_fail,
+            'room_id': graph.location(args[0]),
+            'actors': args[:2],
+            'add_descs': [item_desc],
+        }
 
     def get_action_observation_format(self, action, descs):
         descs[2] = descs[2].capitalize()
@@ -2312,8 +2600,7 @@ class LockedWithConstraint(GraphConstraint):
         actor_id, target_id, key_id = args[0], args[1], args[2]
         if 'room' in graph.get_prop(target_id, 'classes'):
             room_id = graph.location(actor_id)
-            locked_with = \
-                graph.get_path_locked_with(room_id, target_id)
+            locked_with = graph.get_path_locked_with(room_id, target_id)
         else:
             locked_with = graph.get_prop(target_id, 'locked_with', False)
         return locked_with == key_id
@@ -2326,12 +2613,17 @@ class NotLocationOfConstraint(GraphConstraint):
         0 => actor_id
         1 => target_id
     """
+
     name = 'not_location_of'
 
     def get_failure_action(self, graph, args, spec_fail='failed'):
-        return {'caller': self.name, 'name': spec_fail,
-                'room_id': graph.location(args[0]),
-                'actors': args, 'add_descs': []}
+        return {
+            'caller': self.name,
+            'name': spec_fail,
+            'room_id': graph.location(args[0]),
+            'actors': args,
+            'add_descs': [],
+        }
 
     def get_action_observation_format(self, action, descs):
         return "You're already in that location. "
@@ -2399,7 +2691,6 @@ FUNC_IGNORE_LIST = ['tell', 'say']
 
 
 class Graph(object):
-
     def __init__(self, opt):
         """
         Initialize a graph for the game to run on. Creates all of the
@@ -2609,8 +2900,9 @@ class Graph(object):
         """Instantiate a player into the graph with the given state"""
         id = state['id']
         if 'node_to_text_buffer' in state:
-            self._node_to_text_buffer[id] = \
+            self._node_to_text_buffer[id] = (
                 state['node_to_text_buffer'] + self._node_to_text_buffer[id]
+            )
         if 'node_contains' in state:
             self._node_contains[id] = state['node_contains']
             for obj_state in state['contained_nodes']:
@@ -2709,8 +3001,16 @@ class Graph(object):
 
     # -- Node-in-graph properties -- #
 
-    def add_edge(self, id1, edge, id2, edge_label=None, locked_with=None,
-                 edge_desc=None, full_label=False):
+    def add_edge(
+        self,
+        id1,
+        edge,
+        id2,
+        edge_label=None,
+        locked_with=None,
+        edge_desc=None,
+        full_label=False,
+    ):
         """Add an edge of the given type from id1 to id2. Optionally can set
         a label for that edge
         """
@@ -2728,16 +3028,24 @@ class Graph(object):
                 'full_label': full_label,
             }
 
-    def add_one_path_to(self, id1, id2, label=None,
-                        locked_with=None, desc=None, full_label=False):
+    def add_one_path_to(
+        self, id1, id2, label=None, locked_with=None, desc=None, full_label=False
+    ):
         if id1 == id2:
             return False
-        self.add_edge(id1, 'path_to', id2, label, locked_with, desc,
-                      full_label)
+        self.add_edge(id1, 'path_to', id2, label, locked_with, desc, full_label)
         return True
 
-    def add_path_to(self, id1, id2, desc1=None, desc2=None, locked_with=None,
-                    examine1=None, examine2=None):
+    def add_path_to(
+        self,
+        id1,
+        id2,
+        desc1=None,
+        desc2=None,
+        locked_with=None,
+        examine1=None,
+        examine2=None,
+    ):
         """Create a path between two rooms"""
         if id1 == id2:
             return False
@@ -2818,20 +3126,24 @@ class Graph(object):
     def lock_path(self, id1, id2, key_id):
         """lock the edge from id1 to id2 using the given key"""
         self._node_to_edges[id1][('path_to', id2)]['is_locked'] = True
-        self._node_to_edges[id1][('path_to', id2)]['examine_desc'] = \
-            self._node_to_edges[id1][('path_to', id2)]['locked_desc']
+        self._node_to_edges[id1][('path_to', id2)][
+            'examine_desc'
+        ] = self._node_to_edges[id1][('path_to', id2)]['locked_desc']
         self._node_to_edges[id2][('path_to', id1)]['is_locked'] = True
-        self._node_to_edges[id2][('path_to', id1)]['examine_desc'] = \
-            self._node_to_edges[id2][('path_to', id1)]['locked_desc']
+        self._node_to_edges[id2][('path_to', id1)][
+            'examine_desc'
+        ] = self._node_to_edges[id2][('path_to', id1)]['locked_desc']
 
     def unlock_path(self, id1, id2, key_id):
         """unlock the edge from id1 to id2 using the given key"""
         self._node_to_edges[id1][('path_to', id2)]['is_locked'] = False
-        self._node_to_edges[id1][('path_to', id2)]['examine_desc'] = \
-            self._node_to_edges[id1][('path_to', id2)]['unlocked_desc']
+        self._node_to_edges[id1][('path_to', id2)][
+            'examine_desc'
+        ] = self._node_to_edges[id1][('path_to', id2)]['unlocked_desc']
         self._node_to_edges[id2][('path_to', id1)]['is_locked'] = False
-        self._node_to_edges[id2][('path_to', id1)]['examine_desc'] = \
-            self._node_to_edges[id2][('path_to', id1)]['unlocked_desc']
+        self._node_to_edges[id2][('path_to', id1)][
+            'examine_desc'
+        ] = self._node_to_edges[id2][('path_to', id1)]['unlocked_desc']
 
     def path_is_locked(self, id1, id2):
         return self._node_to_edges[id1][('path_to', id2)]['is_locked']
@@ -2969,8 +3281,9 @@ class Graph(object):
                     o = o.union(self._used_player_ids)
                 if 'others' in nearbytype:
                     for item in o:
-                        if self.get_prop(item, 'agent') \
-                                or self.get_prop(item, 'container'):
+                        if self.get_prop(item, 'agent') or self.get_prop(
+                            item, 'container'
+                        ):
                             o = o.union(self.node_contains(item))
                 # if len(o) == 0:
                 #     o1 = self.node_contains(nearbyid)
@@ -2979,23 +3292,23 @@ class Graph(object):
         else:
             o = set(self._node_to_desc.keys())
         # Go through official in-game names
-        if nearbyid is not None and self.room(nearbyid) in o and \
-                desc == 'room':
+        if nearbyid is not None and self.room(nearbyid) in o and desc == 'room':
             return [self.room(nearbyid)]
 
-        found_pairs = [(id, self.node_to_desc(id, from_id=from_id).lower())
-                       for id in o]
-        valid_ids_1 = [(id, name) for (id, name) in found_pairs
-                       if desc.lower() in name+'s']
+        found_pairs = [(id, self.node_to_desc(id, from_id=from_id).lower()) for id in o]
+        valid_ids_1 = [
+            (id, name) for (id, name) in found_pairs if desc.lower() in name + 's'
+        ]
 
         # Check the parent name trees for names that also could match in the
         # case that nothing could be found
         all_subnames = [(id, self.get_prop(id, 'names')) for id in o]
-        all_pairs = [(id, name)
-                     for (id, name_list) in all_subnames
-                     for name in name_list]
-        valid_ids_2 = [(id, name) for (id, name) in all_pairs
-                       if desc.lower() in name+'s']
+        all_pairs = [
+            (id, name) for (id, name_list) in all_subnames for name in name_list
+        ]
+        valid_ids_2 = [
+            (id, name) for (id, name) in all_pairs if desc.lower() in name + 's'
+        ]
 
         valid_ids_1.sort(key=lambda x: len(x[0]))
         valid_ids_2.sort(key=lambda x: len(x[1]))
@@ -3074,10 +3387,17 @@ class Graph(object):
             health = 1
         if health > 8:
             health = 8
-        f = ['dead', 'on the verge of death',
-             'very weak', 'weak', 'ok',
-             'good', 'strong', 'very strong',
-             'nigh on invincible']
+        f = [
+            'dead',
+            'on the verge of death',
+            'very weak',
+            'weak',
+            'ok',
+            'good',
+            'strong',
+            'very strong',
+            'nigh on invincible',
+        ]
         return f[int(health)]
 
     # -- Text accessors -- #
@@ -3127,8 +3447,7 @@ class Graph(object):
         if id1 == id2:
             if looker_id is not None:
                 desc = self.get_classed_prop(id1, 'desc', looker_id)
-                extra_desc = \
-                    self.get_classed_prop(id1, 'extra_desc', looker_id)
+                extra_desc = self.get_classed_prop(id1, 'extra_desc', looker_id)
                 return extra_desc if extra_desc is not None else desc
             desc = self.get_prop(id1, 'desc')
             return self.get_prop(id1, 'extra_desc', desc)
@@ -3180,8 +3499,7 @@ class Graph(object):
     def send_action(self, agent_id, action):
         """Parse the action and send it to the agent with send_msg"""
         if action['caller'] is None:
-            val = \
-                self.extract_classed_from_dict(action['txt'], agent_id, '')
+            val = self.extract_classed_from_dict(action['txt'], agent_id, '')
             if type(val) is dict and 'iter' in val:
                 i = val['iter']
                 val['iter'] = (i + 1) % len(val['data'])
@@ -3282,8 +3600,11 @@ class Graph(object):
         # create rename <node> <value>    <-- **crashes*
         # create delete <node>
         # create set_prop orc to health=5
-        from parlai_internal.tasks.graph_world3.class_nodes import \
-            create_thing, CLASS_NAMES
+        from parlai_internal.tasks.graph_world3.class_nodes import (
+            create_thing,
+            CLASS_NAMES,
+        )
+
         if not self.has_prop(agent_id, 'agent'):
             return False, 'create'
         if params is None:
@@ -3301,8 +3622,7 @@ class Graph(object):
                 self.send_msg(agent_id, "Not found.\n ")
                 return False, resp
             id = ids[0]
-            self.send_msg(agent_id,
-                          id + " has:\n{}".format(self._node_to_prop[id]))
+            self.send_msg(agent_id, id + " has:\n{}".format(self._node_to_prop[id]))
             return True, resp
         if params[0] == 'save':
             self.save_graph(txt)
@@ -3331,8 +3651,7 @@ class Graph(object):
             return True, resp
         if params[0] == 'rename':
             params = self.split_params(params[1:], 'to')
-            to_ids = self.desc_to_nodes(params[0], nearbyid=agent_id,
-                                        nearbytype='all')
+            to_ids = self.desc_to_nodes(params[0], nearbyid=agent_id, nearbytype='all')
             if len(to_ids) == 0:
                 self.send_msg("Not found.\n ")
                 return False, resp
@@ -3352,8 +3671,7 @@ class Graph(object):
             return True, resp
         if params[0] == 'set_prop':
             params = self.split_params(params[1:], 'to')
-            to_ids = self.desc_to_nodes(params[0], nearbyid=agent_id,
-                                        nearbytype='all')
+            to_ids = self.desc_to_nodes(params[0], nearbyid=agent_id, nearbytype='all')
             if len(to_ids) == 0:
                 self.send_msg("Not found.\n ")
                 return False, resp
@@ -3375,7 +3693,7 @@ class Graph(object):
             self.set_prop(to_id, key, value)
             self.send_msg(agent_id, "Done.\n")
             return True, resp
-        if (params[0] in CLASS_NAMES):
+        if params[0] in CLASS_NAMES:
             if params[0] == 'key' and txt.find('key') == -1:
                 self.send_msg(agent_id, "Keys must be called keys!\n")
                 return False, resp
@@ -3386,10 +3704,8 @@ class Graph(object):
             ps = self.split_params(params[1:], 'with')
             if len(ps) != 2:
                 return False, resp
-            to_ids = self.desc_to_nodes(ps[0], nearbyid=agent_id,
-                                        nearbytype='all')
-            with_ids = self.desc_to_nodes(ps[1], nearbyid=agent_id,
-                                          nearbytype='all')
+            to_ids = self.desc_to_nodes(ps[0], nearbyid=agent_id, nearbytype='all')
+            with_ids = self.desc_to_nodes(ps[1], nearbyid=agent_id, nearbytype='all')
             if len(to_ids) == 0 or len(with_ids) == 0:
                 self.send_msg("Something was not found.\n ")
                 return False, resp
@@ -3432,8 +3748,10 @@ class Graph(object):
         max_size = self.get_prop(container_id, 'contain_size')
         if size is None or max_size is None:
             # TODO log these kinds of things
-            print('None compare between {} and {}'.format(
-                object_id, container_id), self._node_to_prop)
+            print(
+                'None compare between {} and {}'.format(object_id, container_id),
+                self._node_to_prop,
+            )
         return size <= max_size
 
     def move_object(self, object_id, container_id):
@@ -3461,50 +3779,45 @@ class Graph(object):
             add_text = ''
             contents = self.node_contains(id)
             if len(contents) > 0:
-                add_text += \
-                    '[*SPLIT*] Your travel companion leaves behind {}.'.format(
-                        self.display_node_list(contents)
-                    )
+                add_text += '[*SPLIT*] Your travel companion leaves behind {}.'.format(
+                    self.display_node_list(contents)
+                )
                 for content in contents:
                     self.move_object(content, room)
             text = {
-                'elf':
-                    "Josephine collapses to the ground! "
-                    "She looks like she's asleep except for an awful "
-                    "stillness about her. Although her home is in the "
-                    "mountains, she seems a part of the woods as well. You "
-                    "hope to meet her again in the next life. And as you "
-                    "think this, a bright white light filters through the "
-                    "trees, engulfing the troll's peaceful form. You stare in "
-                    "wonder: when the light fades away, so does Josephine!" +
-                    add_text,
-                'troll':
-                    "You watch in horror as the elf drops lifelessly to the "
-                    "ground. Lying there, Alixlior looks strangely peaceful "
-                    "and as much a part of the woods as when alive. You know "
-                    "that were your friend alive, you would be told not to "
-                    "mourn and that all of this is a journey that will repeat "
-                    "itself - where you will undoubtedly meet again. But for "
-                    "now, this kind of blows. Before you can wonder if you "
-                    "should conduct a burial ceremony, a strange white light "
-                    "engulfs the elf's body, causing you to close your eyes. "
-                    "When you open them, Alixlior is gone!" + add_text,
+                'elf': "Josephine collapses to the ground! "
+                "She looks like she's asleep except for an awful "
+                "stillness about her. Although her home is in the "
+                "mountains, she seems a part of the woods as well. You "
+                "hope to meet her again in the next life. And as you "
+                "think this, a bright white light filters through the "
+                "trees, engulfing the troll's peaceful form. You stare in "
+                "wonder: when the light fades away, so does Josephine!" + add_text,
+                'troll': "You watch in horror as the elf drops lifelessly to the "
+                "ground. Lying there, Alixlior looks strangely peaceful "
+                "and as much a part of the woods as when alive. You know "
+                "that were your friend alive, you would be told not to "
+                "mourn and that all of this is a journey that will repeat "
+                "itself - where you will undoubtedly meet again. But for "
+                "now, this kind of blows. Before you can wonder if you "
+                "should conduct a burial ceremony, a strange white light "
+                "engulfs the elf's body, causing you to close your eyes. "
+                "When you open them, Alixlior is gone!" + add_text,
             }
-            self.broadcast_to_room({
-                'caller': None,
-                'room_id': room,
-                'txt': text,
-            }, [id])
+            self.broadcast_to_room({'caller': None, 'room_id': room, 'txt': text}, [id])
             self.set_prop(id, 'dead', True)
             self.delete_node(id)
             return True
 
         agent_desc = self.node_to_desc(id, use_the=True).capitalize()
-        self.broadcast_to_room({
-            'caller': None,
-            'room_id': self.location(id),
-            'txt': agent_desc + ' died!\n',
-        }, [id])
+        self.broadcast_to_room(
+            {
+                'caller': None,
+                'room_id': self.location(id),
+                'txt': agent_desc + ' died!\n',
+            },
+            [id],
+        )
         self.set_follow(id, None)
         self.set_prop(id, 'dead', True)
         self.delete_prop(id, 'agent')
@@ -3525,10 +3838,12 @@ class Graph(object):
                 return 'There was ' + room_descs[0] + '.\n'
             else:
                 return 'There\'s ' + room_descs[0] + '.\n'
-        default_paths = [path[10:] for path in room_descs
-                         if path.startswith('a path to')]
-        non_default_paths = [path for path in room_descs
-                             if not path.startswith('a path to')]
+        default_paths = [
+            path[10:] for path in room_descs if path.startswith('a path to')
+        ]
+        non_default_paths = [
+            path for path in room_descs if not path.startswith('a path to')
+        ]
         if len(default_paths) == 0:
             if past:
                 s = 'There was '
@@ -3558,8 +3873,7 @@ class Graph(object):
             s += '.\n'
         return s
 
-    def get_room_object_text(self, object_descs, ents, past=False,
-                             give_empty=True):
+    def get_room_object_text(self, object_descs, ents, past=False, give_empty=True):
         """Get text for all the objects in a room"""
         s = ''
         tensed_is = 'was' if past else 'is'
@@ -3610,8 +3924,7 @@ class Graph(object):
         """Return a list of objects in a room and their current descriptions"""
         objects = self.node_contains(room_id)
         objects = [o for o in objects if self.get_prop(o, 'object')]
-        objects = [o for o in objects
-                   if 'described' not in self.get_prop(o, 'classes')]
+        objects = [o for o in objects if 'described' not in self.get_prop(o, 'classes')]
         object_descs = [self.node_to_desc(o) for o in objects]
         return objects, object_descs
 
@@ -3627,8 +3940,7 @@ class Graph(object):
         if those agents aren't described in the room text"""
         agents = self.node_contains(room)
         agents = [a for a in agents if self.get_prop(a, 'agent')]
-        agents = [a for a in agents
-                  if 'described' not in self.get_prop(a, 'classes')]
+        agents = [a for a in agents if 'described' not in self.get_prop(a, 'classes')]
         agent_descs = [self.node_to_desc(a) for a in agents]
         return agents, agent_descs
 
@@ -3659,8 +3971,17 @@ class Graph(object):
                     words = self.get_prop(ents[obj], 'plural').split(' ')
                 else:
                     words = (obj + 's').split(' ')
-            f = ['two', 'three', 'four', 'five', 'six', 'seven', 'eight',
-                 'nine', 'a lot of']
+            f = [
+                'two',
+                'three',
+                'four',
+                'five',
+                'six',
+                'seven',
+                'eight',
+                'nine',
+                'a lot of',
+            ]
             rep = ['a', 'an', 'the']
             cnt = cnt - 2
             if cnt > 8:
@@ -3747,15 +4068,14 @@ class Graph(object):
         o = self.get_actionable_ids(my_agent_id)
         final_o = o
         for item in o:
-            if self.get_prop(item, 'agent') \
-                    or self.get_prop(item, 'container'):
+            if self.get_prop(item, 'agent') or self.get_prop(item, 'container'):
                 final_o = final_o.union(self.node_contains(item))
         actions = []
         use_functions = CANNONICAL_GRAPH_FUNCTIONS.items()
         if use_actions is not None:
             use_functions = [
-                (fn, func) for (fn, func) in use_functions
-                if fn in use_actions]
+                (fn, func) for (fn, func) in use_functions if fn in use_actions
+            ]
         for func_name, func in use_functions:
             if func_name in FUNC_IGNORE_LIST:
                 continue  # Ignore functions we don't want to expose directly
@@ -3799,7 +4119,7 @@ class Graph(object):
         for i in range(len(symb_points) - 1):
             j, k = symb_points[i], symb_points[i + 1]
             if inst[j].lower() in GRAPH_FUNCTIONS.keys():
-                ret_actions.append(' '.join(inst[j: k]))
+                ret_actions.append(' '.join(inst[j:k]))
         return ' '.join(ret_actions), ret_actions
 
     def parse(self, inst):
@@ -3807,10 +4127,11 @@ class Graph(object):
 
     def canonical_action(self, agentid, inst):
         words = inst.split(' ')
-        if (words[0].lower() in GRAPH_FUNCTIONS.keys()):
+        if words[0].lower() in GRAPH_FUNCTIONS.keys():
             func_wrap = GRAPH_FUNCTIONS[words[0].lower()]
-            valid, args, _canon_args = \
-                func_wrap.parse_text_to_args(self, agentid, words[1:])
+            valid, args, _canon_args = func_wrap.parse_text_to_args(
+                self, agentid, words[1:]
+            )
             if not valid:
                 return False, inst
             return True, func_wrap.get_canonical_form(self, args)
@@ -3821,10 +4142,11 @@ class Graph(object):
         guarantees, could fail miserably"""
         inst, symb_points = self.parse(action)
         j, k = symb_points[0], symb_points[1]
-        if (inst[j].lower() in GRAPH_FUNCTIONS.keys()):
+        if inst[j].lower() in GRAPH_FUNCTIONS.keys():
             func_wrap = GRAPH_FUNCTIONS[inst[j].lower()]
-            valid, args, _canon_args = \
-                func_wrap.parse_text_to_args(old_g, agentid, inst[j + 1: k])
+            valid, args, _canon_args = func_wrap.parse_text_to_args(
+                old_g, agentid, inst[j + 1 : k]
+            )
             rev_func_name, new_args = func_wrap.get_reverse(self, args)
             if rev_func_name is None or rev_func_name is False:
                 return rev_func_name, ''
@@ -3852,11 +4174,12 @@ class Graph(object):
 
         for i in range(len(symb_points) - 1):
             j, k = symb_points[i], symb_points[i + 1]
-            params = inst[j + 1: k]
-            if (inst[j].lower() in GRAPH_FUNCTIONS.keys()):
+            params = inst[j + 1 : k]
+            if inst[j].lower() in GRAPH_FUNCTIONS.keys():
                 func_wrap = GRAPH_FUNCTIONS[inst[j].lower()]
-                valid, args, _canon_args = \
-                    func_wrap.parse_text_to_args(self, agentid, params)
+                valid, args, _canon_args = func_wrap.parse_text_to_args(
+                    self, agentid, params
+                )
                 if not valid:
                     return False
             else:
@@ -3875,8 +4198,7 @@ class Graph(object):
             inst = 'look'
 
         if self.get_prop(agentid, 'dead'):
-            self.send_msg(agentid,
-                          "You are dead, you can't do anything, sorry.")
+            self.send_msg(agentid, "You are dead, you can't do anything, sorry.")
             return False, 'dead'
         inst, symb_points = self.parse(inst)
         inst[0] = inst[0].lower()
@@ -3885,8 +4207,9 @@ class Graph(object):
         if len(inst) == 1 and (inst[0] in hint_calls):
             # TODO remove the list of valid instructions from the main game,
             # Perhaps behind and admin gatekeeper of sorts
-            self.send_msg(agentid, '\n'.join(
-                sorted(self.get_possible_actions(agentid))) + '\n')
+            self.send_msg(
+                agentid, '\n'.join(sorted(self.get_possible_actions(agentid))) + '\n'
+            )
             return True, 'actions'
         if len(inst) == 1 and (inst[0] == 'help'):
             self.send_msg(agentid, self.help())
@@ -3902,11 +4225,12 @@ class Graph(object):
         acts = []
         for i in range(len(symb_points) - 1):
             j, k = symb_points[i], symb_points[i + 1]
-            params = inst[j + 1: k]
-            if (inst[j].lower() in GRAPH_FUNCTIONS.keys()):
+            params = inst[j + 1 : k]
+            if inst[j].lower() in GRAPH_FUNCTIONS.keys():
                 func_wrap = GRAPH_FUNCTIONS[inst[j].lower()]
-                valid, args, _canon_args = \
-                    func_wrap.parse_text_to_args(self, agentid, params)
+                valid, args, _canon_args = func_wrap.parse_text_to_args(
+                    self, agentid, params
+                )
                 if not valid:
                     # if Callbacks.handle_failed_parse_callbacks(
                     #         func_wrap.get_name(), self, params, agentid):

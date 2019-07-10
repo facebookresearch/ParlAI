@@ -30,27 +30,57 @@ class TorchClassifierAgent(TorchAgent):
         TorchAgent.add_cmdline_args(parser)
         parser = parser.add_argument_group('Torch Classifier Arguments')
         # class arguments
-        parser.add_argument('--classes', type=str, nargs='*', default=None,
-                            help='the name of the classes.')
-        parser.add_argument('--class-weights', type=float, nargs='*', default=None,
-                            help='weight of each of the classes for the softmax')
-        parser.add_argument('--ref-class', type=str, default=None, hidden=True,
-                            help='the class that will be used to compute '
-                                 'precision and recall. By default the first '
-                                 'class.')
-        parser.add_argument('--threshold', type=float, default=0.5,
-                            help='during evaluation, threshold for choosing '
-                                 'ref class; only applies to binary '
-                                 'classification')
+        parser.add_argument(
+            '--classes',
+            type=str,
+            nargs='*',
+            default=None,
+            help='the name of the classes.',
+        )
+        parser.add_argument(
+            '--class-weights',
+            type=float,
+            nargs='*',
+            default=None,
+            help='weight of each of the classes for the softmax',
+        )
+        parser.add_argument(
+            '--ref-class',
+            type=str,
+            default=None,
+            hidden=True,
+            help='the class that will be used to compute '
+            'precision and recall. By default the first '
+            'class.',
+        )
+        parser.add_argument(
+            '--threshold',
+            type=float,
+            default=0.5,
+            help='during evaluation, threshold for choosing '
+            'ref class; only applies to binary '
+            'classification',
+        )
         # interactive mode
-        parser.add_argument('--print-scores', type='bool', default=False,
-                            help='print probability of chosen class during '
-                                 'interactive mode')
+        parser.add_argument(
+            '--print-scores',
+            type='bool',
+            default=False,
+            help='print probability of chosen class during ' 'interactive mode',
+        )
         # miscellaneous arguments
-        parser.add_argument('--data-parallel', type='bool', default=False,
-                            help='uses nn.DataParallel for multi GPU')
-        parser.add_argument('--get-all-metrics', type='bool', default=True,
-                            help='give prec/recall metrics for all classes')
+        parser.add_argument(
+            '--data-parallel',
+            type='bool',
+            default=False,
+            help='uses nn.DataParallel for multi GPU',
+        )
+        parser.add_argument(
+            '--get-all-metrics',
+            type='bool',
+            default=True,
+            help='give prec/recall metrics for all classes',
+        )
 
     def __init__(self, opt, shared=None):
         init_model, _ = self._get_init_model(opt, shared)
@@ -58,9 +88,7 @@ class TorchClassifierAgent(TorchAgent):
 
         # set up classes
         if opt.get('classes') is None:
-            raise RuntimeError(
-                'Must specify --classes argument.'
-            )
+            raise RuntimeError('Must specify --classes argument.')
         if not shared:
             self.class_list = opt['classes']
             self.class_dict = {val: i for i, val in enumerate(self.class_list)}
@@ -77,8 +105,7 @@ class TorchClassifierAgent(TorchAgent):
         # get reference class; if opt['get_all_metrics'] is False, this is
         # used to compute metrics
         # in binary classfication, opt['threshold'] applies to ref class
-        if (opt['ref_class'] is None or opt['ref_class'] not in
-                self.class_dict):
+        if opt['ref_class'] is None or opt['ref_class'] not in self.class_dict:
             self.ref_class = self.class_list[0]
         else:
             self.ref_class = opt['ref_class']
@@ -87,8 +114,9 @@ class TorchClassifierAgent(TorchAgent):
                 # move to the front of the class list
                 self.class_list.insert(0, self.class_list.pop(ref_class_id))
         if not opt['get_all_metrics']:
-            warn_once('Using %s as the class for computing P, R, and F1' %
-                      self.ref_class)
+            warn_once(
+                'Using %s as the class for computing P, R, and F1' % self.ref_class
+            )
 
         # set up threshold, only used in binary classification
         if len(self.class_list) == 2 and opt.get('threshold', 0.5) != 0.5:
@@ -142,8 +170,7 @@ class TorchClassifierAgent(TorchAgent):
         Raises a ``KeyError`` if one of the labels is not in the class list.
         """
         try:
-            labels_indices_list = [self.class_dict[label] for label in
-                                   batch.labels]
+            labels_indices_list = [self.class_dict[label] for label in batch.labels]
         except KeyError as e:
             print('One of your labels is not in the class list.')
             raise e
@@ -171,8 +198,11 @@ class TorchClassifierAgent(TorchAgent):
         preds = []
         for i, pred_id in enumerate(prediction_id.tolist()):
             prob = round_sigfigs(probs[i][pred_id], 4)
-            preds.append('Predicted class: {}\nwith probability: {}'.format(
-                         self.class_list[pred_id], prob))
+            preds.append(
+                'Predicted class: {}\nwith probability: {}'.format(
+                    self.class_list[pred_id], prob
+                )
+            )
         return preds
 
     def train_step(self, batch):
@@ -253,10 +283,12 @@ class TorchClassifierAgent(TorchAgent):
         # TODO: document these parameter types.
         eps = 0.00001  # prevent divide by zero errors
         true_positives = confmat[(class_name, class_name)]
-        num_actual_positives = sum([confmat[(class_name, c)]
-                                   for c in self.class_list]) + eps
-        num_predicted_positives = sum([confmat[(c, class_name)]
-                                      for c in self.class_list]) + eps
+        num_actual_positives = (
+            sum([confmat[(class_name, c)] for c in self.class_list]) + eps
+        )
+        num_predicted_positives = (
+            sum([confmat[(c, class_name)] for c in self.class_list]) + eps
+        )
 
         recall_str = 'class_{}_recall'.format(class_name)
         prec_str = 'class_{}_prec'.format(class_name)
@@ -265,8 +297,10 @@ class TorchClassifierAgent(TorchAgent):
         # update metrics dict
         metrics[recall_str] = true_positives / num_actual_positives
         metrics[prec_str] = true_positives / num_predicted_positives
-        metrics[f1_str] = 2 * ((metrics[recall_str] * metrics[prec_str]) /
-                               (metrics[recall_str] + metrics[prec_str] + eps))
+        metrics[f1_str] = 2 * (
+            (metrics[recall_str] * metrics[prec_str])
+            / (metrics[recall_str] + metrics[prec_str] + eps)
+        )
 
         return num_actual_positives
 
@@ -288,8 +322,7 @@ class TorchClassifierAgent(TorchAgent):
 
             examples_per_class = []
             for class_i in metrics_list:
-                class_total = self._report_prec_recall_metrics(confmat,
-                                                               class_i, m)
+                class_total = self._report_prec_recall_metrics(confmat, class_i, m)
                 examples_per_class.append(class_total)
 
             if len(examples_per_class) > 1:
@@ -297,8 +330,9 @@ class TorchClassifierAgent(TorchAgent):
                 f1 = 0
                 total_exs = sum(examples_per_class)
                 for i in range(len(self.class_list)):
-                    f1 += ((examples_per_class[i] / total_exs) *
-                           m['class_{}_f1'.format(self.class_list[i])])
+                    f1 += (examples_per_class[i] / total_exs) * m[
+                        'class_{}_f1'.format(self.class_list[i])
+                    ]
                 m['weighted_f1'] = f1
 
         for k, v in m.items():
@@ -316,10 +350,8 @@ class TorchClassifierAgent(TorchAgent):
             a [bsz, num_classes] FloatTensor containing the score of each
             class.
         """
-        raise NotImplementedError(
-            'Abstract class: user must implement score()')
+        raise NotImplementedError('Abstract class: user must implement score()')
 
     def build_model(self):
         """Build a new model (implemented by children classes)."""
-        raise NotImplementedError(
-            'Abstract class: user must implement build_model()')
+        raise NotImplementedError('Abstract class: user must implement build_model()')

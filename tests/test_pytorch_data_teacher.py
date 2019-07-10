@@ -21,7 +21,7 @@ unit_test_parser_defaults = {
     'pytorch_teacher_task': 'babi:task10k:1',
     'model_file': '/tmp/tmp_model',
     'batchsize': 32,
-    'momentum':  0.9,
+    'momentum': 0.9,
     'validation_every_n_secs': 30,
     'batch_length_range': 5,
 }
@@ -49,10 +49,10 @@ integration_test_parser_defaults = {
 
 def solved_task(str_output, valid, test):
     return (
-        valid['ppl'] < 1.3 and
-        test['ppl'] < 1.3 and
-        valid['accuracy'] > 0.95 and
-        test['accuracy'] > 0.95
+        valid['ppl'] < 1.3
+        and test['ppl'] < 1.3
+        and valid['accuracy'] > 0.95
+        and test['accuracy'] > 0.95
     )
 
 
@@ -76,7 +76,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
                     opt_defaults = {
                         'pytorch_teacher_task': task,
                         'datatype': datatype,
-                        'shuffle': shuffle
+                        'shuffle': shuffle,
                     }
                     with testing_utils.capture_output() as _:
                         parser = display_setup_args()
@@ -84,18 +84,20 @@ class TestPytorchDataTeacher(unittest.TestCase):
                         opt = parser.parse_args()
                         teacher = create_task_agent_from_taskname(opt)[0]
                         if (
-                            'ordered' in datatype or
-                            ('stream' in datatype and not opt.get('shuffle')) or
-                            'train' not in datatype
+                            'ordered' in datatype
+                            or ('stream' in datatype and not opt.get('shuffle'))
+                            or 'train' not in datatype
                         ):
                             self.assertIsInstance(
-                                teacher.pytorch_dataloader.sampler, Sequential,
-                                'PytorchDataTeacher failed with args: {}'.format(opt)
+                                teacher.pytorch_dataloader.sampler,
+                                Sequential,
+                                'PytorchDataTeacher failed with args: {}'.format(opt),
                             )
                         else:
                             self.assertIsInstance(
-                                teacher.pytorch_dataloader.sampler, RandomSampler,
-                                'PytorchDataTeacher failed with args: {}'.format(opt)
+                                teacher.pytorch_dataloader.sampler,
+                                RandomSampler,
+                                'PytorchDataTeacher failed with args: {}'.format(opt),
                             )
 
     def test_pyt_preprocess(self):
@@ -106,6 +108,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
         This tests whether the action provided by the preprocessed teacher
         is equivalent to the agent's observation after the agent processes it.
         """
+
         def get_teacher_act(defaults, teacher_processed=False, agent_to=None):
             parser = train_setup_args()
             parser.set_defaults(**defaults)
@@ -133,7 +136,9 @@ class TestPytorchDataTeacher(unittest.TestCase):
             defaults['model_file'] = os.path.join(tmpdir, 'model')
             defaults['dict_file'] = os.path.join(tmpdir, 'model.dict')
             defaults['pytorch_preprocess'] = True
-            teacher_processed_act, agent2 = get_teacher_act(defaults, teacher_processed=True)  # noqa: E501
+            teacher_processed_act, agent2 = get_teacher_act(
+                defaults, teacher_processed=True
+            )  # noqa: E501
 
         for key in agent_processed_observation:
             val1 = agent_processed_observation[key]
@@ -141,7 +146,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
             if isinstance(val1, torch.Tensor):
                 self.assertTrue(
                     bool(torch.all(torch.eq(val1, val2))),
-                    '{} is not equal to {}'.format(val1, val2)
+                    '{} is not equal to {}'.format(val1, val2),
                 )
             else:
                 self.assertEqual(val1, val2)
@@ -169,11 +174,13 @@ class TestPytorchDataTeacher(unittest.TestCase):
                 world_data.parley()
                 acts_epoch_2.append(world_data.acts[0])
             acts_epoch_1 = [bb for b in acts_epoch_1 for bb in b]
-            acts_epoch_1 = sorted([b for b in acts_epoch_1 if 'text' in b],
-                                  key=lambda x: x.get('text'))
+            acts_epoch_1 = sorted(
+                [b for b in acts_epoch_1 if 'text' in b], key=lambda x: x.get('text')
+            )
             acts_epoch_2 = [bb for b in acts_epoch_2 for bb in b]
-            acts_epoch_2 = sorted([b for b in acts_epoch_2 if 'text' in b],
-                                  key=lambda x: x.get('text'))
+            acts_epoch_2 = sorted(
+                [b for b in acts_epoch_2 if 'text' in b], key=lambda x: x.get('text')
+            )
             world_data.shutdown()
             return acts_epoch_1, acts_epoch_2
 
@@ -188,6 +195,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
                         self.assertTrue(bool(torch.all(torch.eq(val1, val2))))
                     else:
                         self.assertEqual(val1, val2)
+
         # First, check that batchsort itself works
         defaults = unit_test_parser_defaults.copy()
         defaults['datatype'] = 'train:stream:ordered'
@@ -239,26 +247,31 @@ class TestPytorchDataTeacher(unittest.TestCase):
                 world_data = create_task(opt, agent)
                 batch_sort_acts = []
                 # first epoch
-                while len(batch_sort_acts) < 900/50:
+                while len(batch_sort_acts) < 900 / 50:
                     world_data.parley()
                     batch_sort_acts.append(world_data.acts[0])
                 teacher = world_data.world.get_agents()[0]
                 teacher.reset_data()
                 # second epoch
-                while len(batch_sort_acts) < 1800/50:
+                while len(batch_sort_acts) < 1800 / 50:
                     world_data.parley()
                     batch_sort_acts.append(world_data.acts[0])
                 world_data.shutdown()
             field = defaults['batch_sort_field']
-            lengths = [[ep_length(b[field]) for b in bb if field in b]
-                       for bb in batch_sort_acts[:-2]]  # exclude last batch
+            lengths = [
+                [ep_length(b[field]) for b in bb if field in b]
+                for bb in batch_sort_acts[:-2]
+            ]  # exclude last batch
             # verify batch lengths
             for batch_lens in lengths:
-                self.assertLessEqual(max(batch_lens) - min(batch_lens), max_range,
-                                     'PytorchDataTeacher batching does not give '
-                                     'batches with similar sized examples, when '
-                                     'sorting by `{}` field.'.format(
-                                        defaults['batch_sort_field']))
+                self.assertLessEqual(
+                    max(batch_lens) - min(batch_lens),
+                    max_range,
+                    'PytorchDataTeacher batching does not give '
+                    'batches with similar sized examples, when '
+                    'sorting by `{}` field.'.format(defaults['batch_sort_field']),
+                )
+
         defaults['batch_sort_field'] = 'text'
         verify_batch_lengths(defaults)
         defaults['batch_sort_field'] = 'text_vec'
@@ -281,8 +294,9 @@ class TestPytorchDataTeacher(unittest.TestCase):
         str_output, valid, test = testing_utils.train_model(defaults)
         self.assertTrue(
             solved_task(str_output, valid, test),
-            'Teacher could not teach seq2seq with args: {}; here is str_output: {}'
-            .format(defaults, str_output)
+            'Teacher could not teach seq2seq with args: {}; here is str_output: {}'.format(
+                defaults, str_output
+            ),
         )
 
     @testing_utils.retry()
@@ -312,8 +326,9 @@ class TestPytorchDataTeacher(unittest.TestCase):
         str_output, valid, test = testing_utils.train_model(defaults)
         self.assertTrue(
             solved_task(str_output, valid, test),
-            'Teacher could not teach seq2seq with preprocessed obs, output: {}'
-            .format(str_output)
+            'Teacher could not teach seq2seq with preprocessed obs, output: {}'.format(
+                str_output
+            ),
         )
 
     def _pyt_batchsort_train(self, datatype, preprocess):
@@ -335,8 +350,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
         self.assertTrue(
             solved_task(str_output, valid, test),
             'Teacher could not teach seq2seq with batch sort '
-            'and args {} and output {}'
-            .format((datatype, preprocess), str_output)
+            'and args {} and output {}'.format((datatype, preprocess), str_output),
         )
 
     @testing_utils.retry()
@@ -379,15 +393,18 @@ class TestPytorchDataTeacher(unittest.TestCase):
             regular_teacher_act = teacher.act()
 
         keys = set(pytorch_teacher_act.keys()).intersection(
-            set(regular_teacher_act.keys()))
+            set(regular_teacher_act.keys())
+        )
         self.assertTrue(len(keys) != 0)
         for key in keys:
-            self.assertTrue(pytorch_teacher_act[key] == regular_teacher_act[key],
-                            'PytorchDataTeacher does not have the same value '
-                            'as regular teacher for act key: {}. '
-                            'Values: {}; {}'.format(
-                                key, pytorch_teacher_act[key], regular_teacher_act[key])
-                            )
+            self.assertTrue(
+                pytorch_teacher_act[key] == regular_teacher_act[key],
+                'PytorchDataTeacher does not have the same value '
+                'as regular teacher for act key: {}. '
+                'Values: {}; {}'.format(
+                    key, pytorch_teacher_act[key], regular_teacher_act[key]
+                ),
+            )
 
     def test_pyt_multitask(self):
         """
@@ -413,9 +430,10 @@ class TestPytorchDataTeacher(unittest.TestCase):
             self.assertTrue(
                 '[ loaded {} episodes with a total of {} examples ]'.format(
                     ep_and_ex_counts[0], ep_and_ex_counts[1]
-                ) in str_output,
+                )
+                in str_output,
                 'PytorchDataTeacher multitasking failed with '
-                'following args: {}'.format(opt)
+                'following args: {}'.format(opt),
             )
 
         # task; num eps; num exs
@@ -430,7 +448,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
             (1080, 1800),
             (1400, 1400),
             (680, 1400),
-            (1000, 1000)
+            (1000, 1000),
         ]
         defaults = integration_test_parser_defaults.copy()
 

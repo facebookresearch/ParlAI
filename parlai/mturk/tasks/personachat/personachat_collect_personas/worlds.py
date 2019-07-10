@@ -14,6 +14,7 @@ import pickle
 
 class PersonaProfileWorld(MTurkOnboardWorld):
     """A world that provides a persona to the MTurkAgent"""
+
     def __init__(self, opt, mturk_agent):
         self.opt = opt
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -29,16 +30,19 @@ class PersonaProfileWorld(MTurkOnboardWorld):
 
     def parley(self):
         # Persona creation instructions
-        self.mturk_agent.observe({
-            'id': 'SYSTEM',
-            'text': (
-                'Please create your character by entering'
-                '<b><span style="color:blue">{} sentences</span></b> below in'
-                'the input-box. \nYou have <b><span style="color:blue">{} '
-                'mins</span></b> to finish the persona creation.'
-                .format(self.n_persona, int(self.max_persona_time / 60))
-            )
-        })
+        self.mturk_agent.observe(
+            {
+                'id': 'SYSTEM',
+                'text': (
+                    'Please create your character by entering'
+                    '<b><span style="color:blue">{} sentences</span></b> below in'
+                    'the input-box. \nYou have <b><span style="color:blue">{} '
+                    'mins</span></b> to finish the persona creation.'.format(
+                        self.n_persona, int(self.max_persona_time / 60)
+                    )
+                ),
+            }
+        )
         while not self.persona_done:
             act = self.mturk_agent.act(timeout=self.max_persona_time)
             # Check timeout
@@ -47,9 +51,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
                 return
 
             candidate_persona = [
-                x
-                for x in act['text'].split('.'.strip())  # sic.
-                if x != ''
+                x for x in act['text'].split('.'.strip()) if x != ''  # sic.
             ]
 
             for cand in candidate_persona:
@@ -59,11 +61,12 @@ class PersonaProfileWorld(MTurkOnboardWorld):
                         'id': 'SYSTEM',
                         'text': (
                             '\n A sentence you entered is too long:\n \
-                            <b><span style="color:blue">' + cand +
-                            '</span></b>\nPlease resend a sentence '
+                            <b><span style="color:blue">'
+                            + cand
+                            + '</span></b>\nPlease resend a sentence '
                             '<b><span style="color:blue">less than 15 '
                             'words</span></b>.'
-                        )
+                        ),
                     }
                     self.mturk_agent.observe(validate(control_msg))
                     candidate_persona.remove(cand)
@@ -73,11 +76,12 @@ class PersonaProfileWorld(MTurkOnboardWorld):
                         'id': 'SYSTEM',
                         'text': (
                             '\n A sentence you entered is too short:\n'
-                            '<b><span style="color:blue">' + cand +
-                            '</span></b>\n Please resend a sentence '
+                            '<b><span style="color:blue">'
+                            + cand
+                            + '</span></b>\n Please resend a sentence '
                             '<b><span style="color:blue">more than 3 '
                             'words</span></b>.'
-                        )
+                        ),
                     }
                     self.mturk_agent.observe(validate(control_msg))
                     candidate_persona.remove(cand)
@@ -94,7 +98,7 @@ class PersonaProfileWorld(MTurkOnboardWorld):
                         '"Done with this HIT" below to submit the HIT.'
                         '</span></b>'
                     ),
-                    'exceed_min_turns': True
+                    'exceed_min_turns': True,
                 }
                 self.mturk_agent.observe(validate(control_msg))
                 self.episodeDone = True
@@ -103,9 +107,10 @@ class PersonaProfileWorld(MTurkOnboardWorld):
                 control_msg = {
                     'id': 'SYSTEM',
                     'text': (
-                        'Please enter at least *{}* more sentence(s) to finish. '
-                        .format(str(self.n_persona - len(self.persona)))
-                    )
+                        'Please enter at least *{}* more sentence(s) to finish. '.format(
+                            str(self.n_persona - len(self.persona))
+                        )
+                    ),
                 }
                 self.mturk_agent.observe(validate(control_msg))
 
@@ -118,25 +123,30 @@ class PersonaProfileWorld(MTurkOnboardWorld):
             'persona_{}_{}_{}.pkl'.format(
                 time.strftime("%Y%m%d-%H%M%S"),
                 self.mturk_agent.worker_id,
-                self.task_type
-            )
+                self.task_type,
+            ),
         )
         print('Profile successfully saved at {}.'.format(filename))
-        pickle.dump({'hit_id': self.mturk_agent.hit_id,
-                     'assignment_id': self.mturk_agent.assignment_id,
-                     'worker_id': self.mturk_agent.worker_id,
-                     'n_persona': self.n_persona,
-                     'persona': self.persona}, open(filename, 'wb'))
+        pickle.dump(
+            {
+                'hit_id': self.mturk_agent.hit_id,
+                'assignment_id': self.mturk_agent.assignment_id,
+                'worker_id': self.mturk_agent.worker_id,
+                'n_persona': self.n_persona,
+                'persona': self.persona,
+            },
+            open(filename, 'wb'),
+        )
 
     def shutdown(self):
         global shutdown_agent
 
         def shutdown_agent(mturk_agent):
             mturk_agent.shutdown()
-        Parallel(
-            n_jobs=1,
-            backend='threading'
-        )(delayed(shutdown_agent)(agent) for agent in [self.mturk_agent])
+
+        Parallel(n_jobs=1, backend='threading')(
+            delayed(shutdown_agent)(agent) for agent in [self.mturk_agent]
+        )
 
     def review_work(self):
         if self.persona_done:

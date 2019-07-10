@@ -44,12 +44,13 @@ FAKE_ID = 'BOGUS'
 def assert_equal_by(val_func, val, max_time):
     start_time = time.time()
     while val_func() != val:
-        assert time.time() - start_time < max_time, \
-            "Value was not attained in specified time"
+        assert (
+            time.time() - start_time < max_time
+        ), "Value was not attained in specified time"
         time.sleep(0.1)
 
 
-class MockSocket():
+class MockSocket:
     def __init__(self):
         self.last_messages = {}
         self.connected = False
@@ -85,16 +86,17 @@ class MockSocket():
                 return
             packet_dict = json.loads(message)
             if packet_dict['content']['id'] == 'WORLD_ALIVE':
-                self.ws.send_message(
-                    client, json.dumps({'type': 'conn_success'}))
+                self.ws.send_message(client, json.dumps({'type': 'conn_success'}))
                 self.connected = True
             elif packet_dict['content']['type'] == 'heartbeat':
                 pong = packet_dict['content'].copy()
                 pong['type'] = 'pong'
-                self.ws.send_message(client, json.dumps({
-                    'type': data_model.SOCKET_ROUTE_PACKET_STRING,
-                    'content': pong,
-                }))
+                self.ws.send_message(
+                    client,
+                    json.dumps(
+                        {'type': data_model.SOCKET_ROUTE_PACKET_STRING, 'content': pong}
+                    ),
+                )
             if 'receiver_id' in packet_dict['content']:
                 receiver_id = packet_dict['content']['receiver_id']
                 use_func = self.handlers.get(receiver_id, self.do_nothing)
@@ -120,8 +122,7 @@ class MockSocket():
             self.ws.run_forever()
 
         self.listen_thread = threading.Thread(
-            target=run_socket,
-            name='Fake-Socket-Thread'
+            target=run_socket, name='Fake-Socket-Thread'
         )
         self.listen_thread.daemon = True
         self.listen_thread.start()
@@ -129,6 +130,7 @@ class MockSocket():
 
 class InitTestMTurkManager(unittest.TestCase):
     '''Unit tests for MTurkManager setup'''
+
     def setUp(self):
         argparser = ParlaiParser(False, False)
         argparser.add_parlai_data_path()
@@ -138,9 +140,7 @@ class InitTestMTurkManager(unittest.TestCase):
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
         self.mturk_manager = MTurkManager(
-            opt=self.opt,
-            mturk_agent_ids=self.mturk_agent_ids,
-            is_test=True,
+            opt=self.opt, mturk_agent_ids=self.mturk_agent_ids, is_test=True
         )
 
     def tearDown(self):
@@ -160,23 +160,22 @@ class InitTestMTurkManager(unittest.TestCase):
         self.assertFalse(manager.is_shutdown)
         self.assertFalse(manager.is_unique)
         self.assertEqual(manager.opt, opt)
-        self.assertEqual(manager.mturk_agent_ids,
-                         self.mturk_agent_ids)
+        self.assertEqual(manager.mturk_agent_ids, self.mturk_agent_ids)
         self.assertEqual(manager.is_sandbox, opt['is_sandbox'])
         self.assertEqual(manager.num_conversations, opt['num_conversations'])
         self.assertEqual(manager.is_sandbox, opt['is_sandbox'])
 
         self.assertGreaterEqual(
-            manager.required_hits,
-            manager.num_conversations * len(self.mturk_agent_ids))
+            manager.required_hits, manager.num_conversations * len(self.mturk_agent_ids)
+        )
 
         self.assertIsNotNone(manager.agent_pool_change_condition)
 
         self.assertEqual(manager.minimum_messages, opt.get('min_messages', 0))
-        self.assertEqual(manager.auto_approve_delay,
-                         opt.get('auto_approve_delay', 4 * 7 * 24 * 3600))
-        self.assertEqual(manager.has_time_limit,
-                         opt.get('max_time', 0) > 0)
+        self.assertEqual(
+            manager.auto_approve_delay, opt.get('auto_approve_delay', 4 * 7 * 24 * 3600)
+        )
+        self.assertEqual(manager.has_time_limit, opt.get('max_time', 0) > 0)
         self.assertIsInstance(manager.worker_manager, WorkerManager)
         self.assertEqual(manager.task_state, manager.STATE_CREATED)
 
@@ -198,6 +197,7 @@ class InitTestMTurkManager(unittest.TestCase):
 class TestMTurkManagerUnitFunctions(unittest.TestCase):
     '''Tests some of the simpler MTurkManager functions that don't require
     much additional state to run'''
+
     def setUp(self):
         self.fake_socket = MockSocket()
         time.sleep(0.1)
@@ -209,18 +209,31 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
         self.mturk_manager = MTurkManager(
-            opt=self.opt,
-            mturk_agent_ids=self.mturk_agent_ids,
-            is_test=True,
+            opt=self.opt, mturk_agent_ids=self.mturk_agent_ids, is_test=True
         )
         self.mturk_manager._init_state()
         self.mturk_manager.port = self.fake_socket.port
-        self.agent_1 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_1,
-                                  TEST_ASSIGNMENT_ID_1, TEST_WORKER_ID_1)
-        self.agent_2 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_2,
-                                  TEST_ASSIGNMENT_ID_2, TEST_WORKER_ID_2)
-        self.agent_3 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_3,
-                                  TEST_ASSIGNMENT_ID_3, TEST_WORKER_ID_3)
+        self.agent_1 = MTurkAgent(
+            self.opt,
+            self.mturk_manager,
+            TEST_HIT_ID_1,
+            TEST_ASSIGNMENT_ID_1,
+            TEST_WORKER_ID_1,
+        )
+        self.agent_2 = MTurkAgent(
+            self.opt,
+            self.mturk_manager,
+            TEST_HIT_ID_2,
+            TEST_ASSIGNMENT_ID_2,
+            TEST_WORKER_ID_2,
+        )
+        self.agent_3 = MTurkAgent(
+            self.opt,
+            self.mturk_manager,
+            TEST_HIT_ID_3,
+            TEST_ASSIGNMENT_ID_3,
+            TEST_WORKER_ID_3,
+        )
 
     def tearDown(self):
         self.mturk_manager.shutdown()
@@ -241,7 +254,8 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager._move_agents_to_waiting([self.agent_1])
         self.agent_1.reduce_state.assert_called_once()
         manager.socket_manager.close_channel.assert_called_once_with(
-            self.agent_1.get_connection_id())
+            self.agent_1.get_connection_id()
+        )
         manager.worker_manager.change_agent_conversation.assert_not_called()
         manager.force_expire_hit.assert_not_called()
         manager.socket_manager.close_channel.reset_mock()
@@ -265,7 +279,8 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager.socket_manager.close_channel.assert_not_called()
         manager.worker_manager.change_agent_conversation.assert_not_called()
         manager.force_expire_hit.assert_called_once_with(
-            self.agent_3.worker_id, self.agent_3.assignment_id)
+            self.agent_3.worker_id, self.agent_3.assignment_id
+        )
 
     def test_socket_setup(self):
         '''Basic socket setup should fail when not in correct state,
@@ -289,58 +304,74 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager._setup_socket()
         manager.force_expire_hit = mock.MagicMock()
         manager._onboard_new_agent = mock.MagicMock()
-        manager.socket_manager.open_channel = \
-            mock.MagicMock(wraps=manager.socket_manager.open_channel)
-        manager.worker_manager.worker_alive = \
-            mock.MagicMock(wraps=manager.worker_manager.worker_alive)
+        manager.socket_manager.open_channel = mock.MagicMock(
+            wraps=manager.socket_manager.open_channel
+        )
+        manager.worker_manager.worker_alive = mock.MagicMock(
+            wraps=manager.worker_manager.worker_alive
+        )
         open_channel = manager.socket_manager.open_channel
         worker_alive = manager.worker_manager.worker_alive
 
         # Test no assignment
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': None,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': None,
+                'conversation_id': None,
+            },
+            '',
+        )
         manager._on_alive(alive_packet)
         open_channel.assert_not_called()
         worker_alive.assert_not_called()
         manager._onboard_new_agent.assert_not_called()
 
         # Test not accepting workers
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': None,
+            },
+            '',
+        )
         manager.accepting_workers = False
         manager._on_alive(alive_packet)
-        open_channel.assert_called_once_with(
-            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
+        open_channel.assert_called_once_with(TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
         worker_alive.assert_called_once_with(TEST_WORKER_ID_1)
         worker_state = manager.worker_manager._get_worker(TEST_WORKER_ID_1)
         self.assertIsNotNone(worker_state)
         open_channel.reset_mock()
         worker_alive.reset_mock()
         manager.force_expire_hit.assert_called_once_with(
-            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
+            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1
+        )
         manager._onboard_new_agent.assert_not_called()
         manager.force_expire_hit.reset_mock()
 
         # Test successful creation
         manager.accepting_workers = True
         manager._on_alive(alive_packet)
-        open_channel.assert_called_once_with(
-            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
+        open_channel.assert_called_once_with(TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
         worker_alive.assert_called_once_with(TEST_WORKER_ID_1)
         manager._onboard_new_agent.assert_called_once()
         manager._onboard_new_agent.reset_mock()
         manager.force_expire_hit.assert_not_called()
 
-        agent = manager.worker_manager.get_agent_for_assignment(
-            TEST_ASSIGNMENT_ID_1)
+        agent = manager.worker_manager.get_agent_for_assignment(TEST_ASSIGNMENT_ID_1)
         self.assertIsInstance(agent, MTurkAgent)
         self.assertEqual(agent.get_status(), AssignState.STATUS_NONE)
 
@@ -352,7 +383,8 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         agent.log_reconnect = mock.MagicMock(wraps=agent.log_reconnect)
         manager._on_alive(alive_packet)
         manager.force_expire_hit.assert_called_once_with(
-            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
+            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1
+        )
         manager.force_expire_hit.reset_mock()
         agent.set_status.assert_not_called()
         manager._add_agent_to_pool.assert_not_called()
@@ -360,12 +392,20 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         agent.log_reconnect.reset_mock()
 
         # Reconnect in None state onboarding conversation_id
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': 'o_1234',
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': 'o_1234',
+            },
+            '',
+        )
         manager._on_alive(alive_packet)
         manager.force_expire_hit.assert_not_called()
         agent.set_status.assert_called_once_with(AssignState.STATUS_ONBOARDING)
@@ -374,12 +414,20 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         agent.log_reconnect.reset_mock()
 
         # Reconnect in None state waiting conversation_id
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': 'w_1234',
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': 'w_1234',
+            },
+            '',
+        )
         agent.set_status(AssignState.STATUS_NONE)
         agent.set_status.reset_mock()
         manager._on_alive(alive_packet)
@@ -402,19 +450,28 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         agent.log_reconnect.reset_mock()
 
         # Reconnect in onboarding with no conversation id
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': None,
+            },
+            '',
+        )
         agent.set_status(AssignState.STATUS_ONBOARDING)
         agent.set_status.reset_mock()
         manager._restore_agent_state = mock.MagicMock()
         manager._on_alive(alive_packet)
         manager.force_expire_hit.assert_not_called()
         manager._restore_agent_state.assert_called_once_with(
-            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
+            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1
+        )
         agent.set_status.assert_not_called()
         manager._add_agent_to_pool.assert_not_called()
         agent.log_reconnect.assert_called_once()
@@ -427,7 +484,8 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager._restore_agent_state = mock.MagicMock()
         manager._on_alive(alive_packet)
         manager.force_expire_hit.assert_called_once_with(
-            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
+            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1
+        )
         manager.force_expire_hit.reset_mock()
         manager._restore_agent_state.assert_not_called()
         agent.set_status.assert_not_called()
@@ -443,7 +501,8 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager._on_alive(alive_packet)
         manager.force_expire_hit.assert_not_called()
         manager._restore_agent_state.assert_called_once_with(
-            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
+            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1
+        )
         agent.set_status.assert_not_called()
         manager._add_agent_to_pool.assert_called_once()
         manager._add_agent_to_pool.reset_mock()
@@ -451,12 +510,20 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         agent.log_reconnect.reset_mock()
 
         # Reconnect in waiting with conv id
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': 'w_1234',
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': 'w_1234',
+            },
+            '',
+        )
         agent.set_status(AssignState.STATUS_WAITING)
         agent.set_status.reset_mock()
         manager._restore_agent_state = mock.MagicMock()
@@ -470,12 +537,20 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         agent.log_reconnect.reset_mock()
 
         # Reconnect in waiting with task id
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': 't_1234',
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': 't_1234',
+            },
+            '',
+        )
         agent.set_status(AssignState.STATUS_WAITING)
         agent.set_status.reset_mock()
         manager._restore_agent_state = mock.MagicMock()
@@ -490,12 +565,20 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         # Test active convos failure
         agent.set_status(AssignState.STATUS_IN_TASK)
         agent.set_status.reset_mock()
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_2,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_2,
+                'conversation_id': None,
+            },
+            '',
+        )
         manager.opt['allowed_conversations'] = 1
         manager._on_alive(alive_packet)
         agent.set_status.assert_not_called()
@@ -506,12 +589,20 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         # Test uniqueness failed
         agent.set_status(AssignState.STATUS_DONE)
         agent.set_status.reset_mock()
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_2,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_2,
+                'conversation_id': None,
+            },
+            '',
+        )
         manager.is_unique = True
         manager._on_alive(alive_packet)
         agent.set_status.assert_not_called()
@@ -522,15 +613,24 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         # Test in task reconnects
         agent.set_status(AssignState.STATUS_IN_TASK)
         agent.set_status.reset_mock()
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': None,
+            },
+            '',
+        )
         manager._on_alive(alive_packet)
         manager._restore_agent_state.assert_called_once_with(
-            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1)
+            TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1
+        )
         agent.set_status.assert_not_called()
         manager._add_agent_to_pool.assert_not_called()
         agent.log_reconnect.assert_called_once()
@@ -538,9 +638,11 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
 
         # Test all final states
         for use_state in [
-            AssignState.STATUS_DISCONNECT, AssignState.STATUS_DONE,
-            AssignState.STATUS_EXPIRED, AssignState.STATUS_RETURNED,
-            AssignState.STATUS_PARTNER_DISCONNECT
+            AssignState.STATUS_DISCONNECT,
+            AssignState.STATUS_DONE,
+            AssignState.STATUS_EXPIRED,
+            AssignState.STATUS_RETURNED,
+            AssignState.STATUS_PARTNER_DISCONNECT,
         ]:
             manager.send_command = mock.MagicMock()
             agent.set_status(use_state)
@@ -562,23 +664,36 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager.force_expire_hit = mock.MagicMock()
         manager._on_socket_dead = mock.MagicMock()
 
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': None,
+            },
+            '',
+        )
         manager._on_alive(alive_packet)
-        agent = manager.worker_manager.get_agent_for_assignment(
-            TEST_ASSIGNMENT_ID_1)
+        agent = manager.worker_manager.get_agent_for_assignment(TEST_ASSIGNMENT_ID_1)
         self.assertIsInstance(agent, MTurkAgent)
         self.assertEqual(agent.get_status(), AssignState.STATUS_NONE)
         agent.set_hit_is_abandoned = mock.MagicMock()
 
         # Test SNS_ASSIGN_ABANDONDED
-        message_packet = Packet('', '', '', '', TEST_ASSIGNMENT_ID_1, {
-            'text': MTurkManagerFile.SNS_ASSIGN_ABANDONDED,
-        }, '')
+        message_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            TEST_ASSIGNMENT_ID_1,
+            {'text': MTurkManagerFile.SNS_ASSIGN_ABANDONDED},
+            '',
+        )
         manager._handle_mturk_message(message_packet)
         agent.set_hit_is_abandoned.assert_called_once()
         agent.set_hit_is_abandoned.reset_mock()
@@ -588,9 +703,15 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager._on_socket_dead.reset_mock()
 
         # Test SNS_ASSIGN_RETURNED
-        message_packet = Packet('', '', '', '', TEST_ASSIGNMENT_ID_1, {
-            'text': MTurkManagerFile.SNS_ASSIGN_RETURNED,
-        }, '')
+        message_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            TEST_ASSIGNMENT_ID_1,
+            {'text': MTurkManagerFile.SNS_ASSIGN_RETURNED},
+            '',
+        )
         agent.hit_is_returned = False
         manager._handle_mturk_message(message_packet)
         manager._on_socket_dead.assert_called_once_with(
@@ -600,9 +721,15 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         self.assertTrue(agent.hit_is_returned)
 
         # Test SNS_ASSIGN_SUBMITTED
-        message_packet = Packet('', '', '', '', TEST_ASSIGNMENT_ID_1, {
-            'text': MTurkManagerFile.SNS_ASSIGN_SUBMITTED,
-        }, '')
+        message_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            TEST_ASSIGNMENT_ID_1,
+            {'text': MTurkManagerFile.SNS_ASSIGN_SUBMITTED},
+            '',
+        )
         agent.hit_is_complete = False
         manager._handle_mturk_message(message_packet)
         manager._on_socket_dead.assert_not_called()
@@ -610,18 +737,30 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
 
     def test_new_message(self):
         '''test on_new_message'''
-        alive_packet = Packet('', TEST_WORKER_ID_1, '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            TEST_WORKER_ID_1,
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': None,
+            },
+            '',
+        )
 
         message_packet = Packet(
-            '', '', MTurkManagerFile.AMAZON_SNS_NAME, '',
-            TEST_ASSIGNMENT_ID_1, {
-                'text': MTurkManagerFile.SNS_ASSIGN_SUBMITTED,
-            }, '')
+            '',
+            '',
+            MTurkManagerFile.AMAZON_SNS_NAME,
+            '',
+            TEST_ASSIGNMENT_ID_1,
+            {'text': MTurkManagerFile.SNS_ASSIGN_SUBMITTED},
+            '',
+        )
 
         manager = self.mturk_manager
         manager._handle_mturk_message = mock.MagicMock()
@@ -630,8 +769,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         # test mturk message
         manager._on_new_message(alive_packet)
         manager._handle_mturk_message.assert_not_called()
-        manager.worker_manager.route_packet.assert_called_once_with(
-            alive_packet)
+        manager.worker_manager.route_packet.assert_called_once_with(alive_packet)
         manager.worker_manager.route_packet.reset_mock()
 
         # test non-mturk message
@@ -644,13 +782,13 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager.onboard_function = mock.MagicMock()
         manager.worker_manager.change_agent_conversation = mock.MagicMock()
         manager._move_agents_to_waiting = mock.MagicMock()
-        manager.worker_manager.get_agent_for_assignment = \
-            mock.MagicMock(return_value=self.agent_1)
+        manager.worker_manager.get_agent_for_assignment = mock.MagicMock(
+            return_value=self.agent_1
+        )
 
         onboard_threads = manager.assignment_to_onboard_thread
         did_launch = manager._onboard_new_agent(self.agent_1)
-        assert_equal_by(
-            onboard_threads[self.agent_1.assignment_id].isAlive, True, 0.2)
+        assert_equal_by(onboard_threads[self.agent_1.assignment_id].isAlive, True, 0.2)
         time.sleep(0.1)
         manager.worker_manager.change_agent_conversation.assert_called_once()
         manager.worker_manager.change_agent_conversation.reset_mock()
@@ -668,8 +806,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
 
         # Advance the worker to simulate a connection, assert onboarding goes
         self.agent_1.set_status(AssignState.STATUS_ONBOARDING)
-        assert_equal_by(
-            onboard_threads[self.agent_1.assignment_id].isAlive, False, 0.6)
+        assert_equal_by(onboard_threads[self.agent_1.assignment_id].isAlive, False, 0.6)
         manager.onboard_function.assert_called_with(self.agent_1)
         manager._move_agents_to_waiting.assert_called_once()
 
@@ -757,8 +894,7 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         # Assert finality doesn't change
         self.agent_1.set_status(AssignState.STATUS_DISCONNECT)
         manager.mark_workers_done([self.agent_1])
-        self.assertEqual(
-            AssignState.STATUS_DISCONNECT, self.agent_1.get_status())
+        self.assertEqual(AssignState.STATUS_DISCONNECT, self.agent_1.get_status())
 
         # assert uniqueness works as expected
         manager.is_unique = True
@@ -768,7 +904,8 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
         manager.unique_qual_name = 'fake_qual_name'
         manager.mark_workers_done([self.agent_2])
         manager.give_worker_qualification.assert_called_once_with(
-            self.agent_2.worker_id, 'fake_qual_name')
+            self.agent_2.worker_id, 'fake_qual_name'
+        )
         self.assertEqual(self.agent_2.get_status(), AssignState.STATUS_DONE)
         manager.is_unique = False
 
@@ -789,27 +926,37 @@ class TestMTurkManagerPoolHandling(unittest.TestCase):
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
         self.mturk_manager = MTurkManager(
-            opt=self.opt,
-            mturk_agent_ids=self.mturk_agent_ids,
-            is_test=True,
+            opt=self.opt, mturk_agent_ids=self.mturk_agent_ids, is_test=True
         )
         self.mturk_manager._init_state()
-        self.agent_1 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_1,
-                                  TEST_ASSIGNMENT_ID_1, TEST_WORKER_ID_1)
-        self.agent_2 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_2,
-                                  TEST_ASSIGNMENT_ID_2, TEST_WORKER_ID_2)
-        self.agent_3 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_3,
-                                  TEST_ASSIGNMENT_ID_3, TEST_WORKER_ID_3)
+        self.agent_1 = MTurkAgent(
+            self.opt,
+            self.mturk_manager,
+            TEST_HIT_ID_1,
+            TEST_ASSIGNMENT_ID_1,
+            TEST_WORKER_ID_1,
+        )
+        self.agent_2 = MTurkAgent(
+            self.opt,
+            self.mturk_manager,
+            TEST_HIT_ID_2,
+            TEST_ASSIGNMENT_ID_2,
+            TEST_WORKER_ID_2,
+        )
+        self.agent_3 = MTurkAgent(
+            self.opt,
+            self.mturk_manager,
+            TEST_HIT_ID_3,
+            TEST_ASSIGNMENT_ID_3,
+            TEST_WORKER_ID_3,
+        )
 
     def tearDown(self):
         self.mturk_manager.shutdown()
 
     def test_pool_add_get_remove_and_expire(self):
         '''Ensure the pool properly adds and releases workers'''
-        all_are_eligible = {
-            'multiple': True,
-            'func': lambda workers: workers,
-        }
+        all_are_eligible = {'multiple': True, 'func': lambda workers: workers}
         manager = self.mturk_manager
 
         # Test empty pool
@@ -820,47 +967,51 @@ class TestMTurkManagerPoolHandling(unittest.TestCase):
         manager._add_agent_to_pool(self.agent_1)
         manager._add_agent_to_pool(self.agent_2)
         manager._add_agent_to_pool(self.agent_3)
-        self.assertListEqual(manager._get_unique_pool(all_are_eligible), [
-            self.agent_1, self.agent_2, self.agent_3])
+        self.assertListEqual(
+            manager._get_unique_pool(all_are_eligible),
+            [self.agent_1, self.agent_2, self.agent_3],
+        )
 
         # Test extra add to pool has no effect
         manager._add_agent_to_pool(self.agent_1)
-        self.assertListEqual(manager._get_unique_pool(all_are_eligible), [
-            self.agent_1, self.agent_2, self.agent_3])
+        self.assertListEqual(
+            manager._get_unique_pool(all_are_eligible),
+            [self.agent_1, self.agent_2, self.agent_3],
+        )
 
         # Test remove from the pool works:
         manager._remove_from_agent_pool(self.agent_2)
-        self.assertListEqual(manager._get_unique_pool(all_are_eligible), [
-            self.agent_1, self.agent_3])
+        self.assertListEqual(
+            manager._get_unique_pool(all_are_eligible), [self.agent_1, self.agent_3]
+        )
 
         # Test repeated remove fails
         with self.assertRaises(AssertionError):
             manager._remove_from_agent_pool(self.agent_2)
 
         # Test eligibility function
-        second_worker_only = {
-            'multiple': True,
-            'func': lambda workers: [workers[1]],
-        }
-        self.assertListEqual(manager._get_unique_pool(second_worker_only), [
-            self.agent_3])
+        second_worker_only = {'multiple': True, 'func': lambda workers: [workers[1]]}
+        self.assertListEqual(
+            manager._get_unique_pool(second_worker_only), [self.agent_3]
+        )
 
         # Test single eligibility function
         only_agent_1 = {
             'multiple': False,
             'func': lambda worker: worker is self.agent_1,
         }
-        self.assertListEqual(manager._get_unique_pool(only_agent_1), [
-            self.agent_1])
+        self.assertListEqual(manager._get_unique_pool(only_agent_1), [self.agent_1])
 
         # Test expiration of pool
         manager.force_expire_hit = mock.MagicMock()
 
         manager._expire_agent_pool()
-        manager.force_expire_hit.assert_any_call(self.agent_1.worker_id,
-                                                 self.agent_1.assignment_id)
-        manager.force_expire_hit.assert_any_call(self.agent_3.worker_id,
-                                                 self.agent_3.assignment_id)
+        manager.force_expire_hit.assert_any_call(
+            self.agent_1.worker_id, self.agent_1.assignment_id
+        )
+        manager.force_expire_hit.assert_any_call(
+            self.agent_3.worker_id, self.agent_3.assignment_id
+        )
         pool = manager._get_unique_pool(all_are_eligible)
         self.assertEqual(pool, [])
 
@@ -872,8 +1023,7 @@ class TestMTurkManagerPoolHandling(unittest.TestCase):
         self.assertListEqual(manager.agent_pool, [self.agent_1, self.agent_2])
         # Only one worker per unique list though
         manager.is_sandbox = False
-        self.assertListEqual(manager._get_unique_pool(all_are_eligible), [
-            self.agent_1])
+        self.assertListEqual(manager._get_unique_pool(all_are_eligible), [self.agent_1])
 
 
 class TestMTurkManagerTimeHandling(unittest.TestCase):
@@ -886,21 +1036,28 @@ class TestMTurkManagerTimeHandling(unittest.TestCase):
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
         self.mturk_manager = MTurkManager(
-            opt=self.opt,
-            mturk_agent_ids=self.mturk_agent_ids,
-            is_test=True,
+            opt=self.opt, mturk_agent_ids=self.mturk_agent_ids, is_test=True
         )
         self.mturk_manager.time_limit_checked = time.time()
-        self.mturk_manager.worker_manager.un_time_block_workers = \
-            mock.MagicMock()
+        self.mturk_manager.worker_manager.un_time_block_workers = mock.MagicMock()
         self.mturk_manager.worker_manager.time_block_worker = mock.MagicMock()
         self.old_time = MTurkManagerFile.time
         MTurkManagerFile.time = mock.MagicMock()
         MTurkManagerFile.time.time = mock.MagicMock(return_value=0)
-        self.agent_1 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_1,
-                                  TEST_ASSIGNMENT_ID_1, TEST_WORKER_ID_1)
-        self.agent_2 = MTurkAgent(self.opt, self.mturk_manager, TEST_HIT_ID_2,
-                                  TEST_ASSIGNMENT_ID_2, TEST_WORKER_ID_2)
+        self.agent_1 = MTurkAgent(
+            self.opt,
+            self.mturk_manager,
+            TEST_HIT_ID_1,
+            TEST_ASSIGNMENT_ID_1,
+            TEST_WORKER_ID_1,
+        )
+        self.agent_2 = MTurkAgent(
+            self.opt,
+            self.mturk_manager,
+            TEST_HIT_ID_2,
+            TEST_ASSIGNMENT_ID_2,
+            TEST_WORKER_ID_2,
+        )
 
     def tearDown(self):
         self.mturk_manager.shutdown()
@@ -910,10 +1067,8 @@ class TestMTurkManagerTimeHandling(unittest.TestCase):
         manager = self.mturk_manager
         manager._should_use_time_logs = mock.MagicMock(return_value=True)
 
-        file_path = os.path.join(parent_dir,
-                                 MTurkManagerFile.TIME_LOGS_FILE_NAME)
-        file_lock = os.path.join(parent_dir,
-                                 MTurkManagerFile.TIME_LOGS_FILE_LOCK)
+        file_path = os.path.join(parent_dir, MTurkManagerFile.TIME_LOGS_FILE_NAME)
+        file_lock = os.path.join(parent_dir, MTurkManagerFile.TIME_LOGS_FILE_LOCK)
         # No lock should exist already
         self.assertFalse(os.path.exists(file_lock))
 
@@ -926,22 +1081,21 @@ class TestMTurkManagerTimeHandling(unittest.TestCase):
             self.assertEqual(len(existing_times), 1)
 
         # Try to induce a check, ensure it doesn't fire because too recent
-        MTurkManagerFile.time.time = \
-            mock.MagicMock(return_value=(60 * 60 * 24 * 1000))
+        MTurkManagerFile.time.time = mock.MagicMock(return_value=(60 * 60 * 24 * 1000))
         manager._check_time_limit()
         manager.worker_manager.un_time_block_workers.assert_not_called()
 
         # Try to induce a check, ensure it doesn't fire because outside of 30
         # minute window
         MTurkManagerFile.time.time = mock.MagicMock(
-            return_value=(60 * 60 * 24 * 1000) + (60 * 40))
+            return_value=(60 * 60 * 24 * 1000) + (60 * 40)
+        )
         manager.time_limit_checked = 0
         manager._check_time_limit()
         manager.worker_manager.un_time_block_workers.assert_not_called()
 
         # Induce a check
-        MTurkManagerFile.time.time = \
-            mock.MagicMock(return_value=(60 * 60 * 24 * 1000))
+        MTurkManagerFile.time.time = mock.MagicMock(return_value=(60 * 60 * 24 * 1000))
         manager._check_time_limit()
         self.assertEqual(manager.time_limit_checked, (60 * 60 * 24 * 1000))
 
@@ -952,8 +1106,7 @@ class TestMTurkManagerTimeHandling(unittest.TestCase):
         manager.opt['max_time'] = 10000
         # Ensure a worker below the time limit isn't blocked
         MTurkManagerFile.time.time = mock.MagicMock(return_value=10000)
-        self.mturk_manager._should_use_time_logs = \
-            mock.MagicMock(return_value=True)
+        self.mturk_manager._should_use_time_logs = mock.MagicMock(return_value=True)
         manager._log_working_time(self.agent_1)
         manager.worker_manager.time_block_worker.assert_not_called()
 
@@ -961,7 +1114,8 @@ class TestMTurkManagerTimeHandling(unittest.TestCase):
         MTurkManagerFile.time.time = mock.MagicMock(return_value=100000)
         manager._log_working_time(self.agent_2)
         manager.worker_manager.time_block_worker.assert_called_with(
-            self.agent_2.worker_id)
+            self.agent_2.worker_id
+        )
 
         # Ensure on a (forced) reset all workers are freed
         manager._reset_time_logs(force=True)
@@ -984,9 +1138,7 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
         self.mturk_manager = MTurkManager(
-            opt=self.opt,
-            mturk_agent_ids=self.mturk_agent_ids,
-            is_test=True,
+            opt=self.opt, mturk_agent_ids=self.mturk_agent_ids, is_test=True
         )
         MTurkManagerFile.server_utils.delete_server = mock.MagicMock()
 
@@ -999,10 +1151,12 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
         server_url = 'https://fake_server_url'
         topic_arn = 'aws_topic_arn'
         mturk_page_url = 'https://test_mturk_page_url'
-        MTurkManagerFile.server_utils.setup_server = \
-            mock.MagicMock(return_value=server_url)
-        MTurkManagerFile.server_utils.setup_legacy_server = \
-            mock.MagicMock(return_value=server_url)
+        MTurkManagerFile.server_utils.setup_server = mock.MagicMock(
+            return_value=server_url
+        )
+        MTurkManagerFile.server_utils.setup_legacy_server = mock.MagicMock(
+            return_value=server_url
+        )
 
         # Currently in state created. Try steps that are too soon to work
         with self.assertRaises(AssertionError):
@@ -1014,10 +1168,12 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
         manager.opt['local'] = True
         MTurkManagerFile.input = mock.MagicMock()
         MTurkManagerFile.mturk_utils.setup_aws_credentials = mock.MagicMock()
-        MTurkManagerFile.mturk_utils.check_mturk_balance = \
-            mock.MagicMock(return_value=False)
-        MTurkManagerFile.mturk_utils.calculate_mturk_cost = \
-            mock.MagicMock(return_value=10)
+        MTurkManagerFile.mturk_utils.check_mturk_balance = mock.MagicMock(
+            return_value=False
+        )
+        MTurkManagerFile.mturk_utils.calculate_mturk_cost = mock.MagicMock(
+            return_value=10
+        )
         with self.assertRaises(SystemExit):
             manager.setup_server()
 
@@ -1030,8 +1186,9 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
         # Test successful setup
         manager.opt['local'] = False
         MTurkManagerFile.input.reset_mock()
-        MTurkManagerFile.mturk_utils.check_mturk_balance = \
-            mock.MagicMock(return_value=True)
+        MTurkManagerFile.mturk_utils.check_mturk_balance = mock.MagicMock(
+            return_value=True
+        )
         MTurkManagerFile.mturk_utils.create_hit_config = mock.MagicMock()
         manager.setup_server()
         # Copy one file for cover page, 2 workers, and 1 onboarding
@@ -1044,13 +1201,14 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
         self.assertEqual(manager.task_state, manager.STATE_SERVER_ALIVE)
 
         # Start a new run
-        MTurkManagerFile.mturk_utils.setup_sns_topic = \
-            mock.MagicMock(return_value=topic_arn)
+        MTurkManagerFile.mturk_utils.setup_sns_topic = mock.MagicMock(
+            return_value=topic_arn
+        )
         manager._init_state = mock.MagicMock(wraps=manager._init_state)
         manager.start_new_run()
         manager._init_state.assert_called_once()
         MTurkManagerFile.mturk_utils.setup_sns_topic.assert_called_once_with(
-            manager.opt['task'], manager.server_url, manager.task_group_id,
+            manager.opt['task'], manager.server_url, manager.task_group_id
         )
         self.assertEqual(manager.topic_arn, topic_arn)
         self.assertEqual(manager.task_state, manager.STATE_INIT_RUN)
@@ -1059,12 +1217,10 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
         manager._setup_socket = mock.MagicMock()
         manager.ready_to_accept_workers()
         manager._setup_socket.assert_called_once()
-        self.assertEqual(manager.task_state,
-                         MTurkManager.STATE_ACCEPTING_WORKERS)
+        self.assertEqual(manager.task_state, MTurkManager.STATE_ACCEPTING_WORKERS)
 
         # 'launch' some hits
-        manager.create_additional_hits = \
-            mock.MagicMock(return_value=mturk_page_url)
+        manager.create_additional_hits = mock.MagicMock(return_value=mturk_page_url)
         hits_url = manager.create_hits()
         manager.create_additional_hits.assert_called_once()
         self.assertEqual(manager.task_state, MTurkManager.STATE_HITS_MADE)
@@ -1104,13 +1260,13 @@ class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
         manager._expire_agent_pool.assert_called_once()
         manager._wait_for_task_expirations.assert_called_once()
         MTurkManagerFile.server_utils.delete_server.assert_called_once()
-        MTurkManagerFile.mturk_utils.delete_sns_topic.assert_called_once_with(
-            topic_arn)
+        MTurkManagerFile.mturk_utils.delete_sns_topic.assert_called_once_with(topic_arn)
 
 
 class TestMTurkManagerConnectedFunctions(unittest.TestCase):
     '''Semi-unit semi-integration tests on the more state-dependent
     MTurkManager functionality'''
+
     def setUp(self):
         self.fake_socket = MockSocket()
         time.sleep(0.1)
@@ -1122,9 +1278,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
         self.mturk_manager = MTurkManager(
-            opt=self.opt,
-            mturk_agent_ids=self.mturk_agent_ids,
-            is_test=True,
+            opt=self.opt, mturk_agent_ids=self.mturk_agent_ids, is_test=True
         )
         self.mturk_manager._init_state()
         self.mturk_manager.port = self.fake_socket.port
@@ -1132,29 +1286,44 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.mturk_manager._wait_for_task_expirations = mock.MagicMock()
         self.mturk_manager.task_group_id = 'TEST_GROUP_ID'
         self.mturk_manager.server_url = 'https://127.0.0.1'
-        self.mturk_manager.task_state = \
-            self.mturk_manager.STATE_ACCEPTING_WORKERS
+        self.mturk_manager.task_state = self.mturk_manager.STATE_ACCEPTING_WORKERS
         self.mturk_manager._setup_socket()
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_1,
-            'hit_id': TEST_HIT_ID_1,
-            'assignment_id': TEST_ASSIGNMENT_ID_1,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_1,
+                'hit_id': TEST_HIT_ID_1,
+                'assignment_id': TEST_ASSIGNMENT_ID_1,
+                'conversation_id': None,
+            },
+            '',
+        )
         self.mturk_manager._on_alive(alive_packet)
-        alive_packet = Packet('', '', '', '', '', {
-            'worker_id': TEST_WORKER_ID_2,
-            'hit_id': TEST_HIT_ID_2,
-            'assignment_id': TEST_ASSIGNMENT_ID_2,
-            'conversation_id': None,
-        }, '')
+        alive_packet = Packet(
+            '',
+            '',
+            '',
+            '',
+            '',
+            {
+                'worker_id': TEST_WORKER_ID_2,
+                'hit_id': TEST_HIT_ID_2,
+                'assignment_id': TEST_ASSIGNMENT_ID_2,
+                'conversation_id': None,
+            },
+            '',
+        )
         self.mturk_manager._on_alive(alive_packet)
-        self.agent_1 = \
-            self.mturk_manager.worker_manager.get_agent_for_assignment(
-                TEST_ASSIGNMENT_ID_1)
-        self.agent_2 = \
-            self.mturk_manager.worker_manager.get_agent_for_assignment(
-                TEST_ASSIGNMENT_ID_2)
+        self.agent_1 = self.mturk_manager.worker_manager.get_agent_for_assignment(
+            TEST_ASSIGNMENT_ID_1
+        )
+        self.agent_2 = self.mturk_manager.worker_manager.get_agent_for_assignment(
+            TEST_ASSIGNMENT_ID_2
+        )
 
     def tearDown(self):
         self.mturk_manager.shutdown()
@@ -1169,8 +1338,9 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         manager.socket_manager.close_channel = mock.MagicMock()
         agent.reduce_state = mock.MagicMock()
         agent.set_status = mock.MagicMock(wraps=agent.set_status)
-        manager._handle_agent_disconnect = \
-            mock.MagicMock(wraps=manager._handle_agent_disconnect)
+        manager._handle_agent_disconnect = mock.MagicMock(
+            wraps=manager._handle_agent_disconnect
+        )
 
         # Test status none
         agent.set_status(AssignState.STATUS_NONE)
@@ -1231,7 +1401,8 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         )
         self.assertTrue(agent.disconnected)
         manager._handle_agent_disconnect.assert_called_once_with(
-            worker_id, assignment_id)
+            worker_id, assignment_id
+        )
 
         # test status done
         agent.disconnected = False
@@ -1293,7 +1464,8 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         manager.socket_manager.close_channel = mock.MagicMock()
         manager.free_workers([self.agent_1])
         manager.socket_manager.close_channel.assert_called_once_with(
-            self.agent_1.get_connection_id())
+            self.agent_1.get_connection_id()
+        )
 
     def test_force_expire_hit(self):
         manager = self.mturk_manager
@@ -1325,8 +1497,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.assertEqual(agent.get_status(), AssignState.STATUS_EXPIRED)
         self.assertTrue(agent.hit_is_expired)
         self.assertIsNotNone(data['inactive_text'])
-        socket_manager.close_channel.assert_called_once_with(
-            agent.get_connection_id())
+        socket_manager.close_channel.assert_called_once_with(agent.get_connection_id())
 
         # Test expiring not finished worker with custom arguments
         agent.set_status(AssignState.STATUS_ONBOARDING)
@@ -1336,8 +1507,11 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         special_disconnect_text = 'You were disconnected as part of a test'
         test_ack_function = mock.MagicMock()
         manager.force_expire_hit(
-            worker_id, assignment_id,
-            text=special_disconnect_text, ack_func=test_ack_function)
+            worker_id,
+            assignment_id,
+            text=special_disconnect_text,
+            ack_func=test_ack_function,
+        )
         manager.send_command.assert_called_once()
         args = manager.send_command.call_args[0]
         used_worker_id, used_assignment_id, data = args[0], args[1], args[2]
@@ -1349,8 +1523,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.assertEqual(agent.get_status(), AssignState.STATUS_EXPIRED)
         self.assertTrue(agent.hit_is_expired)
         self.assertEqual(data['inactive_text'], special_disconnect_text)
-        socket_manager.close_channel.assert_called_once_with(
-            agent.get_connection_id())
+        socket_manager.close_channel.assert_called_once_with(agent.get_connection_id())
         test_ack_function.assert_called()
 
     def test_get_qualifications(self):
@@ -1362,7 +1535,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         fake_qual = {
             'QualificationTypeId': 'fake_qual_id',
             'Comparator': 'DoesNotExist',
-            'ActionsGuarded': 'DiscoverPreviewAndAccept'
+            'ActionsGuarded': 'DiscoverPreviewAndAccept',
         }
         qualifications = manager.get_qualification_list([fake_qual])
         self.assertListEqual(qualifications, [fake_qual])
@@ -1400,12 +1573,15 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         qualifications = manager.get_qualification_list()
 
         for qual in qualifications:
-            self.assertEqual(qual['ActionsGuarded'],
-                             'DiscoverPreviewAndAccept')
+            self.assertEqual(qual['ActionsGuarded'], 'DiscoverPreviewAndAccept')
             self.assertEqual(qual['Comparator'], 'DoesNotExist')
 
-        for qual_id in [disconnect_qual_id, block_qual_id,
-                        max_time_qual_id, unique_qual_id]:
+        for qual_id in [
+            disconnect_qual_id,
+            block_qual_id,
+            max_time_qual_id,
+            unique_qual_id,
+        ]:
             has_qual = False
             for qual in qualifications:
                 if qual['QualificationTypeId'] == qual_id:
@@ -1432,15 +1608,14 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         manager.task_group_id = 'task_group_id'
         manager.topic_arn = 'topic_arn'
         mturk_chat_url = '{}/chat_index?task_group_id={}'.format(
-            manager.server_url,
-            manager.task_group_id
+            manager.server_url, manager.task_group_id
         )
         hit_url = manager.create_additional_hits(5)
         mturk_utils.create_hit_type.assert_called_once()
         mturk_utils.subscribe_to_hits.assert_called_with(
-            fake_hit, manager.is_sandbox, manager.topic_arn)
-        self.assertEqual(
-            len(mturk_utils.create_hit_with_hit_type.call_args_list), 5)
+            fake_hit, manager.is_sandbox, manager.topic_arn
+        )
+        self.assertEqual(len(mturk_utils.create_hit_with_hit_type.call_args_list), 5)
         mturk_utils.create_hit_with_hit_type.assert_called_with(
             opt=manager.opt,
             page_url=mturk_chat_url,
@@ -1458,8 +1633,9 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         incomplete_1 = 'incomplete_1'
         incomplete_2 = 'incomplete_2'
         MTurkManagerFile.mturk_utils.expire_hit = mock.MagicMock()
-        worker_manager.get_complete_hits = \
-            mock.MagicMock(return_value=[completed_hit_id])
+        worker_manager.get_complete_hits = mock.MagicMock(
+            return_value=[completed_hit_id]
+        )
         manager.hit_id_list = [completed_hit_id, incomplete_1, incomplete_2]
 
         manager.expire_all_unassigned_hits()
@@ -1491,8 +1667,9 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         mturk_utils.find_qualification = find_qualification
         mturk_utils.give_worker_qualification = mock.MagicMock()
         mturk_utils.remove_worker_qualification = mock.MagicMock()
-        mturk_utils.find_or_create_qualification = \
-            mock.MagicMock(return_value=success_id)
+        mturk_utils.find_or_create_qualification = mock.MagicMock(
+            return_value=success_id
+        )
 
         # Test give qualification
         manager.give_worker_qualification(worker_id, test_qual_name)
@@ -1524,7 +1701,8 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         self.agent_1.set_status(AssignState.STATUS_IN_TASK)
         manager._handle_partner_disconnect(self.agent_1)
         self.assertEqual(
-            self.agent_1.get_status(), AssignState.STATUS_PARTNER_DISCONNECT)
+            self.agent_1.get_status(), AssignState.STATUS_PARTNER_DISCONNECT
+        )
         args = manager.send_command.call_args[0]
         worker_id, assignment_id, data = args[0], args[1], args[2]
         self.assertEqual(worker_id, self.agent_1.worker_id)
@@ -1542,19 +1720,20 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         agent.id = 'test_agent_id'
         agent.request_message = mock.MagicMock()
         agent.message_request_time = time.time()
-        test_message = {'text': 'this_is_a_message', 'message_id': 'test_id',
-                        'type': data_model.MESSAGE_TYPE_MESSAGE}
+        test_message = {
+            'text': 'this_is_a_message',
+            'message_id': 'test_id',
+            'type': data_model.MESSAGE_TYPE_MESSAGE,
+        }
         agent.append_message(test_message)
         manager._restore_agent_state(agent.worker_id, agent.assignment_id)
         self.assertFalse(agent.alived)
         manager.send_command.assert_not_called()
         worker_manager.change_agent_conversation.assert_called_once_with(
-            agent=agent, conversation_id=agent.conversation_id,
-            new_agent_id=agent.id,
+            agent=agent, conversation_id=agent.conversation_id, new_agent_id=agent.id
         )
         agent.alived = True
-        assert_equal_by(
-            lambda: len(agent.request_message.call_args_list), 1, 0.6)
+        assert_equal_by(lambda: len(agent.request_message.call_args_list), 1, 0.6)
         manager.send_command.assert_called_once()
         args = manager.send_command.call_args[0]
         worker_id, assignment_id, data = args[0], args[1], args[2]
@@ -1570,7 +1749,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
         manager._expire_onboarding_pool()
 
         manager.force_expire_hit.assert_called_once_with(
-            self.agent_2.worker_id, self.agent_2.assignment_id,
+            self.agent_2.worker_id, self.agent_2.assignment_id
         )
 
 

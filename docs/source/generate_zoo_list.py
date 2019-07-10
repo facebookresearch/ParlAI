@@ -22,9 +22,8 @@ for model in model_list:
     if 'example' in model:
         example = model['example']
     else:
-        example = (
-            "python -m parlai.scripts.eval_model --model {} --task {} -mf {}"
-            .format(model['agent'], model['task'], model['path'])
+        example = "python -m parlai.scripts.eval_model --model {} --task {} -mf {}".format(
+            model['agent'], model['task'], model['path']
         )
     result = model.get('result', '').strip().split("\n")
     # strip leading whitespace from results

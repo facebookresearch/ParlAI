@@ -16,10 +16,7 @@ DEV_FULLWIKI_FILENAME = 'hotpot_dev_fullwiki_v{}.json'.format(VERSION)
 
 URL = 'http://curtis.ml.cmu.edu/datasets/hotpot/'
 
-OUTPUT_FORMAT = (
-    'text:{context_question}\t'
-    'labels:{answer}'
-)
+OUTPUT_FORMAT = 'text:{context_question}\t' 'labels:{answer}'
 
 
 def _handle_data_point(data_point):
@@ -32,8 +29,7 @@ def _handle_data_point(data_point):
     context_question_txt += data_point['question']
 
     output = OUTPUT_FORMAT.format(
-        context_question=context_question_txt,
-        answer=data_point['answer']
+        context_question=context_question_txt, answer=data_point['answer']
     )
     output += '\t\tepisode_done:True\n'
     return output
@@ -58,7 +54,9 @@ def build(opt):
 
         # Download the data.
         build_data.download(URL + TRAIN_FILENAME, dpath, TRAIN_FILENAME)
-        build_data.download(URL + DEV_DISTRACTOR_FILENAME, dpath, DEV_DISTRACTOR_FILENAME)
+        build_data.download(
+            URL + DEV_DISTRACTOR_FILENAME, dpath, DEV_DISTRACTOR_FILENAME
+        )
         build_data.download(URL + DEV_FULLWIKI_FILENAME, dpath, DEV_FULLWIKI_FILENAME)
 
         with open(os.path.join(dpath, TRAIN_FILENAME)) as f:

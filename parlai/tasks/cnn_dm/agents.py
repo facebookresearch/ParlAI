@@ -18,8 +18,16 @@ def _fix_missing_period(line):
     dm_single_close_quote = u'\u2019'
     dm_double_close_quote = u'\u201d'
     END_TOKENS = [
-        '.', '!', '?', '...', "'", "`", '"',
-        dm_single_close_quote, dm_double_close_quote, ")"
+        '.',
+        '!',
+        '?',
+        '...',
+        "'",
+        "`",
+        '"',
+        dm_single_close_quote,
+        dm_double_close_quote,
+        ")",
     ]  # acceptable ways to end a sentence
     if "@highlight" in line or line == "" or line[-1] in END_TOKENS:
         return line
@@ -75,11 +83,12 @@ class CNNDMTeacher(DialogTeacher):
                     else:
                         article.append(line)
                 text = (
-                    unicodedata.normalize('NFKC', ' '.join(article)) +
-                    '\n' + self.question
+                    unicodedata.normalize('NFKC', ' '.join(article))
+                    + '\n'
+                    + self.question
                 )
                 label = [unicodedata.normalize('NFKC', ' '.join(highlights))]
-                yield((text, label, None, None), new_episode)
+                yield ((text, label, None, None), new_episode)
 
         print("{} stories added, {} stories missing.".format(num_added, num_missing))
 

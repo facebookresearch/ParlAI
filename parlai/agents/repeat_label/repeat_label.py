@@ -28,13 +28,25 @@ class RepeatLabelAgent(Agent):
     @staticmethod
     def add_cmdline_args(argparser):
         group = argparser.add_argument_group('RepeatLabel Arguments')
-        group.add_argument('--return_one_random_answer', type='bool', default=True,
-                           help='return one answer from the set of labels')
-        group.add_argument('--cant_answer_percent', type=float, default=0,
-                           help='set value in range[0,1] to set chance of '
-                                'replying with special message')
-        group.add_argument('--cant_answer_message', type=str, default="I don't know.",
-                           help='Message sent when the model cannot answer')
+        group.add_argument(
+            '--return_one_random_answer',
+            type='bool',
+            default=True,
+            help='return one answer from the set of labels',
+        )
+        group.add_argument(
+            '--cant_answer_percent',
+            type=float,
+            default=0,
+            help='set value in range[0,1] to set chance of '
+            'replying with special message',
+        )
+        group.add_argument(
+            '--cant_answer_message',
+            type=str,
+            default="I don't know.",
+            help='Message sent when the model cannot answer',
+        )
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)

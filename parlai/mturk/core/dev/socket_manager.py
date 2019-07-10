@@ -17,7 +17,7 @@ import parlai.mturk.core.dev.data_model as data_model
 import parlai.mturk.core.dev.shared_utils as shared_utils
 
 
-class Packet():
+class Packet:
     """Class for holding information sent over a socket"""
 
     # Possible Packet Status
@@ -26,9 +26,20 @@ class Packet():
     STATUS_SENT = 1
     STATUS_FAIL = 2
 
-    def __init__(self, id, type, sender_id, receiver_id, assignment_id, data,
-                 conversation_id=None, requires_ack=None, blocking=None,
-                 ack_func=None):
+    # TODO remove unused attributes
+    def __init__(
+        self,
+        id,
+        type,
+        sender_id,
+        receiver_id,
+        assignment_id,
+        data,
+        conversation_id=None,
+        requires_ack=None,
+        blocking=None,
+        ack_func=None,
+    ):
         """
         Create a packet to be used for holding information before it is
         sent through the socket
@@ -69,13 +80,20 @@ class Packet():
             data = packet.get('data', '')
             conversation_id = packet.get('conversation_id', None)
 
-            return Packet(packet_id, packet_type, sender_id, receiver_id,
-                          assignment_id, data, conversation_id)
+            return Packet(
+                packet_id,
+                packet_type,
+                sender_id,
+                receiver_id,
+                assignment_id,
+                data,
+                conversation_id,
+            )
         except Exception as e:
             print_and_log(
                 logging.WARN,
                 'Could not create a valid packet out of the dictionary'
-                'provided: {}, error: {}'.format(packet, repr(e))
+                'provided: {}, error: {}'.format(packet, repr(e)),
             )
             return None
 
@@ -88,7 +106,7 @@ class Packet():
             'receiver_id': self.receiver_id,
             'assignment_id': self.assignment_id,
             'conversation_id': self.conversation_id,
-            'data': self.data
+            'data': self.data,
         }
 
     def get_sender_connection_id(self):
@@ -126,18 +144,27 @@ class Packet():
         return self
 
 
-class SocketManager():
+class SocketManager:
     """SocketManager is a wrapper around websocket to conform to the API
     allowing the remote state to sync up with our local state.
     """
+
     # Default pings without pong before socket considered dead
     DEF_MISSED_PONGS = 20
     PING_RATE = 4
     DEF_DEAD_TIME = 30
 
-    def __init__(self, server_url, port, alive_callback, message_callback,
-                 socket_dead_callback, task_group_id,
-                 socket_dead_timeout=None, server_death_callback=None):
+    def __init__(
+        self,
+        server_url,
+        port,
+        alive_callback,
+        message_callback,
+        socket_dead_callback,
+        task_group_id,
+        socket_dead_timeout=None,
+        server_death_callback=None,
+    ):
         """
         server_url:           url at which the server is to be run
         port:                 port for the socket to operate on
@@ -215,7 +242,7 @@ class SocketManager():
             shared_utils.print_and_log(
                 logging.WARN,
                 'Unexpected socket error occured: {}'.format(repr(e)),
-                should_print=True
+                should_print=True,
             )
             return False
         return True
@@ -232,19 +259,33 @@ class SocketManager():
 
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
-        self._safe_send(json.dumps({
-            'type': data_model.AGENT_ALIVE,
-            'content':
-                {'id': 'WORLD_ALIVE', 'sender_id': self.get_my_sender_id()},
-        }), force=True)
+        self._safe_send(
+            json.dumps(
+                {
+                    'type': data_model.AGENT_ALIVE,
+                    'content': {
+                        'id': 'WORLD_ALIVE',
+                        'sender_id': self.get_my_sender_id(),
+                    },
+                }
+            ),
+            force=True,
+        )
 
     def _try_send_world_ping(self):
         if time.time() - self.last_sent_ping_time > self.PING_RATE:
-            self._safe_send(json.dumps({
-                'type': data_model.WORLD_PING,
-                'content':
-                    {'id': 'WORLD_PING', 'sender_id': self.get_my_sender_id()},
-            }), force=True)
+            self._safe_send(
+                json.dumps(
+                    {
+                        'type': data_model.WORLD_PING,
+                        'content': {
+                            'id': 'WORLD_PING',
+                            'sender_id': self.get_my_sender_id(),
+                        },
+                    }
+                ),
+                force=True,
+            )
             self.last_sent_ping_time = time.time()
 
     def _send_packet(self, packet, send_time):
@@ -253,15 +294,9 @@ class SocketManager():
         pkt = packet.as_dict()
         if pkt['data'] is None or packet.status == Packet.STATUS_SENT:
             return  # This packet was _just_ sent.
-        shared_utils.print_and_log(
-            logging.DEBUG,
-            'Send packet: {}'.format(packet)
-        )
+        shared_utils.print_and_log(logging.DEBUG, 'Send packet: {}'.format(packet))
 
-        result = self._safe_send(json.dumps({
-            'type': pkt['type'],
-            'content': pkt,
-        }))
+        result = self._safe_send(json.dumps({'type': pkt['type'], 'content': pkt}))
         if not result:
             # The channel died mid-send, wait for it to come back up
             self.sending_queue.put((send_time, packet))
@@ -290,20 +325,18 @@ class SocketManager():
                     should_print=True,
                 )
                 self.server_death_callback()
+
         reaper_thread = threading.Thread(
-            target=_reaper_thread,
-            name='socket-reaper-{}'.format(self.task_group_id)
+            target=_reaper_thread, name='socket-reaper-{}'.format(self.task_group_id)
         )
         reaper_thread.daemon = True
         reaper_thread.start()
 
     def _setup_socket(self):
         """Create socket handlers and registers the socket"""
+
         def on_socket_open(*args):
-            shared_utils.print_and_log(
-                logging.DEBUG,
-                'Socket open: {}'.format(args)
-            )
+            shared_utils.print_and_log(logging.DEBUG, 'Socket open: {}'.format(args))
             self._send_world_alive()
 
         def on_error(ws, error):
@@ -314,8 +347,7 @@ class SocketManager():
                     raise Exception("Socket refused connection, cancelling")
                 else:
                     shared_utils.print_and_log(
-                        logging.WARN,
-                        'Socket logged error: {}'.format(error),
+                        logging.WARN, 'Socket logged error: {}'.format(error)
                     )
                     self._ensure_closed()
             except Exception:
@@ -333,8 +365,7 @@ class SocketManager():
             dead we set up a thread to reap the whole task.
             """
             shared_utils.print_and_log(
-                logging.INFO,
-                'World server disconnected: {}'.format(args)
+                logging.INFO, 'World server disconnected: {}'.format(args)
             )
             self._ensure_closed()
             if not self.is_shutdown:
@@ -395,8 +426,7 @@ class SocketManager():
                 protocol = "ws"
             while self.keep_running:
                 try:
-                    sock_addr = "{}://{}:{}/".format(
-                        protocol, url_base_name, self.port)
+                    sock_addr = "{}://{}:{}/".format(protocol, url_base_name, self.port)
                     self.ws = websocket.WebSocketApp(
                         sock_addr,
                         on_message=on_message,
@@ -404,21 +434,18 @@ class SocketManager():
                         on_close=on_disconnect,
                     )
                     self.ws.on_open = on_socket_open
-                    self.ws.run_forever(
-                        ping_interval=8 * self.PING_RATE
-                    )
+                    self.ws.run_forever(ping_interval=8 * self.PING_RATE)
                     self._ensure_closed()
                 except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
-                        'Socket error {}, attempting restart'.format(repr(e))
+                        'Socket error {}, attempting restart'.format(repr(e)),
                     )
                 time.sleep(0.2)
 
         # Start listening thread
         self.listen_thread = threading.Thread(
-            target=run_socket,
-            name='Main-Socket-Recv-Thread'
+            target=run_socket, name='Main-Socket-Recv-Thread'
         )
         self.listen_thread.daemon = True
         self.listen_thread.start()
@@ -441,8 +468,7 @@ class SocketManager():
 
         # Start sending thread
         self.send_thread = threading.Thread(
-            target=self.channel_thread,
-            name='Main-Socket-Send-Thread'
+            target=self.channel_thread, name='Main-Socket-Send-Thread'
         )
         self.send_thread.daemon = True
         self.send_thread.start()
@@ -495,13 +521,13 @@ class SocketManager():
     def close_channel(self, connection_id):
         """Closes a channel by connection_id"""
         shared_utils.print_and_log(
-            logging.DEBUG,
-            'Closing channel {}'.format(connection_id)
+            logging.DEBUG, 'Closing channel {}'.format(connection_id)
         )
         if connection_id in self.open_channels:
             self.open_channels.remove(connection_id)
             with self.packet_map_lock:
                 packet_ids = list(self.packet_map.keys())
+                # Clear packets associated with this sender
                 for packet_id in packet_ids:
                     packet = self.packet_map[packet_id]
                     packet_conn_id = packet.get_receiver_connection_id()
@@ -521,8 +547,7 @@ class SocketManager():
     def queue_packet(self, packet):
         """Queues sending a packet to its intended owner"""
         shared_utils.print_and_log(
-            logging.DEBUG,
-            'Put packet ({}) in queue'.format(packet.id)
+            logging.DEBUG, 'Put packet ({}) in queue'.format(packet.id)
         )
         # Get the current time to put packet into the priority queue
         with self.packet_map_lock:
