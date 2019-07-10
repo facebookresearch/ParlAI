@@ -194,7 +194,7 @@ class SelfFeedingModel(nn.Module):
     def build_head(self, opt, outdim=1, num_layers=1):
         dim = self.opt['embedding_size']
         modules = []
-        for i in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             modules.append(nn.Linear(dim, dim))
             modules.append(nn.ReLU())
         modules.append(nn.Linear(dim, outdim))

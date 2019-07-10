@@ -500,7 +500,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         else:
             # Return full rankings to calculate hits@ metrics
             cand_ranked = []
-            for i, ordering in enumerate(ranks):
+            for ordering in ranks:
                 cand_ranked.append([cands[rank] for rank in ordering])
             preds = [cand_ranked[i][0] for i in range(batchsize)]
 
