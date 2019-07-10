@@ -27,6 +27,7 @@ import os
 from torch import optim
 
 from parlai.core.agents import Agent
+from parlai.core.thread_utils import SharedTable
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (

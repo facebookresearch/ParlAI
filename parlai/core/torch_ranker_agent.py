@@ -19,7 +19,6 @@ import torch
 from torch import nn
 
 from parlai.core.distributed_utils import is_distributed
-from parlai.core.thread_utils import SharedTable
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 
