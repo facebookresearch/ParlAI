@@ -1194,10 +1194,8 @@ class TorchAgent(ABC, Agent):
 
         # check truncation
         if 'text_vec' in obs:
-            obs.force_set(
-                'text_vec',
-                torch.LongTensor(self._check_truncate(obs['text_vec'], truncate, True)),
-            )
+            truncated_vec = self._check_truncate(obs['text_vec'], truncate, True)
+            obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
 
@@ -1220,10 +1218,8 @@ class TorchAgent(ABC, Agent):
 
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
-            obs.force_set(
-                label_type + '_vec',
-                self._check_truncate(obs[label_type + '_vec'], truncate),
-            )
+            truncated_vec = self._check_truncate(obs[label_type + '_vec'], truncate)
+            obs.force_set(label_type + '_vec', torch.LongTensor(truncated_vec))
         else:
             # pick one label if there are multiple
             lbls = obs[label_type]
