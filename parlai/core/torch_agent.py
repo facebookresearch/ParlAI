@@ -527,7 +527,7 @@ class TorchAgent(ABC, Agent):
         agent.add_argument(
             '--update-freq',
             type=int,
-            default=-1,
+            default=1,
             hidden=True,
             help='Accumulate gradients N times before performing an optimizer.step().',
         )
