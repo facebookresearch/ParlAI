@@ -881,7 +881,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return opt
 
-    def parse_args(self, args=None, namespace=None, print_args=True):
+    def parse_args(self, args=None, namespace=None, print_args=True, force_known=True):
         """
         Parse the provided arguments and returns a dictionary of the ``args``.
 
@@ -890,7 +890,10 @@ class ParlaiParser(argparse.ArgumentParser):
         return ``None``.
         """
         self.add_extra_args(args)
-        self.args = super().parse_args(args=args)
+        if force_known:
+            self.args = super().parse_args(args=args)
+        else:
+            self.args, _unknown = super().parse_known_args(args=args)
         self.opt = Opt(vars(self.args))
 
         # custom post-parsing
