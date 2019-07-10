@@ -215,13 +215,6 @@ class History(object):
         self.history_strings = []
         self.history_vecs = []
 
-    def reset_metrics(self):
-        """Reset all TorchAgentMetrics."""
-        super().reset_metrics()
-        self.metrics['gnorm'] = 0.0
-        self.metrics['clip'] = 0.0
-        self.metrics['updates'] = 0
-
     def _update_strings(self, text):
         if self.size > 0:
             while len(self.history_strings) >= self.size:
@@ -648,10 +641,19 @@ class TorchAgent(ABC, Agent):
                 if len(self.dict) % 8 != 0:
                     for i in range(8 - len(self.dict) % 8):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
+
+            self.metrics = {}
+            # gradient norms
+            self.metrics['gnorm'] = 0.0
+            # gradient clipping rate
+            self.metrics['clip'] = 0.0
+            # number of calls to optimizer.step()
+            self.metrics['updates'] = 0
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
             self.dict = shared['dict']
+            self.metrics = shared['metrics']
             if self.opt['batchsize'] == 1:
                 # if we're not using batching (e.g. mturk), then replies really need
                 # to stay separated
@@ -1113,6 +1115,14 @@ class TorchAgent(ABC, Agent):
         Subclasses will likely want to share their model as well.
         """
         shared = super().share()
+
+        if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
+            torch.set_num_threads(1)
+            # move metrics and model to shared memory
+            self.metrics = SharedTable(self.metrics)
+            self.model.share_memory()
+        shared['metrics'] = self.metrics
+
         shared['dict'] = self.dict
         if hasattr(self, 'model'):
             shared['model'] = self.model
@@ -1613,6 +1623,13 @@ class TorchAgent(ABC, Agent):
         self.replies.clear()
         self.reset_metrics()
 
+    def reset_metrics(self):
+        """Reset all TorchAgentMetrics."""
+        super().reset_metrics()
+        self.metrics['gnorm'] = 0.0
+        self.metrics['clip'] = 0.0
+        self.metrics['updates'] = 0
+
     def act(self):
         """Call batch_act with the singleton batch."""
         return self.batch_act([self.observation])[0]
@@ -1728,7 +1745,7 @@ class TorchAgent(ABC, Agent):
                     self.model.parameters(), self.opt['gradient_clip']
                 )
             self.metrics['gnorm'] += grad_norm
-            self.metrics['clip'] += int(grad_norm > self.opt['gradient_clip'])
+            self.metrics['clip'] += float(grad_norm > self.opt['gradient_clip'])
 
         self.metrics['updates'] += 1
         self.optimizer.step()

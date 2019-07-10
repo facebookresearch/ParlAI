@@ -355,21 +355,15 @@ class TorchGeneratorAgent(TorchAgent):
             # set up shared properties
             self.model = shared['model']
             self.criterion = shared['criterion']
-            self.metrics = shared['metrics']
             states = shared.get('states', {})
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
             # should correctly initialize to floats or ints here
-            self.metrics = {
-                'nll_loss': 0.0,
-                'loss': 0.0,
-                'num_tokens': 0,
-                'correct_tokens': 0,
-                'total_skipped_batches': 0,
-                'gnorm': 0.0,
-                'clip': 0,
-                'updates': 0,
-            }
+            self.metrics['nll_loss'] = 0.0
+            self.metrics['loss'] = 0.0
+            self.metrics['correct_tokens'] = 0
+            self.metrics['total_skipped_batches'] = 0
+
             # this is not a shared instance of this class, so do full init
             if self.beam_dot_log:
                 self.beam_dot_dir = tempfile.mkdtemp(
