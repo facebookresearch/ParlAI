@@ -196,7 +196,7 @@ class Message(dict):
             )
         super().__setitem__(key, val)
 
-    def set_key(key, val):
+    def force_set(self, key, val):
         super().__setitem__(key, val)
 
     def copy(self):

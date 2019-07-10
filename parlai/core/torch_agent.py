@@ -1194,8 +1194,9 @@ class TorchAgent(ABC, Agent):
 
         # check truncation
         if 'text_vec' in obs:
-            obs['text_vec'] = torch.LongTensor(
-                self._check_truncate(obs['text_vec'], truncate, True)
+            obs.force_set(
+                'text_vec',
+                torch.LongTensor(self._check_truncate(obs['text_vec'], truncate, True)),
             )
 
         return obs
@@ -1219,8 +1220,9 @@ class TorchAgent(ABC, Agent):
 
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
-            obs[label_type + '_vec'] = self._check_truncate(
-                obs[label_type + '_vec'], truncate
+            obs.force_set(
+                label_type + '_vec',
+                self._check_truncate(obs[label_type + '_vec'], truncate),
             )
         else:
             # pick one label if there are multiple
@@ -1498,6 +1500,7 @@ class TorchAgent(ABC, Agent):
 
         This includes remembering the past history of the conversation.
         """
+        observation = Message(observation)  # in case teachers did not send a Message
         reply = self.last_reply(use_reply=self.opt.get('use_reply', 'label'))
         # update the history using the observation
         self.history.update_history(observation, add_next=reply)
