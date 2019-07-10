@@ -155,8 +155,12 @@ class BiEncoderRankerAgent(TorchRankerAgent):
     def _set_text_vec(self, *args, **kwargs):
         obs = super()._set_text_vec(*args, **kwargs)
         # concatenate the [CLS] and [SEP] tokens
-        if obs is not None and 'text_vec' in obs:
-            obs['text_vec'] = surround(obs['text_vec'], self.START_IDX, self.END_IDX)
+        if obs is not None and 'text_vec' in obs and 'added_start_end_tokens' not in obs:
+            obs.force_set(
+                'text_vec',
+                surround(obs['text_vec'], self.START_IDX, self.END_IDX)
+            )
+            obs['added_start_end_tokens'] = True
         return obs
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
