@@ -169,7 +169,7 @@ class MemnnAgent(TorchRankerAgent):
 
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
-            obs['text'] = history.get_history_str()
+            obs['full_text'] = history.get_history_str()
             history_vecs = history.get_history_vec_list()
             if len(history_vecs) > 0:
                 obs['memory_vecs'] = history_vecs[:-1]
