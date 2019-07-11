@@ -635,7 +635,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         :param cands: a [bs, seq_len] or [bs, num_cands, seq_len](?) of vectorized
             candidates
-        """        
+        """
         return self.model.encode_dia_y(cands)
 
     def do_request_feedback(self, positivity):
