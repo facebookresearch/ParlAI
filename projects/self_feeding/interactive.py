@@ -12,7 +12,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.local_human.local_human import LocalHumanAgent
-from parlai.agents.transformer.transformer import TransformerAgent
+from projects.self_feeding.self_feeding_agent import SelfFeedingAgent
 
 import random
 
@@ -20,22 +20,9 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Interactive chat with a model')
-    parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.add_argument(
-        '--display-prettify',
-        type='bool',
-        default=False,
-        help='Set to use a prettytable when displaying '
-        'examples with text candidates',
-    )
-    parser.add_argument(
-        '--display-ignore-fields',
-        type=str,
-        default='label_candidates,text_candidates',
-        help='Do not display these fields',
-    )
-    LocalHumanAgent.add_cmdline_args(parser)
-    TransformerAgent.add_cmdline_args(parser)
+    parser.set_defaults(interactive_mode=True, task='interactive')
+    LocalHumanAgent.add_cmdline_args(parser)    
+    SelfFeedingAgent.add_cmdline_args(parser)
     parser.set_defaults(history_size=2)
     return parser
 
@@ -50,28 +37,32 @@ def interactive(opt, print_parser=None):
         print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
         opt = opt.parse_args()
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
-    # Set the task to dialog, since that's the type we want its outputs to be
-    print("Warning: hardcoding history_size=2")
+    # Set values to override when the opt dict for the saved model is loaded
     opt['override'] = {
-        'no_cuda': True,
-        'subtasks': ['dialog', 'sentiment'],
+        'no_cuda': False,
+        'subtasks': ['dialog', 'satisfaction'],
         'interactive': True,
+        'interactive_task': True,
         'prev_response_filter': True,
         'person_tokens': True,
+        'partial_load': True,
         'history_size': 2,
         'eval_candidates': 'fixed',
-        'fixed_candidates_path': 'data/convai2_cands.txt',
-        'fixed_candidate_vecs': opt['fixed_candidate_vecs'],
+        'encode_candidate_vecs': True,
+        'fixed_candidates_path': 'data/self_feeding/self_feeding_v02/convai2_cands.txt',
         # Pull these from current opt dictionary
+        'fixed_candidate_vecs': opt['fixed_candidate_vecs'],
         'rating_frequency': opt['rating_frequency'],
         'rating_gap': opt['rating_gap'],
         'rating_threshold': opt['rating_threshold'],
-        'request_explanation': opt['request_explanation'],
+        'request_feedback': opt['request_feedback'],
         'request_rating': opt['request_rating'],
     }
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
+    human_agent = LocalHumanAgent(opt)
+    # world = create_task(opt, [human_agent, agent])
     world = create_task(opt, agent)
 
     if print_parser:
