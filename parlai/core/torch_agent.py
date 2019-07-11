@@ -952,7 +952,7 @@ class TorchAgent(ABC, Agent):
             metrics['lr'] = round_sigfigs(current_lr, 4)
         metrics['num_updates'] = self._number_training_updates
 
-        steps = max(1, self.metrics['updates'])  # prevent divide by zero
+        steps = self.metrics['updates']
         if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
             metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
             metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
@@ -1118,7 +1118,6 @@ class TorchAgent(ABC, Agent):
         shared = super().share()
 
         if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
-            torch.set_num_threads(1)
             # move metrics and model to shared memory
             self.metrics = SharedTable(self.metrics)
             self.model.share_memory()
