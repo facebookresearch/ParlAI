@@ -69,7 +69,7 @@ python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --mod
 
 Or to recreate the results in the paper for training on 131k HH examples with the same hyperparameters that we used, run the following:
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train -mf $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
 ```
 
 ### Train on DIALOGUE (HH) + FEEDBACK examples
@@ -80,14 +80,17 @@ To train on more than one task (such as DIALOGUE and FEEDBACK), modify the previ
 
 Putting this all together, the command to recreate the 131k HH + 60k FB result from the paper is as follows (as reported in Table 9 in the paper, this setting had the same optimal hyperparameter settings as 131k HH):
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:diafee:train -mf $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:diafee:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
 ```
 
 ### Train on DIALOGUE (HH) + DIALOGUE (HB) examples
-To train on both HH and HB DIALOGUE examples, point the model to the train file that includes examples from both sets:
+To train on both HH and HB DIALOGUE examples, point the model to a train file that includes examples from both sets. For example, if you combined 131k HH DIALOGUE examples and 60k HB dialogue examples into a file called `train_hh131k_hb60k.txt`, you could add the following flag to train on that combined file for the DIALOGUE task:
 ```
 --dia-train train_hh_hb.txt
 ```
 
 ### Chat with a trained model
-TODO: Instructions coming soon.
+To chat with a model that's already been trained, use the `interactive.py` script.
+```
+python $PARLAIHOME/projects/self_feeding/interactive.py --model-file $PARLAIHOME/models/$MODEL
+```
