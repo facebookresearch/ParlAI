@@ -630,6 +630,14 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 m[k] = v
         return m
 
+    def encode_candidates(self, cands):
+        """Encodes a tensor of vectorized candidates
+
+        :param cands: a [bs, seq_len] or [bs, num_cands, seq_len](?) of vectorized
+            candidates
+        """        
+        return self.model.encode_dia_y(cands)
+
     def do_request_feedback(self, positivity):
         """Decide whether to request an feedback this turn"""
         # If --request-feedback=False, then don't request an feedback
