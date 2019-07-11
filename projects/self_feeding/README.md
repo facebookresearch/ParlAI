@@ -34,7 +34,7 @@ Once you have [installed ParlAI](https://github.com/facebookresearch/ParlAI/#ins
 ## Download the data
 
 Running the commands to train or chat with the models will automatically download the data for you. 
-Alternatively, you can manually download the data by running `python parlai/projects/self_feeding/download_data.py`. This will download the following files to `data/self_feeding/`:
+Alternatively, you can manually download the data by running `python projects/self_feeding/download_data.py`. This will download the following files to `data/self_feeding/`:
 
 - `{train, valid, test}_hh.txt`: DIALOGUE Human-Human (HH) conversations from the PersonaChat dataset, with one context and response per line (train: 131,438; valid: 2,000; test: 5,801).
 - `train_hb.txt`: DIALOGUE Human-Bot (HB) conversations collected between crowdworkers and a trained chatbot, with only human utterances as responses (train: 131,923).
