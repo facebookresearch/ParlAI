@@ -61,8 +61,6 @@ def interactive(opt, print_parser=None):
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
-    human_agent = LocalHumanAgent(opt)
-    # world = create_task(opt, [human_agent, agent])
     world = create_task(opt, agent)
 
     if print_parser:
@@ -73,9 +71,6 @@ def interactive(opt, print_parser=None):
     # Show some example dialogs:
     while True:
         world.parley()
-        if opt.get('display_examples'):
-            print("---")
-            print(world.display())
         if world.epoch_done():
             print("EPOCH DONE")
             break
