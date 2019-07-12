@@ -12,9 +12,9 @@ from random import choice, randint
 BOUNDARIES = {
     'hellskitchen': [3, 3],
     'williamsburg': [2, 8],
-    'uppereast':    [3, 3],
-    'fidi':         [2, 3],
-    'eastvillage':  [3, 4],
+    'uppereast': [3, 3],
+    'fidi': [2, 3],
+    'eastvillage': [3, 4],
 }
 
 
@@ -24,7 +24,7 @@ def is_action(msg, forward=False):
     return msg and msg.startswith('ACTION')
 
 
-class Simulator():
+class Simulator:
 
     boundaries = None
     neighborhood = None
@@ -37,20 +37,28 @@ class Simulator():
         self.feature_loader = GoldstandardFeatures(self.map)
 
     def _get_random_location(self):
-        return [randint(self.boundaries[0], self.boundaries[2]),
-                randint(self.boundaries[1], self.boundaries[3]),
-                randint(0, 3)]
+        return [
+            randint(self.boundaries[0], self.boundaries[2]),
+            randint(self.boundaries[1], self.boundaries[3]),
+            randint(0, 3),
+        ]
 
     def random_init(self):
         self.neighborhood = choice(list(BOUNDARIES.keys()))
-        self.boundaries = [randint(0, BOUNDARIES[self.neighborhood][x])*2 for
-                           x in range(2)]
+        self.boundaries = [
+            randint(0, BOUNDARIES[self.neighborhood][x]) * 2 for x in range(2)
+        ]
         self.boundaries = self.boundaries + [x + 3 for x in self.boundaries]
         self.agent_location = self._get_random_location()
         self.target_location = self._get_random_location()
 
-    def init_sim(self, neighborhood=None, boundaries=None, start_location=None,
-                 target_location=None):
+    def init_sim(
+        self,
+        neighborhood=None,
+        boundaries=None,
+        start_location=None,
+        target_location=None,
+    ):
 
         if not neighborhood:
             self.random_init()
@@ -61,24 +69,33 @@ class Simulator():
             self.target_location = target_location
 
         self.landmarks, self.target_location = self.map.get_landmarks(
-                self.neighborhood,
-                self.boundaries,
-                self.target_location)
+            self.neighborhood, self.boundaries, self.target_location
+        )
 
     def get_agent_location(self):
-        return str((self.agent_location[0]-self.boundaries[0])*4 +
-                   (self.agent_location[1]-self.boundaries[1]))
+        return str(
+            (self.agent_location[0] - self.boundaries[0]) * 4
+            + (self.agent_location[1] - self.boundaries[1])
+        )
 
     def get_text_map(self):
         L = [y for x in zip(*self.landmarks) for y in x]
         txt = '\n'.join([(str(i) + ':' + ' and '.join(x)) for i, x in enumerate(L)])
-        txt += '\n' + str(self.target_location[0]*4 + self.target_location[1]) + \
-               ':Target'+'\n'
+        txt += (
+            '\n'
+            + str(self.target_location[0] * 4 + self.target_location[1])
+            + ':Target'
+            + '\n'
+        )
         return txt
 
     def get_current_view(self):
-        return "\n".join(['see:'+x for x in self.feature_loader.get(
-          self.neighborhood, self.agent_location)])
+        return "\n".join(
+            [
+                'see:' + x
+                for x in self.feature_loader.get(self.neighborhood, self.agent_location)
+            ]
+        )
 
     def add_view_to_text(self, obs, action=None):
         action = action or obs.get('text')
@@ -95,9 +112,8 @@ class Simulator():
             return
 
         self.agent_location = self.map.step_aware(
-                text,
-                self.agent_location,
-                self.boundaries)
+            text, self.agent_location, self.boundaries
+        )
 
 
 class SimulateWorld(ExecutableWorld):
@@ -175,22 +191,27 @@ class Map(object):
         self.landmarks = dict()
 
         for neighborhood in BOUNDARIES.keys():
-            self.coord_to_landmarks[neighborhood] = \
-              [[[] for _ in range(BOUNDARIES[neighborhood][1] * 2 + 4)]
-               for _ in range(BOUNDARIES[neighborhood][0] * 2 + 4)]
+            self.coord_to_landmarks[neighborhood] = [
+                [[] for _ in range(BOUNDARIES[neighborhood][1] * 2 + 4)]
+                for _ in range(BOUNDARIES[neighborhood][0] * 2 + 4)
+            ]
             self.landmarks[neighborhood] = json.load(
-                open(os.path.join(data_dir, neighborhood, "map.json")))
+                open(os.path.join(data_dir, neighborhood, "map.json"))
+            )
             for landmark in self.landmarks[neighborhood]:
                 coord = self.transform_map_coordinates(landmark)
                 self.coord_to_landmarks[neighborhood][coord[0]][coord[1]].append(
-                    landmark['type'])
+                    landmark['type']
+                )
 
     def transform_map_coordinates(self, landmark):
         x_offset = {"NW": 0, "SW": 0, "NE": 1, "SE": 1}
         y_offset = {"NW": 1, "SW": 0, "NE": 1, "SE": 0}
 
-        coord = (landmark['x'] * 2 + x_offset[landmark['orientation']],
-                 landmark['y'] * 2 + y_offset[landmark['orientation']])
+        coord = (
+            landmark['x'] * 2 + x_offset[landmark['orientation']],
+            landmark['y'] * 2 + y_offset[landmark['orientation']],
+        )
         return coord
 
     def get(self, neighborhood, x, y):
@@ -205,7 +226,8 @@ class Map(object):
         for x in range(4):
             for y in range(4):
                 landmarks[x][y] = self.get(
-                    neighborhood, boundaries[0] + x, boundaries[1] + y)
+                    neighborhood, boundaries[0] + x, boundaries[1] + y
+                )
 
         assert 0 <= label_index[0] < 4
         assert 0 <= label_index[1] < 4
@@ -216,8 +238,10 @@ class Map(object):
         landmark_list = []
         for landmark in self.landmarks[neighborhood]:
             coord = self.transform_map_coordinates(landmark)
-            if boundaries[0] <= coord[0] <= boundaries[2] \
-               and boundaries[1] <= coord[1] <= boundaries[3]:
+            if (
+                boundaries[0] <= coord[0] <= boundaries[2]
+                and boundaries[1] <= coord[1] <= boundaries[3]
+            ):
                 landmark_list.append(landmark)
         return landmark_list
 
@@ -253,7 +277,11 @@ class GoldstandardFeatures:
     def __init__(self, map, orientation_aware=False):
         self.map = map
         self.allowed_orientations = {
-            'NW': [3, 0], 'SW': [2, 3], 'NE': [0, 1], 'SE': [1, 2]}
+            'NW': [3, 0],
+            'SW': [2, 3],
+            'NE': [0, 1],
+            'SE': [1, 2],
+        }
         self.mod2orientation = {(0, 0): 'SW', (1, 0): 'SE', (0, 1): 'NW', (1, 1): 'NE'}
         self.orientation_aware = orientation_aware
 

@@ -23,13 +23,13 @@ from PIL import Image
 TASK_TYPE_TO_CONFIG = {
     'personality': config_personality,
     'no_personality': config_no_personality,
-    'caption': config_caption
+    'caption': config_caption,
 }
 
 TASK_TYPE_TO_TITLE = {
     'personality': "Comment on an Image",
     'no_personality': "Comment on an Image",
-    'caption': "Caption an Image"
+    'caption': "Caption an Image",
 }
 
 COMMENTER = 'Commenter'
@@ -49,7 +49,7 @@ START_MSGS = {
     'no_personality': '\nImage number {}! Please take a look at the image, and \
                        write an engaging comment.',
     'caption': '\nImage number {}! Please take a look at the image, and \
-                write a caption.'
+                write a caption.',
 }
 TIMEOUT_MSG = '<b> The other person has timed out. \
         Please click the "Done with this HIT" button below to finish this HIT.\
@@ -73,15 +73,15 @@ def load_image(path):
 
 class PersonalityAndImageGenerator(object):
     """For the test set - specifying multiple personalities per image"""
+
     def __init__(self, opt):
         self.idx_stack_path = os.path.join(
             os.getcwd(),
             './personality_and_image_idx_stack{}.pkl'.format(
                 '_sandbox' if opt['is_sandbox'] else ''
-            ))
-        self.data_path = os.path.join(
-            opt['datapath'],
-            'personality_captions/test.json')
+            ),
+        )
+        self.data_path = os.path.join(opt['datapath'], 'personality_captions/test.json')
 
         if opt.get('yfcc_path'):
             self.image_path = opt['yfcc_path']
@@ -92,8 +92,8 @@ class PersonalityAndImageGenerator(object):
         with open(self.data_path) as f:
             test = json.load(f)
             self.personality_image_pairs = [
-                (d['image_hash'], d['personality'])
-                for d in test]
+                (d['image_hash'], d['personality']) for d in test
+            ]
 
         if os.path.exists(self.idx_stack_path):
             with open(self.idx_stack_path, 'rb') as handle:
@@ -129,11 +129,11 @@ class PersonalityAndImageGenerator(object):
 class PersonalityGenerator(object):
     def __init__(self, opt):
         self.personalities_path = os.path.join(
-            opt['datapath'],
-            'personality_captions/personalities.json')
+            opt['datapath'], 'personality_captions/personalities.json'
+        )
         self.personalities_idx_stack_path = os.path.join(
-            os.getcwd(),
-            './personalities_idx_stack.pkl')
+            os.getcwd(), './personalities_idx_stack.pkl'
+        )
 
         self.personalities = []
 
@@ -172,6 +172,7 @@ class PersonalityGenerator(object):
 
 class ImageGenerator(object):
     """Retrieve Image from Flicker 100m set"""
+
     def __init__(self, opt):
         self.images_idx_stack_path = os.path.join(os.getcwd(), './images_idx_stack.pkl')
         if opt.get('yfcc_path'):
@@ -213,6 +214,7 @@ class ImageGenerator(object):
 class RoleOnboardWorld(MTurkOnboardWorld):
     '''A world that provides a Personality to the MTurkAgent, and provides
        the appropriate instructions during onboarding'''
+
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_onboard_time = opt['max_onboard_time']
@@ -220,10 +222,7 @@ class RoleOnboardWorld(MTurkOnboardWorld):
         super().__init__(opt, mturk_agent)
 
     def parley(self):
-        onboard_msg = {
-            'id': 'SYSTEM',
-            'show_personality': True,
-            'text': ONBOARD_MSG}
+        onboard_msg = {'id': 'SYSTEM', 'show_personality': True, 'text': ONBOARD_MSG}
 
         onboard_msg['task_description'] = self.config['task_description']
         self.mturk_agent.observe(onboard_msg)
@@ -231,15 +230,13 @@ class RoleOnboardWorld(MTurkOnboardWorld):
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
 
         # timeout
-        if act['episode_done'] or (('text' in act and
-                                    act['text'] == TIMEOUT_MESSAGE)):
+        if act['episode_done'] or (('text' in act and act['text'] == TIMEOUT_MESSAGE)):
 
             self.episodeDone = True
             return
 
         if 'text' not in act:
-            control_msg = {'id': 'SYSTEM',
-                           'text': WAITING_MSG}
+            control_msg = {'id': 'SYSTEM', 'text': WAITING_MSG}
             self.mturk_agent.observe(validate(control_msg))
             self.episodeDone = True
 
@@ -248,6 +245,7 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
     """World an agent observes ten images, with ten different personalities,
         and writes engaging comments about them
     """
+
     def __init__(self, opt, agents=None, shared=None, world_tag='NONE'):
         self.turn_idx = 0
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -298,13 +296,14 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
             encoded = str(base64.b64encode(buffered.getvalue()).decode('ascii'))
             control_msg['image'] = encoded
             if self.data_type == 'personality':
-                personality_text = '<b><span style="color:blue">' \
-                                   '{}\n</span></b>'.format(personality.strip())
+                personality_text = (
+                    '<b><span style="color:blue">'
+                    '{}\n</span></b>'.format(personality.strip())
+                )
                 control_msg['personality_text'] = personality_text
             control_msg['text'] = self.get_instruction(
-                                        tag='start',
-                                        agent_id=self.agent.id,
-                                        turn_num=self.turn_idx + 1)
+                tag='start', agent_id=self.agent.id, turn_num=self.turn_idx + 1
+            )
             control_msg['description'] = self.config['task_description']
             control_msg['task_type_title'] = self.task_type_title
             self.agent.observe(validate(control_msg))
@@ -325,10 +324,7 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
                 )
                 if offensive:
                     # Tell Turker to not be offensive!
-                    offensive_msg = {
-                        'id': 'SYSTEM',
-                        'text': OFFENSIVE_MSG,
-                    }
+                    offensive_msg = {'id': 'SYSTEM', 'text': OFFENSIVE_MSG}
                     self.agent.observe(validate(offensive_msg))
                     offensive_counter += 1
                 else:
@@ -336,13 +332,15 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
 
             if self.chat_done:
                 break
-            self.data.append({
-                'comment': comment,
-                'personality': personality,
-                'image_hash': self.image_hash,
-                'image_path': image_path,
-                'contains_offensive_language': offensive,
-            })
+            self.data.append(
+                {
+                    'comment': comment,
+                    'personality': personality,
+                    'image_hash': self.image_hash,
+                    'image_path': image_path,
+                    'contains_offensive_language': offensive,
+                }
+            )
             self.turn_idx += 1
 
         if self.turn_idx == self.num_images:
@@ -385,21 +383,24 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
     def save_data(self):
         convo_finished = True
         for ag in self.agents:
-            if (ag.hit_is_abandoned or ag.hit_is_returned or
-                    ag.disconnected or ag.hit_is_expired):
+            if (
+                ag.hit_is_abandoned
+                or ag.hit_is_returned
+                or ag.disconnected
+                or ag.hit_is_expired
+            ):
                 convo_finished = False
         if not convo_finished:
             if not self.multiple_personality:
                 ag.personality_generator.push_personality(self.pers_idx)
                 ag.image_generator.push_image(self.image_hash)
-                print('\n**Push personality {} back to stack. **\n'.format(
-                        self.pers_idx))
-                print('\n**Push image {} back to stack. **\n'.format(
-                        self.image_hash))
+                print(
+                    '\n**Push personality {} back to stack. **\n'.format(self.pers_idx)
+                )
+                print('\n**Push image {} back to stack. **\n'.format(self.image_hash))
             else:
                 ag.personality_and_image_generator.push_pair(self.pair_idx)
-                print('\n**Push pair {} back to stack. **\n'.format(
-                        self.pair_idx))
+                print('\n**Push pair {} back to stack. **\n'.format(self.pair_idx))
         self.agents[0].personality_generator.save_idx_stack()
         self.agents[0].image_generator.save_idx_stack()
         self.agents[0].personality_and_image_generator.save_idx_stack()
@@ -412,14 +413,18 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
                 '{}_{}_{}.pkl'.format(
                     time.strftime('%Y%m%d-%H%M%S'),
                     np.random.randint(0, 1000),
-                    self.task_type))
+                    self.task_type,
+                ),
+            )
         else:
             filename = os.path.join(
                 data_path,
                 '{}_{}_{}_incomplete.pkl'.format(
                     time.strftime('%Y%m%d-%H%M%S'),
                     np.random.randint(0, 1000),
-                    self.task_type))
+                    self.task_type,
+                ),
+            )
         comments = [d['comment'] for d in self.data]
 
         if len(comments) >= 2:
@@ -427,15 +432,18 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
             if _exact_match(c, comments[1:]):
                 self.exact_match = True
 
-        pickle.dump({'data': self.data,
-                     'worker': self.agents[0].worker_id,
-                     'hit_id': self.agents[0].hit_id,
-                     'assignment_id': self.agents[0].assignment_id,
-                     'exact_match': self.exact_match,
-                     'task_eval': self.eval}, open(filename, 'wb'))
-        print('{}: Data successfully saved at {}.'.format(
-            self.world_tag,
-            filename))
+        pickle.dump(
+            {
+                'data': self.data,
+                'worker': self.agents[0].worker_id,
+                'hit_id': self.agents[0].hit_id,
+                'assignment_id': self.agents[0].assignment_id,
+                'exact_match': self.exact_match,
+                'task_eval': self.eval,
+            },
+            open(filename, 'wb'),
+        )
+        print('{}: Data successfully saved at {}.'.format(self.world_tag, filename))
 
     def review_work(self):
         global review_agent
@@ -443,20 +451,28 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
         def review_agent(ag):
             contains_offense = any(d['contains_offensive_language'] for d in self.data)
             if contains_offense:
-                ag.reject_work(reason='We have rejected this HIT because at '
-                                      'least one of your comments contains '
-                                      'offensive language')
-                print('Rejected work for agent {} for '
-                      'offensive language'.format(ag.worker_id))
+                ag.reject_work(
+                    reason='We have rejected this HIT because at '
+                    'least one of your comments contains '
+                    'offensive language'
+                )
+                print(
+                    'Rejected work for agent {} for '
+                    'offensive language'.format(ag.worker_id)
+                )
             elif self.exact_match:
-                ag.reject_work(reason='We have rejected this HIT because all '
-                                      'of your comments are the exact same')
-                print('Rejected work for agent {} for '
-                      'same comments'.format(ag.worker_id))
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(review_agent)(agent) for agent in self.agents)
+                ag.reject_work(
+                    reason='We have rejected this HIT because all '
+                    'of your comments are the exact same'
+                )
+                print(
+                    'Rejected work for agent {} for '
+                    'same comments'.format(ag.worker_id)
+                )
+
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(review_agent)(agent) for agent in self.agents
+        )
 
     def shutdown(self):
         """Shutdown all mturk agents in parallel, otherwise if one mturk agent
@@ -467,7 +483,7 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
 
         def shutdown_agent(agent):
             agent.shutdown()
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(shutdown_agent)(agent) for agent in self.agents)
+
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(shutdown_agent)(agent) for agent in self.agents
+        )

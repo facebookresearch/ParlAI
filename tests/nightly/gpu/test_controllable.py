@@ -25,24 +25,21 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Check the controllble dialogue data loads.
         """
-        train_output, valid_output, _ = testing_utils.display_data({
-            'task': 'projects.controllable_dialogue.tasks.agents',
-        })
+        train_output, valid_output, _ = testing_utils.display_data(
+            {'task': 'projects.controllable_dialogue.tasks.agents'}
+        )
 
         # check valid data
         self.assertIn('[lastuttsim]', train_output)
         self.assertIn(
             "hi , how are you doing ? i'm getting ready to do some cheetah "
             "chasing to stay in shape .",
-            train_output
+            train_output,
         )
         self.assertIn('131438 examples', train_output)
 
         # check valid data
-        self.assertIn(
-            "hello what are doing today ?",
-            valid_output
-        )
+        self.assertIn("hello what are doing today ?", valid_output)
         self.assertIn('[lastuttsim]', valid_output)
         self.assertIn('7801 examples', valid_output)
 
@@ -51,6 +48,7 @@ class TestControllableDialogue(unittest.TestCase):
         Check the training script doesn't crash.
         """
         import projects.controllable_dialogue.train_controllable_seq2seq as tcs2s
+
         parser = tcs2s.setup_args()
         # make it much smaller just for testing
         parser.set_params(
@@ -68,12 +66,15 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Check the greedy model produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model({
-            'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
-            'task': 'projects.controllable_dialogue.tasks.agents',
-            'beam_size': 1,
-            'batchsize': 64,
-        }, skip_test=True)
+        _, valid, _ = testing_utils.eval_model(
+            {
+                'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
+                'task': 'projects.controllable_dialogue.tasks.agents',
+                'beam_size': 1,
+                'batchsize': 64,
+            },
+            skip_test=True,
+        )
 
         self.assertAlmostEqual(valid['ppl'], 22.86, delta=0.1)
         self.assertAlmostEqual(valid['f1'], 0.1702, delta=0.0002)
@@ -82,14 +83,17 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Check the beamsearch baseline produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model({
-            'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
-            'task': 'projects.controllable_dialogue.tasks.agents',
-            'beam_size': 20,
-            'beam_min_n_best': 10,
-            'batchsize': 64,
-            'num_examples': NUM_EXAMPLES,
-        }, skip_test=True)
+        _, valid, _ = testing_utils.eval_model(
+            {
+                'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
+                'task': 'projects.controllable_dialogue.tasks.agents',
+                'beam_size': 20,
+                'beam_min_n_best': 10,
+                'batchsize': 64,
+                'num_examples': NUM_EXAMPLES,
+            },
+            skip_test=True,
+        )
 
         if FAST_MODE:
             self.assertAlmostEqual(valid['ppl'], 23.54, delta=0.1)
@@ -102,40 +106,46 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the finetuned model with repetition blocking produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model({
-            'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
-            'task': 'projects.controllable_dialogue.tasks.agents',
-            'beam_size': 20,
-            'beam_min_n_best': 10,
-            'use_reply': 'model',
-            'batchsize': 64,
-            'num_examples': NUM_EXAMPLES,
-            'weighted_decoding': NO_REPETITION,
-        }, skip_test=True)
+        _, valid, _ = testing_utils.eval_model(
+            {
+                'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
+                'task': 'projects.controllable_dialogue.tasks.agents',
+                'beam_size': 20,
+                'beam_min_n_best': 10,
+                'use_reply': 'model',
+                'batchsize': 64,
+                'num_examples': NUM_EXAMPLES,
+                'weighted_decoding': NO_REPETITION,
+            },
+            skip_test=True,
+        )
 
         if FAST_MODE:
             self.assertAlmostEqual(valid['ppl'], 26.66, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1389, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 25.83, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], .1375, delta=0.0002)
+            self.assertAlmostEqual(valid['f1'], 0.1375, delta=0.0002)
 
     def test_ct_question_bucket7(self):
         """
         Checks the question-controlled model (z=7) produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model({
-            # b11e10 stands for 11 buckets, embedding size 10
-            'model_file': 'zoo:controllable_dialogue/control_questionb11e10',
-            'task': 'projects.controllable_dialogue.tasks.agents',
-            'beam_size': 20,
-            'beam_min_n_best': 10,
-            'batchsize': 64,
-            'use_reply': 'model',
-            'num_examples': NUM_EXAMPLES,
-            'weighted_decoding': NO_REPETITION,
-            'set_controls': 'question:7',
-        }, skip_test=True)
+        _, valid, _ = testing_utils.eval_model(
+            {
+                # b11e10 stands for 11 buckets, embedding size 10
+                'model_file': 'zoo:controllable_dialogue/control_questionb11e10',
+                'task': 'projects.controllable_dialogue.tasks.agents',
+                'beam_size': 20,
+                'beam_min_n_best': 10,
+                'batchsize': 64,
+                'use_reply': 'model',
+                'num_examples': NUM_EXAMPLES,
+                'weighted_decoding': NO_REPETITION,
+                'set_controls': 'question:7',
+            },
+            skip_test=True,
+        )
 
         if FAST_MODE:
             self.assertAlmostEqual(valid['ppl'], 31.04, delta=0.1)
@@ -148,18 +158,21 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the question-controlled model (z=10 boost) produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model({
-            'model_file': 'zoo:controllable_dialogue/control_questionb11e10',
-            'task': 'projects.controllable_dialogue.tasks.agents',
-            'beam_size': 20,
-            'beam_min_n_best': 10,
-            'batchsize': 64,
-            'use_reply': 'model',
-            'num_examples': NUM_EXAMPLES,
-            'weighted_decoding': 'extrep_nonstopword:-1e20,intrep_nonstopword:-1e20',
-            'set_controls': 'question:10',
-            'beam_reorder': 'best_extrep2gram_qn',
-        }, skip_test=True)
+        _, valid, _ = testing_utils.eval_model(
+            {
+                'model_file': 'zoo:controllable_dialogue/control_questionb11e10',
+                'task': 'projects.controllable_dialogue.tasks.agents',
+                'beam_size': 20,
+                'beam_min_n_best': 10,
+                'batchsize': 64,
+                'use_reply': 'model',
+                'num_examples': NUM_EXAMPLES,
+                'weighted_decoding': 'extrep_nonstopword:-1e20,intrep_nonstopword:-1e20',
+                'set_controls': 'question:10',
+                'beam_reorder': 'best_extrep2gram_qn',
+            },
+            skip_test=True,
+        )
 
         if FAST_MODE:
             self.assertAlmostEqual(valid['ppl'], 31.27, delta=0.1)
@@ -172,17 +185,20 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the specificity-CT model (z=7) produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model({
-            'model_file': 'zoo:controllable_dialogue/control_avgnidf10b10e',
-            'task': 'projects.controllable_dialogue.tasks.agents',
-            'beam_size': 20,
-            'beam_min_n_best': 10,
-            'use_reply': 'model',
-            'batchsize': 64,
-            'num_examples': NUM_EXAMPLES,
-            'weighted_decoding': NO_REPETITION,
-            'set_controls': 'avg_nidf:7',
-        }, skip_test=True)
+        _, valid, _ = testing_utils.eval_model(
+            {
+                'model_file': 'zoo:controllable_dialogue/control_avgnidf10b10e',
+                'task': 'projects.controllable_dialogue.tasks.agents',
+                'beam_size': 20,
+                'beam_min_n_best': 10,
+                'use_reply': 'model',
+                'batchsize': 64,
+                'num_examples': NUM_EXAMPLES,
+                'weighted_decoding': NO_REPETITION,
+                'set_controls': 'avg_nidf:7',
+            },
+            skip_test=True,
+        )
 
         if FAST_MODE:
             self.assertAlmostEqual(valid['ppl'], 38.64, delta=0.1)
@@ -195,16 +211,19 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the specificity-weighted decoding model produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model({
-            'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
-            'task': 'projects.controllable_dialogue.tasks.agents',
-            'beam_size': 20,
-            'beam_min_n_best': 10,
-            'use_reply': 'model',
-            'batchsize': 64,
-            'num_examples': NUM_EXAMPLES,
-            'weighted_decoding': NO_REPETITION + ',nidf:4',
-        }, skip_test=True)
+        _, valid, _ = testing_utils.eval_model(
+            {
+                'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
+                'task': 'projects.controllable_dialogue.tasks.agents',
+                'beam_size': 20,
+                'beam_min_n_best': 10,
+                'use_reply': 'model',
+                'batchsize': 64,
+                'num_examples': NUM_EXAMPLES,
+                'weighted_decoding': NO_REPETITION + ',nidf:4',
+            },
+            skip_test=True,
+        )
 
         if FAST_MODE:
             self.assertAlmostEqual(valid['ppl'], 25.74, delta=0.1)
@@ -217,16 +236,20 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Checks the responsiveness-weighted decoding model produces correct results.
         """
-        _, valid, _ = testing_utils.eval_model({
-            'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
-            'task': 'projects.controllable_dialogue.tasks.agents',
-            'beam_size': 20,
-            'beam_min_n_best': 10,
-            'use_reply': 'model',
-            'batchsize': 64,
-            'num_examples': NUM_EXAMPLES,
-            'weighted_decoding': NO_REPETITION + ',intrep_2gram:-1e20,partnerrep_2gram:-1e20,lastuttsim:5'  # noqa: E501
-        }, skip_test=True)
+        _, valid, _ = testing_utils.eval_model(
+            {
+                'model_file': 'zoo:controllable_dialogue/convai2_finetuned_baseline',
+                'task': 'projects.controllable_dialogue.tasks.agents',
+                'beam_size': 20,
+                'beam_min_n_best': 10,
+                'use_reply': 'model',
+                'batchsize': 64,
+                'num_examples': NUM_EXAMPLES,
+                'weighted_decoding': NO_REPETITION
+                + ',intrep_2gram:-1e20,partnerrep_2gram:-1e20,lastuttsim:5',  # noqa: E501
+            },
+            skip_test=True,
+        )
 
         if FAST_MODE:
             self.assertAlmostEqual(valid['ppl'], 26.16, delta=0.1)

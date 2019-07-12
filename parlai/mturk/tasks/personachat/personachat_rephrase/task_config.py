@@ -17,9 +17,9 @@ task_config['hit_title'] = 'Rehprase a Character Description'
 On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
 view of search results, and in the HIT and assignment screens.
 """
-task_config['hit_description'] = (
-    'You will rephrase some character (persona) descriptions'
-)
+task_config[
+    'hit_description'
+] = 'You will rephrase some character (persona) descriptions'
 
 
 """One or more words or phrases that describe the HIT, separated by commas.
@@ -31,7 +31,9 @@ task_config['hit_keywords'] = 'chat,dialog,text,game'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = '''
+task_config[
+    'task_description'
+] = '''
 In this task, we will show you 4 to 5 sentences with each of them describes
 some person's characteristics.
 <br>

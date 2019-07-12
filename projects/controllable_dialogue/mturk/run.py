@@ -64,51 +64,87 @@ def main():
     argparser = ParlaiParser(False, add_model_args=True)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('--max-resp-time', default=240,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('--max-choice-time', type=int,
-                           default=300, help='time limit for turker'
-                           'choosing the topic')
-    argparser.add_argument('--ag-shutdown-time', default=120,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('--num-turns', default=6, type=int,
-                           help='number of turns of dialogue')
-    argparser.add_argument('--human-eval', type='bool', default=False,
-                           help='human vs human eval, no models involved')
-    argparser.add_argument('--auto-approve-delay', type=int,
-                           default=3600 * 24 * 2,
-                           help='how long to wait for auto approval')
-    argparser.add_argument('--only-masters', type='bool', default=False,
-                           help='Set to true to use only master turks for '
-                                'this test eval')
-    argparser.add_argument('--create-model-qualif', type='bool', default=True,
-                           help='Create model qualif so unique eval between'
-                                'models.')
-    argparser.add_argument('--limit-workers', type=int, default=len(SETTINGS_TO_RUN),
-                           help='max HITs a worker can complete')
-    argparser.add_argument('--mturk-log', type=str,
-                           default=(
-                                '$HOME/ParlAI/data/mturklogs/controllable/{}.log'
-                                .format(start_time)))
-    argparser.add_argument('--short-eval', type='bool', default=True,
-                           help='Only ask engagingness question and persona'
-                                'question.')
+    argparser.add_argument(
+        '--max-resp-time',
+        default=240,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '--max-choice-time',
+        type=int,
+        default=300,
+        help='time limit for turker' 'choosing the topic',
+    )
+    argparser.add_argument(
+        '--ag-shutdown-time',
+        default=120,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '--num-turns', default=6, type=int, help='number of turns of dialogue'
+    )
+    argparser.add_argument(
+        '--human-eval',
+        type='bool',
+        default=False,
+        help='human vs human eval, no models involved',
+    )
+    argparser.add_argument(
+        '--auto-approve-delay',
+        type=int,
+        default=3600 * 24 * 2,
+        help='how long to wait for auto approval',
+    )
+    argparser.add_argument(
+        '--only-masters',
+        type='bool',
+        default=False,
+        help='Set to true to use only master turks for ' 'this test eval',
+    )
+    argparser.add_argument(
+        '--create-model-qualif',
+        type='bool',
+        default=True,
+        help='Create model qualif so unique eval between' 'models.',
+    )
+    argparser.add_argument(
+        '--limit-workers',
+        type=int,
+        default=len(SETTINGS_TO_RUN),
+        help='max HITs a worker can complete',
+    )
+    argparser.add_argument(
+        '--mturk-log',
+        type=str,
+        default=('$HOME/ParlAI/data/mturklogs/controllable/{}.log'.format(start_time)),
+    )
+    argparser.add_argument(
+        '--short-eval',
+        type='bool',
+        default=True,
+        help='Only ask engagingness question and persona' 'question.',
+    )
     # persona specific arguments
-    argparser.add_argument('--persona-type', type=str, default='self',
-                           choices=['self', 'other', 'none'])
-    argparser.add_argument('--persona-datatype', type=str, default='valid',
-                           choices=['train', 'test', 'valid'])
-    argparser.add_argument('--max-persona-time', type=int, default=360,
-                           help='max time to view persona')
+    argparser.add_argument(
+        '--persona-type', type=str, default='self', choices=['self', 'other', 'none']
+    )
+    argparser.add_argument(
+        '--persona-datatype',
+        type=str,
+        default='valid',
+        choices=['train', 'test', 'valid'],
+    )
+    argparser.add_argument(
+        '--max-persona-time', type=int, default=360, help='max time to view persona'
+    )
 
     def get_logger(opt):
         logger = logging.getLogger()
         logger.setLevel(logging.INFO)
 
-        fmt = logging.Formatter(
-            '%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
+        fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
         console = logging.StreamHandler()
         console.setFormatter(fmt)
         logger.addHandler(console)
@@ -135,8 +171,7 @@ def main():
     start_opt['limit_workers'] = len(SETTINGS_TO_RUN)
     start_opt['allowed_conversations'] = 1
     start_opt['max_hits_per_worker'] = start_opt['limit_workers']
-    start_opt['task'] = os.path.basename(
-        os.path.dirname(os.path.abspath(__file__)))
+    start_opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 
     start_opt.update(task_config)
 
@@ -159,9 +194,7 @@ def main():
             combined_config['override'][k] = v
         folder_name = '{}-{}'.format(setup, start_time)
         combined_config['save_data_path'] = os.path.join(
-            start_opt['datapath'],
-            'local_controllable_dialogue',
-            folder_name
+            start_opt['datapath'], 'local_controllable_dialogue', folder_name
         )
         model_opts[setup] = combined_config
         bot = create_agent(combined_config, True)
@@ -172,10 +205,7 @@ def main():
     else:
         mturk_agent_ids = ['PERSON_1', 'PERSON_2']
 
-    mturk_manager = MTurkManager(
-        opt=start_opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=start_opt, mturk_agent_ids=mturk_agent_ids)
 
     personas_generator = PersonasGenerator(start_opt)
 
@@ -240,8 +270,9 @@ def main():
             if not model_options:
                 lock.release()
                 logging.error(
-                    "Worker {} already finished all settings! Returning none"
-                    .format(worker_id)
+                    "Worker {} already finished all settings! Returning none".format(
+                        worker_id
+                    )
                 )
                 return None
             _, model_choice = min(model_options)
@@ -277,7 +308,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

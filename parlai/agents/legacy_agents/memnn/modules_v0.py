@@ -20,14 +20,19 @@ class MemNN(nn.Module):
         self.num_time_features = opt['mem_size']
         self.extra_features_slots = 0
         if opt['time_features']:
-            self.time_features = torch.LongTensor(range(num_features,
-                num_features + self.num_time_features))
+            self.time_features = torch.LongTensor(
+                range(num_features, num_features + self.num_time_features)
+            )
             num_features += self.num_time_features
             self.extra_features_slots += 1
 
         def embedding():
-            return Embed(num_features, opt['embedding_size'],
-                position_encoding=opt['position_encoding'], padding_idx=0)
+            return Embed(
+                num_features,
+                opt['embedding_size'],
+                position_encoding=opt['position_encoding'],
+                padding_idx=0,
+            )
 
         self.query_embedder = embedding()
         self.answer_embedder = embedding()
@@ -50,7 +55,9 @@ class MemNN(nn.Module):
         memories = memories.data
         if self.extra_features_slots > 0:
             num_nonempty_memories = int(memory_lengths.ne(0).long().sum())
-            updated_memories = memories.new(memories.numel() + num_nonempty_memories * self.extra_features_slots)
+            updated_memories = memories.new(
+                memories.numel() + num_nonempty_memories * self.extra_features_slots
+            )
             src_offset = 0
             dst_offset = 0
             for i in range(memory_lengths.size(0)):
@@ -60,7 +67,9 @@ class MemNN(nn.Module):
                         if self.opt['time_features']:
                             updated_memories[dst_offset] = self.time_feature(j)
                             dst_offset += 1
-                        updated_memories[dst_offset:dst_offset + length] = memories[src_offset:src_offset + length]
+                        updated_memories[dst_offset : dst_offset + length] = memories[
+                            src_offset : src_offset + length
+                        ]
                         src_offset += length
                         dst_offset += length
             memory_lengths += memory_lengths.ne(0).long() * self.extra_features_slots
@@ -81,8 +90,12 @@ class MemNN(nn.Module):
             attention_mask = attention_mask.cuda()
 
         for _ in range(self.opt['hops']):
-            query_embeddings = self.memory_hop(query_embeddings,
-                    in_memory_embeddings, out_memory_embeddings, attention_mask)
+            query_embeddings = self.memory_hop(
+                query_embeddings,
+                in_memory_embeddings,
+                out_memory_embeddings,
+                attention_mask,
+            )
         return query_embeddings
 
 
@@ -99,7 +112,9 @@ class Embed(nn.Embedding):
         if lengths_mat.dim() == 1:
             raise RuntimeError(lengths.shape)
 
-        input = torch.LongTensor(lengths_mat.size(0), lengths_mat.size(1), torch.max(lengths_mat))
+        input = torch.LongTensor(
+            lengths_mat.size(0), lengths_mat.size(1), torch.max(lengths_mat)
+        )
         pad = self.padding_idx if self.padding_idx is not None else 0
         input.fill_(pad)
         emb_list = []
@@ -108,7 +123,7 @@ class Embed(nn.Embedding):
             for j, length in enumerate(row):
                 length = length.item()
                 if length > 0:
-                    input[i, j, :length] = indices[offset:offset + length]
+                    input[i, j, :length] = indices[offset : offset + length]
                 offset += length
 
         for i, row in enumerate(lengths_mat):
@@ -154,11 +169,22 @@ class Hop(nn.Module):
         self.embedding_size = embedding_size
         self.linear = nn.Linear(embedding_size, embedding_size, bias=False)
 
-    def forward(self, query_embeddings, in_memory_embeddings, out_memory_embeddings, attention_mask=None):
-        attention = torch.bmm(in_memory_embeddings, query_embeddings.unsqueeze(2)).squeeze(2)
+    def forward(
+        self,
+        query_embeddings,
+        in_memory_embeddings,
+        out_memory_embeddings,
+        attention_mask=None,
+    ):
+        attention = torch.bmm(
+            in_memory_embeddings, query_embeddings.unsqueeze(2)
+        ).squeeze(2)
         if attention_mask is not None:
             # exclude masked elements from the softmax
-            attention = attention_mask.float() * attention + (1 - attention_mask.float()) * -1e20
+            attention = (
+                attention_mask.float() * attention
+                + (1 - attention_mask.float()) * -1e20
+            )
         probs = softmax(attention, dim=1).unsqueeze(1)
         memory_output = torch.bmm(probs, out_memory_embeddings).squeeze(1)
         query_embeddings = self.linear(query_embeddings)

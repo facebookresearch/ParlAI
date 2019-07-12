@@ -26,11 +26,7 @@ from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 
 
-START_ENTRY = {
-    'text': '__SILENCE__',
-    'emotion': 'no_emotion',
-    'act': 'no_act',
-}
+START_ENTRY = {'text': '__SILENCE__', 'emotion': 'no_emotion', 'act': 'no_act'}
 
 
 class Convai2Teacher(FixedDialogTeacher):
@@ -95,6 +91,7 @@ class NoStartTeacher(Convai2Teacher):
     Same as default teacher, but it doesn't contain __SILENCE__ entries.
     If we are the first speaker, then the first utterance is skipped.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 

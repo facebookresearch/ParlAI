@@ -21,6 +21,7 @@ from parlai.core.utils import argsort, padded_tensor
 
 try:
     from fairseq import models, optim, criterions
+
     # this is a hack around versioning check because fairseq doesn't
     # announce version numbers yet
     # fairseq 0.5.0 has fp16_trainer, 0.6.0 does not
@@ -122,6 +123,7 @@ def _fairseq_opt_wrapper(opt, skip_pretrained_embedding_loading=False):
         else:
             # otherwise we may need to modelzoo adjust the path for fairseq
             import warnings
+
             warnings.warn("We recommend using --embedding-type instead")
             setattr(args, k, modelzoo_path(opt.get("datapath"), getattr(args, k)))
 
@@ -144,6 +146,7 @@ class _FairseqDictionary(DictionaryAgent):
     fairseq-py maintains backwards compatibility with fairseq-lua, which uses
     1 indexing.
     """
+
     # Name of our fake lua compatibility token
     _LUA = '__LUACOMPAT__'
 
@@ -235,23 +238,20 @@ class FairseqAgent(TorchAgent):
 
         agent = argparser.add_argument_group('Fairseq Arguments')
         agent.add_argument(
-            '--fp16',
-            default=False,
-            type='bool',
-            help='Use fp16 training'
+            '--fp16', default=False, type='bool', help='Use fp16 training'
         )
         agent.add_argument(
             '--fp16-init-scale',
-            default=2**7,
+            default=2 ** 7,
             type=int,
-            help='default FP16 loss scale'
+            help='default FP16 loss scale',
         )
         agent.add_argument(
             '--seed',
             default=1,
             type=int,
             metavar='N',
-            help='pseudo random number generator seed'
+            help='pseudo random number generator seed',
         )
         agent.add_argument(
             '--skip-generation',
@@ -325,8 +325,8 @@ class FairseqAgent(TorchAgent):
             # this is not a shared instance of this class, so do full initialization
 
             # check early if we're going to be loading the model from a checkpoint
-            model_file_exists = (
-                self.opt.get('model_file') and os.path.isfile(self.opt['model_file'])
+            model_file_exists = self.opt.get('model_file') and os.path.isfile(
+                self.opt['model_file']
             )
 
             # fairseq expects options to be in argparse format, instead of a dict
@@ -374,7 +374,7 @@ class FairseqAgent(TorchAgent):
                 print("Heads up: using --fp16 could be a lot faster!")
             if self.use_cuda:
                 self.trainer = trainer.Trainer(
-                    self.args, self.task, self.model, self.criterion, None,
+                    self.args, self.task, self.model, self.criterion, None
                 )
                 self.trainer._build_optimizer()
             else:
@@ -559,7 +559,7 @@ class FairseqAgent(TorchAgent):
                 # repeat the input many times
                 xs = batch.text_vec[i].unsqueeze(0).expand(ncand, -1)
                 # some models crash if there's leading padding on every example
-                xs = xs[:, :batch.text_lengths[i]]
+                xs = xs[:, : batch.text_lengths[i]]
                 # and appropriately pack the outputs
                 ys, _ = padded_tensor(cands, self.NULL_IDX, self.use_cuda)
                 s = self._make_sample(xs=xs, ys=ys)

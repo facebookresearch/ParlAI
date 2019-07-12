@@ -31,12 +31,17 @@ class CandidateTeacher(DialogTeacher):
     Candidate teacher produces several candidates, one of which is a repeat
     of the input. A good ranker should easily identify the correct response.
     """
-    def __init__(self, opt, shared=None,
-                 vocab_size=VOCAB_SIZE,
-                 example_size=EXAMPLE_SIZE,
-                 num_candidates=NUM_CANDIDATES,
-                 num_train=NUM_TRAIN,
-                 num_test=NUM_TEST):
+
+    def __init__(
+        self,
+        opt,
+        shared=None,
+        vocab_size=VOCAB_SIZE,
+        example_size=EXAMPLE_SIZE,
+        num_candidates=NUM_CANDIDATES,
+        num_train=NUM_TRAIN,
+        num_test=NUM_TEST,
+    ):
         """
         :param int vocab_size: size of the vocabulary
         :param int example_size: length of each example
@@ -82,9 +87,9 @@ class CandidateTeacher(DialogTeacher):
         self.test = list(itertools.islice(it, self.num_test))
 
         # check we have enough data
-        assert (len(self.train) == self.num_train), len(self.train)
-        assert (len(self.val) == self.num_test), len(self.val)
-        assert (len(self.test) == self.num_test), len(self.test)
+        assert len(self.train) == self.num_train, len(self.train)
+        assert len(self.val) == self.num_test, len(self.val)
+        assert len(self.test) == self.num_test, len(self.test)
 
         # check every word appear in the training set
         assert len(set(itertools.chain(*self.train)) - set(self.words)) == 0
@@ -115,12 +120,17 @@ class CandidateTeacherDataset(Dataset):
     Identical setup. Only difference is a `self.data` object, which contains
     all the episodes in the task.
     """
-    def __init__(self, opt, shared=None,
-                 vocab_size=VOCAB_SIZE,
-                 example_size=EXAMPLE_SIZE,
-                 num_candidates=NUM_CANDIDATES,
-                 num_train=NUM_TRAIN,
-                 num_test=NUM_TEST):
+
+    def __init__(
+        self,
+        opt,
+        shared=None,
+        vocab_size=VOCAB_SIZE,
+        example_size=EXAMPLE_SIZE,
+        num_candidates=NUM_CANDIDATES,
+        num_train=NUM_TRAIN,
+        num_test=NUM_TEST,
+    ):
         self.opt = opt
         opt['datafile'] = opt['datatype'].split(':')[0]
         self.datafile = opt['datafile']
@@ -162,9 +172,9 @@ class CandidateTeacherDataset(Dataset):
         self.test = list(itertools.islice(it, self.num_test))
 
         # check we have enough data
-        assert (len(self.train) == self.num_train), len(self.train)
-        assert (len(self.val) == self.num_test), len(self.val)
-        assert (len(self.test) == self.num_test), len(self.test)
+        assert len(self.train) == self.num_train, len(self.train)
+        assert len(self.val) == self.num_test, len(self.val)
+        assert len(self.test) == self.num_test, len(self.test)
 
         # check every word appear in the training set
         assert len(set(itertools.chain(*self.train)) - set(self.words)) == 0
@@ -189,7 +199,7 @@ class CandidateTeacherDataset(Dataset):
                 'text': text,
                 'labels': tuple([text]),
                 'label_candidates': tuple(cands),
-                'episode_done': True
+                'episode_done': True,
             }
             data.append(ex)
         return data
@@ -217,6 +227,7 @@ class MultipassTeacher(CandidateTeacher):
     3         1 2 3
     4         1 2 3 4
     """
+
     def num_examples(self):
         return super().num_examples() * self.example_size
 
@@ -226,8 +237,8 @@ class MultipassTeacher(CandidateTeacher):
             split_t = t.split(' ')
             ans = a[0]
             for i, bit in enumerate(split_t):
-                label = ans[:2 * i + 1]
-                cands = [c[:2 * i + 1] for c in cs]
+                label = ans[: 2 * i + 1]
+                cands = [c[: 2 * i + 1] for c in cs]
                 yield (bit, [label], 0, cands), i == 0
 
 
@@ -236,6 +247,7 @@ class MultiturnCandidateTeacher(CandidateTeacher):
 
     Good for testing models that use the dialog history.
     """
+
     def setup_data(self, fold):
         raw = super().setup_data(fold)
         for (t, a, r, cs), _e in raw:
@@ -244,9 +256,13 @@ class MultiturnCandidateTeacher(CandidateTeacher):
             split_cs = [c.split(' ') for c in cs]
             for i in range(len(split_t)):
                 yield (
-                    (split_t[i], [' '.join(split_a[:i + 1])], r,
-                     [' '.join(c[:i + 1]) for c in split_cs]),
-                    i == 0
+                    (
+                        split_t[i],
+                        [' '.join(split_a[: i + 1])],
+                        r,
+                        [' '.join(c[: i + 1]) for c in split_cs],
+                    ),
+                    i == 0,
                 )
 
 
@@ -255,6 +271,7 @@ class NocandidateTeacher(CandidateTeacher):
     Strips the candidates so the model can't see any options. Good for testing
     simple generative models.
     """
+
     def setup_data(self, fold):
         raw = super().setup_data(fold)
         for (t, a, _r, _c), e in raw:
@@ -266,6 +283,7 @@ class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):
     Strips the candidates so the model can't see any options. Good for testing
     simple generative models.
     """
+
     def setup_data(self, fold):
         raw = super().setup_data(fold)
         for (t, a, _r, _c), e in raw:
@@ -291,6 +309,7 @@ class BadExampleTeacher(CandidateTeacher):
     Note: this test may come to outlive its purpose in the future. When failing
     this test, one should consider who is really at fault: the test, or the code.
     """
+
     NUM_CASES = 8
 
     def __init__(self, opt, shared=None):

@@ -36,8 +36,9 @@ class SentenceEmbedder(object):
     Arora et al, 2017, https://openreview.net/pdf?id=SyK00v5xx
     """
 
-    def __init__(self, word2prob, arora_a, glove_name, glove_dim, first_sv,
-                 glove_cache):
+    def __init__(
+        self, word2prob, arora_a, glove_name, glove_dim, first_sv, glove_cache
+    ):
         """
           Inputs:
             word2prob: dict mapping words to their unigram probs
@@ -75,8 +76,9 @@ class SentenceEmbedder(object):
         Loads torchtext GloVe embs from file and stores in self.tt_embs.
         """
         print('Loading torchtext GloVe embs (for Arora sentence embs)...')
-        self.tt_embs = vocab.GloVe(name=self.glove_name, dim=self.glove_dim,
-                                   cache=self.glove_cache)
+        self.tt_embs = vocab.GloVe(
+            name=self.glove_name, dim=self.glove_dim, cache=self.glove_cache
+        )
         print('Finished loading torchtext GloVe embs')
 
     def get_emb_matrix(self, dictionary):
@@ -88,8 +90,10 @@ class SentenceEmbedder(object):
         Inputs:
           dictionary: ParlAI dictionary
         """
-        print('Constructing GloVe emb matrix for response-relatedness weighted '
-              'decoding...')
+        print(
+            'Constructing GloVe emb matrix for response-relatedness weighted '
+            'decoding...'
+        )
         self.emb_matrix = []
         oov_indices = []  # list of dictionary indices for all OOV words
         for idx in range(len(dictionary)):
@@ -103,8 +107,10 @@ class SentenceEmbedder(object):
                 oov_indices.append(idx)
             self.emb_matrix.append(word_emb)
         self.emb_matrix = np.stack(self.emb_matrix)  # (vocab_size, glove_dim)
-        print('Done constructing GloVe emb matrix; found %i OOVs of %i words'
-              % (len(oov_indices), len(dictionary)))
+        print(
+            'Done constructing GloVe emb matrix; found %i OOVs of %i words'
+            % (len(oov_indices), len(dictionary))
+        )
 
         # Get the norm of each of the word vectors. This is needed for cosine sims.
         # self.emb_matrix_norm is a np array shape (vocab_size)
@@ -178,27 +184,35 @@ class SentenceEmbedder(object):
         # if len(glove_oov_tokens)>0:
         #     print("WARNING: tokens OOV for glove: ", glove_oov_tokens)
         if len(tokens) == 0:
-            print('WARNING: tried to embed utterance %s but all tokens are OOV for '
-                  'GloVe. Returning embedding=None' % sent)
+            print(
+                'WARNING: tried to embed utterance %s but all tokens are OOV for '
+                'GloVe. Returning embedding=None' % sent
+            )
             return None
-        word_embs = [self.tt_embs.vectors[self.tt_embs.stoi[t]]
-                     for t in tokens]  # list of torch Tensors shape (glove_dim)
+        word_embs = [
+            self.tt_embs.vectors[self.tt_embs.stoi[t]] for t in tokens
+        ]  # list of torch Tensors shape (glove_dim)
 
         # Get unigram probabilities for the words. If we don't have a word in word2prob,
         # assume it's as rare as the rarest word in word2prob.
-        unigram_probs = [self.word2prob[t] if t in self.word2prob
-                         else self.min_word_prob for t in tokens]  # list of floats
+        unigram_probs = [
+            self.word2prob[t] if t in self.word2prob else self.min_word_prob
+            for t in tokens
+        ]  # list of floats
         # word2prob_oov_tokens = [t for t in tokens if t not in self.word2prob]
         # if len(word2prob_oov_tokens)>0:
         #     print('WARNING: tokens OOV for word2prob, so assuming they are '
         #           'maximally rare: ', word2prob_oov_tokens)
 
         # Calculate the weighted average of the word embeddings
-        smooth_inverse_freqs = [self.arora_a / (self.arora_a + p)
-                                for p in unigram_probs]  # list of floats
-        sent_emb = sum([word_emb*wt for (word_emb, wt) in
-                        zip(word_embs, smooth_inverse_freqs)
-                        ])/len(word_embs)  # torch Tensor shape (glove_dim)
+        smooth_inverse_freqs = [
+            self.arora_a / (self.arora_a + p) for p in unigram_probs
+        ]  # list of floats
+        sent_emb = sum(
+            [word_emb * wt for (word_emb, wt) in zip(word_embs, smooth_inverse_freqs)]
+        ) / len(
+            word_embs
+        )  # torch Tensor shape (glove_dim)
 
         # Remove the first singular value from sent_emb
         if rem_first_sv:
@@ -297,7 +311,8 @@ def learn_arora(opt):
     )
     # Do include inputs because ConvAI2 train set reverses every convo:
     word_counter_train, total_count_train, all_utts_train = get_word_counts(
-      opt, count_inputs=False)
+        opt, count_inputs=False
+    )
 
     print('Getting word counts from ConvAI2 val set...')
     opt['datatype'] = 'valid'
@@ -306,7 +321,8 @@ def learn_arora(opt):
     )
     # Don't include inputs because ConvAI2 val set doesn't reverses convos:
     word_counter_valid, total_count_valid, all_utts_valid = get_word_counts(
-      opt, count_inputs=True)
+        opt, count_inputs=True
+    )
 
     # Merge word counts
     word_counter = word_counter_train
@@ -319,7 +335,7 @@ def learn_arora(opt):
 
     # Compute unigram prob for every word
     print("Computing unigram probs for all words...")
-    word2prob = {w: c/total_count for w, c in word_counter.items()}
+    word2prob = {w: c / total_count for w, c in word_counter.items()}
 
     # Settings for sentence embedder
     arora_a = 0.0001
@@ -329,8 +345,14 @@ def learn_arora(opt):
 
     # Embed every sentence, without removing first singular value
     print('Embedding all sentences...')
-    sent_embedder = SentenceEmbedder(word2prob, arora_a, glove_name, glove_dim,
-                                     first_sv=None, glove_cache=glove_cache)
+    sent_embedder = SentenceEmbedder(
+        word2prob,
+        arora_a,
+        glove_name,
+        glove_dim,
+        first_sv=None,
+        glove_cache=glove_cache,
+    )
     utt_embs = []
     log_timer = TimeLogger()
     for n, utt in enumerate(all_utts):
@@ -349,8 +371,10 @@ def learn_arora(opt):
 
     # Remove singular vector from all embs to get complete Arora-style sent embs
     print('Removing singular vec from all sentence embeddings...')
-    utt_embs_adj = [remove_first_sv(torch.Tensor(emb), torch.Tensor(first_sv)).numpy()
-                    for emb in utt_embs]  # list of np arrays shape (glove_dim)
+    utt_embs_adj = [
+        remove_first_sv(torch.Tensor(emb), torch.Tensor(first_sv)).numpy()
+        for emb in utt_embs
+    ]  # list of np arrays shape (glove_dim)
 
     # Make dict mapping ConvAI2 dataset utterances to Arora sent emb
     # We save this to file for convenience (e.g. if you want to inspect)
@@ -360,14 +384,17 @@ def learn_arora(opt):
     # info about GloVe vectors used, and full dict of utt->emb to file
     print("Saving Arora embedding info to %s..." % arora_file)
     with open(arora_file, "wb") as f:
-        pickle.dump({
-            'word2prob': word2prob,  # dict: string to float between 0 and 1
-            'first_sv': first_sv,  # np array shape (glove_dim)
-            'arora_a': arora_a,  # float, 0.0001
-            'glove_name': glove_name,  # string, '840B'
-            'glove_dim': glove_dim,  # int, 300
-            'utt2emb': utt2emb,  # dict: string to np array shape (glove_dim)
-        }, f)
+        pickle.dump(
+            {
+                'word2prob': word2prob,  # dict: string to float between 0 and 1
+                'first_sv': first_sv,  # np array shape (glove_dim)
+                'arora_a': arora_a,  # float, 0.0001
+                'glove_name': glove_name,  # string, '840B'
+                'glove_dim': glove_dim,  # int, 300
+                'utt2emb': utt2emb,  # dict: string to np array shape (glove_dim)
+            },
+            f,
+        )
 
 
 def load_arora(opt):

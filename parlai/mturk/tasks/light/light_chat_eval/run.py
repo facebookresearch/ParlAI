@@ -6,7 +6,8 @@
 
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.light.light_chat_eval.worlds import (
-    LightEvalTestWorld, LightEvalTaskWorld
+    LightEvalTestWorld,
+    LightEvalTaskWorld,
 )
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.light.light_chat_eval.task_config import task_config
@@ -34,18 +35,23 @@ def main():
     argparser.add_mturk_args()
     argparser.set_defaults(datatype='test:stream')
     argparser.add_argument(
-        '--light-eval-task-type', default='speech',
-        help='Type of task to be evaluating')
+        '--light-eval-task-type', default='speech', help='Type of task to be evaluating'
+    )
     argparser.add_argument(
-        '--light-eval-unseen', default=False, type='bool',
-        help='Evaluate against the unseen test rather than the seen test')
+        '--light-eval-unseen',
+        default=False,
+        type='bool',
+        help='Evaluate against the unseen test rather than the seen test',
+    )
     opt = argparser.parse_args()
 
     task_opt = opt.copy()
     task_opt['task'] = 'light_dialog'
-    assert opt['light_eval_task_type'] in ['speech', 'emote', 'action'], (
-        '--light-eval-task-type must be one of speech, emote, or action'
-    )
+    assert opt['light_eval_task_type'] in [
+        'speech',
+        'emote',
+        'action',
+    ], '--light-eval-task-type must be one of speech, emote, or action'
     LABEL_TYPE = opt['light_eval_task_type']  # speech, emote, action
     TRAIN_TURNS = 7
     TRAININGS = 1
@@ -119,12 +125,11 @@ def main():
     # Instantiate an MTurkManager with the given options and a maximum number
     # of agents per world of 1 (based on the length of mturk_agent_ids)
     mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_roles,
-        use_db=True,
+        opt=opt, mturk_agent_ids=mturk_agent_roles, use_db=True
     )
     mturk_manager.setup_server(
-        task_directory_path=os.path.dirname(os.path.abspath(__file__)))
+        task_directory_path=os.path.dirname(os.path.abspath(__file__))
+    )
 
     # Create an onboard_function, which will be run for workers who have
     # accepted your task and must be completed before they are put in the
@@ -166,10 +171,7 @@ def main():
         def check_workers_eligibility(workers):
             return workers
 
-        eligibility_function = {
-            'func': check_workers_eligibility,
-            'multiple': True,
-        }
+        eligibility_function = {'func': check_workers_eligibility, 'multiple': True}
 
         # Assign worker roles is used to determine what the role each worker
         # in the given worker list will play. Setting `id` to None will return
@@ -235,7 +237,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

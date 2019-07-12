@@ -14,8 +14,9 @@ import os
 def _path(task, opt, dt):
     # Build the data if it doesn't exist.
     build(opt)
-    return os.path.join(opt['datapath'], 'wmt',
-                        '{task}_{type}.txt'.format(task=task, type=dt))
+    return os.path.join(
+        opt['datapath'], 'wmt', '{task}_{type}.txt'.format(task=task, type=dt)
+    )
 
 
 class EnDeTeacher(FbDialogTeacher):

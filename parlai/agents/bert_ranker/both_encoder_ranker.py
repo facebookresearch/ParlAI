@@ -22,26 +22,31 @@ class BothEncoderRankerAgent(TorchAgent):
     def add_cmdline_args(parser):
         add_common_args(parser)
         parser = parser.add_argument_group('Bert Ranker Arguments')
-        parser.add_argument('--biencoder-model-file', type=str, default=None,
-                            help='path to biencoder model. Default to model-file_bi')
+        parser.add_argument(
+            '--biencoder-model-file',
+            type=str,
+            default=None,
+            help='path to biencoder model. Default to model-file_bi',
+        )
         parser.add_argument(
             '--biencoder-top-n',
             type=int,
             default=10,
-            help='default number of elements to keep from the biencoder response')
+            help='default number of elements to keep from the biencoder response',
+        )
         parser.add_argument(
             '--crossencoder-model-file',
             type=str,
             default=None,
-            help='path to crossencoder model. Default to model-file_cross')
+            help='path to crossencoder model. Default to model-file_cross',
+        )
         parser.add_argument(
             '--crossencoder-batchsize',
             type=int,
             default=-1,
-            help='crossencoder will be fed those many elements at train or eval time.')
-        parser.set_defaults(
-            encode_candidate_vecs=True
+            help='crossencoder will be fed those many elements at train or eval time.',
         )
+        parser.set_defaults(encode_candidate_vecs=True)
 
     def __init__(self, opt, shared=None):
         opt['lr_scheduler'] = 'none'
@@ -81,13 +86,14 @@ class BothEncoderRankerAgent(TorchAgent):
         outc = []
         step = self.crossencoder_batchsize
         for start in range(0, len(batch.text_vec), step):
-            mbatch = Batch(text_vec=batch.text_vec[start:start + step],
-                           label_vec=batch.label_vec[start:start + step],
-                           candidate_vecs=batch.candidate_vecs[start:start + step],
-                           candidates=batch.candidates[start:start + step])
+            mbatch = Batch(
+                text_vec=batch.text_vec[start : start + step],
+                label_vec=batch.label_vec[start : start + step],
+                candidate_vecs=batch.candidate_vecs[start : start + step],
+                candidates=batch.candidates[start : start + step],
+            )
             outc.append(self.crossencoder.train_step(mbatch))
-        return Output(
-            text=[text for out in outc for text in out.text])
+        return Output(text=[text for out in outc for text in out.text])
 
     def eval_step(self, batch):
         """ We pass the batch first in the biencoder, then filter with crossencoder
@@ -96,15 +102,19 @@ class BothEncoderRankerAgent(TorchAgent):
         if output_biencoder is None:
             return None
         new_candidate_vecs = [
-            self.biencoder.vectorize_fixed_candidates(cands[0:self.top_n_bi])
+            self.biencoder.vectorize_fixed_candidates(cands[0 : self.top_n_bi])
             for cands in output_biencoder.text_candidates
         ]
-        new_candidates = [[c for c in cands[0:self.top_n_bi]]
-                          for cands in output_biencoder.text_candidates
-                          if cands is not None]
-        copy_batch = Batch(text_vec=batch.text_vec,
-                           candidate_vecs=new_candidate_vecs,
-                           candidates=new_candidates)
+        new_candidates = [
+            [c for c in cands[0 : self.top_n_bi]]
+            for cands in output_biencoder.text_candidates
+            if cands is not None
+        ]
+        copy_batch = Batch(
+            text_vec=batch.text_vec,
+            candidate_vecs=new_candidate_vecs,
+            candidates=new_candidates,
+        )
         return self.crossencoder.eval_step(copy_batch)
 
     def save(self, path=None):

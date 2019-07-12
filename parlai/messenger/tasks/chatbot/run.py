@@ -4,11 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
-from parlai.messenger.tasks.chatbot.worlds import \
-    MessengerBotChatTaskWorld
+from parlai.messenger.tasks.chatbot.worlds import MessengerBotChatTaskWorld
 from parlai.messenger.core.messenger_manager import MessengerManager
-from parlai.messenger.core.worlds import SimpleMessengerOverworld as \
-    MessengerOverworld
+from parlai.messenger.core.worlds import SimpleMessengerOverworld as MessengerOverworld
 from parlai.core.agents import create_agent, create_agent_from_shared
 
 
@@ -37,11 +35,7 @@ def main():
         agent = agents[0]
         this_bot = create_agent_from_shared(shared_bot_params)
 
-        world = MessengerBotChatTaskWorld(
-            opt=opt,
-            agent=agent,
-            bot=this_bot
-        )
+        world = MessengerBotChatTaskWorld(opt=opt, agent=agent, bot=this_bot)
         while not world.episode_done():
             world.parley()
         world.shutdown()
@@ -57,8 +51,7 @@ def main():
     try:
         messenger_manager.start_new_run()
         messenger_manager.start_task(
-            assign_role_functions=assign_agent_roles,
-            task_functions=task_functions,
+            assign_role_functions=assign_agent_roles, task_functions=task_functions
         )
     except BaseException:
         raise

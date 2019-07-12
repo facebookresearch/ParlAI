@@ -31,11 +31,7 @@ class SharedTable(MutableMapping):
                 tbl['cnt'] += 1
     """
 
-    types = {
-        int: ctypes.c_int,
-        float: ctypes.c_float,
-        bool: ctypes.c_bool,
-    }
+    types = {int: ctypes.c_int, float: ctypes.c_float, bool: ctypes.c_bool}
 
     def __init__(self, init_dict=None):
         """
@@ -62,8 +58,11 @@ class SharedTable(MutableMapping):
                     self.tensors[k] = v
                     continue
                 elif type(v) not in sizes:
-                    raise TypeError('SharedTable does not support values of ' +
-                                    'type ' + str(type(v)))
+                    raise TypeError(
+                        'SharedTable does not support values of '
+                        + 'type '
+                        + str(type(v))
+                    )
                 sizes[type(v)] += 1
             # pop tensors from init_dict
             for k in self.tensors.keys():
@@ -127,14 +126,19 @@ class SharedTable(MutableMapping):
         if key in self.idx:
             idx, typ = self.idx[key]
             if typ != val_type:
-                raise TypeError(('Cannot change stored type for {key} from ' +
-                                 '{v1} to {v2}. You need to del the key first' +
-                                 ' if you need to change value types.'
-                                 ).format(key=key, v1=typ, v2=val_type))
+                raise TypeError(
+                    (
+                        'Cannot change stored type for {key} from '
+                        + '{v1} to {v2}. You need to del the key first'
+                        + ' if you need to change value types.'
+                    ).format(key=key, v1=typ, v2=val_type)
+                )
             self.arrays[typ][idx] = value
         else:
-            raise KeyError('Cannot add more keys to the shared table as '
-                           'they will not be synced across processes.')
+            raise KeyError(
+                'Cannot add more keys to the shared table as '
+                'they will not be synced across processes.'
+            )
 
     def __delitem__(self, key):
         if key in self.tensors:
@@ -167,5 +171,6 @@ def is_tensor(v):
     """Return if an object is a torch Tensor, without importing torch."""
     if type(v).__module__.startswith('torch'):
         import torch
+
         return torch.is_tensor(v)
     return False

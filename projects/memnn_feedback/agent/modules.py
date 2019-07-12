@@ -23,14 +23,19 @@ class MemNN(nn.Module):
         num_features = len(self.dict)
         self.extra_features_slots = 0
         if opt['time_features']:
-            self.time_features = torch.LongTensor(range(num_features,
-                num_features + self.num_time_features))
+            self.time_features = torch.LongTensor(
+                range(num_features, num_features + self.num_time_features)
+            )
             num_features += self.num_time_features
             self.extra_features_slots += 1
 
         def embedding():
-            return Embed(num_features, opt['embedding_size'],
-                position_encoding=opt['position_encoding'], padding_idx=0)
+            return Embed(
+                num_features,
+                opt['embedding_size'],
+                position_encoding=opt['position_encoding'],
+                padding_idx=0,
+            )
 
         self.answer_embedder = embedding()
 
@@ -43,7 +48,9 @@ class MemNN(nn.Module):
         self.memory_hop = Hop(opt['embedding_size'])
 
         self.score = DotScore()
-        self.linear = nn.Linear(opt['embedding_size'], opt['embedding_size'], bias=False)
+        self.linear = nn.Linear(
+            opt['embedding_size'], opt['embedding_size'], bias=False
+        )
 
         if opt['cuda']:
             self.score.cuda()
@@ -58,7 +65,9 @@ class MemNN(nn.Module):
         memories = memories.data
         if self.extra_features_slots > 0:
             num_nonempty_memories = memory_lengths.ne(0).sum()
-            updated_memories = memories.new(memories.numel() + num_nonempty_memories * self.extra_features_slots)
+            updated_memories = memories.new(
+                memories.numel() + num_nonempty_memories * self.extra_features_slots
+            )
             src_offset = 0
             dst_offset = 0
             for i in range(memory_lengths.size(0)):
@@ -68,12 +77,14 @@ class MemNN(nn.Module):
                         if self.opt['time_features']:
                             updated_memories[dst_offset] = self.time_feature(j)
                             dst_offset += 1
-                        updated_memories[dst_offset:dst_offset + length] = memories[src_offset:src_offset + length]
+                        updated_memories[dst_offset : dst_offset + length] = memories[
+                            src_offset : src_offset + length
+                        ]
                         src_offset += length
                         dst_offset += length
             memory_lengths += memory_lengths.ne(0).long() * self.extra_features_slots
             memories.set_(updated_memories)
-        
+
     def get_score(self, cands, output_embeddings, forward_predict=False):
         last_cand = None
         max_len = max([len(c) for c in cands])
@@ -81,19 +92,36 @@ class MemNN(nn.Module):
         for i, cand_list in enumerate(cands):
             if last_cand != cand_list:
                 candidate_lengths, candidate_indices = to_tensors(cand_list, self.dict)
-                candidate_lengths, candidate_indices = Variable(candidate_lengths), Variable(candidate_indices)
+                candidate_lengths, candidate_indices = (
+                    Variable(candidate_lengths),
+                    Variable(candidate_indices),
+                )
                 candidate_embeddings = None
                 if forward_predict and not self.opt['single_embedder']:
-                    candidate_embeddings = self.feedback_embedder(candidate_lengths, candidate_indices)
+                    candidate_embeddings = self.feedback_embedder(
+                        candidate_lengths, candidate_indices
+                    )
                 else:
-                    candidate_embeddings = self.answer_embedder(candidate_lengths, candidate_indices)
+                    candidate_embeddings = self.answer_embedder(
+                        candidate_lengths, candidate_indices
+                    )
                 if self.opt['cuda']:
                     candidate_embeddings = candidate_embeddings.cuda()
                 last_cand = cand_list
-            scores[i, :len(cand_list)] = self.score.one_to_many(output_embeddings[i].unsqueeze(0), candidate_embeddings)
+            scores[i, : len(cand_list)] = self.score.one_to_many(
+                output_embeddings[i].unsqueeze(0), candidate_embeddings
+            )
         return scores
 
-    def forward(self, memories, queries, memory_lengths, query_lengths, cand_answers=None, cands_embeddings_with_beta=None):
+    def forward(
+        self,
+        memories,
+        queries,
+        memory_lengths,
+        query_lengths,
+        cand_answers=None,
+        cands_embeddings_with_beta=None,
+    ):
         self.update_memories_with_extra_features_(memory_lengths, memories)
 
         if self.opt['single_embedder']:
@@ -104,9 +132,9 @@ class MemNN(nn.Module):
             in_memory_embeddings = self.in_memory_embedder(memory_lengths, memories)
             out_memory_embeddings = self.out_memory_embedder(memory_lengths, memories)
             query_embeddings = self.query_embedder(query_lengths, queries)
-        
+
         attention_mask = Variable(memory_lengths.data.ne(0), requires_grad=False)
-        
+
         if self.opt['cuda']:
             in_memory_embeddings = in_memory_embeddings.cuda()
             out_memory_embeddings = out_memory_embeddings.cuda()
@@ -114,8 +142,12 @@ class MemNN(nn.Module):
             attention_mask = attention_mask.cuda()
 
         for _ in range(self.opt['hops']):
-            query_embeddings = self.memory_hop(query_embeddings,
-                    in_memory_embeddings, out_memory_embeddings, attention_mask)
+            query_embeddings = self.memory_hop(
+                query_embeddings,
+                in_memory_embeddings,
+                out_memory_embeddings,
+                attention_mask,
+            )
 
         # return updated query state if not in forward prediction mode
         if cands_embeddings_with_beta is None:
@@ -125,10 +157,13 @@ class MemNN(nn.Module):
         scores = self.get_score(cand_answers, query_embeddings)
         probs = softmax(scores).unsqueeze(1)
 
-        forward_prediction_output = torch.bmm(probs, cands_embeddings_with_beta).squeeze(1)
+        forward_prediction_output = torch.bmm(
+            probs, cands_embeddings_with_beta
+        ).squeeze(1)
         forward_prediction_output = forward_prediction_output + query_embeddings
         forward_prediction_output = self.linear(forward_prediction_output)
         return scores, forward_prediction_output
+
 
 class Embed(nn.Embedding):
     def __init__(self, *args, position_encoding=False, **kwargs):
@@ -141,7 +176,9 @@ class Embed(nn.Embedding):
         if lengths.dim() == 1 or lengths.size(1) == 1:
             lengths_mat = lengths_mat.squeeze().unsqueeze(0)
 
-        input = torch.LongTensor(lengths_mat.size(0), lengths_mat.size(1), torch.max(lengths_mat))
+        input = torch.LongTensor(
+            lengths_mat.size(0), lengths_mat.size(1), torch.max(lengths_mat)
+        )
         pad = self.padding_idx if self.padding_idx is not None else 0
         input.fill_(pad)
         emb_list = []
@@ -149,7 +186,7 @@ class Embed(nn.Embedding):
         for i, row in enumerate(lengths_mat):
             for j, length in enumerate(row):
                 if length > 0:
-                    input[i, j, :length] = indices[offset:offset+length]
+                    input[i, j, :length] = indices[offset : offset + length]
                 offset += length
         input = Variable(input)
 
@@ -174,9 +211,9 @@ class Embed(nn.Embedding):
     @lru_cache(maxsize=32)
     def position_matrix(J, d):
         m = torch.Tensor(J, d)
-        for k in range(1, d+1):
-            for j in range(1, J+1):
-                m[j-1, k-1] = (1 - j/J) - (k/d) * (1 - 2 * j/J)
+        for k in range(1, d + 1):
+            for j in range(1, J + 1):
+                m[j - 1, k - 1] = (1 - j / J) - (k / d) * (1 - 2 * j / J)
         return m
 
     @staticmethod
@@ -195,16 +232,28 @@ class Hop(nn.Module):
         self.embedding_size = embedding_size
         self.linear = nn.Linear(embedding_size, embedding_size, bias=False)
 
-    def forward(self, query_embeddings, in_memory_embeddings, out_memory_embeddings, attention_mask=None):
-        attention = torch.bmm(in_memory_embeddings, query_embeddings.unsqueeze(2)).squeeze(2)
+    def forward(
+        self,
+        query_embeddings,
+        in_memory_embeddings,
+        out_memory_embeddings,
+        attention_mask=None,
+    ):
+        attention = torch.bmm(
+            in_memory_embeddings, query_embeddings.unsqueeze(2)
+        ).squeeze(2)
         if attention_mask is not None:
             # exclude masked elements from the softmax
-            attention = attention_mask.float() * attention + (1 - attention_mask.float()) * -1e20
+            attention = (
+                attention_mask.float() * attention
+                + (1 - attention_mask.float()) * -1e20
+            )
         probs = softmax(attention).unsqueeze(1)
         memory_output = torch.bmm(probs, out_memory_embeddings).squeeze(1)
         query_embeddings = self.linear(query_embeddings)
         output = memory_output + query_embeddings
         return output
+
 
 class Decoder(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, opt, dictionary):
@@ -229,12 +278,14 @@ class Decoder(nn.Module):
         output, state = self.rnn(input, state)
         return self.hidden_to_idx(output, dropout=self.training)
 
+
 class DotScore(nn.Module):
     def one_to_one(self, query_embeddings, answer_embeddings, reply_embeddings=None):
         return (query_embeddings * answer_embeddings).sum(dim=1).squeeze(1)
 
     def one_to_many(self, query_embeddings, answer_embeddings, reply_embeddings=None):
         return query_embeddings.mm(answer_embeddings.t())
+
 
 def to_tensors(sentences, dictionary):
     lengths = []

@@ -16,7 +16,7 @@ SOCKET_TIMEOUT = 6
 
 
 # Socket handler
-class MessageSocket():
+class MessageSocket:
     """MessageSocket is a wrapper around websocket to forward messages from the
     remote server to the MessengerManager.
     """
@@ -68,18 +68,21 @@ class MessageSocket():
 
     def _send_world_alive(self):
         """Registers world with the passthrough server"""
-        self._safe_send(json.dumps({
-            'type': 'world_alive',
-            'content': {'id': 'WORLD_ALIVE', 'sender_id': 'world'},
-        }), force=True)
+        self._safe_send(
+            json.dumps(
+                {
+                    'type': 'world_alive',
+                    'content': {'id': 'WORLD_ALIVE', 'sender_id': 'world'},
+                }
+            ),
+            force=True,
+        )
 
     def _setup_socket(self):
         """Create socket handlers and registers the socket"""
+
         def on_socket_open(*args):
-            shared_utils.print_and_log(
-                logging.DEBUG,
-                'Socket open: {}'.format(args)
-            )
+            shared_utils.print_and_log(logging.DEBUG, 'Socket open: {}'.format(args))
             self._send_world_alive()
 
         def on_error(ws, error):
@@ -90,8 +93,7 @@ class MessageSocket():
                     raise Exception("Socket refused connection, cancelling")
                 else:
                     shared_utils.print_and_log(
-                        logging.WARN,
-                        'Socket logged error: {}'.format(repr(error)),
+                        logging.WARN, 'Socket logged error: {}'.format(repr(error))
                     )
             except BaseException:
                 if type(error) is websocket.WebSocketConnectionClosedException:
@@ -106,8 +108,7 @@ class MessageSocket():
             """Disconnect event is a no-op for us, as the server reconnects
             automatically on a retry"""
             shared_utils.print_and_log(
-                logging.INFO,
-                'World server disconnected: {}'.format(args)
+                logging.INFO, 'World server disconnected: {}'.format(args)
             )
             self.alive = False
             self._ensure_closed()
@@ -123,8 +124,7 @@ class MessageSocket():
                 return  # No further action for pongs
             message_data = packet_dict['content']
             shared_utils.print_and_log(
-                logging.DEBUG,
-                'Message data received: {}'.format(message_data)
+                logging.DEBUG, 'Message data received: {}'.format(message_data)
             )
             for message_packet in message_data['entry']:
                 for message in message_packet['messaging']:
@@ -134,8 +134,7 @@ class MessageSocket():
             url_base_name = self.server_url.split('https://')[1]
             while self.keep_running:
                 try:
-                    sock_addr = "ws://{}/".format(
-                        url_base_name)
+                    sock_addr = "ws://{}/".format(url_base_name)
                     self.ws = websocket.WebSocketApp(
                         sock_addr,
                         on_message=on_message,
@@ -147,14 +146,13 @@ class MessageSocket():
                 except Exception as e:
                     shared_utils.print_and_log(
                         logging.WARN,
-                        'Socket error {}, attempting restart'.format(repr(e))
+                        'Socket error {}, attempting restart'.format(repr(e)),
                     )
                 time.sleep(0.2)
 
         # Start listening thread
         self.listen_thread = threading.Thread(
-            target=run_socket,
-            name='Main-Socket-Thread'
+            target=run_socket, name='Main-Socket-Thread'
         )
         self.listen_thread.daemon = True
         self.listen_thread.start()

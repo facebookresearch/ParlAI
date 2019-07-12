@@ -36,8 +36,7 @@ class QADataCollectionWorld(World):
             context = '\n'.join(qa['text'].split('\n')[:-1])
 
             # Wrap the context with a prompt telling the person what to do next
-            ad['text'] = (context +
-                          '\n\nPlease provide a question given this context.')
+            ad['text'] = context + '\n\nPlease provide a question given this context.'
 
             self.agent.observe(validate(ad))
             self.question = self.agent.act()

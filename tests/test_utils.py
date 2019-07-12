@@ -74,6 +74,7 @@ class TestUtils(unittest.TestCase):
 
     def test_setnamedtupledefaults(self):
         from collections import namedtuple
+
         NT = namedtuple("NT", ("a", "b", "c"))
 
         # Shouldn't be able to construct a namedtuple without providing info
@@ -114,7 +115,8 @@ class TestUtils(unittest.TestCase):
         items2 = ["e", "d", "c", "b", "a"]
         torch_keys = torch.LongTensor(keys)
         assert argsort(keys, items, items2) == [
-            list(reversed(items)), list(reversed(items2))
+            list(reversed(items)),
+            list(reversed(items2)),
         ]
         assert argsort(keys, items, items2, descending=True) == [items, items2]
 

@@ -11,9 +11,7 @@ from parlai.scripts.eval_model import setup_args, eval_model
 if __name__ == '__main__':
     parser = setup_args()
     parser.set_params(
-        task='squad:fulldoc',
-        model='drqa',
-        model_file='models:drqa/squad/model'
+        task='squad:fulldoc', model='drqa', model_file='models:drqa/squad/model'
     )
     opt = parser.parse_args(print_args=False)
     eval_model(opt, print_parser=parser)

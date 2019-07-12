@@ -21,12 +21,19 @@ def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Interactive chat with a model')
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.add_argument('--display-prettify', type='bool', default=False,
-                        help='Set to use a prettytable when displaying '
-                             'examples with text candidates')
-    parser.add_argument('--display-ignore-fields', type=str,
-                        default='label_candidates,text_candidates',
-                        help='Do not display these fields')
+    parser.add_argument(
+        '--display-prettify',
+        type='bool',
+        default=False,
+        help='Set to use a prettytable when displaying '
+        'examples with text candidates',
+    )
+    parser.add_argument(
+        '--display-ignore-fields',
+        type=str,
+        default='label_candidates,text_candidates',
+        help='Do not display these fields',
+    )
     LocalHumanAgent.add_cmdline_args(parser)
     TransformerAgent.add_cmdline_args(parser)
     parser.set_defaults(history_size=2)

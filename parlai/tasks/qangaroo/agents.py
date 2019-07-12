@@ -27,8 +27,9 @@ class DefaultTeacher(FixedDialogTeacher):
     def _path(self, opt):
         dt = opt['datatype'].split(':')
         datatype = 'train' if dt[0] == 'train' else 'dev'
-        return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
-                            'wikihop', datatype + '.json')
+        return os.path.join(
+            opt['datapath'], 'qangaroo', 'qangaroo_v1.1', 'wikihop', datatype + '.json'
+        )
 
     def num_examples(self):
         return len(self.examples)
@@ -49,7 +50,7 @@ class DefaultTeacher(FixedDialogTeacher):
             'text': '\n'.join(item['supports']) + '\n' + item['query'],
             'query': item['query'],
             'label_candidates': item['candidates'],
-            'label': [item['answer']],
+            'labels': [item['answer']],
             'supports': item['supports'],
             'episode_done': True,
         }
@@ -65,29 +66,33 @@ class WikiHopTeacher(DefaultTeacher):
     def _path(self, opt):
         dt = opt['datatype'].split(':')
         datatype = 'train' if dt[0] == 'train' else 'dev'
-        return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
-                            'wikihop', datatype + '.json')
+        return os.path.join(
+            opt['datapath'], 'qangaroo', 'qangaroo_v1.1', 'wikihop', datatype + '.json'
+        )
 
 
 class MaskedWikiHopTeacher(DefaultTeacher):
     def _path(self, opt):
         dt = opt['datatype'].split(':')
         datatype = 'train.masked' if dt[0] == 'train' else 'dev.masked'
-        return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
-                            'wikihop', datatype + '.json')
+        return os.path.join(
+            opt['datapath'], 'qangaroo', 'qangaroo_v1.1', 'wikihop', datatype + '.json'
+        )
 
 
 class MedHopTeacher(DefaultTeacher):
     def _path(self, opt):
         dt = opt['datatype'].split(':')
         datatype = 'train' if dt[0] == 'train' else 'dev'
-        return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
-                            'medhop', datatype + '.json')
+        return os.path.join(
+            opt['datapath'], 'qangaroo', 'qangaroo_v1.1', 'medhop', datatype + '.json'
+        )
 
 
 class MaskedMedHopTeacher(DefaultTeacher):
     def _path(self, opt):
         dt = opt['datatype'].split(':')
         datatype = 'train.masked' if dt[0] == 'train' else 'dev.masked'
-        return os.path.join(opt['datapath'], 'qangaroo', 'qangaroo_v1.1',
-                            'medhop', datatype + '.json')
+        return os.path.join(
+            opt['datapath'], 'qangaroo', 'qangaroo_v1.1', 'medhop', datatype + '.json'
+        )

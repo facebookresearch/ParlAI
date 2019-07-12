@@ -24,9 +24,10 @@ def build(opt):
         # Download the data.
         fnames = ['woz_test_en.json', 'woz_train_en.json', 'woz_validate_en.json']
         for fname in fnames:
-            url = ('https://github.com/nmrksic/'
-                   'neural-belief-tracker/raw/master/data/woz/' +
-                   fname)
+            url = (
+                'https://github.com/nmrksic/'
+                'neural-belief-tracker/raw/master/data/woz/' + fname
+            )
             build_data.download(url, dpath, fname)
 
     # Mark the data as built.

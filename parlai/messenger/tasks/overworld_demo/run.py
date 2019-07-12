@@ -25,15 +25,21 @@ def main():
     def get_overworld(opt, agent):
         return MessengerOverworld(opt, agent)
 
-    onboard_functions = {name: worlds[0].run for (name, worlds)
-                         in MessengerOverworld.DEMOS.items()}
+    onboard_functions = {
+        name: worlds[0].run for (name, worlds) in MessengerOverworld.DEMOS.items()
+    }
     messenger_manager.set_onboard_functions(onboard_functions)
-    task_functions = {name: worlds[1].run for (name, worlds)
-                      in MessengerOverworld.DEMOS.items()}
-    assign_agent_roles = {name: worlds[1].assign_roles for (name, worlds)
-                          in MessengerOverworld.DEMOS.items()}
-    agents_required = {name: worlds[1].MAX_AGENTS for (name, worlds)
-                       in MessengerOverworld.DEMOS.items()}
+    task_functions = {
+        name: worlds[1].run for (name, worlds) in MessengerOverworld.DEMOS.items()
+    }
+    assign_agent_roles = {
+        name: worlds[1].assign_roles
+        for (name, worlds) in MessengerOverworld.DEMOS.items()
+    }
+    agents_required = {
+        name: worlds[1].MAX_AGENTS
+        for (name, worlds) in MessengerOverworld.DEMOS.items()
+    }
     messenger_manager.set_agents_required(agents_required)
 
     messenger_manager.set_overworld_func(get_overworld)
@@ -41,8 +47,7 @@ def main():
     try:
         messenger_manager.start_new_run()
         messenger_manager.start_task(
-            assign_role_functions=assign_agent_roles,
-            task_functions=task_functions,
+            assign_role_functions=assign_agent_roles, task_functions=task_functions
         )
     except BaseException:
         raise

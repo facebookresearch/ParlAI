@@ -70,8 +70,7 @@ class TopicsGenerator(object):
     def __init__(self, opt):
         self.opt = opt
         self.topics_path = os.path.join(
-            opt['datapath'],
-            'wizard_of_wikipedia/topic_splits.json'
+            opt['datapath'], 'wizard_of_wikipedia/topic_splits.json'
         )
         self.load_topics()
 
@@ -94,6 +93,7 @@ class TopicChooseWorld(MTurkOnboardWorld):
     """A world that provides topics to an MTurk Agent and asks them to choose
     one.
     """
+
     def __init__(self, opt, mturk_agent, role='PERSON_1'):
         self.role = role
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -105,62 +105,57 @@ class TopicChooseWorld(MTurkOnboardWorld):
         if self.role == 'PERSON_1':
             seen = random.choice([True, False])
             num = random.choice([2, 3])
-            topics = self.mturk_agent.topics_generator.get_topics(
-                seen=seen,
-                num=num
+            topics = self.mturk_agent.topics_generator.get_topics(seen=seen, num=num)
+            self.mturk_agent.observe(
+                validate(
+                    {'id': 'SYSTEM', 'text': PICK_TOPIC_MSG, 'relevant_topics': topics}
+                )
             )
-            self.mturk_agent.observe(validate({
-                'id': 'SYSTEM',
-                'text': PICK_TOPIC_MSG,
-                'relevant_topics': topics,
-            }))
 
             topic_act = self.mturk_agent.act(timeout=self.max_choice_time)
             timed_out = self.check_timeout(topic_act)
             if timed_out:
                 return
             pick_msg = AFTER_PICK_TOPIC_MSG
-            self.mturk_agent.observe({
-                'id': 'SYSTEM',
-                'text': pick_msg})
+            self.mturk_agent.observe({'id': 'SYSTEM', 'text': pick_msg})
             self.mturk_agent.chosen_topic = topic_act['text']
             self.mturk_agent.topic_choices = topics
             self.mturk_agent.seen = seen
-            self.mturk_agent.observe(validate({
-                'id': 'SYSTEM',
-                'wait_msg': True,
-            }))
+            self.mturk_agent.observe(validate({'id': 'SYSTEM', 'wait_msg': True}))
         else:
-            self.mturk_agent.observe(validate({
-                'id': 'SYSTEM',
-                'wait_msg': True,
-            }))
+            self.mturk_agent.observe(validate({'id': 'SYSTEM', 'wait_msg': True}))
         return
 
     def check_timeout(self, act):
-        if ((act['text'] == '[TIMEOUT]') or (act['text'] == '[RETURNED]') or
-                (act['text'] == '[DISCONNECT]')):
+        if (
+            (act['text'] == '[TIMEOUT]')
+            or (act['text'] == '[RETURNED]')
+            or (act['text'] == '[DISCONNECT]')
+        ):
             return True
         else:
             return False
 
 
 class WizardEval(MultiAgentDialogWorld):
-    def __init__(self, opt, agents=None, shared=None,
-                 range_turn=[3, 5], max_turn=5,
-                 max_resp_time=120,
-                 model_agent_opt=None,
-                 world_tag='',
-                 agent_timeout_shutdown=120):
+    def __init__(
+        self,
+        opt,
+        agents=None,
+        shared=None,
+        range_turn=[3, 5],
+        max_turn=5,
+        max_resp_time=120,
+        model_agent_opt=None,
+        world_tag='',
+        agent_timeout_shutdown=120,
+    ):
 
         # TURN CONTROL
         self.turn_idx = 0
         self.range_turn = range_turn
         self.max_turn = max_turn
-        self.n_turn = np.random.randint(
-            self.range_turn[0],
-            self.range_turn[1]
-        ) + 1
+        self.n_turn = np.random.randint(self.range_turn[0], self.range_turn[1]) + 1
         self.chat_done = False
         self.other_first = random.choice([True, False])
 
@@ -217,13 +212,15 @@ class WizardEval(MultiAgentDialogWorld):
         if self.turn_idx == 1:
             self.start_time = time.time()
             for idx, agent in enumerate(self.agents):
-                chosen_topic_text = '<b><span style="color:blue">' \
-                                    '{}\n</span></b>'.format(self.chosen_topic.strip())
+                chosen_topic_text = (
+                    '<b><span style="color:blue">'
+                    '{}\n</span></b>'.format(self.chosen_topic.strip())
+                )
                 control_msg['chosen_topic'] = chosen_topic_text
                 print(chosen_topic_text)
                 control_msg['text'] = self.get_instruction(
-                    tag='start',
-                    agent_id=agent.id)
+                    tag='start', agent_id=agent.id
+                )
                 agent.observe(validate(control_msg))
                 if idx == 0:
                     time.sleep(3)
@@ -233,10 +230,7 @@ class WizardEval(MultiAgentDialogWorld):
         """
         if self.turn_idx == self.n_turn + 1:
             for idx, agent in enumerate(self.agents):
-                control_msg['text'] = self.get_instruction(
-                    idx,
-                    tag='exceed_min_turns'
-                )
+                control_msg['text'] = self.get_instruction(idx, tag='exceed_min_turns')
                 control_msg['exceed_min_turns'] = True
                 agent.observe(validate(control_msg))
 
@@ -245,9 +239,11 @@ class WizardEval(MultiAgentDialogWorld):
         if self.other_first and self.turn_idx == 1:
             if self.model_agent is not None:
                 # Model has to observe chosen topic
-                chosen_act = {'chosen_topic': self.chosen_topic,
-                              'text': self.chosen_topic,
-                              'episode_done': False}
+                chosen_act = {
+                    'chosen_topic': self.chosen_topic,
+                    'text': self.chosen_topic,
+                    'episode_done': False,
+                }
                 self.model_agent.observe(chosen_act)
                 model_act = self.model_agent.act()
                 model_act['id'] = 'PERSON_2'
@@ -302,7 +298,7 @@ class WizardEval(MultiAgentDialogWorld):
                     (' ,', ','),
                     (' ?', '?'),
                     (' !', '!'),
-                    ('i ', 'I ')
+                    ('i ', 'I '),
                 ]:
                     act['text'] = act['text'].replace(sb_0, sb_1)
                 act['id'] = 'PERSON_2'
@@ -353,14 +349,12 @@ class WizardEval(MultiAgentDialogWorld):
                     control_msg['text'] = NAN_MSG
                     self.eval_agent.observe(validate(control_msg))
                     act = self.eval_agent.act(timeout=self.max_resp_time)
-                if 'text' in act and \
-                        act['text'] in self.ratings:
+                if 'text' in act and act['text'] in self.ratings:
                     self.gmark_score = int(act['text'])
 
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(eval_or_shutdown)(agent) for agent in self.agents)
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(eval_or_shutdown)(agent) for agent in self.agents
+        )
 
     def model_observes_itself(self, txt):
         act = {'text': txt, 'episode_done': False}
@@ -386,15 +380,11 @@ class WizardEval(MultiAgentDialogWorld):
         convo_finished = True
         bad_workers = []
         if not self.opt['is_sandbox']:
-            if (self.opt.get('unique_workers') and
-                    self.opt.get('unique_qualif_id')):
+            if self.opt.get('unique_workers') and self.opt.get('unique_qualif_id'):
                 # assign qualification to evaluating agent only
                 qual = self.opt['unique_qualif_id']
                 mutils.give_worker_qualification(
-                    self.eval_agent.worker_id,
-                    qual,
-                    value=None,
-                    is_sandbox=False
+                    self.eval_agent.worker_id, qual, value=None, is_sandbox=False
                 )
         if self.dialog == [] or self.gmark_score == -1:
             convo_finished = False
@@ -404,11 +394,12 @@ class WizardEval(MultiAgentDialogWorld):
             os.makedirs(data_path)
         if convo_finished:
             filename = os.path.join(
-                data_path, '{}_{}_{}.pkl'.format(
+                data_path,
+                '{}_{}_{}.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type
-                )
+                    self.task_type,
+                ),
             )
         else:
             filename = os.path.join(
@@ -416,26 +407,28 @@ class WizardEval(MultiAgentDialogWorld):
                 '{}_{}_{}_incomplete.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type
-                )
+                    self.task_type,
+                ),
             )
-        print(
-            self.world_tag,
-            ': Data successfully saved at {}.'.format(filename)
+        print(self.world_tag, ': Data successfully saved at {}.'.format(filename))
+        pickle.dump(
+            {
+                'chosen_topic': self.chosen_topic,
+                'topic_choices': self.topic_choices,
+                'seen': self.seen,
+                'dialog': self.dialog,
+                'dialog_list': self.dialog_list,
+                'other_first': self.other_first,
+                'total_time': time.time() - self.start_time,
+                'workers': [ag.worker_id for ag in self.agents],
+                'hit_id': [ag.hit_id for ag in self.agents],
+                'assignment_id': [ag.assignment_id for ag in self.agents],
+                'bad_workers': bad_workers,
+                'n_turn': self.n_turn,
+                'gmark_score': self.gmark_score,
+            },
+            open(filename, 'wb'),
         )
-        pickle.dump({'chosen_topic': self.chosen_topic,
-                     'topic_choices': self.topic_choices,
-                     'seen': self.seen,
-                     'dialog': self.dialog,
-                     'dialog_list': self.dialog_list,
-                     'other_first': self.other_first,
-                     'total_time': time.time() - self.start_time,
-                     'workers': [ag.worker_id for ag in self.agents],
-                     'hit_id': [ag.hit_id for ag in self.agents],
-                     'assignment_id': [ag.assignment_id for ag in self.agents],
-                     'bad_workers': bad_workers,
-                     'n_turn': self.n_turn,
-                     'gmark_score': self.gmark_score}, open(filename, 'wb'))
 
     def is_msg_tooshortlong(self, act, ag, th_min=3, th_max=20):
         if act['episode_done']:
@@ -459,13 +452,15 @@ class WizardEval(MultiAgentDialogWorld):
         if act is None:
             self.chat_done = True
             return True
-        if ((act['text'] == '[TIMEOUT]') or (act['text'] == '[RETURNED]') or
-                (act['text'] == '[DISCONNECT]')):
+        if (
+            (act['text'] == '[TIMEOUT]')
+            or (act['text'] == '[RETURNED]')
+            or (act['text'] == '[DISCONNECT]')
+        ):
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
             control_msg['text'] = self.get_instruction(
-                agent_id=act['id'],
-                tag='timeout'
+                agent_id=act['id'], tag='timeout'
             )
             for ag in self.agents:
                 if ag.id != act['id']:

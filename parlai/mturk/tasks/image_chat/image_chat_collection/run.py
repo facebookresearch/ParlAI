@@ -4,9 +4,13 @@
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.tasks.image_chat.agents import ImageChatTeacher
-from worlds import \
-    MTurkImageChatWorld, RoleOnboardWorld, PersonalityGenerator, \
-    ExampleGenerator, RESPONDER
+from worlds import (
+    MTurkImageChatWorld,
+    RoleOnboardWorld,
+    PersonalityGenerator,
+    ExampleGenerator,
+    RESPONDER,
+)
 from task_configs.task_config_first_response import task_config as config_first
 from task_configs.task_config_second_response import task_config as config_second
 import os
@@ -22,25 +26,48 @@ def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('-min_t', '--min_turns', default=3, type=int,
-                           help='minimum number of turns')
-    argparser.add_argument('-mt', '--max_turns', default=5, type=int,
-                           help='maximal number of chat turns')
-    argparser.add_argument('-mx_rsp_time', '--max_resp_time', default=1800,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('-mx_onb_time', '--max_onboard_time', type=int,
-                           default=300, help='time limit for turker'
-                           'in onboarding')
-    argparser.add_argument('-ni', '--num_images', type=int,
-                           default=10, help='number of images to show \
-                           to turker')
-    argparser.add_argument('--auto-approve-delay', type=int,
-                           default=3600*24*5, help='how long to wait for  \
-                           auto approval')
-    argparser.add_argument('--second-response', type='bool',
-                           default=False, help='Specify if getting responses \
-                           to responses to original comment')
+    argparser.add_argument(
+        '-min_t', '--min_turns', default=3, type=int, help='minimum number of turns'
+    )
+    argparser.add_argument(
+        '-mt', '--max_turns', default=5, type=int, help='maximal number of chat turns'
+    )
+    argparser.add_argument(
+        '-mx_rsp_time',
+        '--max_resp_time',
+        default=1800,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '-mx_onb_time',
+        '--max_onboard_time',
+        type=int,
+        default=300,
+        help='time limit for turker' 'in onboarding',
+    )
+    argparser.add_argument(
+        '-ni',
+        '--num_images',
+        type=int,
+        default=10,
+        help='number of images to show \
+                           to turker',
+    )
+    argparser.add_argument(
+        '--auto-approve-delay',
+        type=int,
+        default=3600 * 24 * 5,
+        help='how long to wait for  \
+                           auto approval',
+    )
+    argparser.add_argument(
+        '--second-response',
+        type='bool',
+        default=False,
+        help='Specify if getting responses \
+                           to responses to original comment',
+    )
     ImageChatTeacher.add_cmdline_args(argparser)
 
     opt = argparser.parse_args()
@@ -51,10 +78,7 @@ def main():
     opt.update(config_second if opt['second_response'] else config_first)
 
     mturk_agent_ids = [RESPONDER]
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
 
     personality_generator = PersonalityGenerator(opt)
     example_generator = ExampleGenerator(opt)
@@ -85,9 +109,7 @@ def main():
             agents = workers[:]
             conv_idx = mturk_manager.conversation_index
             world = MTurkImageChatWorld(
-                opt,
-                agents=agents,
-                world_tag='conversation t_{}'.format(conv_idx),
+                opt, agents=agents, world_tag='conversation t_{}'.format(conv_idx)
             )
             while not world.episode_done():
                 world.parley()
@@ -99,7 +121,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

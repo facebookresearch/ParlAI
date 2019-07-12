@@ -92,8 +92,7 @@ def store_contents(opt, task, save_path, context_length=-1, include_labels=True)
                 # ever reverse-lookup them
                 triples.append((None, text, label))
 
-            c.executemany('INSERT OR IGNORE INTO documents VALUES (?,?,?)',
-                          triples)
+            c.executemany('INSERT OR IGNORE INTO documents VALUES (?,?,?)', triples)
             pbar.update()
 
             # reset flags and content
@@ -102,8 +101,10 @@ def store_contents(opt, task, save_path, context_length=-1, include_labels=True)
             current.clear()
             context.clear()
 
-    logger.info('Read %d examples from %d episodes.' % (
-        teacher.num_examples(), teacher.num_episodes()))
+    logger.info(
+        'Read %d examples from %d episodes.'
+        % (teacher.num_examples(), teacher.num_episodes())
+    )
     logger.info('Committing...')
     conn.commit()
     conn.close()

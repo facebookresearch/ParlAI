@@ -6,8 +6,10 @@
 import os
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from parlai.mturk.tasks.multi_agent_dialog.worlds import \
-    MTurkMultiAgentDialogWorld, MTurkMultiAgentDialogOnboardWorld
+from parlai.mturk.tasks.multi_agent_dialog.worlds import (
+    MTurkMultiAgentDialogWorld,
+    MTurkMultiAgentDialogOnboardWorld,
+)
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from parlai.mturk.tasks.multi_agent_dialog.task_config import task_config
 
@@ -31,10 +33,7 @@ def main():
     mturk_agent_2_id = 'mturk_agent_2'
     human_agent_1_id = 'human_1'
     mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id]
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
     mturk_manager.setup_server()
 
     try:
@@ -42,10 +41,7 @@ def main():
         mturk_manager.create_hits()
 
         def run_onboard(worker):
-            world = MTurkMultiAgentDialogOnboardWorld(
-                opt=opt,
-                mturk_agent=worker
-            )
+            world = MTurkMultiAgentDialogOnboardWorld(opt=opt, mturk_agent=worker)
             while not world.episode_done():
                 world.parley()
             world.shutdown()
@@ -57,10 +53,7 @@ def main():
         def check_worker_eligibility(worker):
             return True
 
-        eligibility_function = {
-            'func': check_worker_eligibility,
-            'multiple': False,
-        }
+        eligibility_function = {'func': check_worker_eligibility, 'multiple': False}
 
         def assign_worker_roles(workers):
             for index, worker in enumerate(workers):
@@ -76,8 +69,7 @@ def main():
             human_agent_1.id = human_agent_1_id
 
             world = MTurkMultiAgentDialogWorld(
-                opt=opt,
-                agents=[human_agent_1, mturk_agent_1, mturk_agent_2]
+                opt=opt, agents=[human_agent_1, mturk_agent_1, mturk_agent_2]
             )
 
             while not world.episode_done():
@@ -88,7 +80,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

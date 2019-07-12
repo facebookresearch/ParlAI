@@ -6,7 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import round_sigfigs #, maintain_dialog_history
+from parlai.core.utils import round_sigfigs  # , maintain_dialog_history
 
 from .modules import Kvmemnn
 
@@ -22,10 +22,17 @@ import os
 import random
 import pickle
 
-def maintain_dialog_history(history, observation, reply='',
-                            historyLength=1, useReplies="labels",
-                            dict=None, useStartEndIndices=True,
-                            usePersonas=True):
+
+def maintain_dialog_history(
+    history,
+    observation,
+    reply='',
+    historyLength=1,
+    useReplies="labels",
+    dict=None,
+    useStartEndIndices=True,
+    usePersonas=True,
+):
     """Keeps track of dialog history, up to a truncation length.
     Either includes replies from the labels, model, or not all using param 'replies'."""
 
@@ -33,7 +40,7 @@ def maintain_dialog_history(history, observation, reply='',
         txt = txt.lower()
         txt = txt.replace("n't", " not")
         if dict is not None:
-            vec =  dict.txt2vec(txt)
+            vec = dict.txt2vec(txt)
             if useStartEndIndices:
                 parsed_x = deque([dict[dict.start_token]])
                 parsed_x.extend(vec)
@@ -63,7 +70,7 @@ def maintain_dialog_history(history, observation, reply='',
         if len(history['labels']) > 0:
             r = history['labels'][0]
             history['dialog'].extend(parse(r))
-        else: #if useReplies == 'model':
+        else:  # if useReplies == 'model':
             if reply != '':
                 history['dialog'].extend(parse(reply))
 
@@ -71,7 +78,9 @@ def maintain_dialog_history(history, observation, reply='',
         txts = observation['text'].split('\n')
         for txt in txts:
             if usePersonas and 'persona:' in txt:
-                history['persona'].append(Variable(torch.LongTensor(parse(txt)).unsqueeze(0)))
+                history['persona'].append(
+                    Variable(torch.LongTensor(parse(txt)).unsqueeze(0))
+                )
             else:
                 utt = parse(txt)
                 history['dialog'].extend(utt)
@@ -84,6 +93,7 @@ def maintain_dialog_history(history, observation, reply='',
         history['labels'] = observation['eval_labels']
 
     return history['dialog'], history['persona']
+
 
 def load_cands(path):
     """Load global fixed set of candidate labels that the teacher provides
@@ -110,7 +120,7 @@ def load_cands(path):
                     cands = []
                 if lines_have_ids:
                     space_idx = line.find(' ')
-                    line = line[space_idx + 1:]
+                    line = line[space_idx + 1 :]
                     if cands_are_replies:
                         sp = line.split('\t')
                         if len(sp) > 1 and sp[1] != '':
@@ -147,67 +157,137 @@ class KvmemnnAgent(Agent):
         """Add command-line arguments specifically for this agent."""
         KvmemnnAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Kvmemnn Arguments')
-        agent.add_argument('--hops', type=int, default=1,
-                           help='num hops')
-        agent.add_argument('--lins', type=int, default=0,
-                           help='num lins projecting after hops')
-        agent.add_argument('-esz', '--embeddingsize', type=int, default=128,
-                           help='size of the token embeddings')
-        agent.add_argument('-enorm', '--embeddingnorm', type=float, default=10,
-                           help='max norm of word embeddings')
-        agent.add_argument('-shareEmb', '--share-embeddings', type='bool', default=True,
-                           help='whether LHS and RHS share embeddings')
-        agent.add_argument('-lr', '--learningrate', type=float, default=0.005,
-                           help='learning rate')
-        agent.add_argument('-margin', '--margin', type=float, default=0.3,
-                           help='margin')
-        agent.add_argument('-loss', '--loss', default='cosine',
-                           choices={'cosine', 'nll'})
-        agent.add_argument('-opt', '--optimizer', default='sgd',
-                           choices=KvmemnnAgent.OPTIM_OPTS.keys(),
-                           help='Choose between pytorch optimizers. '
-                                'Any member of torch.optim is valid and will '
-                                'be used with default params except learning '
-                                'rate (as specified by -lr).')
-        agent.add_argument('-tr', '--truncate', type=int, default=-1,
-                           help='truncate input & output lengths to speed up '
-                           'training (may reduce accuracy). This fixes all '
-                           'input and output to have a maximum length.')
-        agent.add_argument('-k', '--neg-samples', type=int, default=10,
-                           help='number k of negative samples per example')
-        agent.add_argument('--parrot-neg', type=int, default=0,
-                           help='include query as a negative')
-        agent.add_argument('--take-next-utt', type='bool', default=False,
-                           help='take next utt')
-        agent.add_argument('--twohop-range', type=int, default=100,
-                           help='2 hop range constraint for num rescored utterances')
-        agent.add_argument('--twohop-blend', type=float, default=0,
-                           help='2 hop blend in the first hop scores if > 0')
-        agent.add_argument('--kvmemnn-debug', type='bool', default=False,
-                           help='print debug information')
-        agent.add_argument('--tfidf', type='bool', default=False,
-                           help='Use frequency based normalization for embeddings.')
-        agent.add_argument('-cs', '--cache-size', type=int, default=1000,
-                           help='size of negative sample cache to draw from')
-        agent.add_argument('-hist', '--history-length', default=100, type=int,
-                           help='Number of past tokens to remember. ')
-        agent.add_argument('-histr', '--history-replies',
-                           default='label', type=str,
-                           choices=['none', 'model', 'label'],
-                           help='Keep replies in the history, or not.')
-        agent.add_argument('--interactive-mode',
-                           default=False, type='bool',
-                           choices=[True, False])
-        agent.add_argument('--loadcands', type='bool', default=True,
-                           help='Load candidates to rank from .candspair files, or not.')
-        
+        agent.add_argument('--hops', type=int, default=1, help='num hops')
+        agent.add_argument(
+            '--lins', type=int, default=0, help='num lins projecting after hops'
+        )
+        agent.add_argument(
+            '-esz',
+            '--embeddingsize',
+            type=int,
+            default=128,
+            help='size of the token embeddings',
+        )
+        agent.add_argument(
+            '-enorm',
+            '--embeddingnorm',
+            type=float,
+            default=10,
+            help='max norm of word embeddings',
+        )
+        agent.add_argument(
+            '-shareEmb',
+            '--share-embeddings',
+            type='bool',
+            default=True,
+            help='whether LHS and RHS share embeddings',
+        )
+        agent.add_argument(
+            '-lr', '--learningrate', type=float, default=0.005, help='learning rate'
+        )
+        agent.add_argument(
+            '-margin', '--margin', type=float, default=0.3, help='margin'
+        )
+        agent.add_argument(
+            '-loss', '--loss', default='cosine', choices={'cosine', 'nll'}
+        )
+        agent.add_argument(
+            '-opt',
+            '--optimizer',
+            default='sgd',
+            choices=KvmemnnAgent.OPTIM_OPTS.keys(),
+            help='Choose between pytorch optimizers. '
+            'Any member of torch.optim is valid and will '
+            'be used with default params except learning '
+            'rate (as specified by -lr).',
+        )
+        agent.add_argument(
+            '-tr',
+            '--truncate',
+            type=int,
+            default=-1,
+            help='truncate input & output lengths to speed up '
+            'training (may reduce accuracy). This fixes all '
+            'input and output to have a maximum length.',
+        )
+        agent.add_argument(
+            '-k',
+            '--neg-samples',
+            type=int,
+            default=10,
+            help='number k of negative samples per example',
+        )
+        agent.add_argument(
+            '--parrot-neg', type=int, default=0, help='include query as a negative'
+        )
+        agent.add_argument(
+            '--take-next-utt', type='bool', default=False, help='take next utt'
+        )
+        agent.add_argument(
+            '--twohop-range',
+            type=int,
+            default=100,
+            help='2 hop range constraint for num rescored utterances',
+        )
+        agent.add_argument(
+            '--twohop-blend',
+            type=float,
+            default=0,
+            help='2 hop blend in the first hop scores if > 0',
+        )
+        agent.add_argument(
+            '--kvmemnn-debug',
+            type='bool',
+            default=False,
+            help='print debug information',
+        )
+        agent.add_argument(
+            '--tfidf',
+            type='bool',
+            default=False,
+            help='Use frequency based normalization for embeddings.',
+        )
+        agent.add_argument(
+            '-cs',
+            '--cache-size',
+            type=int,
+            default=1000,
+            help='size of negative sample cache to draw from',
+        )
+        agent.add_argument(
+            '-hist',
+            '--history-length',
+            default=100,
+            type=int,
+            help='Number of past tokens to remember. ',
+        )
+        agent.add_argument(
+            '-histr',
+            '--history-replies',
+            default='label',
+            type=str,
+            choices=['none', 'model', 'label'],
+            help='Keep replies in the history, or not.',
+        )
+        agent.add_argument(
+            '--interactive-mode', default=False, type='bool', choices=[True, False]
+        )
+        agent.add_argument(
+            '--loadcands',
+            type='bool',
+            default=True,
+            help='Load candidates to rank from .candspair files, or not.',
+        )
+
     def __init__(self, opt, shared=None):
         """Set up model if shared params not set, otherwise no work to do."""
         super().__init__(opt, shared)
         opt = self.opt
         if opt.get('batchsize', 1) > 1:
-            raise RuntimeError('Kvmemnn model does not support batchsize > 1, '
-                               'try training with numthreads > 1 instead.')
+            raise RuntimeError(
+                'Kvmemnn model does not support batchsize > 1, '
+                'try training with numthreads > 1 instead.'
+            )
         self.reset_metrics()
         # all instances needs truncate param
         self.id = 'Kvmemnn'
@@ -228,7 +308,7 @@ class KvmemnnAgent(Agent):
             # set up shared properties
             self.dict = shared['dict']
             # answers contains a batch_size list of the last answer produced
-            self.model = shared['model'] #Kvmemnn(opt, len(self.dict))
+            self.model = shared['model']  # Kvmemnn(opt, len(self.dict))
             if 'fixedX' in shared:
                 self.fixedX = shared['fixedX']
                 self.fixedCands = shared['fixedCands']
@@ -241,8 +321,9 @@ class KvmemnnAgent(Agent):
             self.threadindex = -1
             torch.set_num_threads(1)
 
-            if ((opt['dict_file'] is None and opt.get('model_file')) or
-                os.path.isfile(opt['model_file'] + '.dict')):
+            if (opt['dict_file'] is None and opt.get('model_file')) or os.path.isfile(
+                opt['model_file'] + '.dict'
+            ):
                 # set default dict-file if not set
                 opt['dict_file'] = opt['model_file'] + '.dict'
             # load dictionary and basic tokens & vectors
@@ -278,7 +359,9 @@ class KvmemnnAgent(Agent):
             print("=init done=")
 
         if self.opt['loss'] == 'cosine':
-            self.criterion = torch.nn.CosineEmbeddingLoss(margin=opt['margin'], size_average=False)
+            self.criterion = torch.nn.CosineEmbeddingLoss(
+                margin=opt['margin'], size_average=False
+            )
         elif self.opt['loss'] == 'nll':
             self.criterion = nn.CrossEntropyLoss(ignore_index=-100)
         else:
@@ -296,16 +379,24 @@ class KvmemnnAgent(Agent):
         if self.interactiveMode:
             print("[ Interactive mode ]")
 
-
     def override_opt(self, new_opt):
         """Set overridable opts from loaded opt file.
 
         Print out each added key and each overriden key.
         Only override args specific to the model.
         """
-        model_args = {'hiddensize', 'embeddingsize', 'numlayers', 'optimizer',
-                      'encoder', 'decoder', 'lookuptable', 'attention',
-                      'attention_length', 'fixed_candidates_file'}
+        model_args = {
+            'hiddensize',
+            'embeddingsize',
+            'numlayers',
+            'optimizer',
+            'encoder',
+            'decoder',
+            'lookuptable',
+            'attention',
+            'attention_length',
+            'fixed_candidates_file',
+        }
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -313,8 +404,11 @@ class KvmemnnAgent(Agent):
             if k not in self.opt:
                 print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
             elif self.opt[k] != v:
-                print('Overriding option [ {k}: {old} => {v}]'.format(
-                      k=k, old=self.opt[k], v=v))
+                print(
+                    'Overriding option [ {k}: {old} => {v}]'.format(
+                        k=k, old=self.opt[k], v=v
+                    )
+                )
             self.opt[k] = v
         return self.opt
 
@@ -381,11 +475,14 @@ class KvmemnnAgent(Agent):
         self.episode_done = observation['episode_done']
         # shallow copy observation (deep copy can be expensive)
         obs = observation.copy()
-        obs['query'],obs['mem'] = maintain_dialog_history(
-            self.history, obs,
+        obs['query'], obs['mem'] = maintain_dialog_history(
+            self.history,
+            obs,
             historyLength=self.opt['history_length'],
             useReplies=self.opt['history_replies'],
-            dict=self.dict, useStartEndIndices=False)
+            dict=self.dict,
+            useStartEndIndices=False,
+        )
         self.observation = obs
         return obs
 
@@ -395,7 +492,7 @@ class KvmemnnAgent(Agent):
 
         metrics = self.metrics
         if metrics['exs'] == 0:
-            report = { 'mean_rank': self.opt['neg_samples'] }
+            report = {'mean_rank': self.opt['neg_samples']}
         else:
             maxn = 0
             for i in range(100):
@@ -403,25 +500,39 @@ class KvmemnnAgent(Agent):
                 if n > maxn:
                     maxn = n
 
-            report = { 'exs': clip(metrics['total_total']),
-                       'loss': clip(metrics['loss'] / metrics['exs']),
-                       'mean_rank': clip(metrics['mean_rank'] / metrics['exs']),
-                       'mlp_time': clip(metrics['mlp_time'] / metrics['exs']),
-                       'tot_time': clip(metrics['tot_time'] / metrics['exs']),
-                       'max_norm': clip(n),
-                       }
+            report = {
+                'exs': clip(metrics['total_total']),
+                'loss': clip(metrics['loss'] / metrics['exs']),
+                'mean_rank': clip(metrics['mean_rank'] / metrics['exs']),
+                'mlp_time': clip(metrics['mlp_time'] / metrics['exs']),
+                'tot_time': clip(metrics['tot_time'] / metrics['exs']),
+                'max_norm': clip(n),
+            }
         return report
 
     def reset_metrics(self, keep_total=False):
         if keep_total:
-            self.metrics = { 'exs':0, 'mean_rank':0, 'loss':0,
-                             'total_total':self.metrics['total_total'],
-                             'mlp_time':0, 'tot_time':0,
-                             'max_weight':0, 'mean_weight':0}
+            self.metrics = {
+                'exs': 0,
+                'mean_rank': 0,
+                'loss': 0,
+                'total_total': self.metrics['total_total'],
+                'mlp_time': 0,
+                'tot_time': 0,
+                'max_weight': 0,
+                'mean_weight': 0,
+            }
         else:
-            self.metrics = { 'total_total':0, 'mean_rank':0, 'exs':0,
-                             'mlp_time':0, 'tot_time':0, 'loss':0,
-                             'max_weight':0, 'mean_weight':0}
+            self.metrics = {
+                'total_total': 0,
+                'mean_rank': 0,
+                'exs': 0,
+                'mlp_time': 0,
+                'tot_time': 0,
+                'loss': 0,
+                'max_weight': 0,
+                'mean_weight': 0,
+            }
 
     def compute_metrics(self, loss, scores, mlp_time, non_mlp_time):
         metrics = {}
@@ -446,13 +557,13 @@ class KvmemnnAgent(Agent):
 
     def get_negs(self, xs, ys):
         negs = []
-        #for neg in self.ys_cache:
+        # for neg in self.ys_cache:
         cache_sz = len(self.ys_cache) - 1
         if cache_sz < 1:
             return negs
         k = self.opt['neg_samples']
         for i in range(1, k * 3):
-            index =  random.randint(0, cache_sz)
+            index = random.randint(0, cache_sz)
             neg = self.ys_cache[index]
             if not self.same(ys.squeeze(0), neg.squeeze(0)):
                 negs.append(neg)
@@ -474,9 +585,15 @@ class KvmemnnAgent(Agent):
         score = torch.Tensor(W.size(0))
         for i in range(W.size(0)):
             score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0)[0].item()
-        val,ind=score.sort(descending=True)
+        val, ind = score.sort(descending=True)
         for i in range(20):
-            print(str(ind[i]) + " [" + str(val[i]) + "]: " + self.v2t(torch.Tensor([ind[i]])))
+            print(
+                str(ind[i])
+                + " ["
+                + str(val[i])
+                + "]: "
+                + self.v2t(torch.Tensor([ind[i]]))
+            )
 
     def predict(self, xs, ys=None, cands=None, cands_txt=None, obs=None):
         """Produce a prediction from our model.
@@ -487,7 +604,7 @@ class KvmemnnAgent(Agent):
         if xs is None:
             return [{}]
         is_training = ys is not None
-        if is_training: #
+        if is_training:  #
             negs = self.get_negs(xs, ys)
             if len(negs) > 0:
                 self.model.train()
@@ -495,7 +612,7 @@ class KvmemnnAgent(Agent):
                 if self.opt['loss'] == 'cosine':
                     xe, ye = self.model(xs, obs[0]['mem'], ys, negs)
                     y = Variable(-torch.ones(xe.size(0)))
-                    y[0]= 1
+                    y[0] = 1
                     loss = self.criterion(xe, ye, y)
                 else:
                     x = self.model(xs, obs[0]['mem'], ys, negs)
@@ -505,25 +622,26 @@ class KvmemnnAgent(Agent):
                 self.update_params()
                 rest = 0
                 if self.start2 != 99:
-                    rest = self.start-self.start2
+                    rest = self.start - self.start2
                 self.start2 = time.time()
                 if self.opt['loss'] == 'cosine':
-                    pred = nn.CosineSimilarity().forward(xe,ye)
+                    pred = nn.CosineSimilarity().forward(xe, ye)
                 else:
                     pred = x
-                metrics = self.compute_metrics(loss.item(),
-                pred.squeeze(0), self.start2-self.start, rest)
-                return [{'metrics':metrics}]
+                metrics = self.compute_metrics(
+                    loss.item(), pred.squeeze(0), self.start2 - self.start, rest
+                )
+                return [{'metrics': metrics}]
         else:
             fixed = False
             if hasattr(self, 'fixedCands') and self.fixedCands:
-                self.take_next_utt=True
-                self.twohoputt=True
-                self.tricks=True
+                self.take_next_utt = True
+                self.twohoputt = True
+                self.tricks = True
             else:
                 self.take_next_utt = False
-                self.twohoputt=False
-                self.tricks=False
+                self.twohoputt = False
+                self.tricks = False
             if cands is None or cands[0] is None or self.take_next_utt:
                 # cannot predict without candidates.
                 if self.fixedCands or self.take_next_utt:
@@ -541,14 +659,14 @@ class KvmemnnAgent(Agent):
                     xs = Variable(torch.LongTensor([self.parse('nothing')]))
                 xs = xs.clone()
                 if self.tricks:
-                    vv=self.history['last_utterance']
+                    vv = self.history['last_utterance']
                     if len(vv) == 0:
                         xsq = Variable(torch.LongTensor([self.parse('nothing')]))
                     else:
                         xsq = Variable(torch.LongTensor([vv]))
                 else:
                     xsq = xs
-                mems= obs[0]['mem']
+                mems = obs[0]['mem']
                 if self.tricks:
                     mems = []
                 if self.fixedX is None:
@@ -559,17 +677,17 @@ class KvmemnnAgent(Agent):
                     blah = Variable(torch.LongTensor([1]))
                     xe, ye = self.model(xsq, mems, ys, [blah])
                     ye = self.fixedX
-                pred = nn.CosineSimilarity().forward(xe,ye)
+                pred = nn.CosineSimilarity().forward(xe, ye)
                 origxe = xe
                 origpred = pred
-                val,ind=pred.sort(descending=True)
-                ypred = cands_txt2[0][ind[0].item()] # reply to match
+                val, ind = pred.sort(descending=True)
+                ypred = cands_txt2[0][ind[0].item()]  # reply to match
                 if self.opt.get('kvmemnn_debug', False):
                     print("twohop-range:", self.opt.get('twohop_range', 100))
                     for i in range(10):
-                        txt1= self.fixedCands_txt[ind[i].item()]
-                        txt2= cands_txt2[0][ind[i].item()]
-                        print(i, txt1,'\n    ', txt2)
+                        txt1 = self.fixedCands_txt[ind[i].item()]
+                        txt2 = cands_txt2[0][ind[i].item()]
+                        print(i, txt1, '\n    ', txt2)
                 tc = [ypred]
                 if self.twohoputt:
                     # now we rerank original cands against this prediction
@@ -589,8 +707,7 @@ class KvmemnnAgent(Agent):
                             newwords[w.item()] = True
                     xs2 = torch.cat(zq, 1)
 
-                if ((self.interactiveMode and self.twohoputt)
-                    or cands[0] is None):
+                if (self.interactiveMode and self.twohoputt) or cands[0] is None:
                     # used for nextutt alg in demo mode, get 2nd hop
                     blah = Variable(torch.LongTensor([1]))
                     if self.tricks:
@@ -600,75 +717,78 @@ class KvmemnnAgent(Agent):
                         ye = self.fixedX
                     blend = self.opt.get('twohop_blend', 0)
                     if blend > 0:
-                        xe = (1-blend)*xe + blend*origxe
-                    pred = nn.CosineSimilarity().forward(xe,ye)
+                        xe = (1 - blend) * xe + blend * origxe
+                    pred = nn.CosineSimilarity().forward(xe, ye)
                     for c in self.cands_done:
                         for i in range(len(ztxt)):
                             if ztxt[i] == c:
                                 # interactive heuristic: don't repeat yourself
                                 pred[i] = -1000
-                    val,ind=pred.sort(descending=True)
+                    val, ind = pred.sort(descending=True)
                     # predict the highest scoring candidate, and return it.
-                    #print("   [query:          " + self.v2t(xsq) + "]")
+                    # print("   [query:          " + self.v2t(xsq) + "]")
                     ps = []
                     for c in obs[0]['mem']:
                         ps.append(self.v2t(c))
-                    #print("   [persona:        " + '|'.join(ps) + "]")
-                    #print("   [1st hop qmatch: " + ypredorig + "]")
-                    #print("   [1st hop nextut: " + ypred + "]")
+                    # print("   [persona:        " + '|'.join(ps) + "]")
+                    # print("   [1st hop qmatch: " + ypredorig + "]")
+                    # print("   [1st hop nextut: " + ypred + "]")
                     if self.tricks:
-                        ypred = ztxt[ind[0].item()] # match
+                        ypred = ztxt[ind[0].item()]  # match
                         self.cands_done.append(ypred)
                     else:
-                        ypred = self.fixedCands_txt[ind[0].item()] # match
+                        ypred = self.fixedCands_txt[ind[0].item()]  # match
                         self.cands_done.append(ind[0].item())
-                        #print("   [2nd hop nextut: " + ypred2 + "]")
+                        # print("   [2nd hop nextut: " + ypred2 + "]")
                     tc = [ypred]
                     self.history['labels'] = [ypred]
-                    #print("   [final pred: " + ypred + "]")
-                    ret = [{'text': ypred, 'text_candidates': tc }]
+                    # print("   [final pred: " + ypred + "]")
+                    ret = [{'text': ypred, 'text_candidates': tc}]
                     return ret
                 elif self.take_next_utt and not self.interactiveMode:
                     xe, ye = self.model(xs2, obs[0]['mem'], ys, cands[0])
                     pred = nn.CosineSimilarity().forward(xe, ye)
                     xe, ye = self.model(xs, obs[0]['mem'], ys, cands[0])
-                    origpred = nn.CosineSimilarity().forward(xe,ye)
+                    origpred = nn.CosineSimilarity().forward(xe, ye)
                     if 'alpha' not in self.opt:
-                        alpha=0.1
+                        alpha = 0.1
                     else:
-                        alpha=self.opt['alpha']
-                    pred = alpha*pred + 1*origpred
-                    val,ind=pred.sort(descending=True)
+                        alpha = self.opt['alpha']
+                    pred = alpha * pred + 1 * origpred
+                    val, ind = pred.sort(descending=True)
                     # predict the highest scoring candidate, and return it.
-                    ypred = cands_txt[0][ind[0].item()] # match
+                    ypred = cands_txt[0][ind[0].item()]  # match
                     tc = []
                     for i in range(len(ind)):
                         tc.append(cands_txt[0][ind[i].item()])
             else:
                 if self.opt['loss'] == 'cosine':
                     xe, ye = self.model(xs, obs[0]['mem'], ys, cands[0])
-                    pred = nn.CosineSimilarity().forward(xe,ye)
+                    pred = nn.CosineSimilarity().forward(xe, ye)
                 else:
                     x = self.model(xs, obs[0]['mem'], ys, cands[0])
-                    pred = x #.squeeze()
-                val,ind=pred.sort(descending=True)
-                ypred = cands_txt[0][ind[0].item()] # match
+                    pred = x  # .squeeze()
+                val, ind = pred.sort(descending=True)
+                ypred = cands_txt[0][ind[0].item()]  # match
                 tc = []
                 for i in range(min(100, ind.size(0))):
                     tc.append(cands_txt[0][ind[i].item()])
-            ret = [{'text': ypred, 'text_candidates': tc }]
+            ret = [{'text': ypred, 'text_candidates': tc}]
             return ret
         return [{}] * xs.size(0)
 
     def batchify(self, observations):
         """Convert a list of observations into input & target tensors."""
+
         def valid(obs):
             # check if this is an example our model should actually process
             return 'query' in obs and len(obs['query']) > 0
+
         try:
             # valid examples and their indices
-            valid_inds, exs = zip(*[(i, ex) for i, ex in
-                                    enumerate(observations) if valid(ex)])
+            valid_inds, exs = zip(
+                *[(i, ex) for i, ex in enumerate(observations) if valid(ex)]
+            )
         except ValueError:
             # zero examples to process in this batch, so zip failed to unpack
             return None, None, None, None
@@ -719,7 +839,9 @@ class KvmemnnAgent(Agent):
                     cs = []
                     ct = []
                     for c in o['label_candidates']:
-                        cs.append(Variable(torch.LongTensor(self.parse(c)).unsqueeze(0)))
+                        cs.append(
+                            Variable(torch.LongTensor(self.parse(c)).unsqueeze(0))
+                        )
                         ct.append(c)
                     cands.append(cs)
                     cands_txt.append(ct)
@@ -743,7 +865,7 @@ class KvmemnnAgent(Agent):
         batch_reply = [{'id': self.getID()} for _ in range(batchsize)]
 
         if batchsize == 0 or 'text' not in observations[0]:
-            return [{ 'text': 'dunno' }]
+            return [{'text': 'dunno'}]
 
         # convert the observations into batches of inputs and targets
         # valid_inds tells us the indices of all valid examples
@@ -758,9 +880,8 @@ class KvmemnnAgent(Agent):
         # call batch_act with this batch of one
         return self.batch_act([self.observation])[0]
 
-
     def shutdown(self):
-        #"""Save the state of the model when shutdown."""
+        # """Save the state of the model when shutdown."""
         super().shutdown()
 
     def save(self, path=None):

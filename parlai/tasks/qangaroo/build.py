@@ -26,8 +26,7 @@ def build(opt):
         g_ID = "1ytVZ4AhubFDOEL7o7XrIRIyhU8g9wvKA"
 
         print("downloading ...")
-        build_data.download_from_google_drive(
-            g_ID, os.path.join(dpath, fname))
+        build_data.download_from_google_drive(g_ID, os.path.join(dpath, fname))
         build_data.untar(dpath, fname)
 
         # Mark the data as built.

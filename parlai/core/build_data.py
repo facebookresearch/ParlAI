@@ -33,7 +33,7 @@ def built(path, version_string=None):
         else:
             with open(fname, 'r') as read:
                 text = read.read().split('\n')
-            return (len(text) > 1 and text[1] == version_string)
+            return len(text) > 1 and text[1] == version_string
     else:
         return os.path.isfile(os.path.join(path, '.built'))
 
@@ -85,8 +85,11 @@ def download(url, path, fname, redownload=False):
 
         with requests.Session() as session:
             try:
-                header = {'Range': 'bytes=%d-' % resume_pos,
-                          'Accept-Encoding': 'identity'} if resume else {}
+                header = (
+                    {'Range': 'bytes=%d-' % resume_pos, 'Accept-Encoding': 'identity'}
+                    if resume
+                    else {}
+                )
                 response = session.get(url, stream=True, timeout=5, headers=header)
 
                 # negative reply could be 'none' or just missing
@@ -130,9 +133,13 @@ def download(url, path, fname, redownload=False):
     if download and retry > 0:
         pbar.update(done - pbar.n)
         if done < total_size:
-            raise RuntimeWarning('Received less data than specified in ' +
-                                 'Content-Length header for ' + url + '.' +
-                                 ' There may be a download problem.')
+            raise RuntimeWarning(
+                'Received less data than specified in '
+                + 'Content-Length header for '
+                + url
+                + '.'
+                + ' There may be a download problem.'
+            )
         move(resume_file, outfile)
 
     pbar.close()
@@ -215,8 +222,13 @@ def download_from_google_drive(gd_id, destination):
         response.close()
 
 
-def download_models(opt, fnames, model_folder, version='v1.0', path='aws',
-                    use_model_type=False):
+def get_model_dir(datapath):
+    return os.path.join(datapath, 'models')
+
+
+def download_models(
+    opt, fnames, model_folder, version='v1.0', path='aws', use_model_type=False
+):
     """
     Download models into the ParlAI model zoo from a url.
 
@@ -266,14 +278,17 @@ def modelzoo_path(datapath, path):
     """
     if path is None:
         return None
-    if (not path.startswith('models:') and not path.startswith('zoo:') and not
-            path.startswith('izoo:')):
+    if (
+        not path.startswith('models:')
+        and not path.startswith('zoo:')
+        and not path.startswith('izoo:')
+    ):
         return path
     elif path.startswith('models:') or path.startswith('zoo:'):
         zoo = path.split(':')[0]
         zoo_len = len(zoo) + 1
         # Check if we need to download the model
-        animal = path[zoo_len:path.rfind('/')].replace('/', '.')
+        animal = path[zoo_len : path.rfind('/')].replace('/', '.')
         if '.' not in animal:
             animal += '.build'
         module_name = 'parlai.zoo.{}'.format(animal)
