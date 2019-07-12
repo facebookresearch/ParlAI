@@ -64,29 +64,28 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
 
     # Suppress output of workers except the main host.
     if opt.get('verbose') or rank != 0:
-        print_prefix = '[rank:{:2d}]'.format(rank)
+        print_prefix = '[rank:{:3d}]'.format(rank)
     else:
         print_prefix = None
-    distributed_utils.override_print(
-        suppress=(not opt.get('verbose') and rank != 0), prefix=print_prefix
-    )
+    suppress_output = not opt.get('verbose') and rank != 0
 
-    # perform distributed setup, ensuring all hosts are ready
-    torch.cuda.set_device(opt['gpu'])
-    dist.init_process_group(
-        backend="nccl",
-        init_method="tcp://{}:{}".format(hostname, port),
-        world_size=opt['distributed_world_size'],
-        rank=rank,
-    )
-    print("Distributed group initialized")
+    with distributed_utils.override_print(suppress_output, print_prefix):
+        # perform distributed setup, ensuring all hosts are ready
+        torch.cuda.set_device(opt['gpu'])
+        dist.init_process_group(
+            backend="nccl",
+            init_method="tcp://{}:{}".format(hostname, port),
+            world_size=opt['distributed_world_size'],
+            rank=rank,
+        )
+        print("Distributed group initialized")
 
-    # Run the actual training
-    return single_train.TrainLoop(opt).train()
+        # Run the actual training
+        return single_train.TrainLoop(opt).train()
 
 
 def launch_and_train(opt, port):
-    """Performs a fork() to many processes."""
+    """Perform a fork() to many processes."""
     # Launch multiple subprocesses
     spawncontext = torch.multiprocessing.spawn(
         multiprocess_train,

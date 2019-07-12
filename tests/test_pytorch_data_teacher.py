@@ -56,6 +56,7 @@ def solved_task(str_output, valid, test):
     )
 
 
+@testing_utils.skipIfGPU
 class TestPytorchDataTeacher(unittest.TestCase):
     """Various tests for PytorchDataTeacher"""
 

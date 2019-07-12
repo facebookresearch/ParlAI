@@ -6,6 +6,7 @@
 
 import os
 import unittest
+import torch.distributed as dist
 import parlai.core.testing_utils as testing_utils
 import parlai.scripts.multiprocessing_train as mp_train
 import parlai.scripts.build_dict as build_dict
@@ -17,7 +18,7 @@ def _forced_parse(parser, opt):
     popt = parser.parse_args(print_args=False)
     # in some rare cases, like for instance if the model class also
     # overrides its default params, the params override will not
-    # be taken into account.   popt = parser.parse_args(print_args=False)
+    # be taken into account.
     for k, v in opt.items():
         popt[k] = v
     return popt
@@ -41,6 +42,7 @@ class TestDistributed(unittest.TestCase):
                 build_dict.build_dict(popt)
 
                 valid, test = mp_train.launch_and_train(popt, 31337)
+                dist.destroy_process_group()
 
         return (output.getvalue(), valid, test)
 
