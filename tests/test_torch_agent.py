@@ -8,6 +8,7 @@
 
 import unittest
 from parlai.core.agents import Agent
+from parlai.core.utils import Message
 
 from collections import deque
 
@@ -226,16 +227,16 @@ class TestTorchAgent(unittest.TestCase):
         param options.
         """
         agent = get_agent()
-        obs_labs = {
-            'text': 'No. Try not.',
-            'labels': ['Do.', 'Do not.'],
-            'episode_done': True,
-        }
-        obs_elabs = {
-            'text': 'No. Try not.',
-            'eval_labels': ['Do.', 'Do not.'],
-            'episode_done': True,
-        }
+        obs_labs = Message(
+            {'text': 'No. Try not.', 'labels': ['Do.', 'Do not.'], 'episode_done': True}
+        )
+        obs_elabs = Message(
+            {
+                'text': 'No. Try not.',
+                'eval_labels': ['Do.', 'Do not.'],
+                'episode_done': True,
+            }
+        )
 
         for obs in (obs_labs, obs_elabs):
             lab_key = 'labels' if 'labels' in obs else 'eval_labels'
@@ -294,11 +295,13 @@ class TestTorchAgent(unittest.TestCase):
 
         # test split_lines
         agent = get_agent(split_lines=True)
-        obs = {
-            'text': 'Hello.\nMy name is Inogo Montoya.\n'
-            'You killed my father.\nPrepare to die.',
-            'episode_done': True,
-        }
+        obs = Message(
+            {
+                'text': 'Hello.\nMy name is Inogo Montoya.\n'
+                'You killed my father.\nPrepare to die.',
+                'episode_done': True,
+            }
+        )
         agent.history.update_history(obs)
         vecs = agent.history.get_history_vec_list()
         self.assertEqual(vecs, [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
@@ -313,38 +316,50 @@ class TestTorchAgent(unittest.TestCase):
         """Make sure the batchify function sets up the right fields."""
         agent = get_agent(rank_candidates=True)
         obs_labs = [
-            {
-                'text': 'It\'s only a flesh wound.',
-                'labels': ['Yield!'],
-                'episode_done': True,
-            },
-            {
-                'text': 'The needs of the many outweigh...',
-                'labels': ['The needs of the few.'],
-                'episode_done': True,
-            },
-            {
-                'text': 'Hello there.',
-                'labels': ['General Kenobi.'],
-                'episode_done': True,
-            },
+            Message(
+                {
+                    'text': 'It\'s only a flesh wound.',
+                    'labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
         ]
         obs_elabs = [
-            {
-                'text': 'It\'s only a flesh wound.',
-                'eval_labels': ['Yield!'],
-                'episode_done': True,
-            },
-            {
-                'text': 'The needs of the many outweigh...',
-                'eval_labels': ['The needs of the few.'],
-                'episode_done': True,
-            },
-            {
-                'text': 'Hello there.',
-                'eval_labels': ['General Kenobi.'],
-                'episode_done': True,
-            },
+            Message(
+                {
+                    'text': 'It\'s only a flesh wound.',
+                    'eval_labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'eval_labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'eval_labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
         ]
         for obs_batch in (obs_labs, obs_elabs):
             lab_key = 'labels' if 'labels' in obs_batch[0] else 'eval_labels'
@@ -475,13 +490,18 @@ class TestTorchAgent(unittest.TestCase):
 
         agent.history.reset()
         obs_cands = [
-            agent.vectorize({'label_candidates': ['A', 'B', 'C']}, agent.history),
             agent.vectorize(
-                {'label_candidates': ['1', '2', '5', '3', 'Sir']}, agent.history
+                Message({'label_candidates': ['A', 'B', 'C']}), agent.history
             ),
-            agent.vectorize({'label_candidates': ['Do', 'Re', 'Mi']}, agent.history),
             agent.vectorize(
-                {'label_candidates': ['Fa', 'So', 'La', 'Ti']}, agent.history
+                Message({'label_candidates': ['1', '2', '5', '3', 'Sir']}),
+                agent.history,
+            ),
+            agent.vectorize(
+                Message({'label_candidates': ['Do', 'Re', 'Mi']}), agent.history
+            ),
+            agent.vectorize(
+                Message({'label_candidates': ['Fa', 'So', 'La', 'Ti']}), agent.history
             ),
         ]
 
@@ -831,21 +851,27 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent()
 
         obs_labs = [
-            {
-                'text': "It's only a flesh wound.",
-                'labels': ['Yield!'],
-                'episode_done': True,
-            },
-            {
-                'text': 'The needs of the many outweigh...',
-                'labels': ['The needs of the few.'],
-                'episode_done': True,
-            },
-            {
-                'text': 'Hello there.',
-                'labels': ['General Kenobi.'],
-                'episode_done': True,
-            },
+            Message(
+                {
+                    'text': "It's only a flesh wound.",
+                    'labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
         ]
         obs_labs_vecs = []
         for o in obs_labs:
@@ -857,21 +883,27 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(reply[i]['text'], 'Training {}!'.format(i))
 
         obs_elabs = [
-            {
-                'text': "It's only a flesh wound.",
-                'eval_labels': ['Yield!'],
-                'episode_done': True,
-            },
-            {
-                'text': 'The needs of the many outweigh...',
-                'eval_labels': ['The needs of the few.'],
-                'episode_done': True,
-            },
-            {
-                'text': 'Hello there.',
-                'eval_labels': ['General Kenobi.'],
-                'episode_done': True,
-            },
+            Message(
+                {
+                    'text': "It's only a flesh wound.",
+                    'eval_labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'eval_labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'eval_labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
         ]
         obs_elabs_vecs = []
         for o in obs_elabs:

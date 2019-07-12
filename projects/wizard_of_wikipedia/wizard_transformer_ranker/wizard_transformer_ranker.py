@@ -77,9 +77,10 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         Useful to override to change vectorization behavior
         """
         obs = super()._set_text_vec(*args, **kwargs)
-        if self.opt.get('legacy'):
-            soc_tensor = torch.LongTensor([self.dict[SOC_TOKEN]])
-            obs['text_vec'] = torch.cat([soc_tensor, obs['text_vec']])
+        if self.opt.get('legacy') and 'text_vec' in obs:
+            if obs['text_vec'][0] != self.dict[SOC_TOKEN]:
+                soc_tensor = torch.LongTensor([self.dict[SOC_TOKEN]])
+                obs.force_set('text_vec', torch.cat([soc_tensor, obs['text_vec']]))
         return obs
 
     def _vectorize_memories(self, observation):
@@ -116,10 +117,13 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
                     to_vectorize.append(line)
 
         # vectorize knowledge
-        observation['memory_vecs'] = [
-            self._vectorize_text(line, truncate=self.knowledge_truncate)
-            for line in to_vectorize
-        ]
+        observation.force_set(
+            'memory_vecs',
+            [
+                self._vectorize_text(line, truncate=self.knowledge_truncate)
+                for line in to_vectorize
+            ],
+        )
         return observation
 
     def load(self, path):

@@ -11,7 +11,7 @@
 NOTE: this model only works for eval, it assumes all training is already done.
 """
 
-from parlai.core.agents import Agent, create_agent
+from parlai.core.agents import Agent, create_agent, create_agent_from_shared
 from projects.wizard_of_wikipedia.wizard_transformer_ranker.wizard_transformer_ranker import (
     WizardTransformerRankerAgent,
 )
@@ -34,15 +34,15 @@ class InteractiveRetrievalAgent(Agent):
             'full_dialogue_retrieval_model',
         )
 
-        # Create responder
-        self._set_up_responder(opt)
-
         if not shared:
+            # Create responder
+            self._set_up_responder(opt)
             # Create retriever
             self._set_up_retriever(opt)
         else:
             self.opt = shared['opt']
             self.retriever = shared['retriever']
+            self.responder = create_agent_from_shared(shared['responder_shared_opt'])
             self.sent_tok = shared['sent_tok']
             self.wiki_map = shared['wiki_map']
 
@@ -278,9 +278,9 @@ class InteractiveRetrievalAgent(Agent):
         responder_act = self.responder.act()
         if self.debug:
             print('DEBUG: Responder is acting:\n{}'.format(responder_act))
-        responder_act['id'] = 'WizardRetrievalInteractiveAgent'
+        responder_act.force_set('id', 'WizardRetrievalInteractiveAgent')
         if self.get_unique:
-            responder_act['text'] = self.get_unique_reply(responder_act)
+            responder_act.force_set('text', self.get_unique_reply(responder_act))
         return responder_act
 
     def share(self):
@@ -288,6 +288,7 @@ class InteractiveRetrievalAgent(Agent):
         shared = super().share()
         shared['opt'] = self.opt
         shared['retriever'] = self.retriever
+        shared['responder_shared_opt'] = self.responder.share()
         shared['sent_tok'] = self.sent_tok
         shared['wiki_map'] = self.wiki_map
 
