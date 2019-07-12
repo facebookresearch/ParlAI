@@ -9,12 +9,20 @@
 
 set -e
 
+onlyexists() {
+    while read fn; do
+        if [ -f "$fn" ]; then
+            echo "$fn"
+        fi
+    done
+}
+
 CMD="flake8"
-CHANGED_FILES="$(git diff --name-only master... | grep '\.py$' | tr '\n' ' ')"
+CHANGED_FILES="$(git diff --name-only master... | grep '\.py$' | onlyexists | tr '\n' ' ')"
 while getopts bi opt; do
   case $opt in
     i)
-      CHANGED_FILES="$(git -C ./parlai_internal/ diff --name-only master... |
+      CHANGED_FILES="$(git -C ./parlai_internal/ diff --name-only master... | onlyexists |
       xargs -I '{}' realpath --relative-to=. $(git -C ./parlai_internal/ rev-parse --show-toplevel)/'{}' |
       grep '\.py$' | tr '\n' ' ')"
       ;;
