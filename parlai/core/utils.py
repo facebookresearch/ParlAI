@@ -6,17 +6,22 @@
 """File for miscellaneous utility functions and constants."""
 
 from collections import deque
+from copy import deepcopy
 from functools import lru_cache
 import math
+import json
 import os
+import pickle
 import random
 import time
+import traceback
 import warnings
 import heapq
 
 # some of the utility methods are helpful for Torch
 try:
     import torch
+
     # default type in padded3d needs to be protected if torch
     # isn't installed.
     TORCH_LONG = torch.long
@@ -43,7 +48,7 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'reward',
     'eval_labels_vec',
     'text_vec',
-    'label_candidates_vecs'
+    'label_candidates_vecs',
 }
 
 
@@ -55,10 +60,16 @@ def neginf(dtype):
         return -NEAR_INF
 
 
-def maintain_dialog_history(history, observation, reply='',
-                            historyLength=1, useReplies='label_else_model',
-                            dict=None, useStartEndIndices=True,
-                            splitSentences=False):
+def maintain_dialog_history(
+    history,
+    observation,
+    reply='',
+    historyLength=1,
+    useReplies='label_else_model',
+    dict=None,
+    useStartEndIndices=True,
+    splitSentences=False,
+):
     """
     Keep track of dialog history, up to a truncation length.
 
@@ -67,6 +78,7 @@ def maintain_dialog_history(history, observation, reply='',
 
     DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
     """
+
     def parse(txt, splitSentences):
         if dict is not None:
             if splitSentences:
@@ -89,8 +101,9 @@ def maintain_dialog_history(history, observation, reply='',
         history['episode_done'] = False
 
     if useReplies != 'none':
-        if useReplies == 'model' or (useReplies == 'label_else_model' and
-                                     len(history['labels']) == 0):
+        if useReplies == 'model' or (
+            useReplies == 'label_else_model' and len(history['labels']) == 0
+        ):
             if reply:
                 if useStartEndIndices:
                     reply = dict.start_token + ' ' + reply
@@ -143,7 +156,7 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
                     cands = []
                 if lines_have_ids:
                     space_idx = line.find(' ')
-                    line = line[space_idx + 1:]
+                    line = line[space_idx + 1 :]
                     if cands_are_replies:
                         sp = line.split('\t')
                         if len(sp) > 1 and sp[1] != '':
@@ -153,6 +166,85 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
                 else:
                     cands.append(line)
     return cands
+
+
+def load_opt_file(optfile):
+    """Load an Opt from disk."""
+    try:
+        # try json first
+        with open(optfile, 'r') as handle:
+            opt = json.load(handle)
+    except UnicodeDecodeError:
+        # oops it's pickled
+        with open(optfile, 'rb') as handle:
+            opt = pickle.load(handle)
+    return Opt(opt)
+
+
+class Opt(dict):
+    """
+    Class for tracking options.
+
+    Functions like a dict, but allows us to track the history of arguments
+    as they are set.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.history = {}
+        self.deepcopies = []
+
+    def __setitem__(self, key, val):
+        loc = traceback.format_stack()[-2]
+        self.history.setdefault(key, []).append((loc, val))
+        super().__setitem__(key, val)
+
+    def __getstate__(self):
+        return (self.history, self.deepcopies, dict(self))
+
+    def __setstate__(self, state):
+        self.history, self.deepcopies, data = state
+        self.update(data)
+
+    def __reduce__(self):
+        return (Opt, (), self.__getstate__())
+
+    def __deepcopy__(self, memo):
+        """Override deepcopy so that history is copied over to new object."""
+        # track location of deepcopy
+        loc = traceback.format_stack()[-3]
+        self.deepcopies.append(loc)
+        # deepcopy the dict
+        memo = deepcopy(dict(self))
+        # make into Opt object
+        memo = Opt(memo)
+        # deepcopy the history
+        memo.history = deepcopy(self.history)
+        # deepcopy the deepcopy history
+        memo.deepcopies = deepcopy(self.deepcopies)
+        return memo
+
+    def display_deepcopies(self):
+        """Display all deepcopies."""
+        if len(self.deepcopies) == 0:
+            print('No deepcopies performed on this opt.')
+            return
+        print('Deepcopies were performed at the following locations:\n')
+        for i, loc in enumerate(self.deepcopies):
+            print('{}. {}'.format(i + 1, loc))
+
+    def display_history(self, key):
+        """Display the history for an item in the dict."""
+        if key not in self.history:
+            print('No history for key {}.'.format(key))
+            return
+        item_hist = self.history[key]
+        for i, change in enumerate(item_hist):
+            print(
+                '{}. {} was set to {} at:\n{}\n'.format(
+                    i + 1, key, change[1], change[0]
+                )
+            )
 
 
 class Predictor(object):
@@ -235,7 +327,7 @@ class Timer(object):
         return self.total
 
 
-class TimeLogger():
+class TimeLogger:
     """Class for logging time progress against a goal."""
 
     def __init__(self):
@@ -361,9 +453,16 @@ class PaddingUtils(object):
     # DEPRECATIONDAY: delete!
 
     @classmethod
-    def pad_text(cls, observations, dictionary,
-                 end_idx=None, null_idx=0, dq=False, eval_labels=True,
-                 truncate=None):
+    def pad_text(
+        cls,
+        observations,
+        dictionary,
+        end_idx=None,
+        null_idx=0,
+        dq=False,
+        eval_labels=True,
+        truncate=None,
+    ):
         """
         Pad observations to max width.
 
@@ -378,13 +477,16 @@ class PaddingUtils(object):
 
         DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
         """
+
         def valid(obs):
             # check if this is an example our model should actually process
             return 'text' in obs and len(obs['text']) > 0
+
         try:
             # valid examples and their indices
-            valid_inds, exs = zip(*[(i, ex) for i, ex in
-                                    enumerate(observations) if valid(ex)])
+            valid_inds, exs = zip(
+                *[(i, ex) for i, ex in enumerate(observations) if valid(ex)]
+            )
         except ValueError:
             # zero examples to process in this batch, so zip failed to unpack
             return None, None, None, None, None, None
@@ -421,13 +523,17 @@ class PaddingUtils(object):
 
         # pad with zeros
         if dq:
-            parsed_x = [x if len(x) == max_x_len else
-                        x + deque((null_idx,)) * (max_x_len - len(x))
-                        for x in parsed_x]
+            parsed_x = [
+                x
+                if len(x) == max_x_len
+                else x + deque((null_idx,)) * (max_x_len - len(x))
+                for x in parsed_x
+            ]
         else:
-            parsed_x = [x if len(x) == max_x_len else
-                        x + [null_idx] * (max_x_len - len(x))
-                        for x in parsed_x]
+            parsed_x = [
+                x if len(x) == max_x_len else x + [null_idx] * (max_x_len - len(x))
+                for x in parsed_x
+            ]
         xs = parsed_x
 
         # set up the target tensors
@@ -455,21 +561,35 @@ class PaddingUtils(object):
             max_y_len = max(y_lens)
 
             if dq:
-                parsed_y = [y if len(y) == max_y_len else
-                            y + deque((null_idx,)) * (max_y_len - len(y))
-                            for y in parsed_y]
+                parsed_y = [
+                    y
+                    if len(y) == max_y_len
+                    else y + deque((null_idx,)) * (max_y_len - len(y))
+                    for y in parsed_y
+                ]
             else:
-                parsed_y = [y if len(y) == max_y_len else
-                            y + [null_idx] * (max_y_len - len(y))
-                            for y in parsed_y]
+                parsed_y = [
+                    y if len(y) == max_y_len else y + [null_idx] * (max_y_len - len(y))
+                    for y in parsed_y
+                ]
             ys = parsed_y
 
         return xs, ys, labels, valid_inds, end_idxs, y_lens
 
     @classmethod
-    def map_predictions(cls, predictions, valid_inds, batch_reply,
-                        observations, dictionary, end_idx, report_freq=0.1,
-                        labels=None, answers=None, ys=None):
+    def map_predictions(
+        cls,
+        predictions,
+        valid_inds,
+        batch_reply,
+        observations,
+        dictionary,
+        end_idx,
+        report_freq=0.1,
+        labels=None,
+        answers=None,
+        ys=None,
+    ):
         """
         Match predictions to original index in the batch.
 
@@ -526,6 +646,7 @@ class OffensiveLanguageDetector(object):
         import parlai.core.build_data as build_data
         from parlai.core.params import ParlaiParser
         from parlai.core.dict import DictionaryAgent
+
         self.tokenize = DictionaryAgent.split_tokenize
 
         parser = ParlaiParser(False, False)
@@ -563,14 +684,59 @@ class OffensiveLanguageDetector(object):
         self.END = '__END__'
         self.max_len = 1
         self.offensive_trie = {}
-        self.word_prefixes = ['de', 'de-', 'dis', 'dis-', 'ex', 'ex-', 'mis',
-                              'mis-', 'pre', 'pre-', 'non', 'non-', 'semi',
-                              'semi-', 'sub', 'sub-', 'un', 'un-']
-        self.word_suffixes = ['a', 'able', 'as', 'dom', 'ed', 'er', 'ers',
-                              'ery', 'es', 'est', 'ful', 'fy', 'ies', 'ify',
-                              'in', 'ing', 'ish', 'less', 'ly', 's', 'y']
-        self.white_list = ['butter', 'buttery', 'spicy', 'spiced', 'spices',
-                           'spicier', 'spicing', 'twinkies']
+        self.word_prefixes = [
+            'de',
+            'de-',
+            'dis',
+            'dis-',
+            'ex',
+            'ex-',
+            'mis',
+            'mis-',
+            'pre',
+            'pre-',
+            'non',
+            'non-',
+            'semi',
+            'semi-',
+            'sub',
+            'sub-',
+            'un',
+            'un-',
+        ]
+        self.word_suffixes = [
+            'a',
+            'able',
+            'as',
+            'dom',
+            'ed',
+            'er',
+            'ers',
+            'ery',
+            'es',
+            'est',
+            'ful',
+            'fy',
+            'ies',
+            'ify',
+            'in',
+            'ing',
+            'ish',
+            'less',
+            'ly',
+            's',
+            'y',
+        ]
+        self.white_list = [
+            'butter',
+            'buttery',
+            'spicy',
+            'spiced',
+            'spices',
+            'spicier',
+            'spicing',
+            'twinkies',
+        ]
 
         with open(self.datafile, 'r') as f:
             for p in f.read().splitlines():
@@ -676,8 +842,7 @@ class OffensiveLanguageDetector(object):
             if not text:
                 return []
             candidates = [
-                [first] + segment(rem)
-                for first, rem in splits(text, max_length)
+                [first] + segment(rem) for first, rem in splits(text, max_length)
             ]
 
             nonlocal max_heap
@@ -694,7 +859,7 @@ class OffensiveLanguageDetector(object):
         def splits(text, max_length):
             # Returns a list of all possible first and remainder tuples where
             return [
-                (text[:i+1], text[i+1:])
+                (text[: i + 1], text[i + 1 :])
                 for i in range(min(len(text), max_length))
             ]
 
@@ -718,11 +883,9 @@ class OffensiveLanguageDetector(object):
 def clip_text(text, max_len):
     """Clip text to max length, adding ellipses."""
     if len(text) > max_len:
-        begin_text = ' '.join(
-            text[:math.floor(0.8 * max_len)].split(' ')[:-1]
-        )
+        begin_text = ' '.join(text[: math.floor(0.8 * max_len)].split(' ')[:-1])
         end_text = ' '.join(
-            text[(len(text) - math.floor(0.2 * max_len)):].split(' ')[1:]
+            text[(len(text) - math.floor(0.2 * max_len)) :].split(' ')[1:]
         )
         if len(end_text) > 0:
             text = begin_text + ' ...\n' + end_text
@@ -808,6 +971,7 @@ def str_to_msg(txt, ignore_fields=''):
         (default '') comma-separated field names to not
         include in the msg dict even if they're in the string.
     """
+
     def tostr(txt):
         txt = str(txt)
         txt = txt.replace('\\t', '\t')
@@ -824,8 +988,12 @@ def str_to_msg(txt, ignore_fields=''):
     def convert(key, value):
         if key == 'text' or key == 'id':
             return tostr(value)
-        elif (key == 'label_candidates' or key == 'labels' or
-              key == 'eval_labels' or key == 'text_candidates'):
+        elif (
+            key == 'label_candidates'
+            or key == 'labels'
+            or key == 'eval_labels'
+            or key == 'text_candidates'
+        ):
             return tolist(value)
         elif key == 'episode_done':
             return bool(value)
@@ -839,7 +1007,7 @@ def str_to_msg(txt, ignore_fields=''):
     for t in txt.split('\t'):
         ind = t.find(':')
         key = t[:ind]
-        value = t[ind + 1:]
+        value = t[ind + 1 :]
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
     msg['episode_done'] = msg.get('episode_done', False)
@@ -856,6 +1024,7 @@ def msg_to_str(msg, ignore_fields=''):
         (default '') comma-separated field names to not include in the string
         even if they're in the msg dict.
     """
+
     def filter(txt):
         txt = str(txt)
         txt = txt.replace('\t', '\\t')
@@ -879,8 +1048,14 @@ def msg_to_str(msg, ignore_fields=''):
             txt = filter(data)
         return name + ":" + txt + '\t'
 
-    default_fields = ['id', 'text', 'labels', 'label_candidates',
-                      'episode_done', 'reward']
+    default_fields = [
+        'id',
+        'text',
+        'labels',
+        'label_candidates',
+        'episode_done',
+        'reward',
+    ]
     txt = ""
     ignore_fields = ignore_fields.split(',')
     for f in default_fields:
@@ -914,8 +1089,14 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
-                  max_len=None, fp16friendly=False):
+def padded_tensor(
+    items,
+    pad_idx=0,
+    use_cuda=False,
+    left_padded=False,
+    max_len=None,
+    fp16friendly=False,
+):
     """
     Create a right-padded matrix from an uneven list of lists.
 
@@ -974,7 +1155,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
             item = torch.LongTensor(item)
         if left_padded:
             # place at end
-            output[i, t - length:] = item
+            output[i, t - length :] = item
         else:
             # place at beginning
             output[i, :length] = item
@@ -1017,7 +1198,7 @@ def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=Fal
                 continue
             if not isinstance(item, torch.Tensor):
                 item = torch.Tensor(item, dtype=dtype)
-            output[i, j, :len(item)] = item
+            output[i, j, : len(item)] = item
 
     if use_cuda:
         output = output.cuda()
@@ -1070,10 +1251,7 @@ def warn_once(msg, warningtype=None):
 
 
 def fp16_optimizer_wrapper(
-    optimizer,
-    verbose=False,
-    dynamic_loss_scale=True,
-    loss_initial_scale=2.**17
+    optimizer, verbose=False, dynamic_loss_scale=True, loss_initial_scale=2.0 ** 17
 ):
     """
     Wrap the an optimizer with FP16 loss scaling protection.

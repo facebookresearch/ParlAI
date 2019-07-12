@@ -22,10 +22,7 @@ class MessengerBotChatTaskWorld(World):
     @staticmethod
     def run(messenger_manager, opt, agents, task_id):
         agent = agents[0]
-        world = MessengerBotChatTaskWorld(
-            opt=opt,
-            agent=agent
-        )
+        world = MessengerBotChatTaskWorld(opt=opt, agent=agent)
         while not world.episode_done():
             world.parley()
         world.shutdown()

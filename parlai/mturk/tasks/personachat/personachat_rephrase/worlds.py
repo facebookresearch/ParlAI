@@ -6,7 +6,7 @@
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.core.worlds import validate
 from parlai.mturk.tasks.personachat.personachat_chat.extract_and_save_personas import (
-    main as main_extract
+    main as main_extract,
 )
 from joblib import Parallel, delayed
 import numpy as np
@@ -18,8 +18,9 @@ import random
 
 class PersonasGenerator(object):
     def __init__(self, opt):
-        self.personas_idx_stack_path = os.path.join(opt['extract_personas_path'],
-                                                    './personas_idx_stack.pkl')
+        self.personas_idx_stack_path = os.path.join(
+            opt['extract_personas_path'], './personas_idx_stack.pkl'
+        )
 
         self.personas_path = '{}/personas-{}'.format(
             opt['extract_personas_path'], opt['persona_type'] + 'Original'
@@ -76,8 +77,9 @@ class PersonasGenerator(object):
             else:
                 self.recently_popped.pop(0)
                 self.recently_popped.append(idx)
-        data = np.load(os.path.join(self.personas_path,
-                                    self.personas_name_list[int(idx)]))
+        data = np.load(
+            os.path.join(self.personas_path, self.personas_name_list[int(idx)])
+        )
         return (idx, data)
 
     def push_persona(self, idx):
@@ -97,6 +99,7 @@ class PersonasGenerator(object):
 
 class RephrasePersonaWorld(MTurkOnboardWorld):
     """A world that provides a persona to the MTurkAgent"""
+
     def __init__(self, opt, mturk_agent):
         self.opt = opt
         self.personas_generator = opt['personas_generator']
@@ -114,33 +117,39 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
     def parley(self):
         # Persona creation instructions
         if not self.shown_persona:
-            self.mturk_agent.observe({
-                'id': 'SYSTEM',
-                'text': 'You will be asked to rephrase the following persona:\n\n ' +
-                        '\n'.join(self.persona)
-            })
+            self.mturk_agent.observe(
+                {
+                    'id': 'SYSTEM',
+                    'text': 'You will be asked to rephrase the following persona:\n\n '
+                    + '\n'.join(self.persona),
+                }
+            )
             self.shown_persona = True
 
         if len(self.rephrased_persona) < len(self.persona):
             persona_done = False
-            self.mturk_agent.observe({
-                'id': 'SYSTEM',
-                'text': "Please rephrase the sentence below so that it sticks to the "
-                        "same person's characteristics: \n\n"
-                        "<b><span style='color:blue'>{}</span></b>"
-                        "\n\n There are {} sentences left to be rephrased.".format(
-                            self.persona[self.num_done],
-                            len(self.persona) - len(self.rephrased_persona) - 1
-                        )
-            })
+            self.mturk_agent.observe(
+                {
+                    'id': 'SYSTEM',
+                    'text': "Please rephrase the sentence below so that it sticks to the "
+                    "same person's characteristics: \n\n"
+                    "<b><span style='color:blue'>{}</span></b>"
+                    "\n\n There are {} sentences left to be rephrased.".format(
+                        self.persona[self.num_done],
+                        len(self.persona) - len(self.rephrased_persona) - 1,
+                    ),
+                }
+            )
             while not persona_done:
                 act = self.mturk_agent.act(timeout=self.max_response_time)
                 if act['episode_done']:
                     self.episodeDone = True
                     return
-                if (self.is_msg_tooshortlong(act, self.mturk_agent) or
-                        self.is_close_match(act, self.mturk_agent,
-                                            self.persona[self.num_done])):
+                if self.is_msg_tooshortlong(
+                    act, self.mturk_agent
+                ) or self.is_close_match(
+                    act, self.mturk_agent, self.persona[self.num_done]
+                ):
                     pass
                 else:
                     self.rephrased_persona.append(act['text'])
@@ -148,12 +157,14 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                     persona_done = True
             return
         else:
-            self.mturk_agent.observe({
-                'id': 'SYSTEM',
-                'text': 'Thank you for rephrasing the character! \n '
-                        '<b><span style="color:blue">Please click "Done '
-                        'with this HIT" below to submit the HIT.</span></b>'
-            })
+            self.mturk_agent.observe(
+                {
+                    'id': 'SYSTEM',
+                    'text': 'Thank you for rephrasing the character! \n '
+                    '<b><span style="color:blue">Please click "Done '
+                    'with this HIT" below to submit the HIT.</span></b>',
+                }
+            )
             self.episodeDone = True
             return
 
@@ -169,16 +180,21 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 'persona_{}_{}_{}.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     self.mturk_agent.worker_id,
-                    self.task_type
-                )
+                    self.task_type,
+                ),
             )
             print('Profile successfully saved at {}.'.format(filename))
-            pickle.dump({'hit_id': self.mturk_agent.hit_id,
-                         'assignment_id': self.mturk_agent.assignment_id,
-                         'worker_id': self.mturk_agent.worker_id,
-                         'persona': self.persona,
-                         'rephrased': self.rephrased_persona,
-                         'persona_idx': self.persona_idx}, open(filename, 'wb'))
+            pickle.dump(
+                {
+                    'hit_id': self.mturk_agent.hit_id,
+                    'assignment_id': self.mturk_agent.assignment_id,
+                    'worker_id': self.mturk_agent.worker_id,
+                    'persona': self.persona,
+                    'rephrased': self.rephrased_persona,
+                    'persona_idx': self.persona_idx,
+                },
+                open(filename, 'wb'),
+            )
         else:
             self.personas_generator.push_persona(self.persona_idx)
             print("Incomplete persona:", self.persona_idx)
@@ -187,26 +203,31 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                 'incomplete_persona_{}_{}_{}.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     self.mturk_agent.worker_id,
-                    self.task_type
-                )
+                    self.task_type,
+                ),
             )
             print('Profile successfully saved at {}.'.format(filename))
-            pickle.dump({'hit_id': self.mturk_agent.hit_id,
-                         'assignment_id': self.mturk_agent.assignment_id,
-                         'worker_id': self.mturk_agent.worker_id,
-                         'persona': self.persona,
-                         'rephrased': self.rephrased_persona,
-                         'persona_idx': self.persona_idx}, open(filename, 'wb'))
+            pickle.dump(
+                {
+                    'hit_id': self.mturk_agent.hit_id,
+                    'assignment_id': self.mturk_agent.assignment_id,
+                    'worker_id': self.mturk_agent.worker_id,
+                    'persona': self.persona,
+                    'rephrased': self.rephrased_persona,
+                    'persona_idx': self.persona_idx,
+                },
+                open(filename, 'wb'),
+            )
 
     def shutdown(self):
         global shutdown_agent
 
         def shutdown_agent(mturk_agent):
             mturk_agent.shutdown()
-        Parallel(
-            n_jobs=1,
-            backend='threading'
-        )(delayed(shutdown_agent)(agent) for agent in [self.mturk_agent])
+
+        Parallel(n_jobs=1, backend='threading')(
+            delayed(shutdown_agent)(agent) for agent in [self.mturk_agent]
+        )
 
     def is_exact_match(self, act, ag, persona_data, tolerance=0):
         if act['episode_done']:
@@ -225,7 +246,7 @@ class RephrasePersonaWorld(MTurkOnboardWorld):
                     if r_w in per_parse:
                         per_parse.remove(r_w)
                 per_subseq = [
-                    ' '.join(per_parse[i:i + len(per_parse) - tolerance])
+                    ' '.join(per_parse[i : i + len(per_parse) - tolerance])
                     for i in range(tolerance + 1)
                 ]
                 for pp in per_subseq:

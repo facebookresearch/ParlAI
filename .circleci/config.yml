@@ -3,7 +3,11 @@ version: 2
 # -------------------------------------------------------------------------------------
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
-standard_cpu: &standard_cpu
+standard_cpu37: &standard_cpu37
+  docker:
+    - image: circleci/python:3.7.1
+
+standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.5-node
 
@@ -31,17 +35,18 @@ setup: &setup
     name: Sets up the virtual environment
     command: |
       mkdir -p ~/venv
-      virtualenv --python=python3.6 ~/venv
+      virtualenv --python=python3 ~/venv
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
+      python --version
       pip3 install --upgrade --progress-bar off pip
-
 
 installdeps: &installdeps
   run:
     name: Installs basic dependencies
     command: |
       python setup.py develop
+      python -c "import nltk; nltk.download('punkt')"
 
 installtorchgpu: &installtorchgpu
   run:
@@ -52,11 +57,17 @@ installtorchgpu: &installtorchgpu
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
 
-installtorchcpu: &installtorchcpu
+installtorchcpu36: &installtorchcpu36
   run:
     name: Install torch CPU and dependencies
     command: |
       pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+
+installtorchcpu37: &installtorchcpu37
+  run:
+    name: Install torch CPU and dependencies
+    command: |
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp37-cp37m-linux_x86_64.whl
 
 setupcuda: &setupcuda
   run:
@@ -83,33 +94,64 @@ buildwebsite: &buildwebsite
 # -------------------------------------------------------------------------------------
 jobs:
   datatests:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu
+      - <<: *installtorchcpu36
       - run:
           name: Data tests
           command: python setup.py test -s tests.suites.datatests -v
 
-  unittests:
-    <<: *standard_cpu
+  unittests_36:
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu
+      - <<: *installtorchcpu36
       - run:
-          name: Unit tests
+          name: Unit tests (py36)
           command: python setup.py test -s tests.suites.unittests -v
 
+  unittests_37:
+    <<: *standard_cpu37
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu37
+      - run:
+          name: Unit tests (py37)
+          command: python setup.py test -s tests.suites.unittests -v
+
+  black:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - run:
+          name: minimum black dependencies
+          working_directory: ~/ParlAI
+          command: |
+            pip install -q gitpython black  # only what's needd to lint
+      - run:
+          name: black
+          working_directory: ~/ParlAI
+          command: |
+            bash ./tests/lint_changed.sh -b
+
   lint:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -122,15 +164,20 @@ jobs:
             npm install
             npm run lint
       - run:
+          name: minimum lint dependencies
+          working_directory: ~/ParlAI
+          command: |
+            pip install -q flake8 gitpython flake8-bugbear  # only what's needd to lint
+      - run:
           name: Lint
           working_directory: ~/ParlAI
           command: |
-            pip install flake8 gitpython flake8-bugbear  # only what's needd to lint
             bash ./tests/lint_changed.sh
 
   nightly_gpu_tests:
     <<: *gpu
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
@@ -144,7 +191,7 @@ jobs:
           command: python setup.py test -s tests.suites.nightly_gpu -v
 
   mturk_tests:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -156,25 +203,25 @@ jobs:
           command: python setup.py test -s tests.suites.mturk -v
 
   build_website:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu
+      - <<: *installtorchcpu36
       - <<: *buildwebsite
 
   deploy_website:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu
+      - <<: *installtorchcpu36
       - <<: *buildwebsite
       - run:
           working_directory: ~/ParlAI/
@@ -186,7 +233,7 @@ jobs:
             s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
 
   test_website:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/
     steps:
       - run:
@@ -206,7 +253,7 @@ jobs:
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 
   check_extra_tests:
-    <<: *standard_cpu
+    <<: *standard_cpu36
     working_directory: ~/ParlAI
     steps:
       - checkout
@@ -237,8 +284,10 @@ workflows:
   version: 2
   commit:
     jobs:
+      - black
       - lint
-      - unittests
+      - unittests_37
+      - unittests_36
       - mturk_tests:
           filters:
             branches:
@@ -267,7 +316,8 @@ workflows:
               only:
                 - master
     jobs:
-      - unittests
+      - unittests_36
+      - unittests_37
       - mturk_tests
       - nightly_gpu_tests
       - test_website

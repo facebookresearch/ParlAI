@@ -29,8 +29,9 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], 'VisDial-v0.9',
-                             'visdial_0.9_' + suffix + '.json')
+    data_path = os.path.join(
+        opt['datapath'], 'VisDial-v0.9', 'visdial_0.9_' + suffix + '.json'
+    )
 
     image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
 
@@ -51,6 +52,7 @@ class DefaultTeacher(DialogTeacher):
     inherit basic metrics, a `act` function, and enables
     Hogwild training with shared memory with no extra work.
     """
+
     def __init__(self, opt, shared=None):
 
         self.datatype = opt['datatype']
@@ -86,10 +88,13 @@ class DefaultTeacher(DialogTeacher):
                     # only load image on first item
                     yield (
                         (
-                            caption + '\n' + question, answer,
-                            None, answer_options, img_path
+                            caption + '\n' + question,
+                            answer,
+                            None,
+                            answer_options,
+                            img_path,
                         ),
-                        True
+                        True,
                     )
                 else:
                     yield (question, answer, None, answer_options), False

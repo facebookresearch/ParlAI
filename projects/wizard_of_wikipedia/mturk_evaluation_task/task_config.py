@@ -16,8 +16,8 @@ On the Amazon Mechanical Turk web site, the HIT description appears in the expan
 view of search results, and in the HIT and assignment screens.
 """
 task_config['hit_description'] = (
-    'Choose a topic and chat with another user about it. ' +
-    'After the conversation, you will be asked to rate your partner.'
+    'Choose a topic and chat with another user about it. '
+    + 'After the conversation, you will be asked to rate your partner.'
 )
 
 
@@ -30,8 +30,9 @@ task_config['hit_keywords'] = 'chat,dialog'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-    """
+task_config[
+    'task_description'
+] = """
 <br>
 <b><h2>Task Description</h2></b>
 <br>

@@ -6,21 +6,25 @@
 from argparse import ArgumentParser
 import json
 
-from parlai.projects.self_feeding.utils import (
-    extract_fb_episodes,
-    episode_to_examples,
-)
+from parlai.projects.self_feeding.utils import extract_fb_episodes, episode_to_examples
 
 
 def setup_args():
     argparser = ArgumentParser()
-    argparser.add_argument('-if', '--infile', type=str,
-                           default='data/ConvAI2/valid_self_original.txt')
-    argparser.add_argument('-of', '--outfile', type=str,
-                           default='data/convai2meta/valid.txt')
-    argparser.add_argument('-histsz', '--history-size', type=int, default=-1,
-                           help="The number of turns to include in the prompt."
-                           "In general, include all turns and filter in the teacher.")
+    argparser.add_argument(
+        '-if', '--infile', type=str, default='data/ConvAI2/valid_self_original.txt'
+    )
+    argparser.add_argument(
+        '-of', '--outfile', type=str, default='data/convai2meta/valid.txt'
+    )
+    argparser.add_argument(
+        '-histsz',
+        '--history-size',
+        type=int,
+        default=-1,
+        help="The number of turns to include in the prompt."
+        "In general, include all turns and filter in the teacher.",
+    )
     config = vars(argparser.parse_args())
     return config
 

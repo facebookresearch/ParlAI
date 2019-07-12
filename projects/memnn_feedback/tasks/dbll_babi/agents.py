@@ -29,23 +29,22 @@ tasks[8] = 'rl8_imitation_plus_rl'
 tasks[9] = 'rl9_ask_for_answer'
 tasks[10] = 'rl10_ask_for_sf'
 
-_suffixes = {
-    'train': 'train',
-    'test': 'test',
-    'valid': 'dev'
-}
+_suffixes = {'train': 'train', 'test': 'test', 'valid': 'dev'}
 
 
 def _path(subdir, task, opt, dt=''):
     build(opt)
     if dt == '':
         dt = opt['datatype'].split(':')[0]
-    task_name = '%s_%s' % (task.split('_')[1],
-                           tasks[int(task.split('_')[0])])
-    return os.path.join(opt['datapath'], 'DBLL', 'dbll',
-                        '{subdir}_{task}_{suffix}.txt'.format(
-                            subdir=subdir, task=task_name,
-                            suffix=_suffixes[dt]))
+    task_name = '%s_%s' % (task.split('_')[1], tasks[int(task.split('_')[0])])
+    return os.path.join(
+        opt['datapath'],
+        'DBLL',
+        'dbll',
+        '{subdir}_{task}_{suffix}.txt'.format(
+            subdir=subdir, task=task_name, suffix=_suffixes[dt]
+        ),
+    )
 
 
 class TaskTeacher(FbDialogTeacher):
@@ -53,14 +52,15 @@ class TaskTeacher(FbDialogTeacher):
         params = opt['task'].split(':')[2]
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(os.path.join('babi', 'babi1'), params, opt)
-        opt['cands_datafile'] = _path(os.path.join('babi', 'babi1'), params,
-                                      opt, 'train')
+        opt['cands_datafile'] = _path(
+            os.path.join('babi', 'babi1'), params, opt, 'train'
+        )
         self.opt = opt
         super().__init__(opt, shared)
 
     def setup_data(self, path):
         """ Reads feedback for an example along with text and labels
-        if 'feedback' argument is specified 
+        if 'feedback' argument is specified
         """
         if self.opt['task'].split(':')[-1] == 'feedback':
             return self.setup_data_with_feedback(path)
@@ -69,23 +69,23 @@ class TaskTeacher(FbDialogTeacher):
 
     def setup_data_with_feedback(self, path):
         """Reads data in the fbdialog format.
-        This method is very similar to FbDialogTeacher.setup_data(..). 
-        The difference is that in this method the feedback is appended to the query 
-        from the current example; in the default setup the feedback is appended to 
+        This method is very similar to FbDialogTeacher.setup_data(..).
+        The difference is that in this method the feedback is appended to the query
+        from the current example; in the default setup the feedback is appended to
         the x from the next example.
 
         The data would look something like this:
-        
+
         Mary moved to the bedroom.
         Mary travelled to the garden.
         Where is John?
         No, that's wrong.
         [labels: garden]
-        
+
         To append feedback to the current example, modify the task name like this:
-          python examples/display_data.py -t dbll_babi:task:2_p0.5:f 
-        Default setup: 
-          python examples/display_data.py -t dbll_babi:task:2_p0.5 
+          python examples/display_data.py -t dbll_babi:task:2_p0.5:f
+        Default setup:
+          python examples/display_data.py -t dbll_babi:task:2_p0.5
 
         """
         print("[loading fbdialog data:" + path + "]")
@@ -110,7 +110,7 @@ class TaskTeacher(FbDialogTeacher):
                 # split line into constituent parts, if available:
                 # x<tab>y<tab>reward<tab>label_candidates
                 # where y, reward, and label_candidates are optional
-                split = line[space_idx + 1:].split('\t')
+                split = line[space_idx + 1 :].split('\t')
 
                 # remove empty items and strip each one
                 for i in range(len(split)):
@@ -170,12 +170,12 @@ class TaskTeacher(FbDialogTeacher):
                     y = None
                     read_feedback = False
 
+
 # Defaults to task 2 with p=0.5.
 class DefaultTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
         task = '2_p0.5'
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(os.path.join('babi', 'babi1'), task, opt)
-        opt['cands_datafile'] = _path(os.path.join('babi', 'babi1'), task,
-                                      opt, 'train')
+        opt['cands_datafile'] = _path(os.path.join('babi', 'babi1'), task, opt, 'train')
         super().__init__(opt, shared)

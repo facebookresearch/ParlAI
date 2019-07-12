@@ -8,10 +8,12 @@ from argparse import ArgumentParser
 
 def setup_args():
     argparser = ArgumentParser()
-    argparser.add_argument('-if', '--infile', type=str,
-                           default='data/ConvAI2/train_self_original.txt')
-    argparser.add_argument('-of', '--outfile', type=str,
-                           default='projects/metadialog/convai2_cands.txt')
+    argparser.add_argument(
+        '-if', '--infile', type=str, default='data/ConvAI2/train_self_original.txt'
+    )
+    argparser.add_argument(
+        '-of', '--outfile', type=str, default='projects/metadialog/convai2_cands.txt'
+    )
     config = vars(argparser.parse_args())
     return config
 
@@ -23,7 +25,7 @@ def main(config):
                 continue
             first_space = line.index(' ')
             first_tab = line.index('\t')
-            candidate = line[first_space + 1: first_tab]
+            candidate = line[first_space + 1 : first_tab]
             fout.write(candidate + '\n')
 
 

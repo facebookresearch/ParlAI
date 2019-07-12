@@ -26,11 +26,13 @@ class SimpleTokenizer(Tokenizer):
         """
         self._regexp = regex.compile(
             '(%s)|(%s)' % (self.ALPHA_NUM, self.NON_WS),
-            flags=regex.IGNORECASE + regex.UNICODE + regex.MULTILINE
+            flags=regex.IGNORECASE + regex.UNICODE + regex.MULTILINE,
         )
         if len(kwargs.get('annotators', {})) > 0:
-            logger.warning('%s only tokenizes! Skipping annotators: %s' %
-                           (type(self).__name__, kwargs.get('annotators')))
+            logger.warning(
+                '%s only tokenizes! Skipping annotators: %s'
+                % (type(self).__name__, kwargs.get('annotators'))
+            )
         self.annotators = set()
 
     def tokenize(self, text):
@@ -49,9 +51,5 @@ class SimpleTokenizer(Tokenizer):
                 end_ws = span[1]
 
             # Format data
-            data.append((
-                token,
-                text[start_ws: end_ws],
-                span,
-            ))
+            data.append((token, text[start_ws:end_ws], span))
         return Tokens(data, self.annotators)

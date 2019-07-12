@@ -24,9 +24,14 @@ def build(opt):
         # save training and validation data
         to_save = {
             'attributes': ['color', 'shape', 'style'],
-            'task_defn': [['color', 'shape'], ['shape', 'color'],
-                          ['color', 'style'], ['style', 'color'],
-                          ['shape', 'style'], ['style', 'shape']]
+            'task_defn': [
+                ['color', 'shape'],
+                ['shape', 'color'],
+                ['color', 'style'],
+                ['style', 'color'],
+                ['shape', 'style'],
+                ['style', 'shape'],
+            ],
         }
         split_data = {}
 
@@ -34,7 +39,7 @@ def build(opt):
         properties = {
             'color': ['red', 'green', 'blue', 'purple'],
             'shape': ['square', 'triangle', 'circle', 'star'],
-            'style': ['dotted', 'solid', 'filled', 'dashed']
+            'style': ['dotted', 'solid', 'filled', 'dashed'],
         }
         to_save['properties'] = properties
         # properties.values() not used directly to maintain order
@@ -61,16 +66,35 @@ def build(opt):
         # large dataset properties
         properties = {
             'color': [
-                'red', 'green', 'blue', 'purple', 'yellow', 'cyan', 'orange', 'teal'
+                'red',
+                'green',
+                'blue',
+                'purple',
+                'yellow',
+                'cyan',
+                'orange',
+                'teal',
             ],
             'shape': [
-                'square', 'triangle', 'circle', 'star', 'heart', 'spade',
-                'club', 'diamond'
+                'square',
+                'triangle',
+                'circle',
+                'star',
+                'heart',
+                'spade',
+                'club',
+                'diamond',
             ],
             'style': [
-                'dotted', 'solid', 'filled', 'dashed', 'hstripe', 'vstripe',
-                'hgrad', 'vgrad'
-            ]
+                'dotted',
+                'solid',
+                'filled',
+                'dashed',
+                'hstripe',
+                'vstripe',
+                'hgrad',
+                'vgrad',
+            ],
         }
         to_save['properties'] = properties
         data_verbose = list(

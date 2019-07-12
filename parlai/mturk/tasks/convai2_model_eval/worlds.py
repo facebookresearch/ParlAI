@@ -6,8 +6,9 @@
 from parlai.core.agents import create_agent_from_shared
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.mturk.tasks.personachat.personachat_chat.extract_and_save_personas \
-    import main as main_extract
+from parlai.mturk.tasks.personachat.personachat_chat.extract_and_save_personas import (
+    main as main_extract,
+)
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from joblib import Parallel, delayed
 import numpy as np
@@ -101,14 +102,13 @@ PERSONA_CHOICE_MSG = 'Lastly, we show you two personas below, please select the 
 
 class PersonasGenerator(object):
     def __init__(self, opt):
-        self.personas_idx_stack_path = os.path.join(os.getcwd(),
-                                                    './personas_idx_stack.pkl')
+        self.personas_idx_stack_path = os.path.join(
+            os.getcwd(), './personas_idx_stack.pkl'
+        )
 
-        self.personas_path = (
-            '{}/data/personas-{}'.format(
-                os.getcwd(),
-                opt['persona_type'] + 'Revised' if opt['revised'] else 'Original'
-            )
+        self.personas_path = '{}/data/personas-{}'.format(
+            os.getcwd(),
+            opt['persona_type'] + 'Revised' if opt['revised'] else 'Original',
         )
         if not os.path.exists(self.personas_path):
             opt['personas_path'] = self.personas_path
@@ -138,8 +138,9 @@ class PersonasGenerator(object):
         if len(self.idx_stack) == 0:
             self.add_idx_stack()
         idx = self.idx_stack.pop()
-        data = np.load(os.path.join(self.personas_path,
-                                    self.personas_name_list[int(idx)]))
+        data = np.load(
+            os.path.join(self.personas_path, self.personas_name_list[int(idx)])
+        )
         return (idx, data)
 
     def push_persona(self, idx):
@@ -152,6 +153,7 @@ class PersonasGenerator(object):
 
 class PersonaProfileWorld(MTurkOnboardWorld):
     """A world that provides a persona to the MTurkAgent"""
+
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_persona_time = opt['max_persona_time']
@@ -159,59 +161,64 @@ class PersonaProfileWorld(MTurkOnboardWorld):
 
     def parley(self):
         persona_idx, data = self.mturk_agent.persona_generator.pop_persona()
-        model_persona_idx, model_data = \
-            self.mturk_agent.persona_generator.pop_persona()
+        model_persona_idx, model_data = self.mturk_agent.persona_generator.pop_persona()
         self.mturk_agent.persona_idx = persona_idx
         self.mturk_agent.persona_data = data
         self.mturk_agent.model_persona = [model_persona_idx, model_data]
         self.mturk_agent.persona_pair = [
             (persona_idx, data),
-            (model_persona_idx, model_data)
+            (model_persona_idx, model_data),
         ]
         persona_text = ''
         for s in data:
-            persona_text += '<b><span style="color:blue">' \
-                            '{}\n</span></b>'.format(s.strip())
+            persona_text += '<b><span style="color:blue">' '{}\n</span></b>'.format(
+                s.strip()
+            )
 
-        self.mturk_agent.observe({
-            'id': 'SYSTEM',
-            'show_persona': True,
-            'text': ONBOARD_MSG + '<br>' + persona_text + '<br>'})
+        self.mturk_agent.observe(
+            {
+                'id': 'SYSTEM',
+                'show_persona': True,
+                'text': ONBOARD_MSG + '<br>' + persona_text + '<br>',
+            }
+        )
 
         act = self.mturk_agent.act(timeout=self.max_persona_time)
 
         # timeout
-        if act['episode_done'] or (('text' in act and
-                                    act['text'] == TIMEOUT_MESSAGE)):
+        if act['episode_done'] or (('text' in act and act['text'] == TIMEOUT_MESSAGE)):
 
             self.mturk_agent.persona_generator.push_persona(
-                self.mturk_agent.persona_idx)
+                self.mturk_agent.persona_idx
+            )
             self.mturk_agent.persona_generator.save_idx_stack()
             self.episodeDone = True
             return
 
         if 'text' not in act:
-            control_msg = {'id': 'SYSTEM',
-                           'text': WAITING_MSG}
+            control_msg = {'id': 'SYSTEM', 'text': WAITING_MSG}
             self.mturk_agent.observe(validate(control_msg))
             self.episodeDone = True
 
 
 class Convai2EvalWorld(MultiAgentDialogWorld):
-    def __init__(self, opt, agents=None, shared=None,
-                 range_turn=(5, 6), max_turn=10,
-                 max_resp_time=120,
-                 model_agent_opt=None,
-                 world_tag='',
-                 agent_timeout_shutdown=120):
+    def __init__(
+        self,
+        opt,
+        agents=None,
+        shared=None,
+        range_turn=(5, 6),
+        max_turn=10,
+        max_resp_time=120,
+        model_agent_opt=None,
+        world_tag='',
+        agent_timeout_shutdown=120,
+    ):
         self.turn_idx = 0
         self.hit_id = None
         self.range_turn = range_turn
         self.max_turn = max_turn
-        self.n_turn = np.random.randint(
-            self.range_turn[0],
-            self.range_turn[1]
-        ) + 1
+        self.n_turn = np.random.randint(self.range_turn[0], self.range_turn[1]) + 1
         self.model_name = opt.get('model_name')
         self.dialog = []
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -240,11 +247,13 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         self.agent_timeout_shutdown = agent_timeout_shutdown
 
         # set up personas
-        self.personas = [(ag.persona_data if hasattr(ag, 'persona_data')
-                          else None) for ag in self.agents]
-        self.model_persona_text = '\n'.join([
-            'your persona:' + pers for pers in self.agents[0].model_persona[1]
-        ])
+        self.personas = [
+            (ag.persona_data if hasattr(ag, 'persona_data') else None)
+            for ag in self.agents
+        ]
+        self.model_persona_text = '\n'.join(
+            ['your persona:' + pers for pers in self.agents[0].model_persona[1]]
+        )
         print(self.model_persona_text)
 
     def parley(self):
@@ -260,8 +269,10 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             for idx, agent in enumerate(self.agents):
                 persona_text = ''
                 for s in self.personas[idx]:
-                    persona_text += '<b><span style="color:blue">' \
-                                    '{}\n</span></b>'.format(s.strip())
+                    persona_text += (
+                        '<b><span style="color:blue">'
+                        '{}\n</span></b>'.format(s.strip())
+                    )
                 control_msg['persona_text'] = persona_text
                 control_msg['text'] = self.get_instruction(
                     tag='start', agent_id=agent.id
@@ -275,10 +286,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         """
         if self.turn_idx == self.n_turn:
             for idx, agent in enumerate(self.agents):
-                control_msg['text'] = self.get_instruction(
-                    idx,
-                    tag='exceed_min_turns'
-                )
+                control_msg['text'] = self.get_instruction(idx, tag='exceed_min_turns')
                 control_msg['exceed_min_turns'] = True
                 agent.observe(validate(control_msg))
 
@@ -293,14 +301,14 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 _text = ''
                 for s in agent.model_persona[1]['persona']:
                     _text += (
-                        '<b><span style="color:blue">' + s.strip() +
-                        '</span></b><br>'
+                        '<b><span style="color:blue">' + s.strip() + '</span></b><br>'
                     )
                 control_msg['text'] = 'The model persona is: \n' + _text
                 agent.observe(control_msg)
                 return
-            while self.is_msg_tooshortlong(acts[idx], agent) or \
-                    self.is_exact_match(acts[idx], agent):
+            while self.is_msg_tooshortlong(acts[idx], agent) or self.is_exact_match(
+                acts[idx], agent
+            ):
                 acts[idx] = agent.act()
 
             if acts[idx]['episode_done']:
@@ -324,8 +332,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             control_msg['text'] = NAN_MSG
                             agent.observe(validate(control_msg))
                             acts[idx] = agent.act(timeout=self.max_resp_time)
-                        if 'text' in acts[idx] and \
-                                acts[idx]['text'] in self.ratings:
+                        if 'text' in acts[idx] and acts[idx]['text'] in self.ratings:
                             self.fluency_score[idx] = int(acts[idx]['text'])
 
                     # Fluency reason
@@ -337,8 +344,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             control_msg['text'] = 'Please try again.'
                             agent.observe(validate(control_msg))
                             acts[idx] = agent.act(timeout=self.max_resp_time)
-                        if 'text' in acts[idx] and \
-                                acts[idx]['text'] != '':
+                        if 'text' in acts[idx] and acts[idx]['text'] != '':
                             self.fluency_reason[idx] = acts[idx]['text']
 
                     # Engagingness Check
@@ -350,8 +356,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             control_msg['text'] = NAN_MSG
                             agent.observe(validate(control_msg))
                             acts[idx] = agent.act(timeout=self.max_resp_time)
-                        if 'text' in acts[idx] and \
-                                acts[idx]['text'] in self.ratings:
+                        if 'text' in acts[idx] and acts[idx]['text'] in self.ratings:
                             self.eng_score[idx] = int(acts[idx]['text'])
 
                     # Engagingness reason
@@ -363,8 +368,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             control_msg['text'] = 'Please try again.'
                             agent.observe(validate(control_msg))
                             acts[idx] = agent.act(timeout=self.max_resp_time)
-                        if 'text' in acts[idx] and \
-                                acts[idx]['text'] != '':
+                        if 'text' in acts[idx] and acts[idx]['text'] != '':
                             self.eng_reason[idx] = acts[idx]['text']
 
                     # Check Consistency
@@ -376,8 +380,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             control_msg['text'] = NAN_MSG
                             agent.observe(validate(control_msg))
                             acts[idx] = agent.act(timeout=self.max_resp_time)
-                        if 'text' in acts[idx] and \
-                                acts[idx]['text'] in self.ratings:
+                        if 'text' in acts[idx] and acts[idx]['text'] in self.ratings:
                             self.consistent_score[idx] = int(acts[idx]['text'])
 
                     # Consistency reasoning
@@ -389,26 +392,28 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             control_msg['text'] = 'Please try again.'
                             agent.observe(validate(control_msg))
                             acts[idx] = agent.act(timeout=self.max_resp_time)
-                        if 'text' in acts[idx] and \
-                                acts[idx]['text'] != '':
+                        if 'text' in acts[idx] and acts[idx]['text'] != '':
                             self.consistent_reason[idx] = acts[idx]['text']
 
                     # Persona Selection
                     for idx, agent in enumerate(self.agents):
                         model_idx = agent.model_persona[0]
                         self_idx = agent.persona_idx
-                        false_idx_list = [x for x in range(len(
-                            agent.persona_generator.personas_name_list
-                        ))]
+                        false_idx_list = [
+                            x
+                            for x in range(
+                                len(agent.persona_generator.personas_name_list)
+                            )
+                        ]
                         false_idx_list.remove(self_idx)
                         false_idx_list.remove(model_idx)
                         false_idx = random.choice(false_idx_list)
-                        false_data = np.load(os.path.join(
-                            agent.persona_generator.personas_path,
-                            agent.persona_generator.personas_name_list[
-                                false_idx
-                            ]
-                        ))
+                        false_data = np.load(
+                            os.path.join(
+                                agent.persona_generator.personas_path,
+                                agent.persona_generator.personas_name_list[false_idx],
+                            )
+                        )
                         cand_text = []
                         for dt in [agent.model_persona[1], false_data]:
                             if dt == agent.model_persona[1]:
@@ -417,14 +422,16 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                                 is_correct = False
                             _text = ''
                             for s in dt:
-                                _text += '<b><span style="color:blue">' + \
-                                    s.strip() + '</span></b><br>'
+                                _text += (
+                                    '<b><span style="color:blue">'
+                                    + s.strip()
+                                    + '</span></b><br>'
+                                )
                             cand_text.append((is_correct, _text))
                         random.shuffle(cand_text)
 
                         control_msg['text'] = PERSONA_CHOICE_MSG.format(
-                            cand_text[0][1],
-                            cand_text[1][1]
+                            cand_text[0][1], cand_text[1][1]
                         )
                         agent.observe(validate(control_msg))
                         acts[idx] = agent.act(timeout=self.max_resp_time)
@@ -433,10 +440,10 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             agent.observe(validate(control_msg))
                             acts[idx] = agent.act(timeout=self.max_resp_time)
 
-                        if 'text' in acts[idx] and \
-                                acts[idx]['text'] in ['1', '2']:
-                            self.persona_picked[idx] = \
-                                cand_text[int(acts[idx]['text']) - 1][0]
+                        if 'text' in acts[idx] and acts[idx]['text'] in ['1', '2']:
+                            self.persona_picked[idx] = cand_text[
+                                int(acts[idx]['text']) - 1
+                            ][0]
 
                     # reached the end of the chat
                     self.chat_done = True
@@ -448,8 +455,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
 
             self.dialog.append((idx, acts[idx]['text']))
             if self.turn_idx == 1:
-                acts[idx]['text'] = self.model_persona_text + '\n' + \
-                    acts[idx]['text']
+                acts[idx]['text'] = self.model_persona_text + '\n' + acts[idx]['text']
 
             self.model_agent.observe(acts[idx])
 
@@ -468,14 +474,16 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             (' ,', ','),
             (' ?', '?'),
             (' !', '!'),
-            ('i ', 'I ')
+            ('i ', 'I '),
         ]:
             acts[idx]['text'] = acts[idx]['text'].replace(sb_0, sb_1)
         acts[idx]['text'].capitalize()
         acts[idx]['id'] = 'PERSON_2'
-        acts[idx]['message_id'] = acts[0]['message_id'][:-1] + '0' if \
-            acts[0]['message_id'][-1] != '0' else \
-            acts[0]['message_id'][:-1] + '1'
+        acts[idx]['message_id'] = (
+            acts[0]['message_id'][:-1] + '0'
+            if acts[0]['message_id'][-1] != '0'
+            else acts[0]['message_id'][:-1] + '1'
+        )
         self.dialog.append((idx, acts[idx]['text']))
         time.sleep(len(acts[idx]['text'].split(' ')) * 0.5)
         agent.observe(acts[idx])
@@ -500,19 +508,27 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         convo_finished = True
         bad_workers = []
         for ag in self.agents:
-            if (ag.hit_is_abandoned or ag.hit_is_returned or
-                    ag.disconnected or ag.hit_is_expired):
+            if (
+                ag.hit_is_abandoned
+                or ag.hit_is_returned
+                or ag.disconnected
+                or ag.hit_is_expired
+            ):
                 bad_workers.append(ag.worker_id)
                 convo_finished = False
-        if (not convo_finished or self.dialog == [] or
-                self.eng_score[0] == -1 or self.fluency_score[0] == -1 or
-                self.consistent_score[0] == -1):
+        if (
+            not convo_finished
+            or self.dialog == []
+            or self.eng_score[0] == -1
+            or self.fluency_score[0] == -1
+            or self.consistent_score[0] == -1
+        ):
             for ag in self.agents:
                 ag.not_approve = True
                 ag.persona_generator.push_persona(ag.persona_idx)
-                print("\n*** Push persona {} back to stack. ****\n".format(
-                    ag.persona_idx
-                ))
+                print(
+                    "\n*** Push persona {} back to stack. ****\n".format(ag.persona_idx)
+                )
             convo_finished = False
 
         data_path = self.opt['data_path']
@@ -520,12 +536,13 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             os.makedirs(data_path)
         if convo_finished:
             filename = os.path.join(
-                data_path, '{}_{}_{}_{}_withreasons.pkl'.format(
+                data_path,
+                '{}_{}_{}_{}_withreasons.pkl'.format(
                     self.model_name,
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type
-                )
+                    self.task_type,
+                ),
             )
         else:
             filename = os.path.join(
@@ -534,29 +551,31 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                     self.model_name,
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type
-                )
+                    self.task_type,
+                ),
             )
-        print(
-            self.world_tag,
-            ': Data successfully saved at {}.'.format(filename)
-        )
+        print(self.world_tag, ': Data successfully saved at {}.'.format(filename))
         self.personas.append(self.agents[0].model_persona[1])
-        pickle.dump({'personas': self.personas,
-                     'dialog': self.dialog,
-                     'workers': [ag.worker_id for ag in self.agents],
-                     'hit_id': [ag.hit_id for ag in self.agents],
-                     'assignment_id': [ag.assignment_id for ag in self.agents],
-                     'bad_workers': bad_workers,
-                     'n_turn': self.n_turn,
-                     'fluency_score': self.fluency_score,
-                     'fluency_reason': self.fluency_reason,
-                     'eng_score': self.eng_score,
-                     'eng_reason': self.eng_reason,
-                     'consistent_score': self.consistent_score,
-                     'consistent_reason': self.consistent_reason,
-                     'persona_picked': self.persona_picked,
-                     'n_personas': self.n_personas}, open(filename, 'wb'))
+        pickle.dump(
+            {
+                'personas': self.personas,
+                'dialog': self.dialog,
+                'workers': [ag.worker_id for ag in self.agents],
+                'hit_id': [ag.hit_id for ag in self.agents],
+                'assignment_id': [ag.assignment_id for ag in self.agents],
+                'bad_workers': bad_workers,
+                'n_turn': self.n_turn,
+                'fluency_score': self.fluency_score,
+                'fluency_reason': self.fluency_reason,
+                'eng_score': self.eng_score,
+                'eng_reason': self.eng_reason,
+                'consistent_score': self.consistent_score,
+                'consistent_reason': self.consistent_reason,
+                'persona_picked': self.persona_picked,
+                'n_personas': self.n_personas,
+            },
+            open(filename, 'wb'),
+        )
 
     def is_exact_match(self, act, ag, tolerance=0):
         if act['episode_done']:
@@ -574,8 +593,10 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 for r_w in regular_words:
                     if r_w in per_parse:
                         per_parse.remove(r_w)
-                per_subseq = [' '.join(per_parse[i:i + len(per_parse) -
-                                       tolerance]) for i in range(tolerance + 1)]
+                per_subseq = [
+                    ' '.join(per_parse[i : i + len(per_parse) - tolerance])
+                    for i in range(tolerance + 1)
+                ]
                 for pp in per_subseq:
                     if pp in ['', ' ', '  ', '   ']:
                         per_subseq.remove(pp)
@@ -606,22 +627,18 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         return False
 
     def reset_random(self):
-        self.n_turn = np.random.randint(
-            self.range_turn[0],
-            self.range_turn[1]
-        ) + 1
+        self.n_turn = np.random.randint(self.range_turn[0], self.range_turn[1]) + 1
 
     def check_disconnects(self, act):
         if (
-            act['text'] == '[TIMEOUT]' or
-            act['text'] == '[RETURNED]' or
-            act['text'] == '[DISCONNECT]'
+            act['text'] == '[TIMEOUT]'
+            or act['text'] == '[RETURNED]'
+            or act['text'] == '[DISCONNECT]'
         ):
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
             control_msg['text'] = self.get_instruction(
-                agent_id=act['id'],
-                tag='timeout'
+                agent_id=act['id'], tag='timeout'
             )
             for ag in self.agents:
                 if ag.id != act['id']:
@@ -637,7 +654,6 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         def shutdown_agent(mturk_agent):
             mturk_agent.shutdown()
 
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(shutdown_agent)(agent) for agent in self.agents)
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(shutdown_agent)(agent) for agent in self.agents
+        )

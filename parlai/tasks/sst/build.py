@@ -24,11 +24,12 @@ def build(opt):
         # Download the data.
         url_base = (
             'https://raw.githubusercontent.com/openai/'
-            'generating-reviews-discovering-sentiment/master/data/')
+            'generating-reviews-discovering-sentiment/master/data/'
+        )
         fnames = [
             'train_binary_sent.csv',
             'dev_binary_sent.csv',
-            'test_binary_sent.csv'
+            'test_binary_sent.csv',
         ]
         for fname in fnames:
             url = url_base + fname

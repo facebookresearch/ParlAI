@@ -29,13 +29,16 @@ task_directory_name = 'task'
 
 server_process = None
 
-heroku_url = \
-    'https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli'
+heroku_url = 'https://cli-assets.heroku.com/heroku-cli/channels/stable/heroku-cli'
 
 
-def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
-                               heroku_team=None, use_hobby=False,
-                               tmp_dir=parent_dir):
+def setup_legacy_heroku_server(
+    task_name,
+    task_files_to_copy=None,
+    heroku_team=None,
+    use_hobby=False,
+    tmp_dir=parent_dir,
+):
     print("Heroku: Collecting files...")
     # Install Heroku CLI
     os_name = None
@@ -58,33 +61,32 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
         bit_architecture = 'x86'
 
     # Remove existing heroku client files
-    existing_heroku_directory_names = \
-        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))
+    existing_heroku_directory_names = glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))
     if len(existing_heroku_directory_names) == 0:
         if os.path.exists(os.path.join(tmp_dir, 'heroku.tar.gz')):
             os.remove(os.path.join(tmp_dir, 'heroku.tar.gz'))
 
         # Get the heroku client and unzip
         os.chdir(tmp_dir)
-        sh.wget(shlex.split('{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
-            heroku_url,
-            os_name,
-            bit_architecture
-        )))
+        sh.wget(
+            shlex.split(
+                '{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
+                    heroku_url, os_name, bit_architecture
+                )
+            )
+        )
         sh.tar(shlex.split('-xvzf heroku.tar.gz'))
 
-    heroku_directory_name = \
-        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))[0]
+    heroku_directory_name = glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))[0]
     heroku_directory_path = os.path.join(tmp_dir, heroku_directory_name)
-    heroku_executable_path = \
-        os.path.join(heroku_directory_path, 'bin', 'heroku')
+    heroku_executable_path = os.path.join(heroku_directory_path, 'bin', 'heroku')
 
-    server_source_directory_path = \
-        os.path.join(parent_dir, legacy_server_source_directory_name)
-    heroku_server_directory_path = os.path.join(tmp_dir, '{}_{}'.format(
-        heroku_server_directory_name,
-        task_name
-    ))
+    server_source_directory_path = os.path.join(
+        parent_dir, legacy_server_source_directory_name
+    )
+    heroku_server_directory_path = os.path.join(
+        tmp_dir, '{}_{}'.format(heroku_server_directory_name, task_name)
+    )
 
     # Delete old server files
     sh.rm(shlex.split('-rf ' + heroku_server_directory_path))
@@ -93,12 +95,10 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
     shutil.copytree(server_source_directory_path, heroku_server_directory_path)
 
     # Consolidate task files
-    task_directory_path = \
-        os.path.join(heroku_server_directory_path, task_directory_name)
-    sh.mv(
-        os.path.join(heroku_server_directory_path, 'html'),
-        task_directory_path
+    task_directory_path = os.path.join(
+        heroku_server_directory_path, task_directory_name
     )
+    sh.mv(os.path.join(heroku_server_directory_path, 'html'), task_directory_path)
 
     hit_config_file_path = os.path.join(tmp_dir, 'hit_config.json')
     sh.mv(hit_config_file_path, task_directory_path)
@@ -108,8 +108,7 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
             shutil.copy2(file_path, task_directory_path)
         except IsADirectoryError:  # noqa: F821 we don't support python2
             dir_name = os.path.basename(os.path.normpath(file_path))
-            shutil.copytree(
-                file_path, os.path.join(task_directory_path, dir_name))
+            shutil.copytree(file_path, os.path.join(task_directory_path, dir_name))
         except FileNotFoundError:  # noqa: F821 we don't support python2
             pass
 
@@ -122,13 +121,10 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
     heroku_user_identifier = None
     while not heroku_user_identifier:
         try:
-            subprocess.check_output(
-                shlex.split(heroku_executable_path + ' auth:token')
-            )
-            heroku_user_identifier = (
-                netrc.netrc(os.path.join(os.path.expanduser("~"), '.netrc'))
-                     .hosts['api.heroku.com'][0]
-            )
+            subprocess.check_output(shlex.split(heroku_executable_path + ' auth:token'))
+            heroku_user_identifier = netrc.netrc(
+                os.path.join(os.path.expanduser("~"), '.netrc')
+            ).hosts['api.heroku.com'][0]
         except subprocess.CalledProcessError:
             raise SystemExit(
                 'A free Heroku account is required for launching MTurk tasks. '
@@ -137,11 +133,13 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
                 'program again.'.format(heroku_executable_path)
             )
 
-    heroku_app_name = ('{}-{}-{}'.format(
-        user_name,
-        task_name,
-        hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest()
-    ))[:30]
+    heroku_app_name = (
+        '{}-{}-{}'.format(
+            user_name,
+            task_name,
+            hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest(),
+        )
+    )[:30]
 
     while heroku_app_name[-1] == '-':
         heroku_app_name = heroku_app_name[:-1]
@@ -149,17 +147,19 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
     # Create or attach to the server
     try:
         if heroku_team is not None:
-            subprocess.check_output(shlex.split(
-                '{} create {} --team {}'.format(
-                    heroku_executable_path,
-                    heroku_app_name,
-                    heroku_team
+            subprocess.check_output(
+                shlex.split(
+                    '{} create {} --team {}'.format(
+                        heroku_executable_path, heroku_app_name, heroku_team
+                    )
                 )
-            ))
+            )
         else:
-            subprocess.check_output(shlex.split(
-                '{} create {}'.format(heroku_executable_path, heroku_app_name)
-            ))
+            subprocess.check_output(
+                shlex.split(
+                    '{} create {}'.format(heroku_executable_path, heroku_app_name)
+                )
+            )
     except subprocess.CalledProcessError:  # User has too many apps
         sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
         raise SystemExit(
@@ -172,11 +172,13 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
 
     # Enable WebSockets
     try:
-        subprocess.check_output(shlex.split(
-            '{} features:enable http-session-affinity'.format(
-                heroku_executable_path
+        subprocess.check_output(
+            shlex.split(
+                '{} features:enable http-session-affinity'.format(
+                    heroku_executable_path
+                )
             )
-        ))
+        )
     except subprocess.CalledProcessError:  # Already enabled WebSockets
         pass
 
@@ -186,15 +188,15 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
     sh.git(shlex.split('commit -m "app"'))
     sh.git(shlex.split('push -f heroku master'))
 
-    subprocess.check_output(shlex.split('{} ps:scale web=1'.format(
-        heroku_executable_path)
-    ))
+    subprocess.check_output(
+        shlex.split('{} ps:scale web=1'.format(heroku_executable_path))
+    )
 
     if use_hobby:
         try:
-            subprocess.check_output(shlex.split('{} dyno:type Hobby'.format(
-                heroku_executable_path)
-            ))
+            subprocess.check_output(
+                shlex.split('{} dyno:type Hobby'.format(heroku_executable_path))
+            )
         except subprocess.CalledProcessError:  # User doesn't have hobby access
             delete_heroku_server(task_name)
             sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
@@ -213,8 +215,13 @@ def setup_legacy_heroku_server(task_name, task_files_to_copy=None,
     return 'https://{}.herokuapp.com'.format(heroku_app_name)
 
 
-def setup_heroku_server(task_name, task_files_to_copy=None,
-                        heroku_team=None, use_hobby=False, tmp_dir=parent_dir):
+def setup_heroku_server(
+    task_name,
+    task_files_to_copy=None,
+    heroku_team=None,
+    use_hobby=False,
+    tmp_dir=parent_dir,
+):
 
     print("Heroku: Collecting files... for ", tmp_dir)
     # Install Heroku CLI
@@ -238,33 +245,32 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
         bit_architecture = 'x86'
 
     # Remove existing heroku client files
-    existing_heroku_directory_names = \
-        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))
+    existing_heroku_directory_names = glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))
     if len(existing_heroku_directory_names) == 0:
         if os.path.exists(os.path.join(tmp_dir, 'heroku.tar.gz')):
             os.remove(os.path.join(tmp_dir, 'heroku.tar.gz'))
 
         # Get the heroku client and unzip
         os.chdir(tmp_dir)
-        sh.wget(shlex.split('{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
-            heroku_url,
-            os_name,
-            bit_architecture
-        )))
+        sh.wget(
+            shlex.split(
+                '{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
+                    heroku_url, os_name, bit_architecture
+                )
+            )
+        )
         sh.tar(shlex.split('-xvzf heroku.tar.gz'))
 
-    heroku_directory_name = \
-        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))[0]
+    heroku_directory_name = glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))[0]
     heroku_directory_path = os.path.join(tmp_dir, heroku_directory_name)
-    heroku_executable_path = \
-        os.path.join(heroku_directory_path, 'bin', 'heroku')
+    heroku_executable_path = os.path.join(heroku_directory_path, 'bin', 'heroku')
 
-    server_source_directory_path = \
-        os.path.join(parent_dir, server_source_directory_name)
-    heroku_server_development_path = os.path.join(tmp_dir, '{}_{}'.format(
-        heroku_server_directory_name,
-        task_name
-    ))
+    server_source_directory_path = os.path.join(
+        parent_dir, server_source_directory_name
+    )
+    heroku_server_development_path = os.path.join(
+        tmp_dir, '{}_{}'.format(heroku_server_directory_name, task_name)
+    )
 
     # Delete old server files
     sh.rm(shlex.split('-rf ' + heroku_server_development_path))
@@ -274,8 +280,8 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
 
     # Check to see if we need to build
     custom_component_dir = os.path.join(
-        heroku_server_development_path, 'dev',
-        'components', 'built_custom_components')
+        heroku_server_development_path, 'dev', 'components', 'built_custom_components'
+    )
     if task_files_to_copy['needs_build'] is not None:
         # Build the directory, then pull the custom component out.
         print('Build: Detected custom package.json, prepping build')
@@ -287,30 +293,35 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
         shutil.copytree(frontend_dir, custom_component_dir)
 
         os.chdir(heroku_server_development_path)
-        packages_installed = subprocess.call(
-            ['npm', 'install', custom_component_dir])
+        packages_installed = subprocess.call(['npm', 'install', custom_component_dir])
         if packages_installed != 0:
-            raise Exception('please make sure npm is installed, otherwise view'
-                            ' the above error for more info.')
+            raise Exception(
+                'please make sure npm is installed, otherwise view'
+                ' the above error for more info.'
+            )
 
         os.chdir(custom_component_dir)
 
         webpack_complete = subprocess.call(['npm', 'run', 'dev'])
         if webpack_complete != 0:
-            raise Exception('Webpack appears to have failed to build your '
-                            'custom components. See the above for more info.')
+            raise Exception(
+                'Webpack appears to have failed to build your '
+                'custom components. See the above for more info.'
+            )
     else:
         os.chdir(heroku_server_development_path)
-        packages_installed = subprocess.call(
-            ['npm', 'install', custom_component_dir])
+        packages_installed = subprocess.call(['npm', 'install', custom_component_dir])
         if packages_installed != 0:
-            raise Exception('please make sure npm is installed, otherwise view'
-                            ' the above error for more info.')
+            raise Exception(
+                'please make sure npm is installed, otherwise view'
+                ' the above error for more info.'
+            )
 
     # Move dev resource files to their correct places
     for resource_type in ['css', 'components']:
         target_resource_dir = os.path.join(
-            heroku_server_development_path, 'dev', resource_type)
+            heroku_server_development_path, 'dev', resource_type
+        )
         for file_path in task_files_to_copy[resource_type]:
             try:
                 file_name = os.path.basename(file_path)
@@ -319,8 +330,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
                 shutil.copy2(file_path, target_path)
             except IsADirectoryError:  # noqa: F821
                 dir_name = os.path.basename(os.path.normpath(file_path))
-                shutil.copytree(
-                    file_path, os.path.join(target_resource_dir, dir_name))
+                shutil.copytree(file_path, os.path.join(target_resource_dir, dir_name))
             except FileNotFoundError:  # noqa: F821
                 pass
 
@@ -329,18 +339,23 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
 
     packages_installed = subprocess.call(['npm', 'install'])
     if packages_installed != 0:
-        raise Exception('please make sure npm is installed, otherwise view '
-                        'the above error for more info.')
+        raise Exception(
+            'please make sure npm is installed, otherwise view '
+            'the above error for more info.'
+        )
 
     webpack_complete = subprocess.call(['npm', 'run', 'dev'])
     if webpack_complete != 0:
-        raise Exception('Webpack appears to have failed to build your '
-                        'frontend. See the above error for more information.')
+        raise Exception(
+            'Webpack appears to have failed to build your '
+            'frontend. See the above error for more information.'
+        )
 
     # all the important files should've been moved to bundle.js in
     # server/static, now copy the rest into static
     target_resource_dir = os.path.join(
-        heroku_server_development_path, 'server', 'static')
+        heroku_server_development_path, 'server', 'static'
+    )
     for file_path in task_files_to_copy['static']:
         try:
             file_name = os.path.basename(file_path)
@@ -348,8 +363,7 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
             shutil.copy2(file_path, target_path)
         except IsADirectoryError:  # noqa: F821 we don't support python2
             dir_name = os.path.basename(os.path.normpath(file_path))
-            shutil.copytree(
-                file_path, os.path.join(target_resource_dir, dir_name))
+            shutil.copytree(file_path, os.path.join(target_resource_dir, dir_name))
         except FileNotFoundError:  # noqa: F821 we don't support python2
             pass
 
@@ -359,7 +373,8 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
     print("Heroku: Starting server...")
 
     heroku_server_directory_path = os.path.join(
-        heroku_server_development_path, 'server')
+        heroku_server_development_path, 'server'
+    )
     os.chdir(heroku_server_directory_path)
     sh.git('init')
 
@@ -367,13 +382,10 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
     heroku_user_identifier = None
     while not heroku_user_identifier:
         try:
-            subprocess.check_output(
-                shlex.split(heroku_executable_path + ' auth:token')
-            )
-            heroku_user_identifier = (
-                netrc.netrc(os.path.join(os.path.expanduser("~"), '.netrc'))
-                     .hosts['api.heroku.com'][0]
-            )
+            subprocess.check_output(shlex.split(heroku_executable_path + ' auth:token'))
+            heroku_user_identifier = netrc.netrc(
+                os.path.join(os.path.expanduser("~"), '.netrc')
+            ).hosts['api.heroku.com'][0]
         except subprocess.CalledProcessError:
             raise SystemExit(
                 'A free Heroku account is required for launching MTurk tasks. '
@@ -382,11 +394,13 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
                 'program again.'.format(heroku_executable_path)
             )
 
-    heroku_app_name = ('{}-{}-{}'.format(
-        user_name,
-        task_name,
-        hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest()
-    ))[:30]
+    heroku_app_name = (
+        '{}-{}-{}'.format(
+            user_name,
+            task_name,
+            hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest(),
+        )
+    )[:30]
 
     while heroku_app_name[-1] == '-':
         heroku_app_name = heroku_app_name[:-1]
@@ -394,17 +408,19 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
     # Create or attach to the server
     try:
         if heroku_team is not None:
-            subprocess.check_output(shlex.split(
-                '{} create {} --team {}'.format(
-                    heroku_executable_path,
-                    heroku_app_name,
-                    heroku_team
+            subprocess.check_output(
+                shlex.split(
+                    '{} create {} --team {}'.format(
+                        heroku_executable_path, heroku_app_name, heroku_team
+                    )
                 )
-            ))
+            )
         else:
-            subprocess.check_output(shlex.split(
-                '{} create {}'.format(heroku_executable_path, heroku_app_name)
-            ))
+            subprocess.check_output(
+                shlex.split(
+                    '{} create {}'.format(heroku_executable_path, heroku_app_name)
+                )
+            )
     except subprocess.CalledProcessError:  # User has too many apps
         sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
         raise SystemExit(
@@ -417,11 +433,13 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
 
     # Enable WebSockets
     try:
-        subprocess.check_output(shlex.split(
-            '{} features:enable http-session-affinity'.format(
-                heroku_executable_path
+        subprocess.check_output(
+            shlex.split(
+                '{} features:enable http-session-affinity'.format(
+                    heroku_executable_path
+                )
             )
-        ))
+        )
     except subprocess.CalledProcessError:  # Already enabled WebSockets
         pass
 
@@ -431,15 +449,15 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
     sh.git(shlex.split('commit -m "app"'))
     sh.git(shlex.split('push -f heroku master'))
 
-    subprocess.check_output(shlex.split('{} ps:scale web=1'.format(
-        heroku_executable_path)
-    ))
+    subprocess.check_output(
+        shlex.split('{} ps:scale web=1'.format(heroku_executable_path))
+    )
 
     if use_hobby:
         try:
-            subprocess.check_output(shlex.split('{} dyno:type Hobby'.format(
-                heroku_executable_path)
-            ))
+            subprocess.check_output(
+                shlex.split('{} dyno:type Hobby'.format(heroku_executable_path))
+            )
         except subprocess.CalledProcessError:  # User doesn't have hobby access
             delete_heroku_server(task_name)
             sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
@@ -459,44 +477,43 @@ def setup_heroku_server(task_name, task_files_to_copy=None,
 
 
 def delete_heroku_server(task_name, tmp_dir=parent_dir):
-    heroku_directory_name = \
-        glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))[0]
+    heroku_directory_name = glob.glob(os.path.join(tmp_dir, 'heroku-cli-*'))[0]
     heroku_directory_path = os.path.join(tmp_dir, heroku_directory_name)
-    heroku_executable_path = \
-        os.path.join(heroku_directory_path, 'bin', 'heroku')
+    heroku_executable_path = os.path.join(heroku_directory_path, 'bin', 'heroku')
 
-    heroku_user_identifier = (
-        netrc.netrc(os.path.join(os.path.expanduser("~"), '.netrc'))
-             .hosts['api.heroku.com'][0]
-    )
+    heroku_user_identifier = netrc.netrc(
+        os.path.join(os.path.expanduser("~"), '.netrc')
+    ).hosts['api.heroku.com'][0]
 
-    heroku_app_name = ('{}-{}-{}'.format(
-        user_name,
-        task_name,
-        hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest()
-    ))[:30]
+    heroku_app_name = (
+        '{}-{}-{}'.format(
+            user_name,
+            task_name,
+            hashlib.md5(heroku_user_identifier.encode('utf-8')).hexdigest(),
+        )
+    )[:30]
     while heroku_app_name[-1] == '-':
         heroku_app_name = heroku_app_name[:-1]
     print("Heroku: Deleting server: {}".format(heroku_app_name))
-    subprocess.check_output(shlex.split(
-        '{} destroy {} --confirm {}'.format(
-            heroku_executable_path,
-            heroku_app_name,
-            heroku_app_name
+    subprocess.check_output(
+        shlex.split(
+            '{} destroy {} --confirm {}'.format(
+                heroku_executable_path, heroku_app_name, heroku_app_name
+            )
         )
-    ))
+    )
 
 
 def setup_local_server(task_name, task_files_to_copy=None):
     global server_process
     print("Local Server: Collecting files...")
 
-    server_source_directory_path = \
-        os.path.join(parent_dir, legacy_server_source_directory_name)
-    local_server_directory_path = os.path.join(parent_dir, '{}_{}'.format(
-        local_server_directory_name,
-        task_name
-    ))
+    server_source_directory_path = os.path.join(
+        parent_dir, legacy_server_source_directory_name
+    )
+    local_server_directory_path = os.path.join(
+        parent_dir, '{}_{}'.format(local_server_directory_name, task_name)
+    )
 
     # Delete old server files
     sh.rm(shlex.split('-rf ' + local_server_directory_path))
@@ -505,12 +522,8 @@ def setup_local_server(task_name, task_files_to_copy=None):
     shutil.copytree(server_source_directory_path, local_server_directory_path)
 
     # Consolidate task files
-    task_directory_path = \
-        os.path.join(local_server_directory_path, task_directory_name)
-    sh.mv(
-        os.path.join(local_server_directory_path, 'html'),
-        task_directory_path
-    )
+    task_directory_path = os.path.join(local_server_directory_path, task_directory_name)
+    sh.mv(os.path.join(local_server_directory_path, 'html'), task_directory_path)
 
     hit_config_file_path = os.path.join(parent_dir, 'hit_config.json')
     sh.mv(hit_config_file_path, task_directory_path)
@@ -520,8 +533,7 @@ def setup_local_server(task_name, task_files_to_copy=None):
             shutil.copy2(file_path, task_directory_path)
         except IsADirectoryError:  # noqa: F821 we don't support python2
             dir_name = os.path.basename(os.path.normpath(file_path))
-            shutil.copytree(
-                file_path, os.path.join(task_directory_path, dir_name))
+            shutil.copytree(file_path, os.path.join(task_directory_path, dir_name))
         except FileNotFoundError:  # noqa: F821 we don't support python2
             pass
 
@@ -531,15 +543,16 @@ def setup_local_server(task_name, task_files_to_copy=None):
 
     packages_installed = subprocess.call(['npm', 'install'])
     if packages_installed != 0:
-        raise Exception('please make sure npm is installed, otherwise view '
-                        'the above error for more info.')
+        raise Exception(
+            'please make sure npm is installed, otherwise view '
+            'the above error for more info.'
+        )
 
     server_process = subprocess.Popen(['node', 'server.js'])
 
     time.sleep(1)
     print('Server running locally with pid {}.'.format(server_process.pid))
-    host = input(
-        'Please enter the public server address, like https://hostname.com: ')
+    host = input('Please enter the public server address, like https://hostname.com: ')
     port = input('Please enter the port given above, likely 3000: ')
     return '{}:{}'.format(host, port)
 
@@ -551,37 +564,48 @@ def delete_local_server(task_name):
     server_process.wait()
     print('Cleaning temp directory')
 
-    local_server_directory_path = os.path.join(parent_dir, '{}_{}'.format(
-        local_server_directory_name,
-        task_name
-    ))
+    local_server_directory_path = os.path.join(
+        parent_dir, '{}_{}'.format(local_server_directory_name, task_name)
+    )
     sh.rm(shlex.split('-rf {}'.format(local_server_directory_path)))
 
 
-def setup_legacy_server(task_name, task_files_to_copy, local=False,
-                        heroku_team=None, use_hobby=False, legacy=True,
-                        tmp_dir=parent_dir):
+def setup_legacy_server(
+    task_name,
+    task_files_to_copy,
+    local=False,
+    heroku_team=None,
+    use_hobby=False,
+    legacy=True,
+    tmp_dir=parent_dir,
+):
     if local:
-        return setup_local_server(
-            task_name,
-            task_files_to_copy=task_files_to_copy
-        )
+        return setup_local_server(task_name, task_files_to_copy=task_files_to_copy)
     return setup_legacy_heroku_server(
         task_name,
         task_files_to_copy=task_files_to_copy,
-        heroku_team=heroku_team, use_hobby=use_hobby,
+        heroku_team=heroku_team,
+        use_hobby=use_hobby,
         tmp_dir=tmp_dir,
     )
 
 
-def setup_server(task_name, task_files_to_copy, local=False, heroku_team=None,
-                 use_hobby=False, legacy=True, tmp_dir=parent_dir):
+def setup_server(
+    task_name,
+    task_files_to_copy,
+    local=False,
+    heroku_team=None,
+    use_hobby=False,
+    legacy=True,
+    tmp_dir=parent_dir,
+):
     if local:
         raise Exception('Local server not yet supported for non-legacy tasks')
     return setup_heroku_server(
         task_name,
         task_files_to_copy=task_files_to_copy,
-        heroku_team=heroku_team, use_hobby=use_hobby,
+        heroku_team=heroku_team,
+        use_hobby=use_hobby,
         tmp_dir=tmp_dir,
     )
 

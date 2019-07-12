@@ -51,14 +51,34 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.add_argument('-ed', '--external-dict', type=str, default=None,
-                        help='External dictionary for stat computation')
-    parser.add_argument('-fb', '--freq-bins', type=str, default='0,100,1000,10000',
-                        help='Bins boundaries for rare words stat')
-    parser.add_argument('-dup', '--dump-predictions-path', type=str, default=None,
-                        help='Dump predictions into file')
-    parser.add_argument('-cun', '--compute-unique', type=bool, default=True,
-                        help='Compute %% of unique responses from the model')
+    parser.add_argument(
+        '-ed',
+        '--external-dict',
+        type=str,
+        default=None,
+        help='External dictionary for stat computation',
+    )
+    parser.add_argument(
+        '-fb',
+        '--freq-bins',
+        type=str,
+        default='0,100,1000,10000',
+        help='Bins boundaries for rare words stat',
+    )
+    parser.add_argument(
+        '-dup',
+        '--dump-predictions-path',
+        type=str,
+        default=None,
+        help='Dump predictions into file',
+    )
+    parser.add_argument(
+        '-cun',
+        '--compute-unique',
+        type=bool,
+        default=True,
+        help='Compute %% of unique responses from the model',
+    )
     parser.set_defaults(datatype='valid', model='repeat_label')
     TensorboardLogger.add_cmdline_args(parser)
     return parser
@@ -101,8 +121,7 @@ def eval_wordstat(opt, print_parser=None):
     world = create_task(opt, agent)
 
     if opt.get('external_dict'):
-        print('[ Using external dictionary from: {} ]'.format(
-            opt['external_dict']))
+        print('[ Using external dictionary from: {} ]'.format(opt['external_dict']))
         dict_opt = copy.deepcopy(opt)
         dict_opt['dict_file'] = opt['external_dict']
         dictionary = DictionaryAgent(dict_opt)
@@ -129,7 +148,7 @@ def eval_wordstat(opt, print_parser=None):
         'word_cnt': 0,
         'pred_list': [],
         'pure_pred_list': [],
-        'context_list': []
+        'context_list': [],
     }
     bins = [int(i) for i in opt['freq_bins'].split(',')]
 
@@ -168,24 +187,28 @@ def eval_wordstat(opt, print_parser=None):
             text, report = log_time.log(report['exs'], world.num_examples(), report)
             print(text)
             stat_str = 'total_words: {}, '.format(word_statistics['word_cnt'])
-            stat_str += ', '.join([
-                '<{}:{} ({:.{prec}f}%)'.format(
-                    b,
-                    word_statistics['freqs_cnt'].get(b, 0),
-                    (word_statistics['freqs_cnt'].get(b, 0) /
-                        word_statistics['word_cnt']) * 100,
-                    prec=2
-                )
-                for b in bins
-            ])
+            stat_str += ', '.join(
+                [
+                    '<{}:{} ({:.{prec}f}%)'.format(
+                        b,
+                        word_statistics['freqs_cnt'].get(b, 0),
+                        (
+                            word_statistics['freqs_cnt'].get(b, 0)
+                            / word_statistics['word_cnt']
+                        )
+                        * 100,
+                        prec=2,
+                    )
+                    for b in bins
+                ]
+            )
             print(
                 "Word statistics: {}, avg_word_length: {:.{prec}f}, "
-                "avg_char_length: {:.{prec}f}"
-                .format(
+                "avg_char_length: {:.{prec}f}".format(
                     stat_str,
                     numpy.array(word_statistics['mean_wlength']).mean(),
                     numpy.array(word_statistics['mean_clength']).mean(),
-                    prec=2
+                    prec=2,
                 )
             )
         if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
@@ -200,45 +223,46 @@ def eval_wordstat(opt, print_parser=None):
             if v == 1:
                 unique_list.append(k)
         print(
-            "Unique responses: {:.{prec}f}%"
-            .format(
-                len(unique_list) / len(word_statistics['pred_list']) * 100,
-                prec=2
+            "Unique responses: {:.{prec}f}%".format(
+                len(unique_list) / len(word_statistics['pred_list']) * 100, prec=2
             )
         )
 
     if opt['dump_predictions_path'] is not None:
         with open(opt['dump_predictions_path'], 'w') as f:
-            f.writelines([
-                'CONTEXT: {}\nPREDICTION:{}\n\n'.format(c, p)
-                for c, p in zip(
-                    word_statistics['context_list'],
-                    word_statistics['pure_pred_list']
-                )
-            ])
+            f.writelines(
+                [
+                    'CONTEXT: {}\nPREDICTION:{}\n\n'.format(c, p)
+                    for c, p in zip(
+                        word_statistics['context_list'],
+                        word_statistics['pure_pred_list'],
+                    )
+                ]
+            )
         if opt['compute_unique'] is True:
             with open(opt['dump_predictions_path'] + '_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])
 
     stat_str = 'total_words: {}, '.format(word_statistics['word_cnt'])
-    stat_str += ', '.join([
-        '<{}:{} ({:.{prec}f}%)'.format(
-            b,
-            word_statistics['freqs_cnt'].get(b, 0),
-            (word_statistics['freqs_cnt'].get(b, 0) /
-                word_statistics['word_cnt']) * 100,
-            prec=2
-        )
-        for b in bins
-    ])
+    stat_str += ', '.join(
+        [
+            '<{}:{} ({:.{prec}f}%)'.format(
+                b,
+                word_statistics['freqs_cnt'].get(b, 0),
+                (word_statistics['freqs_cnt'].get(b, 0) / word_statistics['word_cnt'])
+                * 100,
+                prec=2,
+            )
+            for b in bins
+        ]
+    )
     print(
         "Word statistics: {}, avg_word_length: {:.{prec}f}, "
-        "avg_char_length: {:.{prec}f}"
-        .format(
+        "avg_char_length: {:.{prec}f}".format(
             stat_str,
             numpy.array(word_statistics['mean_wlength']).mean(),
             numpy.array(word_statistics['mean_clength']).mean(),
-            prec=2
+            prec=2,
         )
     )
 

@@ -1,18 +1,18 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-'''
-    Images and Dialogues from Image-Chat dataset
+"""
+Images and Dialogues from Image-Chat dataset.
 
-    202k images, 401k utterances, over 215 different personalities.
+202k images, 401k utterances, over 215 different personalities.
 
-    An example is given as follows:
-        obs = {'text': <personality>,
-               'image': <image features if specified else image>,
-               'label': <comment/response>,
-              }
+An example is given as follows:
+    obs = {'text': <personality>,
+           'image': <image features if specified else image>,
+           'label': <comment/response>,
+          }
 
-'''
+"""
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from torch.utils.data import Dataset
@@ -26,11 +26,11 @@ def _path(opt):
     build(opt)
     dt = opt['datatype'].split(':')[0]
     if dt in ['train', 'valid', 'test']:
-        data_path = os.path.join(opt['datapath'],
-                                 'image_chat/{}.json'.format(dt))
+        data_path = os.path.join(opt['datapath'], 'image_chat/{}.json'.format(dt))
 
-    personalities_data_path = os.path.join(opt['datapath'],
-                                           'image_chat/personalities.json')
+    personalities_data_path = os.path.join(
+        opt['datapath'], 'image_chat/personalities.json'
+    )
     image_path = ''
     if opt.get('yfcc_path'):
         image_path = opt['yfcc_path']
@@ -42,6 +42,7 @@ def _path(opt):
 
 class DefaultDataset(Dataset):
     """A Pytorch Dataset"""
+
     def __init__(self, opt):
         self.opt = opt
         opt['image_load_task'] = 'image_chat'
@@ -121,6 +122,7 @@ class ImageChatTeacher(FixedDialogTeacher):
         To specify your own path to the YFCC100m images, please use the
         `--yfcc-path` command line argument.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
@@ -142,18 +144,32 @@ class ImageChatTeacher(FixedDialogTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('Personality-Captions arguments')
-        agent.add_argument('--include-personality', type='bool',
-                           default=True,
-                           help='Whether to provide personality to agent')
-        agent.add_argument('--include-image', type='bool',
-                           default=True,
-                           help='Whether to provide image to agent')
-        agent.add_argument('--yfcc-path', type=str, default=None,
-                           help='Path to yfcc images (if not downloaded '
-                                'via the provided download script)')
-        agent.add_argument('--num-cands', type=str, default='100',
-                           choices=['100', '1000'],
-                           help='how many candidates to provide agent')
+        agent.add_argument(
+            '--include-personality',
+            type='bool',
+            default=True,
+            help='Whether to provide personality to agent',
+        )
+        agent.add_argument(
+            '--include-image',
+            type='bool',
+            default=True,
+            help='Whether to provide image to agent',
+        )
+        agent.add_argument(
+            '--yfcc-path',
+            type=str,
+            default=None,
+            help='Path to yfcc images (if not downloaded '
+            'via the provided download script)',
+        )
+        agent.add_argument(
+            '--num-cands',
+            type=str,
+            default='100',
+            choices=['100', '1000'],
+            help='how many candidates to provide agent',
+        )
 
     def _setup_data(self, data_path, personalities_data_path):
         print('loading: ' + data_path)
@@ -174,9 +190,9 @@ class ImageChatTeacher(FixedDialogTeacher):
 
     def submit_load_request(self, image_id):
         img_path = os.path.join(self.image_path, '{}.jpg'.format(image_id))
-        self.data_loader.request_load(self.receive_data,
-                                      self.image_loader.load,
-                                      (img_path,))
+        self.data_loader.request_load(
+            self.receive_data, self.image_loader.load, (img_path,)
+        )
 
     def get(self, episode_idx, entry_idx=0):
         data = self.data[episode_idx]
@@ -228,6 +244,62 @@ class ImageChatTeacher(FixedDialogTeacher):
         shared['image_loader'] = self.image_loader
         shared['personalities'] = self.personalities
         return shared
+
+
+class ImageChatTestTeacher(ImageChatTeacher):
+    """Test ImageChat teacher for ensuring pretrained model does not break."""
+
+    def _setup_data(self, data_path, personalities_data_path):
+        super()._setup_data(data_path, personalities_data_path)
+        from parlai.zoo.image_chat.transresnet_multimodal import download
+        download(self.opt['datapath'])
+        image_features_path = os.path.join(
+            self.opt['datapath'],
+            'models/image_chat/transresnet_multimodal/test_image_feats'
+        )
+        import torch
+        self.image_features = torch.load(image_features_path)
+
+    def reset(self):
+        """Reset teacher."""
+        super().reset()
+        self.example = None
+
+    def num_episodes(self):
+        """Return number of episodes."""
+        return len(self.image_features)
+
+    def num_examples(self):
+        """Return number of examples."""
+        return len(self.image_features)
+
+    def get(self, episode_idx, entry_idx=0):
+        """
+        Get an example.
+
+        :param episode_idx:
+            index of episode in self.data
+        :param entry_idx:
+            optional, which entry in the episode to get
+
+        :return:
+            an example
+        """
+        data = self.data[episode_idx]
+        personality, text = data['dialog'][entry_idx]
+        episode_done = entry_idx == len(data['dialog']) - 1
+
+        action = {
+            'text': personality if self.include_personality else '',
+            'image': self.image_features[data['image_hash']],
+            'episode_done': episode_done,
+            'labels': [text],
+        }
+
+        if 'candidates' in data:
+            action['label_candidates'] = data['candidates'][entry_idx][self.num_cands]
+
+        return action
 
 
 class DefaultTeacher(ImageChatTeacher):

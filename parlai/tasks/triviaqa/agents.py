@@ -16,8 +16,10 @@ import os
 def _path(opt):
     build(opt)
 
-    return (os.path.join(opt['datapath'], 'TriviaQA', 'qa'),
-            os.path.join(opt['datapath'], 'TriviaQA', 'evidence'))
+    return (
+        os.path.join(opt['datapath'], 'TriviaQA', 'qa'),
+        os.path.join(opt['datapath'], 'TriviaQA', 'evidence'),
+    )
 
 
 class WebTeacher(DialogTeacher):
@@ -49,8 +51,9 @@ class WebTeacher(DialogTeacher):
                 continue
 
             for evidence_item in evidence_list:
-                evidence_file_path = os.path.join(self.evidence_dir, 'web',
-                                                  evidence_item['Filename'])
+                evidence_file_path = os.path.join(
+                    self.evidence_dir, 'web', evidence_item['Filename']
+                )
                 with open(evidence_file_path) as evidence_file:
                     evidence = 'Title: %s\n' % evidence_item['Title']
                     evidence += evidence_file.read()
@@ -100,9 +103,9 @@ class WikipediaTeacher(DialogTeacher):
 
             evidence = ''
             for evidence_item in evidence_list:
-                evidence_file_path = os.path.join(self.evidence_dir,
-                                                  'wikipedia',
-                                                  evidence_item['Filename'])
+                evidence_file_path = os.path.join(
+                    self.evidence_dir, 'wikipedia', evidence_item['Filename']
+                )
                 with open(evidence_file_path) as evidence_file:
                     evidence += 'Title: %s\n' % evidence_item['Title']
                     evidence += evidence_file.read() + '\n\n'

@@ -66,8 +66,18 @@ class MwscTeacher(mwsc.DefaultTeacher):
 
 class DecaNLPTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
-        decanlp_tasks = ['squad', 'iwslt14', 'cnn_dm', 'multinli', 'sst',
-                         'qasrl', 'qazre', 'woz', 'wikisql', 'mwsc']
+        decanlp_tasks = [
+            'squad',
+            'iwslt14',
+            'cnn_dm',
+            'multinli',
+            'sst',
+            'qasrl',
+            'qazre',
+            'woz',
+            'wikisql',
+            'mwsc',
+        ]
         opt = deepcopy(opt)
         opt['task'] = ', '.join(decanlp_tasks)
         super().__init__(opt, shared)

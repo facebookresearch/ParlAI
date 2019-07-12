@@ -46,15 +46,22 @@ class TestDataHandler(unittest.TestCase):
 
     def assertHITEqual(self, mturk_hit, db_hit, run_id):
         self.assertEqual(mturk_hit['HIT']['HITId'], db_hit['hit_id'])
-        self.assertEqual(mturk_hit['HIT']['Expiration'],
-                         datetime.fromtimestamp(db_hit['expiration']))
+        self.assertEqual(
+            mturk_hit['HIT']['Expiration'], datetime.fromtimestamp(db_hit['expiration'])
+        )
         self.assertEqual(mturk_hit['HIT']['HITStatus'], db_hit['hit_status'])
-        self.assertEqual(mturk_hit['HIT']['NumberOfAssignmentsPending'],
-                         db_hit['assignments_pending'])
-        self.assertEqual(mturk_hit['HIT']['NumberOfAssignmentsAvailable'],
-                         db_hit['assignments_available'])
-        self.assertEqual(mturk_hit['HIT']['NumberOfAssignmentsCompleted'],
-                         db_hit['assignments_complete'])
+        self.assertEqual(
+            mturk_hit['HIT']['NumberOfAssignmentsPending'],
+            db_hit['assignments_pending'],
+        )
+        self.assertEqual(
+            mturk_hit['HIT']['NumberOfAssignmentsAvailable'],
+            db_hit['assignments_available'],
+        )
+        self.assertEqual(
+            mturk_hit['HIT']['NumberOfAssignmentsCompleted'],
+            db_hit['assignments_complete'],
+        )
         self.assertEqual(run_id, db_hit['run_id'])
 
     def test_init_db(self):
@@ -166,11 +173,14 @@ class TestDataHandler(unittest.TestCase):
 
         # Create two workers and assign the 3 assignments to them
         db_logger.log_worker_accept_assignment(
-            worker_id_1, assignment_id_1, HIT1['HIT']['HITId'])
+            worker_id_1, assignment_id_1, HIT1['HIT']['HITId']
+        )
         db_logger.log_worker_accept_assignment(
-            worker_id_2, assignment_id_2, HIT2['HIT']['HITId'])
+            worker_id_2, assignment_id_2, HIT2['HIT']['HITId']
+        )
         db_logger.log_worker_accept_assignment(
-            worker_id_2, assignment_id_3, HIT3['HIT']['HITId'])
+            worker_id_2, assignment_id_3, HIT3['HIT']['HITId']
+        )
 
         # Ensure two workers have been created
         conn = db_logger._get_connection()
@@ -198,8 +208,7 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(worker_2_data['rejected'], 0)
 
         # Ensure all the assignments are marked as accepted
-        c.execute('SELECT COUNT(*) FROM assignments WHERE status = ?;',
-                  ('Accepted', ))
+        c.execute('SELECT COUNT(*) FROM assignments WHERE status = ?;', ('Accepted',))
         self.assertEqual(c.fetchone()[0], 3)
 
         # Ensure non-existing assign is None
@@ -230,17 +239,20 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(c.fetchone()[0], 3)
 
         # Ensure pairings are accurate
-        self.assertIsNone(db_logger.get_worker_assignment_pairing(
-            worker_id_1, assignment_id_3))
+        self.assertIsNone(
+            db_logger.get_worker_assignment_pairing(worker_id_1, assignment_id_3)
+        )
 
-        pair_1 = db_logger.get_worker_assignment_pairing(
-            worker_id_1, assignment_id_1)
-        pair_2 = db_logger.get_worker_assignment_pairing(
-            worker_id_2, assignment_id_2)
-        pair_3 = db_logger.get_worker_assignment_pairing(
-            worker_id_2, assignment_id_3)
-        for f in ['onboarding_start', 'onboarding_end', 'task_start',
-                  'task_end', 'conversation_id']:
+        pair_1 = db_logger.get_worker_assignment_pairing(worker_id_1, assignment_id_1)
+        pair_2 = db_logger.get_worker_assignment_pairing(worker_id_2, assignment_id_2)
+        pair_3 = db_logger.get_worker_assignment_pairing(worker_id_2, assignment_id_3)
+        for f in [
+            'onboarding_start',
+            'onboarding_end',
+            'task_start',
+            'task_end',
+            'conversation_id',
+        ]:
             for pair in [pair_1, pair_2, pair_3]:
                 self.assertIsNone(pair[f])
         self.assertEqual(pair_1['status'], AssignState.STATUS_NONE)
@@ -268,42 +280,39 @@ class TestDataHandler(unittest.TestCase):
         # Ensure get_pairings_for_assignment works
         pair_4 = db_logger.get_pairings_for_assignment(assignment_id_2)[0]
         self.assertEqual(pair_2, pair_4)
-        self.assertListEqual(
-            [], db_logger.get_pairings_for_assignment('fake_id'))
+        self.assertListEqual([], db_logger.get_pairings_for_assignment('fake_id'))
 
         # Ensure get_all_<thing>_for_worker works
-        self.assertListEqual(
-            [], db_logger.get_all_assignments_for_worker('fake_id'))
-        self.assertListEqual(
-            [], db_logger.get_all_pairings_for_worker('fake_id'))
+        self.assertListEqual([], db_logger.get_all_assignments_for_worker('fake_id'))
+        self.assertListEqual([], db_logger.get_all_pairings_for_worker('fake_id'))
         self.assertEqual(
-            db_logger.get_all_assignments_for_worker(worker_id_1)[0],
-            assignment_1_data)
-        self.assertEqual(
-            len(db_logger.get_all_assignments_for_worker(worker_id_2)), 2)
-        self.assertEqual(
-            db_logger.get_all_pairings_for_worker(worker_id_1)[0],
-            pair_1)
-        self.assertEqual(
-            len(db_logger.get_all_pairings_for_worker(worker_id_2)), 2)
+            db_logger.get_all_assignments_for_worker(worker_id_1)[0], assignment_1_data
+        )
+        self.assertEqual(len(db_logger.get_all_assignments_for_worker(worker_id_2)), 2)
+        self.assertEqual(db_logger.get_all_pairings_for_worker(worker_id_1)[0], pair_1)
+        self.assertEqual(len(db_logger.get_all_pairings_for_worker(worker_id_2)), 2)
 
         # test task_restricted gets
         self.assertEqual(
             db_logger.get_all_task_assignments_for_worker(worker_id_1)[0],
-            assignment_1_data)
+            assignment_1_data,
+        )
         self.assertEqual(
-            len(db_logger.get_all_task_assignments_for_worker(worker_id_2)), 2)
+            len(db_logger.get_all_task_assignments_for_worker(worker_id_2)), 2
+        )
         self.assertEqual(
-            len(db_logger.get_all_task_assignments_for_worker(
-                worker_id_1, 'fake_id')), 0)
+            len(db_logger.get_all_task_assignments_for_worker(worker_id_1, 'fake_id')),
+            0,
+        )
         self.assertEqual(
-            db_logger.get_all_task_pairings_for_worker(worker_id_1)[0],
-            pair_1)
+            db_logger.get_all_task_pairings_for_worker(worker_id_1)[0], pair_1
+        )
         self.assertEqual(
-            len(db_logger.get_all_task_pairings_for_worker(worker_id_2)), 2)
+            len(db_logger.get_all_task_pairings_for_worker(worker_id_2)), 2
+        )
         self.assertEqual(
-            len(db_logger.get_all_task_pairings_for_worker(
-                worker_id_1, 'fake_id')), 0)
+            len(db_logger.get_all_task_pairings_for_worker(worker_id_1, 'fake_id')), 0
+        )
 
         conversation_id_1 = "CONV_ID_1"
         conversation_id_2 = "CONV_ID_2"
@@ -312,32 +321,23 @@ class TestDataHandler(unittest.TestCase):
         onboarding_id_2 = 'onboard_2'
         onboarding_id_3 = 'onboard_3'
 
-        db_logger.log_start_onboard(
-            worker_id_1, assignment_id_1, onboarding_id_1)
-        db_logger.log_start_onboard(
-            worker_id_2, assignment_id_2, onboarding_id_2)
-        db_logger.log_start_onboard(
-            worker_id_2, assignment_id_3, onboarding_id_3)
+        db_logger.log_start_onboard(worker_id_1, assignment_id_1, onboarding_id_1)
+        db_logger.log_start_onboard(worker_id_2, assignment_id_2, onboarding_id_2)
+        db_logger.log_start_onboard(worker_id_2, assignment_id_3, onboarding_id_3)
         db_logger.log_finish_onboard(worker_id_1, assignment_id_1)
         db_logger.log_finish_onboard(worker_id_2, assignment_id_2)
         db_logger.log_finish_onboard(worker_id_2, assignment_id_3)
-        db_logger.log_start_task(worker_id_1, assignment_id_1,
-                                 conversation_id_1)
-        db_logger.log_start_task(worker_id_2, assignment_id_2,
-                                 conversation_id_1)
-        db_logger.log_start_task(worker_id_2, assignment_id_3,
-                                 conversation_id_2)
+        db_logger.log_start_task(worker_id_1, assignment_id_1, conversation_id_1)
+        db_logger.log_start_task(worker_id_2, assignment_id_2, conversation_id_1)
+        db_logger.log_start_task(worker_id_2, assignment_id_3, conversation_id_2)
 
         # Check to see retrieval by conversation
         pairs_1 = db_logger.get_pairings_for_conversation(conversation_id_1)
         pairs_2 = db_logger.get_pairings_for_conversation(conversation_id_2)
         pairs_3 = db_logger.get_pairings_for_conversation('fake_id')
-        pair_1 = db_logger.get_worker_assignment_pairing(
-            worker_id_1, assignment_id_1)
-        pair_2 = db_logger.get_worker_assignment_pairing(
-            worker_id_2, assignment_id_2)
-        pair_3 = db_logger.get_worker_assignment_pairing(
-            worker_id_2, assignment_id_3)
+        pair_1 = db_logger.get_worker_assignment_pairing(worker_id_1, assignment_id_1)
+        pair_2 = db_logger.get_worker_assignment_pairing(worker_id_2, assignment_id_2)
+        pair_3 = db_logger.get_worker_assignment_pairing(worker_id_2, assignment_id_3)
         self.assertEqual(pairs_1[0], pair_1)
         self.assertEqual(pairs_1[1], pair_2)
         self.assertEqual(pairs_2[0], pair_3)
@@ -345,13 +345,17 @@ class TestDataHandler(unittest.TestCase):
 
         # Do some final processing on assignments
         db_logger.log_complete_assignment(
-            worker_id_1, assignment_id_1, time.time(),
-            AssignState.STATUS_PARTNER_DISCONNECT)
+            worker_id_1,
+            assignment_id_1,
+            time.time(),
+            AssignState.STATUS_PARTNER_DISCONNECT,
+        )
         db_logger.log_disconnect_assignment(
-            worker_id_2, assignment_id_2, time.time(),
-            AssignState.STATUS_DISCONNECT)
-        db_logger.log_complete_assignment(worker_id_2, assignment_id_3,
-                                          time.time(), AssignState.STATUS_DONE)
+            worker_id_2, assignment_id_2, time.time(), AssignState.STATUS_DISCONNECT
+        )
+        db_logger.log_complete_assignment(
+            worker_id_2, assignment_id_3, time.time(), AssignState.STATUS_DONE
+        )
 
         # Assignment state consistent
         assignment_1_data = db_logger.get_assignment_data(assignment_id_1)
@@ -390,14 +394,10 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(worker_2_data['rejected'], 0)
 
         # Ensure Pairing state is consistent
-        pair_1 = db_logger.get_worker_assignment_pairing(
-            worker_id_1, assignment_id_1)
-        pair_2 = db_logger.get_worker_assignment_pairing(
-            worker_id_2, assignment_id_2)
-        pair_3 = db_logger.get_worker_assignment_pairing(
-            worker_id_2, assignment_id_3)
-        self.assertEqual(pair_1['status'],
-                         AssignState.STATUS_PARTNER_DISCONNECT)
+        pair_1 = db_logger.get_worker_assignment_pairing(worker_id_1, assignment_id_1)
+        pair_2 = db_logger.get_worker_assignment_pairing(worker_id_2, assignment_id_2)
+        pair_3 = db_logger.get_worker_assignment_pairing(worker_id_2, assignment_id_3)
+        self.assertEqual(pair_1['status'], AssignState.STATUS_PARTNER_DISCONNECT)
         self.assertEqual(pair_2['status'], AssignState.STATUS_DISCONNECT)
         self.assertEqual(pair_3['status'], AssignState.STATUS_DONE)
         self.assertEqual(pair_1['worker_id'], worker_id_1)
@@ -409,24 +409,15 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(pair_1['conversation_id'], conversation_id_1)
         self.assertEqual(pair_2['conversation_id'], conversation_id_1)
         self.assertEqual(pair_3['conversation_id'], conversation_id_2)
-        self.assertGreaterEqual(pair_1['onboarding_end'],
-                                pair_1['onboarding_start'])
-        self.assertGreaterEqual(pair_2['onboarding_end'],
-                                pair_2['onboarding_start'])
-        self.assertGreaterEqual(pair_3['onboarding_end'],
-                                pair_3['onboarding_start'])
-        self.assertGreaterEqual(pair_1['task_start'],
-                                pair_1['onboarding_end'])
-        self.assertGreaterEqual(pair_2['task_start'],
-                                pair_2['onboarding_end'])
-        self.assertGreaterEqual(pair_3['task_start'],
-                                pair_3['onboarding_end'])
-        self.assertGreaterEqual(pair_1['task_end'],
-                                pair_1['onboarding_start'])
-        self.assertGreaterEqual(pair_2['task_end'],
-                                pair_2['onboarding_start'])
-        self.assertGreaterEqual(pair_3['task_end'],
-                                pair_3['onboarding_start'])
+        self.assertGreaterEqual(pair_1['onboarding_end'], pair_1['onboarding_start'])
+        self.assertGreaterEqual(pair_2['onboarding_end'], pair_2['onboarding_start'])
+        self.assertGreaterEqual(pair_3['onboarding_end'], pair_3['onboarding_start'])
+        self.assertGreaterEqual(pair_1['task_start'], pair_1['onboarding_end'])
+        self.assertGreaterEqual(pair_2['task_start'], pair_2['onboarding_end'])
+        self.assertGreaterEqual(pair_3['task_start'], pair_3['onboarding_end'])
+        self.assertGreaterEqual(pair_1['task_end'], pair_1['onboarding_start'])
+        self.assertGreaterEqual(pair_2['task_end'], pair_2['onboarding_start'])
+        self.assertGreaterEqual(pair_3['task_end'], pair_3['onboarding_start'])
         self.assertEqual(pair_1['run_id'], run_id)
         self.assertEqual(pair_2['run_id'], run_id)
         self.assertEqual(pair_3['run_id'], run_id)
@@ -476,10 +467,12 @@ class TestDataHandler(unittest.TestCase):
         test_cents = 100 * test_dollars
         reason_use = 'Just because'
         out_reason = '${} for {}\n'.format(test_dollars, reason_use)
-        db_logger.log_award_amount(worker_id_1, assignment_id_1, test_dollars,
-                                   reason_use)
-        db_logger.log_award_amount(worker_id_2, assignment_id_2, test_dollars,
-                                   reason_use)
+        db_logger.log_award_amount(
+            worker_id_1, assignment_id_1, test_dollars, reason_use
+        )
+        db_logger.log_award_amount(
+            worker_id_2, assignment_id_2, test_dollars, reason_use
+        )
         db_logger.log_bonus_paid(worker_id_1, assignment_id_1)
         db_logger.log_approve_assignment(assignment_id_1)
         db_logger.log_reject_assignment(assignment_id_2)
@@ -515,14 +508,10 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(worker_2_data['approved'], 0)
         self.assertEqual(worker_2_data['rejected'], 1)
 
-        pair_1 = db_logger.get_worker_assignment_pairing(
-            worker_id_1, assignment_id_1)
-        pair_2 = db_logger.get_worker_assignment_pairing(
-            worker_id_2, assignment_id_2)
-        pair_3 = db_logger.get_worker_assignment_pairing(
-            worker_id_2, assignment_id_3)
-        self.assertEqual(pair_1['status'],
-                         AssignState.STATUS_PARTNER_DISCONNECT)
+        pair_1 = db_logger.get_worker_assignment_pairing(worker_id_1, assignment_id_1)
+        pair_2 = db_logger.get_worker_assignment_pairing(worker_id_2, assignment_id_2)
+        pair_3 = db_logger.get_worker_assignment_pairing(worker_id_2, assignment_id_3)
+        self.assertEqual(pair_1['status'], AssignState.STATUS_PARTNER_DISCONNECT)
         self.assertEqual(pair_2['status'], AssignState.STATUS_DISCONNECT)
         self.assertEqual(pair_3['status'], AssignState.STATUS_EXPIRED)
         self.assertEqual(pair_1['worker_id'], worker_id_1)
@@ -534,24 +523,15 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(pair_1['conversation_id'], conversation_id_1)
         self.assertEqual(pair_2['conversation_id'], conversation_id_1)
         self.assertEqual(pair_3['conversation_id'], conversation_id_2)
-        self.assertGreaterEqual(pair_1['onboarding_end'],
-                                pair_1['onboarding_start'])
-        self.assertGreaterEqual(pair_2['onboarding_end'],
-                                pair_2['onboarding_start'])
-        self.assertGreaterEqual(pair_3['onboarding_end'],
-                                pair_3['onboarding_start'])
-        self.assertGreaterEqual(pair_1['task_start'],
-                                pair_1['onboarding_end'])
-        self.assertGreaterEqual(pair_2['task_start'],
-                                pair_2['onboarding_end'])
-        self.assertGreaterEqual(pair_3['task_start'],
-                                pair_3['onboarding_end'])
-        self.assertGreaterEqual(pair_1['task_end'],
-                                pair_1['onboarding_start'])
-        self.assertGreaterEqual(pair_2['task_end'],
-                                pair_2['onboarding_start'])
-        self.assertGreaterEqual(pair_3['task_end'],
-                                pair_3['onboarding_start'])
+        self.assertGreaterEqual(pair_1['onboarding_end'], pair_1['onboarding_start'])
+        self.assertGreaterEqual(pair_2['onboarding_end'], pair_2['onboarding_start'])
+        self.assertGreaterEqual(pair_3['onboarding_end'], pair_3['onboarding_start'])
+        self.assertGreaterEqual(pair_1['task_start'], pair_1['onboarding_end'])
+        self.assertGreaterEqual(pair_2['task_start'], pair_2['onboarding_end'])
+        self.assertGreaterEqual(pair_3['task_start'], pair_3['onboarding_end'])
+        self.assertGreaterEqual(pair_1['task_end'], pair_1['onboarding_start'])
+        self.assertGreaterEqual(pair_2['task_end'], pair_2['onboarding_start'])
+        self.assertGreaterEqual(pair_3['task_end'], pair_3['onboarding_start'])
         self.assertEqual(pair_1['run_id'], run_id)
         self.assertEqual(pair_2['run_id'], run_id)
         self.assertEqual(pair_3['run_id'], run_id)

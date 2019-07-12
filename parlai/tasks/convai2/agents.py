@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.agents import create_task_agent_from_taskname
 from parlai.core.teachers import FbDialogTeacher
 from parlai.core.utils import warn_once
 from .build import build
@@ -87,3 +88,16 @@ class SelfRevisedTeacher(FbDialogTeacher):
 
 class DefaultTeacher(SelfOriginalTeacher):
     pass
+
+
+class InteractiveTeacher(SelfOriginalTeacher):
+    # Dummy class to add arguments for interactive world.
+    pass
+
+
+def create_agents(opt, task):
+    if not opt.get('interactive_task', False):
+        return create_task_agent_from_taskname(opt)
+    else:
+        # interactive task has no task agents (they are attached as user agents)
+        return []

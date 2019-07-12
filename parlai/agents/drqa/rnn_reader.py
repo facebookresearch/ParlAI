@@ -10,6 +10,7 @@ from . import layers
 
 class RnnDocReader(nn.Module):
     """Network for the Document Reader module of DrQA."""
+
     RNN_TYPES = {'lstm': nn.LSTM, 'gru': nn.GRU, 'rnn': nn.RNN}
 
     def __init__(self, opt, padding_idx=0):
@@ -18,9 +19,9 @@ class RnnDocReader(nn.Module):
         self.opt = opt
 
         # Word embeddings (+1 for padding)
-        self.embedding = nn.Embedding(opt['vocab_size'],
-                                      opt['embedding_dim'],
-                                      padding_idx=padding_idx)
+        self.embedding = nn.Embedding(
+            opt['vocab_size'], opt['embedding_dim'], padding_idx=padding_idx
+        )
 
         # ...(maybe) keep them fixed
         if opt['fix_embeddings']:
@@ -29,10 +30,9 @@ class RnnDocReader(nn.Module):
 
         # Register a buffer to (maybe) fill later for keeping *some* fixed
         if opt['tune_partial'] > 0:
-            buffer_size = torch.Size((
-                opt['vocab_size'] - opt['tune_partial'] - 2,
-                opt['embedding_dim']
-            ))
+            buffer_size = torch.Size(
+                (opt['vocab_size'] - opt['tune_partial'] - 2, opt['embedding_dim'])
+            )
             self.register_buffer('fixed_embedding', torch.Tensor(buffer_size))
 
         # Projection for attention weighted question
@@ -82,14 +82,8 @@ class RnnDocReader(nn.Module):
             self.self_attn = layers.LinearSeqAttn(question_hidden_size)
 
         # Bilinear attention for span start/end
-        self.start_attn = layers.BilinearSeqAttn(
-            doc_hidden_size,
-            question_hidden_size,
-        )
-        self.end_attn = layers.BilinearSeqAttn(
-            doc_hidden_size,
-            question_hidden_size,
-        )
+        self.start_attn = layers.BilinearSeqAttn(doc_hidden_size, question_hidden_size)
+        self.end_attn = layers.BilinearSeqAttn(doc_hidden_size, question_hidden_size)
 
     def forward(self, x1, x1_f, x1_mask, x2, x2_mask):
         """Inputs:
@@ -105,10 +99,12 @@ class RnnDocReader(nn.Module):
 
         # Dropout on embeddings
         if self.opt['dropout_emb'] > 0:
-            x1_emb = nn.functional.dropout(x1_emb, p=self.opt['dropout_emb'],
-                                           training=self.training)
-            x2_emb = nn.functional.dropout(x2_emb, p=self.opt['dropout_emb'],
-                                           training=self.training)
+            x1_emb = nn.functional.dropout(
+                x1_emb, p=self.opt['dropout_emb'], training=self.training
+            )
+            x2_emb = nn.functional.dropout(
+                x2_emb, p=self.opt['dropout_emb'], training=self.training
+            )
 
         # Add attention-weighted question representation
         if self.opt['use_qemb']:

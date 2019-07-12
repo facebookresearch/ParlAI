@@ -15,7 +15,6 @@ from .tokenizer import Tokens, Tokenizer
 
 
 class SpacyTokenizer(Tokenizer):
-
     def __init__(self, **kwargs):
         """
         Args:
@@ -49,14 +48,16 @@ class SpacyTokenizer(Tokenizer):
             else:
                 end_ws = tokens[i].idx + len(tokens[i].text)
 
-            data.append((
-                tokens[i].text,
-                text[start_ws: end_ws],
-                (tokens[i].idx, tokens[i].idx + len(tokens[i].text)),
-                tokens[i].tag_,
-                tokens[i].lemma_,
-                tokens[i].ent_type_,
-            ))
+            data.append(
+                (
+                    tokens[i].text,
+                    text[start_ws:end_ws],
+                    (tokens[i].idx, tokens[i].idx + len(tokens[i].text)),
+                    tokens[i].tag_,
+                    tokens[i].lemma_,
+                    tokens[i].ent_type_,
+                )
+            )
 
         # Set special option for non-entity tag: '' vs 'O' in spaCy
         return Tokens(data, self.annotators, opts={'non_ent': ''})

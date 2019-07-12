@@ -29,8 +29,7 @@ class UnigramAgent(Agent):
         Adds command line arguments
         """
         parser.add_argument(
-            '--num-words', type=int, default=10,
-            help='Number of unigrams to output.'
+            '--num-words', type=int, default=10, help='Number of unigrams to output.'
         )
         cls.dictionary_class().add_cmdline_args(parser)
 
@@ -72,9 +71,7 @@ class UnigramAgent(Agent):
         filter punctuation and special tokens.
         """
         return (
-            not word.startswith('__') and
-            word != '\n' and
-            not re.match(r'[^\w]', word)
+            not word.startswith('__') and word != '\n' and not re.match(r'[^\w]', word)
         )
 
     def get_prediction(self):
@@ -96,10 +93,7 @@ class UnigramAgent(Agent):
         """
         Stub act, which always makes the same prediction.
         """
-        return {
-            'id': self.getID(),
-            'text': self.get_prediction(),
-        }
+        return {'id': self.getID(), 'text': self.get_prediction()}
 
     def save(self, path=None):
         """

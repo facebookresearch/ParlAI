@@ -8,13 +8,13 @@ import numpy as np
 from torch import nn
 
 
-class EmbeddingDropout():
-
+class EmbeddingDropout:
     def __init__(self, p=0.5):
         super(EmbeddingDropout, self).__init__()
         if p < 0 or p > 1:
-            raise ValueError("dropout probability has to be between 0 and 1, "
-                             "but got {}".format(p))
+            raise ValueError(
+                "dropout probability has to be between 0 and 1, " "but got {}".format(p)
+            )
         self.p = p
         self.training = True
 
@@ -43,12 +43,12 @@ class EmbeddingDropout():
 
 
 class SequentialDropout(nn.Module):
-
     def __init__(self, p=0.5):
         super(SequentialDropout, self).__init__()
         if p < 0 or p > 1:
-            raise ValueError("dropout probability has to be between 0 and 1, "
-                             "but got {}".format(p))
+            raise ValueError(
+                "dropout probability has to be between 0 and 1, " "but got {}".format(p)
+            )
         self.p = p
         self.restart = True
 

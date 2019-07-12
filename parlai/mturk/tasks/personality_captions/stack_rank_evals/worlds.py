@@ -43,12 +43,14 @@ def load_image(path):
 
 class ExampleGenerator(object):
     """Retrieve Example from Personality-Captions Dataset"""
+
     def __init__(self, opt):
         self.opt = opt
         handle = './examples_stack{}{}{}.pkl'.format(
             '_sandbox' if opt['is_sandbox'] else '',
             opt['compare_key_1'],
-            opt['compare_key_2'])
+            opt['compare_key_2'],
+        )
         self.examples_idx_stack_path = os.path.join(os.getcwd(), handle)
         build_pc(opt)
         data_path = opt.get('eval_data_path')
@@ -86,15 +88,14 @@ class ExampleGenerator(object):
 
 class RoleOnboardWorld(MTurkOnboardWorld):
     """A world that provides the appropriate instructions during onboarding"""
+
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_onboard_time = opt['max_onboard_time']
         super().__init__(opt, mturk_agent)
 
     def parley(self):
-        onboard_msg = {
-            'id': 'SYSTEM',
-            'text': ONBOARD_MSG}
+        onboard_msg = {'id': 'SYSTEM', 'text': ONBOARD_MSG}
 
         onboard_msg['task_description'] = config['task_description']
         self.mturk_agent.observe(onboard_msg)
@@ -102,14 +103,12 @@ class RoleOnboardWorld(MTurkOnboardWorld):
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
 
         # timeout
-        if act['episode_done'] or (('text' in act and
-                                    act['text'] == TIMEOUT_MESSAGE)):
+        if act['episode_done'] or (('text' in act and act['text'] == TIMEOUT_MESSAGE)):
             self.episodeDone = True
             return
 
         if 'text' not in act:
-            control_msg = {'id': 'SYSTEM',
-                           'text': WAITING_MSG}
+            control_msg = {'id': 'SYSTEM', 'text': WAITING_MSG}
             self.mturk_agent.observe(validate(control_msg))
             self.episodeDone = True
 
@@ -118,6 +117,7 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
     """World where an agent observes 5 images and 2 comments about the images,
        and chooses the more engaging comment
     """
+
     def __init__(self, opt, agents=None, shared=None, world_tag='NONE'):
         self.turn_idx = 0
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -158,9 +158,9 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
             # Send image to turker
             control_msg['description'] = config['task_description']
             self.example_num, example = self.agent.example_generator.pop_example()
-            img = load_image(os.path.join(
-                             self.image_path,
-                             '{}.jpg'.format(example['image_hash'])))
+            img = load_image(
+                os.path.join(self.image_path, '{}.jpg'.format(example['image_hash']))
+            )
             buffered = BytesIO()
             img.save(buffered, format="JPEG")
             encoded = str(base64.b64encode(buffered.getvalue()).decode('ascii'))
@@ -172,9 +172,10 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
             random.shuffle(comments)
             control_msg['comments'] = [c[1] for c in comments]
             if self.show_personality:
-                control_msg['personality'] = '<b><span style="color:blue">' \
-                                               '{}\n</span></b>'.format(
-                                              example['personality'].strip())
+                control_msg['personality'] = (
+                    '<b><span style="color:blue">'
+                    '{}\n</span></b>'.format(example['personality'].strip())
+                )
 
             best_pick = None
             control_msg['text'] = PICK_BEST_MSG.format(self.turn_idx + 1)
@@ -224,13 +225,16 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
     def save_data(self):
         convo_finished = True
         for ag in self.agents:
-            if (ag.hit_is_abandoned or ag.hit_is_returned or
-                    ag.disconnected or ag.hit_is_expired):
+            if (
+                ag.hit_is_abandoned
+                or ag.hit_is_returned
+                or ag.disconnected
+                or ag.hit_is_expired
+            ):
                 convo_finished = False
         if not convo_finished:
             ag.example_generator.push_example(self.example_num)
-            print("\n**Push image {} back to stack. **\n".format(
-                    self.example_num))
+            print("\n**Push image {} back to stack. **\n".format(self.example_num))
         self.agents[0].example_generator.save_idx_stack()
         data_path = self.opt['data_path']
         if not os.path.exists(data_path):
@@ -241,32 +245,38 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
                 '{}_{}_{}.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type))
+                    self.task_type,
+                ),
+            )
         else:
             filename = os.path.join(
                 data_path,
                 '{}_{}_{}_incomplete.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type))
-        pickle.dump({'data': self.data,
-                     'worker': self.agents[0].worker_id,
-                     'hit_id': self.agents[0].hit_id,
-                     'assignment_id': self.agents[0].assignment_id
-                     }, open(filename, 'wb'))
-        print('{}: Data successfully saved at {}.'.format(
-            self.world_tag,
-            filename))
+                    self.task_type,
+                ),
+            )
+        pickle.dump(
+            {
+                'data': self.data,
+                'worker': self.agents[0].worker_id,
+                'hit_id': self.agents[0].hit_id,
+                'assignment_id': self.agents[0].assignment_id,
+            },
+            open(filename, 'wb'),
+        )
+        print('{}: Data successfully saved at {}.'.format(self.world_tag, filename))
 
     def review_work(self):
         global review_agent
 
         def review_agent(ag):
             pass  # auto approve 5 days
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(review_agent)(agent) for agent in self.agents)
+
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(review_agent)(agent) for agent in self.agents
+        )
 
     def shutdown(self):
         """Shutdown all mturk agents in parallel, otherwise if one mturk agent
@@ -277,7 +287,7 @@ class MTurkPersonalityCaptionsStackRankWorld(MultiAgentDialogWorld):
 
         def shutdown_agent(agent):
             agent.shutdown()
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(shutdown_agent)(agent) for agent in self.agents)
+
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(shutdown_agent)(agent) for agent in self.agents
+        )
