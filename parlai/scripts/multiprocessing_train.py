@@ -50,6 +50,8 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     """
     # Set per-host options
     opt = copy.deepcopy(opt)
+    # offset the rank by 1 to make the root process be rank 0
+    rank = rank + 1
     opt['rank'] = rank
     if gpu is None:
         # default assumption is local GPUs
@@ -83,29 +85,40 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     return single_train.TrainLoop(opt).train()
 
 
-def main():
-    parser = single_train.setup_args()
-    parser.add_distributed_training_args()
-    parser.set_defaults(distributed_world_size=torch.cuda.device_count())
-    opt = parser.parse_args()
-
-    port = random.randint(32000, 48000)
-
+def launch_and_train(opt, port):
+    """Performs a fork() to many processes."""
     # Launch multiple subprocesses
     spawncontext = torch.multiprocessing.spawn(
         multiprocess_train,
         (opt, port),
-        nprocs=opt['distributed_world_size'],
+        nprocs=opt['distributed_world_size'] - 1,
         join=False,
     )
 
     try:
+        # rank is offset by -1 to make the root process be rank 0
+        retval = multiprocess_train(-1, opt, port)
         spawncontext.join()
+        return retval
     except KeyboardInterrupt:
         # tell the subprocesses to stop too
         for p in spawncontext.processes:
             if p.is_alive():
                 os.kill(p.pid, signal.SIGINT)
+        raise
+
+
+def setup_args():
+    parser = single_train.setup_args()
+    parser.add_distributed_training_args()
+    parser.set_defaults(distributed_world_size=torch.cuda.device_count())
+    return parser
+
+
+def main():
+    opt = setup_args().parse_args()
+    port = random.randint(32000, 48000)
+    return launch_and_train(opt, port)
 
 
 if __name__ == '__main__':

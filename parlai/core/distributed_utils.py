@@ -216,3 +216,30 @@ def sync_object(data, max_size=16384):
             )
 
     return data
+
+
+def check_synced_parameters(model):
+    """
+    Check that all parameters across all workers are the same.
+
+    Always returns True, or raises an AssertionError if they are not
+    synchronized.
+
+    :param torch.nn.Module model: A pytorch model.
+    :return: True
+    """
+    if not is_distributed():
+        # if things aren't distributed, of course things are in sync
+        return True
+
+    # compute the local norm:
+    norm2 = sum((p.data ** 2).sum().float() for p in model.parameters()).item()
+    all_versions = all_gather_list(norm2)
+    if not all(n == norm2 for n in all_versions):
+        raise AssertionError(
+            "Some models parameters were out of sync. Got the following norms: {}".format(
+                " ".join(str(x) for x in all_versions)
+            )
+        )
+
+    return True

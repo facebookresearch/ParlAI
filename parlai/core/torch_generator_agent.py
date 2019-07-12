@@ -377,6 +377,9 @@ class TorchGeneratorAgent(TorchAgent):
                 print('[ Saving dot beam logs in {} ]'.format(self.beam_dot_dir))
 
             self.build_criterion()
+            # with torch.random.fork_rng():
+            #    torch.manual_seed(42)
+            #    self.build_model()
             self.build_model()
             print("Total parameters: {}".format(self._total_parameters()))
             print("Trainable parameters:  {}".format(self._trainable_parameters()))
