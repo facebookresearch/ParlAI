@@ -940,7 +940,7 @@ class ParlaiParser(argparse.ArgumentParser):
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
 
-    def parse_and_process_known_args(self):
+    def parse_and_process_known_args(self, args=None):
         self.args, unknowns = super().parse_known_args(args=args)
         self._process_args_to_opts()
         return self.opt, unknowns
