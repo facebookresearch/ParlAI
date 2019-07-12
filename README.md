@@ -10,12 +10,12 @@ VQA (Visual Question Answering).
 
 Its goal is to provide researchers:
 
-- **70+ popular datasets available all in one place, with the same API**, among them [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [bAbI tasks](https://arxiv.org/abs/1502.05698), [MS MARCO](http://www.msmarco.org/), [WikiQA](https://www.microsoft.com/en-us/download/details.aspx?id=52419), [SimpleQuestions](https://arxiv.org/abs/1506.02075), [WikiMovies](https://arxiv.org/abs/1606.03126), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Cornell Movie](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
+- **70+ popular datasets available all in one place, with the same API**, among them [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/), [MS MARCO](http://www.msmarco.org/), [QuAC](https://www.aclweb.org/anthology/D18-1241), [HotpotQA](https://hotpotqa.github.io/), [QACNN & QADailyMail](https://arxiv.org/abs/1506.03340), [CBT](https://arxiv.org/abs/1511.02301), [BookTest](https://arxiv.org/abs/1610.00956), [bAbI Dialogue tasks](https://arxiv.org/abs/1605.07683), [Ubuntu Dialogue](https://arxiv.org/abs/1506.08909), [PersonaChat](https://arxiv.org/abs/1801.07243), [OpenSubtitles](http://opus.lingfil.uu.se/OpenSubtitles.php), [Wizard of Wikipedia](https://openreview.net/forum?id=r1l73iRqKm), [VQA-COCO2014](http://visualqa.org/), [VisDial](https://arxiv.org/abs/1611.08669) and [CLEVR](http://cs.stanford.edu/people/jcjohns/clevr/). See the complete list [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
 - a wide set of **reference models** -- from retrieval baselines to transformers.
-- a large zoo of **pretrained models** ready to use off the shelf
+- a large zoo of **pretrained models** ready to use off-the-shelf
 - seamless **integration of [Amazon Mechanical Turk](https://www.mturk.com/mturk/welcome)** for data collection and human evaluation
 - **integration with [Facebook Messenger](http://www.parl.ai/docs/tutorial_messenger.html)** to connect agents with humans in a chat interface
-- a large range of **helpers to create your own agents** and combine several datasets
+- a large range of **helpers to create your own agents** and train on several tasks with **multitasking**
 - **multimodality**, some tasks use text and images
 
 ParlAI is described in the following paper:
@@ -38,7 +38,7 @@ This will link the cloned directory to your site-packages.
 
 This is the recommended installation procedure, as it provides ready access to the examples and allows you to modify anything you might need. This is especially useful if you if you want to submit another task to the repository.
 
-All needed data will be downloaded to `~/ParlAI/data`, and any non-data files (such as the MemNN code) if requested will be downloaded to `~/ParlAI/downloads`. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
+All needed data will be downloaded to `~/ParlAI/data`, and any non-data files if requested will be downloaded to `~/ParlAI/downloads`. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
 
 ## Documentation
 
@@ -58,12 +58,12 @@ All needed data will be downloaded to `~/ParlAI/data`, and any non-data files (s
 A large set of examples can be found in [this directory](./examples). Here are a few of them.
 Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
 
-Display 10 random examples from the Wikimovies dataset
+Display 10 random examples from the SQuAD task
 ```bash
-python examples/display_data.py -t wikimovies
+python examples/display_data.py -t squad
 ```
 
-Evaluate an IR baseline model on the validation set of the Personachat dataset:
+Evaluate an IR baseline model on the validation set of the Personachat task:
 ```bash
 python examples/eval_model.py -m ir_baseline -t personachat -dt valid
 ```
@@ -73,6 +73,7 @@ Detail: embedding size 300, 4 attention heads,  2 epochs using batchsize 64, wor
 ```bash
 python examples/train_model.py -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
 ```
+
 
 
 ## Code Organization
