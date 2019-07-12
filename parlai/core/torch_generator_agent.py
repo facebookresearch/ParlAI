@@ -29,10 +29,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from parlai.core.distributed_utils import is_distributed
+from parlai.core.thread_utils import SharedTable
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.core.utils import padded_tensor, round_sigfigs, warn_once, neginf
-from parlai.core.thread_utils import SharedTable
-from parlai.core.distributed_utils import is_distributed
 
 
 class TorchGeneratorModel(nn.Module, ABC):
@@ -350,7 +350,6 @@ class TorchGeneratorAgent(TorchAgent):
         self.beam_min_n_best = opt.get('beam_min_n_best', 3)
         self.beam_min_length = opt.get('beam_min_length', 3)
         self.beam_block_ngram = opt.get('beam_block_ngram', 0)
-        self.skip_generation = opt.get('skip_generation', False)
 
         if shared:
             # set up shared properties
@@ -426,6 +425,15 @@ class TorchGeneratorAgent(TorchAgent):
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
+    def set_interactive_mode(self, mode, shared=False):
+        if mode:
+            if not shared:
+                # Only print in the non-shared version.
+                print("[" + self.id + ': full interactive mode on.' + ']')
+            self.skip_generation = False
+        else:
+            self.skip_generation = self.opt.get('skip_generation', False)
+
     @abstractmethod
     def build_model(self):
         """
@@ -498,7 +506,6 @@ class TorchGeneratorAgent(TorchAgent):
     def share(self):
         """Share internal states between parent and child instances."""
         shared = super().share()
-        shared['model'] = self.model
         shared['criterion'] = self.criterion
         if self.opt.get('numthreads', 1) > 1:
             # we're doing hogwild so share the model too

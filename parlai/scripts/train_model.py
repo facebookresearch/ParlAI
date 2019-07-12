@@ -26,10 +26,10 @@ Examples
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 
+import json
 import numpy as np
 import os
 import signal
-import json
 
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.metrics import aggregate_task_reports
@@ -188,7 +188,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '-micro',
         '--aggregate-micro',
         type='bool',
-        default=True,
+        default=False,
         help='If multitasking, average metrics over the number of examples. '
         'If false, averages over the number of tasks.',
     )
@@ -585,6 +585,8 @@ class TrainLoop:
             else:
                 # all other cases, take the mean across the workers
                 finalized[k] = np.mean(values)
+                if all(isinstance(v, int) for v in values):
+                    finalized[k] = int(finalized[k])
         return finalized
 
     def _cleanup_inaccurate_metrics(self, metrics):

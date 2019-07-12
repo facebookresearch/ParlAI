@@ -8,7 +8,7 @@ Worlds are the basic environments which define how agents interact with one anot
 
     ``World(object)`` provides a generic parent class, including ``__enter__``
     and ``__exit__`` statements which allow you to guarantee that the shutdown
-    method is called and KeyboardInterrupts are less noisy (if desired).
+    method is called.
 
     ``DialogPartnerWorld(World)`` provides a two-agent turn-based dialog setting.
 
@@ -186,9 +186,8 @@ class World(object):
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """After ``with`` statement, call shutdown."""
-        silent_exit = isinstance(exc_value, KeyboardInterrupt)
         self.shutdown()
-        return silent_exit
+        return False
 
     def num_examples(self):
         """Return the number of examples. Always 0 in the abstract world."""
@@ -1082,8 +1081,13 @@ def _get_task_world(opt, user_agents, default_world=None):
         if len(sp) > 1:
             sp[1] = sp[1][0].upper() + sp[1][1:]
             world_name = sp[1] + "World"
+            if opt.get('interactive_task', False):
+                world_name = "Interactive" + world_name
         else:
-            world_name = "DefaultWorld"
+            if opt.get('interactive_task', False):
+                world_name = "InteractiveWorld"
+            else:
+                world_name = "DefaultWorld"
         module_name = "parlai.tasks.%s.worlds" % (task)
         try:
             my_module = importlib.import_module(module_name)

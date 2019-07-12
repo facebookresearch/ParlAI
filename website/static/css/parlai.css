@@ -575,7 +575,11 @@ footer ul.primary-nav li:last-child a {
 }
 .install-wizard {
     background-color: #fff;
-    padding: 108px 0;
+    padding: 0 0 108px 0;
+}
+.twitter-feed {
+    text-align: center;
+    padding: 30px 0 80px 0;
 }
 .install-wizard h3 {
     font-size: 50px;

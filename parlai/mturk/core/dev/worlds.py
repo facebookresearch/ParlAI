@@ -25,6 +25,7 @@ class MTurkDataWorld(World):
                 'assignment_id': agent.assignment_id,
                 'messages': save_messages,
                 'given_feedback': agent.feedback,
+                'completed': self.episode_done(),
             }
 
         # In simple pairing case, attach the feedback right here
@@ -65,6 +66,17 @@ class MTurkOnboardWorld(MTurkDataWorld):
 
     def episode_done(self):
         return self.episodeDone
+
+    def review_work(self):
+        """This call is an opportunity to act on this worker based on their
+        onboarding work. Generally one could assign a qualification to soft
+        block members who didn't pass the onboarding world.
+        """
+        # if self.episodeDone and work_was_bad:
+        #   self.mturk_agent.soft_block_worker()
+        #   # Can set a flag for use later in the process
+        #   self.mturk_agent.failed_onboarding = True
+        pass
 
     def shutdown(self):
         """Clear up resources needed for this world"""
@@ -179,6 +191,7 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
             'assignment_id': agent.assignment_id,
             'task_data': self.task_data,
             'response': self.response,
+            'completed': self.episode_done(),
         }
 
         return save_data
