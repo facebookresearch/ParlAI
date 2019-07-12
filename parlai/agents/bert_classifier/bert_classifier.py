@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""BERT classifier agent uses bert embeddings to make an utterance-level calssification."""
+"""BERT classifier agent uses bert embeddings to make an utterance-level classification."""
 
 from parlai.agents.bert_ranker.bert_dictionary import BertDictionaryAgent
 from parlai.agents.bert_ranker.helpers import (

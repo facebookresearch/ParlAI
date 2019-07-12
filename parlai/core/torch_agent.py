@@ -691,7 +691,7 @@ class TorchAgent(ABC, Agent):
         self.add_person_tokens = opt.get('person_tokens', False)
 
     @classmethod
-    def upgrade_opt(cls, opt_on_disk):
+    def upgrade_opt(cls, opt_from_disk):
         """
         Upgrade legacy options when loading an opt file from disk.
 
@@ -712,17 +712,17 @@ class TorchAgent(ABC, Agent):
             compatibility.  Other behavior should find a different behavior.
             2. Children should always call the parent's ``upgrade_opt`` first.
             3. ``upgrade_opt`` should always warn when an option was overwritten.
-            4. Include Comments annotating the date and purpose of each upgrade.
+            4. Include comments annotating the date and purpose of each upgrade.
 
-        :param Opt opt_on_disk:
+        :param Opt opt_from_disk:
             The opt file, as loaded from the ``.opt`` file on disk.
         :return:
             The modified options
         :rtype:
             Opt
         """
-        # Currently no-op for TorchAgente.
-        return opt_on_disk
+        # 2019-07-11: currently a no-op.
+        return opt_from_disk
 
     def build_dictionary(self):
         """
