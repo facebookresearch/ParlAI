@@ -21,7 +21,7 @@ def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Interactive chat with a model')
     parser.set_defaults(interactive_mode=True, task='interactive')
-    LocalHumanAgent.add_cmdline_args(parser)    
+    LocalHumanAgent.add_cmdline_args(parser)
     SelfFeedingAgent.add_cmdline_args(parser)
     parser.set_defaults(history_size=2)
     return parser
@@ -39,7 +39,6 @@ def interactive(opt, print_parser=None):
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
     # Set values to override when the opt dict for the saved model is loaded
     opt['override'] = {
-        'no_cuda': False,
         'subtasks': ['dialog', 'satisfaction'],
         'interactive': True,
         'interactive_task': True,
@@ -51,6 +50,7 @@ def interactive(opt, print_parser=None):
         'encode_candidate_vecs': True,
         'fixed_candidates_path': 'data/self_feeding/self_feeding_v02/convai2_cands.txt',
         # Pull these from current opt dictionary
+        'no_cuda': opt["no_cuda"],
         'fixed_candidate_vecs': opt['fixed_candidate_vecs'],
         'rating_frequency': opt['rating_frequency'],
         'rating_gap': opt['rating_gap'],
