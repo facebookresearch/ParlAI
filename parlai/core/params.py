@@ -941,6 +941,13 @@ class ParlaiParser(argparse.ArgumentParser):
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
 
     def parse_and_process_known_args(self, args=None):
+        """
+        Parse provided arguments and return parlai opts and unknown arg list.
+
+        Runs the same arg->opt parsing that parse_args does, but doesn't
+        throw an error if the args being parsed include additional command
+        line arguments that parlai doesn't know what to do with.
+        """
         self.args, unknowns = super().parse_known_args(args=args)
         self._process_args_to_opts()
         return self.opt, unknowns
