@@ -94,6 +94,12 @@ class SelfFeedingAgent(TransformerRankerAgent):
             help="Treat feedback below this threshold as negative",
         )
         agent.add_argument(
+            '--display-sat-estimate',
+            type='bool',
+            default=False,
+            help="If True, print estimated satisfaction after each response",
+        )
+        agent.add_argument(
             '--target-class',
             type=int,
             default=0,
@@ -289,7 +295,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
             if self.status == NORMAL:
                 positivity = self.predict_satisfaction(self.observation)
-                # print(f"[ positivity ]: {positivity}")
+                if self.opt["display_sat_estimate"]:
+                    print(f"[ satisfaction estimate ]: {positivity}")
                 if self.do_request_feedback(positivity):
                     action = self.make_action(self.make_feedback_request())
                     self.status = FEEDBACK_REQUESTED
@@ -416,7 +423,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         self.metrics['examples'] += batchsize
 
         if self.subtask == 'dialog':
-            loss, preds, cand_ranked = self.dialog_step(batch)
+            _, preds, cand_ranked = self.dialog_step(batch)
             if self.opt['interactive']:
                 if self.opt['prev_response_filter']:
                     preds = self.check_prev_response(preds, cand_ranked)
@@ -425,7 +432,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 return Output(preds, cand_ranked)
 
         elif self.subtask == 'feedback':
-            loss, preds, cand_ranked = self.feedback_step(batch)
+            _, preds, cand_ranked = self.feedback_step(batch)
             return Output(preds, cand_ranked)
 
         elif self.subtask == 'satisfaction':
@@ -434,7 +441,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 preds = self.predict_satisfaction_by_uncertainty(batch)
             else:
                 # Use satisfaction of user response to classify bot's previous response
-                loss, preds = self.satisfaction_step(batch)
+                _, preds = self.satisfaction_step(batch)
             preds = [str(p) for p in preds]
             return Output(preds)
 
@@ -635,13 +642,13 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         :param cands: a [bs, seq_len] or [bs, num_cands, seq_len](?) of vectorized
             candidates
-        """        
+        """
         return self.model.encode_dia_y(cands)
 
     def do_request_feedback(self, positivity):
         """Decide whether to request an feedback this turn"""
         # If --request-feedback=False, then don't request an feedback
-        if not self.opt['request_feedback'] or len(self.history.history_strings) < 3:
+        if not self.opt['request_feedback'] or len(self.history.history_strings) == 1:
             return False
         else:
             return positivity < self.opt['rating_threshold']
@@ -743,17 +750,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
         return action
 
     def make_feedback_request(self):
-        orig_prompt = self.history.history_strings[-3]
-        return (
-            f'Oops! I think I messed up. '
-            f'Whether I messed up or not, what could I have said '
-            f'(in response to "{orig_prompt}")?'
-        )
+        return 'Oops! I think I messed up. ' 'What could I have said instead?'
 
     def make_rating_request(self):
-        # last_response = self.history[-2]
-        # return (f'Just checking: did my last response ("{last_response}") make sense '
-        #         'in the conversation? (Choose one of: [yes, no, maybe])')
         return RAT_REQUEST
 
     def make_rating_response(self, rating):
