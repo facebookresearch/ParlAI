@@ -8,10 +8,10 @@ To appear in ACL 2019.
 
 ## Abstract
 
-The majority of conversations a dialogue agent sees over its lifetime occur after it has already been trained and deployed, leaving a vast store of potential training signal untapped. 
-In this work, we propose the self-feeding chatbot, a dialogue agent with the ability to extract new training examples from the conversations it participates in. As our agent engages in conversation, it also estimates user satisfaction in its responses. 
-When the conversation appears to be going well, the user’s responses become new training examples to imitate. 
-When the agent believes it has made a mistake, it asks for feedback; learning to predict the feedback that will be given improves the chatbot’s dialogue abilities further. 
+The majority of conversations a dialogue agent sees over its lifetime occur after it has already been trained and deployed, leaving a vast store of potential training signal untapped.
+In this work, we propose the self-feeding chatbot, a dialogue agent with the ability to extract new training examples from the conversations it participates in. As our agent engages in conversation, it also estimates user satisfaction in its responses.
+When the conversation appears to be going well, the user’s responses become new training examples to imitate.
+When the agent believes it has made a mistake, it asks for feedback; learning to predict the feedback that will be given improves the chatbot’s dialogue abilities further.
 On the PersonaChat chit-chat dataset with over 131k training examples, we find that learning from dialogue with a self- feeding chatbot significantly improves performance, regardless of the amount of traditional supervision.
 
 ## Citation
@@ -33,7 +33,7 @@ Once you have [installed ParlAI](https://github.com/facebookresearch/ParlAI/#ins
 
 ## Download the data
 
-Running the commands to train or chat with the models will automatically download the data for you. 
+Running the commands to train or chat with the models will automatically download the data for you.
 Alternatively, you can manually download the data by running `python parlai/projects/self_feeding/download_data.py`. This will download the following files to `data/self_feeding/`:
 
 - `{train, valid, test}_hh.txt`: DIALOGUE Human-Human (HH) conversations from the PersonaChat dataset, with one context and response per line (train: 131,438; valid: 2,000; test: 5,801).
@@ -46,13 +46,13 @@ We also include two derivative files for convenience:
 - `train_fb.txt`: The result of `cat train_fb_a.txt train_fb_b.txt | shuf > train_fb.txt`
 - `train_hh_hb.txt`: The result of `cat train_hh.txt train_hb.txt | shuf > train_hh_hb.txt`
 
-For more context on the scenarios in which these data were collected (including screenshots of crowdworker interfaces), refer to the paper. 
+For more context on the scenarios in which these data were collected (including screenshots of crowdworker interfaces), refer to the paper.
 In this distribution, we include all data collected of each type.
 To recreate the exact datasets used in the paper, keep only the first X lines of each file such that the resulting sets match the sizes reported in Table 1.
 
 
 ## Train a model
-To train a model, use the standard `ParlAI` protocol with `train_model.py`. 
+To train a model, use the standard `ParlAI` protocol with `train_model.py`.
 The following commands assume that you have set the following environment variables:
 ```
 export PARLAIHOME=/path/to/ParlAI
@@ -69,7 +69,7 @@ python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --mod
 
 Or to recreate the results in the paper for training on 131k HH examples with the same hyperparameters that we used, run the following:
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
 ```
 
 ### Train on DIALOGUE (HH) + FEEDBACK examples
@@ -80,17 +80,30 @@ To train on more than one task (such as DIALOGUE and FEEDBACK), modify the previ
 
 Putting this all together, the command to recreate the 131k HH + 60k FB result from the paper is as follows (as reported in Table 9 in the paper, this setting had the same optimal hyperparameter settings as 131k HH):
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:diafee:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch -ecands inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:diafee:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
 ```
 
 ### Train on DIALOGUE (HH) + DIALOGUE (HB) examples
 To train on both HH and HB DIALOGUE examples, point the model to a train file that includes examples from both sets. For example, if you combined 131k HH DIALOGUE examples and 60k HB dialogue examples into a file called `train_hh131k_hb60k.txt`, you could add the following flag to train on that combined file for the DIALOGUE task:
 ```
---dia-train train_hh_hb.txt
+--dia-train train_hh131k_hb60k.txt
+```
+
+### Train on DIALOGUE (HH) + DIALOGUE (HB) + FEEDBACK (FB) + SATISFACTION (ST) examples
+You can train on all three tasks at once with the command below. Note that the more examples we add, the more epochs we expect to need to converge.
+```
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:all:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss,sat_acc,sat_f1,sat_loss -ltim 5 -vtim 10 -vp 100 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 500 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 --dia-train train_hh131k_hb60k.txt -vmt dia_acc -vmm max
+```
+
+### Evaluate a trained model
+To evaluate a model, use the following command, which specifies which teacher to use (the one with all three tasks), which splits to test on (`test` or `valid`), and what batch size to use (larger will evaluate faster):
+```
+python $PARLAIHOME/examples/eval_model.py -mf $PARLAIHOME/models/$MODEL -t self_feeding:all:test --datatype test -bs 128
 ```
 
 ### Chat with a trained model
 To chat with a model that's already been trained, use the `interactive.py` script.
+You can add the flag `--request-feedback 1` to have the model ask for feedback based on its estimate of your satisfaction with the conversation.
 ```
 python $PARLAIHOME/projects/self_feeding/interactive.py --model-file $PARLAIHOME/models/$MODEL
 ```
