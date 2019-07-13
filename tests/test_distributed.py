@@ -47,11 +47,12 @@ class TestDistributed(unittest.TestCase):
 
                 valid, test = mp_train.launch_and_train(popt, 31337)
 
-                # we need to de-initialize the distributed world, otherwise other
-                # tests will they're we're distributed when we're really not.
-                dist.destroy_process_group()
-
         return (output.getvalue(), valid, test)
+
+    def tearDown(self):
+        # we need to de-initialize the distributed world, otherwise other
+        # tests will they're we're distributed when we're really not.
+        dist.destroy_process_group()
 
     def test_generator_distributed(self):
         stdout, valid, test = self._distributed_train_model(
