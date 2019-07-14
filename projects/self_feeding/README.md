@@ -51,7 +51,7 @@ In this distribution, we include all data collected of each type.
 To recreate the exact datasets used in the paper, keep only the first X lines of each file such that the resulting sets match the sizes reported in Table 1.
 
 ## Download a model
-A pretrained model can be downloaded from **TBD**.
+A pretrained model can be downloaded with the following command: `wget https://www.dropbox.com/s/8mnsljhmruj8ntq/hh131k_hb60k_fb60k_st1k.tar.gz`.
 This model was trained on DIALOGUE (HH), DIALOGUE (HB), FEEDBACK (FB), and SATISFACTION (ST), using the command given in the following section.
 
 ## Train a model
