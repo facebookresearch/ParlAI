@@ -349,7 +349,6 @@ class SelfFeedingAgent(TransformerRankerAgent):
         self.observation = observation
         return self.vectorize(self.observation, self.history)
 
-
     def batchify(self, observations):
         batch = super().batchify(observations)
         if self.multitask and batch.text_vec is not None:
