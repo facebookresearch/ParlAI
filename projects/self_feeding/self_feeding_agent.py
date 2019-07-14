@@ -214,7 +214,6 @@ class SelfFeedingAgent(TransformerRankerAgent):
         if opt['interactive']:
             print("[ Setting interactive mode defaults... ]")
             opt['prev_response_filter'] = True
-            opt['person_tokens'] = True
 
         # Set subtasks first so that opt['subtasks'] is set before build_model()
         self.set_subtasks(opt)
@@ -339,23 +338,17 @@ class SelfFeedingAgent(TransformerRankerAgent):
         # If their response is a response to a rating request, no work required
         if self.status == RATING_REQUESTED:
             self.last_rating = observation['text']
-        else:
-            if 'text' in observation:
-                self.history.update_history(observation)
 
+        self.history.update_history(observation)
         if len(self.history.history_strings) > 0:
-            # WARNING: Be suspicious of this; is history_size being applied correctly?
             observation['text'] = add_person_tokens(
                 self.history.history_strings[-self.opt['history_size'] :],
                 last_speaker=1,
             )
 
         self.observation = observation
-
-        if observation.get('episode_done', True):
-            self.history.reset()
-
         return self.vectorize(self.observation, self.history)
+
 
     def batchify(self, observations):
         batch = super().batchify(observations)

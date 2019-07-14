@@ -43,7 +43,7 @@ def interactive(opt, print_parser=None):
         'interactive': True,
         'interactive_task': True,
         'prev_response_filter': True,
-        'person_tokens': True,
+        'person_tokens': False,  # SelfFeedingAgent adds person_tokens on its own
         'partial_load': True,
         'history_size': 2,
         'eval_candidates': 'fixed',
