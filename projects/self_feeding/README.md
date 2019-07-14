@@ -33,7 +33,7 @@ Once you have [installed ParlAI](https://github.com/facebookresearch/ParlAI/#ins
 
 ## Download the data
 
-Running the commands to train or chat with the models will automatically download the data for you. 
+Running the commands to train or chat with the models will automatically download the data for you.
 Alternatively, you can manually download the data by running `python projects/self_feeding/download_data.py`. This will download the following files to `data/self_feeding/`:
 
 - `{train, valid, test}_hh.txt`: DIALOGUE Human-Human (HH) conversations from the PersonaChat dataset, with one context and response per line (train: 131,438; valid: 2,000; test: 5,801).
@@ -50,13 +50,16 @@ For more context on the scenarios in which these data were collected (including 
 In this distribution, we include all data collected of each type.
 To recreate the exact datasets used in the paper, keep only the first X lines of each file such that the resulting sets match the sizes reported in Table 1.
 
+## Download a model
+A pretrained model can be downloaded from **TBD**.
+This model was trained on DIALOGUE (HH), DIALOGUE (HB), FEEDBACK (FB), and SATISFACTION (ST), using the command given in the following section.
 
 ## Train a model
 To train a model, use the standard `ParlAI` protocol with `train_model.py`.
 The following commands assume that you have set the following environment variables:
 ```
 export PARLAIHOME=/path/to/ParlAI
-export MODEL=my_model_name
+export MODEL=/path/to/model
 ```
 You may require a GPU to train a model to convergence in a reasonable amount of time.
 On a P100 GPU, these training commands take approximately 10 minutes to converge.
@@ -64,23 +67,12 @@ On a P100 GPU, these training commands take approximately 10 minutes to converge
 ### Train on the DIALOGUE (HH) examples
 Here is a minimal command for training on the DIALOGUE task using Human-Human (HH) examples:
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model projects.self_feeding.self_feeding_agent:SelfFeedingAgent --model-file $PARLAIHOME/models/$MODEL -bs 128
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model projects.self_feeding.self_feeding_agent:SelfFeedingAgent --model-file $MODEL -bs 128
 ```
 
 Or to recreate the results in the paper for training on 131k HH examples with the same hyperparameters that we used, run the following:
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
-```
-
-### Train on DIALOGUE (HH) + FEEDBACK examples
-To train on more than one task (such as DIALOGUE and FEEDBACK), modify the previous command as follows:
-- Change `-t self_feeding:dialog:train` to `-t self_feeding:diafee:train`. This will result in a different "teacher" agent being used to train the chatbot, one with access to both 'dia\[logue\]' and 'fee\[dback\]`.
-- Append `,fee_acc,fee_loss` to the end of the `-tbmetrics` argument to include the accuracy and loss terms for the feedback task to the tensorboard logs.
-- Add `--fee-weight 1.0` to set a coefficient by which the loss for the `feedback` task will be multiplied (the default is 1.0 already).
-
-Putting this all together, the command to recreate the 131k HH + 60k FB result from the paper is as follows (as reported in Table 9 in the paper, this setting had the same optimal hyperparameter settings as 131k HH):
-```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:diafee:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:dialog:train --model-file $MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
 ```
 
 ### Train on DIALOGUE (HH) + DIALOGUE (HB) examples
@@ -89,21 +81,32 @@ To train on both HH and HB DIALOGUE examples, point the model to a train file th
 --dia-train train_hh131k_hb60k.txt
 ```
 
-### Train on DIALOGUE (HH) + DIALOGUE (HB) + FEEDBACK (FB) + SATISFACTION (ST) examples
-You can train on all three tasks at once with the command below. Note that the more examples we add, the more epochs we expect to need to converge.
+### Train on DIALOGUE (HH) + FEEDBACK examples
+To train on more than one task (such as DIALOGUE and FEEDBACK), modify the command for training on DIALOGUE (HH) alone as follows:
+- Change `-t self_feeding:dialog:train` to `-t self_feeding:diafee:train`. This will result in a different "teacher" agent being used to train the chatbot, one with access to both 'dia\[logue\]' and 'fee\[dback\]`.
+- Append `,fee_acc,fee_loss` to the end of the `-tbmetrics` argument to include the accuracy and loss terms for the feedback task to the Tensorboard logs.
+- Add `--fee-weight 1.0` to set a coefficient by which the loss for the `feedback` task will be multiplied (the default is 1.0 already).
+
+Putting this all together, the command to recreate the 131k HH + 60k FB result from the paper is as follows (as reported in Table 9 in the paper, this setting had the same optimal hyperparameter settings as 131k HH):
 ```
-python -u $PARLAIHOME/examples/train_model.py -t self_feeding:all:train --model-file $PARLAIHOME/models/$MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss,sat_acc,sat_f1,sat_loss -ltim 5 -vtim 10 -vp 100 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 500 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 --dia-train train_hh131k_hb60k.txt -vmt dia_acc -vmm max
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:diafee:train --model-file $MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+```
+
+### Train on DIALOGUE (HH) + DIALOGUE (HB) + FEEDBACK (FB) + SATISFACTION (ST) examples
+You can train on all three tasks at once with the command below.
+```
+python -u $PARLAIHOME/examples/train_model.py -t self_feeding:all:train --model-file $MODEL -tblog true -tbcomment $MODEL -tbmetrics lr,dia_acc,dia_loss,dia_rank,fee_acc,fee_loss,sat_acc,sat_f1,sat_loss -ltim 5 -vtim 10 -vp 50 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 500 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 --dia-train train_hh131k_hb60k.txt -vmt dia_acc -vmm max
 ```
 
 ### Evaluate a trained model
 To evaluate a model, use the following command, which specifies which teacher to use (the one with all three tasks), which splits to test on (`test` or `valid`), and what batch size to use (larger will evaluate faster):
 ```
-python $PARLAIHOME/examples/eval_model.py -mf $PARLAIHOME/models/$MODEL -t self_feeding:all:test --datatype test -bs 128
+python $PARLAIHOME/examples/eval_model.py -mf $MODEL -t self_feeding:all:test --datatype test -bs 20
 ```
 
 ### Chat with a trained model
 To chat with a model that's already been trained, use the `interactive.py` script.
-You can add the flag `--request-feedback 1` to have the model ask for feedback based on its estimate of your satisfaction with the conversation.
+You can add the flag `--request-feedback true` to have the model ask for feedback based on its estimate of your satisfaction with the conversation.
 ```
-python $PARLAIHOME/projects/self_feeding/interactive.py --model-file $PARLAIHOME/models/$MODEL
+python $PARLAIHOME/projects/self_feeding/interactive.py --model-file $MODEL --no-cuda
 ```
