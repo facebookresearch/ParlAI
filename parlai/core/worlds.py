@@ -60,7 +60,7 @@ from parlai.tasks.tasks import ids_to_tasks
 
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
-    if observation is not None and type(observation) in (dict, Message):
+    if observation is not None and isinstance(observation, dict):
         return observation
     else:
         raise RuntimeError('Must return dictionary or Message object from act().')

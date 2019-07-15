@@ -11,7 +11,6 @@ from parlai.core.utils import (
     padded_tensor,
     argsort,
     Opt,
-    Message,
 )
 from copy import deepcopy
 import time
@@ -124,18 +123,6 @@ class TestUtils(unittest.TestCase):
         assert argsort(keys, items, items2, descending=True) == [items, items2]
 
         assert np.all(argsort(torch_keys, torch_keys)[0].numpy() == np.arange(1, 6))
-
-    def test_message(self):
-        message = Message()
-        message['text'] = 'lol'
-        err = None
-        try:
-            message['text'] = 'rofl'
-        except RuntimeError as e:
-            err = e
-        assert err is not None, 'Message allowed override'
-        message_copy = message.copy()
-        assert type(message_copy) == Message, 'Message did not copy properly'
 
     def test_opt(self):
         opt = {'x': 0}

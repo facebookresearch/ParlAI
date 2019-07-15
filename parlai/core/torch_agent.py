@@ -29,11 +29,11 @@ from torch import optim
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
+from parlai.core.message import Message
 from parlai.core.utils import (
     AttrDict,
     argsort,
     fp16_optimizer_wrapper,
-    Message,
     padded_tensor,
     warn_once,
     round_sigfigs,
@@ -1509,7 +1509,10 @@ class TorchAgent(ABC, Agent):
 
         This includes remembering the past history of the conversation.
         """
-        observation = Message(observation)  # in case teachers did not send a Message
+        # TODO: Migration plan: TorchAgent currently supports being passed
+        # messages as vanilla dicts for legacy interop, but eventually we
+        # want to remove this behavior and demand Messages everywhere
+        observation = Message(observation)
         reply = self.last_reply(use_reply=self.opt.get('use_reply', 'label'))
         # update the history using the observation
         self.history.update_history(observation, add_next=reply)

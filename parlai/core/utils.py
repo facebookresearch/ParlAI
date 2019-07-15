@@ -18,6 +18,8 @@ import traceback
 import warnings
 import heapq
 
+from parlai.core.message import Message
+
 # some of the utility methods are helpful for Torch
 try:
     import torch
@@ -179,28 +181,6 @@ def load_opt_file(optfile):
         with open(optfile, 'rb') as handle:
             opt = pickle.load(handle)
     return Opt(opt)
-
-
-class Message(dict):
-    """
-    Class for observations and actions.
-
-    Functions like a dict, but breaks when writing to fields that already exist.
-    """
-
-    def __setitem__(self, key, val):
-        if key in self:
-            raise RuntimeError(
-                'Message already contains key `{}`. If this was intentional, '
-                'please use the function `set_key(key, value)`.'.format(key)
-            )
-        super().__setitem__(key, val)
-
-    def force_set(self, key, val):
-        super().__setitem__(key, val)
-
-    def copy(self):
-        return Message(self)
 
 
 class Opt(dict):
