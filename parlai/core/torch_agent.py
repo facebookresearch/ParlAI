@@ -1510,8 +1510,8 @@ class TorchAgent(ABC, Agent):
         This includes remembering the past history of the conversation.
         """
         # TODO: Migration plan: TorchAgent currently supports being passed
-        # messages as vanilla dicts for legacy interop, but eventually we
-        # want to remove this behavior and demand Messages everywhere
+        # observations as vanilla dicts for legacy interop; eventually we
+        # want to remove this behavior and demand that teachers return Messages
         observation = Message(observation)
         reply = self.last_reply(use_reply=self.opt.get('use_reply', 'label'))
         # update the history using the observation
