@@ -91,7 +91,7 @@ Execute this to train a cross-encoder scoring 90+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
 
 ```
-PYTHONPATH=. python -u examples/train_model.py
+PYTHONPATH=. python -u examples/train_model.py \
   --init-model zoo:pretrained_transformers/cross_model_huge_reddit/model \
   -pyt convai2 --shuffle true \
   --model transformer/crossencoder --batchsize 16 --eval-batchsize 10 \
