@@ -292,7 +292,6 @@ class BertQaAgent(TorchAgent):
         self.backward(loss)
         self.update_params()
         
-
         # predictions
         with torch.no_grad():
             b_input_ids, b_segment_ids, b_input_mask, _, _ = tensors
