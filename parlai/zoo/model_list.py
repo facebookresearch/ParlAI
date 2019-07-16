@@ -10,14 +10,14 @@ load them, agents & tasks associated (e.g. they were trained using) and a
 description. Using the path you should be able to download and use the model
 automatically, e.g.:
  python examples/interactive.py --model-file\
-    "models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
+    "zoo:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
 """
 
 model_list = [
     {
         "title": "KVMemNN ConvAI2 model",
         "id": "convai2",
-        "path": "models:convai2/kvmemnn/model",
+        "path": "zoo:convai2/kvmemnn/model",
         "agent": "projects.personachat.kvmemnn.kvmemnn:Kvmemnn",
         "task": "convai2",
         "description": (
@@ -25,13 +25,13 @@ model_list = [
             "competition."
         ),
         "example": (
-            "python -m parlai.scripts.interactive -mf models:convai2/kvmemnn/model"
+            "python -m parlai.scripts.interactive -mf zoo:convai2/kvmemnn/model"
         ),
     },
     {
         "title": "Seq2Seq ConvAI2 model",
         "id": "convai2",
-        "path": "models:convai2/seq2seq/convai2_self_seq2seq_model",
+        "path": "zoo:convai2/seq2seq/convai2_self_seq2seq_model",
         "agent": "legacy:seq2seq:0",
         "task": "convai2",
         "description": (
@@ -39,13 +39,13 @@ model_list = [
         ),
         "example": (
             "python -m parlai.scripts.interactive -mf "
-            "models:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0"
+            "zoo:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0"
         ),
     },
     {
         "title": "Seq2Seq Twitter model",
         "id": "twitter",
-        "path": "models:twitter/seq2seq/twitter_seq2seq_model",
+        "path": "zoo:twitter/seq2seq/twitter_seq2seq_model",
         "agent": "legacy:seq2seq:0",
         "task": "twitter",
         "description": ("Seq2Seq conversational model trained on the Twitter task"),
@@ -54,7 +54,7 @@ model_list = [
     {
         "title": "DrQA SQuAD model",
         "id": "drqa",
-        "path": "models:drqa/squad/model",
+        "path": "zoo:drqa/squad/model",
         "agent": "drqa",
         "task": "squad",
         "description": "drqa reader trained on SQuAD",
@@ -65,12 +65,12 @@ model_list = [
     {
         "title": "Wikipedia Retriever (used for open SQuAD)",
         "id": "wikipedia_2016-12-21",
-        "path": "models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs",
+        "path": "zoo:wikipedia_2016-12-21/tfidf_retriever/drqa_docs",
         "agent": "tfidf_retriever",
         "task": "wikipedia:full",
         "example": (
             "python -m parlai.scripts.interactive --model tfidf_retriever "
-            "-mf models:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
+            "-mf zoo:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
         ),
         "result": (
             """
@@ -92,13 +92,13 @@ model_list = [
     {
         "title": "Wikipedia Retriever (used for Wizard of Wikipedia)",
         "id": "wikipedia_full",
-        "path": "models:wikipedia_full/tfidf_retriever/model",
+        "path": "zoo:wikipedia_full/tfidf_retriever/model",
         "agent": "tfidf_retriever",
         "task": "wikipedia:full",
         "description": (
             "Retrieval over Wikipedia dump, used for DrQA on the open squad " "dataset."
         ),
-        "example": "python -m parlai.scripts.interactive --model tfidf_retriever -mf models:wikipedia_full/tfidf_retriever/model",  # noqa: E501
+        "example": "python -m parlai.scripts.interactive --model tfidf_retriever -mf zoo:wikipedia_full/tfidf_retriever/model",  # noqa: E501
         "result": (
             """
             Enter Your Message: Yann LeCun
@@ -116,12 +116,12 @@ model_list = [
     {
         "title": "Wizard of Wikipedia (End to end Generator)",
         "id": "wizard_of_wikipedia",
-        "path": "models:wizard_of_wikipedia/end2end_generator/model",
+        "path": "zoo:wizard_of_wikipedia/end2end_generator/model",
         "description": ("End2End Generative model for Wizard of Wikipedia"),
         "task": "wizard_of_wikipedia:generator",
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia:generator "
-            "-mf models:wizard_of_wikipedia/end2end_generator/model -n 1 "
+            "-mf zoo:wizard_of_wikipedia/end2end_generator/model -n 1 "
             "--display-ignore-fields knowledge_parsed"
         ),
         "result": (
@@ -148,12 +148,12 @@ model_list = [
     {
         "title": "Wizard of Wikipedia (Full Dialogue Retrieval Model)",
         "id": "wizard_of_wikipedia",
-        "path": "models:wizard_of_wikipedia/full_dialogue_retrieval_model/model",
+        "path": "zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model",
         "description": ("Full Dialogue Retrieval Model for Wizard of Wikipedia"),
         "task": "wizard_of_wikipedia",
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia "
-            "-mf models:wizard_of_wikipedia/full_dialogue_retrieval_model/model "
+            "-mf zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model "
             "-m projects:wizard_of_wikipedia:wizard_transformer_ranker "
             "--n-heads 6 --ffn-size 1200 --embeddings-scale False "
             "--delimiter ' __SOC__ ' --n-positions 1000 --legacy True "
@@ -182,13 +182,13 @@ model_list = [
     {
         "title": "LIGHT BERT-Biranker Dialogue model",
         "id": "light",
-        "path": "models:light/biranker_dialogue/model",
+        "path": "zoo:light/biranker_dialogue/model",
         "agent": "bert_ranker/bi_encoder_ranker",
         "task": "light_dialog",
         "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
         "example": (
             "python examples/eval_model.py -t light_dialog "
-            "-mf models:light/biranker_dialogue/model"
+            "-mf zoo:light/biranker_dialogue/model"
         ),
         "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"  # noqa: E501
         "'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'num_updates': 15050,"  # noqa: E501
@@ -197,7 +197,7 @@ model_list = [
     {
         "title": "Twitter conversational model",
         "id": "twitter",
-        "path": "models:twitter/seq2seq/twitter_seq2seq_model",
+        "path": "zoo:twitter/seq2seq/twitter_seq2seq_model",
         "agent": "legacy:seq2seq:0",
         "task": "twitter",
         "description": ("Generic conversational model trained on the twitter task"),
@@ -206,15 +206,15 @@ model_list = [
     {
         "title": "Controllable Dialogue pretrained models",
         "id": "controllable_dialogue",
-        "path": "models:controllable_dialogue/convai2_finetuned_baseline",
+        "path": "zoo:controllable_dialogue/convai2_finetuned_baseline",
         "agent": "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",  # noqa: E501
         "task": "projects.controllable_dialogue.tasks.agents",
-        "description": ("Generic conversational model trained on the twitter task"),
+        "description": ("Seq2Seq model trained on ConvAI2"),
     },
     {
         "title": "Personality-Captions pretrained model",
         "id": "personality_captions",
-        "path": "models:personality_captions/transresnet",
+        "path": "zoo:personality_captions/transresnet",
         "agent": "projects.personality_captions.transresnet.transresnet:TransresnetAgent",  # noqa: E501
         "task": "personality_captions",
         "description": (
@@ -222,18 +222,20 @@ model_list = [
         ),
         "example": (
             "python examples/eval_model.py -t personality_captions "
-            "-mf models:personality_captions/transresnet/model --num-test-labels 5 -dt test"
+            "-mf zoo:personality_captions/transresnet/model --num-test-labels 5 -dt test"
         ),
         "result": "{'exs': 10000, 'accuracy': 0.5113, 'f1': 0.5951, 'hits@1': 0.511, 'hits@5': 0.816, "  # noqa: E501
         "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}",  # noqa: E501
     },
     {
-        "title": "Pretrained large transformers",
+        "title": "Pretrained large transformers (ConvAI2)",
         "id": "pretrained_transformers",
-        "path": "models:pretrained_transformers/model_poly",
+        "path": "zoo:pretrained_transformers/model_poly",
         "agent": "transformer/polyencoder",  # noqa: E501
-        "task": "personality_captions",
-        "description": ("Polyencoder pretrained on Convai2 scoring 89+ hits@1/20"),
+        "task": "convai2",
+        "description": (
+            "Polyencoder pretrained on ConvAI2 scoring 89+ hits@1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
+        ),
         "example": (
             "PYTHONPATH=. python examples/interactive.py -m transformer/polyencoder "
             "-mf zoo:pretrained_transformers/model_poly --encode-candidate-vecs true "
@@ -255,18 +257,20 @@ model_list = [
     {
         "title": "Image-Chat pretrained model",
         "id": "image_chat",
-        "path": "models:image_chat/transresnet_multimodal",
+        "path": "zoo:image_chat/transresnet_multimodal",
         "agent": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",  # noqa: E501
         "task": "image_chat",
-        "description": ("Transresnet Multimodal Model pretrained on the Image-Chat task"),
+        "description": (
+            "Transresnet Multimodal Model pretrained on the Image-Chat task"
+        ),
         "example": (
             "python examples/eval_model.py -t image_chat "
-            "-mf models:image_chat/transresnet_multimodal/model -dt test"
+            "-mf zoo:image_chat/transresnet_multimodal/model -dt test"
         ),
         "result": "{'exs': 29991, 'accuracy': 0.4032, 'f1': 0.4432, 'hits@1': 0.403, 'hits@5': 0.672, 'hits@10': 0.779, 'hits@100': 1.0, 'bleu': 0.3923,"  # noqa: E501
         "'first_round': {'hits@1/100': 0.3392, 'loss': -0.002001, 'med_rank': 3.0},"
         "'second_round': {'hits@1/100': 0.4558, 'loss': -0.002001, 'med_rank': 2.0},"
         "'third_round+': {'hits@1/100': 0.4147, 'loss': -0.002001, 'med_rank': 2.0}}"  # noqa: E501
-        "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}"  # noqa: E501
+        "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}",  # noqa: E501
     },
 ]
