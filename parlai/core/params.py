@@ -881,16 +881,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return opt
 
-    def parse_args(self, args=None, namespace=None, print_args=True):
-        """
-        Parse the provided arguments and returns a dictionary of the ``args``.
-
-        We specifically remove items with ``None`` as values in order
-        to support the style ``opt.get(key, default)``, which would otherwise
-        return ``None``.
-        """
-        self.add_extra_args(args)
-        self.args = super().parse_args(args=args)
+    def _process_args_to_opts(self):
         self.opt = Opt(vars(self.args))
 
         # custom post-parsing
@@ -948,6 +939,31 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
+
+    def parse_and_process_known_args(self, args=None):
+        """
+        Parse provided arguments and return parlai opts and unknown arg list.
+
+        Runs the same arg->opt parsing that parse_args does, but doesn't
+        throw an error if the args being parsed include additional command
+        line arguments that parlai doesn't know what to do with.
+        """
+        self.args, unknowns = super().parse_known_args(args=args)
+        self._process_args_to_opts()
+        return self.opt, unknowns
+
+    def parse_args(self, args=None, namespace=None, print_args=True):
+        """
+        Parse the provided arguments and returns a dictionary of the ``args``.
+
+        We specifically remove items with ``None`` as values in order
+        to support the style ``opt.get(key, default)``, which would otherwise
+        return ``None``.
+        """
+        self.add_extra_args(args)
+        self.args = super().parse_args(args=args)
+
+        self._process_args_to_opts()
 
         if print_args:
             self.print_args()
