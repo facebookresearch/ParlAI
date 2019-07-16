@@ -9,7 +9,7 @@ This directory contains:
 
 Run this command: (assumes your model zoo is in the default ./data/models)
 ```
-PYTHONPATH=. python examples/interactive.py -m transformer/polyencoder \
+python examples/interactive.py -m transformer/polyencoder \
     -mf zoo:pretrained_transformers/model_poly/model \
     --encode-candidate-vecs true \
     --eval-candidates fixed  \
@@ -65,7 +65,7 @@ Execute this to train a poly-encoder scoring 89+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
 
 ```
-PYTHONPATH=. python -u examples/train_model.py \
+python -u examples/train_model.py \
   --init-model zoo:pretrained_transformers/poly_model_huge_reddit/model \
   -pyt convai2 --shuffle true \
   --model transformer/polyencoder --batchsize 256 --eval-batchsize 10 \
@@ -91,7 +91,7 @@ Execute this to train a cross-encoder scoring 90+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
 
 ```
-PYTHONPATH=. python -u examples/train_model.py \
+python -u examples/train_model.py \
   --init-model zoo:pretrained_transformers/cross_model_huge_reddit/model \
   -pyt convai2 --shuffle true \
   --model transformer/crossencoder --batchsize 16 --eval-batchsize 10 \
