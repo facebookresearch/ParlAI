@@ -10,7 +10,7 @@ from parlai.zoo.bert.build import download
 import os
 import torch
 import collections
-
+from parlai.core.distributed_utils import is_distributed
 try:
     from pytorch_pretrained_bert.modeling import BertForQuestionAnswering
     from pytorch_pretrained_bert.optimization import BertAdam
@@ -283,20 +283,19 @@ class BertQaAgent(TorchAgent):
         loss = self.model(*tensors)
 
         if self.n_gpu > 1:
-            loss = loss.mean()  # mean() to average on multi-gpu.
+            loss = loss.mean()  # mean() to average on multi-gpu local machine.
 
         self.metrics["examples"] += len(batch["observations"])
         self.metrics["loss"] += loss
 
+        self.zero_grad()
         self.backward(loss)
         self.update_params()
-        self.zero_grad()
+        
 
         # predictions
         with torch.no_grad():
             b_input_ids, b_segment_ids, b_input_mask, _, _ = tensors
-            # print(b_input_ids)
-            # input(...)
             b_start_logits, b_end_logits = self.model(
                 b_input_ids, b_segment_ids, b_input_mask
             )
@@ -386,11 +385,20 @@ class BertQaAgent(TorchAgent):
 
     def build_model(self):
         self.model = BertForQuestionAnswering.from_pretrained(self.pretrained_path)
+
         self.n_gpu = 0
-        if self.use_cuda:
-            self.n_gpu = torch.cuda.device_count()
-            if self.n_gpu > 0:
-                self.model = torch.nn.DataParallel(self.model)
+        
+        if is_distributed():
+            # use multiple machines
+            self.model = torch.nn.parallel.DistributedDataParallel(
+                self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
+            )
+        else:
+            if self.use_cuda:
+                self.n_gpu = torch.cuda.device_count()
+                if self.n_gpu > 0:
+                    #  training on multiple GPUs, single machine
+                    self.model = torch.nn.DataParallel(self.model)
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         param_optimizer = list(self.model.named_parameters())
