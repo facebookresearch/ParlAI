@@ -233,7 +233,9 @@ model_list = [
         "path": "zoo:pretrained_transformers/model_poly",
         "agent": "transformer/polyencoder",  # noqa: E501
         "task": "convai2",
-        "description": ("Polyencoder pretrained on ConvAI2 scoring 89+ hits@1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"),
+        "description": (
+            "Polyencoder pretrained on ConvAI2 scoring 89+ hits@1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
+        ),
         "example": (
             "PYTHONPATH=. python examples/interactive.py -m transformer/polyencoder "
             "-mf zoo:pretrained_transformers/model_poly --encode-candidate-vecs true "
@@ -258,7 +260,9 @@ model_list = [
         "path": "zoo:image_chat/transresnet_multimodal",
         "agent": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",  # noqa: E501
         "task": "image_chat",
-        "description": ("Transresnet Multimodal Model pretrained on the Image-Chat task"),
+        "description": (
+            "Transresnet Multimodal Model pretrained on the Image-Chat task"
+        ),
         "example": (
             "python examples/eval_model.py -t image_chat "
             "-mf zoo:image_chat/transresnet_multimodal/model -dt test"
@@ -267,6 +271,6 @@ model_list = [
         "'first_round': {'hits@1/100': 0.3392, 'loss': -0.002001, 'med_rank': 3.0},"
         "'second_round': {'hits@1/100': 0.4558, 'loss': -0.002001, 'med_rank': 2.0},"
         "'third_round+': {'hits@1/100': 0.4147, 'loss': -0.002001, 'med_rank': 2.0}}"  # noqa: E501
-        "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}"  # noqa: E501
+        "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}",  # noqa: E501
     },
 ]
