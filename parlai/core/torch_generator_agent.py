@@ -29,7 +29,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from parlai.core.distributed_utils import is_distributed
+from parlai.core.distributed_utils import is_distributed, check_synced_parameters
 from parlai.core.thread_utils import SharedTable
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.core.utils import padded_tensor, round_sigfigs, warn_once, neginf
@@ -377,7 +377,11 @@ class TorchGeneratorAgent(TorchAgent):
                 print('[ Saving dot beam logs in {} ]'.format(self.beam_dot_dir))
 
             self.build_criterion()
-            self.build_model()
+            with torch.random.fork_rng(range(torch.cuda.device_count())):
+                # TODO: turn this into an option
+                torch.manual_seed(42)
+                self.build_model()
+            check_synced_parameters(self.model)
             print("Total parameters: {}".format(self._total_parameters()))
             print("Trainable parameters:  {}".format(self._trainable_parameters()))
 

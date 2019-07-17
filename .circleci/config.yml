@@ -132,6 +132,19 @@ jobs:
           name: Unit tests (py37)
           command: python setup.py test -s tests.suites.unittests -v
 
+  unittests_gpu:
+    <<: *gpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setupcuda
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchgpu
+      - run:
+          name: Unit tests (GPU)
+          command: python setup.py test -s tests.suites.unittests -v
   black:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
@@ -286,6 +299,7 @@ workflows:
     jobs:
       - black
       - lint
+      - unittests_gpu
       - unittests_37
       - unittests_36
       - mturk_tests:
@@ -318,6 +332,7 @@ workflows:
     jobs:
       - unittests_36
       - unittests_37
+      - gpu_unittests
       - mturk_tests
       - nightly_gpu_tests
       - test_website

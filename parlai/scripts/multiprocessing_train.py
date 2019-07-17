@@ -40,7 +40,7 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     This should be launched n times for n GPUs; this is handled either in main
     or via srun.
 
-    :param int rank: This process's rank
+    :param int rank: This process's rank - 1. (Starts at -1 ... n - 2). See comments.
     :param opt: command line options
     :param int port: A TCP port to use. This will need to be changed to run
         multiple distributed training setups on the same machine.
@@ -50,6 +50,9 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     """
     # Set per-host options
     opt = copy.deepcopy(opt)
+    # rank is adjusted to start at -1 to correct for spawn()'s behavior. see comment
+    # in launch_and_train.
+    rank = rank + 1
     opt['rank'] = rank
     if gpu is None:
         # default assumption is local GPUs
@@ -62,50 +65,62 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
 
     # Suppress output of workers except the main host.
     if opt.get('verbose') or rank != 0:
-        print_prefix = '[rank:{:2d}]'.format(rank)
+        print_prefix = '[rank:{:3d}]'.format(rank)
     else:
         print_prefix = None
-    distributed_utils.override_print(
-        suppress=(not opt.get('verbose') and rank != 0), prefix=print_prefix
-    )
+    suppress_output = not opt.get('verbose') and rank != 0
 
-    # perform distributed setup, ensuring all hosts are ready
-    torch.cuda.set_device(opt['gpu'])
-    dist.init_process_group(
-        backend="nccl",
-        init_method="tcp://{}:{}".format(hostname, port),
-        world_size=opt['distributed_world_size'],
-        rank=rank,
-    )
-    print("Distributed group initialized")
+    with distributed_utils.override_print(suppress_output, print_prefix):
+        # perform distributed setup, ensuring all hosts are ready
+        torch.cuda.set_device(opt['gpu'])
+        dist.init_process_group(
+            backend="nccl",
+            init_method="tcp://{}:{}".format(hostname, port),
+            world_size=opt['distributed_world_size'],
+            rank=rank,
+        )
+        print("Distributed group initialized")
 
-    # Run the actual training
-    return single_train.TrainLoop(opt).train()
+        # Run the actual training
+        return single_train.TrainLoop(opt).train()
 
 
-def main():
-    parser = single_train.setup_args()
-    parser.add_distributed_training_args()
-    parser.set_defaults(distributed_world_size=torch.cuda.device_count())
-    opt = parser.parse_args()
-
-    port = random.randint(32000, 48000)
-
+def launch_and_train(opt, port):
+    """Perform a fork() to many processes."""
     # Launch multiple subprocesses
     spawncontext = torch.multiprocessing.spawn(
         multiprocess_train,
         (opt, port),
-        nprocs=opt['distributed_world_size'],
+        nprocs=opt['distributed_world_size'] - 1,  # main proc will also run loop
         join=False,
     )
 
     try:
+        # spawn always initiates the processes with rank starting at 0. However,
+        # we want this main process to be rank 0, so that we can capture the retval
+        # and return it upwards. We correct for the rank offset here and above.
+        retval = multiprocess_train(-1, opt, port)
         spawncontext.join()
+        return retval
     except KeyboardInterrupt:
         # tell the subprocesses to stop too
         for p in spawncontext.processes:
             if p.is_alive():
                 os.kill(p.pid, signal.SIGINT)
+        raise
+
+
+def setup_args():
+    parser = single_train.setup_args()
+    parser.add_distributed_training_args()
+    parser.set_defaults(distributed_world_size=torch.cuda.device_count())
+    return parser
+
+
+def main():
+    opt = setup_args().parse_args()
+    port = random.randint(32000, 48000)
+    return launch_and_train(opt, port)
 
 
 if __name__ == '__main__':
