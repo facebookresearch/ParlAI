@@ -14,14 +14,6 @@ from .modules import TransformerGeneratorModel
 import torch
 
 
-warn_once(
-    "Public release transformer models are currently in beta. The name of "
-    "command line options may change or disappear before a stable release. We "
-    "welcome your feedback. Please file feedback as issues at "
-    "https://github.com/facebookresearch/ParlAI/issues/new"
-)
-
-
 def add_common_cmdline_args(argparser):
     argparser.add_argument(
         '-esz',

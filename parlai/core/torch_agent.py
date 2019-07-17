@@ -434,11 +434,12 @@ class TorchAgent(ABC, Agent):
             'correct size. If the dimensions are the same, this is '
             'ignored unless you append "-force" to your choice.',
         )
-        # optimizer arguments
         agent.add_argument(
             '--fp16', type='bool', default=False, help='Use fp16 computations.'
         )
-        agent.add_argument(
+        # optimizer arguments
+        optim_group = agent.add_argument_group('Optimizer Arguments')
+        optim_group.add_argument(
             '-opt',
             '--optimizer',
             default='sgd',
@@ -446,30 +447,30 @@ class TorchAgent(ABC, Agent):
             help='Choose between pytorch optimizers. Any member of torch.optim'
             ' should be valid.',
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '-lr', '--learningrate', type=float, default=1, help='learning rate'
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '-clip',
             '--gradient-clip',
             type=float,
             default=0.1,
             help='gradient clipping using l2 norm',
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '-mom',
             '--momentum',
             default=0,
             type=float,
             help='if applicable, momentum value for optimizer.',
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '--nesterov',
             default=True,
             type='bool',
             help='if applicable, whether to use nesterov momentum.',
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '-nu',
             '--nus',
             default='0.7',
@@ -477,7 +478,7 @@ class TorchAgent(ABC, Agent):
             help='if applicable, nu value(s) for optimizer. can use a single '
             'value like 0.7 or a comma-separated tuple like 0.7,1.0',
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '-beta',
             '--betas',
             default='0.9,0.999',
@@ -485,29 +486,38 @@ class TorchAgent(ABC, Agent):
             help='if applicable, beta value(s) for optimizer. can use a single '
             'value like 0.9 or a comma-separated tuple like 0.9,0.999',
         )
+        optim_group.add_argument(
+            '-wd',
+            '--weight-decay',
+            type=float,
+            default=None,
+            help='Weight decay on the weights.',
+        )
+
         # lr scheduler
-        agent.add_argument(
+        lr_group = agent.add_argument_group('Learning Rate Scheduler')
+        lr_group.add_argument(
             '--lr-scheduler',
             type=str,
             default='reduceonplateau',
             choices=['reduceonplateau', 'none', 'fixed', 'invsqrt'],
             help='Learning rate scheduler.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--lr-scheduler-patience',
             type=int,
             default=3,
             help='LR scheduler patience. In number of validation runs. If using '
             'fixed scheduler, LR is decayed every <patience> validations.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--lr-scheduler-decay',
             type=float,
             default=0.5,
             help='Decay factor for LR scheduler, or how much LR is multiplied by '
             'when it is lowered.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--warmup-updates',
             type=int,
             default=-1,
@@ -515,7 +525,7 @@ class TorchAgent(ABC, Agent):
             help='Learning rate warmup period, in number of SGD updates. '
             'Linearly scales up LR over period. Only enabled if > 0.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--warmup-rate',
             type=float,
             default=1e-4,
@@ -524,13 +534,14 @@ class TorchAgent(ABC, Agent):
             'this value. Linearly adjusted up to 1.0 across --warmup-updates '
             'steps.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--update-freq',
             type=int,
-            default=-1,
+            default=1,
             hidden=True,
             help='Accumulate gradients N times before performing an optimizer.step().',
         )
+
         # preprocessing arguments
         agent.add_argument(
             '-rc',
@@ -768,6 +779,8 @@ class TorchAgent(ABC, Agent):
         # set up optimizer args
         lr = opt['learningrate']
         kwargs = {'lr': lr}
+        if opt.get('weight_decay'):
+            kwargs['weight_decay'] = opt['weight_decay']
         if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop', 'qhm']:
             # turn on momentum for optimizers that use it
             kwargs['momentum'] = opt['momentum']
@@ -784,7 +797,7 @@ class TorchAgent(ABC, Agent):
         elif opt['optimizer'] == 'qhadam':
             # set nus for qhadam
             kwargs['nus'] = opt.get('nus', (0.7, 1.0))
-        if opt['optimizer'] in ['adam', 'sparseadam', 'adamax', 'qhadam']:
+        if opt['optimizer'] in ['adam', 'sparseadam', 'fused_adam', 'adamax', 'qhadam']:
             # set betas for optims that use it
             kwargs['betas'] = opt.get('betas', (0.9, 0.999))
 
@@ -1666,6 +1679,10 @@ class TorchAgent(ABC, Agent):
         loss.backward(), for integration with distributed training and FP16
         training.
         """
+        if self.opt.get('update_freq', 1) > 1:
+            # gradient accumulation, but still need to average across the minibatches
+            loss = loss / self.opt['update_freq']
+
         if self.fp16:
             self.optimizer.backward(loss, update_master_grads=False)
         else:
