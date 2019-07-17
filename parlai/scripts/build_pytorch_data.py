@@ -13,6 +13,7 @@ One can set the ``--context-len`` flag to specify how many past utterances
 are used in a flattened episode.
 """
 from parlai.core.agents import create_agent
+from parlai.core.message import Message
 from parlai.core.worlds import create_task
 from parlai.scripts.build_dict import build_dict, setup_args as dict_setup
 import copy
@@ -141,7 +142,9 @@ def build_data(opt):
     with open(os.path.join(datapath, 'data'), 'w') as pytorch_data:
         while num_exs < total_exs:
             while not episode_done:
-                action = teacher.act()
+                # TODO: eventually all teachers should return Messages, so
+                # we should assert this
+                action = Message(teacher.act())
                 current.append(action)
                 episode_done = action.get('episode_done', False)
 
@@ -150,7 +153,7 @@ def build_data(opt):
                 context.append(ex.get('text', ''))
                 if len(context) > 1:
                     ex['text'] = '\n'.join(context)
-                ex['episode_done'] = True
+                ex.force_set('episode_done', True)
                 labels = ex.get('labels', ex.get('eval_labels', None))
                 if labels is not None and include_labels:
                     context.append(random.choice(labels))
