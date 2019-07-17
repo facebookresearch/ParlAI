@@ -133,6 +133,4 @@ python projects/self_feeding/interactive.py --model-file zoo:self_feeding/hh131k
 ```
 
 You can change the filename to any of your own models to interactive with a
-model you have trained.  You will likely find that chatting with the model on
-CPU (`--no-cuda true`) can be slow, and you may wish to remove this argument if
-you have a GPU available.
+model you have trained.

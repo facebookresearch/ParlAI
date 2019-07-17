@@ -26,10 +26,10 @@ def model_text(model_dict, fout):
     links = ''
     if 'project' in model:
         link = model['project']
-        links += '`[related project] <' + link + '/>`_ '
+        links += '`[related project] <' + link + '/>`__ '
     if 'external_website' in model:
         link = model['external_website']
-        links += '`[external website] <' + link + '/>`_ '
+        links += '`[external website] <' + link + '/>`__ '
     if links != "":
         fout.write(links + "\n")
 
