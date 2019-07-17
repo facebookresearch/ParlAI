@@ -33,6 +33,7 @@ structures for accessing textual dialog data and utilized by ``DialogTeacher``
 
 from .agents import Teacher
 from .image_featurizers import ImageLoader
+from .message import Message
 from .utils import AttrDict, no_lock, str_to_msg
 
 from functools import lru_cache
@@ -390,7 +391,10 @@ class FixedDialogTeacher(Teacher):
 
         # get next example, action is episode_done dict if already out of exs
         action, self.epochDone = self.next_example()
-        action['id'] = self.getID()
+        # TODO: all teachers should eventually create messages
+        # while setting up the data, so this won't be necessary
+        action = Message(action)
+        action.force_set('id', self.getID())
 
         # remember correct answer if available
         self.lastY = action.get('labels', action.get('eval_labels', None))

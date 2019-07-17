@@ -17,7 +17,7 @@ class Message(dict):
         if key in self:
             raise RuntimeError(
                 'Message already contains key `{}`. If this was intentional, '
-                'please use the function `set_key(key, value)`.'.format(key)
+                'please use the function `force_set(key, value)`.'.format(key)
             )
         super().__setitem__(key, val)
 
