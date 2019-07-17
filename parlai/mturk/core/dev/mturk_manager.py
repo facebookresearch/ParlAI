@@ -1389,9 +1389,6 @@ class MTurkManager:
 
     # Amazon MTurk Server Functions #
 
-    def get_agent_work_status(self, assignment_id):
-        return self.worker_manager.get_agent_work_status(assignment_id)
-
     def get_qualification_list(self, qualifications=None):
         if self.qualifications is not None:
             return self.qualifications.copy()

@@ -133,8 +133,6 @@ class MTurkAgent(Agent):
         self.m_send_state_change = mturk_manager.send_state_change
         self.m_send_message = mturk_manager.send_message
         self.m_send_command = mturk_manager.send_command
-        # TODO update or remove this function
-        self.m_get_agent_work_status = mturk_manager.get_agent_work_status
         self.m_approve_work = mturk_manager.approve_work
         self.m_reject_work = mturk_manager.reject_work
         self.m_block_worker = mturk_manager.block_worker
@@ -161,15 +159,16 @@ class MTurkAgent(Agent):
         self.worker_id = worker_id
         self.some_agent_disconnected = False
         self.hit_is_expired = False
-        self.hit_is_abandoned = False  # state from Amazon MTurk system
-        self.hit_is_returned = False  # state from Amazon MTurk system
-        self.hit_is_complete = False  # state from Amazon MTurk system
+        self.hit_is_abandoned = False  # state from MTurk SNS system
+        self.hit_is_returned = False  # state from MTurk SNS system
+        self.hit_is_complete = False  # submission post came through
         self.disconnected = False
         self.message_request_time = None
         self.recieved_packets = {}
         self.creation_time = time.time()
         self.feedback = None
         self.msg_queue = Queue()
+        self.completed_message = None
 
     def set_status(self, status, conversation_id=None, agent_id=None):
         """
@@ -298,8 +297,8 @@ class MTurkAgent(Agent):
         self.msg_queue = None
         self.recieved_packets = None
 
-    def get_new_act_message(self):
-        """Get a new act message if one exists, return None otherwise"""
+    def check_disconnects(self):
+        """Ensures that an agent is still connected"""
         # See if any agent has disconnected
         if self.disconnected or self.some_agent_disconnected:
             raise AgentDisconnectedError(self.worker_id, self.assignment_id)
@@ -307,7 +306,11 @@ class MTurkAgent(Agent):
         # Check if the current turker already returned the HIT
         if self.hit_is_returned:
             raise AgentReturnedError(self.worker_id, self.assignment_id)
+        return
 
+    def get_new_act_message(self):
+        """Get a new act message if one exists, return None otherwise"""
+        self.check_disconnects()
         if self.msg_queue is not None:
             # Check if Turker sends a message
             while not self.msg_queue.empty():
@@ -317,6 +320,19 @@ class MTurkAgent(Agent):
 
         # There are no messages to be sent
         return None
+
+    def set_completed_act(self, completed_act):
+        """Set the completed act for an agent, notes successful submission"""
+        self.completed_act = completed_act
+        self.hit_is_complete = True
+
+    def get_completed_act(self):
+        """Returns completed act upon arrival, errors on disconnect"""
+        while self.completed_message is None:
+            self.check_disconnects()
+            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+
+        return self.completed_message
 
     def request_message(self):
         if not (
@@ -378,9 +394,7 @@ class MTurkAgent(Agent):
     def episode_done(self):
         """Return whether or not this agent believes the conversation to
         be done"""
-        # TODO re-examine after implementing better amazon state syncing.
-        # Do this for all get_agent_work_status calls
-        if self.m_get_agent_work_status(self.assignment_id) == self.ASSIGNMENT_NOT_DONE:
+        if not self.hit_is_complete:
             return False
         else:
             return True
@@ -399,7 +413,7 @@ class MTurkAgent(Agent):
         if self.hit_is_abandoned:
             self._print_not_available_for('review')
         else:
-            if self.m_get_agent_work_status(self.assignment_id) == self.ASSIGNMENT_DONE:
+            if self.hit_is_complete:
                 self.m_approve_work(assignment_id=self.assignment_id)
                 shared_utils.print_and_log(
                     logging.INFO,
@@ -417,7 +431,7 @@ class MTurkAgent(Agent):
         if self.hit_is_abandoned:
             self._print_not_available_for('review')
         else:
-            if self.m_get_agent_work_status(self.assignment_id) == self.ASSIGNMENT_DONE:
+            if self.hit_is_complete:
                 self.m_reject_work(self.assignment_id, reason)
                 shared_utils.print_and_log(
                     logging.INFO,
@@ -444,10 +458,7 @@ class MTurkAgent(Agent):
         if self.hit_is_abandoned:
             self._print_not_available_for('bonus')
         else:
-            if self.m_get_agent_work_status(self.assignment_id) in (
-                self.ASSIGNMENT_DONE,
-                self.ASSIGNMENT_APPROVED,
-            ):
+            if self.hit_is_complete:
                 unique_request_token = str(uuid.uuid4())
                 self.m_pay_bonus(
                     worker_id=self.worker_id,
@@ -529,10 +540,7 @@ class MTurkAgent(Agent):
         wait_periods = 1
         self.wait_completion_timeout(wait_periods)
         sync_attempts = 0
-        while (
-            not self.hit_is_complete
-            and self.m_get_agent_work_status(self.assignment_id) != self.ASSIGNMENT_DONE
-        ):
+        while not self.hit_is_complete:
             if sync_attempts < 8:
                 # Scaling on how frequently to poll, doubles time waited on
                 # every failure
