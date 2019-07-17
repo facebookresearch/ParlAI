@@ -272,7 +272,7 @@ class History(object):
                 # update history vecs
                 self._update_vecs(text)
 
-        if obs['episode_done']:
+        if obs.get('episode_done'):
             # end of this episode, clear the history when we see a new example
             self.reset_on_next_update = True
 

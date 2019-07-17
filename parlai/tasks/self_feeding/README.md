@@ -4,5 +4,5 @@ Description: Learning from Dialogue after Deployment. Leveraging user textual fe
 
 Link: https://arxiv.org/abs/1901.05415
 
-Tags: #SelfFeedingChatbot, #diaexp, #diasen, #All
+Tags: #SelfFeedingChatbot
 
