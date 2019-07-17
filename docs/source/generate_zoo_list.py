@@ -21,9 +21,19 @@ def model_text(model_dict, fout):
     fout.write(name)
     fout.write('\n')
     fout.write('~' * len(name))
-    fout.write('\n\n')
+    fout.write('\n')
 
-    fout.write(model['description'])
+    links = ''
+    if 'project' in model:
+        link = model['project']
+        links += '`[related project] <' + link + '/>`_ '
+    if 'external_website' in model:
+        link = model['external_website']
+        links += '`[external website] <' + link + '/>`_ '
+    if links != "":
+        fout.write(links + "\n")
+
+    fout.write("\n" + model['description'])
     fout.write('\n\n')
 
     fout.write('Example invocation(s):\n\n')

@@ -23,7 +23,9 @@ model_list = [
         "description": (
             "KvMemNN trained on the ConvAI2 task, used as a baseline in the "
             "competition."
-        ),
+            ),
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
+        "external_website": "http://convai.io/",
         "example": (
             "python -m parlai.scripts.interactive -mf zoo:convai2/kvmemnn/model"
         ),
@@ -34,6 +36,8 @@ model_list = [
         "path": "zoo:convai2/seq2seq/convai2_self_seq2seq_model",
         "agent": "legacy:seq2seq:0",
         "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
+        "external_website": "http://convai.io/",
         "description": (
             "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
         ),
@@ -95,6 +99,7 @@ model_list = [
         "path": "zoo:wikipedia_full/tfidf_retriever/model",
         "agent": "tfidf_retriever",
         "task": "wikipedia:full",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "description": (
             "Retrieval over Wikipedia dump, used for DrQA on the open squad " "dataset."
         ),
@@ -119,6 +124,7 @@ model_list = [
         "path": "zoo:wizard_of_wikipedia/end2end_generator/model",
         "description": ("End2End Generative model for Wizard of Wikipedia"),
         "task": "wizard_of_wikipedia:generator",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia:generator "
             "-mf zoo:wizard_of_wikipedia/end2end_generator/model -n 1 "
@@ -150,6 +156,7 @@ model_list = [
         "id": "wizard_of_wikipedia",
         "path": "zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model",
         "description": ("Full Dialogue Retrieval Model for Wizard of Wikipedia"),
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "task": "wizard_of_wikipedia",
         "example2": "examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia",
         "result2": 
@@ -194,6 +201,7 @@ model_list = [
         "id": "light",
         "path": "zoo:light/biranker_dialogue/model",
         "agent": "bert_ranker/bi_encoder_ranker",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/light",
         "task": "light_dialog",
         "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
         "example": (
@@ -219,6 +227,7 @@ model_list = [
         "path": "zoo:controllable_dialogue/convai2_finetuned_baseline",
         "agent": "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",  # noqa: E501
         "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue",
         "example": "python -m parlai.scripts.eval_model --model projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent --task projects.controllable_dialogue.tasks.agents -mf zoo:controllable_dialogue/convai2_finetuned_baseline",
         "description": ("Seq2Seq model with control trained on ConvAI2"),
     },
@@ -228,6 +237,7 @@ model_list = [
         "path": "zoo:personality_captions/transresnet",
         "agent": "projects.personality_captions.transresnet.transresnet:TransresnetAgent",  # noqa: E501
         "task": "personality_captions",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/personality_captions",
         "description": (
             "Transresnet Model pretrained on the Personality-Captions task"
         ),
@@ -276,6 +286,7 @@ model_list = [
         "path": "zoo:image_chat/transresnet_multimodal",
         "agent": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",  # noqa: E501
         "task": "image_chat",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/image_chat",
         "description": (
             "Transresnet Multimodal Model pretrained on the Image-Chat task"
         ),
