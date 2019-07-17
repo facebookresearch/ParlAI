@@ -5,12 +5,17 @@
 # LICENSE file in the root directory of this source tree.
 
 """
+The Model Zoo.
+
 This file contains a list of all the models in the model zoo, the path to
 load them, agents & tasks associated (e.g. they were trained using) and a
 description. Using the path you should be able to download and use the model
 automatically, e.g.:
- python examples/interactive.py --model-file\
-    "zoo:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
+
+... code-block:
+
+   python examples/interactive.py --model-file
+       "zoo:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
 """
 
 model_list = [
@@ -315,7 +320,25 @@ model_list = [
         ),
         "example": (
             "python projects/self_feeding/interactive.py --model-file "
-            "zoo:self_feeding/model"
+            "zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model --no-cuda true"
+        ),
+        "result": (
+            "Enter Your Message: hi, my name is stephen. what's yours?\n"
+            "[SelfFeeding]: hi there greg . do you have pets ? i've 2 cats named "
+            "milo and fio .\n"
+            "Enter Your Message: sadly, i have no pets. my landlord isn't a fan.\n"
+            "[SelfFeeding]: sorry to hear that . i always had bad allergies when i "
+            "liven on my farm in kansas ."
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf "
+            "zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model -t self_feeding:all"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['self_feeding:all'] using datatype valid ]\n"
+            "{'exs': 3500, 'dia_rank': 4.654, 'dia_acc': 0.3525, 'fee_rank': 1.0, "
+            "'fee_acc': 1.0, 'fee_exs': 1000, 'sat_re': 0.4607, 'sat_f1': 0.5605, "
+            "'sat_acc': 0.724}"
         ),
     },
 ]
