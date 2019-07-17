@@ -152,7 +152,7 @@ def build_data(opt):
             for ex in current:
                 context.append(ex.get('text', ''))
                 if len(context) > 1:
-                    ex['text'] = '\n'.join(context)
+                    ex.force_set('text', '\n'.join(context))
                 ex.force_set('episode_done', True)
                 labels = ex.get('labels', ex.get('eval_labels', None))
                 if labels is not None and include_labels:
