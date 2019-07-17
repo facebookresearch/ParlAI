@@ -65,8 +65,6 @@ class InteractiveWorld(DialogPartnerWorld):
         if self.cnt == 0:
             # add the persona on to the first message to agent 1
             act['text'] = self.p2 + act.get('text', 'hi')
-            print("gave bot its persona!")
-            print(act)
             agents[1].observe(validate(act))
         else:
             agents[1].observe(validate(act))
