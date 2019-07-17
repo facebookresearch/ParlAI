@@ -24,6 +24,8 @@ model_list = [
             "KvMemNN trained on the ConvAI2 task, used as a baseline in the "
             "competition."
         ),
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
+        "external_website": "http://convai.io/",
         "example": (
             "python -m parlai.scripts.interactive -mf zoo:convai2/kvmemnn/model"
         ),
@@ -34,6 +36,8 @@ model_list = [
         "path": "zoo:convai2/seq2seq/convai2_self_seq2seq_model",
         "agent": "legacy:seq2seq:0",
         "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
+        "external_website": "http://convai.io/",
         "description": (
             "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
         ),
@@ -95,6 +99,7 @@ model_list = [
         "path": "zoo:wikipedia_full/tfidf_retriever/model",
         "agent": "tfidf_retriever",
         "task": "wikipedia:full",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "description": (
             "Retrieval over Wikipedia dump, used for DrQA on the open squad " "dataset."
         ),
@@ -119,6 +124,7 @@ model_list = [
         "path": "zoo:wizard_of_wikipedia/end2end_generator/model",
         "description": ("End2End Generative model for Wizard of Wikipedia"),
         "task": "wizard_of_wikipedia:generator",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia:generator "
             "-mf zoo:wizard_of_wikipedia/end2end_generator/model -n 1 "
@@ -150,7 +156,18 @@ model_list = [
         "id": "wizard_of_wikipedia",
         "path": "zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model",
         "description": ("Full Dialogue Retrieval Model for Wizard of Wikipedia"),
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "task": "wizard_of_wikipedia",
+        "example2": "examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia",
+        "result2": (
+            "[ Your chosen topic is: Teapot ]\n"
+            "Enter Your Message: do you like tea?\n"
+            "[WizardRetrievalInteractiveAgent]: Yes!  I only use teapots that have a little air hole in the lid. That prevents the spout from dripping or splashing when the tea is poured. Most teapots have this though.\n"
+            "Enter Your Message: what about kettles?\n"
+            "[WizardRetrievalInteractiveAgent]: I would think you could use them to heat any type of liquid! I use my teapots with a tea cosy. It's a thermal cover that helps keep the tea hot.\n"
+            "Enter Your Message: do you like earl grey?\n"
+            "[WizardRetrievalInteractiveAgent]: I think I'll try some Lipton, I love their green tea!"
+        ),
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia "
             "-mf zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model "
@@ -184,6 +201,7 @@ model_list = [
         "id": "light",
         "path": "zoo:light/biranker_dialogue/model",
         "agent": "bert_ranker/bi_encoder_ranker",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/light",
         "task": "light_dialog",
         "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
         "example": (
@@ -195,7 +213,7 @@ model_list = [
         "'examples': 6623, 'loss': 5307.0, 'mean_loss': 0.8013, 'mean_rank': 1.599, 'train_accuracy': 0}",  # noqa: E501
     },
     {
-        "title": "Twitter conversational model",
+        "title": "Legacy Seq2Seq Twitter model",
         "id": "twitter",
         "path": "zoo:twitter/seq2seq/twitter_seq2seq_model",
         "agent": "legacy:seq2seq:0",
@@ -204,19 +222,22 @@ model_list = [
         "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
     },
     {
-        "title": "Controllable Dialogue pretrained models",
+        "title": "Controllable Dialogue ConvAI2 model",
         "id": "controllable_dialogue",
         "path": "zoo:controllable_dialogue/convai2_finetuned_baseline",
         "agent": "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",  # noqa: E501
-        "task": "projects.controllable_dialogue.tasks.agents",
-        "description": ("Seq2Seq model trained on ConvAI2"),
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue",
+        "example": "python -m parlai.scripts.eval_model --model projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent --task projects.controllable_dialogue.tasks.agents -mf zoo:controllable_dialogue/convai2_finetuned_baseline",
+        "description": ("Seq2Seq model with control trained on ConvAI2"),
     },
     {
-        "title": "Personality-Captions pretrained model",
+        "title": "TransResNet (ResNet 152) Personality-Captions model",
         "id": "personality_captions",
         "path": "zoo:personality_captions/transresnet",
         "agent": "projects.personality_captions.transresnet.transresnet:TransresnetAgent",  # noqa: E501
         "task": "personality_captions",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/personality_captions",
         "description": (
             "Transresnet Model pretrained on the Personality-Captions task"
         ),
@@ -228,38 +249,44 @@ model_list = [
         "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}",  # noqa: E501
     },
     {
-        "title": "Pretrained large transformers (ConvAI2)",
+        "title": "Poly-Encoder Transformer ConvAI2 Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/model_poly",
         "agent": "transformer/polyencoder",  # noqa: E501
         "task": "convai2",
         "description": (
-            "Polyencoder pretrained on ConvAI2 scoring 89+ hits@1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
+            "Polyencoder pretrained on Reddit and fine-tuned on ConvAI2 scoring 89+ hits@1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
         ),
         "example": (
-            "PYTHONPATH=. python examples/interactive.py -m transformer/polyencoder "
-            "-mf zoo:pretrained_transformers/model_poly --encode-candidate-vecs true "
-            "--eval-candidates fixed  "
-            "--fixed-candidates-path data/models/pretrained_transformers/convai_trainset_cands.txt"
+            "python examples/interactive.py -mf zoo:pretrained_transformers/model_poly/model -t convai2"
         ),
+        # "python examples/interactive.py -m transformer/polyencoder "
+        # "-mf zoo:pretrained_transformers/model_poly/model --encode-candidate-vecs true "
+        # "--eval-candidates fixed  "
+        # "--fixed-candidates-path data/models/pretrained_transformers/convai_trainset_cands.txt"
         "result": (
-            "Enter Your Message: your persona: i love to drink fancy tea.\n"
-            "your persona: i have a big library at home.\n"
-            "your persona: i'm a museum tour guide.\n"
-            "hi how are you doing ?"
+            "hi how are you doing ?\n"
             "[Polyencoder]: i am alright . i am back from the library .\n"
             "Enter Your Message: oh, what do you do for a living?\n"
             "[Polyencoder]: i work at the museum downtown . i love it there .\n"
             "Enter Your Message: what is your favorite drink?\n"
             "[Polyencoder]: i am more of a tea guy . i get my tea from china .\n"
         ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:pretrained_transformers/model_poly/model -t convai2 --eval-candidates inline"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
+            "{'exs': 7801, 'accuracy': 0.8942, 'f1': 0.9065, 'hits@1': 0.894, 'hits@5': 0.99, 'hits@10': 0.997, 'hits@100': 1.0, 'bleu': 0.8941, 'lr': 5e-09, 'num_updates': 0, 'examples': 7801, 'loss': 3004.0, 'mean_loss': 0.385, 'mean_rank': 1.234, 'mrr': 0.9359}"
+        ),
     },
     {
-        "title": "Image-Chat pretrained model",
+        "title": "TransResNet (ResNet152) Image-Chat model",
         "id": "image_chat",
         "path": "zoo:image_chat/transresnet_multimodal",
         "agent": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",  # noqa: E501
         "task": "image_chat",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/image_chat",
         "description": (
             "Transresnet Multimodal Model pretrained on the Image-Chat task"
         ),
