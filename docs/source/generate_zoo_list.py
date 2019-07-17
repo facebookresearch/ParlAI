@@ -10,7 +10,7 @@ category_zoo_list = {}
 for model_dict in model_list:
     task = model_dict.get('task', None)
     if ':' in task:
-        task = task[0:task.find(':')]  # strip detailed task name
+        task = task[0 : task.find(':')]  # strip detailed task name
     if task not in category_zoo_list:
         category_zoo_list[task] = []
     category_zoo_list[task].append(model_dict)
@@ -42,7 +42,6 @@ def model_text(model_dict, fout):
     fout.write('.. code-block:: none\n\n   {}\n   \n{}\n'.format(example, result))
     fout.write('\n')
 
-
     if 'example2' in model:
         example = model['example2']
         result = model.get('result2', '').strip().split("\n")
@@ -53,8 +52,6 @@ def model_text(model_dict, fout):
         result = "\n".join(result)
         fout.write('.. code-block:: none\n\n   {}\n   \n{}\n'.format(example, result))
         fout.write('\n')
-
-    
 
 
 fout = open('zoo_list.inc', 'w')
