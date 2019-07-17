@@ -500,15 +500,6 @@ class MTurkAgent(Agent):
         """Assigns this worker a soft blocking qualification"""
         self.m_soft_block_worker(self.worker_id, qual)
 
-    def DEPRECATED_set_hit_is_abandoned(self):
-        """Update local state to abandoned and mark the HIT as expired"""
-        # TODO(wish) hit_is_abandoned could easily be bundled into a HIT being
-        # returned, as the end outcome of the two are functionally equivalent.
-        # New callsites should not be made for this function
-        if not self.hit_is_abandoned:
-            self.hit_is_abandoned = True
-            self.m_force_expire_hit(self.worker_id, self.assignment_id)
-
     def wait_completion_timeout(self, iterations):
         """Suspends the thread waiting for hit completion for some number of
         iterations on the THREAD_MTURK_POLLING_SLEEP time"""
@@ -526,17 +517,9 @@ class MTurkAgent(Agent):
             i += 1
         return
 
-    # TODO clean up this whole thing once completes are guaranteed posts
+    # TODO cleanup timeout now that it's not used.
     def wait_for_hit_completion(self, timeout=None):
         """Waits for a hit to be marked as complete"""
-        # Timeout in seconds, after which the HIT will be expired automatically
-        if timeout:
-            if timeout < 0:
-                # Negative timeout is for testing, wait for packet to send
-                time.sleep(1)
-                self.m_free_workers([self])
-                return True
-            start_time = time.time()
         wait_periods = 1
         self.wait_completion_timeout(wait_periods)
         sync_attempts = 0
@@ -553,18 +536,6 @@ class MTurkAgent(Agent):
             if self.hit_is_returned or self.disconnected:
                 self.m_free_workers([self])
                 return False
-            if timeout:
-                current_time = time.time()
-                if (current_time - start_time) > timeout:
-                    shared_utils.print_and_log(
-                        logging.INFO,
-                        "Timeout waiting for ({})_({}) to complete {}.".format(
-                            self.worker_id, self.assignment_id, self.conversation_id
-                        ),
-                    )
-                    self.DEPRECATED_set_hit_is_abandoned()
-                    self.m_free_workers([self])
-                    return False
             shared_utils.print_and_log(
                 logging.DEBUG,
                 'Waiting for ({})_({}) to complete {}...'.format(
