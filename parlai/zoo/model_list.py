@@ -23,7 +23,7 @@ model_list = [
         "description": (
             "KvMemNN trained on the ConvAI2 task, used as a baseline in the "
             "competition."
-            ),
+        ),
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
         "external_website": "http://convai.io/",
         "example": (
@@ -159,15 +159,15 @@ model_list = [
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "task": "wizard_of_wikipedia",
         "example2": "examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia",
-        "result2": 
-        ("[ Your chosen topic is: Teapot ]\n"
-         "Enter Your Message: do you like tea?\n"
-         "[WizardRetrievalInteractiveAgent]: Yes!  I only use teapots that have a little air hole in the lid. That prevents the spout from dripping or splashing when the tea is poured. Most teapots have this though.\n"
-         "Enter Your Message: what about kettles?\n"
-         "[WizardRetrievalInteractiveAgent]: I would think you could use them to heat any type of liquid! I use my teapots with a tea cosy. It's a thermal cover that helps keep the tea hot.\n"
-         "Enter Your Message: do you like earl grey?\n"
-         "[WizardRetrievalInteractiveAgent]: I think I'll try some Lipton, I love their green tea!"
-         ),
+        "result2": (
+            "[ Your chosen topic is: Teapot ]\n"
+            "Enter Your Message: do you like tea?\n"
+            "[WizardRetrievalInteractiveAgent]: Yes!  I only use teapots that have a little air hole in the lid. That prevents the spout from dripping or splashing when the tea is poured. Most teapots have this though.\n"
+            "Enter Your Message: what about kettles?\n"
+            "[WizardRetrievalInteractiveAgent]: I would think you could use them to heat any type of liquid! I use my teapots with a tea cosy. It's a thermal cover that helps keep the tea hot.\n"
+            "Enter Your Message: do you like earl grey?\n"
+            "[WizardRetrievalInteractiveAgent]: I think I'll try some Lipton, I love their green tea!"
+        ),
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia "
             "-mf zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model "
@@ -205,7 +205,7 @@ model_list = [
         "task": "light_dialog",
         "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
         "example": (
-           "python examples/eval_model.py -t light_dialog "
+            "python examples/eval_model.py -t light_dialog "
             "-mf zoo:light/biranker_dialogue/model"
         ),
         "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"  # noqa: E501
@@ -260,10 +260,10 @@ model_list = [
         "example": (
             "python examples/interactive.py -mf zoo:pretrained_transformers/model_poly/model -t convai2"
         ),
-            #"python examples/interactive.py -m transformer/polyencoder "
-            #"-mf zoo:pretrained_transformers/model_poly/model --encode-candidate-vecs true "
-            #"--eval-candidates fixed  "
-            #"--fixed-candidates-path data/models/pretrained_transformers/convai_trainset_cands.txt"
+        # "python examples/interactive.py -m transformer/polyencoder "
+        # "-mf zoo:pretrained_transformers/model_poly/model --encode-candidate-vecs true "
+        # "--eval-candidates fixed  "
+        # "--fixed-candidates-path data/models/pretrained_transformers/convai_trainset_cands.txt"
         "result": (
             "hi how are you doing ?\n"
             "[Polyencoder]: i am alright . i am back from the library .\n"
@@ -274,11 +274,11 @@ model_list = [
         ),
         "example2": (
             "python examples/eval_model.py -mf zoo:pretrained_transformers/model_poly/model -t convai2 --eval-candidates inline"
-            ),
+        ),
         "result2": (
             "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
             "{'exs': 7801, 'accuracy': 0.8942, 'f1': 0.9065, 'hits@1': 0.894, 'hits@5': 0.99, 'hits@10': 0.997, 'hits@100': 1.0, 'bleu': 0.8941, 'lr': 5e-09, 'num_updates': 0, 'examples': 7801, 'loss': 3004.0, 'mean_loss': 0.385, 'mean_rank': 1.234, 'mrr': 0.9359}"
-            )
+        ),
     },
     {
         "title": "TransResNet (ResNet152) Image-Chat model",
