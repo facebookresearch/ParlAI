@@ -18,7 +18,6 @@ for model_dict in model_list:
 
 def model_text(model_dict, fout):
     name = model_dict.get('title').title()
-    #fout.write("**" + name + "**\n")
     fout.write(name)
     fout.write('\n')
     fout.write('~' * len(name))
