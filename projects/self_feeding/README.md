@@ -42,9 +42,10 @@ Alternatively, you can manually download the data by running `python projects/se
 -`train_fb_b.txt`: The same as `train_fb_a.txt` but with a chatbot that was retrained using the additional feedback examples collected from the A set (train: 21,257).
 -`{valid, test}_fb.txt`: FEEDBACK validation and test sets collected at the same time and with the same model as the `train_fb_a.txt` file.
 
-We also include two derivative files for convenience:
+We also include three derivative files for convenience (as they were used in experiments and in some of the sample commands in the sections below):
 - `train_fb.txt`: The result of `cat train_fb_a.txt train_fb_b.txt | shuf > train_fb.txt`
-- `train_hh_hb.txt`: The result of `cat train_hh.txt train_hb.txt | shuf > train_hh_hb.txt`
+- `train_hb60k.txt`: The result of `head -n 60000 train_hb.txt > train_hb60k.txt`
+- `train_hh131k_hb60k.txt`: The result of `cat train_hh.txt train_hb60k.txt > train_hh131k_hb60k.txt`
 
 For more context on the scenarios in which these data were collected (including screenshots of crowdworker interfaces), refer to the paper.
 In this distribution, we include all data collected of each type.
