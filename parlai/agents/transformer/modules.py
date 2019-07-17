@@ -28,7 +28,6 @@ from parlai.core.utils import neginf
 
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
-    import apex.normalization.fused_layer_norm_cuda
 except ImportError:
     warn_once("Installing APEX can give a significant speed boost.")
     from torch.nn import LayerNorm
