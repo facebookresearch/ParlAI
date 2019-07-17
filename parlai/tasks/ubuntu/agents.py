@@ -133,7 +133,7 @@ class UbuntuTeacherWithNegs(UbuntuTeacher):
         print(len(self.all_candidates))
 
     def add_candidates(self, sample, seed):
-        """ Add 15 candidates. Should be called only at train time.
+        """ Add 16 candidates. Should be called only at train time.
         """
         rand = random.Random(seed)
         if 'label_candidates' in sample:
