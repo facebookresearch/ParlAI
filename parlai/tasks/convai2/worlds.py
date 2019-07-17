@@ -75,7 +75,7 @@ class InteractiveWorld(DialogPartnerWorld):
         self.update_counters()
         self.cnt += 1
 
-        if self.episode_done():
+        if act['episode_done']:
             print("CHAT DONE ")
             print("\n... preparing new chat... \n")
             self.cnt = 0
