@@ -152,7 +152,7 @@ class MTurkManager:
         self.is_test = is_test
         self.is_unique = False
         self.max_hits_per_worker = opt.get('max_hits_per_worker', 0)
-        self.is_shutdown = False
+        self.is_shutdown = threading.Event()
         self.use_db = use_db  # TODO enable always DB integration is complete
         self.db_logger = None
         self.logging_permitted = False  # Enables logging to parl.ai
@@ -177,7 +177,7 @@ class MTurkManager:
             'log_level': 30,
         }
         manager = MTurkManager(opt, [], use_db=True)
-        manager.is_shutdown = True
+        manager.is_shutdown.set()
         mturk_utils.setup_aws_credentials()
         return manager
 
@@ -216,6 +216,7 @@ class MTurkManager:
 
         # TODO move some state to DB
         self.hit_id_list = []  # list of outstanding incomplete hits
+        self.all_hit_ids = []  # list of all hits launched by this manager
         self.assignment_to_onboard_thread = {}
         self.conversation_index = 0
         self.started_conversations = 0
@@ -228,6 +229,7 @@ class MTurkManager:
         self.time_limit_checked = time.time()
         self.task_state = self.STATE_INIT_RUN
         self.last_hit_check = time.time()
+        self.hit_status_thread = None
         if self.use_db:
             db_filename = 'pmt_sbdata.db' if self.is_sandbox else 'pmt_data.db'
             self.db_logger = MTurkDataHandler(self.task_group_id, db_filename)
@@ -294,25 +296,18 @@ class MTurkManager:
 
     def _maintain_hit_status(self):
         def update_status():
-            while len(self.hit_id_list) > 0:
+            while len(self.hit_id_list) > 0 and not self.is_shutdown.is_set():
                 cur_time = time.time()
                 if cur_time - self.last_hit_check > 10:
                     self.last_hit_check = cur_time
                     for hit_id in self.hit_id_list.copy():
-                        hit = self.get_hit(hit_id)
-                        hit_data = hit['HIT']
-                        if hit_data['HITStatus'] in [
-                            'Reviewable',
-                            'Reviewing',
-                            'Disposed',
-                        ]:
-                            self.hit_id_list.remove(hit_id)
-                time.sleep(10)
+                        self.check_hit_status(hit_id)
+                self.is_shutdown.wait(timeout=30)
 
-        hit_status_thread = threading.Thread(
+        self.hit_status_thread = threading.Thread(
             target=update_status, name='Hit-Status-Thread', daemon=True
         )
-        hit_status_thread.start()
+        self.hit_status_thread.start()
 
     def _should_use_time_logs(self):
         # Used to ensure time logs are properly tracked. Can be overridden for
@@ -1139,10 +1134,11 @@ class MTurkManager:
                     for agent in agents:
                         if agent.submitted_hit():
                             self.create_additional_hits(1)
+                            self.hit_id_list.remove(agent.hit_id)
 
         if self.db_logger is not None:
             self._maintain_hit_status()
-        while not self.is_shutdown:
+        while not self.is_shutdown.is_set():
             if self.has_time_limit:
                 self._check_time_limit()
             # Loop forever starting task worlds until desired convos are had
@@ -1195,23 +1191,32 @@ class MTurkManager:
         """
         start_time = time.time()
         min_wait = self.opt['assignment_duration_in_seconds']
+        wait_time = 0.1
         while time.time() - start_time < min_wait and len(self.hit_id_list) > 0:
-            self.expire_all_unassigned_hits()
-            time.sleep(max(self.opt['assignment_duration_in_seconds'] / 60, 0.1))
+            for hit_id in self.hit_id_list.copy():
+                self.check_hit_status(hit_id)
+            wait_time *= 1.5
+            time.sleep(wait_time)
 
     def shutdown(self, force=False):
         """Handle any mturk client shutdown cleanup."""
         # Ensure all threads are cleaned and state and HITs are handled
-        if self.is_shutdown and not force:
+        if self.is_shutdown.is_set() and not force:
             return
-        self.is_shutdown = True
+        self.is_shutdown.set()
         try:
-            self.expire_all_unassigned_hits()
+            # handle complete state cleanup
+            self.expire_all_hits()  # ensure no hits sneak by after shutdown
             self._expire_onboarding_pool()
             self._expire_agent_pool()
             self._wait_for_task_expirations()
+
+            # Join helper threads
+            self.hit_status_thread.join()
             for assignment_id in self.assignment_to_onboard_thread:
                 self.assignment_to_onboard_thread[assignment_id].join()
+            for thread in self.task_threads:
+                thread.join()
         except BaseException:
             pass
         finally:
@@ -1541,6 +1546,7 @@ class MTurkManager:
             if self.db_logger is not None:
                 self.db_logger.log_hit_status(mturk_response)
             self.hit_id_list.append(hit_id)
+            self.all_hit_ids.append(hit_id)
         return mturk_page_url
 
     def create_hits(self, qualifications=None):
@@ -1602,22 +1608,37 @@ class MTurkManager:
         assignments_info = client.list_assignments_for_hit(HITId=hit_id)
         return assignments_info.get('Assignments', [])
 
+    # WISH move this into mturk_utils
+    def check_hit_status(self, hit_id):
+        """Checks the status of a HIT, removes it from outstanding if it is
+        no longer acceptable or pending.
+        """
+        hit = self.get_hit(hit_id)
+        hit_data = hit['HIT']
+        if hit_data['HITStatus'] in ['Reviewable', 'Reviewing', 'Disposed']:
+            self.hit_id_list.remove(hit_id)
+
     def expire_all_unassigned_hits(self):
-        """Move through the whole hit_id list and attempt to expire the
+        """Move through the whole unassigned hit list and attempt to expire the
         HITs, though this only immediately expires those that aren't assigned.
         """
-        # TODO note and mark assigned hits as ones to be expired later.
-        # this will improve the shutdown experience
         shared_utils.print_and_log(
             logging.INFO,
             'Expiring all unassigned HITs...',
             should_print=not self.is_test,
         )
-        completed_ids = self.worker_manager.get_complete_hits()
         for hit_id in self.hit_id_list:
-            if hit_id not in completed_ids:
-                # TODO get confirmation that the HIT is acutally expired
-                mturk_utils.expire_hit(self.is_sandbox, hit_id)
+            mturk_utils.expire_hit(self.is_sandbox, hit_id)
+
+    def expire_all_hits(self):
+        """Move through all the HITs launched and expire every one of them.
+        Ensures no HITs should be around after this instance is dead
+        """
+        shared_utils.print_and_log(
+            logging.INFO, 'Expiring all HITs...', should_print=not self.is_test
+        )
+        for hit_id in self.hit_id_list:
+            mturk_utils.expire_hit(self.is_sandbox, hit_id)
 
     def approve_work(self, assignment_id, override_rejection=False):
         """approve work for a given assignment through the mturk client"""
