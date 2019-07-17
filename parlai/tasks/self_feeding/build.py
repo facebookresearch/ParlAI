@@ -9,8 +9,8 @@ import os
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'self_feeding')
-    fname = 'self_feeding_v02.tgz'
-    version = '2.0'
+    fname = 'self_feeding_v031.tar.gz'
+    version = '3.1'
     if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):

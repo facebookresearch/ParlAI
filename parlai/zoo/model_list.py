@@ -258,7 +258,9 @@ model_list = [
         "path": "models:image_chat/transresnet_multimodal",
         "agent": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",  # noqa: E501
         "task": "image_chat",
-        "description": ("Transresnet Multimodal Model pretrained on the Image-Chat task"),
+        "description": (
+            "Transresnet Multimodal Model pretrained on the Image-Chat task"
+        ),
         "example": (
             "python examples/eval_model.py -t image_chat "
             "-mf models:image_chat/transresnet_multimodal/model -dt test"
@@ -267,6 +269,24 @@ model_list = [
         "'first_round': {'hits@1/100': 0.3392, 'loss': -0.002001, 'med_rank': 3.0},"
         "'second_round': {'hits@1/100': 0.4558, 'loss': -0.002001, 'med_rank': 2.0},"
         "'third_round+': {'hits@1/100': 0.4147, 'loss': -0.002001, 'med_rank': 2.0}}"  # noqa: E501
-        "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}"  # noqa: E501
+        "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}",  # noqa: E501
+    },
+    {
+        "title": "Self-feeding Chatbot",
+        "id": "self_feeding",
+        "path": "zoo:self_feeding/model",
+        "agent": "projects.self_feeding.self_feeding_agent:SelfFeedingAgent",
+        "task": "self_feeding:all:train",
+        "description": (
+            "The self-feeding chatbot of Hancock, et al., 2019 "
+            "(https://arxiv.org/abs/1901.05415). This model learns from is mistakes "
+            "when actually talking with users. This particular model corresponds to "
+            "the model with 131k human-human chats + 60k human-bot chats + 60k "
+            "feedback chats."
+        ),
+        "example": (
+            "python projects/self_feeding/interactive.py --model-file "
+            "zoo:self_feeding/model"
+        ),
     },
 ]

@@ -30,7 +30,7 @@ def _path(opt, filename, add_suffix=False):
         else:
             raise ValueError(f"Unrecognized subtask: {subtask}")
         filename += f"_{suffix}.txt"
-    dp = os.path.join(opt['datapath'], 'self_feeding', 'self_feeding_v02')
+    dp = os.path.join(opt['datapath'], 'self_feeding')
     return os.path.join(dp, filename)
 
 

@@ -3,18 +3,21 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Basic example which allows local human keyboard input to talk to a trained model.
+"""
+Basic example which allows local human keyboard input to talk to a trained model.
 
 Note: this is identical to examples/interactive with the exception that we add
 TransformerAgent command line args.
 """
+
+import os
+import random
+
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from projects.self_feeding.self_feeding_agent import SelfFeedingAgent
-
-import random
 
 
 def setup_args(parser=None):
@@ -36,7 +39,9 @@ def interactive(opt, print_parser=None):
     if isinstance(opt, ParlaiParser):
         print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
         opt = opt.parse_args()
+
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+    cand_file = os.path.join(opt['datapath'], 'self_feeding/convai2_cands.txt')
     # Set values to override when the opt dict for the saved model is loaded
     opt['override'] = {
         'subtasks': ['dialog', 'satisfaction'],
@@ -48,7 +53,7 @@ def interactive(opt, print_parser=None):
         'history_size': 2,
         'eval_candidates': 'fixed',
         'encode_candidate_vecs': True,
-        'fixed_candidates_path': 'data/self_feeding/self_feeding_v02/convai2_cands.txt',
+        'fixed_candidates_path': cand_file,
         # Pull these from current opt dictionary
         'no_cuda': opt["no_cuda"],
         'fixed_candidate_vecs': opt['fixed_candidate_vecs'],
