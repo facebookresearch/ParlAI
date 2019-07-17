@@ -40,7 +40,7 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     This should be launched n times for n GPUs; this is handled either in main
     or via srun.
 
-    :param int rank: This process's rank
+    :param int rank: This process's rank - 1. (Starts at -1 ... n - 2). See comments.
     :param opt: command line options
     :param int port: A TCP port to use. This will need to be changed to run
         multiple distributed training setups on the same machine.
@@ -50,7 +50,8 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     """
     # Set per-host options
     opt = copy.deepcopy(opt)
-    # offset the rank by 1 to make the root process be rank 0
+    # rank is adjusted to start at -1 to correct for spawn()'s behavior. see comment
+    # in launch_and_train.
     rank = rank + 1
     opt['rank'] = rank
     if gpu is None:
@@ -90,12 +91,14 @@ def launch_and_train(opt, port):
     spawncontext = torch.multiprocessing.spawn(
         multiprocess_train,
         (opt, port),
-        nprocs=opt['distributed_world_size'] - 1,
+        nprocs=opt['distributed_world_size'] - 1,  # main proc will also run loop
         join=False,
     )
 
     try:
-        # rank is offset by -1 to make the root process be rank 0
+        # spawn always initiates the processes with rank starting at 0. However,
+        # we want this main process to be rank 0, so that we can capture the retval
+        # and return it upwards. We correct for the rank offset here and above.
         retval = multiprocess_train(-1, opt, port)
         spawncontext.join()
         return retval

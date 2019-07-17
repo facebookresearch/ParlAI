@@ -21,7 +21,7 @@ import parlai.core.testing_utils as testing_utils
 
 def detect_all():
     """Check if we should run all tests."""
-    return any(kw in testing_utils.git_commit_messages() for kw in ['[all]', '[long'])
+    return any(kw in testing_utils.git_commit_messages() for kw in ['[all]', '[long]'])
 
 
 def detect_gpu():

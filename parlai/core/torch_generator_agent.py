@@ -378,6 +378,7 @@ class TorchGeneratorAgent(TorchAgent):
 
             self.build_criterion()
             with torch.random.fork_rng(range(torch.cuda.device_count())):
+                # TODO: turn this into an option
                 torch.manual_seed(42)
                 self.build_model()
             check_synced_parameters(self.model)
