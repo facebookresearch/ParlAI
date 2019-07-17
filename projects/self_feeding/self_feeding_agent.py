@@ -768,7 +768,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 subtasks = opt['subtasks'].split(',')
         else:
             # Otherwise, try to infer from the task name.
-            subtasks = [task.split(':')[-2] for task in opt['task'].split(',')]
+            subtasks = [task.split(':')[1] for task in opt['task'].split(',')]
 
         # Expand any abbreviations
         if subtasks[0] == 'diafee':
