@@ -396,7 +396,7 @@ class TorchRankerAgent(TorchAgent):
 
         if (
             self.opt.get('repeat_blocking_heuristic', True)
-            and self.opt.get('eval_candidates') == 'fixed'
+            and self.eval_candidates == 'fixed'
         ):
             cand_preds = self.block_repeats(cand_preds)
 

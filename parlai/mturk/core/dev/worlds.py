@@ -175,7 +175,7 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
             {'id': 'System', 'text': '[TASK_DATA]', 'task_data': self.task_data}
         )
         agent.set_status(AssignState.STATUS_STATIC)
-        self.response = agent.act()
+        self.response = agent.get_completed_act()
         self.episodeDone = True
 
     def prep_save_data(self, workers):
