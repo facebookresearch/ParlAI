@@ -124,13 +124,18 @@ class UbuntuTeacherWithNegs(UbuntuTeacher):
         self.datatype = opt['datatype']
         if 'train' in self.datatype:
             if shared is None:
-                self.all_candidates = [
-                    self.data.get(i, 0)[0]['labels'][0]
-                    for i in range(self.num_episodes())
-                ]
+                if self.stream:
+                    self.all_candidates = [
+                        self.data.get()[0]['labels'][0]
+                        for i in range(self.num_episodes())
+                    ]
+                else:
+                    self.all_candidates = [
+                        self.data.get(i, 0)[0]['labels'][0]
+                        for i in range(self.num_episodes())
+                    ]
             else:
                 self.all_candidates = shared['all_candidates']
-        print(len(self.all_candidates))
 
     def add_candidates(self, sample, seed):
         """ Add 16 candidates. Should be called only at train time.
