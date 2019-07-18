@@ -297,7 +297,7 @@ class MTurkAgent(Agent):
         self.msg_queue = None
         self.recieved_packets = None
 
-    def check_disconnects(self):
+    def assert_connected(self):
         """Ensures that an agent is still connected"""
         # See if any agent has disconnected
         if self.disconnected or self.some_agent_disconnected:
@@ -310,7 +310,7 @@ class MTurkAgent(Agent):
 
     def get_new_act_message(self):
         """Get a new act message if one exists, return None otherwise"""
-        self.check_disconnects()
+        self.assert_connected()
         if self.msg_queue is not None:
             # Check if Turker sends a message
             while not self.msg_queue.empty():
@@ -329,7 +329,7 @@ class MTurkAgent(Agent):
     def get_completed_act(self):
         """Returns completed act upon arrival, errors on disconnect"""
         while self.completed_message is None:
-            self.check_disconnects()
+            self.assert_connected()
             time.sleep(shared_utils.THREAD_SHORT_SLEEP)
 
         return self.completed_message
@@ -500,49 +500,23 @@ class MTurkAgent(Agent):
         """Assigns this worker a soft blocking qualification"""
         self.m_soft_block_worker(self.worker_id, qual)
 
-    def wait_completion_timeout(self, iterations):
-        """Suspends the thread waiting for hit completion for some number of
-        iterations on the THREAD_MTURK_POLLING_SLEEP time"""
-
-        # Determine number of sleep iterations for the amount of time
-        # we want to wait before syncing with MTurk. Start with 10 seconds
-        # of waiting
-        iters = (
-            shared_utils.THREAD_MTURK_POLLING_SLEEP / shared_utils.THREAD_MEDIUM_SLEEP
-        )
-        i = 0
-        # Wait for the desired number of MTURK_POLLING_SLEEP iterations
-        while not self.hit_is_complete and i < iters * iterations:
-            time.sleep(shared_utils.THREAD_SHORT_SLEEP)
-            i += 1
-        return
-
     # TODO cleanup timeout now that it's not used.
     def wait_for_hit_completion(self, timeout=None):
         """Waits for a hit to be marked as complete"""
-        wait_periods = 1
-        self.wait_completion_timeout(wait_periods)
         sync_attempts = 0
+        WAIT_TIME = 45 * 60
+        start_time = time.time()
         while not self.hit_is_complete:
-            if sync_attempts < 8:
-                # Scaling on how frequently to poll, doubles time waited on
-                # every failure
-                wait_periods *= 2
-                sync_attempts += 1
-            else:
+            if time.time() - start_time > WAIT_TIME:
                 # Okay we've waited for 45 mins and the HIT still isn't up
                 self.disconnected = True
             # Check if the Turker already returned/disconnected
             if self.hit_is_returned or self.disconnected:
                 self.m_free_workers([self])
                 return False
-            shared_utils.print_and_log(
-                logging.DEBUG,
-                'Waiting for ({})_({}) to complete {}...'.format(
-                    self.worker_id, self.assignment_id, self.conversation_id
-                ),
-            )
-            self.wait_completion_timeout(wait_periods)
+            # FIXME if hit_is_complete was a threading.Event() this
+            # function would be cleaner and not have sleeps
+            time.sleep(shared_utils.thread_medium_sleep)
 
         shared_utils.print_and_log(
             logging.INFO,

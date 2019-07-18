@@ -274,7 +274,7 @@ class LocalAgentState {
 // ======================= <Socket> =======================
 
 // Socket function types
-// WISH move to constants
+// FIXME move to constants
 const AGENT_MESSAGE = 'agent message'  // Message from an agent
 const WORLD_MESSAGE = 'world message'  // Message from world to agent
 const HEARTBEAT = 'heartbeat'   // Heartbeat from agent, carries current state
@@ -319,7 +319,7 @@ var connection_id_to_agent_state = {};
 var NOTIF_ID = 'MTURK_NOTIFICATIONS';
 
 // Handles sending a message through the socket
-// WISH create a version that handles wrapping into a packet?
+// FIXME create a version that handles wrapping into a packet?
 function _send_message(connection_id, event_name, event_data) {
   // Find the connection's socket
   var socket = connection_id_to_socket[connection_id];
@@ -510,7 +510,7 @@ wss.on('connection', function(socket) {
   // handles routing a packet to the desired recipient
   socket.on('message', function(data) {
     try {
-      // WISH It's somewhat annoying that these constants come up and
+      // FIXME It's somewhat annoying that these constants come up and
       // redefined all over the place, would be useful to have a singular
       // source for the API
       data = JSON.parse(data);

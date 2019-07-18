@@ -142,7 +142,7 @@ class WorkerManager:
                 'Manager received: {}'.format(pkt),
                 should_print=self.opt['verbose'],
             )
-            # WISH worker_manager shouldn't need to know packet types
+            # FIXME worker_manager shouldn't need to know packet types
             if pkt.type == data_model.SUBMIT_MESSAGE:
                 # Mark the agent as submitted with this packet
                 agent.set_completed_act(pkt.data)
