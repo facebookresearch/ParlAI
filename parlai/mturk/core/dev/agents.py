@@ -503,7 +503,6 @@ class MTurkAgent(Agent):
     # TODO cleanup timeout now that it's not used.
     def wait_for_hit_completion(self, timeout=None):
         """Waits for a hit to be marked as complete"""
-        sync_attempts = 0
         WAIT_TIME = 45 * 60
         start_time = time.time()
         while not self.hit_is_complete:
@@ -516,7 +515,7 @@ class MTurkAgent(Agent):
                 return False
             # FIXME if hit_is_complete was a threading.Event() this
             # function would be cleaner and not have sleeps
-            time.sleep(shared_utils.thread_medium_sleep)
+            time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 
         shared_utils.print_and_log(
             logging.INFO,
