@@ -1604,7 +1604,7 @@ class MTurkManager:
         assignments_info = client.list_assignments_for_hit(HITId=hit_id)
         return assignments_info.get('Assignments', [])
 
-    # WISH move this into mturk_utils
+    # FIXME move this into mturk_utils
     def check_hit_status(self, hit_id):
         """Checks the status of a HIT, removes it from outstanding if it is
         no longer acceptable or pending.
