@@ -332,7 +332,7 @@ workflows:
     jobs:
       - unittests_36
       - unittests_37
-      - gpu_unittests
+      - unittests_gpu
       - mturk_tests
       - nightly_gpu_tests
       - test_website
