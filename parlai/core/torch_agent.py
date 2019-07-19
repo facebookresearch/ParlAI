@@ -463,7 +463,7 @@ class TorchAgent(ABC, Agent):
             default=None,
             hidden=True,
             help='Epsilon value for Adam optimizers. Set to 1e-6 if your '
-            'large model has stability issues, but prefer the default.'
+            'large model has stability issues, but prefer the default.',
         )
         optim_group.add_argument(
             '-mom',
