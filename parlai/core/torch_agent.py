@@ -27,6 +27,7 @@ import os
 from torch import optim
 
 from parlai.core.agents import Agent
+from parlai.core.thread_utils import SharedTable
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (
@@ -652,10 +653,19 @@ class TorchAgent(ABC, Agent):
                 if len(self.dict) % 8 != 0:
                     for i in range(8 - len(self.dict) % 8):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
+
+            self.metrics = {}
+            # gradient norms
+            self.metrics['gnorm'] = 0.0
+            # gradient clipping rate
+            self.metrics['clip'] = 0.0
+            # number of calls to optimizer.step()
+            self.metrics['updates'] = 0
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
             self.dict = shared['dict']
+            self.metrics = shared['metrics']
             if self.opt['batchsize'] == 1:
                 # if we're not using batching (e.g. mturk), then replies really need
                 # to stay separated
@@ -954,6 +964,11 @@ class TorchAgent(ABC, Agent):
             current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
             metrics['lr'] = round_sigfigs(current_lr, 4)
         metrics['num_updates'] = self._number_training_updates
+
+        steps = self.metrics['updates']
+        if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
+            metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
+            metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
         return metrics
 
     def _is_lr_warming_up(self):
@@ -1114,6 +1129,13 @@ class TorchAgent(ABC, Agent):
         Subclasses will likely want to share their model as well.
         """
         shared = super().share()
+
+        if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
+            # move metrics and model to shared memory
+            self.metrics = SharedTable(self.metrics)
+            self.model.share_memory()
+        shared['metrics'] = self.metrics
+
         shared['dict'] = self.dict
         if hasattr(self, 'model'):
             shared['model'] = self.model
@@ -1614,6 +1636,13 @@ class TorchAgent(ABC, Agent):
         self.replies.clear()
         self.reset_metrics()
 
+    def reset_metrics(self):
+        """Reset all TorchAgentMetrics."""
+        super().reset_metrics()
+        self.metrics['gnorm'] = 0.0
+        self.metrics['clip'] = 0.0
+        self.metrics['updates'] = 0
+
     def act(self):
         """Call batch_act with the singleton batch."""
         return self.batch_act([self.observation])[0]
@@ -1727,12 +1756,15 @@ class TorchAgent(ABC, Agent):
 
         if self.opt.get('gradient_clip', -1) > 0:
             if self.fp16:
-                self.optimizer.clip_master_grads(self.opt['gradient_clip'])
+                grad_norm = self.optimizer.clip_master_grads(self.opt['gradient_clip'])
             else:
-                torch.nn.utils.clip_grad_norm_(
+                grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
+            self.metrics['gnorm'] += grad_norm
+            self.metrics['clip'] += float(grad_norm > self.opt['gradient_clip'])
 
+        self.metrics['updates'] += 1
         self.optimizer.step()
 
     def zero_grad(self):
