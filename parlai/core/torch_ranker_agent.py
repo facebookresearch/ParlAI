@@ -393,7 +393,7 @@ class TorchRankerAgent(TorchAgent):
 
         if (
             self.opt.get('repeat_blocking_heuristic', True)
-            and self.opt.get('eval_candidates') == 'fixed'
+            and self.eval_candidates == 'fixed'
         ):
             cand_preds = self.block_repeats(cand_preds)
 
@@ -844,7 +844,7 @@ class TorchRankerAgent(TorchAgent):
         cand_encs = []
         vec_batches = [vecs[i : i + 256] for i in range(0, len(vecs), 256)]
         print(
-            "[ Vectorizing fixed candidates set from ({} batch(es) of up to 256) ]"
+            "[ Encoding fixed candidates set from ({} batch(es) of up to 256) ]"
             "".format(len(vec_batches))
         )
         with torch.no_grad():

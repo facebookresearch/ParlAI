@@ -12,6 +12,7 @@ import time
 from botocore.exceptions import ClientError
 
 from parlai.mturk.core.dev.agents import MTurkAgent, AssignState
+import parlai.mturk.core.dev.data_model as data_model
 import parlai.mturk.core.dev.mturk_utils as mturk_utils
 import parlai.mturk.core.dev.shared_utils as shared_utils
 
@@ -141,8 +142,13 @@ class WorkerManager:
                 'Manager received: {}'.format(pkt),
                 should_print=self.opt['verbose'],
             )
-            # Push the message to the agent
-            agent.put_data(pkt.id, pkt.data)
+            # FIXME worker_manager shouldn't need to know packet types
+            if pkt.type == data_model.SUBMIT_MESSAGE:
+                # Mark the agent as submitted with this packet
+                agent.set_completed_act(pkt.data)
+            else:
+                # Push the message to the agent
+                agent.put_data(pkt.id, pkt.data)
 
     def map_over_agents(self, map_function, filter_func=None):
         """Take an action over all the agents we have access to, filters if
@@ -285,36 +291,6 @@ class WorkerManager:
             if agent.hit_is_complete:
                 hit_ids.append(hit_id)
         return hit_ids
-
-    # TODO update this once using submitted state via POST
-    def get_agent_work_status(self, assignment_id):
-        """Get the current status of an assignment's work"""
-        client = mturk_utils.get_mturk_client(self.is_sandbox)
-        try:
-            response = client.get_assignment(AssignmentId=assignment_id)
-            status = response['Assignment']['AssignmentStatus']
-            worker_id = self.assignment_to_worker_id[assignment_id]
-            agent = self._get_agent(worker_id, assignment_id)
-            if agent is not None and status == MTurkAgent.ASSIGNMENT_DONE:
-                agent.hit_is_complete = True
-            return status
-        except ClientError as e:
-            # If the assignment isn't done, asking for the assignment will fail
-            not_done_message = (
-                'This operation can be called with a status '
-                'of: Reviewable,Approved,Rejected'
-            )
-            if not_done_message in e.response['Error']['Message']:
-                return MTurkAgent.ASSIGNMENT_NOT_DONE
-            else:
-                shared_utils.print_and_log(
-                    logging.WARN,
-                    'Unanticipated error in `get_agent_work_status`: '
-                    + e.response['Error']['Message'],
-                    should_print=True,
-                )
-                # Assume not done if status check seems to be faulty.
-                return MTurkAgent.ASSIGNMENT_NOT_DONE
 
     def _log_missing_agent(self, worker_id, assignment_id):
         """Logs when an agent was expected to exist, yet for some reason it

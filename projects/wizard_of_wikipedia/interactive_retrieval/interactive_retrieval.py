@@ -11,7 +11,7 @@
 NOTE: this model only works for eval, it assumes all training is already done.
 """
 
-from parlai.core.agents import Agent, create_agent
+from parlai.core.agents import Agent, create_agent, create_agent_from_shared
 from projects.wizard_of_wikipedia.wizard_transformer_ranker.wizard_transformer_ranker import (
     WizardTransformerRankerAgent,
 )
@@ -35,16 +35,16 @@ class InteractiveRetrievalAgent(Agent):
         )
 
         if not shared:
+            # Create responder
+            self._set_up_responder(opt)
             # Create retriever
             self._set_up_retriever(opt)
         else:
             self.opt = shared['opt']
             self.retriever = shared['retriever']
+            self.responder = create_agent_from_shared(shared['responder_shared_opt'])
             self.sent_tok = shared['sent_tok']
             self.wiki_map = shared['wiki_map']
-
-        # Create responder
-        self._set_up_responder(opt)
 
         self.id = 'WizardRetrievalInteractiveAgent'
         self.ret_history = {}
@@ -54,8 +54,16 @@ class InteractiveRetrievalAgent(Agent):
         """Add command-line arguments specifically for this agent."""
         WizardTransformerRankerAgent.add_cmdline_args(argparser)
         parser = argparser.add_argument_group('WizardRetrievalInteractive Arguments')
-        parser.add_argument('--retriever-model-file', type=str, default=None)
-        parser.add_argument('--responder-model-file', type=str, default=None)
+        parser.add_argument(
+            '--retriever-model-file',
+            type=str,
+            default='models:wikipedia_full/tfidf_retriever/model',
+        )
+        parser.add_argument(
+            '--responder-model-file',
+            type=str,
+            default='models:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
+        )
         parser.add_argument(
             '--get-unique',
             type='bool',
@@ -280,6 +288,7 @@ class InteractiveRetrievalAgent(Agent):
         shared = super().share()
         shared['opt'] = self.opt
         shared['retriever'] = self.retriever
+        shared['responder_shared_opt'] = self.responder.share()
         shared['sent_tok'] = self.sent_tok
         shared['wiki_map'] = self.wiki_map
 
