@@ -36,10 +36,13 @@ class TestEvalModel(unittest.TestCase):
             # check totals
             self.assertEqual(score['exs'], i, "Total is incorrect")
             # accuracy should be one
-            self.assertEqual('accuracy' in score, True, "Accuracy is missing from default")
+            self.assertEqual(
+                'accuracy' in score, True, "Accuracy is missing from default"
+            )
             self.assertEqual(score['accuracy'], 1, "Accuracy != 1")
-            self.assertEqual('rouge-1' in score, False, "Rouge is in the default metrics")
-
+            self.assertEqual(
+                'rouge-1' in score, False, "Rouge is in the default metrics"
+            )
 
     def test_metrics_all(self):
         """Test output of running eval_model"""
@@ -50,7 +53,7 @@ class TestEvalModel(unittest.TestCase):
             datatype='valid',
             num_examples=5,
             display_examples=False,
-            metrics='all'
+            metrics='all',
         )
 
         opt = parser.parse_args(print_args=False)
@@ -72,7 +75,6 @@ class TestEvalModel(unittest.TestCase):
             self.assertEqual(score['rouge-2'], 1, 'rouge-2 != 1')
             self.assertEqual(score['rouge-L'], 1, 'rouge-L != 1')
 
-
     def test_metrics_select(self):
         """Test output of running eval_model"""
         parser = setup_args()
@@ -82,7 +84,7 @@ class TestEvalModel(unittest.TestCase):
             datatype='valid',
             num_examples=5,
             display_examples=False,
-            metrics='accuracy, rouge'
+            metrics='accuracy, rouge',
         )
 
         opt = parser.parse_args(print_args=False)
@@ -97,13 +99,16 @@ class TestEvalModel(unittest.TestCase):
             # check totals
             self.assertEqual(score['exs'], i, "Total is incorrect")
             # accuracy should be one
-            self.assertEqual('accuracy' in score, True, "Accuracy is missing from selection")
+            self.assertEqual(
+                'accuracy' in score, True, "Accuracy is missing from selection"
+            )
             self.assertEqual(score['accuracy'], 1, "Accuracy != 1")
-            self.assertEqual('rouge-1' in score, True, "Rouge is missing from selection")
+            self.assertEqual(
+                'rouge-1' in score, True, "Rouge is missing from selection"
+            )
             self.assertEqual(score['rouge-1'], 1, 'rouge1 != 1')
             self.assertEqual(score['rouge-2'], 1, 'rouge-2 != 1')
             self.assertEqual(score['rouge-L'], 1, 'rouge-L != 1')
-
 
     def test_multitasking_metrics(self):
         stdout, valid, test = testing_utils.eval_model(
