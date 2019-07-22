@@ -10,10 +10,6 @@ Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 between processes.
 """
 
-DEFAULT_METRICS = set(['correct', 'bleu', 'accuracy', 'f1'])
-ROUGE__METRICS = set(['rouge-1', 'rouge-2', 'rouge-L'])
-ALL__METRICS = set(DEFAULT_METRICS | ROUGE__METRICS)
-
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, no_lock
 from collections import Counter
@@ -21,6 +17,11 @@ from parlai.core.utils import warn_once
 from numbers import Number
 
 import re
+
+DEFAULT_METRICS = set(['correct', 'bleu', 'accuracy', 'f1'])
+ROUGE__METRICS = set(['rouge-1', 'rouge-2', 'rouge-L'])
+ALL__METRICS = set(DEFAULT_METRICS | ROUGE__METRICS)
+
 
 try:
     from nltk.translate import bleu_score as nltkbleu
