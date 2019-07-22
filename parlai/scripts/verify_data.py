@@ -36,7 +36,7 @@ def report(world, counts, log_time):
         'missing_text': counts['missing_text'],
         'missing_labels': counts['missing_labels'],
         'missing_label_candidates': counts['missing_label_candidates'],
-        'empty_label_candidates': counts['empty_label_candidates'],
+        'empty_string_label_candidates': counts['empty_string_label_candidates'],
         'label_candidates_with_missing_label': counts[
             'label_candidates_with_missing_label'
         ],
@@ -69,7 +69,7 @@ def verify(opt, printargs=None, print_parser=None):
     counts['missing_text'] = 0
     counts['missing_labels'] = 0
     counts['missing_label_candidates'] = 0
-    counts['empty_label_candidates'] = 0
+    counts['empty_string_label_candidates'] = 0
     counts['label_candidates_with_missing_label'] = 0
 
     # Show some example dialogs.
@@ -95,7 +95,7 @@ def verify(opt, printargs=None, print_parser=None):
                 for c in act['label_candidates']:
                     if c == '':
                         warn("warning: empty string label_candidate:\n", act, opt)
-                        counts['empty_label_candidates'] += 1
+                        counts['empty_string_label_candidates'] += 1
                     if c in is_label_cand:
                         if is_label_cand[c] is True:
                             warn(

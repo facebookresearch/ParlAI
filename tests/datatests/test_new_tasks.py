@@ -12,7 +12,7 @@ import parlai.core.teachers as teach_module
 from parlai.scripts.verify_data import verify, setup_args
 import parlai.core.testing_utils as testing_utils
 
-KEYS = ['missing_text', 'missing_labels', 'empty_label_candidates']
+KEYS = ['missing_text', 'missing_labels', 'empty_string_label_candidates']
 BASE_TEACHERS = dir(teach_module) + ['PytorchDataTeacher', 'MultiTaskTeacher']
 
 

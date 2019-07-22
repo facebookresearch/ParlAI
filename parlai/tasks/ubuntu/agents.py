@@ -122,6 +122,7 @@ class UbuntuTeacherWithNegs(UbuntuTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.datatype = opt['datatype']
+        self.num_seen = -1
         if 'train' in self.datatype:
             if shared is None:
                 if self.stream:
@@ -160,13 +161,15 @@ class UbuntuTeacherWithNegs(UbuntuTeacher):
 
     def next_example(self):
         sample, episode_done = super().next_example()
+        self.num_seen += 1
         if 'train' in self.datatype:
-            self.add_candidates(sample, self.episode_idx)
+            self.add_candidates(sample, self.num_seen)
         return sample, episode_done
 
     def share(self):
         shared = super().share()
-        shared['all_candidates'] = self.all_candidates
+        if 'train' in self.datatype:
+            shared['all_candidates'] = self.all_candidates
         return shared
 
 
