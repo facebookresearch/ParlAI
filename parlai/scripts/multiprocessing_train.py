@@ -33,7 +33,9 @@ import parlai.scripts.train_model as single_train
 import parlai.core.distributed_utils as distributed_utils
 
 
-def multiprocess_train(rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'):
+def multiprocess_train(
+    rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'
+):
     """
     Subprocess which initializes distributed training, and begins training.
 
