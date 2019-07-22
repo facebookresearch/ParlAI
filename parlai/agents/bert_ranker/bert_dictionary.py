@@ -10,8 +10,8 @@ try:
     from pytorch_pretrained_bert import BertTokenizer
 except ImportError:
     raise ImportError(
-        "BERT rankers needs pytorch-pretrained-BERT installed. \n "
-        "pip install pytorch-pretrained-bert"
+        'BERT rankers needs pytorch-pretrained-BERT installed. \n '
+        'pip install pytorch-pretrained-bert'
     )
 
 from .helpers import VOCAB_PATH
@@ -25,39 +25,21 @@ class BertDictionaryAgent(DictionaryAgent):
 
     def __init__(self, opt):
         super().__init__(opt)
-
         # initialize from vocab path
-        if "bert_model" in opt:
-            download(opt["datapath"], bert_model=opt["bert_model"])
-            vocab_path = os.path.join(
-                opt["datapath"],
-                "models",
-                "bert_models",
-                "{}-vocab.txt".format(opt["bert_model"]),
-            )
-        else:
-            download(opt["datapath"])
-            vocab_path = os.path.join(
-                opt["datapath"], "models", "bert_models", VOCAB_PATH
-            )
+        download(opt['datapath'])
+        vocab_path = os.path.join(opt['datapath'], 'models', 'bert_models', VOCAB_PATH)
+        self.tokenizer = BertTokenizer.from_pretrained(vocab_path)
 
-        if "do_lower_case" in opt:
-            self.tokenizer = BertTokenizer.from_pretrained(
-                vocab_path, do_lower_case=opt["do_lower_case"]
-            )
-        else:
-            self.tokenizer = BertTokenizer.from_pretrained(vocab_path)
-
-        self.start_token = "[CLS]"
-        self.end_token = "[SEP]"
-        self.null_token = "[PAD]"
-        self.start_idx = self.tokenizer.convert_tokens_to_ids(["[CLS]"])[
+        self.start_token = '[CLS]'
+        self.end_token = '[SEP]'
+        self.null_token = '[PAD]'
+        self.start_idx = self.tokenizer.convert_tokens_to_ids(['[CLS]'])[
             0
         ]  # should be 101
-        self.end_idx = self.tokenizer.convert_tokens_to_ids(["[SEP]"])[
+        self.end_idx = self.tokenizer.convert_tokens_to_ids(['[SEP]'])[
             0
         ]  # should be 102
-        self.pad_idx = self.tokenizer.convert_tokens_to_ids(["[PAD]"])[0]  # should be 0
+        self.pad_idx = self.tokenizer.convert_tokens_to_ids(['[PAD]'])[0]  # should be 0
         # set tok2ind for special tokens
         self.tok2ind[self.start_token] = self.start_idx
         self.tok2ind[self.end_token] = self.end_idx
@@ -72,10 +54,14 @@ class BertDictionaryAgent(DictionaryAgent):
         tokens_id = self.tokenizer.convert_tokens_to_ids(tokens)
         return tokens_id
 
-    def vec2txt(self, tensor):
-        idxs = [idx.item() for idx in tensor.cpu()]
+    def vec2txt(self, vec):
+        if not isinstance(vec, list):
+            # assume tensor
+            idxs = [idx.item() for idx in vec.cpu()]
+        else:
+            idxs = vec
         toks = self.tokenizer.convert_ids_to_tokens(idxs)
-        return " ".join(toks)
+        return ' '.join(toks)
 
     def act(self):
         return {}
