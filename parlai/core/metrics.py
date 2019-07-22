@@ -10,8 +10,9 @@ Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 between processes.
 """
 
-DEFAULT_METRICS = ['correct', 'bleu', 'accuracy', 'f1']
-ALL__METRICS = set(DEFAULT_METRICS + ['rouge-1', 'rouge-2', 'rouge-L'])
+DEFAULT_METRICS = set(['correct', 'bleu', 'accuracy', 'f1'])
+ROUGE__METRICS = set(['rouge-1', 'rouge-2', 'rouge-L'])
+ALL__METRICS = set(DEFAULT_METRICS | ROUGE__METRICS)
 
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, no_lock
@@ -183,8 +184,8 @@ def _rouge(guess, answers):
 
     scores_rouge1 = [score['rouge-1']['r'] for score in scores]
     scores_rouge2 = [score['rouge-2']['r'] for score in scores]
-    scores_rougel = [score['rouge-l']['r'] for score in scores]
-    return max(scores_rouge1), max(scores_rouge2), max(scores_rougel)
+    scores_rougeL = [score['rouge-l']['r'] for score in scores]
+    return max(scores_rouge1), max(scores_rouge2), max(scores_rougeL)
 
 
 def aggregate_metrics(reporters):
@@ -192,15 +193,20 @@ def aggregate_metrics(reporters):
     # reporters is a list of teachers or worlds
     m = {}
     m['tasks'] = {}
-    sums = {'accuracy': 0, 'f1': 0, 'loss': 0, 'ppl': 0}
-    if nltkbleu is not None:
-        sums['bleu'] = 0
-    if rouge is not None:
-        sums['rouge-1'] = 0.0
-        sums['rouge-2'] = 0.0
-        sums['rouge-L'] = 0.0
+    sums = {}
     num_tasks = 0
     total = 0
+    for i in range(len(reporters)):
+        task_id = reporters[i].getID()
+        task_report = reporters[i].report()
+        for each_metric, value in task_report.items():
+            if isinstance(value, float):
+                sums[each_metric] = 0.0
+                m[each_metric] = 0.0
+            elif isinstance(value, Number):
+                sums[each_metric] = 0
+                m[each_metric] = 0
+
     for i in range(len(reporters)):
         task_id = reporters[i].getID()
         task_report = reporters[i].report()
@@ -232,8 +238,6 @@ class Metrics(object):
         self.metrics['cnt'] = 0
         self.metrics_list = set()
         optional_metrics_list = []
-        self.compute_rouge_n = 0
-        self.compute_rouge_l = False
         metrics_arg = opt.get('metrics', 'default')
         if metrics_arg == 'default':
             optional_metrics_list = DEFAULT_METRICS
@@ -244,14 +248,7 @@ class Metrics(object):
             optional_metrics_list.add('correct')
         for each_m in optional_metrics_list:
             if each_m.startswith('rouge') and rouge is not None:
-                self.metrics_list.add(each_m)
-                if each_m == 'rouge-L':
-                    self.compute_rouge_l = True
-                elif each_m.split('-')[-1].isdigit():
-                    if int(each_m.split('-')[-1]) > self.compute_rouge_n:
-                        self.compute_rouge_n = int(each_m.split('-')[-1])
-                        for each_rouge_idx in range(1, self.compute_rouge_n):
-                            self.metrics_list.add('rouge-{}'.format(each_rouge_idx))
+                self.metrics_list = self.metrics_list | ROUGE__METRICS
             elif each_m == 'bleu' and nltkbleu is None:
                 # only compute bleu if we can
                 pass
@@ -332,10 +329,8 @@ class Metrics(object):
                 f1 = _f1_score(prediction, labels)
             if 'bleu' in self.metrics_list:
                 bleu = _bleu(prediction, labels)
-            if self.compute_rouge_l or self.compute_rouge_n > 0:
-                rougen, rougel = _rouge(
-                    prediction, labels, self.compute_rouge_n, self.compute_rouge_l
-                )
+            if 'rouge-L' in self.metrics_list:
+                rouge1, rouge2, rougeL = _rouge(prediction, labels)
 
             with self._lock():
                 if 'f1' in self.metrics:
@@ -344,13 +339,13 @@ class Metrics(object):
                 if 'bleu' in self.metrics:
                     self.metrics['bleu'] += bleu
                     self.metrics['bleu_cnt'] += 1
-                if self.compute_rouge_l:
-                    self.metrics['rouge-L'] += rougel
+                if 'rouge-L' in self.metrics:
+                    self.metrics['rouge-1'] += rouge1
+                    self.metrics['rouge-1_cnt'] += 1
+                    self.metrics['rouge-2'] += rouge2
+                    self.metrics['rouge-2_cnt'] += 1
+                    self.metrics['rouge-L'] += rougeL
                     self.metrics['rouge-L_cnt'] += 1
-                if self.compute_rouge_n:
-                    for idx in range(1, self.compute_rouge_n):
-                        self.metrics['rouge-{}'.format(idx)] += rougen[idx - 1]
-                        self.metrics['rouge-{}_cnt'.format(idx)] += 1
 
         # Ranking metrics.
         self._update_ranking_metrics(observation, labels)

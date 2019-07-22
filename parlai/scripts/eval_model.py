@@ -50,8 +50,8 @@ def setup_args(parser=None):
         default='default',
         help='list of metrics to show/compute, e.g. all, default,'
         'or give a list split by , like '
-        'ppl, f1, accuracy, hits@1, rouge-l, rouge-1, rouge-2, bleu'
-        'the rouge metrics will be computed up to the max n you give',
+        'ppl, f1, accuracy, hits@1, rouge, bleu'
+        'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
     )
     TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')
