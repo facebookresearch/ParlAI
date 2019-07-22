@@ -449,7 +449,7 @@ class TorchAgent(ABC, Agent):
             ' should be valid.',
         )
         optim_group.add_argument(
-            '-lr', '--learningrate', type=float, default=1, help='learning rate'
+            '-lr', '--learningrate', type=float, default=1, help='Learning rate'
         )
         optim_group.add_argument(
             '-clip',
@@ -457,6 +457,14 @@ class TorchAgent(ABC, Agent):
             type=float,
             default=0.1,
             help='gradient clipping using l2 norm',
+        )
+        optim_group.add_argument(
+            '--adam-eps',
+            type=float,
+            default=1e-8,
+            hidden=True,
+            help='Epsilon value for Adam optimizers. Set to 1e-6 if your '
+            'large model has stability issues, but prefer the default.',
         )
         optim_group.add_argument(
             '-mom',
@@ -810,6 +818,9 @@ class TorchAgent(ABC, Agent):
         if opt['optimizer'] in ['adam', 'sparseadam', 'fused_adam', 'adamax', 'qhadam']:
             # set betas for optims that use it
             kwargs['betas'] = opt.get('betas', (0.9, 0.999))
+            # set adam optimizer, but only if user specified it
+            if opt.get('adam_eps'):
+                kwargs['eps'] = opt['adam_eps']
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
