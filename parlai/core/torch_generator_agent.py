@@ -30,7 +30,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.distributed_utils import is_distributed, check_synced_parameters
-from parlai.core.thread_utils import SharedTable
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.core.utils import padded_tensor, round_sigfigs, warn_once, neginf
 
@@ -355,18 +354,15 @@ class TorchGeneratorAgent(TorchAgent):
             # set up shared properties
             self.model = shared['model']
             self.criterion = shared['criterion']
-            self.metrics = shared['metrics']
             states = shared.get('states', {})
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
             # should correctly initialize to floats or ints here
-            self.metrics = {
-                'nll_loss': 0.0,
-                'loss': 0.0,
-                'num_tokens': 0,
-                'correct_tokens': 0,
-                'total_skipped_batches': 0,
-            }
+            self.metrics['nll_loss'] = 0.0
+            self.metrics['loss'] = 0.0
+            self.metrics['correct_tokens'] = 0
+            self.metrics['total_skipped_batches'] = 0
+
             # this is not a shared instance of this class, so do full init
             if self.beam_dot_log:
                 self.beam_dot_dir = tempfile.mkdtemp(
@@ -512,15 +508,9 @@ class TorchGeneratorAgent(TorchAgent):
         shared = super().share()
         shared['criterion'] = self.criterion
         if self.opt.get('numthreads', 1) > 1:
-            # we're doing hogwild so share the model too
-            if isinstance(self.metrics, dict):
-                # move metrics and model to shared memory
-                self.metrics = SharedTable(self.metrics)
-                self.model.share_memory()
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer']
             }
-        shared['metrics'] = self.metrics  # do after numthreads check
         if self.beam_dot_log is True:
             shared['beam_dot_dir'] = self.beam_dot_dir
         return shared
