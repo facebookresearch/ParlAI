@@ -31,11 +31,17 @@ TOKEN_KNOWLEDGE = '__knowledge__'
 
 
 def _first_val(dictionary):
-    return list(dictionary.values())[0]
+    vals = list(dictionary.values())
+    if len(vals) > 0:
+        return vals[0]
+    return ''
 
 
 def _first_key(dictionary):
-    return list(dictionary.keys())[0]
+    keys = list(dictionary.keys())
+    if len(keys) > 0:
+        return keys[0]
+    return ''
 
 
 def _get_chosen_title_and_sent(wizard_entry, k_dict):

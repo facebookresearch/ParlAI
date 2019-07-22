@@ -56,6 +56,9 @@ def solved_task(str_output, valid, test):
     )
 
 
+# this test actually runs fine on gpu, but it mixes poorly with test_distributed
+# due to distributed changing the spawn method.
+@testing_utils.skipIfGPU
 class TestPytorchDataTeacher(unittest.TestCase):
     """Various tests for PytorchDataTeacher"""
 

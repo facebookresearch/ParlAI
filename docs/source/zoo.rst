@@ -6,11 +6,15 @@
 Model Zoo
 =========
 
-This is a list of pretrained ParlAI models. Some are meant to be used as components in
-larger systems, while others may be used by themselves.
+This is a list of pretrained ParlAI models. They are listed by task, or else in a pretraining
+section (at the end) when meant to be used as initialization for fine-tuning on a task.
 
-Pretrained Embeddings
----------------------
+
+.. include:: zoo_list.inc
+
+
+Pretrained Word Embeddings
+--------------------------
 
 Some models support using Pretrained Embeddings, via `torchtext
 <https://github.com/pytorch/text>`_. As of writing, this includes:
@@ -32,7 +36,7 @@ BERT
 ----
 
 BERT is in the model zoo and is automatically used for initialization of
-bert bi-ranker and cross-rankers.
+bert bi-, poly- and cross-encoder rankers.
 
 Example invocation:
 
@@ -41,4 +45,4 @@ Example invocation:
   python -m parlai.scripts.train_model -t convai2 -m bert_ranker/bi_encoder_ranker
 
 
-.. include:: zoo_list.inc
+

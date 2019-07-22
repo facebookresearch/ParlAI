@@ -22,10 +22,10 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Chit-chat
 
-- **Dialogue Natural Language Inference** [[website]](https://wellecks.github.io/dialogue_nli/).
+- **Dialogue Natural Language Inference** [[external website]](https://wellecks.github.io/dialogue_nli/).
   _Task and method for improving dialogue consistency._
 
-- **ConvAI2 Competition** [[website]](http://convai.io/).
+- **ConvAI2 Competition** [[external website]](http://convai.io/).
 _Competition on dialogue chitchat based on the PersonaChat task._
 
 - **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat).
@@ -33,7 +33,7 @@ _Task & models for chitchat with a given persona._
 
 ## Knowledge Grounded
 
-- **Wizard of Wikipedia** [[website]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://openreview.net/forum?id=r1l73iRqKm).
+- **Wizard of Wikipedia** [[project]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://openreview.net/forum?id=r1l73iRqKm).
   _Knowledge-grounded open domain chitchat task & models._
 
 ## Visually Grounded
@@ -41,12 +41,12 @@ _Task & models for chitchat with a given persona._
 - **Image Chat** [[paper]](https://klshuster.github.io/image_chat/) [[task]](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/image_chat).
   _Task for personality-based engaging dialogue on images._
 
-- **Personality-Captions** [[website]](http://parl.ai/projects/personality_captions/) [[paper]](https://arxiv.org/abs/1810.10665).
+- **Personality-Captions** [[project]](http://parl.ai/projects/personality_captions/) [[paper]](https://arxiv.org/abs/1810.10665).
   _Task for personality-based engaging comments on images._
 
 ## Environment Grounded
 
-- **LIGHT** [[website]](http://parl.ai/projects/light/)
+- **LIGHT** [[project]](http://parl.ai/projects/light/)
 _A large-scale text adventure game research platform for agents that speak and act._
 
 - **Mastering the Dungeon** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/mastering_the_dungeon).
