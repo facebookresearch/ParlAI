@@ -10,6 +10,9 @@ Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 between processes.
 """
 
+DEFAULT_METRICS = ['correct', 'bleu', 'accuracy', 'f1']
+ALL__METRICS = set(DEFAULT_METRICS + ['rouge-1', 'rouge-2', 'rouge-L'])
+
 from parlai.core.thread_utils import SharedTable
 from parlai.core.utils import round_sigfigs, no_lock
 from collections import Counter
@@ -227,15 +230,33 @@ class Metrics(object):
     def __init__(self, opt):
         self.metrics = {}
         self.metrics['cnt'] = 0
-        self.metrics_list = ['mean_rank', 'loss', 'correct', 'f1', 'ppl']
-        if nltkbleu is not None:
-            # only compute bleu if we can
-            self.metrics_list.append('bleu')
-        if rouge is not None:
-            # only compute rouge if we can
-            self.metrics_list.append('rouge-1')
-            self.metrics_list.append('rouge-2')
-            self.metrics_list.append('rouge-L')
+        self.metrics_list = set()
+        optional_metrics_list = []
+        self.compute_rouge_n = 0
+        self.compute_rouge_l = False
+        metrics_arg = opt.get('metrics', 'default')
+        if metrics_arg == 'default':
+            optional_metrics_list = DEFAULT_METRICS
+        elif metrics_arg == 'all':
+            optional_metrics_list = ALL__METRICS
+        else:
+            optional_metrics_list = set(metrics_arg.split(','))
+            optional_metrics_list.add('correct')
+        for each_m in optional_metrics_list:
+            if each_m.startswith('rouge') and rouge is not None:
+                self.metrics_list.add(each_m)
+                if each_m == 'rouge-L':
+                    self.compute_rouge_l = True
+                elif each_m.split('-')[-1].isdigit():
+                    if int(each_m.split('-')[-1]) > self.compute_rouge_n:
+                        self.compute_rouge_n = int(each_m.split('-')[-1])
+                        for each_rouge_idx in range(1, self.compute_rouge_n):
+                            self.metrics_list.add('rouge-{}'.format(each_rouge_idx))
+            elif each_m == 'bleu' and nltkbleu is None:
+                # only compute bleu if we can
+                pass
+            else:
+                self.metrics_list.add(each_m)
         for k in self.metrics_list:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0
@@ -307,23 +328,29 @@ class Metrics(object):
                 self.metrics['correct_cnt'] += 1
 
             # F1 and BLEU metrics.
-            f1 = _f1_score(prediction, labels)
-            bleu = _bleu(prediction, labels)
-            rouge1, rouge2, rougel = _rouge(prediction, labels)
+            if 'f1' in self.metrics_list:
+                f1 = _f1_score(prediction, labels)
+            if 'bleu' in self.metrics_list:
+                bleu = _bleu(prediction, labels)
+            if self.compute_rouge_l or self.compute_rouge_n > 0:
+                rougen, rougel = _rouge(
+                    prediction, labels, self.compute_rouge_n, self.compute_rouge_l
+                )
 
             with self._lock():
-                self.metrics['f1'] += f1
-                self.metrics['f1_cnt'] += 1
-                if bleu is not None:
+                if 'f1' in self.metrics:
+                    self.metrics['f1'] += f1
+                    self.metrics['f1_cnt'] += 1
+                if 'bleu' in self.metrics:
                     self.metrics['bleu'] += bleu
                     self.metrics['bleu_cnt'] += 1
-                if rouge1 is not None:
-                    self.metrics['rouge-1'] += rouge1
-                    self.metrics['rouge-2'] += rouge2
+                if self.compute_rouge_l:
                     self.metrics['rouge-L'] += rougel
-                    self.metrics['rouge-1_cnt'] += 1
-                    self.metrics['rouge-2_cnt'] += 1
                     self.metrics['rouge-L_cnt'] += 1
+                if self.compute_rouge_n:
+                    for idx in range(1, self.compute_rouge_n):
+                        self.metrics['rouge-{}'.format(idx)] += rougen[idx - 1]
+                        self.metrics['rouge-{}_cnt'.format(idx)] += 1
 
         # Ranking metrics.
         self._update_ranking_metrics(observation, labels)
@@ -331,15 +358,7 @@ class Metrics(object):
         # User-reported metrics
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
-                if k not in [
-                    'correct',
-                    'f1',
-                    'hits@k',
-                    'bleu',
-                    'rouge-1',
-                    'rouge-2',
-                    'rouge-L',
-                ]:
+                if k not in ALL__METRICS:
                     if k in self.metrics_list:
                         with self._lock():
                             self.metrics[k] += v
@@ -352,7 +371,7 @@ class Metrics(object):
                             # no need to lock because not SharedTable
                             if k not in self.metrics:
                                 self.metrics[k] = v
-                                self.metrics_list.append(k)
+                                self.metrics_list.add(k)
                                 self.metrics[k + '_cnt'] = 1.0
                             else:
                                 self.metrics[k] += v
@@ -371,12 +390,14 @@ class Metrics(object):
         m['exs'] = total
         if total > 0:
             if self.flags['print_prediction_metrics']:
-                m['accuracy'] = round_sigfigs(
-                    self.metrics['correct'] / max(1, self.metrics['correct_cnt']), 4
-                )
-                m['f1'] = round_sigfigs(
-                    self.metrics['f1'] / max(1, self.metrics['f1_cnt']), 4
-                )
+                if 'accuracy' in self.metrics_list:
+                    m['accuracy'] = round_sigfigs(
+                        self.metrics['correct'] / max(1, self.metrics['correct_cnt']), 4
+                    )
+                if 'f1' in self.metrics_list:
+                    m['f1'] = round_sigfigs(
+                        self.metrics['f1'] / max(1, self.metrics['f1_cnt']), 4
+                    )
             if self.flags['has_text_cands']:
                 for k in self.eval_pr:
                     m['hits@' + str(k)] = round_sigfigs(
