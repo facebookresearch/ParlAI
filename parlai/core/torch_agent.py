@@ -460,7 +460,7 @@ class TorchAgent(ABC, Agent):
         optim_group.add_argument(
             '--adam-eps',
             type=float,
-            default=None,
+            default=1e-8,
             hidden=True,
             help='Epsilon value for Adam optimizers. Set to 1e-6 if your '
             'large model has stability issues, but prefer the default.',
