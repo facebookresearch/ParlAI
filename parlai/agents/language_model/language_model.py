@@ -6,6 +6,7 @@
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.core.message import Message
 from parlai.core.utils import PaddingUtils, round_sigfigs
 from parlai.core.thread_utils import SharedTable
 from .modules import RNNModel
@@ -373,7 +374,8 @@ class LanguageModelAgent(Agent):
         If multiple observations are from the same episode, concatenate them.
         """
         # shallow copy observation (deep copy can be expensive)
-        obs = observation.copy()
+        obs = Message(observation.copy())  # TODO: all teachers should return
+        # messages, so this should be eventually unecessary
         seq_len = self.opt['seq_len']
         is_training = True
         if 'labels' not in obs:
@@ -382,7 +384,7 @@ class LanguageModelAgent(Agent):
         if is_training:
             if 'text' in obs:
                 if self.use_person_tokens:
-                    obs['text'] = 'PERSON1 ' + obs['text']
+                    obs.force_set('text', 'PERSON1 ' + obs['text'])
                 vec = self.parse(obs['text'])
                 vec.append(self.END_IDX)
                 self.next_observe += vec
@@ -391,7 +393,7 @@ class LanguageModelAgent(Agent):
                     labels = [
                         'PERSON2 ' + label for label in obs['labels'] if label != ''
                     ]
-                    obs['labels'] = tuple(labels)
+                    obs.force_set('labels', tuple(labels))
                 vec = self.parse(obs['labels'][0])
                 vec.append(self.END_IDX)
                 self.next_observe += vec
@@ -409,12 +411,12 @@ class LanguageModelAgent(Agent):
                     self.next_observe = self.next_observe[(seq_len + 1) :]
                     vecs_to_return.append(observe)
                 dict_to_return = {'text': '', 'labels': '', 'text2vec': vecs_to_return}
-                self.observation = dict_to_return
+                self.observation = Message(dict_to_return)
                 return dict_to_return
         else:
             if 'text' in obs:
                 if self.use_person_tokens:
-                    obs['text'] = 'PERSON1 ' + obs['text']
+                    obs.force_set('text', 'PERSON1 ' + obs['text'])
             if 'eval_labels' in obs:
                 if self.use_person_tokens:
                     eval_labels = [
@@ -422,7 +424,7 @@ class LanguageModelAgent(Agent):
                         for label in obs['eval_labels']
                         if label != ''
                     ]
-                    obs['eval_labels'] = tuple(eval_labels)
+                    obs.force_set('eval_labels', tuple(eval_labels))
             self.observation = obs
             return obs
 
