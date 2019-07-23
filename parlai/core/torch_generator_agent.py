@@ -373,10 +373,7 @@ class TorchGeneratorAgent(TorchAgent):
                 print('[ Saving dot beam logs in {} ]'.format(self.beam_dot_dir))
 
             self.build_criterion()
-            with torch.random.fork_rng(range(torch.cuda.device_count())):
-                # TODO: turn this into an option
-                torch.manual_seed(42)
-                self.build_model()
+            self.build_model()
             check_synced_parameters(self.model)
             print("Total parameters: {}".format(self._total_parameters()))
             print("Trainable parameters:  {}".format(self._trainable_parameters()))

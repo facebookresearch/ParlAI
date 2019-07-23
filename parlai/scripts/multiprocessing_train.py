@@ -33,7 +33,9 @@ import parlai.scripts.train_model as single_train
 import parlai.core.distributed_utils as distributed_utils
 
 
-def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
+def multiprocess_train(
+    rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'
+):
     """
     Subprocess which initializes distributed training, and begins training.
 
@@ -50,9 +52,9 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
     """
     # Set per-host options
     opt = copy.deepcopy(opt)
-    # rank is adjusted to start at -1 to correct for spawn()'s behavior. see comment
-    # in launch_and_train.
-    rank = rank + 1
+    # we need to manually adjust the rank differently in multiprocessing
+    # and distributed train
+    rank = rank + rank_offset
     opt['rank'] = rank
     if gpu is None:
         # default assumption is local GPUs
@@ -81,6 +83,9 @@ def multiprocess_train(rank, opt, port=61337, gpu=None, hostname='localhost'):
         )
         print("Distributed group initialized")
 
+        # make sure all parameters will be in sync
+        torch.manual_seed(42)
+
         # Run the actual training
         return single_train.TrainLoop(opt).train()
 
@@ -90,16 +95,15 @@ def launch_and_train(opt, port):
     # Launch multiple subprocesses
     spawncontext = torch.multiprocessing.spawn(
         multiprocess_train,
-        (opt, port),
+        # need to give rank offset as 1 to cover the fact that the main
+        # process is rank 0, but that spawn() doesn't let you control rank
+        (opt, port, 1),
         nprocs=opt['distributed_world_size'] - 1,  # main proc will also run loop
         join=False,
     )
 
     try:
-        # spawn always initiates the processes with rank starting at 0. However,
-        # we want this main process to be rank 0, so that we can capture the retval
-        # and return it upwards. We correct for the rank offset here and above.
-        retval = multiprocess_train(-1, opt, port)
+        retval = multiprocess_train(0, opt, port)
         spawncontext.join()
         return retval
     except KeyboardInterrupt:
