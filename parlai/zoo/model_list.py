@@ -265,7 +265,10 @@ model_list = [
             "projects.controllable_dialogue.tasks.agents "
             "-mf zoo:controllable_dialogue/convai2_finetuned_baseline"
         ),
-        "result": ("FIXME"),  # FIXME: fill this in
+        "result": (
+            "{'exs': 7801, 'accuracy': 0.0006409, 'f1': 0.1702, 'bleu': 0.005205, "
+            "'token_acc': 0.3949, 'loss': 3.129, 'ppl': 22.86}"
+        ),
         "description": ("Seq2Seq model with control trained on ConvAI2"),
     },
     {
