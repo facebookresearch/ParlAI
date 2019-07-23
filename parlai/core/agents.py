@@ -166,7 +166,6 @@ class Agent(object):
         return opt_from_disk
 
 
-
 class Teacher(Agent):
     """
     Basic Teacher agent that keeps track of how many times it's received messages.
