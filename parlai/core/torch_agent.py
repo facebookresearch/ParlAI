@@ -1155,8 +1155,7 @@ class TorchAgent(ABC, Agent):
         return shared
 
     def _add_start_end_tokens(self, vec, add_start=False, add_end=False):
-        """ Can handle both a 1D tensor and a list
-        """
+        """Add start and end tokens to a list or tensor."""
         if isinstance(vec, torch.Tensor):
             if len(vec.shape) != 1:
                 raise Exception('_add_start_end_tokens expects a 1D tensor')
