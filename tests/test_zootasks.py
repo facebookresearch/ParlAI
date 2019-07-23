@@ -7,24 +7,50 @@
 import os
 import unittest
 import parlai.core.testing_utils as testing_utils
+from parlai.zoo.model_list import model_list
+from parlai.tasks.task_list import task_list
 
+ZOO_EXCEPTIONS = {"fasttext_cc_vectors", "fasttext_vectors", "glove_vectors", "bert"}
 
 class TestZooAndTasks(unittest.TestCase):
     """Make sure the package is alive."""
 
-    def test_zoolist_types(self):
-        from parlai.zoo.model_list import model_list
+    def _assertZooString(self, member, container, animal_name=None):
+        msg = 'Missing or empty {} in parlai.zoo.model_list'.format(member)
+        if animal_name:
+            msg += '[{}]'.format(animal_name)
+        self.assertIn(member, container, msg=msg)
+        self.assertTrue(container[member], msg=msg)
 
+
+    def test_zoolist_fields(self):
+        """Ensure zoo entries conform to style standards."""
+
+        for animal in model_list:
+            self._assertZooString('title', animal)
+            name = animal['title']
+            # every task must at least contain these
+            for key in ['id', 'task', 'description', 'example', 'result']:
+                self._assertZooString(key, animal, name)
+
+            # if there's a second example there should be a second result
+            if 'example2' in animal:
+                self._assertZooString('result2', animal, name)
+
+            # every entry needs a project page or a website
+            self.assertTrue(
+                ("project" in animal) or ("external_website" in animal),
+                f"Zoo entry ({name}) should contain either project or external_website"
+            )
+
+
+    def test_zoolist_types(self):
         self._check_types(model_list, 'Zoo')
 
     def test_tasklist_types(self):
-        from parlai.tasks.task_list import task_list
-
         self._check_types(task_list, 'Task')
 
     def test_tasklist(self):
-        from parlai.tasks.task_list import task_list
-
         self._check_directory(
             "task_list",
             task_list,
@@ -34,14 +60,12 @@ class TestZooAndTasks(unittest.TestCase):
         )
 
     def test_zoolist(self):
-        from parlai.zoo.model_list import model_list
-
         self._check_directory(
             "model_list",
             model_list,
             "parlai/zoo",
             "id",
-            ignore=["fasttext_cc_vectors", "fasttext_vectors", "glove_vectors", "bert"],
+            ignore=ZOO_EXCEPTIONS,
         )
 
     def _check_directory(self, listname, thing_list, thing_dir, thing_key, ignore=None):
