@@ -12,7 +12,7 @@ for task_dict in task_list:
     display_name = task_dict.get('display_name', None)
     task_detailed = task_dict.get('task', None)
     if ':' in task_detailed:
-        task = task_detailed[0:task_detailed.find(':')]
+        task = task_detailed[0 : task_detailed.find(':')]
     else:
         task = task_detailed
     tags = task_dict.get('tags', None)

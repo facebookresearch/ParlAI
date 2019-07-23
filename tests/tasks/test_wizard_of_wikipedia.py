@@ -26,29 +26,34 @@ class TestWoW(unittest.TestCase):
     def test_output(self):
         dts = ['train', 'valid', 'test']
         main_task = 'wizard_of_wikipedia'
-        variants = ['WizardOfWikipediaTeacher',
-                    'WizardDialogKnowledgeTeacher',
-                    'BasicdialogTeacher',
-                    'DocreaderTeacher',
-                    'GeneratorTeacher']
+        variants = [
+            'WizardOfWikipediaTeacher',
+            'WizardDialogKnowledgeTeacher',
+            'BasicdialogTeacher',
+            'DocreaderTeacher',
+            'GeneratorTeacher',
+        ]
         variant_args = {
             'WizardOfWikipediaTeacher': {},
             'WizardDialogKnowledgeTeacher': {
                 'label_type': ['response', 'chosen_sent'],
                 'include_knowledge': [False, True],
-                'include_checked_sentence': [False, True]
+                'include_checked_sentence': [False, True],
             },
-            'BasicdialogTeacher': {
-                'wizard_dialog': [False, True]
-            },
+            'BasicdialogTeacher': {'wizard_dialog': [False, True]},
             'DocreaderTeacher': {
-                'teacher_type': ['docs', 'docs_sentence', 'more_docs',
-                                 'more_docs_sentence', 'span']
+                'teacher_type': [
+                    'docs',
+                    'docs_sentence',
+                    'more_docs',
+                    'more_docs_sentence',
+                    'span',
+                ]
             },
             'GeneratorTeacher': {
                 'only_checked_knowledge': [False, True],
-                'ignorant_dropout': [0, 0.5, 1]
-            }
+                'ignorant_dropout': [0, 0.5, 1],
+            },
         }
         splits = ['random_split', 'topic_split']
 
@@ -56,21 +61,15 @@ class TestWoW(unittest.TestCase):
             for task_var in variants:
                 for split in splits:
                     task_name = '{}:{}:{}'.format(main_task, task_var, split)
-                    opt_defaults = {
-                        'task': task_name,
-                        'datatype': datatype
-                    }
+                    opt_defaults = {'task': task_name, 'datatype': datatype}
                     task_args = variant_args[task_var]
                     if len(task_args) == 0:
-                        print('Testing {} with args {}'.format(task_name,
-                                                               opt_defaults))
+                        print('Testing {} with args {}'.format(task_name, opt_defaults))
                         self.run_display_test(opt_defaults)
                     else:
                         for combo in product_dict(task_args):
                             args = {**opt_defaults, **combo}
-                            print('Testing {} with args {}'.format(
-                                task_name,
-                                args))
+                            print('Testing {} with args {}'.format(task_name, args))
                             self.run_display_test(args)
 
     def run_display_test(self, kwargs):
@@ -87,8 +86,9 @@ class TestWoW(unittest.TestCase):
         self.assertTrue(
             '[ loaded {} episodes with a total of {} examples ]'.format(
                 world.num_episodes(), world.num_examples()
-            ) in str_output,
-            'Wizard of Wikipedia failed with following args: {}'.format(opt)
+            )
+            in str_output,
+            'Wizard of Wikipedia failed with following args: {}'.format(opt),
         )
 
 

@@ -20,6 +20,7 @@ from parlai.scripts.build_dict import setup_args, build_dict as main_build_dict
 
 DICT_FILE = 'models:convai2/dict_self'
 
+
 def build_dict():
     parser = setup_args()
     # first build on standard train and validation

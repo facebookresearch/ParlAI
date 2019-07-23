@@ -13,6 +13,7 @@ class MessengerEchoOnboardWorld(OnboardWorld):
     """Example messenger onboarding world for Echo task, displays.
     onboarding worlds that only exist to send an introduction message.
     """
+
     @staticmethod
     def run(opt, agent, task_id):
         world = MessengerEchoOnboardWorld(opt=opt, agent=agent)
@@ -21,12 +22,14 @@ class MessengerEchoOnboardWorld(OnboardWorld):
         world.shutdown()
 
     def parley(self):
-        self.agent.observe({
-            'id': 'Onboarding',
-            'text': 'Welcome to the onboarding world for our echo bot. '
-                    'The next message you send will be echoed. Use [DONE] '
-                    'to finish the chat.'
-        })
+        self.agent.observe(
+            {
+                'id': 'Onboarding',
+                'text': 'Welcome to the onboarding world for our echo bot. '
+                'The next message you send will be echoed. Use [DONE] '
+                'to finish the chat.',
+            }
+        )
         self.episodeDone = True
 
 
@@ -42,10 +45,7 @@ class MessengerEchoTaskWorld(World):
     @staticmethod
     def run(messenger_manager, opt, agents, task_id):
         agent = agents[0]
-        world = MessengerEchoTaskWorld(
-            opt=opt,
-            agent=agent
-        )
+        world = MessengerEchoTaskWorld(opt=opt, agent=agent)
         while not world.episode_done():
             world.parley()
         world.shutdown()
@@ -75,6 +75,7 @@ class MessengerOnboardDataOnboardWorld(OnboardWorld):
     """Example messenger onboarding that collects and returns data for use
     in the real task world
     """
+
     def __init__(self, opt, agent):
         self.agent = agent
         self.episodeDone = False
@@ -92,21 +93,22 @@ class MessengerOnboardDataOnboardWorld(OnboardWorld):
 
     def parley(self):
         if self.turn == 0:
-            self.agent.observe({
-                'id': 'Onboarding',
-                'text': 'Welcome to the onboarding world the onboarding '
-                        'data demo.\nEnter your name.',
-            })
+            self.agent.observe(
+                {
+                    'id': 'Onboarding',
+                    'text': 'Welcome to the onboarding world the onboarding '
+                    'data demo.\nEnter your name.',
+                }
+            )
             a = self.agent.act()
             while a is None:
                 a = self.agent.act()
             self.user_name = a['text']
             self.turn = self.turn + 1
         elif self.turn == 1:
-            self.agent.observe({
-                'id': 'Onboarding',
-                'text': '\nEnter your favorite color.',
-            })
+            self.agent.observe(
+                {'id': 'Onboarding', 'text': '\nEnter your favorite color.'}
+            )
             a = self.agent.act()
             while a is None:
                 a = self.agent.act()
@@ -126,10 +128,7 @@ class MessengerOnboardDataTaskWorld(World):
     @staticmethod
     def run(messenger_manager, opt, agents, task_id):
         agent = agents[0]
-        world = MessengerOnboardDataTaskWorld(
-            opt=opt,
-            agent=agent
-        )
+        world = MessengerOnboardDataTaskWorld(opt=opt, agent=agent)
         while not world.episode_done():
             world.parley()
         world.shutdown()
@@ -141,11 +140,13 @@ class MessengerOnboardDataTaskWorld(World):
     def parley(self):
         name = self.agent.onboard_data['name']
         color = self.agent.onboard_data['color']
-        self.agent.observe({
-            'id': 'World',
-            'text': 'During onboarding, you said your name was {} and your '
-                    'favorite color was {}'.format(name, color)
-        })
+        self.agent.observe(
+            {
+                'id': 'World',
+                'text': 'During onboarding, you said your name was {} and your '
+                'favorite color was {}'.format(name, color),
+            }
+        )
         self.episodeDone = True
 
     def episode_done(self):
@@ -160,6 +161,7 @@ class MessengerChatOnboardWorld(OnboardWorld):
     """Example messenger onboarding world for chat task, displays intro and
     explains instructions.
     """
+
     def __init__(self, opt, agent):
         self.agent = agent
         self.episodeDone = False
@@ -175,22 +177,26 @@ class MessengerChatOnboardWorld(OnboardWorld):
 
     def parley(self):
         if self.turn == 0:
-            self.agent.observe({
-                'id': 'Onboarding',
-                'text': 'Welcome to the onboarding world free chat. '
-                        'Enter your display name.'
-            })
+            self.agent.observe(
+                {
+                    'id': 'Onboarding',
+                    'text': 'Welcome to the onboarding world free chat. '
+                    'Enter your display name.',
+                }
+            )
             a = self.agent.act()
             while a is None:
                 a = self.agent.act()
             self.user_name = a['text']
             self.turn = self.turn + 1
         elif self.turn == 1:
-            self.agent.observe({
-                'id': 'Onboarding',
-                'text': 'You will be matched with a random person. Say [DONE] '
-                        'to end the chat.',
-            })
+            self.agent.observe(
+                {
+                    'id': 'Onboarding',
+                    'text': 'You will be matched with a random person. Say [DONE] '
+                    'to end the chat.',
+                }
+            )
             self.episodeDone = True
 
 
@@ -205,10 +211,7 @@ class MessengerChatTaskWorld(World):
 
     @staticmethod
     def run(messenger_manager, opt, agents, task_id):
-        world = MessengerChatTaskWorld(
-            opt=opt,
-            agents=agents
-        )
+        world = MessengerChatTaskWorld(opt=opt, agents=agents)
         while not world.episode_done():
             world.parley()
         world.shutdown()
@@ -223,10 +226,9 @@ class MessengerChatTaskWorld(World):
             a = self.agents[x].act()
             if a is not None:
                 if '[DONE]' in a['text']:
-                    self.agents[x - 1].observe({
-                        'id': 'World',
-                        'text': 'The other agent has ended the chat.'
-                    })
+                    self.agents[x - 1].observe(
+                        {'id': 'World', 'text': 'The other agent has ended the chat.'}
+                    )
                     self.episodeDone = True
                 else:
                     self.agents[x - 1].observe(a)
@@ -242,10 +244,13 @@ class MessengerChatTaskWorld(World):
 # ---------- Overworld -------- #
 class MessengerOverworld(World):
     """World to handle moving agents to their proper places"""
+
     DEMOS = {
         'echo': (MessengerEchoOnboardWorld, MessengerEchoTaskWorld),
-        'onboard data': (MessengerOnboardDataOnboardWorld,
-                         MessengerOnboardDataTaskWorld),
+        'onboard data': (
+            MessengerOnboardDataOnboardWorld,
+            MessengerOnboardDataTaskWorld,
+        ),
         'chat': (MessengerChatOnboardWorld, MessengerChatTaskWorld),
     }
 
@@ -259,26 +264,29 @@ class MessengerOverworld(World):
 
     def parley(self):
         if self.first_time:
-            self.agent.observe({
-                'id': 'Overworld',
-                'text': 'Welcome to the overworld for the ParlAI messenger '
-                        'demo. Choose one of the demos from the listed quick '
-                        'replies. ',
-                'quick_replies': self.DEMOS.keys(),
-            })
+            self.agent.observe(
+                {
+                    'id': 'Overworld',
+                    'text': 'Welcome to the overworld for the ParlAI messenger '
+                    'demo. Choose one of the demos from the listed quick '
+                    'replies. ',
+                    'quick_replies': self.DEMOS.keys(),
+                }
+            )
             self.first_time = False
         a = self.agent.act()
         if a is not None:
             if a['text'] in self.DEMOS:
-                self.agent.observe({
-                    'id': 'Overworld',
-                    'text': 'Transferring to ' + a['text'],
-                })
+                self.agent.observe(
+                    {'id': 'Overworld', 'text': 'Transferring to ' + a['text']}
+                )
                 return a['text']
             else:
-                self.agent.observe({
-                    'id': 'Overworld',
-                    'text': 'Invalid option. Choose one of the demos from the '
-                            'listed quick replies. ',
-                    'quick_replies': self.DEMOS.keys(),
-                })
+                self.agent.observe(
+                    {
+                        'id': 'Overworld',
+                        'text': 'Invalid option. Choose one of the demos from the '
+                        'listed quick replies. ',
+                        'quick_replies': self.DEMOS.keys(),
+                    }
+                )

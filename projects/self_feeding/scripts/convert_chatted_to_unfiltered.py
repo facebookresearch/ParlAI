@@ -24,22 +24,42 @@ def setup_args():
     parser = ArgumentParser()
     parser.add_argument('-if', '--infile', type=str)
     parser.add_argument('-of', '--outfile', type=str)
-    parser.add_argument('-mode', '--mode', type=str, choices=['bot', 'human'],
-                        help="Whether to use as target responses what the bot said, "
-                        "human said, or both")
-    parser.add_argument('-fm', '--filter-mistake', type=int, default=0,
-                        help="If true, toss bot examples where the bot made a mistake")
-    parser.add_argument('-fa', '--filter-accusation', type=int, default=0,
-                        help="If true, toss human examples where the human is "
-                        "expressing dissatisfaction")
-    parser.add_argument('-histsz', '--history-size', type=int, default=-1,
-                        help="The number of turns to include in the prompt.")
+    parser.add_argument(
+        '-mode',
+        '--mode',
+        type=str,
+        choices=['bot', 'human'],
+        help="Whether to use as target responses what the bot said, "
+        "human said, or both",
+    )
+    parser.add_argument(
+        '-fm',
+        '--filter-mistake',
+        type=int,
+        default=0,
+        help="If true, toss bot examples where the bot made a mistake",
+    )
+    parser.add_argument(
+        '-fa',
+        '--filter-accusation',
+        type=int,
+        default=0,
+        help="If true, toss human examples where the human is "
+        "expressing dissatisfaction",
+    )
+    parser.add_argument(
+        '-histsz',
+        '--history-size',
+        type=int,
+        default=-1,
+        help="The number of turns to include in the prompt.",
+    )
     opt = vars(parser.parse_args())
 
     if opt['filter_accusation']:
-        assert(not opt['outfile'].endswith('unfiltered'))
+        assert not opt['outfile'].endswith('unfiltered')
     else:
-        assert(opt['outfile'].endswith('unfiltered'))
+        assert opt['outfile'].endswith('unfiltered')
 
     if opt['mode'] == 'all':
         raise Exception("Double check the logic for extracting bot comments first...")
@@ -65,29 +85,35 @@ def main(opt):
         for parley in episode:
             num_parleys += 1
             # Update history (not including stock control flow responses)
-            if (parley.context.startswith(INITIAL_PROMPT) or
-                    parley.context.startswith(NEWTOPIC)):
+            if parley.context.startswith(INITIAL_PROMPT) or parley.context.startswith(
+                NEWTOPIC
+            ):
                 # a prompt, first utterance
                 # Begin history
                 history = [parley.response]
                 # NOTE: we now allow these one-utterance episodes to be examples
                 # continue
-            elif (parley.context.startswith(EXP_REQUEST) or
-                  parley.context.startswith(RAT_REQUEST)):
+            elif parley.context.startswith(EXP_REQUEST) or parley.context.startswith(
+                RAT_REQUEST
+            ):
                 # If 'filter_accusation' is on and the last example added was a human,
                 # toss the previous example, which is when the human expressed
                 # dissatisfaction
-                if (opt['mode'] == 'human' and
-                    opt['filter_accusation'] and
-                    parley.context.startswith(EXP_REQUEST) and
-                        len(examples) > 0):
+                if (
+                    opt['mode'] == 'human'
+                    and opt['filter_accusation']
+                    and parley.context.startswith(EXP_REQUEST)
+                    and len(examples) > 0
+                ):
                     examples.pop()
                 # If 'filter_mistake' is on and the last example in the queue was a bot,
                 # toss it too, since that's when the bot messed up
-                if (opt['mode'] == 'bot' and
-                    opt['filter_mistake'] and
-                    parley.context.startswith(EXP_REQUEST) and
-                        len(examples) > 0):
+                if (
+                    opt['mode'] == 'bot'
+                    and opt['filter_mistake']
+                    and parley.context.startswith(EXP_REQUEST)
+                    and len(examples) > 0
+                ):
                     examples.pop()
 
                 # Asked for y_exp or rating, got it
@@ -97,7 +123,7 @@ def main(opt):
             elif CONTINUE in parley.context:
                 # if response was negative, history will get blasted in EXP_REQUEST
                 # if we're here, response was neutral/positive, so continue the history
-                history.append(parley.context[parley.context.rindex(':') + 1:])
+                history.append(parley.context[parley.context.rindex(':') + 1 :])
                 history.append(parley.response)
             else:
                 # normal turn: maintain the history
@@ -106,10 +132,7 @@ def main(opt):
 
             if opt['mode'] in ['bot'] and len(history) >= 2:
                 if len(history) == 2:
-                    example = Parley(
-                        context='__null__',
-                        response=history[0],
-                    )
+                    example = Parley(context='__null__', response=history[0])
                 else:
                     example = Parley(
                         context=add_person_tokens(history[:-2], last_speaker=1),
@@ -119,10 +142,7 @@ def main(opt):
 
             if opt['mode'] in ['human']:
                 if len(history) == 1:
-                    example = Parley(
-                        context='__null__',
-                        response=history[0],
-                    )
+                    example = Parley(context='__null__', response=history[0])
                 else:
                     example = Parley(
                         # this is not technically true:
@@ -138,9 +158,11 @@ def main(opt):
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 
-    print(f"Extracted {len(examples)} examples out of {num_episodes} episodes "
-          f"({num_parleys} parleys) and wrote them to {opt['outfile']} with "
-          f"histsz == {opt['history_size']}.")
+    print(
+        f"Extracted {len(examples)} examples out of {num_episodes} episodes "
+        f"({num_parleys} parleys) and wrote them to {opt['outfile']} with "
+        f"histsz == {opt['history_size']}."
+    )
 
 
 if __name__ == '__main__':

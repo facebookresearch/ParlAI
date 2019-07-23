@@ -39,11 +39,14 @@ def bucket_data(opt):
     for _ in range(num_examples):
         world.parley()
         world.acts[0]['labels'] = world.acts[0].get(
-            'labels', world.acts[0].pop('eval_labels', None))
+            'labels', world.acts[0].pop('eval_labels', None)
+        )
 
         if ctrl not in world.acts[0].keys():
-            raise Exception('Error: control %s isn\'t in the data. available keys: %s'
-                            % (ctrl, ', '.join(world.acts[0].keys())))
+            raise Exception(
+                'Error: control %s isn\'t in the data. available keys: %s'
+                % (ctrl, ', '.join(world.acts[0].keys()))
+            )
         ctrl_val = world.acts[0][ctrl]
         if ctrl_val == "None":
             assert ctrl == 'lastuttsim'
@@ -74,16 +77,20 @@ def bucket_data(opt):
     if ctrl == 'lastuttsim':
         num_nones = len([v for v in ctrl_vals if v is None])
         ctrl_vals = [v for v in ctrl_vals if v is not None]
-        print("Have %i Nones for lastuttsim; these have been removed "
-              "for bucket calculation" % num_nones)
+        print(
+            "Have %i Nones for lastuttsim; these have been removed "
+            "for bucket calculation" % num_nones
+        )
 
-    print('Collected %i control vals between %.6f and %.6f'
-          % (len(ctrl_vals), min(ctrl_vals), max(ctrl_vals)))
+    print(
+        'Collected %i control vals between %.6f and %.6f'
+        % (len(ctrl_vals), min(ctrl_vals), max(ctrl_vals))
+    )
 
     # Calculate bucket lower bounds
     print('Calculating lowerbounds for %i buckets...' % num_buckets)
     ctrl_vals = sorted(ctrl_vals)
-    lb_indices = [int(len(ctrl_vals)*i/num_buckets) for i in range(num_buckets)]
+    lb_indices = [int(len(ctrl_vals) * i / num_buckets) for i in range(num_buckets)]
     lbs = [ctrl_vals[idx] for idx in lb_indices]
     print('\nBucket lowerbounds for control %s: ' % ctrl)
     print(lbs)
@@ -101,14 +108,27 @@ def main():
     random.seed(42)
     # Get command line arguments
     parser = ParlaiParser()
-    parser.add_argument('-n', '--num-examples', default=-1, type=int,
-                        help='Total number of exs to convert, -1 to convert \
-                                all examples')
+    parser.add_argument(
+        '-n',
+        '--num-examples',
+        default=-1,
+        type=int,
+        help='Total number of exs to convert, -1 to convert \
+                                all examples',
+    )
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.add_argument('--control', type=str, default='',
-                        help='the control for which we want to calculate the buckets')
-    parser.add_argument('--num-buckets', type=int, default=10,
-                        help='the number of buckets we want to calculate')
+    parser.add_argument(
+        '--control',
+        type=str,
+        default='',
+        help='the control for which we want to calculate the buckets',
+    )
+    parser.add_argument(
+        '--num-buckets',
+        type=int,
+        default=10,
+        help='the number of buckets we want to calculate',
+    )
 
     parser.set_defaults(task="projects.controllable_dialogue.tasks.agents")
     parser.set_defaults(datatype="train:stream")

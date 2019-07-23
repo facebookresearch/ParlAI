@@ -40,14 +40,15 @@ def _path(opt):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_path = os.path.join(opt['datapath'], 'VQA-v2',
-                             ques_suffix + '_questions.json')
+    data_path = os.path.join(opt['datapath'], 'VQA-v2', ques_suffix + '_questions.json')
 
-    annotation_path = os.path.join(opt['datapath'], 'VQA-v2',
-                                   annotation_suffix + '_annotations.json')
+    annotation_path = os.path.join(
+        opt['datapath'], 'VQA-v2', annotation_suffix + '_annotations.json'
+    )
 
-    image_path = os.path.join(opt['datapath'],
-                              'COCO-IMG-{}'.format(img_version), img_suffix)
+    image_path = os.path.join(
+        opt['datapath'], 'COCO-IMG-{}'.format(img_version), img_suffix
+    )
 
     return data_path, annotation_path, image_path
 
@@ -60,6 +61,7 @@ class OeTeacher(FixedDialogTeacher):
     """VQA v2.0 Open-Ended teacher, which loads the json VQA data and
     implements the ``get`` method to return additional metadata.
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.image_mode = opt.get('image_mode', 'none')
@@ -98,11 +100,7 @@ class OeTeacher(FixedDialogTeacher):
         qa = self.ques['questions'][episode_idx]
         question = qa['question']
 
-        action = {
-            'text': question,
-            'image_id': qa['image_id'],
-            'episode_done': True
-        }
+        action = {'text': question, 'image_id': qa['image_id'], 'episode_done': True}
 
         if not self.datatype.startswith('test'):
             # test set annotations are not available for this dataset

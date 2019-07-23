@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from worlds import \
-    PersonaChatWorld, PersonaProfileWorld, PersonasGenerator
+from worlds import PersonaChatWorld, PersonaProfileWorld, PersonasGenerator
 from task_config import task_config
 
 import os
@@ -19,28 +18,48 @@ def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('-min_t', '--min_turns', default=5, type=int,
-                           help='minimum number of turns')
-    argparser.add_argument('-mt', '--max_turns', default=10, type=int,
-                           help='maximal number of chat turns')
-    argparser.add_argument('-mx_rsp_time', '--max_resp_time', default=150,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('-mx_psn_time', '--max_persona_time', type=int,
-                           default=300, help='time limit for turker'
-                           'entering the persona')
-    argparser.add_argument('--ag_shutdown_time', default=120,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('--persona-type', default='both', type=str,
-                           choices=['both', 'self', 'other'],
-                           help='Which personas to load from personachat')
-    argparser.add_argument('--revised', default=False, type='bool',
-                           help='Whether to use revised personas')
-    argparser.add_argument('-rt', '--range_turn', default='5,7',
-                           help='sample range of number of turns')
-    argparser.add_argument('--personas-path', default=None,
-                           help='specify path for personas data')
+    argparser.add_argument(
+        '-min_t', '--min_turns', default=5, type=int, help='minimum number of turns'
+    )
+    argparser.add_argument(
+        '-mt', '--max_turns', default=10, type=int, help='maximal number of chat turns'
+    )
+    argparser.add_argument(
+        '-mx_rsp_time',
+        '--max_resp_time',
+        default=150,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '-mx_psn_time',
+        '--max_persona_time',
+        type=int,
+        default=300,
+        help='time limit for turker' 'entering the persona',
+    )
+    argparser.add_argument(
+        '--ag_shutdown_time',
+        default=120,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '--persona-type',
+        default='both',
+        type=str,
+        choices=['both', 'self', 'other'],
+        help='Which personas to load from personachat',
+    )
+    argparser.add_argument(
+        '--revised', default=False, type='bool', help='Whether to use revised personas'
+    )
+    argparser.add_argument(
+        '-rt', '--range_turn', default='5,7', help='sample range of number of turns'
+    )
+    argparser.add_argument(
+        '--personas-path', default=None, help='specify path for personas data'
+    )
     opt = argparser.parse_args()
 
     directory_path = os.path.dirname(os.path.abspath(__file__))
@@ -57,10 +76,7 @@ def main():
 
     mturk_agent_ids = ['PERSON_1', 'PERSON_2']
 
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
 
     persona_generator = PersonasGenerator(opt)
     mturk_manager.setup_server(task_directory_path=directory_path)
@@ -75,7 +91,7 @@ def main():
                 mturk_manager.block_worker(
                     w,
                     'We found that you have unexpected behaviors in our previous '
-                    'HITs. For more questions please email us.'
+                    'HITs. For more questions please email us.',
                 )
 
         def run_onboard(worker):
@@ -83,6 +99,7 @@ def main():
             world = PersonaProfileWorld(opt, worker)
             world.parley()
             world.shutdown()
+
         mturk_manager.set_onboard_function(onboard_function=run_onboard)
         mturk_manager.ready_to_accept_workers()
 
@@ -102,7 +119,7 @@ def main():
                 range_turn=[int(s) for s in opt['range_turn'].split(',')],
                 max_turn=opt['max_turns'],
                 max_resp_time=opt['max_resp_time'],
-                world_tag='conversation t_{}'.format(conv_idx)
+                world_tag='conversation t_{}'.format(conv_idx),
             )
             world.reset_random()
             while not world.episode_done():
@@ -115,7 +132,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

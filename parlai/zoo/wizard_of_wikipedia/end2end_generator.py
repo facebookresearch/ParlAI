@@ -11,9 +11,7 @@ from parlai.core.build_data import download_models
 
 
 def download(datapath):
-    opt = {
-        'datapath': datapath,
-    }
+    opt = {'datapath': datapath}
     fnames = ['end2end_generator_0.tar.gz']
     download_models(
         opt, fnames, 'wizard_of_wikipedia', version='v0.5', use_model_type=False

@@ -14,9 +14,12 @@ in non-distributed mode.
 
 import builtins
 import pickle
+import contextlib
+
 try:
     import torch.version
     import torch.distributed as dist
+
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
@@ -35,14 +38,10 @@ def validate_params(opt):
         )
 
     if opt.get('no_cuda', False):
-        raise ValueError(
-            'Distributed mode only makes sense when using GPUs.'
-        )
+        raise ValueError('Distributed mode only makes sense when using GPUs.')
 
     if opt.get('numthreads', 1) != 1:
-        raise ValueError(
-            '--numthreads must be 1 for distributed training.'
-        )
+        raise ValueError('--numthreads must be 1 for distributed training.')
 
     if 'train:stream' in opt['datatype'] or 'ordered' in opt['datatype']:
         raise ValueError(
@@ -75,12 +74,16 @@ def is_primary_worker():
     return not is_distributed() or dist.get_rank() == 0
 
 
+@contextlib.contextmanager
 def override_print(suppress=False, prefix=None):
     """
-    Override the builtin print to mute or annotate the output with a given prefix.
+    Context manager to override the print to suppress or modify output.
 
     Recommended usage is to call this with suppress=True for all non-primary workers,
-    or call with with a prefix of rank on all workers.
+    or call with a prefix of rank on all workers.
+
+    >>> with override_print(prefix="rank{}".format(rank)):
+    ...     my_computation()
 
     :param bool suppress:
         if true, all future print statements are noops.
@@ -99,7 +102,11 @@ def override_print(suppress=False, prefix=None):
             # default to normal print
             return builtin_print(*args, **kwargs)
 
+    # override the print for now
     builtins.print = new_print
+    yield
+    # bring it back at the end of the context
+    builtins.print = builtin_print
 
 
 def all_gather_list(data, max_size=16384):
@@ -128,8 +135,8 @@ def all_gather_list(data, max_size=16384):
 
     buffer_size = max_size * world_size
     if (
-        not hasattr(all_gather_list, '_buffer') or
-        all_gather_list._buffer.numel() < buffer_size
+        not hasattr(all_gather_list, '_buffer')
+        or all_gather_list._buffer.numel() < buffer_size
     ):
         all_gather_list._buffer = torch.cuda.ByteTensor(buffer_size)
 
@@ -142,20 +149,20 @@ def all_gather_list(data, max_size=16384):
         raise ValueError('encoded data exceeds max_size: {}'.format(enc_size + 2))
     assert max_size < 255 * 256
 
-    buffer_rank = buffer[rank * max_size: (rank + 1) * max_size]
+    buffer_rank = buffer[rank * max_size : (rank + 1) * max_size]
     buffer_rank[0] = enc_size // 255  # this encoding works for max_size < 65k
     buffer_rank[1] = enc_size % 255
-    buffer_rank[2: enc_size + 2] = torch.ByteTensor(list(enc))
+    buffer_rank[2 : enc_size + 2] = torch.ByteTensor(list(enc))
 
     dist.all_reduce(buffer)
 
     result = []
     for i in range(world_size):
-        out_buffer = buffer[i * max_size: (i + 1) * max_size]
+        out_buffer = buffer[i * max_size : (i + 1) * max_size]
         size = (255 * out_buffer[0].item()) + out_buffer[1].item()
         if size > 0:
             try:
-                result.append(pickle.loads(bytes(out_buffer[2:size+2].tolist())))
+                result.append(pickle.loads(bytes(out_buffer[2 : size + 2].tolist())))
             except pickle.UnpicklingError:
                 raise RuntimeError(
                     'There was an unpickling error in all_gather_list. This likely '
@@ -186,7 +193,7 @@ def sync_object(data, max_size=16384):
         return data
 
     # prepare the buffer
-    if (not hasattr(sync_object, '_buffer') or sync_object._buffer.numel() < max_size):
+    if not hasattr(sync_object, '_buffer') or sync_object._buffer.numel() < max_size:
         # cuda is safe because distributed mode is only okay with CUDA
         sync_object._buffer = torch.cuda.ByteTensor(max_size)
 
@@ -201,7 +208,7 @@ def sync_object(data, max_size=16384):
 
         buffer[0] = enc_size // 255
         buffer[1] = enc_size % 255
-        buffer[2: enc_size + 2] = torch.ByteTensor(list(enc))
+        buffer[2 : enc_size + 2] = torch.ByteTensor(list(enc))
 
     dist.broadcast(buffer, 0)
 
@@ -209,7 +216,7 @@ def sync_object(data, max_size=16384):
         # deserialize the data
         enc_size = buffer[0].item() * 255 + buffer[1].item()
         try:
-            data = pickle.loads(bytes(buffer[2: enc_size + 2].tolist()))
+            data = pickle.loads(bytes(buffer[2 : enc_size + 2].tolist()))
         except pickle.UnpicklingError:
             raise RuntimeError(
                 'There was an unpickling error in sync_object. This likely '
@@ -218,3 +225,30 @@ def sync_object(data, max_size=16384):
             )
 
     return data
+
+
+def check_synced_parameters(model):
+    """
+    Check that all parameters across all workers are the same.
+
+    Always returns True, or raises an AssertionError if they are not
+    synchronized.
+
+    :param torch.nn.Module model: A pytorch model.
+    :return: True
+    """
+    if not is_distributed():
+        # if things aren't distributed, of course things are in sync
+        return True
+
+    # compute the local norm:
+    norm2 = sum((p.data ** 2).sum().float() for p in model.parameters()).item()
+    all_versions = all_gather_list(norm2)
+    if not all(n == norm2 for n in all_versions):
+        raise AssertionError(
+            "Some models parameters were out of sync. Got the following norms: {}".format(
+                " ".join(str(x) for x in all_versions)
+            )
+        )
+
+    return True

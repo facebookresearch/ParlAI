@@ -16,6 +16,9 @@ const task_directory_name = 'static';
 
 const PORT = process.env.PORT || 3000;
 
+import { get_message_for_status } from './constants/status_messages.js'
+import * as agent_states from './constants/agent_states.js'
+
 // Initialize app
 const app = express();
 app.use(bodyParser.text());
@@ -43,23 +46,13 @@ function uuidv4() {
 
 // ===================== <Agent state> ====================
 
-const STATUS_NONE = 'none';
-const STATUS_ONBOARDING = 'onboarding';
-const STATUS_WAITING = 'waiting';
-const STATUS_IN_TASK = 'in task';
-const STATUS_DONE = 'done';
-const STATUS_DISCONNECT = 'disconnect';
-const STATUS_PARTNER_DISCONNECT = 'partner disconnect';
-const STATUS_STATIC = 'static';
-const STATUS_EXPIRED = 'expired';
-const STATUS_RETURNED = 'returned';
-const STATUS_PARLAI_DISCONNECT = 'parlai_disconnect';
 const AGENT_TIMEOUT_TIME = 20000; // 20 seconds
 
 function is_final_status(status) {
   return [
-    STATUS_DONE, STATUS_DISCONNECT, STATUS_PARTNER_DISCONNECT,
-    STATUS_EXPIRED, STATUS_RETURNED, STATUS_PARLAI_DISCONNECT,
+    agent_states.STATUS_DONE, agent_states.STATUS_DISCONNECT,
+    agent_states.STATUS_PARTNER_DISCONNECT, agent_states.STATUS_EXPIRED,
+    agent_states.STATUS_RETURNED, agent_states.STATUS_PARLAI_DISCONNECT,
   ].includes(status);
 }
 
@@ -74,7 +67,7 @@ function is_final_status(status) {
 // cleanup)
 class LocalAgentState {
   constructor(connection_id) {
-    this.status = STATUS_NONE;
+    this.status = agent_states.STATUS_NONE;
     this.agent_id = null;
     this.conversation_id = null;
     this.unsent_messages = {};
@@ -105,11 +98,16 @@ class LocalAgentState {
   }
 
   get_reconnect_packet() {
+    let done_text = this.done_text;
+    if (!done_text && is_final_status(this.status)) {
+      done_text = get_message_for_status(this.status);
+    }
+
     return {
       conversation_id: this.conversation_id,
       messages: this.get_previous_messages_for(this.conversation_id),
       agent_status: this.status,
-      done_text: this.done_text,
+      done_text: done_text,
       agent_id: this.agent_id,
     }
   }
@@ -154,7 +152,7 @@ class LocalAgentState {
         this._cleanup_state();
       }
 
-      if (new_status == STATUS_STATIC) {
+      if (new_status == agent_states.STATUS_STATIC) {
         // Status static needs special cleanup to keep state but stop tracking
         let sendable_messages = this.get_sendable_messages()
         if (sendable_messages.length > 0) {
@@ -276,6 +274,7 @@ class LocalAgentState {
 // ======================= <Socket> =======================
 
 // Socket function types
+// FIXME move to constants
 const AGENT_MESSAGE = 'agent message'  // Message from an agent
 const WORLD_MESSAGE = 'world message'  // Message from world to agent
 const HEARTBEAT = 'heartbeat'   // Heartbeat from agent, carries current state
@@ -284,7 +283,7 @@ const SERVER_PONG = 'server pong'  // pong to confirm uptime
 const MESSAGE_BATCH = 'message batch' // packet containing batch of messages
 const AGENT_DISCONNECT = 'agent disconnect'  // Notes an agent disconnecting
 const SNS_MESSAGE = 'sns message'   // packet from an SNS message
-const STATIC_MESSAGE = 'static message'  // packet from static done POST
+const SUBMIT_MESSAGE = 'submit message'  // packet from done POST
 const AGENT_STATE_CHANGE = 'agent state change'  // state change from parlai
 const AGENT_ALIVE = 'agent alive'  // packet from an agent alive event
 const UPDATE_STATE = 'update state'  // packet for updating agent client state
@@ -320,7 +319,7 @@ var connection_id_to_agent_state = {};
 var NOTIF_ID = 'MTURK_NOTIFICATIONS';
 
 // Handles sending a message through the socket
-// TODO create a version that handles wrapping into a packet?
+// FIXME create a version that handles wrapping into a packet?
 function _send_message(connection_id, event_name, event_data) {
   // Find the connection's socket
   var socket = connection_id_to_socket[connection_id];
@@ -391,8 +390,6 @@ function handle_pong(data) {
 // and then forwarding the alive to the world if it came from a client. If
 // there is already an agent state for this agent, we handle the reconnection
 // event ourselves.
-// TODO handle specific agent alive messages sent after a task is already
-// completed
 function handle_alive(socket, data) {
   var sender_id = data['sender_id'];
   var in_connection_id = _get_from_conn_id(data);
@@ -513,7 +510,9 @@ wss.on('connection', function(socket) {
   // handles routing a packet to the desired recipient
   socket.on('message', function(data) {
     try {
-      // TODO add all of these to the data model, create them in SocketManager
+      // FIXME It's somewhat annoying that these constants come up and
+      // redefined all over the place, would be useful to have a singular
+      // source for the API
       data = JSON.parse(data);
       if (data['type'] == AGENT_ALIVE) {
         handle_alive(socket, data['content']);
@@ -579,7 +578,7 @@ function main_thread() {
   for (const connection_id of active_connections) {
     let agent_state = connection_id_to_agent_state[connection_id];
     // Non-static tasks should keep tabs on the sockets
-    if (agent_state.status != STATUS_STATIC) {
+    if (agent_state.status != agent_states.STATUS_STATIC) {
       let now = Date.now();
       if (now - agent_state.last_heartbeat > AGENT_TIMEOUT_TIME) {
         let msg = {
@@ -656,15 +655,15 @@ app.post('/sns_posts', async function(req, res, next) {
   }
 });
 
-app.post('/submit_static', async function(req, res, next) {
-  res.end('Successful static POST');
+app.post('/submit_hit', async function(req, res, next) {
+  res.end('Successful submit POST');
   let content = req.body;
   var task_group_id = content['task_group_id'];
   var agent_id = content['agent_id'];
   var assignment_id = content['assignment_id'];
   var worker_id = content['worker_id'];
   var response_data = content['response_data'];
-  var message_id = assignment_id + '_' + worker_id + '_static_submit';
+  var message_id = assignment_id + '_' + worker_id + '_submit';
 
   var data = {
     text: '[DATA_SUBMIT]',
@@ -681,9 +680,19 @@ app.post('/submit_static', async function(req, res, next) {
     receiver_id: world_id,
     data: data,
   };
-  _send_message(world_id, STATIC_MESSAGE, msg);
+  _send_message(world_id, SUBMIT_MESSAGE, msg);
   /// TODO on submit clean up static tasks  (must be by assign id)
 });
+
+// Sometimes worker ids are corrupted in arriving from mturk for
+// as of yet unknown reasons. We process those here
+function fix_worker_id(worker_id) {
+  if (worker_id) {
+    // The only common issue is a worker id being comma-joined with itself.
+    return worker_id.split(',')[0]
+  }
+  return worker_id
+}
 
 // Renders the chat page by setting up the template_context given the
 // sent params for the request
@@ -698,7 +707,7 @@ app.get('/chat_index', async function(req, res) {
 
   var params = req.query;
   var template_context = {
-    worker_id: params['workerId'],
+    worker_id: fix_worker_id(params['workerId']),
     hit_id: params['hitId'],
     task_group_id: params['task_group_id'],
     assignment_id: params['assignmentId'],

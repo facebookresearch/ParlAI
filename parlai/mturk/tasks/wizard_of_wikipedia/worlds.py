@@ -8,12 +8,26 @@ from parlai.core.utils import OffensiveLanguageDetector
 from joblib import Parallel, delayed
 from task_config import task_config as config
 from extract_and_save_personas import main as main_extract
-from constants import MAX_DOC_LEN, WIZARD, APPRENTICE, ONBOARD_MSG, \
-    APPRENTICE_START_MSG, WIZARD_START_MSG, TIMEOUT_MSG, EXCEED_MIN_TURNS_MSG, \
-    UNEXPECTED_DISCONNECTION_MSG, CHAT_ENDED_MSG, STOPWORDS, EVAL_WIZARD_MSG, \
-    PARTNER_RETRIEVED_PASSAGES_INST_MSG, WAITING_MSG, PICK_TOPIC_MSG, \
-    AFTER_PICK_TOPIC_MSG, AFTER_PICK_TOPIC_WIZARD_MSG, \
-    AFTER_PARTNER_PICK_TOPIC_WIZARD_MSG
+from constants import (
+    MAX_DOC_LEN,
+    WIZARD,
+    APPRENTICE,
+    ONBOARD_MSG,
+    APPRENTICE_START_MSG,
+    WIZARD_START_MSG,
+    TIMEOUT_MSG,
+    EXCEED_MIN_TURNS_MSG,
+    UNEXPECTED_DISCONNECTION_MSG,
+    CHAT_ENDED_MSG,
+    STOPWORDS,
+    EVAL_WIZARD_MSG,
+    PARTNER_RETRIEVED_PASSAGES_INST_MSG,
+    WAITING_MSG,
+    PICK_TOPIC_MSG,
+    AFTER_PICK_TOPIC_MSG,
+    AFTER_PICK_TOPIC_WIZARD_MSG,
+    AFTER_PARTNER_PICK_TOPIC_WIZARD_MSG,
+)
 import numpy as np
 import time
 import os
@@ -27,22 +41,32 @@ def split_tokenize(text):
     """Splits tokens based on whitespace after adding whitespace around
     punctuation.
     """
-    return (text.replace('.', ' . ').replace('. . .', '...')
-            .replace(',', ' , ').replace(';', ' ; ').replace(':', ' : ')
-            .replace('!', ' ! ').replace('?', ' ? ').replace('(', ' ( ')
-            .replace(')', ' ) ').split())
+    return (
+        text.replace('.', ' . ')
+        .replace('. . .', '...')
+        .replace(',', ' , ')
+        .replace(';', ' ; ')
+        .replace(':', ' : ')
+        .replace('!', ' ! ')
+        .replace('?', ' ? ')
+        .replace('(', ' ( ')
+        .replace(')', ' ) ')
+        .split()
+    )
 
 
 class PersonasGenerator(object):
     def __init__(self, opt):
-        self.personas_idx_stack_path = os.path.join(os.getcwd(),
-                                                    './personas_idx_stack.pkl')
+        self.personas_idx_stack_path = os.path.join(
+            os.getcwd(), './personas_idx_stack.pkl'
+        )
 
         self.personas_path = '{}/data/personas-{}'.format(
-                             os.getcwd(),
-                             opt['persona_type'] + 'Original')
+            os.getcwd(), opt['persona_type'] + 'Original'
+        )
         self.topic_for_personas_path = '{}/personas_with_wiki_links.txt'.format(
-            os.getcwd())
+            os.getcwd()
+        )
         if not os.path.exists(self.personas_path):
             opt['personas_path'] = self.personas_path
             main_extract(opt)
@@ -72,8 +96,7 @@ class PersonasGenerator(object):
         if len(self.idx_stack) == 0:
             self.add_idx_stack()
         idx = self.idx_stack.pop()
-        data = np.load(os.path.join(self.personas_path,
-                                    self.personas_name_list[idx]))
+        data = np.load(os.path.join(self.personas_path, self.personas_name_list[idx]))
         return (idx, data)
 
     def push_persona(self, idx):
@@ -94,8 +117,7 @@ class PersonasGenerator(object):
                 for i in range(1, len(persona)):
                     p_i = persona[i]
                     if 'https' in p_i:
-                        topic = unquote(p_i[p_i.rfind('/') + 1:]).replace('_',
-                                                                          ' ')
+                        topic = unquote(p_i[p_i.rfind('/') + 1 :]).replace('_', ' ')
                         if prev_p in self.persona_to_topics:
                             self.persona_to_topics[prev_p].append(topic)
                         else:
@@ -110,6 +132,7 @@ class PersonasGenerator(object):
 class RoleOnboardWorld(MTurkOnboardWorld):
     """A world that provides
        the appropriate instructions during onboarding"""
+
     def __init__(self, opt, mturk_agent, role):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_onboard_time = opt['max_onboard_time']
@@ -129,14 +152,12 @@ class RoleOnboardWorld(MTurkOnboardWorld):
 
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
         # timeout
-        if act['episode_done'] or (('text' in act and
-                                    act['text'] == TIMEOUT_MESSAGE)):
+        if act['episode_done'] or (('text' in act and act['text'] == TIMEOUT_MESSAGE)):
             self.episodeDone = True
             return
 
         if 'text' not in act:
-            control_msg = {'id': 'SYSTEM',
-                           'text': WAITING_MSG}
+            control_msg = {'id': 'SYSTEM', 'text': WAITING_MSG}
             self.mturk_agent.observe(validate(control_msg))
             self.episodeDone = True
 
@@ -147,8 +168,17 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         responses on documents (i.e. sentences) retrieved based on what the
         other agent says.
     """
-    def __init__(self, opt, agents=None, shared=None, world_tag='NONE',
-                 ir_agent=None, task='', wiki_title_to_passage=None):
+
+    def __init__(
+        self,
+        opt,
+        agents=None,
+        shared=None,
+        world_tag='NONE',
+        ir_agent=None,
+        task='',
+        wiki_title_to_passage=None,
+    ):
         self.turn_idx = 0
         self.min_turns = opt['min_turns']
         self.max_turns = opt['max_turns']
@@ -161,8 +191,7 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         self.max_resp_time = opt['max_resp_time']  # in secs
         self.num_passages_to_retrieve = opt['num_passages_retrieved']
         super().__init__(opt, agents, shared)
-        self.agents = sorted(agents, key=lambda x: x.id,
-                             reverse=random.random() <= 0.5)
+        self.agents = sorted(agents, key=lambda x: x.id, reverse=random.random() <= 0.5)
         #  Personas and retriever
         self.persona_generator = self.agents[0].persona_generator
         self.relevant_topics = []
@@ -206,10 +235,12 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
     def sufficient_overlap(self, text, sent_dict):
         text_list = [w[:4] for w in split_tokenize(text.lower()) if w not in STOPWORDS]
         for _, sentence in sent_dict.items():
-            sentence_list = [w[:4] for w in split_tokenize(sentence.lower())
-                             if w not in STOPWORDS]
-            if (len(set(text_list).intersection(set(sentence_list))) >=
-                    self.opt.get('word_overlap_threshold', 2)):
+            sentence_list = [
+                w[:4] for w in split_tokenize(sentence.lower()) if w not in STOPWORDS
+            ]
+            if len(set(text_list).intersection(set(sentence_list))) >= self.opt.get(
+                'word_overlap_threshold', 2
+            ):
                 return True
         return False
 
@@ -229,8 +260,9 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         if self.turn_idx == 1:
             for idx, agent in enumerate(self.agents):
                 '''If we are giving the persona, do that :)'''
-                control_msg['text'] = self.get_instruction(tag='start',
-                                                           agent_id=agent.id)
+                control_msg['text'] = self.get_instruction(
+                    tag='start', agent_id=agent.id
+                )
                 if agent.id == WIZARD:
                     control_msg['description'] = config['wizard_onboarding']
                 else:
@@ -240,11 +272,15 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                     time.sleep(3)
 
             '''Send First Person the list of relevant topics'''
-            self.agents[0].observe(validate({
-                'id': 'SYSTEM',
-                'text': PICK_TOPIC_MSG,
-                'relevant_topics': self.relevant_topics,
-            }))
+            self.agents[0].observe(
+                validate(
+                    {
+                        'id': 'SYSTEM',
+                        'text': PICK_TOPIC_MSG,
+                        'relevant_topics': self.relevant_topics,
+                    }
+                )
+            )
 
             topic_act = self.agents[0].act(timeout=self.max_resp_time)
             timed_out = self.check_timeout(topic_act)
@@ -253,16 +289,13 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                     pick_msg = AFTER_PICK_TOPIC_MSG
                 else:
                     pick_msg = AFTER_PICK_TOPIC_WIZARD_MSG
-                self.agents[0].observe({
-                    'id': 'SYSTEM',
-                    'text': pick_msg})
+                self.agents[0].observe({'id': 'SYSTEM', 'text': pick_msg})
             self.chosen_topic = topic_act['text']
 
             '''Now, send the wiki page for the chosen topic to the wizard'''
             for idx, agent in enumerate(self.agents):
                 if agent.id == WIZARD:
-                    passage = self.wiki_title_to_passage.get(self.chosen_topic,
-                                                             '')
+                    passage = self.wiki_title_to_passage.get(self.chosen_topic, '')
                     if passage == '':
                         break
                     split = passage.split('\n')
@@ -279,17 +312,18 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                     control_msg['text'] = msg_text
                     control_msg['chosen_topic_passages'] = [[title, sentences]]
                     agent.observe(validate(control_msg))
-                    self.chosen_topic_passage = {'topic': self.chosen_topic,
-                                                 'full_passage': passage,
-                                                 'shown_passage': sentences}
+                    self.chosen_topic_passage = {
+                        'topic': self.chosen_topic,
+                        'full_passage': passage,
+                        'shown_passage': sentences,
+                    }
 
         '''If we get to the min turns, inform turker that they can end if they
            want
         '''
         if self.turn_idx == self.num_turns + 1:
             for agent in self.agents:
-                control_msg['text'] = self.get_instruction(
-                    tag='exceed_min_turns')
+                control_msg['text'] = self.get_instruction(tag='exceed_min_turns')
                 control_msg['exceed_min_turns'] = True
                 agent.observe(validate(control_msg))
 
@@ -297,9 +331,9 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         acts = self.acts
         for idx, agent in enumerate(self.agents):
             # Increase response time for wizard
-            max_response_time = self.max_resp_time * (1
-                                                      if agent.id == APPRENTICE
-                                                      else 1.5)
+            max_response_time = self.max_resp_time * (
+                1 if agent.id == APPRENTICE else 1.5
+            )
             acts[idx] = agent.act(timeout=max_response_time)
             self.check_timeout(acts[idx])
 
@@ -332,13 +366,13 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                 return
 
             '''Set up msg info dict to save in dialog'''
-            msg_info = {'speaker': '{}_{}'.format(idx, agent.id),
-                        'text': acts[idx]['text'],
-                        'turn': self.turn_idx,
-                        'time': time.time(),
-                        'offensive': self.OLD.contains_offensive_language(
-                            acts[idx]['text'])
-                        }
+            msg_info = {
+                'speaker': '{}_{}'.format(idx, agent.id),
+                'text': acts[idx]['text'],
+                'turn': self.turn_idx,
+                'time': time.time(),
+                'offensive': self.OLD.contains_offensive_language(acts[idx]['text']),
+            }
 
             '''Get clicked passages and checked sentences from Wizard'''
             if 'clicked_passages' in acts[idx]:
@@ -353,26 +387,28 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                         topic_idx = split[1]
                         sent_idx = split[2]
                         if person == 'partner':
-                            sub_passages = [p.split('\n')[0]
-                                            for p in
-                                            self.dialog[-1]['full_passages']]
+                            sub_passages = [
+                                p.split('\n')[0]
+                                for p in self.dialog[-1]['full_passages']
+                            ]
                             topic = sub_passages[int(topic_idx)]
                         elif person == 'self':
-                            sub_passages = [p.split('\n')[0]
-                                            for p in
-                                            self.dialog[-2]['full_passages']]
+                            sub_passages = [
+                                p.split('\n')[0]
+                                for p in self.dialog[-2]['full_passages']
+                            ]
                             topic = sub_passages[int(topic_idx)]
                         else:
                             topic = self.chosen_topic
-                        cs_key = '_'.join([person,
-                                           '_'.join(topic.split(' ')),
-                                           sent_idx])
+                        cs_key = '_'.join(
+                            [person, '_'.join(topic.split(' ')), sent_idx]
+                        )
                         checked_sents[cs_key] = v
                 msg_info['checked_sentence'] = checked_sents
                 msg_info['checked_passage'] = acts[idx]['checked_passages']
                 msg_info['good_message'] = self.sufficient_overlap(
-                    msg_info['text'],
-                    msg_info['checked_sentence'])
+                    msg_info['text'], msg_info['checked_sentence']
+                )
 
             '''Retrieve Passages'''
             ir_passages = self.retrieve_passages(copy.deepcopy(acts[idx]))
@@ -421,7 +457,7 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         self.ir_agent.observe(act)
         action = self.ir_agent.act()
         passages = action.get('text_candidates', [action.get('text', "")])
-        return passages[:min(len(passages), num_passages)]
+        return passages[: min(len(passages), num_passages)]
 
     def get_instruction(self, agent_id=None, tag='first'):
         if tag == 'start':
@@ -452,13 +488,16 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         # save persona_idx_stack
         convo_finished = self.turn_idx >= self.num_turns + 1
         for ag in self.agents:
-            if (ag.hit_is_abandoned or ag.hit_is_returned or
-                    ag.disconnected or ag.hit_is_expired):
+            if (
+                ag.hit_is_abandoned
+                or ag.hit_is_returned
+                or ag.disconnected
+                or ag.hit_is_expired
+            ):
                 convo_finished = False
         if not convo_finished:
             self.persona_generator.push_persona(self.persona_idx)
-            print("\n**Push persona {} back to stack. **\n".format(
-                self.persona_idx))
+            print("\n**Push persona {} back to stack. **\n".format(self.persona_idx))
         self.agents[0].persona_generator.save_idx_stack()
 
         data_path = self.opt['data_path']
@@ -472,7 +511,9 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                 '{}_{}_{}.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type))
+                    self.task_type,
+                ),
+            )
             self.good_wiz, self.wizard_worker = self.check_wizard_quality()
         else:
             filename = os.path.join(
@@ -480,36 +521,44 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
                 '{}_{}_{}_incomplete.pkl'.format(
                     time.strftime("%Y%m%d-%H%M%S"),
                     np.random.randint(0, 1000),
-                    self.task_type))
+                    self.task_type,
+                ),
+            )
             self.good_wiz = True
-        pickle.dump({
-            'persona': self.persona_to_topics,
-            'relevant_topics': self.relevant_topics,
-            'chosen_topic_passage': self.chosen_topic_passage,
-            'dialog': self.dialog,
-            'speaker_with_persona': self.agents[0].worker_id,
-            'workers': [ag.worker_id for ag in self.agents],
-            'n_turn': self.num_turns,
-            'hit_ids': [ag.hit_id for ag in self.agents],
-            'assignment_ids': [ag.assignment_id for ag in self.agents],
-            'wizard_eval': self.wizard_eval,
-            'chosen_topic': self.chosen_topic,
-            'wizard_good': convo_finished and self.good_wiz,
-            'good_wizard_worker': self.wizard_worker if self.good_wiz else '',
-            'bad_wizard_worker': self.wizard_worker if not self.good_wiz else ''
-        }, open(filename, 'wb'))
-        print('{}: Data successfully saved at {}.'.format(
-            self.world_tag,
-            filename))
+        pickle.dump(
+            {
+                'persona': self.persona_to_topics,
+                'relevant_topics': self.relevant_topics,
+                'chosen_topic_passage': self.chosen_topic_passage,
+                'dialog': self.dialog,
+                'speaker_with_persona': self.agents[0].worker_id,
+                'workers': [ag.worker_id for ag in self.agents],
+                'n_turn': self.num_turns,
+                'hit_ids': [ag.hit_id for ag in self.agents],
+                'assignment_ids': [ag.assignment_id for ag in self.agents],
+                'wizard_eval': self.wizard_eval,
+                'chosen_topic': self.chosen_topic,
+                'wizard_good': convo_finished and self.good_wiz,
+                'good_wizard_worker': self.wizard_worker if self.good_wiz else '',
+                'bad_wizard_worker': self.wizard_worker if not self.good_wiz else '',
+            },
+            open(filename, 'wb'),
+        )
+        print('{}: Data successfully saved at {}.'.format(self.world_tag, filename))
 
     def check_wizard_quality(self):
         '''Determines whether to soft-block this turker or not
            Only called if the conversation finishes
            Returns True if the Wizard is good
         '''
-        num_good_sents = len(list(filter(lambda info: 'good_message' in info and
-                                                      info['good_message'],
-                                         self.dialog)))
+        num_good_sents = len(
+            list(
+                filter(
+                    lambda info: 'good_message' in info and info['good_message'],
+                    self.dialog,
+                )
+            )
+        )
         wizard_worker = [w for w in self.agents if w.id == WIZARD][0].worker_id
         data_path = self.opt['current_working_dir']
         bad_wizards = os.path.join(data_path, 'bad_wizards.txt')
@@ -533,14 +582,15 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
             for d in self.dialog:
                 if role in d['speaker']:
                     if d['offensive']:
-                        ag.reject_work(reason='Your HIT has been rejected '
-                                              'because we detected offensive '
-                                              'language in your submission.')
+                        ag.reject_work(
+                            reason='Your HIT has been rejected '
+                            'because we detected offensive '
+                            'language in your submission.'
+                        )
 
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(review_agent)(agent) for agent in self.agents)
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(review_agent)(agent) for agent in self.agents
+        )
 
     def shutdown(self):
         """Shutdown all mturk agents in parallel, otherwise if one mturk agent
@@ -551,7 +601,7 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
 
         def shutdown_agent(agent):
             agent.shutdown()
-        Parallel(
-            n_jobs=len(self.agents),
-            backend='threading'
-        )(delayed(shutdown_agent)(agent) for agent in self.agents)
+
+        Parallel(n_jobs=len(self.agents), backend='threading')(
+            delayed(shutdown_agent)(agent) for agent in self.agents
+        )

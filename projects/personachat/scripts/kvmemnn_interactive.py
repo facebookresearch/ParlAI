@@ -24,6 +24,6 @@ if __name__ == '__main__':
     opt = parser.parse_args()
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
-    opt['model_type'] = 'kvmemnn' # for builder
+    opt['model_type'] = 'kvmemnn'  # for builder
     download_models(opt, fnames, 'personachat')
     interactive(opt)

@@ -11,7 +11,6 @@ from parlai.core.agents import Agent
 
 
 class RepeatQueryAgent(Agent):
-
     def __init__(self, opt, shared=None):
         super().__init__(opt)
         self.id = 'RepeatQueryAgent'

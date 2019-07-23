@@ -23,8 +23,7 @@ def build(opt):
 
         # Download the data from github
         fname = 'nlvr.zip'
-        url = ('https://github.com/clic-lab/nlvr/'
-               'archive/master.zip')
+        url = 'https://github.com/clic-lab/nlvr/' 'archive/master.zip'
         print('[downloading data from: ' + url + ']')
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)

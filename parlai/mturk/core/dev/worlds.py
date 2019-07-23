@@ -13,22 +13,19 @@ class MTurkDataWorld(World):
         """This prepares data to be saved for later review, including
         chats from individual worker perspectives."""
         custom_data = self.get_custom_task_data()
-        save_data = {
-            'custom_data': custom_data,
-            'worker_data': {}
-        }
+        save_data = {'custom_data': custom_data, 'worker_data': {}}
 
         for agent in workers:
             messages = agent.get_messages()
             # filter out peer feedback
-            save_messages = [m for m in messages
-                             if m.get('text') != '[PEER_REVIEW]']
+            save_messages = [m for m in messages if m.get('text') != '[PEER_REVIEW]']
             save_data['worker_data'][agent.worker_id] = {
                 'worker_id': agent.worker_id,
                 'agent_id': agent.id,
                 'assignment_id': agent.assignment_id,
                 'messages': save_messages,
                 'given_feedback': agent.feedback,
+                'completed': self.episode_done(),
             }
 
         # In simple pairing case, attach the feedback right here
@@ -57,6 +54,7 @@ class MTurkDataWorld(World):
 class MTurkOnboardWorld(MTurkDataWorld):
     """Generic world for onboarding a Turker and collecting
     information from them."""
+
     def __init__(self, opt, mturk_agent):
         """Init should set up resources for running the onboarding world"""
         self.mturk_agent = mturk_agent
@@ -69,6 +67,17 @@ class MTurkOnboardWorld(MTurkDataWorld):
     def episode_done(self):
         return self.episodeDone
 
+    def review_work(self):
+        """This call is an opportunity to act on this worker based on their
+        onboarding work. Generally one could assign a qualification to soft
+        block members who didn't pass the onboarding world.
+        """
+        # if self.episodeDone and work_was_bad:
+        #   self.mturk_agent.soft_block_worker()
+        #   # Can set a flag for use later in the process
+        #   self.mturk_agent.failed_onboarding = True
+        pass
+
     def shutdown(self):
         """Clear up resources needed for this world"""
         pass
@@ -76,6 +85,7 @@ class MTurkOnboardWorld(MTurkDataWorld):
 
 class MTurkTaskWorld(MTurkDataWorld):
     """Generic world for MTurk tasks."""
+
     def __init__(self, opt, mturk_agent):
         """Init should set up resources for running the task world"""
         self.mturk_agent = mturk_agent
@@ -135,6 +145,7 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
     """World for handling generic tasks that aim to use ParlAI as an MTurk
     interface, but don't need the server to be in the loop.
     """
+
     def __init__(self, opt, mturk_agent, task_data):
         """Init should be provided with the task_data that the worker needs
         to complete the task on the frontend.
@@ -160,23 +171,18 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
         for the response
         """
         agent = self.mturk_agent
-        agent.observe({
-            'id': 'System',
-            'text': '[TASK_DATA]',
-            'task_data': self.task_data,
-        })
+        agent.observe(
+            {'id': 'System', 'text': '[TASK_DATA]', 'task_data': self.task_data}
+        )
         agent.set_status(AssignState.STATUS_STATIC)
-        self.response = agent.act()
+        self.response = agent.get_completed_act()
         self.episodeDone = True
 
     def prep_save_data(self, workers):
         """This prepares data to be saved for later review, including
         chats from individual worker perspectives."""
         custom_data = self.get_custom_task_data()
-        save_data = {
-            'custom_data': custom_data,
-            'worker_data': {}
-        }
+        save_data = {'custom_data': custom_data, 'worker_data': {}}
 
         agent = self.mturk_agent
         save_data['worker_data'][agent.worker_id] = {
@@ -185,6 +191,7 @@ class StaticMTurkTaskWorld(MTurkDataWorld):
             'assignment_id': agent.assignment_id,
             'task_data': self.task_data,
             'response': self.response,
+            'completed': self.episode_done(),
         }
 
         return save_data

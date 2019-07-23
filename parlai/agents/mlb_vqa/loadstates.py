@@ -62,8 +62,11 @@ def make_emb_state_dict(dictionary, parameters, vocab):
         weight[id_weight] = torch.from_numpy(params)
     state_dict = OrderedDict({'weight': weight})
     if nb_unknown > 0:
-        print('Warning: {}/{} words are not in dictionary, thus set UNK'
-              .format(nb_unknown, len(dictionary)))
+        print(
+            'Warning: {}/{} words are not in dictionary, thus set UNK'.format(
+                nb_unknown, len(dictionary)
+            )
+        )
     return state_dict
 
 

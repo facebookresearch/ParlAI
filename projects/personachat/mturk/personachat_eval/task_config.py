@@ -10,14 +10,18 @@ task_config = {}
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
 """
-task_config['hit_title'] = 'Play a character and chat! [You can keep accepting new HITs]'
+task_config[
+    'hit_title'
+] = 'Play a character and chat! [You can keep accepting new HITs]'
 
 
 """A description includes detailed information about the kind of task the HIT contains.
 On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
 view of search results, and in the HIT and assignment screens.
 """
-task_config['hit_description'] = 'You will chat to another person while adopting a specific persona.'
+task_config[
+    'hit_description'
+] = 'You will chat to another person while adopting a specific persona.'
 
 
 """One or more words or phrases that describe the HIT, separated by commas.
@@ -29,8 +33,9 @@ task_config['hit_keywords'] = 'chat,dialog'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-task_config['task_description'] = \
-'''
+task_config[
+    'task_description'
+] = '''
 <br>
 <b><h4>Task Description</h4></b>
 <br>

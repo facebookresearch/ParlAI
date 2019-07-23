@@ -8,7 +8,12 @@
 
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
-from projects.mastering_the_dungeon.agents.graph_world2.agents import ObjectChecklistDataAgent, ObjectChecklistModelAgent, Seq2SeqDataAgent, Seq2SeqModelAgent
+from projects.mastering_the_dungeon.agents.graph_world2.agents import (
+    ObjectChecklistDataAgent,
+    ObjectChecklistModelAgent,
+    Seq2SeqDataAgent,
+    Seq2SeqModelAgent,
+)
 from projects.mastering_the_dungeon.agents.graph_world2.models import Seq2SeqModel
 from copy import deepcopy
 import os
@@ -24,10 +29,14 @@ from torch.autograd import Variable
 import random
 
 import projects.mastering_the_dungeon as parlai_internal
+
 sys.modules['parlai_internal'] = parlai_internal
 
+
 def prepro(opt):
-    agent = ObjectChecklistDataAgent(opt) if not opt['seq2seq'] else Seq2SeqDataAgent(opt)
+    agent = (
+        ObjectChecklistDataAgent(opt) if not opt['seq2seq'] else Seq2SeqDataAgent(opt)
+    )
 
     opt = deepcopy(opt)
     opt['datatype'] = 'train'
@@ -40,6 +49,7 @@ def prepro(opt):
 
     agent.build()
     return agent
+
 
 def validate(opt, agent):
     old_datatype = agent.opt['datatype']
@@ -62,6 +72,7 @@ def validate(opt, agent):
     agent.opt['datatype'] = old_datatype
     return stats
 
+
 def get_metrics(actions, gt_actions):
     tp, fp, fn = 0, 0, 0
     action_set, gt_action_set = set(actions), set(gt_actions)
@@ -78,19 +89,23 @@ def get_metrics(actions, gt_actions):
     f1 = 2.0 * prec * recall / (prec + recall) if prec + recall > 0 else 0.0
     return f1
 
+
 def get_accuracy(actions, gt_actions, graph):
     graph_a, graph_b = graph.copy(), graph.copy()
     graph_a.parse_exec(' '.join(actions))
     graph_b.parse_exec(' '.join(gt_actions))
     return float(graph_a == graph_b)
 
-def additional_validate(opt, model, data_agent, valid_data_file, constrain_=True, no_hits=False):
+
+def additional_validate(
+    opt, model, data_agent, valid_data_file, constrain_=True, no_hits=False
+):
     seq2seq = isinstance(model, Seq2SeqModel)
 
     def _get_actions(inst, symb_points):
         ret = []
         for i in range(len(symb_points) - 1):
-            ret.append(' '.join(inst[symb_points[i]: symb_points[i + 1]]))
+            ret.append(' '.join(inst[symb_points[i] : symb_points[i + 1]]))
         return ret
 
     def _get_variable(np_a, volatile=False):
@@ -109,14 +124,34 @@ def additional_validate(opt, model, data_agent, valid_data_file, constrain_=True
     for example in valid_data:
         exp_dict = {'text': example[2], 'actions': example[3], 'graph': example[1]}
         if not seq2seq:
-            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = data_agent.get_data([exp_dict], 'valid')
-            x, action_key, second_action_key, action_type, checked = _get_variable(x, True), _get_variable(action_key, True), _get_variable(second_action_key, True), _get_variable(action_type, True), _get_variable(checked, True)
-            text_out = model.forward_predict(x, action_key, second_action_key, action_type, check_mapping, checked, [example[1]], data_agent, constrain_=constrain_)[0]
+            x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = data_agent.get_data(
+                [exp_dict], 'valid'
+            )
+            x, action_key, second_action_key, action_type, checked = (
+                _get_variable(x, True),
+                _get_variable(action_key, True),
+                _get_variable(second_action_key, True),
+                _get_variable(action_type, True),
+                _get_variable(checked, True),
+            )
+            text_out = model.forward_predict(
+                x,
+                action_key,
+                second_action_key,
+                action_type,
+                check_mapping,
+                checked,
+                [example[1]],
+                data_agent,
+                constrain_=constrain_,
+            )[0]
         else:
             x, y = data_agent.get_data([exp_dict], 'valid')
             x, y = _get_variable(x, True), _get_variable(y, True)
-            text_out = model.forward_predict(x, [example[1]], data_agent, constrain_=constrain_)[0]
-        actions = text_out[: -1]
+            text_out = model.forward_predict(
+                x, [example[1]], data_agent, constrain_=constrain_
+            )[0]
+        actions = text_out[:-1]
         gt_actions = _get_actions(*Graph.parse_static(example[3]))
         cur_f1 = get_metrics(actions, gt_actions)
         all_f1 += cur_f1
@@ -131,12 +166,43 @@ def additional_validate(opt, model, data_agent, valid_data_file, constrain_=True
             all_dicts = []
             for j in range(100):
                 idx = i if j == 99 else random.randint(0, len(valid_data) - 1)
-                exp_dict = {'text': example[2], 'actions': ' '.join(all_gt_actions[idx]), 'graph': example[1]}
+                exp_dict = {
+                    'text': example[2],
+                    'actions': ' '.join(all_gt_actions[idx]),
+                    'graph': example[1],
+                }
                 all_dicts.append(exp_dict)
             if not seq2seq:
-                x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = data_agent.get_data(all_dicts, 'train', assert_=False)
-                x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = _get_variable(x, True), _get_variable(action_key, True), _get_variable(second_action_key, True), _get_variable(action_type, True), _get_variable(current_room, True), _get_variable(checked, True), _get_variable(y, True), _get_variable(y_mask, True), _get_variable(counter_feat, True)
-                all_losses = model.forward_loss(x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat, average_=False).data.cpu().numpy()
+                x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = data_agent.get_data(
+                    all_dicts, 'train', assert_=False
+                )
+                x, action_key, second_action_key, action_type, current_room, checked, y, y_mask, counter_feat = (
+                    _get_variable(x, True),
+                    _get_variable(action_key, True),
+                    _get_variable(second_action_key, True),
+                    _get_variable(action_type, True),
+                    _get_variable(current_room, True),
+                    _get_variable(checked, True),
+                    _get_variable(y, True),
+                    _get_variable(y_mask, True),
+                    _get_variable(counter_feat, True),
+                )
+                all_losses = (
+                    model.forward_loss(
+                        x,
+                        action_key,
+                        second_action_key,
+                        action_type,
+                        current_room,
+                        checked,
+                        y,
+                        y_mask,
+                        counter_feat,
+                        average_=False,
+                    )
+                    .data.cpu()
+                    .numpy()
+                )
             else:
                 x, y = data_agent.get_data(all_dicts, 'train', assert_=False)
                 x, y = _get_variable(x, True), _get_variable(y, True)
@@ -151,8 +217,15 @@ def additional_validate(opt, model, data_agent, valid_data_file, constrain_=True
 
     N = len(valid_data)
     if constrain_ and not no_hits:
-        return {'accuracy': all_accuracy / N, 'f1': all_f1 / N, 'hits1': hits1 / N, 'hits5': hits5 / N, 'hits10': hits10 / N}
+        return {
+            'accuracy': all_accuracy / N,
+            'f1': all_f1 / N,
+            'hits1': hits1 / N,
+            'hits5': hits5 / N,
+            'hits10': hits10 / N,
+        }
     return {'f1': all_f1 / N, 'accuracy': all_accuracy / N}
+
 
 def log_print(s, out_file):
     print(s)
@@ -162,9 +235,14 @@ def log_print(s, out_file):
     f_log.write(s + '\n')
     f_log.close()
 
+
 def main(opt, return_full=False, out_file=None):
     data_agent = prepro(opt)
-    model_agent = ObjectChecklistModelAgent(opt, data_agent=data_agent) if not opt['seq2seq'] else Seq2SeqModelAgent(opt, data_agent=data_agent)
+    model_agent = (
+        ObjectChecklistModelAgent(opt, data_agent=data_agent)
+        if not opt['seq2seq']
+        else Seq2SeqModelAgent(opt, data_agent=data_agent)
+    )
 
     train_world = create_task(opt, model_agent)
 
@@ -172,7 +250,8 @@ def main(opt, return_full=False, out_file=None):
 
     max_acc, max_f1, max_data, last_max, max_acc_len = -1, 0, None, 0, None
     for iter in range(opt['max_iter']):
-        if iter - last_max > opt['exit_iter']: break
+        if iter - last_max > opt['exit_iter']:
+            break
 
         if 'inc_ratio' in opt and opt['inc_ratio'] > 0 and iter == opt['inc_pre_iters']:
             print('resetting best model for finetuning')
@@ -194,7 +273,15 @@ def main(opt, return_full=False, out_file=None):
                 for i in range(1, 5):
                     max_acc_len.append(stats['acc_len'][i] / stats['cnt_len'][i])
             max_f1 = max(max_f1, cur_f1)
-            s = '#{} train {:.4f} valid {:.4f} acc {:.4f} f1 {:.4f} max_acc {:.4f} max_f1 {:.4f} acc_len'.format(iter, train_report['loss'], stats['loss'] / stats['cnt'], cur_acc, cur_f1, max_acc, max_f1)
+            s = '#{} train {:.4f} valid {:.4f} acc {:.4f} f1 {:.4f} max_acc {:.4f} max_f1 {:.4f} acc_len'.format(
+                iter,
+                train_report['loss'],
+                stats['loss'] / stats['cnt'],
+                cur_acc,
+                cur_f1,
+                max_acc,
+                max_f1,
+            )
             for i in range(1, 5):
                 s += ' {:.4f}'.format(stats['acc_len'][i] / stats['cnt_len'][i])
             s += ' cnt_len'
@@ -209,16 +296,23 @@ def main(opt, return_full=False, out_file=None):
     else:
         return max_acc, max_dict, model_agent.data_agent, wrong_data, max_acc_len
 
+
 def online_exp(opt, log_file=None):
     model_dict, data_agent, wrong_data, max_acc_len = None, None, None, None
     max_accs = []
     record = -1.0
     for _ in range(opt['num_runs']):
-        max_acc, cur_model_dict, cur_data_agent, cur_wrong_data, cur_max_acc_len = main(opt, True, log_file)
+        max_acc, cur_model_dict, cur_data_agent, cur_wrong_data, cur_max_acc_len = main(
+            opt, True, log_file
+        )
         max_accs.append(max_acc)
         if max_acc > record:
             record = max_acc
-            model_dict, data_agent, wrong_data = cur_model_dict, cur_data_agent, cur_wrong_data
+            model_dict, data_agent, wrong_data = (
+                cur_model_dict,
+                cur_data_agent,
+                cur_wrong_data,
+            )
         if max_acc_len is None:
             max_acc_len = cur_max_acc_len
         else:
@@ -241,9 +335,20 @@ def online_exp(opt, log_file=None):
     if opt['wrong_data_file'] != '':
         pickle.dump(wrong_data, open(opt['wrong_data_file'], 'wb'))
 
+
 def ablation_exp(opt):
-    max_acc, cur_model_dict, cur_data_agent, cur_wrong_data, cur_max_acc_len = main(opt, True, None)
-    return additional_validate(opt, cur_model_dict, cur_data_agent, opt['valid_data_file'], constrain_=True, no_hits=True)
+    max_acc, cur_model_dict, cur_data_agent, cur_wrong_data, cur_max_acc_len = main(
+        opt, True, None
+    )
+    return additional_validate(
+        opt,
+        cur_model_dict,
+        cur_data_agent,
+        opt['valid_data_file'],
+        constrain_=True,
+        no_hits=True,
+    )
+
 
 if __name__ == '__main__':
     if not os.path.exists('tmp'):
@@ -281,7 +386,7 @@ if __name__ == '__main__':
     argparser.add_arg('--room_ablation', type=bool, default=False)
 
     opt = argparser.parse_args()
-    
+
     opt['bidir'] = True
     opt['action_type_emb_dim'] = 5
     opt['counter_max'] = 3
@@ -300,7 +405,7 @@ if __name__ == '__main__':
         time.sleep(5)
         if os.path.isfile(input_file):
             time.sleep(5)
-            log_print('grab job {}'.format(job_num),log_file)
+            log_print('grab job {}'.format(job_num), log_file)
             try:
                 with open(input_file, 'rb') as f_in:
                     job_in_opt = pickle.load(f_in)
@@ -316,4 +421,3 @@ if __name__ == '__main__':
                 fout.write('Error in train: {}\n'.format(traceback.format_exc()))
                 fout.close()
             log_print('job done {}'.format(job_num), log_file)
-

@@ -28,6 +28,7 @@ class ImgNet(nn.Module):
     **Note:** ``parlai.core.image_featurizers.ImageLoader`` can also be
     used instead.
     """
+
     def __init__(self, feature_size, input_size=None):
         super().__init__()
         # input_size is needed for modules which require input_size specification
@@ -45,6 +46,7 @@ class ListenNet(nn.Module):
     """Module for listening the sequence spoken by other agent. In ``forward``:
     Generate token embeddings.
     """
+
     def __init__(self, in_size, embed_size):
         super().__init__()
         self.net = nn.Embedding(in_size, embed_size)
@@ -59,6 +61,7 @@ class StateNet(nn.Module):
     """Module for containing the state update mechanism for an agent. In
     ``forward``: Update states by passing the embeddings through LSTMCell.
     """
+
     def __init__(self, embed_size, state_size):
         super().__init__()
         self.net = nn.LSTMCell(embed_size, state_size)
@@ -73,6 +76,7 @@ class SpeakNet(nn.Module):
     """Module for speaking a token based on current state. In ``forward``:
     Return a probability distribution of utterances of tokens.
     """
+
     def __init__(self, state_size, out_size):
         super().__init__()
         self.net = nn.Linear(state_size, out_size)
@@ -88,6 +92,7 @@ class PredictNet(nn.Module):
     """Module to make a prediction as per goal. Used by questioner agent. In
     ``forward``: Return a probability distribution of utterances of tokens.
     """
+
     def __init__(self, embed_size, state_size, out_size):
         super().__init__()
         self.net_lstm = nn.LSTMCell(embed_size, state_size)

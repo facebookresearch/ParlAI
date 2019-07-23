@@ -18,21 +18,38 @@ def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    argparser.add_argument('-min_t', '--min_turns', default=5, type=int,
-                           help='minimum number of turns')
-    argparser.add_argument('-mt', '--max_turns', default=10, type=int,
-                           help='maximal number of chat turns')
-    argparser.add_argument('-mx_rsp_time', '--max_resp_time', default=150,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('-mx_psn_time', '--max_persona_time', type=int,
-                           default=300, help='time limit for turker'
-                           'entering the persona')
-    argparser.add_argument('--ag_shutdown_time', default=120,
-                           type=int,
-                           help='time limit for entering a dialog message')
-    argparser.add_argument('-rp', '--range_persona', default='4,6',
-                           help='sample range of number of persona sentences')
+    argparser.add_argument(
+        '-min_t', '--min_turns', default=5, type=int, help='minimum number of turns'
+    )
+    argparser.add_argument(
+        '-mt', '--max_turns', default=10, type=int, help='maximal number of chat turns'
+    )
+    argparser.add_argument(
+        '-mx_rsp_time',
+        '--max_resp_time',
+        default=150,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '-mx_psn_time',
+        '--max_persona_time',
+        type=int,
+        default=300,
+        help='time limit for turker' 'entering the persona',
+    )
+    argparser.add_argument(
+        '--ag_shutdown_time',
+        default=120,
+        type=int,
+        help='time limit for entering a dialog message',
+    )
+    argparser.add_argument(
+        '-rp',
+        '--range_persona',
+        default='4,6',
+        help='sample range of number of persona sentences',
+    )
     opt = argparser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
@@ -43,10 +60,7 @@ def main():
 
     mturk_agent_ids = ['PERSON_1']
 
-    mturk_manager = MTurkManager(
-        opt=opt,
-        mturk_agent_ids=mturk_agent_ids
-    )
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
 
     mturk_manager.setup_server(task_directory_path=directory_path)
 
@@ -61,7 +75,7 @@ def main():
                 mturk_manager.block_worker(
                     w,
                     'We found that you have unexpected behaviors in our previous '
-                    'HITs. For more questions please email us.'
+                    'HITs. For more questions please email us.',
                 )
 
         def run_onboard(worker):
@@ -89,7 +103,7 @@ def main():
         mturk_manager.start_task(
             eligibility_function=check_worker_eligibility,
             assign_role_function=assign_worker_roles,
-            task_function=run_conversation
+            task_function=run_conversation,
         )
 
     except BaseException:

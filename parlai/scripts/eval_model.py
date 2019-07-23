@@ -34,23 +34,34 @@ def setup_args(parser=None):
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.add_argument('-micro', '--aggregate-micro', type='bool',
-                        default=True,
-                        help='If multitasking, average metrics over the '
-                             'number of examples. If false, averages over the '
-                             'number of tasks.')
-    parser.add_argument('--metrics', type=str, default='all',
-                        help='list of metrics to show/compute, e.g. '
-                             'ppl, f1, accuracy, hits@1.'
-                             'If `all` is specified [default] all are shown.')
+    parser.add_argument(
+        '-micro',
+        '--aggregate-micro',
+        type='bool',
+        default=False,
+        help='If multitasking, average metrics over the '
+        'number of examples. If false, averages over the '
+        'number of tasks.',
+    )
+    parser.add_argument(
+        '--metrics',
+        type=str,
+        default='all',
+        help='list of metrics to show/compute, e.g. '
+        'ppl, f1, accuracy, hits@1.'
+        'If `all` is specified [default] all are shown.',
+    )
     TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')
     return parser
 
 
 def _eval_single_world(opt, agent, task):
-    print('[ Evaluating task {} using datatype {}. ] '.format(
-        task, opt.get('datatype', 'N/A')))
+    print(
+        '[ Evaluating task {} using datatype {}. ] '.format(
+            task, opt.get('datatype', 'N/A')
+        )
+    )
     task_opt = opt.copy()  # copy opt since we're editing the task
     task_opt['task'] = task
     world = create_task(task_opt, agent)  # create worlds for tasks
@@ -73,8 +84,7 @@ def _eval_single_world(opt, agent, task):
             print(world.display() + '\n~~')
         if log_time.time() > log_every_n_secs:
             report = world.report()
-            text, report = log_time.log(report['exs'], world.num_examples(),
-                                        report)
+            text, report = log_time.log(report['exs'], world.num_examples(), report)
             print(text)
 
     report = world.report()
@@ -105,13 +115,17 @@ def eval_model(opt, print_parser=None):
         task_report = _eval_single_world(opt, agent, task)
         reports.append(task_report)
 
-    report = aggregate_task_reports(reports, tasks,
-                                    micro=opt.get('aggregate_micro', True))
+    report = aggregate_task_reports(
+        reports, tasks, micro=opt.get('aggregate_micro', True)
+    )
 
     # print announcments and report
     print_announcements(opt)
-    print('[ Finished evaluating tasks {} using datatype {} ]'.format(
-          tasks, opt.get('datatype', 'N/A')))
+    print(
+        '[ Finished evaluating tasks {} using datatype {} ]'.format(
+            tasks, opt.get('datatype', 'N/A')
+        )
+    )
     print(report)
 
     return report

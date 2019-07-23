@@ -8,6 +8,7 @@
 # some of the utility methods are helpful for Torch
 try:
     import torch
+
     __TORCH_AVAILABLE = True
 except ImportError:
     __TORCH_AVAILABLE = False
@@ -34,8 +35,7 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
-                  max_len=None):
+def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False, max_len=None):
     """Create a right-padded matrix from an uneven list of lists.
 
     Returns (padded, lengths), where padded is the padded matrix, and lengths
@@ -88,7 +88,7 @@ def padded_tensor(items, pad_idx=0, use_cuda=False, left_padded=False,
             item = torch.LongTensor(item)
         if left_padded:
             # place at end
-            output[i, t - length:] = item
+            output[i, t - length :] = item
         else:
             # place at beginning
             output[i, :length] = item

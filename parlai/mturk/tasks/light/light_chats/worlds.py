@@ -4,29 +4,34 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
-from parlai.mturk.core.agents import \
-    MTURK_DISCONNECT_MESSAGE, RETURN_MESSAGE, TIMEOUT_MESSAGE
+from parlai.mturk.core.agents import (
+    MTURK_DISCONNECT_MESSAGE,
+    RETURN_MESSAGE,
+    TIMEOUT_MESSAGE,
+)
 
 import threading
 import time
 
 
 def is_disconnected(act):
-    return 'text' in act and \
-            act['text'] in [MTURK_DISCONNECT_MESSAGE, RETURN_MESSAGE,
-                            TIMEOUT_MESSAGE]
+    return 'text' in act and act['text'] in [
+        MTURK_DISCONNECT_MESSAGE,
+        RETURN_MESSAGE,
+        TIMEOUT_MESSAGE,
+    ]
 
 
 class LightChatOnboardingWorld(MTurkOnboardWorld):
     '''Example onboarding world. Sends a message from the world to the
     worker and then exits as complete after the worker uses the interface
     '''
+
     instruction_act = {
         'id': 'System',
-        'text':
-            'Please attempt to take a turn given the setting and persona '
-            'on the left. This is where your information will appear in '
-            'the main task.',
+        'text': 'Please attempt to take a turn given the setting and persona '
+        'on the left. This is where your information will appear in '
+        'the main task.',
         'task_data': {
             'base_name': 'bandit',
             'persona': (
@@ -43,46 +48,45 @@ class LightChatOnboardingWorld(MTurkOnboardWorld):
                 "There is a beer here. There is an orc here. "
             ),
             'actions': [
-                'wave at orc', 'steal coin purse from orc',
-                'hit orc', 'give beer to orc', 'hug orc', 'get beer',
+                'wave at orc',
+                'steal coin purse from orc',
+                'hit orc',
+                'give beer to orc',
+                'hug orc',
+                'get beer',
             ],
-        }
+        },
     }
 
     bad_choice_act = {
         'id': 'System',
-        'text':
-            "Are you sure that's an appropriate action to take given your "
-            "persona and the current setting? Try again."
+        'text': "Are you sure that's an appropriate action to take given your "
+        "persona and the current setting? Try again.",
     }
 
     too_short_act = {
         'id': 'System',
-        'text':
-            "Please generally speak in full sentences unless your persona "
-            "implies that your character isn't able to."
+        'text': "Please generally speak in full sentences unless your persona "
+        "implies that your character isn't able to.",
     }
 
     block_act = {
         'id': 'System',
-        'text':
-            "Sorry, you've exceeded the maximum amount of tries to get the "
-            "correct actions given your persona and the setting, and thus we "
-            "don't believe you can complete the task correctly. Please return "
-            "the HIT."
+        'text': "Sorry, you've exceeded the maximum amount of tries to get the "
+        "correct actions given your persona and the setting, and thus we "
+        "don't believe you can complete the task correctly. Please return "
+        "the HIT.",
     }
 
     complete_act = {
         'id': 'System',
-        'text':
-            "Passed - We'll be pairing you with a partner. Hold on tight."
+        'text': "Passed - We'll be pairing you with a partner. Hold on tight.",
     }
 
     def block_loop(self):
         print('Worker {} failed onboarding'.format(self.mturk_agent.worker_id))
         self.mturk_agent.observe(self.block_act)
-        self.mturk_agent.mturk_manager.soft_block_worker(
-            self.mturk_agent.worker_id)
+        self.mturk_agent.mturk_manager.soft_block_worker(self.mturk_agent.worker_id)
         act = self.mturk_agent.act()
         while not is_disconnected(act):
             self.mturk_agent.observe(self.block_act)
@@ -95,8 +99,7 @@ class LightChatOnboardingWorld(MTurkOnboardWorld):
         self.mturk_agent.observe(self.instruction_act)
         act = self.mturk_agent.act()  # first attempt, turns = 0
         data = act.get('task_data', {'action': None})
-        while (data['action'] != 'steal coin purse from orc' or
-                len(act['text']) < 4):
+        while data['action'] != 'steal coin purse from orc' or len(act['text']) < 4:
             if self.turns >= 2:  # if 3rd attempt wasn't correct, block worker
                 self.block_loop()
                 self.episodeDone = True
@@ -148,11 +151,20 @@ class LightChatTaskWorld(MTurkTaskWorld):
         self.graph.parse_exec(agent_name, 'inv')
         context = self.graph.get_text(agent_name).rstrip('\n')
         use_actions = [
-            'get', 'put', 'drink', 'eat', 'steal', 'hit', 'hug', 'wear',
-            'wield', 'drop', 'give', 'remove',
+            'get',
+            'put',
+            'drink',
+            'eat',
+            'steal',
+            'hit',
+            'hug',
+            'wear',
+            'wield',
+            'drop',
+            'give',
+            'remove',
         ]
-        actions = self.graph.get_possible_actions(
-            agent_name, use_actions=use_actions)
+        actions = self.graph.get_possible_actions(agent_name, use_actions=use_actions)
         return context, actions
 
     def parley(self):
@@ -165,31 +177,29 @@ class LightChatTaskWorld(MTurkTaskWorld):
 
                 ad = {
                     'id': 'System',
-                    'text':
-                        "Your chat partner is: {}. "
-                        "Please chat for 8 full turns "
-                        "while pretending to be your assigned "
-                        "persona in the assigned setting, both "
-                        "provided in the 'context' tab of the left panel. "
-                        "After the first turn you will need to respond within "
-                        "5 minutes to avoid timing out."
-                        "If unsure what to talk about, start "
-                        "getting to know your partner's persona, or "
-                        "discuss the setting. Take actions when/if it "
-                        "feels appropriate to. "
-                        "Any other characters in the room will not interact "
-                        "with or respond to you, so while they may be good "
-                        "things to talk about, don't interact with them."
-                        "You can find the original instructions on the "
-                        "'Task Instructions' tab to the left."
-                        "".format(self.c_names[1-i]),
-                    'task_data':
-                        {
-                            'base_name': self.c_names[i],
-                            'persona': self.characters[i][1]['personas'][0],
-                            'setting': context,
-                            'actions': actions,
-                        }
+                    'text': "Your chat partner is: {}. "
+                    "Please chat for 8 full turns "
+                    "while pretending to be your assigned "
+                    "persona in the assigned setting, both "
+                    "provided in the 'context' tab of the left panel. "
+                    "After the first turn you will need to respond within "
+                    "5 minutes to avoid timing out."
+                    "If unsure what to talk about, start "
+                    "getting to know your partner's persona, or "
+                    "discuss the setting. Take actions when/if it "
+                    "feels appropriate to. "
+                    "Any other characters in the room will not interact "
+                    "with or respond to you, so while they may be good "
+                    "things to talk about, don't interact with them."
+                    "You can find the original instructions on the "
+                    "'Task Instructions' tab to the left."
+                    "".format(self.c_names[1 - i]),
+                    'task_data': {
+                        'base_name': self.c_names[i],
+                        'persona': self.characters[i][1]['personas'][0],
+                        'setting': context,
+                        'actions': actions,
+                    },
                 }
 
                 self.mturk_agents[i].observe(ad)
@@ -203,7 +213,7 @@ class LightChatTaskWorld(MTurkTaskWorld):
                 if self.turns == 0 and i == 0:
                     a = cur_agent.act()
                 else:
-                    a = cur_agent.act(timeout=5*60)
+                    a = cur_agent.act(timeout=5 * 60)
 
                 self.acts.append(a)
                 if is_disconnected(a):
@@ -214,37 +224,33 @@ class LightChatTaskWorld(MTurkTaskWorld):
                 observe_action = {
                     'id': cur_agent_name.capitalize(),
                     'text': a['text'],
-                    'task_data': {}
+                    'task_data': {},
                 }
                 if graph_action.startswith('gesture'):
                     observe_action['task_data']['action'] = graph_action
                 elif graph_action != '':
                     # execute graph action
                     status, c_acts_text = self.graph.parse_exec(
-                        cur_agent_name, graph_action)
+                        cur_agent_name, graph_action
+                    )
                     if status:
                         self.graph.update_world()
                     # send new setting and actions to the actor
-                    return_act_text = \
-                        self.graph.get_text(cur_agent_name).rstrip('\n')
+                    return_act_text = self.graph.get_text(cur_agent_name).rstrip('\n')
                     if status:
-                        observe_action['task_data']['action'] = \
-                            self.graph.get_text(other_agent_name).rstrip('\n')
-                    context, actions = \
-                        self.get_context_actions_for(cur_agent_name)
+                        observe_action['task_data']['action'] = self.graph.get_text(
+                            other_agent_name
+                        ).rstrip('\n')
+                    context, actions = self.get_context_actions_for(cur_agent_name)
                     reflex_action = {
                         'id': 'System',
                         'text': return_act_text,
-                        'task_data': {
-                            'setting': context,
-                            'actions': actions,
-                        }
+                        'task_data': {'setting': context, 'actions': actions},
                     }
                     cur_agent.observe(reflex_action)
 
                     # Set the viewer context change and new actions
-                    context, actions = \
-                        self.get_context_actions_for(other_agent_name)
+                    context, actions = self.get_context_actions_for(other_agent_name)
                     observe_action['task_data']['setting'] = context
                     observe_action['task_data']['actions'] = actions
                 other_agent.observe(observe_action)
@@ -269,6 +275,7 @@ class LightChatTaskWorld(MTurkTaskWorld):
                 agent.shutdown(timeout=None)
             except Exception:
                 agent.shutdown()  # not MTurkAgent
+
         threads = []
         for agent in self.mturk_agents:
             t = threading.Thread(target=shutdown_agent, args=(agent,))

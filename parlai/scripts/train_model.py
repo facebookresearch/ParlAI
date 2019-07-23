@@ -26,10 +26,10 @@ Examples
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 
+import json
 import numpy as np
 import os
 import signal
-import json
 
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.metrics import aggregate_task_reports
@@ -188,10 +188,10 @@ def setup_args(parser=None) -> ParlaiParser:
         '-micro',
         '--aggregate-micro',
         type='bool',
-        default=True,
+        default=False,
         help='If multitasking, average metrics over the number of examples. '
-             'If false, averages over the number of tasks.'
-     )
+        'If false, averages over the number of tasks.',
+    )
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
@@ -294,13 +294,13 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
     print('[ running eval: ' + datatype + ' ]')
     reports = []
     for v_world in valid_worlds:
-        task_report = _run_single_eval(opt, v_world,
-                                       max_exs / len(valid_worlds))
+        task_report = _run_single_eval(opt, v_world, max_exs / len(valid_worlds))
         reports.append(task_report)
 
     tasks = [world.opt['task'] for world in valid_worlds]
-    report = aggregate_task_reports(reports, tasks,
-                                    micro=opt.get('aggregate_micro', True))
+    report = aggregate_task_reports(
+        reports, tasks, micro=opt.get('aggregate_micro', True)
+    )
 
     metrics = '{}:{}'.format(datatype, report)
     print(metrics)
@@ -322,7 +322,7 @@ def _save_best_valid(model_file, best_valid):
     f.close()
 
 
-class TrainLoop():
+class TrainLoop:
     """TrainLoop contains the core training loop logic."""
 
     def __init__(self, opt):
@@ -585,6 +585,8 @@ class TrainLoop():
             else:
                 # all other cases, take the mean across the workers
                 finalized[k] = np.mean(values)
+                if all(isinstance(v, int) for v in values):
+                    finalized[k] = int(finalized[k])
         return finalized
 
     def _cleanup_inaccurate_metrics(self, metrics):

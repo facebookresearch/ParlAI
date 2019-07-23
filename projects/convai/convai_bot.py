@@ -13,7 +13,6 @@ import random
 
 
 class ConvAISampleAgent(Agent):
-
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.id = 'ConvAISampleAgent'
@@ -28,22 +27,25 @@ class ConvAISampleAgent(Agent):
         if self.episode_done:
             self.text = '/end'
         else:
-            self.text = random.choice([
-                'I love you!',
-                'Wow!',
-                'Really?',
-                'Nice!',
-                'Hi',
-                'Hello',
-                'This is not very interesting. Let\'s change the subject of the '
-                'conversation and talk about cats.',
-                '/end'])
+            self.text = random.choice(
+                [
+                    'I love you!',
+                    'Wow!',
+                    'Really?',
+                    'Nice!',
+                    'Hi',
+                    'Hello',
+                    'This is not very interesting. Let\'s change the subject of the '
+                    'conversation and talk about cats.',
+                    '/end',
+                ]
+            )
 
     def act(self):
         reply = {
             'id': self.getID(),
             'text': self.text,
-            'episode_done': self.episode_done
+            'episode_done': self.episode_done,
         }
         print('\t' + display_messages([reply]))
         return reply

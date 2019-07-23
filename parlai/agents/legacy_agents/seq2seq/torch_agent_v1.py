@@ -73,10 +73,21 @@ parent function to set up these fields as a base.
                        the input text on newlines, with the last line put in the
                        text field and the remaining put in this one.
 """
-Batch = namedtuple('Batch', ['text_vec', 'text_lengths', 'label_vec',
-                             'label_lengths', 'labels', 'valid_indices',
-                             'candidates', 'candidate_vecs', 'image',
-                             'memory_vecs'])
+Batch = namedtuple(
+    'Batch',
+    [
+        'text_vec',
+        'text_lengths',
+        'label_vec',
+        'label_lengths',
+        'labels',
+        'valid_indices',
+        'candidates',
+        'candidate_vecs',
+        'image',
+        'memory_vecs',
+    ],
+)
 set_namedtuple_defaults(Batch, default=None)
 
 
@@ -116,8 +127,11 @@ class TorchAgent(Agent):
     For example:
     'adagrad': optim.Adagrad, 'adam': optim.Adad, 'sgd': optim.SGD
     """
-    OPTIM_OPTS = {k.lower(): v for k, v in optim.__dict__.items()
-                  if not k.startswith('__') and k[0].isupper()}
+    OPTIM_OPTS = {
+        k.lower(): v
+        for k, v in optim.__dict__.items()
+        if not k.startswith('__') and k[0].isupper()
+    }
 
     P1_TOKEN = '__p1__'
     P2_TOKEN = '__p2__'
@@ -136,75 +150,131 @@ class TorchAgent(Agent):
         agent = argparser.add_argument_group('TorchAgent Arguments')
         # pretrained embedding arguments
         agent.add_argument(
-            '-emb', '--embedding-type', default='random',
-            choices=['random', 'glove', 'glove-fixed', 'glove-twitter-fixed',
-                     'fasttext', 'fasttext-fixed', 'fasttext_cc',
-                     'fasttext_cc-fixed'],
+            '-emb',
+            '--embedding-type',
+            default='random',
+            choices=[
+                'random',
+                'glove',
+                'glove-fixed',
+                'glove-twitter-fixed',
+                'fasttext',
+                'fasttext-fixed',
+                'fasttext_cc',
+                'fasttext_cc-fixed',
+            ],
             help='Choose between different strategies for initializing word '
-                 'embeddings. Default is random, but can also preinitialize '
-                 'from Glove or Fasttext. Preinitialized embeddings can also '
-                 'be fixed so they are not updated during training.')
+            'embeddings. Default is random, but can also preinitialize '
+            'from Glove or Fasttext. Preinitialized embeddings can also '
+            'be fixed so they are not updated during training.',
+        )
         agent.add_argument(
-            '-embp', '--embedding-projection', default='random',
+            '-embp',
+            '--embedding-projection',
+            default='random',
             help='If pretrained embeddings have a different dimensionality '
-                 'than your embedding size, strategy for projecting to the '
-                 'correct size. If the dimensions are the same, this is '
-                 'ignored unless you append "-force" to your choice.')
+            'than your embedding size, strategy for projecting to the '
+            'correct size. If the dimensions are the same, this is '
+            'ignored unless you append "-force" to your choice.',
+        )
         # optimizer arguments
         agent.add_argument(
-            '-opt', '--optimizer', default='sgd', choices=cls.OPTIM_OPTS,
+            '-opt',
+            '--optimizer',
+            default='sgd',
+            choices=cls.OPTIM_OPTS,
             help='Choose between pytorch optimizers. Any member of torch.optim'
-                 ' should be valid.')
+            ' should be valid.',
+        )
         agent.add_argument(
-            '-lr', '--learningrate', type=float, default=1,
-            help='learning rate')
+            '-lr', '--learningrate', type=float, default=1, help='learning rate'
+        )
         agent.add_argument(
-            '-clip', '--gradient-clip', type=float, default=0.1,
-            help='gradient clipping using l2 norm')
+            '-clip',
+            '--gradient-clip',
+            type=float,
+            default=0.1,
+            help='gradient clipping using l2 norm',
+        )
         agent.add_argument(
-            '-mom', '--momentum', default=0, type=float,
-            help='if applicable, momentum value for optimizer.')
+            '-mom',
+            '--momentum',
+            default=0,
+            type=float,
+            help='if applicable, momentum value for optimizer.',
+        )
         # preprocessing arguments
         agent.add_argument(
-            '-rc', '--rank-candidates', type='bool', default=False,
-            help='Whether the model should parse candidates for ranking.')
+            '-rc',
+            '--rank-candidates',
+            type='bool',
+            default=False,
+            help='Whether the model should parse candidates for ranking.',
+        )
         agent.add_argument(
-            '-tr', '--truncate', default=-1, type=int,
-            help='Truncate input lengths to increase speed / use less memory.')
+            '-tr',
+            '--truncate',
+            default=-1,
+            type=int,
+            help='Truncate input lengths to increase speed / use less memory.',
+        )
         agent.add_argument(
-            '-histsz', '--history-size', default=-1, type=int,
-            help='Number of past dialog utterances to remember.')
+            '-histsz',
+            '--history-size',
+            default=-1,
+            type=int,
+            help='Number of past dialog utterances to remember.',
+        )
         agent.add_argument(
-            '-pt', '--person-tokens', type='bool', default=False,
+            '-pt',
+            '--person-tokens',
+            type='bool',
+            default=False,
             help='add person tokens to history. adds __p1__ in front of input '
-                 'text and __p2__ in front of past labels when available or '
-                 'past utterances generated by the model. these are added to '
-                 'the dictionary during initialization.')
+            'text and __p2__ in front of past labels when available or '
+            'past utterances generated by the model. these are added to '
+            'the dictionary during initialization.',
+        )
         agent.add_argument(
-            '--use-reply', default='label', hidden=True,
+            '--use-reply',
+            default='label',
+            hidden=True,
             choices=['label', 'model'],
             help='Which previous replies to use as history. If label, use '
-            'gold dataset replies. If model, use model\'s own replies.')
+            'gold dataset replies. If model, use model\'s own replies.',
+        )
         agent.add_argument(
-            '--add-p1-after-newln', type='bool', default=False, hidden=True,
+            '--add-p1-after-newln',
+            type='bool',
+            default=False,
+            hidden=True,
             help='Add the other speaker token before the last newline in the '
-                 'input instead of at the beginning of the input. this is '
-                 'useful for tasks that include some kind of context before '
-                 'the actual utterance (e.g. squad, babi, personachat).')
+            'input instead of at the beginning of the input. this is '
+            'useful for tasks that include some kind of context before '
+            'the actual utterance (e.g. squad, babi, personachat).',
+        )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
         # user tries to present multiple of them
         gpugroup = agent.add_mutually_exclusive_group()
         gpugroup.add_argument(
-            '-gpu', '--gpu', type=int, default=-1, help='which GPU to use')
+            '-gpu', '--gpu', type=int, default=-1, help='which GPU to use'
+        )
         gpugroup.add_argument(
-            '--multigpu', type='bool', default=False,
+            '--multigpu',
+            type='bool',
+            default=False,
             help='Suggest model should employ multiple GPUs. Not all models '
-                 'respect this flag.')
+            'respect this flag.',
+        )
         gpugroup.add_argument(
-            '--no-cuda', default=False, action='store_true', dest='no_cuda',
+            '--no-cuda',
+            default=False,
+            action='store_true',
+            dest='no_cuda',
             help='disable GPUs even if available. otherwise, will use GPUs if '
-                 'available on the device.')
+            'available on the device.',
+        )
 
         cls.dictionary_class().add_cmdline_args(argparser)
 
@@ -291,14 +361,15 @@ class TorchAgent(Agent):
         self.optimizer = optim_class(params, **kwargs)
         if optim_states:
             if saved_optim_type != opt['optimizer']:
-                print('WARNING: not loading optim state since optim class '
-                      'changed.')
+                print('WARNING: not loading optim state since optim class ' 'changed.')
             else:
                 try:
                     self.optimizer.load_state_dict(optim_states)
                 except ValueError:
-                    print('WARNING: not loading optim state since model '
-                          'params changed.')
+                    print(
+                        'WARNING: not loading optim state since model '
+                        'params changed.'
+                    )
                 if self.use_cuda:
                     for state in self.optimizer.state.values():
                         for k, v in state.items():
@@ -306,7 +377,8 @@ class TorchAgent(Agent):
                                 state[k] = v.cuda()
         # TODO: Move scheduler params to command line args
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-            self.optimizer, 'min', factor=0.5, patience=3, verbose=True)
+            self.optimizer, 'min', factor=0.5, patience=3, verbose=True
+        )
 
     def receive_metrics(self, metrics_dict):
         """Use the metrics to decide when to adjust LR schedule.
@@ -336,25 +408,32 @@ class TorchAgent(Agent):
                 init = 'glove'
                 name = '840B'
             embs = vocab.GloVe(
-                name=name, dim=pretrained_dim,
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:glove_vectors'))
+                name=name,
+                dim=pretrained_dim,
+                cache=modelzoo_path(self.opt.get('datapath'), 'models:glove_vectors'),
+            )
         elif emb_type.startswith('fasttext_cc'):
             init = 'fasttext_cc'
             embs = vocab.FastText(
                 language='en',
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_cc_vectors'))
+                cache=modelzoo_path(
+                    self.opt.get('datapath'), 'models:fasttext_cc_vectors'
+                ),
+            )
         elif emb_type.startswith('fasttext'):
             init = 'fasttext'
             embs = vocab.FastText(
                 language='en',
-                cache=modelzoo_path(self.opt.get('datapath'),
-                                    'models:fasttext_vectors'))
+                cache=modelzoo_path(
+                    self.opt.get('datapath'), 'models:fasttext_vectors'
+                ),
+            )
         else:
-            raise RuntimeError('embedding type {} not implemented. check arg, '
-                               'submit PR to this function, or override it.'
-                               ''.format(emb_type))
+            raise RuntimeError(
+                'embedding type {} not implemented. check arg, '
+                'submit PR to this function, or override it.'
+                ''.format(emb_type)
+            )
         return embs, init
 
     def _project_vec(self, vec, target_dim, method='random'):
@@ -383,8 +462,9 @@ class TorchAgent(Agent):
                 # TODO: PCA
                 # TODO: PCA + RP
                 # TODO: copy
-                raise RuntimeError('Projection method not implemented: {}'
-                                   ''.format(method))
+                raise RuntimeError(
+                    'Projection method not implemented: {}' ''.format(method)
+                )
         else:
             return vec
 
@@ -398,14 +478,15 @@ class TorchAgent(Agent):
         cnt = 0
         for w, i in self.dict.tok2ind.items():
             if w in embs.stoi:
-                vec = self._project_vec(embs.vectors[embs.stoi[w]],
-                                        weight.size(1))
+                vec = self._project_vec(embs.vectors[embs.stoi[w]], weight.size(1))
                 weight.data[i] = vec
                 cnt += 1
 
         if log:
-            print('Initialized embeddings for {} tokens ({}%) from {}.'
-                  ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name))
+            print(
+                'Initialized embeddings for {} tokens ({}%) from {}.'
+                ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
+            )
 
     def share(self):
         """Share fields from parent as well as useful objects in this class.
@@ -429,8 +510,9 @@ class TorchAgent(Agent):
             new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def _vectorize_text(self, text, add_start=False, add_end=False,
-                        truncate=None, truncate_left=True):
+    def _vectorize_text(
+        self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
+    ):
         """Return vector from text.
 
         :param text:          String to vectorize.
@@ -453,11 +535,11 @@ class TorchAgent(Agent):
             if add_end:
                 # add the end token first
                 vec.append(self.END_IDX)
-            vec = vec[len(vec) - truncate:]
+            vec = vec[len(vec) - truncate :]
         else:
             # truncate from the right side
             # don't check add_end, we know we are truncating it
-            vec = vec[:truncate - add_start]
+            vec = vec[: truncate - add_start]
             if add_start:
                 # always keep the start token if it's there
                 vec.insert(0, self.START_IDX)
@@ -482,8 +564,9 @@ class TorchAgent(Agent):
             # check truncation of pre-computed vectors
             obs['text_vec'] = self._check_truncate(obs['text_vec'], truncate)
             if split_lines and 'memory_vecs' in obs:
-                obs['memory_vecs'] = [self._check_truncate(m, truncate)
-                                      for m in obs['memory_vecs']]
+                obs['memory_vecs'] = [
+                    self._check_truncate(m, truncate) for m in obs['memory_vecs']
+                ]
         elif 'text' in obs:
             # convert 'text' into tensor of dictionary indices
             # we don't add start and end to the input
@@ -492,12 +575,12 @@ class TorchAgent(Agent):
                 obs['memory_vecs'] = []
                 for line in obs['text'].split('\n'):
                     obs['memory_vecs'].append(
-                        self._vectorize_text(line, truncate=truncate))
+                        self._vectorize_text(line, truncate=truncate)
+                    )
                 # the last line is treated as the normal input
                 obs['text_vec'] = obs['memory_vecs'].pop()
             else:
-                obs['text_vec'] = self._vectorize_text(obs['text'],
-                                                       truncate=truncate)
+                obs['text_vec'] = self._vectorize_text(obs['text'], truncate=truncate)
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
@@ -519,13 +602,13 @@ class TorchAgent(Agent):
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
             obs[label_type + '_vec'] = self._check_truncate(
-                obs[label_type + '_vec'], truncate)
+                obs[label_type + '_vec'], truncate
+            )
         else:
             # pick one label if there are multiple
             lbls = obs[label_type]
             label = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-            vec_label = self._vectorize_text(label, add_start, add_end,
-                                             truncate, False)
+            vec_label = self._vectorize_text(label, add_start, add_end, truncate, False)
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -546,11 +629,13 @@ class TorchAgent(Agent):
             obs['label_candidates'] = list(obs['label_candidates'])
             obs['label_candidates_vecs'] = [
                 self._vectorize_text(c, add_start, add_end, truncate, False)
-                for c in obs['label_candidates']]
+                for c in obs['label_candidates']
+            ]
         return obs
 
-    def vectorize(self, obs, add_start=True, add_end=True, truncate=None,
-                  split_lines=False):
+    def vectorize(
+        self, obs, add_start=True, add_end=True, truncate=None, split_lines=False
+    ):
         """Make vectors out of observation fields and store in the observation.
 
         In particular, the 'text' and 'labels'/'eval_labels' fields are
@@ -577,8 +662,12 @@ class TorchAgent(Agent):
         self._set_label_cands_vec(obs, add_start, add_end, truncate)
         return obs
 
-    def batchify(self, obs_batch, sort=False,
-                 is_valid=lambda obs: 'text_vec' in obs or 'image' in obs):
+    def batchify(
+        self,
+        obs_batch,
+        sort=False,
+        is_valid=lambda obs: 'text_vec' in obs or 'image' in obs,
+    ):
         """Create a batch of valid observations from an unchecked batch.
 
         A valid observation is one that passes the lambda provided to the
@@ -628,8 +717,7 @@ class TorchAgent(Agent):
 
         # LABELS
         labels_avail = any('labels_vec' in ex for ex in exs)
-        some_labels_avail = (labels_avail or
-                             any('eval_labels_vec' in ex for ex in exs))
+        some_labels_avail = labels_avail or any('eval_labels_vec' in ex for ex in exs)
 
         ys, y_lens, labels = None, None, None
         if some_labels_avail:
@@ -642,8 +730,7 @@ class TorchAgent(Agent):
             ys, y_lens = padded_tensor(label_vecs, self.NULL_IDX, self.use_cuda)
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(
-                    y_lens, ys, valid_inds, label_vecs, labels, y_lens,
-                    descending=True
+                    y_lens, ys, valid_inds, label_vecs, labels, y_lens, descending=True
                 )
 
         # LABEL_CANDIDATES
@@ -662,10 +749,18 @@ class TorchAgent(Agent):
         if any('memory_vecs' in ex for ex in exs):
             mems = [ex.get('memory_vecs', None) for ex in exs]
 
-        return Batch(text_vec=xs, text_lengths=x_lens, label_vec=ys,
-                     label_lengths=y_lens, labels=labels,
-                     valid_indices=valid_inds, candidates=cands,
-                     candidate_vecs=cand_vecs, image=imgs, memory_vecs=mems)
+        return Batch(
+            text_vec=xs,
+            text_lengths=x_lens,
+            label_vec=ys,
+            label_lengths=y_lens,
+            labels=labels,
+            valid_indices=valid_inds,
+            candidates=cands,
+            candidate_vecs=cand_vecs,
+            image=imgs,
+            memory_vecs=mems,
+        )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
         """Match sub-batch of predictions to the original batch indices.
@@ -712,8 +807,9 @@ class TorchAgent(Agent):
         else:
             return token + ' ' + text
 
-    def get_dialog_history(self, observation, reply=None,
-                           add_person_tokens=False, add_p1_after_newln=False):
+    def get_dialog_history(
+        self, observation, reply=None, add_person_tokens=False, add_p1_after_newln=False
+    ):
         """Retrieve dialog history and add current observations to it.
 
         :param observation:        current observation
@@ -743,9 +839,9 @@ class TorchAgent(Agent):
         if 'text' in obs:
             if add_person_tokens:
                 # add person1 token to text
-                obs['text'] = self._add_person_tokens(obs['text'],
-                                                      self.P1_TOKEN,
-                                                      add_p1_after_newln)
+                obs['text'] = self._add_person_tokens(
+                    obs['text'], self.P1_TOKEN, add_p1_after_newln
+                )
             # add text to history
             self.history.append(obs['text'])
 
@@ -774,13 +870,16 @@ class TorchAgent(Agent):
 
         if use_label:
             # first look for the true label, if we aren't on a new episode
-            label_key = ('labels' if 'labels' in self.observation else
-                         'eval_labels' if 'eval_labels' in self.observation
-                         else None)
+            label_key = (
+                'labels'
+                if 'labels' in self.observation
+                else 'eval_labels'
+                if 'eval_labels' in self.observation
+                else None
+            )
             if label_key is not None:
                 lbls = self.observation[label_key]
-                last_reply = (lbls[0] if len(lbls) == 1
-                              else self.random.choice(lbls))
+                last_reply = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
                 return last_reply
         # otherwise, we use the last reply the model generated
         batch_reply = self.replies.get('batch_reply')
@@ -829,10 +928,14 @@ class TorchAgent(Agent):
         This includes remembering the past history of the conversation.
         """
         reply = self.last_reply(
-            use_label=(self.opt.get('use_reply', 'label') == 'label'))
+            use_label=(self.opt.get('use_reply', 'label') == 'label')
+        )
         self.observation = self.get_dialog_history(
-            observation, reply=reply, add_person_tokens=self.add_person_tokens,
-            add_p1_after_newln=self.opt.get('add_p1_after_newln', False))
+            observation,
+            reply=reply,
+            add_person_tokens=self.add_person_tokens,
+            add_p1_after_newln=self.opt.get('add_p1_after_newln', False),
+        )
         return self.vectorize(self.observation, truncate=self.truncate)
 
     def save(self, path=None):
@@ -919,20 +1022,27 @@ class TorchAgent(Agent):
 
     def train_step(self, batch):
         """Process one batch with training labels."""
-        raise NotImplementedError(
-            'Abstract class: user must implement train_step')
+        raise NotImplementedError('Abstract class: user must implement train_step')
 
     def eval_step(self, batch):
         """Process one batch but do not train on it."""
-        raise NotImplementedError(
-            'Abstract class: user must implement eval_step')
+        raise NotImplementedError('Abstract class: user must implement eval_step')
 
 
 class Beam(object):
     """Generic beam class. It keeps information about beam_size hypothesis."""
 
-    def __init__(self, beam_size, min_length=3, padding_token=0, bos_token=1,
-                 eos_token=2, min_n_best=3, cuda='cpu', block_ngram=0):
+    def __init__(
+        self,
+        beam_size,
+        min_length=3,
+        padding_token=0,
+        bos_token=1,
+        eos_token=2,
+        min_n_best=3,
+        cuda='cpu',
+        block_ngram=0,
+    ):
         """Instantiate Beam object.
 
         :param beam_size: number of hypothesis in the beam
@@ -951,19 +1061,20 @@ class Beam(object):
         self.pad = padding_token
         self.device = cuda
         # recent score for each hypo in the beam
-        self.scores = torch.Tensor(self.beam_size).float().zero_().to(
-            self.device)
+        self.scores = torch.Tensor(self.beam_size).float().zero_().to(self.device)
         # self.scores values per each time step
         self.all_scores = [torch.Tensor([0.0] * beam_size).to(self.device)]
         # backtracking id to hypothesis at previous time step
         self.bookkeep = []
         # output tokens at each time step
-        self.outputs = [torch.Tensor(self.beam_size).long()
-                        .fill_(self.bos).to(self.device)]
+        self.outputs = [
+            torch.Tensor(self.beam_size).long().fill_(self.bos).to(self.device)
+        ]
         # keeps tuples (score, time_step, hyp_id)
         self.finished = []
         self.HypothesisTail = namedtuple(
-            'HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid'])
+            'HypothesisTail', ['timestep', 'hypid', 'score', 'tokenid']
+        )
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
@@ -999,8 +1110,9 @@ class Beam(object):
         else:
             # we need to sum up hypo scores and curr softmax scores before topk
             # [beam_size, voc_size]
-            beam_scores = (softmax_probs +
-                           self.scores.unsqueeze(1).expand_as(softmax_probs))
+            beam_scores = softmax_probs + self.scores.unsqueeze(1).expand_as(
+                softmax_probs
+            )
             for i in range(self.outputs[-1].size(0)):
                 if self.block_ngram > 0:
                     current_hypo = self.partial_hyps[i][1:]
@@ -1023,7 +1135,8 @@ class Beam(object):
         flatten_beam_scores = beam_scores.view(-1)  # [beam_size * voc_size]
         with torch.no_grad():
             best_scores, best_idxs = torch.topk(
-                flatten_beam_scores, self.beam_size, dim=-1)
+                flatten_beam_scores, self.beam_size, dim=-1
+            )
 
         self.scores = best_scores
         self.all_scores.append(self.scores)
@@ -1034,17 +1147,21 @@ class Beam(object):
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
-        self.partial_hyps = [self.partial_hyps[hyp_ids[i]] +
-                             [tok_ids[i].item()] for i in range(self.beam_size)]
+        self.partial_hyps = [
+            self.partial_hyps[hyp_ids[i]] + [tok_ids[i].item()]
+            for i in range(self.beam_size)
+        ]
 
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
                 #  this is finished hypo, adding to finished
-                eostail = self.HypothesisTail(timestep=len(self.outputs) - 1,
-                                              hypid=hypid,
-                                              score=self.scores[hypid],
-                                              tokenid=self.eos)
+                eostail = self.HypothesisTail(
+                    timestep=len(self.outputs) - 1,
+                    hypid=hypid,
+                    score=self.scores[hypid],
+                    tokenid=self.eos,
+                )
                 self.finished.append(eostail)
                 self.n_best_counter += 1
 
@@ -1063,8 +1180,10 @@ class Beam(object):
         :return: hypothesis sequence and the final score
         """
         top_hypothesis_tail = self.get_rescored_finished(n_best=1)[0]
-        return (self.get_hyp_from_finished(top_hypothesis_tail),
-                top_hypothesis_tail.score)
+        return (
+            self.get_hyp_from_finished(top_hypothesis_tail),
+            top_hypothesis_tail.score,
+        )
 
     def get_hyp_from_finished(self, hypothesis_tail):
         """Extract hypothesis ending with EOS at timestep with hyp_id.
@@ -1073,15 +1192,19 @@ class Beam(object):
         :param hyp_id: id with range up to beam_size-1
         :return: hypothesis sequence
         """
-        assert (self.outputs[hypothesis_tail.timestep]
-                [hypothesis_tail.hypid] == self.eos)
+        assert self.outputs[hypothesis_tail.timestep][hypothesis_tail.hypid] == self.eos
         assert hypothesis_tail.tokenid == self.eos
         hyp_idx = []
         endback = hypothesis_tail.hypid
         for i in range(hypothesis_tail.timestep, -1, -1):
-            hyp_idx.append(self.HypothesisTail(
-                timestep=i, hypid=endback, score=self.all_scores[i][endback],
-                tokenid=self.outputs[i][endback]))
+            hyp_idx.append(
+                self.HypothesisTail(
+                    timestep=i,
+                    hypid=endback,
+                    score=self.all_scores[i][endback],
+                    tokenid=self.outputs[i][endback],
+                )
+            )
             endback = self.bookkeep[i - 1][endback]
 
         return hyp_idx
@@ -1102,15 +1225,19 @@ class Beam(object):
             timestep=ts,
             hypid=torch.Tensor([hypid]).long(),
             score=self.all_scores[ts][hypid],
-            tokenid=self.outputs[ts][hypid])
+            tokenid=self.outputs[ts][hypid],
+        )
         hyp_idx = []
         endback = hypothesis_tail.hypid
         for i in range(hypothesis_tail.timestep, -1, -1):
-            hyp_idx.append(self.HypothesisTail(
-                timestep=i,
-                hypid=endback,
-                score=self.all_scores[i][endback],
-                tokenid=self.outputs[i][endback]))
+            hyp_idx.append(
+                self.HypothesisTail(
+                    timestep=i,
+                    hypid=endback,
+                    score=self.all_scores[i][endback],
+                    tokenid=self.outputs[i][endback],
+                )
+            )
             endback = self.bookkeep[i - 1][endback]
 
         return hyp_idx
@@ -1126,13 +1253,16 @@ class Beam(object):
             current_length = finished_item.timestep + 1
             # these weights are from Google NMT paper
             length_penalty = math.pow((1 + current_length) / 6, 0.65)
-            rescored_finished.append(self.HypothesisTail(
-                timestep=finished_item.timestep, hypid=finished_item.hypid,
-                score=finished_item.score / length_penalty,
-                tokenid=finished_item.tokenid))
+            rescored_finished.append(
+                self.HypothesisTail(
+                    timestep=finished_item.timestep,
+                    hypid=finished_item.hypid,
+                    score=finished_item.score / length_penalty,
+                    tokenid=finished_item.tokenid,
+                )
+            )
 
-        srted = sorted(rescored_finished, key=attrgetter('score'),
-                       reverse=True)
+        srted = sorted(rescored_finished, key=attrgetter('score'), reverse=True)
 
         if n_best is not None:
             srted = srted[:n_best]
@@ -1151,10 +1281,12 @@ class Beam(object):
             # to pass assert in L102, it is ok since empty self.finished
             # means junk prediction anyway
             self.outputs[-1][0] = self.eos
-            hyptail = self.HypothesisTail(timestep=len(self.outputs) - 1,
-                                          hypid=0,
-                                          score=self.all_scores[-1][0],
-                                          tokenid=self.outputs[-1][0])
+            hyptail = self.HypothesisTail(
+                timestep=len(self.outputs) - 1,
+                hypid=0,
+                score=self.all_scores[-1][0],
+                tokenid=self.outputs[-1][0],
+            )
 
             self.finished.append(hyptail)
 
@@ -1179,23 +1311,24 @@ class Beam(object):
 
         # get top nbest hyp
         top_hyp_idx_n_best = []
-        n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue',
-                         'green2', 'tan']
+        n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue', 'green2', 'tan']
         sorted_finished = self.get_rescored_finished(n_best=n_best)
         for hyptail in sorted_finished:
             # do not include EOS since it has rescored score not from original
             # self.all_scores, we color EOS with black
-            top_hyp_idx_n_best.append(self.get_hyp_from_finished(
-                hyptail))
+            top_hyp_idx_n_best.append(self.get_hyp_from_finished(hyptail))
 
         # create nodes
         for tstep, lis in enumerate(outputs):
             for hypid, token in enumerate(lis):
                 if tstep == 0:
                     hypid = 0  # collapse all __NULL__ nodes
-                node_tail = self.HypothesisTail(timestep=tstep, hypid=hypid,
-                                                score=all_scores[tstep][hypid],
-                                                tokenid=token)
+                node_tail = self.HypothesisTail(
+                    timestep=tstep,
+                    hypid=hypid,
+                    score=all_scores[tstep][hypid],
+                    tokenid=token,
+                )
                 color = 'white'
                 rank = None
                 for i, hypseq in enumerate(top_hyp_idx_n_best):
@@ -1205,29 +1338,46 @@ class Beam(object):
                         rank = i
                         break
                 label = (
-                    "<{}".format(dictionary.vec2txt([token])
-                                 if dictionary is not None else token) +
-                    " : " +
-                    "{:.{prec}f}>".format(all_scores[tstep][hypid], prec=3))
+                    "<{}".format(
+                        dictionary.vec2txt([token]) if dictionary is not None else token
+                    )
+                    + " : "
+                    + "{:.{prec}f}>".format(all_scores[tstep][hypid], prec=3)
+                )
 
-                graph.add_node(pydot.Node(
-                    node_tail.__repr__(), label=label, fillcolor=color,
-                    style='filled',
-                    xlabel='{}'.format(rank) if rank is not None else ''))
+                graph.add_node(
+                    pydot.Node(
+                        node_tail.__repr__(),
+                        label=label,
+                        fillcolor=color,
+                        style='filled',
+                        xlabel='{}'.format(rank) if rank is not None else '',
+                    )
+                )
 
         # create edges
         for revtstep, lis in reversed(list(enumerate(bookkeep))):
             for i, prev_id in enumerate(lis):
                 from_node = graph.get_node(
-                    '"{}"'.format(self.HypothesisTail(
-                        timestep=revtstep, hypid=prev_id,
-                        score=all_scores[revtstep][prev_id],
-                        tokenid=outputs[revtstep][prev_id]).__repr__()))[0]
+                    '"{}"'.format(
+                        self.HypothesisTail(
+                            timestep=revtstep,
+                            hypid=prev_id,
+                            score=all_scores[revtstep][prev_id],
+                            tokenid=outputs[revtstep][prev_id],
+                        ).__repr__()
+                    )
+                )[0]
                 to_node = graph.get_node(
-                    '"{}"'.format(self.HypothesisTail(
-                        timestep=revtstep + 1, hypid=i,
-                        score=all_scores[revtstep + 1][i],
-                        tokenid=outputs[revtstep + 1][i]).__repr__()))[0]
+                    '"{}"'.format(
+                        self.HypothesisTail(
+                            timestep=revtstep + 1,
+                            hypid=i,
+                            score=all_scores[revtstep + 1][i],
+                            tokenid=outputs[revtstep + 1][i],
+                        ).__repr__()
+                    )
+                )[0]
                 newedge = pydot.Edge(from_node.get_name(), to_node.get_name())
                 graph.add_edge(newedge)
 

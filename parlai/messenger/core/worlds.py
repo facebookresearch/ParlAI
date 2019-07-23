@@ -13,6 +13,7 @@ class SimpleMessengerOverworld(World):
 
     Demos of more advanced overworld functionality exist in the overworld demo
     """
+
     def __init__(self, opt, agent):
         self.agent = agent
         self.opt = opt

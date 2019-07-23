@@ -48,8 +48,7 @@ class DocDB(object):
         """Fetch the raw text of the doc for 'doc_id'."""
         cursor = self.connection.cursor()
         cursor.execute(
-            "SELECT text FROM documents WHERE id = ?",
-            (utils.normalize(doc_id),)
+            "SELECT text FROM documents WHERE id = ?", (utils.normalize(doc_id),)
         )
         result = cursor.fetchone()
         cursor.close()
@@ -59,8 +58,7 @@ class DocDB(object):
         """Fetch the raw text of the doc for 'doc_id'."""
         cursor = self.connection.cursor()
         cursor.execute(
-            "SELECT value FROM documents WHERE id = ?",
-            (utils.normalize(doc_id),)
+            "SELECT value FROM documents WHERE id = ?", (utils.normalize(doc_id),)
         )
         result = cursor.fetchone()
         cursor.close()
@@ -68,7 +66,6 @@ class DocDB(object):
 
     def add(self, triples):
         cursor = self.connection.cursor()
-        cursor.executemany('INSERT OR IGNORE INTO documents VALUES (?,?,?)',
-                           triples)
+        cursor.executemany('INSERT OR IGNORE INTO documents VALUES (?,?,?)', triples)
         cursor.close()
         self.connection.commit()

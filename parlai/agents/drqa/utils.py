@@ -23,8 +23,7 @@ def load_embeddings(opt, word_dict):
     """Initialize embeddings from file of pretrained vectors."""
     embeddings = torch.Tensor(len(word_dict), opt['embedding_dim'])
     embeddings.normal_(0, 1)
-    opt['embedding_file'] = modelzoo_path(opt.get('datapath'),
-                                          opt['embedding_file'])
+    opt['embedding_file'] = modelzoo_path(opt.get('datapath'), opt['embedding_file'])
     # Fill in embeddings
     if not opt.get('embedding_file'):
         raise RuntimeError('Tried to load embeddings with no embedding file.')
@@ -32,7 +31,7 @@ def load_embeddings(opt, word_dict):
         for line in f:
             parsed = line.rstrip().split(' ')
             if len(parsed) > 2:
-                assert(len(parsed) == opt['embedding_dim'] + 1)
+                assert len(parsed) == opt['embedding_dim'] + 1
                 w = normalize_text(parsed[0])
                 if w in word_dict:
                     vec = torch.Tensor([float(i) for i in parsed[1:]])
@@ -97,6 +96,7 @@ def vectorize(opt, ex, word_dict, feature_dict):
 
         def _full_stop(w):
             return w in {'.', '?', '!'}
+
         for i, w in reversed(list(enumerate(ex['document']))):
             sent_idx = sent_idx + 1 if _full_stop(w) else max(sent_idx, 1)
             if sent_idx < opt['use_time']:
@@ -134,17 +134,17 @@ def batchify(batch, null=0, cuda=False):
     x1_mask = torch.ByteTensor(len(docs), max_length).fill_(1)
     x1_f = torch.zeros(len(docs), max_length, features[0].size(1))
     for i, d in enumerate(docs):
-        x1[i, :d.size(0)].copy_(d)
-        x1_mask[i, :d.size(0)].fill_(0)
-        x1_f[i, :d.size(0)].copy_(features[i])
+        x1[i, : d.size(0)].copy_(d)
+        x1_mask[i, : d.size(0)].fill_(0)
+        x1_f[i, : d.size(0)].copy_(features[i])
 
     # Batch questions
     max_length = max([q.size(0) for q in questions])
     x2 = torch.LongTensor(len(questions), max_length).fill_(null)
     x2_mask = torch.ByteTensor(len(questions), max_length).fill_(1)
     for i, q in enumerate(questions):
-        x2[i, :q.size(0)].copy_(q)
-        x2_mask[i, :q.size(0)].fill_(0)
+        x2[i, : q.size(0)].copy_(q)
+        x2_mask[i, : q.size(0)].fill_(0)
 
     # Pin memory if cuda
     if cuda:
@@ -175,6 +175,7 @@ def batchify(batch, null=0, cuda=False):
 
 class AverageMeter(object):
     """Computes and stores the average and current value."""
+
     def __init__(self):
         self.reset()
 

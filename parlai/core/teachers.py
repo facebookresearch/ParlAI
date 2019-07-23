@@ -33,11 +33,7 @@ structures for accessing textual dialog data and utilized by ``DialogTeacher``
 
 from .agents import Teacher
 from .image_featurizers import ImageLoader
-from .utils import (
-    AttrDict,
-    no_lock,
-    str_to_msg,
-)
+from .utils import AttrDict, no_lock, str_to_msg
 
 from functools import lru_cache
 
@@ -279,8 +275,11 @@ class FixedDialogTeacher(Teacher):
         ex = self.get(self.episode_idx, self.entry_idx)
         self.episode_done = ex.get('episode_done', False)
 
-        if (not self.random and self.episode_done and
-                self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()):
+        if (
+            not self.random
+            and self.episode_done
+            and self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()
+        ):
             epoch_done = True
         else:
             epoch_done = False
@@ -365,9 +364,9 @@ class FixedDialogTeacher(Teacher):
         batch = self.next_batch()
         # pad batch
         if len(batch) < self.bsz:
-            batch += [
-                {'episode_done': True, 'id': self.getID()}
-            ] * (self.bsz - len(batch))
+            batch += [{'episode_done': True, 'id': self.getID()}] * (
+                self.bsz - len(batch)
+            )
 
         # remember correct answer if available (for padding, None)
         for i, ex in enumerate(batch):
@@ -395,8 +394,9 @@ class FixedDialogTeacher(Teacher):
 
         # remember correct answer if available
         self.lastY = action.get('labels', action.get('eval_labels', None))
-        if ((not self.datatype.startswith('train') or 'evalmode' in self.datatype) and
-                'labels' in action):
+        if (
+            not self.datatype.startswith('train') or 'evalmode' in self.datatype
+        ) and 'labels' in action:
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             action = action.copy()
@@ -427,9 +427,11 @@ class DialogTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         # Check for setup_data
         if not hasattr(self, 'setup_data'):
-            raise RuntimeError('Must implement setup_data or subclass a class '
-                               'which implements it (e.g. FbDialogTeacher) '
-                               'in order to use this class.')
+            raise RuntimeError(
+                'Must implement setup_data or subclass a class '
+                'which implements it (e.g. FbDialogTeacher) '
+                'in order to use this class.'
+            )
         super().__init__(opt, shared)
 
         self.startTime = time.time()
@@ -444,8 +446,12 @@ class DialogTeacher(FixedDialogTeacher):
             if shared and shared.get('data'):
                 self.data = data_class(opt, shared=shared['data'], **kwargs)
             else:
-                self.data = data_class(opt, data_loader=self.setup_data,
-                                       cands=self.label_candidates(), **kwargs)
+                self.data = data_class(
+                    opt,
+                    data_loader=self.setup_data,
+                    cands=self.label_candidates(),
+                    **kwargs,
+                )
 
         self.reset()
 
@@ -565,7 +571,7 @@ class DialogData(object):
         shared = {
             'data': self.data,
             'cands': self.cands,
-            'image_loader': self.image_loader
+            'image_loader': self.image_loader,
         }
         return shared
 
@@ -711,8 +717,7 @@ class DialogData(object):
             if img is not None:
                 table['image'] = img
 
-        if (table.get('labels', None) is not None and
-                self.cands is not None):
+        if table.get('labels', None) is not None and self.cands is not None:
             if self.addedCands:
                 # remove elements in addedCands
                 self.cands.difference_update(self.addedCands)
@@ -780,8 +785,10 @@ class StreamDialogData(DialogData):
             self.reset_data = None
             self.is_reset = True
             if opt.get('numthreads', 1) > 1:
-                print('WARNING: multithreaded streaming will process every '
-                      'example numthreads times.')
+                print(
+                    'WARNING: multithreaded streaming will process every '
+                    'example numthreads times.'
+                )
                 self.lock = Lock()
         self.entry_idx = 0
         self.next_episode = None
@@ -1013,7 +1020,7 @@ class FbDialogTeacher(DialogTeacher):
                         cands = []
                     if lines_have_ids:
                         space_idx = line.find(' ')
-                        line = line[space_idx + 1:]
+                        line = line[space_idx + 1 :]
                         if cands_are_replies:
                             sp = line.split('\t')
                             if len(sp) > 1 and sp[1] != '':
@@ -1076,7 +1083,7 @@ class FbDialogTeacher(DialogTeacher):
                 # split line into constituent parts, if available:
                 # x<tab>y<tab>reward<tab>label_candidates
                 # where y, reward, and label_candidates are optional
-                split = line[space_idx + 1:].split('\t')
+                split = line[space_idx + 1 :].split('\t')
 
                 # remove empty items and strip each one
                 for i in range(len(split)):

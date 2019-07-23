@@ -20,8 +20,7 @@ def download(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
         # Download the data.
-        url = ('http://parl.ai/downloads/light/' +
-               'light-dialog-processed-small7.pkl')
+        url = 'http://parl.ai/downloads/light/' + 'light-dialog-processed-small7.pkl'
         fname = 'light_data.pkl'
         build_data.download(url, dpath, fname)
         # Download the unseen data.

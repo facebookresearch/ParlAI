@@ -29,12 +29,10 @@ from parlai.core.utils import neginf
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 except ImportError:
-    warn_once(
-        "Installing APEX can give a significant speed boost."
-    )
+    warn_once("Installing APEX can give a significant speed boost.")
     from torch.nn import LayerNorm
 
-LAYER_NORM_EPS = 1e-12  # Epsilon for layer norm.
+LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
 
 
 def _normalize(tensor, norm_layer):
@@ -52,8 +50,13 @@ def _create_embeddings(dictionary, embedding_size, padding_idx):
 
 
 def _build_encoder(
-    opt, dictionary, embedding=None, padding_idx=None,
-    reduction_type='mean', n_positions=1024, n_segments=0,
+    opt,
+    dictionary,
+    embedding=None,
+    padding_idx=None,
+    reduction_type='mean',
+    n_positions=1024,
+    n_segments=0,
 ):
     return TransformerEncoder(
         n_heads=opt['n_heads'],
@@ -73,11 +76,13 @@ def _build_encoder(
         n_segments=n_segments,
         activation=opt['activation'],
         variant=opt['variant'],
+        output_scaling=opt['output_scaling'],
     )
 
 
-def _build_decoder(opt, dictionary, embedding=None, padding_idx=None,
-                   n_positions=1024, n_segments=0):
+def _build_decoder(
+    opt, dictionary, embedding=None, padding_idx=None, n_positions=1024, n_segments=0
+):
     return TransformerDecoder(
         n_heads=opt['n_heads'],
         n_layers=opt['n_layers'],
@@ -107,6 +112,22 @@ def gelu(tensor):
     return 0.5 * tensor * (1.0 + torch.erf(tensor / math.sqrt(2.0)))
 
 
+def get_n_positions_from_options(opt):
+    if opt.get('n_positions'):
+        # if the number of positions is explicitly provided, use that
+        n_positions = opt['n_positions']
+    else:
+        # else, use the worst case from truncate
+        n_positions = max(
+            opt.get('truncate') or 0,
+            opt.get('text_truncate') or 0,
+            opt.get('label_truncate') or 0,
+        )
+        if n_positions == 0:
+            n_positions = 1024
+    return n_positions
+
+
 class TransformerMemNetModel(nn.Module):
     """Model which takes context, memories, candidates and encodes them."""
 
@@ -131,19 +152,7 @@ class TransformerMemNetModel(nn.Module):
             if not self.share_word_embedding:
                 self.cand_embeddings.weight.requires_grad = False
 
-        if opt.get('n_positions'):
-            # if the number of positions is explicitly provided, use that
-            n_positions = opt['n_positions']
-        else:
-            # else, use the worst case from truncate
-            n_positions = max(
-                opt.get('truncate') or 0,
-                opt.get('text_truncate') or 0,
-                opt.get('label_truncate') or 0
-            )
-            if n_positions == 0:
-                # default to 1024
-                n_positions = 1024
+        n_positions = get_n_positions_from_options(opt)
 
         if n_positions < 0:
             raise ValueError('n_positions must be positive')
@@ -152,14 +161,18 @@ class TransformerMemNetModel(nn.Module):
         self.n_segments = opt.get('n_segments', 0)
 
         self.context_encoder = _build_encoder(
-            opt, dictionary, self.embeddings, self.pad_idx,
+            opt,
+            dictionary,
+            self.embeddings,
+            self.pad_idx,
             reduction_type=self.reduction_type,
-            n_positions=n_positions, n_segments=self.n_segments,
+            n_positions=n_positions,
+            n_segments=self.n_segments,
         )
 
         if opt.get('share_encoders'):
             self.cand_encoder = TransformerResponseWrapper(
-                self.context_encoder, self.context_encoder.out_dim,
+                self.context_encoder, self.context_encoder.out_dim
             )
         else:
             if not self.share_word_embedding:
@@ -167,11 +180,14 @@ class TransformerMemNetModel(nn.Module):
             else:
                 cand_embeddings = self.embeddings
             self.cand_encoder = _build_encoder(
-                opt, dictionary, cand_embeddings, self.pad_idx,
+                opt,
+                dictionary,
+                cand_embeddings,
+                self.pad_idx,
                 n_positions=n_positions,
                 reduction_type=self.reduction_type,
                 n_segments=self.n_segments,
-                )
+            )
 
         # build memory encoder
         if opt.get('wrap_memory_encoder', False):
@@ -181,7 +197,9 @@ class TransformerMemNetModel(nn.Module):
         else:
             self.memory_transformer = self.context_encoder
 
-        self.attender = BasicAttention(dim=2, attn=opt['memory_attention'])
+        self.attender = BasicAttention(
+            dim=2, attn=opt['memory_attention'], residual=True
+        )
 
     def encode_cand(self, words):
         """Encode the candidates."""
@@ -239,10 +257,12 @@ class TransformerMemNetModel(nn.Module):
 
 def create_position_codes(n_pos, dim, out):
     """Create positional codes and store them in ``out``."""
-    position_enc = np.array([
-        [pos / np.power(10000, 2 * j / dim) for j in range(dim // 2)]
-        for pos in range(n_pos)
-    ])
+    position_enc = np.array(
+        [
+            [pos / np.power(10000, 2 * j / dim) for j in range(dim // 2)]
+            for pos in range(n_pos)
+        ]
+    )
 
     out[:, 0::2] = torch.FloatTensor(np.sin(position_enc)).type_as(out)
     out[:, 1::2] = torch.FloatTensor(np.cos(position_enc)).type_as(out)
@@ -264,7 +284,7 @@ class TransformerResponseWrapper(nn.Module):
         self.mlp = nn.Sequential(
             nn.Linear(dim, hdim),
             nn.ReLU(),  # TODO: should this also be gelu?
-            nn.Linear(hdim, dim)
+            nn.Linear(hdim, dim),
         )
 
     def forward(self, *args):
@@ -305,6 +325,8 @@ class TransformerEncoder(nn.Module):
     :param variant:
         Which transformer architecture to use. Could be AIAYN or XLM.
         Future versions may support things like GPT-2, ...
+    :param output_scaling:
+        Scale the outputs by a given scalar
     """
 
     def __init__(
@@ -326,6 +348,7 @@ class TransformerEncoder(nn.Module):
         activation='relu',
         variant='aiayn',
         n_segments=0,
+        output_scaling=1.0,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -344,8 +367,9 @@ class TransformerEncoder(nn.Module):
 
         self.n_positions = n_positions
         self.out_dim = embedding_size
-        assert embedding_size % n_heads == 0, \
-            'Transformer embedding size must be a multiple of n_heads'
+        assert (
+            embedding_size % n_heads == 0
+        ), 'Transformer embedding size must be a multiple of n_heads'
 
         # check input formats:
         if embedding is not None:
@@ -388,14 +412,19 @@ class TransformerEncoder(nn.Module):
         # build the model
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
-            self.layers.append(TransformerEncoderLayer(
-                n_heads, embedding_size, ffn_size,
-                attention_dropout=attention_dropout,
-                relu_dropout=relu_dropout,
-                dropout=dropout,
-                variant=variant,
-                activation=activation,
-            ))
+            self.layers.append(
+                TransformerEncoderLayer(
+                    n_heads,
+                    embedding_size,
+                    ffn_size,
+                    attention_dropout=attention_dropout,
+                    relu_dropout=relu_dropout,
+                    dropout=dropout,
+                    variant=variant,
+                    activation=activation,
+                )
+            )
+        self.output_scaling = output_scaling
 
     def forward(self, input, positions=None, segments=None):
         """
@@ -419,8 +448,8 @@ class TransformerEncoder(nn.Module):
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
-                    x=positions.max().item(),
-                    y=self.n_positions)
+                    x=positions.max().item(), y=self.n_positions
+                )
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
 
@@ -439,6 +468,7 @@ class TransformerEncoder(nn.Module):
         for i in range(self.n_layers):
             tensor = self.layers[i](tensor, mask)
 
+        tensor *= self.output_scaling
         if self.reduction_type == 'first':
             return tensor[:, 0, :]
         elif self.reduction_type == 'max':
@@ -476,13 +506,15 @@ class TransformerEncoderLayer(nn.Module):
         self.activation = activation
         self.variant = variant
         self.attention = MultiHeadAttention(
-            n_heads, embedding_size,
-            dropout=attention_dropout,  # --attention-dropout
+            n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
         )
         self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-        self.ffn = TransformerFFN(embedding_size, ffn_size,
-                                  relu_dropout=relu_dropout,
-                                  activation=self.activation)
+        self.ffn = TransformerFFN(
+            embedding_size,
+            ffn_size,
+            relu_dropout=relu_dropout,
+            activation=self.activation,
+        )
         self.norm2 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.dropout = nn.Dropout(p=dropout)
 
@@ -553,8 +585,9 @@ class TransformerDecoder(nn.Module):
 
         self.n_positions = n_positions
         self.out_dim = embedding_size
-        assert embedding_size % n_heads == 0, \
-            'Transformer embedding size must be a multiple of n_heads'
+        assert (
+            embedding_size % n_heads == 0
+        ), 'Transformer embedding size must be a multiple of n_heads'
 
         self.embeddings = embedding
 
@@ -577,14 +610,18 @@ class TransformerDecoder(nn.Module):
         # build the model
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
-            self.layers.append(TransformerDecoderLayer(
-                n_heads, embedding_size, ffn_size,
-                attention_dropout=attention_dropout,
-                relu_dropout=relu_dropout,
-                dropout=dropout,
-                activation=activation,
-                variant=variant,
-            ))
+            self.layers.append(
+                TransformerDecoderLayer(
+                    n_heads,
+                    embedding_size,
+                    ffn_size,
+                    attention_dropout=attention_dropout,
+                    relu_dropout=relu_dropout,
+                    dropout=dropout,
+                    activation=activation,
+                    variant=variant,
+                )
+            )
 
     def forward(self, input, encoder_state, incr_state=None):
         """
@@ -611,8 +648,8 @@ class TransformerDecoder(nn.Module):
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
-                    x=positions.max().item(),
-                    y=self.n_positions)
+                    x=positions.max().item(), y=self.n_positions
+                )
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
         tensor = self.dropout(tensor)  # --dropout
@@ -679,10 +716,7 @@ class TransformerDecoderLayer(nn.Module):
 
         residual = x
         x = self.encoder_attention(
-            query=x,
-            key=encoder_output,
-            value=encoder_output,
-            mask=encoder_mask
+            query=x, key=encoder_output, value=encoder_output, mask=encoder_mask
         )
         x = self.dropout(x)  # --dropout
         x = residual + x
@@ -728,7 +762,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             n_positions = max(
                 opt.get('truncate') or 0,
                 opt.get('text_truncate') or 0,
-                opt.get('label_truncate') or 0
+                opt.get('label_truncate') or 0,
             )
             if n_positions == 0:
                 # default to 1024
@@ -739,12 +773,16 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             raise ValueError('n_positions must be positive')
 
         self.encoder = _build_encoder(
-            opt, dictionary, self.embeddings, self.pad_idx, reduction_type=None,
-            n_positions=n_positions, n_segments=n_segments,
+            opt,
+            dictionary,
+            self.embeddings,
+            self.pad_idx,
+            reduction_type=None,
+            n_positions=n_positions,
+            n_segments=n_segments,
         )
         self.decoder = _build_decoder(
-            opt, dictionary, self.embeddings, self.pad_idx,
-            n_positions=n_positions,
+            opt, dictionary, self.embeddings, self.pad_idx, n_positions=n_positions
         )
 
     def reorder_encoder_states(self, encoder_states, indices):
@@ -779,16 +817,24 @@ class TransformerGeneratorModel(TorchGeneratorModel):
 class BasicAttention(nn.Module):
     """Implements simple/classical attention."""
 
-    def __init__(self, dim=1, attn='cosine'):
+    def __init__(self, dim=1, attn='cosine', residual=False, get_weights=True):
         super().__init__()
         self.softmax = nn.Softmax(dim=dim)
         if attn == 'cosine':
             self.cosine = nn.CosineSimilarity(dim=dim)
         self.attn = attn
         self.dim = dim
+        self.get_weights = get_weights
+        self.residual = residual
 
-    def forward(self, xs, ys):
-        """Forward pass."""
+    def forward(self, xs, ys, mask_ys=None):
+        """ xs: B x query_len x dim
+            ys: B x key_len x dim
+            TODO: Document this
+        """
+        bsz = xs.size(0)
+        y_len = ys.size(1)
+        x_len = xs.size(1)
         if self.attn == 'cosine':
             l1 = self.cosine(xs, ys).unsqueeze(self.dim - 1)
         else:
@@ -796,12 +842,21 @@ class BasicAttention(nn.Module):
             if self.attn == 'sqrt':
                 d_k = ys.size(-1)
                 l1 = l1 / math.sqrt(d_k)
+        if mask_ys is not None:
+            attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
+            attn_mask = attn_mask.repeat(1, x_len, 1)
+            l1.masked_fill_(attn_mask, -float('inf'))
         l2 = self.softmax(l1)
         lhs_emb = torch.bmm(l2, ys)
-        # add back the query
-        lhs_emb = lhs_emb.add(xs)
 
-        return lhs_emb.squeeze(self.dim - 1), l2
+        # # add back the query
+        if self.residual:
+            lhs_emb = lhs_emb.add(xs)
+
+        if self.get_weights:
+            return lhs_emb.squeeze(self.dim - 1), l2
+        else:
+            return lhs_emb.squeeze(self.dim - 1)
 
 
 class MultiHeadAttention(nn.Module):
@@ -836,10 +891,9 @@ class MultiHeadAttention(nn.Module):
         # Input is [B, query_len, dim]
         # Mask is [B, key_len] (selfattn) or [B, key_len, key_len] (enc attn)
         batch_size, query_len, dim = query.size()
-        assert dim == self.dim, (
-            'Dimensions do not match: {} query vs {} configured'
-            .format(dim, self.dim)
-        )
+        assert (
+            dim == self.dim
+        ), 'Dimensions do not match: {} query vs {} configured'.format(dim, self.dim)
         assert mask is not None, 'Mask is None, please specify a mask'
         n_heads = self.n_heads
         dim_per_head = dim // n_heads
@@ -850,10 +904,10 @@ class MultiHeadAttention(nn.Module):
             # output is [batch_size * n_heads, seq_len, dim_per_head]
             bsz, seq_len, _ = tensor.size()
             tensor = tensor.view(batch_size, tensor.size(1), n_heads, dim_per_head)
-            tensor = tensor.transpose(1, 2).contiguous().view(
-                batch_size * n_heads,
-                seq_len,
-                dim_per_head
+            tensor = (
+                tensor.transpose(1, 2)
+                .contiguous()
+                .view(batch_size * n_heads, seq_len, dim_per_head)
             )
             return tensor
 
@@ -890,7 +944,8 @@ class MultiHeadAttention(nn.Module):
         attentioned = (
             attentioned.type_as(query)
             .view(batch_size, n_heads, query_len, dim_per_head)
-            .transpose(1, 2).contiguous()
+            .transpose(1, 2)
+            .contiguous()
             .view(batch_size, query_len, dim)
         )
 

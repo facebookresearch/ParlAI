@@ -13,7 +13,7 @@ words into your commit messages.
 [gpu]: Run the nightly GPU tests
 [mturk]: Run the mturk tests
 [data]: Run the data tests
-[long]: run all above
+[long] or [all]: run all above
 """
 
 import parlai.core.testing_utils as testing_utils
@@ -21,15 +21,14 @@ import parlai.core.testing_utils as testing_utils
 
 def detect_all():
     """Check if we should run all tests."""
-    return '[long]' in testing_utils.git_commit_messages()
+    return any(kw in testing_utils.git_commit_messages() for kw in ['[all]', '[long]'])
 
 
 def detect_gpu():
     """Check if we should run GPU tests."""
     commit_msg = '[gpu]' in testing_utils.git_commit_messages()
     test_changed = any(
-        'tests/nightly/gpu' in fn
-        for fn in testing_utils.git_changed_files()
+        'tests/nightly/gpu' in fn for fn in testing_utils.git_changed_files()
     )
     return commit_msg or test_changed
 
@@ -48,8 +47,7 @@ def detect_mturk():
     """Check if we should run mturk tests."""
     commit_msg = '[mturk]' in testing_utils.git_commit_messages().lower()
     mturk_changed = any(
-        'parlai/mturk' in fn
-        for fn in testing_utils.git_changed_files()
+        'parlai/mturk' in fn for fn in testing_utils.git_changed_files()
     )
     return commit_msg or mturk_changed
 

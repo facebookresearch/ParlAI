@@ -22,7 +22,7 @@ def build(opt):
 
         # Download the data.
         fname = 'CLEVR_v1.0.zip'
-        url = 'https://s3-us-west-1.amazonaws.com/clevr/'
+        url = 'https://dl.fbaipublicfiles.com/clevr/'
 
         build_data.download(url + fname, dpath, fname)
         build_data.untar(dpath, fname)

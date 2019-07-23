@@ -12,9 +12,9 @@ import os
 
 def create_fb_format(lines_file, convo_file, outpath):
     print('[building fbformat]')
-    with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, \
-            open(os.path.join(outpath, 'valid.txt'), 'w') as fvalid, \
-            open(os.path.join(outpath, 'test.txt'), 'w') as ftest:
+    with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, open(
+        os.path.join(outpath, 'valid.txt'), 'w'
+    ) as fvalid, open(os.path.join(outpath, 'test.txt'), 'w') as ftest:
         lines = {}
 
         codecs.register_error('strict', codecs.ignore_errors)
@@ -67,9 +67,11 @@ def build(opt):
         build_data.untar(dpath, fname)
 
         dpext = os.path.join(dpath, 'cornell movie-dialogs corpus')
-        create_fb_format(os.path.join(dpext, 'movie_lines.txt'),
-                         os.path.join(dpext, 'movie_conversations.txt'),
-                         dpath)
+        create_fb_format(
+            os.path.join(dpext, 'movie_lines.txt'),
+            os.path.join(dpext, 'movie_conversations.txt'),
+            dpath,
+        )
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

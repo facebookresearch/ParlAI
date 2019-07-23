@@ -16,7 +16,7 @@ import parlai.core.testing_utils as testing_utils
 FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js|css)$'
 WHITELIST_PHRASES = [
     'Moscow Institute of Physics and Technology.',
-    'https://github.com/fartashf/vsepp'
+    'https://github.com/fartashf/vsepp',
 ]
 COPYRIGHT = [
     "Copyright (c) Facebook, Inc. and its affiliates.",
@@ -50,14 +50,12 @@ class TestCopyright(unittest.TestCase):
                     # very special exception for mlb_vqa
                     continue
 
-                self.assertTrue(
-                    msg in src,
-                    '{} missing copyright "{}"'.format(fn, msg)
-                )
+                self.assertTrue(msg in src, '{} missing copyright "{}"'.format(fn, msg))
 
 
 class TestInit(unittest.TestCase):
     """Make sure all python packages have init files."""
+
     def test_init_everywhere(self):
         for folder in testing_utils.git_ls_dirs('parlai'):
             if 'mturk' in folder:
@@ -65,7 +63,7 @@ class TestInit(unittest.TestCase):
             self.assertIn(
                 '__init__.py',
                 os.listdir(folder),
-                '{} does not contain __init__.py'.format(folder)
+                '{} does not contain __init__.py'.format(folder),
             )
 
 
