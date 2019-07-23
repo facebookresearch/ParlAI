@@ -174,7 +174,7 @@ task_list = [
         "description": (
             "DSTC7 is a competition which provided a dataset of dialogs very "
             "similar to the ubuntu dataset. In particular, the subtrack 1 "
-            "consists in predicting the next utterance."
+            "consists in predicting the next utterance. "
             "See: https://arxiv.org/pdf/1901.03461.pdf"
         ),
     },
