@@ -131,6 +131,41 @@ class Agent(object):
         """Perform any final cleanup if needed."""
         pass
 
+    @classmethod
+    def upgrade_opt(cls, opt_from_disk):
+        """
+        Upgrade legacy options when loading an opt file from disk.
+
+        When loading a previously trained model file, we may wish to ensure
+        backwards compatibility. For example, we may introduce a new option
+        today that wasn't available initially, but we want the default on all
+        new models to be the new behavior.
+
+        ``upgrade_opt`` provides an opportunity for such checks for backwards
+        compatibility. It is called shortly after loading the opt file from
+        disk, and is called before the Agent is initialized.
+
+        Implementations of ``upgrade_opt`` should conform to high standards,
+        due to the risk of these methods becoming complicated. We recommend
+        the following behaviors:
+
+            1. ``upgrade_opt`` should only be used to provide backwards
+            compatibility.  Other behavior should find a different behavior.
+            2. Children should always call the parent's ``upgrade_opt`` first.
+            3. ``upgrade_opt`` should always warn when an option was overwritten.
+            4. Include comments annotating the date and purpose of each upgrade.
+
+        :param Opt opt_from_disk:
+            The opt file, as loaded from the ``.opt`` file on disk.
+        :return:
+            The modified options
+        :rtype:
+            Opt
+        """
+        # 2019-07-11: currently a no-op.
+        return opt_from_disk
+
+
 
 class Teacher(Agent):
     """
