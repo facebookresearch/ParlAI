@@ -136,24 +136,33 @@ class Agent(object):
         """
         Upgrade legacy options when loading an opt file from disk.
 
-        When loading a previously trained model file, we may wish to ensure
-        backwards compatibility. For example, we may introduce a new option
-        today that wasn't available initially, but we want the default on all
-        new models to be the new behavior.
+        This is primarily made available to provide a safe space to handle
+        backwards-compatible behavior. For example, perhaps we introduce a
+        new option today, which wasn't previously available. We can have the
+        argument have a new default, but fall back to the "legacy" compatibility
+        behavior if the option doesn't exist.
 
         ``upgrade_opt`` provides an opportunity for such checks for backwards
         compatibility. It is called shortly after loading the opt file from
         disk, and is called before the Agent is initialized.
 
+        Other possible examples include:
+
+            1. Renaming an option,
+            2. Deprecating an old option,
+            3. Splitting coupled behavior, etc.
+
         Implementations of ``upgrade_opt`` should conform to high standards,
-        due to the risk of these methods becoming complicated. We recommend
-        the following behaviors:
+        due to the risk of these methods becoming complicated and difficult to
+        reason about. We recommend the following behaviors:
 
             1. ``upgrade_opt`` should only be used to provide backwards
-            compatibility.  Other behavior should find a different behavior.
+            compatibility.  Other behavior should find a different location.
             2. Children should always call the parent's ``upgrade_opt`` first.
             3. ``upgrade_opt`` should always warn when an option was overwritten.
             4. Include comments annotating the date and purpose of each upgrade.
+            5. Add an integration test which ensures your old work behaves
+            appropriately.
 
         :param Opt opt_from_disk:
             The opt file, as loaded from the ``.opt`` file on disk.
