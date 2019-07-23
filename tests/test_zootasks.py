@@ -4,6 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Test common developer mistakes in the model zoo and task list.
+
+Mostly just ensures the docs will output nicely.
+"""
+
 import os
 import unittest
 import parlai.core.testing_utils as testing_utils
@@ -12,16 +18,16 @@ from parlai.tasks.task_list import task_list
 
 ZOO_EXCEPTIONS = {"fasttext_cc_vectors", "fasttext_vectors", "glove_vectors", "bert"}
 
+
 class TestZooAndTasks(unittest.TestCase):
     """Make sure the package is alive."""
 
     def _assertZooString(self, member, container, animal_name=None):
-        msg = 'Missing or empty {} in parlai.zoo.model_list'.format(member)
+        msg = f'Missing or empty {member} in parlai.zoo.model_list'
         if animal_name:
-            msg += '[{}]'.format(animal_name)
+            msg += f'[{animal_name}]'
         self.assertIn(member, container, msg=msg)
         self.assertTrue(container[member], msg=msg)
-
 
     def test_zoolist_fields(self):
         """Ensure zoo entries conform to style standards."""
@@ -40,17 +46,19 @@ class TestZooAndTasks(unittest.TestCase):
             # every entry needs a project page or a website
             self.assertTrue(
                 ("project" in animal) or ("external_website" in animal),
-                f"Zoo entry ({name}) should contain either project or external_website"
+                f"Zoo entry ({name}) should contain either project or external_website",
             )
 
-
     def test_zoolist_types(self):
+        """Ensure no type errors in the model zoo."""
         self._check_types(model_list, 'Zoo')
 
     def test_tasklist_types(self):
+        """Ensure no type errors in the task list."""
         self._check_types(task_list, 'Task')
 
     def test_tasklist(self):
+        """Check the task list for issues."""
         self._check_directory(
             "task_list",
             task_list,
@@ -60,12 +68,9 @@ class TestZooAndTasks(unittest.TestCase):
         )
 
     def test_zoolist(self):
+        """Check the zoo list for issues."""
         self._check_directory(
-            "model_list",
-            model_list,
-            "parlai/zoo",
-            "id",
-            ignore=ZOO_EXCEPTIONS,
+            "model_list", model_list, "parlai/zoo", "id", ignore=ZOO_EXCEPTIONS
         )
 
     def _check_directory(self, listname, thing_list, thing_dir, thing_key, ignore=None):
