@@ -86,7 +86,7 @@ class TensorboardLogger(object):
         print('[ Saving tensorboard logs here: {} ]'.format(tbpath))
         if not os.path.exists(tbpath):
             os.makedirs(tbpath)
-        self.writer = SummaryWriter(log_dir='{}/{}'.format(tbpath, tensorboard_tag))
+        self.writer = SummaryWriter(logdir='{}/{}'.format(tbpath, tensorboard_tag))
         if opt['tensorboard_metrics'] is None:
             self.tbmetrics = ['ppl', 'loss']
         else:

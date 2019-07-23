@@ -608,7 +608,6 @@ class MTurkManager:
             # Treat as a socket_dead event
             self._on_socket_dead(agent.worker_id, assignment_id)
         elif mturk_event_type == SNS_ASSIGN_ABANDONDED:
-            agent.DEPRECATED_set_hit_is_abandoned()
             agent.hit_is_returned = True
             # Treat as a socket_dead event
             self._on_socket_dead(agent.worker_id, assignment_id)
@@ -1388,9 +1387,6 @@ class MTurkManager:
             self.socket_manager.close_channel(agent.get_connection_id())
 
     # Amazon MTurk Server Functions #
-
-    def get_agent_work_status(self, assignment_id):
-        return self.worker_manager.get_agent_work_status(assignment_id)
 
     def get_qualification_list(self, qualifications=None):
         if self.qualifications is not None:

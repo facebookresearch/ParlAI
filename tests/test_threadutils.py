@@ -5,11 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.thread_utils import SharedTable
 from multiprocessing import Process
+import parlai.core.testing_utils as testing_utils
 import unittest
 import random
 import time
 
 
+@testing_utils.skipIfGPU
 class TestSharedTable(unittest.TestCase):
     """Make sure the package is alive."""
 
