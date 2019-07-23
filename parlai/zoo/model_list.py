@@ -16,6 +16,31 @@ automatically, e.g.:
 
    python examples/interactive.py --model-file
        "zoo:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
+
+
+There are a number of guidelines you should follow in the zoo:
+
+- You should choose the best directory name as possible. An input of
+  ``zoo:MYDIR/MYNAME/FILENAME`` will attempt to use a build script from
+  parlai/zoo/MYDIR/MYNAME.py.
+- You should include all of the following fields:
+    * title: the name of the entry:
+    * id: corresponds to MYDIR
+    * description: describe the entry in reasonable detail. It should be at least
+      a couple sentences.
+    * example: an example command to chat with or evaluate the model
+    * result: the expected output from running the model. You are strongly encouraged
+      to make a nightly test which verifies this result.
+    * external_website: if applicable, an external website related to the zoo to
+      link to.
+    * project: if applicable, a link to the project folder. You must have either
+      external_website or project.
+    * example2 and result2 (optional): additional examples to run.
+
+- As much as possible, you should try to include two examples: one to generate
+  some key metrics (e.g. from a paper) and one to actually chat with the model
+  using interactive.py. Both should strongly attempt to minimize mandatory
+  command line flags.
 """
 
 model_list = [
