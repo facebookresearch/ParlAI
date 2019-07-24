@@ -423,6 +423,7 @@ class TorchGeneratorAgent(TorchAgent):
         return self.dict.vec2txt(new_vec)
 
     def set_interactive_mode(self, mode, shared=False):
+        """Turn on interactive mode."""
         if mode:
             if not shared:
                 # Only print in the non-shared version.
@@ -649,12 +650,8 @@ class TorchGeneratorAgent(TorchAgent):
             _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz, maxlen=maxlen)
         elif self.beam_size > 1:
             out = self.beam_search(
-                self.model,
                 batch,
                 self.beam_size,
-                start=self.START_IDX,
-                end=self.END_IDX,
-                pad=self.NULL_IDX,
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
                 block_ngram=self.beam_block_ngram,
@@ -694,36 +691,18 @@ class TorchGeneratorAgent(TorchAgent):
         return Output(text, cand_choices)
 
     def beam_search(
-        self,
-        model,
-        batch,
-        beam_size,
-        start=1,
-        end=2,
-        pad=0,
-        min_length=3,
-        min_n_best=5,
-        max_ts=40,
-        block_ngram=0,
+        self, batch, beam_size, min_length=3, min_n_best=5, max_ts=40, block_ngram=0
     ):
         """
-        Beam search given the model and Batch.
+        Generate an output with beam search.
 
         This function expects to be given a TorchGeneratorModel. Please refer to
         that interface for information.
 
-        :param TorchGeneratorModel model:
-            Implements the above interface
         :param Batch batch:
             Batch structure with input and labels
         :param int beam_size:
             Size of each beam during the search
-        :param int start:
-            start of sequence token
-        :param int end:
-            end of sequence token
-        :param int pad:
-            padding token
         :param int min_length:
             minimum length of the decoded sequence
         :param int min_n_best:
@@ -741,7 +720,7 @@ class TorchGeneratorAgent(TorchAgent):
             - beams :list of Beam instances defined in Beam class, can be used for any
               following postprocessing, e.g. dot logging.
         """
-        encoder_states = model.encoder(*self._model_input(batch))
+        encoder_states = self.model.encoder(*self._model_input(batch))
         dev = batch.text_vec.device
 
         bsz = len(batch.text_lengths)
@@ -749,9 +728,9 @@ class TorchGeneratorAgent(TorchAgent):
             Beam(
                 beam_size,
                 min_length=min_length,
-                padding_token=pad,
-                bos_token=start,
-                eos_token=end,
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
                 min_n_best=min_n_best,
                 cuda=dev,
                 block_ngram=block_ngram,
@@ -760,10 +739,12 @@ class TorchGeneratorAgent(TorchAgent):
         ]
 
         # repeat encoder outputs and decoder inputs
-        decoder_input = torch.LongTensor([start]).expand(bsz * beam_size, 1).to(dev)
+        decoder_input = (
+            torch.LongTensor([self.START_IDX]).expand(bsz * beam_size, 1).to(dev)
+        )
 
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
-        encoder_states = model.reorder_encoder_states(encoder_states, inds)
+        encoder_states = self.model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
 
         for _ts in range(max_ts):
@@ -771,10 +752,12 @@ class TorchGeneratorAgent(TorchAgent):
             if all((b.done() for b in beams)):
                 break
 
-            score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
+            score, incr_state = self.model.decoder(
+                decoder_input, encoder_states, incr_state
+            )
             # only need the final hidden state to make the word prediction
             score = score[:, -1:, :]
-            score = model.output(score)
+            score = self.model.output(score)
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)
             score = F.log_softmax(score, dim=-1)
@@ -787,7 +770,7 @@ class TorchGeneratorAgent(TorchAgent):
                     for i, b in enumerate(beams)
                 ]
             )
-            incr_state = model.reorder_decoder_incremental_state(
+            incr_state = self.model.reorder_decoder_incremental_state(
                 incr_state, incr_state_inds
             )
             decoder_input = torch.index_select(decoder_input, 0, incr_state_inds)
