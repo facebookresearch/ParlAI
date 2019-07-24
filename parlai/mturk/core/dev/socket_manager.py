@@ -373,7 +373,7 @@ class SocketManager:
 
         def on_message(*args):
             """Incoming message handler for SERVER_PONG, MESSAGE_BATCH,
-            AGENT_DISCONNECT, SNS_MESSAGE, STATIC_MESSAGE, AGENT_ALIVE
+            AGENT_DISCONNECT, SNS_MESSAGE, SUBMIT_MESSAGE, AGENT_ALIVE
             """
             packet_dict = json.loads(args[1])
             if packet_dict['type'] == 'conn_success':  # TODO make socket func
@@ -415,7 +415,7 @@ class SocketManager:
             elif packet_type == data_model.SNS_MESSAGE:
                 # Treated as a regular message
                 self.message_callback(packet)
-            elif packet_type == data_model.STATIC_MESSAGE:
+            elif packet_type == data_model.SUBMIT_MESSAGE:
                 # Treated as a regular message
                 self.message_callback(packet)
 

@@ -34,15 +34,8 @@ function postData(url = ``, data = {}) {
   });
 }
 
-// Callback for submission
-function allDoneCallback() {
-  if (inMTurkHITPage()) {
-    $('input#mturk_submit_button').click();
-  }
-}
-
 // Callback for static submission
-function staticAllDoneCallback(sender_id, assign_id, worker_id, response_data) {
+function allDoneCallback(sender_id, assign_id, worker_id, response_data) {
   if (inMTurkHITPage()) {
     let server_url = window.location.origin;
     let post_data = {
@@ -52,10 +45,10 @@ function staticAllDoneCallback(sender_id, assign_id, worker_id, response_data) {
       response_data: response_data,
       task_group_id: TASK_GROUP_ID,
     };
-    // We allow workers to submit even if our server goes down.
-    // TODO reconcile this data with the fact that we'll likely mark as an
+    // TODO We allow workers to submit even if our server goes down.
+    // reconcile this data with the fact that we'll likely mark as an
     // abandon on our end and will want to query the data from amazon instead
-    postData(server_url + '/submit_static', post_data).then(
+    postData(server_url + '/submit_hit', post_data).then(
       res => { $('input#mturk_submit_button').click(); }
     );
   }
@@ -115,4 +108,4 @@ class MTurkSubmitForm extends React.Component {
   }
 }
 
-export { allDoneCallback, staticAllDoneCallback, MTurkSubmitForm };
+export { allDoneCallback, MTurkSubmitForm };

@@ -393,6 +393,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 variant='xlm',
                 activation='gelu',
                 n_segments=8,  # doesn't do anything but still good to test
+                adam_eps=1e-6,  # just to test another flag simultaneously
             )
         )
 

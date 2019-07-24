@@ -95,6 +95,11 @@ following script:
 
     python projects/wizard_of_wikipedia/scripts/eval_retrieval_model.py
 
+
+You can run an interactive session with the model with:
+
+    python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
+
 Check back later for more pretrained models soon!
 
 ## Citation

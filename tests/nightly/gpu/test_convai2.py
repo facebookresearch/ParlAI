@@ -55,7 +55,7 @@ class TestConvai2KVMemnn(unittest.TestCase):
 
         with testing_utils.capture_output() as stdout:
             report = eval_f1.main()
-        self.assertEqual(report['f1'], 0.1173, str(stdout))
+        self.assertAlmostEqual(report['f1'], 0.1173, delta=0.0002, msg=str(stdout))
 
 
 @testing_utils.skipUnlessGPU

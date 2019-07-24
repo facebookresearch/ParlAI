@@ -11,6 +11,8 @@
 
 2019-03-09: Added [LIGHT](http://parl.ai/projects/light) text adventure game research platform for learning to speak and act. [[press]](https://venturebeat.com/2019/03/08/facebook-ai-researchers-create-a-text-based-adventure-to-study-how-ai-speak-and-act/)
 
+2019-03-06: Added [Self-feeding Chatbot](http://parl.ai/projects/self_feeding) for leveraging user textual feedback to improve the chatbot's abilities. [[press]](https://venturebeat.com/2019/01/17/facebook-and-stanford-researchers-design-a-chatbot-that-learns-from-its-mistakes/)
+
 2019-02-07: Added [BERT Ranker agents](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/bert_ranker), several variations of a ranking model based on the pretrained language model BERT.
 
 2019-01-16: ParlAI has been relicensed under the MIT open source license.

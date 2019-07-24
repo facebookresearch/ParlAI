@@ -65,8 +65,6 @@ class InteractiveWorld(DialogPartnerWorld):
         if self.cnt == 0:
             # add the persona on to the first message to agent 1
             act['text'] = self.p2 + act.get('text', 'hi')
-            print("gave bot its persona!")
-            print(act)
             agents[1].observe(validate(act))
         else:
             agents[1].observe(validate(act))
@@ -75,7 +73,7 @@ class InteractiveWorld(DialogPartnerWorld):
         self.update_counters()
         self.cnt += 1
 
-        if self.episode_done():
+        if act['episode_done']:
             print("CHAT DONE ")
             print("\n... preparing new chat... \n")
             self.cnt = 0
