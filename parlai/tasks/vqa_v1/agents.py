@@ -7,6 +7,8 @@
 import json
 import os
 import re
+import numpy as np
+from collections import Counter
 
 from parlai.core.agents import Agent
 from collections import defaultdict
