@@ -52,7 +52,6 @@ class TransformerDictionaryAgent(DictionaryAgent):
     def vec2tokens(self, tensor):
         idxs = [idx.item() for idx in tensor.cpu()]
         filtered_tokens = self.tokenizer.convert_ids_to_tokens(idxs)
-        #text = self.tokenizer.decode(idxs)
         return filtered_tokens
 
     def vec2txt(self, tensor):

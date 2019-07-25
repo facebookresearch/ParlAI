@@ -420,7 +420,7 @@ class TransformerQaAgent(TorchAgent):
         if self.opt.get('weight_decay', 0.0):
             weight_decay = self.opt.get('weight_decay', 0.0)
 
-         # Prepare optimizer and schedule (linear warmup and decay)
+        # Prepare optimizer and schedule (linear warmup and decay)
         no_decay = ['bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
             {'params': [p for n, p in self.model.named_parameters() if not any(
