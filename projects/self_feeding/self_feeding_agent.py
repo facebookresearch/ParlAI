@@ -178,7 +178,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
             type='bool',
             default=False,
             help="For backwards compatibility with old models only. For new "
-            "models, this should always be False."
+            "models, this should always be False.",
         )
 
         agent.set_defaults(person_tokens=False)  # add these in a special way
