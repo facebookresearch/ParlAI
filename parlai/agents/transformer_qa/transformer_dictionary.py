@@ -17,6 +17,7 @@ except ImportError:
         )
     )
 
+
 TOKENIZER_CLASSES = {
     'bert': BertTokenizer,
     'xlnet': XLNetTokenizer,
