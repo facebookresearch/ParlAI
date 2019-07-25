@@ -411,7 +411,7 @@ class TransformerQaAgent(TorchAgent):
             if self.use_cuda:
                 self.n_gpu = torch.cuda.device_count()
                 if self.n_gpu > 0:
-                    #  training on multiple GPUs, single machine
+                    # training on multiple GPUs, single machine
                     self.model = torch.nn.DataParallel(self.model)
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
