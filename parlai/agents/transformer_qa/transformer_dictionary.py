@@ -31,6 +31,7 @@ class TransformerDictionaryAgent(DictionaryAgent):
 
         tokenizer_class = TOKENIZER_CLASSES[opt["model_type"].lower()]
         self.tokenizer = tokenizer_class.from_pretrained(opt["tokenizer_name"] if opt["tokenizer_name"] else opt["model_name_or_path"], do_lower_case=opt["do_lower_case"])
+        self.tokenizer.max_len = int(1e12) # to avoid getting the warning for sequences longer than 512 tokens
 
         self.cls_token = self.tokenizer.cls_token
         self.sep_token = self.tokenizer.sep_token

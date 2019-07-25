@@ -144,7 +144,8 @@ class TransformerQaAgent(TorchAgent):
             b_valid_obs.append(valid_obs)
             b_segment_ids.append(segment_ids)
 
-        max_tokens_length = max([len(tokens_id) for tokens_id in b_tokens_ids])
+        # if self.text_truncate is defined, make all vectors of that size
+        max_tokens_length = max(self.text_truncate, max([len(tokens_id) for tokens_id in b_tokens_ids]) )
 
         b_input_mask = []
 
@@ -363,13 +364,13 @@ class TransformerQaAgent(TorchAgent):
                         help="Pretrained config name or path if not the same as model_name")
         parser.add_argument("--tokenizer-name", default="", type=str,
                         help="Pretrained tokenizer name or path if not the same as model_name")
-        parser.add_argument("--weight-decay", default=0.0, type=float,
-                        help="Weight deay if we apply some.")
         parser.add_argument('--fp16-opt-level', type=str, default='O1',
                         help="For fp16: Apex AMP optimization level selected in ['O0', 'O1', 'O2', and 'O3']."
                              "See details at https://nvidia.github.io/apex/amp.html")
         parser.add_argument("--adam-epsilon", default=1e-8, type=float,
                     help="Epsilon for Adam optimizer.")
+        parser.add_argument("--t-total", default=None, type=int,
+                    help="Total number of training steps for WarmupLinearSchedule.")
         parser.add_argument(
             "--do-lower-case",
             type='bool', 
@@ -404,10 +405,14 @@ class TransformerQaAgent(TorchAgent):
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
 
+        weight_decay = 0.0
+        if self.opt.get('weight_decay', 0.0):
+            weight_decay = self.opt.get('weight_decay', 0.0)
+
          # Prepare optimizer and schedule (linear warmup and decay)
         no_decay = ['bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
-            {'params': [p for n, p in self.model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
+            {'params': [p for n, p in self.model.named_parameters() if not any(nd in n for nd in no_decay)],  'weight_decay': weight_decay },
             {'params': [p for n, p in self.model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
         ]
 
@@ -420,3 +425,12 @@ class TransformerQaAgent(TorchAgent):
                 raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
             self.model, self.optimizer = amp.initialize(self.model, self.optimizer, opt_level=self.opt["fp16_opt_level"])
 
+    def build_lr_scheduler(self, states=None, hard_reset=False):
+        super().build_lr_scheduler()
+        if 't_total' in self.opt and self.opt['t_total']:
+            self.scheduler = WarmupLinearSchedule(self.optimizer, warmup_steps=self.opt['warmup_updates'], t_total=self.opt['t_total'])
+
+    def update_params(self):
+        super().update_params()
+        if 't_total' in self.opt and self.opt['t_total']:
+            self.scheduler.step(self._number_training_updates)
