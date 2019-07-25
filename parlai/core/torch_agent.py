@@ -729,9 +729,9 @@ class TorchAgent(ABC, Agent):
         self.set_interactive_mode(opt['interactive_mode'], shared)
 
     def build_history(self):
-        """Returns the constructed history object."""
+        """Return the constructed history object."""
         return self.history_class()(
-            opt,
+            self.opt,
             maxlen=self.text_truncate,
             size=self.histsz,
             p1_token=self.P1_TOKEN,
@@ -1710,7 +1710,7 @@ class TorchAgent(ABC, Agent):
         pass
 
     def set_interactive_mode(self, mode, shared):
-        """ Set interactive mode on or off."""
+        """Set interactive mode on or off."""
         # Base class is a no-op.
         pass
 
