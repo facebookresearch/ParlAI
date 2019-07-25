@@ -720,7 +720,17 @@ class TorchAgent(ABC, Agent):
         label_truncate = opt.get('label_truncate') or opt['truncate']
         self.label_truncate = label_truncate if label_truncate >= 0 else None
         # stores up to hist_utt past observations within current dialog
-        self.history = self.history_class()(
+        self.history = self.build_history()
+
+        self.is_training = False  # track whether model is training
+        self.rank_candidates = opt['rank_candidates']
+        self.add_person_tokens = opt.get('person_tokens', False)
+        # set interactive mode or not according to options.
+        self.set_interactive_mode(opt['interactive_mode'], shared)
+
+    def build_history(self):
+        """Returns the constructed history object."""
+        return self.history_class()(
             opt,
             maxlen=self.text_truncate,
             size=self.histsz,
@@ -728,12 +738,6 @@ class TorchAgent(ABC, Agent):
             p2_token=self.P2_TOKEN,
             dict_agent=self.dict,
         )
-
-        self.is_training = False  # track whether model is training
-        self.rank_candidates = opt['rank_candidates']
-        self.add_person_tokens = opt.get('person_tokens', False)
-        # set interactive mode or not according to options.
-        self.set_interactive_mode(opt['interactive_mode'], shared)
 
     def build_dictionary(self):
         """
