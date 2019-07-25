@@ -495,6 +495,12 @@ def load_agent_module(opt):
                         "previously: {} )]".format(k, v, new_opt.get(k, None))
                     )
                 new_opt[k] = v
+
+        model_class = get_agent_module(new_opt['model'])
+
+        if hasattr(model_class, 'upgrade_opt'):
+            new_opt = model_class.upgrade_opt(new_opt)
+
         # add model arguments to new_opt if they aren't in new_opt already
         for k, v in opt.items():
             if k not in new_opt:
@@ -512,7 +518,6 @@ def load_agent_module(opt):
                 'is correct. This may manifest as a shape mismatch later '
                 'on.'.format(old_dict_file, new_opt['dict_file'])
             )
-        model_class = get_agent_module(new_opt['model'])
 
         # check for model version
         if hasattr(model_class, 'model_version'):
@@ -536,9 +541,6 @@ def load_agent_module(opt):
                     raise RuntimeError(
                         m.format(m='modelname', v=curr_version, c='ModelAgent')
                     )
-
-        if hasattr(model_class, 'upgrade_opt'):
-            new_opt = model_class.upgrade_opt(new_opt)
 
         # if we want to load weights from --init-model, compare opts with
         # loaded ones

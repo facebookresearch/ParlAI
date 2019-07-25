@@ -173,6 +173,16 @@ class SelfFeedingAgent(TransformerRankerAgent):
             "evaluation, and always with the same fixed candidate set.",
         )
 
+        agent.add_argument(
+            '--add-double-person-tokens',
+            type='bool',
+            default=False,
+            help="For backwards compatibility with old models only. For new "
+            "models, this should always be False."
+        )
+
+        agent.set_defaults(person_tokens=False)  # add these in a special way
+
         variants = argparser.add_argument_group('Self-feeding Variants')
         variants.add_argument(
             '-rgx',
@@ -267,6 +277,19 @@ class SelfFeedingAgent(TransformerRankerAgent):
         random.seed()
         self.reset()
 
+    @classmethod
+    def upgrade_opt(cls, opt_on_disk):
+        """Upgrade opts from older model files."""
+        super(SelfFeedingAgent, cls).upgrade_opt(opt_on_disk)
+
+        # 2019-06-25: previous versions of the model did not add a CLS token
+        # to the beginning of text_vec.
+        if 'add_double_person_tokens' not in opt_on_disk:
+            warn_once('Old model: overriding `add_double_person_tokens` to True.')
+            opt_on_disk['add_double_person_tokens'] = True
+
+        return opt_on_disk
+
     # NOTE: This is the only method of TransformerAgent being overwritten
     def build_model(self):
         self.model = SelfFeedingModel(self.opt, self.dict)
@@ -340,10 +363,16 @@ class SelfFeedingAgent(TransformerRankerAgent):
             self.last_rating = observation['text']
 
         self.history.update_history(observation)
-        if len(self.history.history_strings) > 0:
-            observation['text'] = add_person_tokens(
-                self.history.history_strings[-self.opt['history_size'] :],
-                last_speaker=1,
+        if (
+            self.opt['add_double_person_tokens']
+            and len(self.history.history_strings) > 0
+        ):
+            observation.force_set(
+                'text',
+                add_person_tokens(
+                    self.history.history_strings[-self.opt['history_size'] :],
+                    last_speaker=1,
+                ),
             )
 
         self.observation = observation
@@ -372,8 +401,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         # check truncation
         if 'text_vec' in obs:
-            obs['text_vec'] = torch.LongTensor(
-                self._check_truncate(obs['text_vec'], truncate, True)
+            obs.force_set(
+                'text_vec',
+                torch.LongTensor(self._check_truncate(obs['text_vec'], truncate, True)),
             )
 
         return obs
