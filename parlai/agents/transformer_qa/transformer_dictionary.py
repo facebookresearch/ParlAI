@@ -7,7 +7,8 @@ from parlai.core.dict import DictionaryAgent
 import os
 try:
     from pytorch_transformers import AdamW, WarmupLinearSchedule
-    from pytorch_transformers import (BertTokenizer, XLMTokenizer, XLNetTokenizer)
+    from pytorch_transformers import (
+        BertTokenizer, XLMTokenizer, XLNetTokenizer)
 except ImportError:
     raise Exception(
         (
@@ -22,6 +23,7 @@ TOKENIZER_CLASSES = {
     'xlm': XLMTokenizer
 }
 
+
 class TransformerDictionaryAgent(DictionaryAgent):
     """Allow to use the Torch Agent with the wordpiece dictionary of Hugging Face.
     """
@@ -30,16 +32,17 @@ class TransformerDictionaryAgent(DictionaryAgent):
         super().__init__(opt)
 
         tokenizer_class = TOKENIZER_CLASSES[opt["model_type"].lower()]
-        self.tokenizer = tokenizer_class.from_pretrained(opt["tokenizer_name"] if opt["tokenizer_name"] else opt["model_name_or_path"], do_lower_case=opt["do_lower_case"])
-        self.tokenizer.max_len = int(1e12) # to avoid getting the warning for sequences longer than 512 tokens
+        self.tokenizer = tokenizer_class.from_pretrained(
+            opt["tokenizer_name"] if opt["tokenizer_name"] else opt["model_name_or_path"], do_lower_case=opt["do_lower_case"])
+        # to avoid getting the warning for sequences longer than 512 tokens
+        self.tokenizer.max_len = int(1e12)
 
         self.cls_token = self.tokenizer.cls_token
         self.sep_token = self.tokenizer.sep_token
         self.pad_token = self.tokenizer.pad_token
-        self.cls_idx =  self.tokenizer._convert_token_to_id(self.cls_token)
-        self.sep_idx =  self.tokenizer._convert_token_to_id(self.sep_token)
-        self.pad_idx =  self.tokenizer._convert_token_to_id(self.pad_token)
-
+        self.cls_idx = self.tokenizer._convert_token_to_id(self.cls_token)
+        self.sep_idx = self.tokenizer._convert_token_to_id(self.sep_token)
+        self.pad_idx = self.tokenizer._convert_token_to_id(self.pad_token)
 
     def txt2vec(self, text):
         tokens_id = self.tokenizer.encode(text)
@@ -72,7 +75,8 @@ class TransformerDictionaryAgent(DictionaryAgent):
         if char_start_position > 0:
             # label found in text
 
-            assert text[char_start_position:char_start_position + len(label)] == label
+            assert text[char_start_position:char_start_position +
+                        len(label)] == label
 
             # 1. Token words before the answer
             tokens = self.tokenizer.tokenize(text[:char_start_position])

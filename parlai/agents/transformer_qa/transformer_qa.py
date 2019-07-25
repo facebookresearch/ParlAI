@@ -14,10 +14,10 @@ from parlai.core.distributed_utils import is_distributed
 try:
     from pytorch_transformers import AdamW, WarmupLinearSchedule
     from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
-                                    BertForQuestionAnswering,
-                                    XLMConfig, XLMForQuestionAnswering,
-                                    XLNetConfig,
-                                    XLNetForQuestionAnswering)
+                                      BertForQuestionAnswering,
+                                      XLMConfig, XLMForQuestionAnswering,
+                                      XLNetConfig,
+                                      XLNetForQuestionAnswering)
 except ImportError:
     raise Exception(
         (
@@ -26,7 +26,7 @@ except ImportError:
         )
     )
 
-ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) \
+ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys())
                   for conf in (BertConfig, XLNetConfig, XLMConfig)), ())
 
 MODEL_CLASSES = {
@@ -34,6 +34,7 @@ MODEL_CLASSES = {
     'xlnet': (XLNetConfig, XLNetForQuestionAnswering),
     'xlm': (XLMConfig, XLMForQuestionAnswering),
 }
+
 
 class TransformerQaAgent(TorchAgent):
     """
@@ -68,7 +69,8 @@ class TransformerQaAgent(TorchAgent):
             if "optimizer" in shared:
                 self.optimizer = shared["optimizer"]
         else:
-            optim_params = [p for p in self.model.parameters() if p.requires_grad]
+            optim_params = [p for p in self.model.parameters()
+                            if p.requires_grad]
             self.init_optim(optim_params)
             self.build_lr_scheduler()
 
@@ -92,9 +94,9 @@ class TransformerQaAgent(TorchAgent):
             context, question = self._split_context_question(obs["text"])
 
             question_tokens_id = (
-                [self.dict.cls_idx]
-                + self.dict.txt2vec(question)
-                + [self.dict.sep_idx]
+                [self.dict.cls_idx] +
+                self.dict.txt2vec(question) +
+                [self.dict.sep_idx]
             )
 
             segment_ids = [0] * len(question_tokens_id)
@@ -145,7 +147,8 @@ class TransformerQaAgent(TorchAgent):
             b_segment_ids.append(segment_ids)
 
         # if self.text_truncate is defined, make all vectors of that size
-        max_tokens_length = max(self.text_truncate, max([len(tokens_id) for tokens_id in b_tokens_ids]) )
+        max_tokens_length = max(self.text_truncate, max(
+            [len(tokens_id) for tokens_id in b_tokens_ids]))
 
         b_input_mask = []
 
@@ -183,7 +186,8 @@ class TransformerQaAgent(TorchAgent):
 
     def _get_best_indexes(self, logits, n_best_size):
         """Get the n-best logits from a list."""
-        index_and_score = sorted(enumerate(logits), key=lambda x: x[1], reverse=True)
+        index_and_score = sorted(
+            enumerate(logits), key=lambda x: x[1], reverse=True)
 
         best_indexes = []
         for i in range(len(index_and_score)):
@@ -196,11 +200,14 @@ class TransformerQaAgent(TorchAgent):
         self, start_logits, end_logits, input_ids, start_context_position=None
     ):
 
-        start_indexes = self._get_best_indexes(start_logits, self.opt["n_best_size"])
-        end_indexes = self._get_best_indexes(end_logits, self.opt["n_best_size"])
+        start_indexes = self._get_best_indexes(
+            start_logits, self.opt["n_best_size"])
+        end_indexes = self._get_best_indexes(
+            end_logits, self.opt["n_best_size"])
 
         _PrelimPrediction = collections.namedtuple(
-            "PrelimPrediction", ["start_index", "end_index", "start_logit", "end_logit"]
+            "PrelimPrediction", ["start_index",
+                                 "end_index", "start_logit", "end_logit"]
         )
         prelim_predictions = []
 
@@ -275,12 +282,12 @@ class TransformerQaAgent(TorchAgent):
     def train_step(self, batch):
 
         tensors = self._vectorize(batch["observations"])
-        
-        inputs = {'input_ids':       tensors[0],
-                  'token_type_ids':  None if self.opt["model_type"] == 'xlm' else tensors[1],  
-                  'attention_mask':  tensors[2], 
-                  'start_positions': tensors[3], 
-                  'end_positions':   tensors[4]}
+
+        inputs = {'input_ids': tensors[0],
+                  'token_type_ids': None if self.opt["model_type"] == 'xlm' else tensors[1],
+                  'attention_mask': tensors[2],
+                  'start_positions': tensors[3],
+                  'end_positions': tensors[4]}
 
         outputs = self.model(**inputs)
 
@@ -304,7 +311,8 @@ class TransformerQaAgent(TorchAgent):
         for start_logits, end_logits, input_ids in zip(
             b_start_logits, b_end_logits, tensors[0]
         ):
-            prediction = self._get_prediction(start_logits, end_logits, input_ids)
+            prediction = self._get_prediction(
+                start_logits, end_logits, input_ids)
             predictions.append(prediction)
 
         return Output(predictions)
@@ -315,10 +323,10 @@ class TransformerQaAgent(TorchAgent):
             batch["observations"]
         )
 
-        inputs = {'input_ids':       b_tokens_ids,
-                  'token_type_ids':  b_segment_ids,  
-                  'attention_mask':  b_input_mask
-        }
+        inputs = {'input_ids': b_tokens_ids,
+                  'token_type_ids': b_segment_ids,
+                  'attention_mask': b_input_mask
+                  }
 
         with torch.no_grad():
             outputs = self.model(**inputs)
@@ -335,7 +343,7 @@ class TransformerQaAgent(TorchAgent):
             predictions.append(prediction)
 
         # print(predictions)
-        
+
         return Output(predictions)
 
     def share(self):
@@ -357,23 +365,23 @@ class TransformerQaAgent(TorchAgent):
             "output file.",
         )
         parser.add_argument("--model-type", default=None, type=str, required=True,
-                        help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
+                            help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
         parser.add_argument("--model-name-or-path", default=None, type=str, required=True,
-                        help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(ALL_MODELS))
+                            help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(ALL_MODELS))
         parser.add_argument("--config-name", default="", type=str,
-                        help="Pretrained config name or path if not the same as model_name")
+                            help="Pretrained config name or path if not the same as model_name")
         parser.add_argument("--tokenizer-name", default="", type=str,
-                        help="Pretrained tokenizer name or path if not the same as model_name")
+                            help="Pretrained tokenizer name or path if not the same as model_name")
         parser.add_argument('--fp16-opt-level', type=str, default='O1',
-                        help="For fp16: Apex AMP optimization level selected in ['O0', 'O1', 'O2', and 'O3']."
-                             "See details at https://nvidia.github.io/apex/amp.html")
+                            help="For fp16: Apex AMP optimization level selected in ['O0', 'O1', 'O2', and 'O3']."
+                            "See details at https://nvidia.github.io/apex/amp.html")
         parser.add_argument("--adam-epsilon", default=1e-8, type=float,
-                    help="Epsilon for Adam optimizer.")
+                            help="Epsilon for Adam optimizer.")
         parser.add_argument("--t-total", default=None, type=int,
-                    help="Total number of training steps for WarmupLinearSchedule.")
+                            help="Total number of training steps for WarmupLinearSchedule.")
         parser.add_argument(
             "--do-lower-case",
-            type='bool', 
+            type='bool',
             default=False,
             help="Whether to lower case the input text. True for uncased models, False for cased models.",
         )
@@ -387,14 +395,17 @@ class TransformerQaAgent(TorchAgent):
 
         self.opt["model_type"] = self.opt["model_type"].lower()
         config_class, model_class = MODEL_CLASSES[self.opt["model_type"]]
-        config = config_class.from_pretrained(self.opt["config_name"] if self.opt["config_name"] else self.opt["model_name_or_path"])
-        self.model = model_class.from_pretrained(self.opt["model_name_or_path"], from_tf=bool('.ckpt' in self.opt["model_name_or_path"]), config=config)
+        config = config_class.from_pretrained(
+            self.opt["config_name"] if self.opt["config_name"] else self.opt["model_name_or_path"])
+        self.model = model_class.from_pretrained(self.opt["model_name_or_path"], from_tf=bool(
+            '.ckpt' in self.opt["model_name_or_path"]), config=config)
 
         self.n_gpu = 0
         if is_distributed():
             # use multiple machines
             self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
+                self.model, device_ids=[
+                    self.opt['gpu']], broadcast_buffers=False
             )
         else:
             if self.use_cuda:
@@ -412,23 +423,29 @@ class TransformerQaAgent(TorchAgent):
          # Prepare optimizer and schedule (linear warmup and decay)
         no_decay = ['bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
-            {'params': [p for n, p in self.model.named_parameters() if not any(nd in n for nd in no_decay)],  'weight_decay': weight_decay },
-            {'params': [p for n, p in self.model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+            {'params': [p for n, p in self.model.named_parameters() if not any(
+                nd in n for nd in no_decay)], 'weight_decay': weight_decay},
+            {'params': [p for n, p in self.model.named_parameters() if any(
+                nd in n for nd in no_decay)], 'weight_decay': 0.0}
         ]
 
-        self.optimizer = AdamW(optimizer_grouped_parameters, lr=self.opt["learningrate"], eps=self.opt["adam_epsilon"])
+        self.optimizer = AdamW(optimizer_grouped_parameters,
+                               lr=self.opt["learningrate"], eps=self.opt["adam_epsilon"])
 
         if self.fp16:
             try:
                 from apex import amp
             except ImportError:
-                raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
-            self.model, self.optimizer = amp.initialize(self.model, self.optimizer, opt_level=self.opt["fp16_opt_level"])
+                raise ImportError(
+                    "Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
+            self.model, self.optimizer = amp.initialize(
+                self.model, self.optimizer, opt_level=self.opt["fp16_opt_level"])
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         super().build_lr_scheduler()
         if 't_total' in self.opt and self.opt['t_total']:
-            self.scheduler = WarmupLinearSchedule(self.optimizer, warmup_steps=self.opt['warmup_updates'], t_total=self.opt['t_total'])
+            self.scheduler = WarmupLinearSchedule(
+                self.optimizer, warmup_steps=self.opt['warmup_updates'], t_total=self.opt['t_total'])
 
     def update_params(self):
         super().update_params()
