@@ -16,6 +16,31 @@ automatically, e.g.:
 
    python examples/interactive.py --model-file
        "zoo:wikipedia_2016-12-21/tfidf_retriever/drqa_docs"
+
+
+There are a number of guidelines you should follow in the zoo:
+
+- You should choose the best directory name as possible. An input of
+  ``zoo:PROJECTNAME/MODELNAME/FILENAME`` will attempt to use a build script from
+  parlai/zoo/PROJECTNAME/MODELNAME.py.
+- You should include all of the following fields:
+    * title: the name of the entry:
+    * id: corresponds to PROJECTNAME
+    * description: describe the entry in reasonable detail. It should be at least
+      a couple sentences.
+    * example: an example command to chat with or evaluate the model
+    * result: the expected output from running the model. You are strongly encouraged
+      to make a nightly test which verifies this result.
+    * external_website: if applicable, an external website related to the zoo to
+      link to.
+    * project: if applicable, a link to the project folder. You must have either
+      external_website or project.
+    * example2 and result2 (optional): additional examples to run.
+
+- As much as possible, you should try to include two examples: one to generate
+  some key metrics (e.g. from a paper) and one to actually chat with the model
+  using interactive.py. Both should strongly attempt to minimize mandatory
+  command line flags.
 """
 
 model_list = [
@@ -34,6 +59,10 @@ model_list = [
         "example": (
             "python -m parlai.scripts.interactive -mf zoo:convai2/kvmemnn/model"
         ),
+        "result": (
+            "Enter Your Message: Hi, what do you think of peanuts?\n"
+            "there was a kid in the school system my mum works for with a severe peanut allergy"
+        ),
     },
     {
         "title": "Seq2Seq ConvAI2 model",
@@ -50,15 +79,10 @@ model_list = [
             "python -m parlai.scripts.interactive -mf "
             "zoo:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0"
         ),
-    },
-    {
-        "title": "Seq2Seq Twitter model",
-        "id": "twitter",
-        "path": "zoo:twitter/seq2seq/twitter_seq2seq_model",
-        "agent": "legacy:seq2seq:0",
-        "task": "twitter",
-        "description": ("Seq2Seq conversational model trained on the Twitter task"),
-        "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
+        "result": (
+            "Enter Your Message: Hi, what do you think of peanuts?\n"
+            "[Seq2Seq]: i don't have any , but i do not have a favorite ."
+        ),
     },
     {
         "title": "DrQA SQuAD model",
@@ -66,8 +90,14 @@ model_list = [
         "path": "zoo:drqa/squad/model",
         "agent": "drqa",
         "task": "squad",
-        "description": "drqa reader trained on SQuAD",
+        "description": "DrQA Reader trained on SQuAD",
+        "external_website": "https://github.com/facebookresearch/DrQA",
+        "example": (
+            "python -m parlai.scripts.eval_model -mf zoo:drqa/squad/model -t squad "
+            "-dt test"
+        ),
         "result": (
+            # TODO: this differs slightly from the actual results as of 2019-07-23
             "{'exs': 10570, 'accuracy': 0.6886, 'f1': 0.7821, 'hits@1': 0.689, 'hits@5': 0.689, 'hits@10': 0.689, 'hits@100': 0.689, 'bleu': 0.1364, 'train_loss': 0}"  # noqa: E501
         ),
     },
@@ -76,6 +106,7 @@ model_list = [
         "id": "wikipedia_2016-12-21",
         "path": "zoo:wikipedia_2016-12-21/tfidf_retriever/drqa_docs",
         "agent": "tfidf_retriever",
+        "external_website": "https://github.com/facebookresearch/DrQA",
         "task": "wikipedia:full",
         "example": (
             "python -m parlai.scripts.interactive --model tfidf_retriever "
@@ -108,7 +139,10 @@ model_list = [
         "description": (
             "Retrieval over Wikipedia dump, used for DrQA on the open squad " "dataset."
         ),
-        "example": "python -m parlai.scripts.interactive --model tfidf_retriever -mf zoo:wikipedia_full/tfidf_retriever/model",  # noqa: E501
+        "example": (
+            "python -m parlai.scripts.interactive --model tfidf_retriever -mf "
+            "zoo:wikipedia_full/tfidf_retriever/model"
+        ),
         "result": (
             """
             Enter Your Message: Yann LeCun
@@ -218,22 +252,23 @@ model_list = [
         "'examples': 6623, 'loss': 5307.0, 'mean_loss': 0.8013, 'mean_rank': 1.599, 'train_accuracy': 0}",  # noqa: E501
     },
     {
-        "title": "Legacy Seq2Seq Twitter model",
-        "id": "twitter",
-        "path": "zoo:twitter/seq2seq/twitter_seq2seq_model",
-        "agent": "legacy:seq2seq:0",
-        "task": "twitter",
-        "description": ("Generic conversational model trained on the twitter task"),
-        "result": "{'exs': 10405, 'accuracy': 0.001538, 'f1': 0.07537, 'bleu': 0.002304, 'loss': 3.93, 'ppl': 50.9}",  # noqa: E501
-    },
-    {
         "title": "Controllable Dialogue ConvAI2 model",
         "id": "controllable_dialogue",
         "path": "zoo:controllable_dialogue/convai2_finetuned_baseline",
         "agent": "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",  # noqa: E501
         "task": "convai2",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue",
-        "example": "python -m parlai.scripts.eval_model --model projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent --task projects.controllable_dialogue.tasks.agents -mf zoo:controllable_dialogue/convai2_finetuned_baseline",
+        "example": (
+            "python -m parlai.scripts.eval_model --model "
+            "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:"
+            "ControllableSeq2seqAgent --task "
+            "projects.controllable_dialogue.tasks.agents "
+            "-mf zoo:controllable_dialogue/convai2_finetuned_baseline"
+        ),
+        "result": (
+            "{'exs': 7801, 'accuracy': 0.0006409, 'f1': 0.1702, 'bleu': 0.005205, "
+            "'token_acc': 0.3949, 'loss': 3.129, 'ppl': 22.86}"
+        ),
         "description": ("Seq2Seq model with control trained on ConvAI2"),
     },
     {
@@ -250,8 +285,11 @@ model_list = [
             "python examples/eval_model.py -t personality_captions "
             "-mf zoo:personality_captions/transresnet/model --num-test-labels 5 -dt test"
         ),
-        "result": "{'exs': 10000, 'accuracy': 0.5113, 'f1': 0.5951, 'hits@1': 0.511, 'hits@5': 0.816, "  # noqa: E501
-        "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}",  # noqa: E501
+        "result": (
+            "{'exs': 10000, 'accuracy': 0.5113, 'f1': 0.5951, 'hits@1': 0.511, "
+            "'hits@5': 0.816, 'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, "
+            "'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}"
+        ),
     },
     {
         "title": "Poly-Encoder Transformer ConvAI2 Model",
@@ -259,16 +297,14 @@ model_list = [
         "path": "zoo:pretrained_transformers/model_poly",
         "agent": "transformer/polyencoder",  # noqa: E501
         "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
             "Polyencoder pretrained on Reddit and fine-tuned on ConvAI2 scoring 89+ hits@1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:pretrained_transformers/model_poly/model -t convai2"
+            "python examples/interactive.py -mf "
+            "zoo:pretrained_transformers/model_poly/model -t convai2"
         ),
-        # "python examples/interactive.py -m transformer/polyencoder "
-        # "-mf zoo:pretrained_transformers/model_poly/model --encode-candidate-vecs true "
-        # "--eval-candidates fixed  "
-        # "--fixed-candidates-path data/models/pretrained_transformers/convai_trainset_cands.txt"
         "result": (
             "hi how are you doing ?\n"
             "[Polyencoder]: i am alright . i am back from the library .\n"
@@ -311,6 +347,7 @@ model_list = [
         "path": "zoo:self_feeding/model",
         "agent": "projects.self_feeding.self_feeding_agent:SelfFeedingAgent",
         "task": "self_feeding:all:train",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/self_feeding",
         "description": (
             "The self-feeding chatbot of Hancock, et al., 2019 "
             "(https://arxiv.org/abs/1901.05415). This model learns from is mistakes "
