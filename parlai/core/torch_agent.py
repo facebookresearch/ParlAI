@@ -721,20 +721,24 @@ class TorchAgent(ABC, Agent):
         label_truncate = opt.get('label_truncate') or opt['truncate']
         self.label_truncate = label_truncate if label_truncate >= 0 else None
         # stores up to hist_utt past observations within current dialog
-        self.history = self.history_class()(
-            opt,
-            maxlen=self.text_truncate,
-            size=self.histsz,
-            p1_token=self.P1_TOKEN,
-            p2_token=self.P2_TOKEN,
-            dict_agent=self.dict,
-        )
+        self.history = self.build_history()
 
         self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
         # set interactive mode or not according to options.
         self.set_interactive_mode(opt['interactive_mode'], shared)
+
+    def build_history(self):
+        """Return the constructed history object."""
+        return self.history_class()(
+            self.opt,
+            maxlen=self.text_truncate,
+            size=self.histsz,
+            p1_token=self.P1_TOKEN,
+            p2_token=self.P2_TOKEN,
+            dict_agent=self.dict,
+        )
 
     def build_dictionary(self):
         """
@@ -1709,7 +1713,7 @@ class TorchAgent(ABC, Agent):
         pass
 
     def set_interactive_mode(self, mode, shared):
-        """ Set interactive mode on or off."""
+        """Set interactive mode on or off."""
         # Base class is a no-op.
         pass
 
