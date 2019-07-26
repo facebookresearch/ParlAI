@@ -467,12 +467,10 @@ def compare_init_model_opts(opt, curr_opt):
 def load_agent_module(opt):
     """
     Load agent options and module from file if opt file exists.
-
     Checks to see if file exists opt['model_file'] + ".opt"; if so, load up the
     options from the file and use that to create an agent, loading the model
     type from that file and overriding any options specified in that file when
     instantiating the agent.
-
     If that file does not exist, return None.
     """
     model_file = opt['model_file']
@@ -495,6 +493,12 @@ def load_agent_module(opt):
                         "previously: {} )]".format(k, v, new_opt.get(k, None))
                     )
                 new_opt[k] = v
+
+        model_class = get_agent_module(new_opt['model'])
+
+        if hasattr(model_class, 'upgrade_opt'):
+            new_opt = model_class.upgrade_opt(new_opt)
+
         # add model arguments to new_opt if they aren't in new_opt already
         for k, v in opt.items():
             if k not in new_opt:
@@ -512,7 +516,6 @@ def load_agent_module(opt):
                 'is correct. This may manifest as a shape mismatch later '
                 'on.'.format(old_dict_file, new_opt['dict_file'])
             )
-        model_class = get_agent_module(new_opt['model'])
 
         # check for model version
         if hasattr(model_class, 'model_version'):
@@ -536,9 +539,6 @@ def load_agent_module(opt):
                     raise RuntimeError(
                         m.format(m='modelname', v=curr_version, c='ModelAgent')
                     )
-
-        if hasattr(model_class, 'upgrade_opt'):
-            new_opt = model_class.upgrade_opt(new_opt)
 
         # if we want to load weights from --init-model, compare opts with
         # loaded ones
