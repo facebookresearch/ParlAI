@@ -134,8 +134,7 @@ WEB_HTML = """
 
 class MyHandler(BaseHTTPRequestHandler):
     def interactive_running(self, opt, reply_text):
-        reply = {}
-        reply['text'] = reply_text
+        reply = {'episode_done': False, 'text': reply_text}
         SHARED['agent'].observe(reply)
         model_res = SHARED['agent'].act()
         return model_res
