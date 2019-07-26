@@ -25,7 +25,7 @@ class TestZooAndTasks(unittest.TestCase):
     def _assertZooString(self, member, container, animal_name=None):
         msg = f'Missing or empty {member} in parlai.zoo.model_list'
         if animal_name:
-            msg += f'[{animal_name}]'
+            msg += f' [{animal_name}]'
         self.assertIn(member, container, msg=msg)
         self.assertTrue(container[member], msg=msg)
 
