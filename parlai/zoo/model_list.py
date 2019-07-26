@@ -21,11 +21,11 @@ automatically, e.g.:
 There are a number of guidelines you should follow in the zoo:
 
 - You should choose the best directory name as possible. An input of
-  ``zoo:MYDIR/MYNAME/FILENAME`` will attempt to use a build script from
-  parlai/zoo/MYDIR/MYNAME.py.
+  ``zoo:PROJECTNAME/MODELNAME/FILENAME`` will attempt to use a build script from
+  parlai/zoo/PROJECTNAME/MODELNAME.py.
 - You should include all of the following fields:
     * title: the name of the entry:
-    * id: corresponds to MYDIR
+    * id: corresponds to PROJECTNAME
     * description: describe the entry in reasonable detail. It should be at least
       a couple sentences.
     * example: an example command to chat with or evaluate the model
