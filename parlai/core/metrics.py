@@ -255,7 +255,12 @@ class Metrics(object):
                 pass
             else:
                 self.metrics_list.add(each_m)
-        for k in self.metrics_list:
+        metrics_list = (
+            self.metrics_list
+            if 'rouge' not in self.metrics_list
+            else self.metrics_list | ROUGE_METRICS
+        )
+        for k in metrics_list:
             self.metrics[k] = 0.0
             self.metrics[k + '_cnt'] = 0
         self.eval_pr = [1, 5, 10, 100]
