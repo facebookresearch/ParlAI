@@ -84,7 +84,7 @@ class TestEvalModel(unittest.TestCase):
             datatype='valid',
             num_examples=5,
             display_examples=False,
-            metrics='accuracy, rouge',
+            metrics='accuracy,rouge',
         )
 
         opt = parser.parse_args(print_args=False)

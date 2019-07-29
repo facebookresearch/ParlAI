@@ -18,9 +18,9 @@ from numbers import Number
 
 import re
 
-DEFAULT_METRICS = set(['correct', 'bleu', 'accuracy', 'f1'])
-ROUGE__METRICS = set(['rouge-1', 'rouge-2', 'rouge-L'])
-ALL__METRICS = set(DEFAULT_METRICS | ROUGE__METRICS)
+DEFAULT_METRICS = {'correct', 'bleu', 'accuracy', 'f1'}
+ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
+ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS
 
 
 try:
@@ -243,13 +243,13 @@ class Metrics(object):
         if metrics_arg == 'default':
             optional_metrics_list = DEFAULT_METRICS
         elif metrics_arg == 'all':
-            optional_metrics_list = ALL__METRICS
+            optional_metrics_list = ALL_METRICS
         else:
             optional_metrics_list = set(metrics_arg.split(','))
             optional_metrics_list.add('correct')
         for each_m in optional_metrics_list:
             if each_m.startswith('rouge') and rouge is not None:
-                self.metrics_list = self.metrics_list | ROUGE__METRICS
+                self.metrics_list.add('rouge')
             elif each_m == 'bleu' and nltkbleu is None:
                 # only compute bleu if we can
                 pass
@@ -330,7 +330,7 @@ class Metrics(object):
                 f1 = _f1_score(prediction, labels)
             if 'bleu' in self.metrics_list:
                 bleu = _bleu(prediction, labels)
-            if 'rouge-L' in self.metrics_list:
+            if 'rouge' in self.metrics_list:
                 rouge1, rouge2, rougeL = _rouge(prediction, labels)
 
             with self._lock():
@@ -354,7 +354,7 @@ class Metrics(object):
         # User-reported metrics
         if 'metrics' in observation:
             for k, v in observation['metrics'].items():
-                if k not in ALL__METRICS:
+                if k not in ALL_METRICS and k != 'rouge':
                     if k in self.metrics_list:
                         with self._lock():
                             self.metrics[k] += v
@@ -413,7 +413,12 @@ class Metrics(object):
         # TODO: rename to reset for consistency with rest of ParlAI
         with self._lock():
             self.metrics['cnt'] = 0
-            for k in self.metrics_list:
+            metrics_list = (
+                self.metrics_list
+                if 'rouge' not in self.metrics_list
+                else self.metrics_list | ROUGE_METRICS
+            )
+            for k in metrics_list:
                 v = self.metrics[k]
                 v_typ = type(v)
                 if 'Tensor' in str(v_typ):
