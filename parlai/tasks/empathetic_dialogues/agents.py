@@ -30,8 +30,8 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
         agent = argparser.add_argument_group('Empathetic Dialogue teacher arguments')
         agent.add_argument(
             '--reactions-only',
-            type='bool',
-            default=True,
+            action='store_true',
+            default=False,
             help='Only use Listener reactions as examples in the validation/test sets',
         )
 
