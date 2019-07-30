@@ -118,34 +118,21 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
                     # label candidates
                     continue
 
+                dialogue_parts = [
+                        contextt,
+                        label,
+                        prompt,
+                        sit,
+                        context_emb,
+                        cand_emb,
+                        ft_ctx,
+                        ft_cand,
+                        inline_label_candidates,
+                    ]
                 if j % 2 == 0:
-                    listener_dialogue.append(
-                        [
-                            contextt,
-                            label,
-                            prompt,
-                            sit,
-                            context_emb,
-                            cand_emb,
-                            ft_ctx,
-                            ft_cand,
-                            inline_label_candidates,
-                        ]
-                    )
+                    listener_dialogue.append(dialogue_parts)
                 else:
-                    speaker_dialogue.append(
-                        [
-                            contextt,
-                            label,
-                            prompt,
-                            sit,
-                            context_emb,
-                            cand_emb,
-                            ft_ctx,
-                            ft_cand,
-                            inline_label_candidates,
-                        ]
-                    )
+                    speaker_dialogue.append(dialogue_parts)
                 j += 1
 
             else:
