@@ -301,7 +301,7 @@ class MTurkManager:
                 if cur_time - self.last_hit_check > 10:
                     self.last_hit_check = cur_time
                     for hit_id in self.hit_id_list.copy():
-                        self.check_hit_status(hit_id)
+                        self.update_hit_status(hit_id)
                 self.is_shutdown.wait(timeout=30)
 
         self.hit_status_thread = threading.Thread(
@@ -1193,7 +1193,7 @@ class MTurkManager:
         wait_time = 0.1
         while time.time() - start_time < min_wait and len(self.hit_id_list) > 0:
             for hit_id in self.hit_id_list.copy():
-                self.check_hit_status(hit_id)
+                self.update_hit_status(hit_id)
             wait_time *= 1.5
             time.sleep(wait_time)
 
@@ -1605,7 +1605,7 @@ class MTurkManager:
         return assignments_info.get('Assignments', [])
 
     # FIXME move this into mturk_utils
-    def check_hit_status(self, hit_id):
+    def update_hit_status(self, hit_id):
         """Checks the status of a HIT, removes it from outstanding if it is
         no longer acceptable or pending.
         """
@@ -1633,7 +1633,7 @@ class MTurkManager:
         shared_utils.print_and_log(
             logging.INFO, 'Expiring all HITs...', should_print=not self.is_test
         )
-        for hit_id in self.hit_id_list:
+        for hit_id in self.all_hit_ids:
             mturk_utils.expire_hit(self.is_sandbox, hit_id)
 
     def approve_work(self, assignment_id, override_rejection=False):
