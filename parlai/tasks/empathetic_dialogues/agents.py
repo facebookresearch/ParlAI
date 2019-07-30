@@ -138,9 +138,9 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
-        i = entry_idx * 2
-        ep_i = ep[i]
-        episode_done = i >= (len(ep) - 2)
+        ep_i = ep[entry_idx]
+        episode_done = entry_idx >= (len(ep) - 1)
+        # TODO: confirm this indexing
         action = {
             'situation': ep_i[3],
             'emotion': ep_i[2],
