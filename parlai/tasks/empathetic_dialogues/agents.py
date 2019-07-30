@@ -109,15 +109,6 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
                     for f in gettop:
                         ft_cand = f.split("_")[-1] + " " + ft_cand
 
-                if (
-                    len(inline_label_candidates) == 0
-                    and fold != 'train'
-                    and self.opt['eval_candidates'] == 'inline'
-                ):
-                    # We can't use this example for eval because there are no
-                    # label candidates
-                    continue
-
                 dialogue_parts = [
                     contextt,
                     label,
