@@ -25,6 +25,16 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
         self.num_eps = len(self.data)
         self.reset()
 
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('Empathetic Dialogue teacher arguments')
+        agent.add_argument(
+            '--reactions-only',
+            type='bool',
+            default=True,
+            help='Only use Listener reactions as examples in the validation/test sets',
+        )
+
     def num_episodes(self):
         return self.num_eps
 
@@ -52,8 +62,10 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
         )
         df = open(fpath).readlines()
 
+        speaker_dialogue = []
+        listener_dialogue = []
         self.data = []
-        dialog = []
+        j = 0
         for i in range(1, len(df)):
 
             cparts = df[i - 1].strip().split(",")
@@ -66,10 +78,13 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
                 prompt = sparts[2]
                 sit = sparts[3].replace("_comma_", ",")
                 if len(sparts) == 9:
-                    inline_label_candidates = [
-                        cand.replace("_comma_", ",").replace("_pipe_", "|")
-                        for cand in sparts[8].split('|')
-                    ]
+                    if sparts[8] != '':
+                        inline_label_candidates = [
+                            cand.replace("_comma_", ",").replace("_pipe_", "|")
+                            for cand in sparts[8].split('|')
+                        ]
+                    else:
+                        inline_label_candidates = []
                 elif len(sparts) == 8:
                     inline_label_candidates = []
                 else:
@@ -94,25 +109,57 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
                     for f in gettop:
                         ft_cand = f.split("_")[-1] + " " + ft_cand
 
-                dialog.append(
-                    (
-                        contextt,
-                        label,
-                        prompt,
-                        sit,
-                        context_emb,
-                        cand_emb,
-                        ft_ctx,
-                        ft_cand,
-                        inline_label_candidates,
+                if (
+                    len(inline_label_candidates) == 0
+                    and fold != 'train'
+                    and self.opt['eval_candidates'] == 'inline'
+                ):
+                    # We can't use this example for eval because there are no
+                    # label candidates
+                    continue
+
+                if j % 2 == 0:
+                    listener_dialogue.append(
+                        [
+                            contextt,
+                            label,
+                            prompt,
+                            sit,
+                            context_emb,
+                            cand_emb,
+                            ft_ctx,
+                            ft_cand,
+                            inline_label_candidates,
+                        ]
                     )
-                )
+                else:
+                    speaker_dialogue.append(
+                        [
+                            contextt,
+                            label,
+                            prompt,
+                            sit,
+                            context_emb,
+                            cand_emb,
+                            ft_ctx,
+                            ft_cand,
+                            inline_label_candidates,
+                        ]
+                    )
+                j += 1
 
             else:
 
-                if len(dialog) > 0:
-                    self.data.append(dialog)
-                dialog = []
+                # Finished with the episode
+                if len(listener_dialogue) > 0:
+                    self.data.append(listener_dialogue)
+                if len(speaker_dialogue) > 0 and (
+                    fold == 'train' or self.opt['reactions_only'] is False
+                ):
+                    self.data.append(speaker_dialogue)
+                listener_dialogue = []
+                speaker_dialogue = []
+                j = 0
 
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
