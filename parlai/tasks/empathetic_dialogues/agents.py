@@ -78,13 +78,10 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
                 prompt = sparts[2]
                 sit = sparts[3].replace("_comma_", ",")
                 if len(sparts) == 9:
-                    if sparts[8] != '':
-                        inline_label_candidates = [
-                            cand.replace("_comma_", ",").replace("_pipe_", "|")
-                            for cand in sparts[8].split('|')
-                        ]
-                    else:
-                        inline_label_candidates = []
+                    inline_label_candidates = [
+                        cand.replace("_comma_", ",").replace("_pipe_", "|")
+                        for cand in sparts[8].split('|')
+                    ]
                 elif len(sparts) == 8:
                     inline_label_candidates = []
                 else:
