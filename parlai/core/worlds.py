@@ -289,18 +289,7 @@ class DialogPartnerWorld(World):
     def report(self):
         """Report all metrics of all subagents."""
 
-        def show(metric):
-            if (
-                'all' in self.show_metrics
-                or metric in self.show_metrics
-                or metric == 'exs'
-            ):
-                return True
-            return False
-
         # DEPRECATIONDAY: should we get rid of this option?
-        show_metrics = self.opt.get('metrics', "all")
-        self.show_metrics = show_metrics.split(',')
         metrics = {}
         for a in self.agents:
             if hasattr(a, 'report'):
@@ -309,8 +298,7 @@ class DialogPartnerWorld(World):
                     if k not in metrics:
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
-                        if show(k):
-                            metrics[k] = v
+                        metrics[k] = v
         if metrics:
             self.total_exs += metrics.get('exs', 0)
             return metrics
