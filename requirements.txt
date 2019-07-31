@@ -25,3 +25,4 @@ websocket-client
 websocket-server
 py-rouge
 pre-commit
+docutils<0.15

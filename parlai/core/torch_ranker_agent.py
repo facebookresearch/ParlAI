@@ -19,7 +19,6 @@ import torch
 from torch import nn
 
 from parlai.core.distributed_utils import is_distributed
-from parlai.core.thread_utils import SharedTable
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 
@@ -130,18 +129,16 @@ class TorchRankerAgent(TorchAgent):
 
         if shared:
             self.model = shared['model']
-            self.metrics = shared['metrics']
             states = None
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
             # should correctly initialize to floats or ints here
-            self.metrics = {
-                'loss': 0.0,
-                'examples': 0,
-                'rank': 0.0,
-                'mrr': 0.0,
-                'train_accuracy': 0.0,
-            }
+            self.metrics['loss'] = 0.0
+            self.metrics['examples'] = 0
+            self.metrics['rank'] = 0.0
+            self.metrics['mrr'] = 0.0
+            self.metrics['train_accuracy'] = 0.0
+
             self.build_model()
             if self.fp16:
                 self.model = self.model.half()
@@ -649,12 +646,6 @@ class TorchRankerAgent(TorchAgent):
     def share(self):
         """Share model parameters."""
         shared = super().share()
-        if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
-            torch.set_num_threads(1)
-            # move metrics and model to shared memory
-            self.metrics = SharedTable(self.metrics)
-            self.model.share_memory()
-        shared['metrics'] = self.metrics
         shared['fixed_candidates'] = self.fixed_candidates
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['fixed_candidate_encs'] = self.fixed_candidate_encs
