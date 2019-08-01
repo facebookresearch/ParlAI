@@ -428,7 +428,7 @@ class Metrics(object):
                 v_typ = type(v)
                 if 'Tensor' in str(v_typ):
                     self.metrics[k].zero_()
-                if 'int' in str(v_typ):
+                if isinstance(v, int):
                     self.metrics[k] = 0
                 else:
                     self.metrics[k] = 0.0
