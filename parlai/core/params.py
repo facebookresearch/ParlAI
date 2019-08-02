@@ -83,16 +83,8 @@ def get_model_name(opt):
             model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
             if os.path.isfile(optfile):
-                try:
-                    # try json first
-                    with open(optfile, 'r', encoding='utf-8') as handle:
-                        new_opt = json.load(handle)
-                        model = new_opt.get('model', None)
-                except UnicodeDecodeError:
-                    # oops it's pickled
-                    with open(optfile, 'rb') as handle:
-                        new_opt = pickle.load(handle)
-                        model = new_opt.get('model', None)
+                new_opt = load_opt_file(optfile)
+                model = new_opt.get('model', None)
     return model
 
 
@@ -834,9 +826,10 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_known_opts(self, optfile, parsed):
         """
-        _load_known_opts is called before args are parsed, to pull in the cmdline args
-        for the proper models/tasks/etc.
-        _load_opts (below) is for actually overriding opts after they are parsed.
+        Pull in CLI args for proper models/tasks/etc.
+
+        Called before args are parsed; ``_load_opts`` is used for actually
+        overriding opts after they are parsed.
         """
         new_opt = load_opt_file(optfile)
         for key, value in new_opt.items():
@@ -881,16 +874,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return opt
 
-    def parse_args(self, args=None, namespace=None, print_args=True):
-        """
-        Parse the provided arguments and returns a dictionary of the ``args``.
-
-        We specifically remove items with ``None`` as values in order
-        to support the style ``opt.get(key, default)``, which would otherwise
-        return ``None``.
-        """
-        self.add_extra_args(args)
-        self.args = super().parse_args(args=args)
+    def _process_args_to_opts(self):
         self.opt = Opt(vars(self.args))
 
         # custom post-parsing
@@ -948,6 +932,31 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
+
+    def parse_and_process_known_args(self, args=None):
+        """
+        Parse provided arguments and return parlai opts and unknown arg list.
+
+        Runs the same arg->opt parsing that parse_args does, but doesn't
+        throw an error if the args being parsed include additional command
+        line arguments that parlai doesn't know what to do with.
+        """
+        self.args, unknowns = super().parse_known_args(args=args)
+        self._process_args_to_opts()
+        return self.opt, unknowns
+
+    def parse_args(self, args=None, namespace=None, print_args=True):
+        """
+        Parse the provided arguments and returns a dictionary of the ``args``.
+
+        We specifically remove items with ``None`` as values in order
+        to support the style ``opt.get(key, default)``, which would otherwise
+        return ``None``.
+        """
+        self.add_extra_args(args)
+        self.args = super().parse_args(args=args)
+
+        self._process_args_to_opts()
 
         if print_args:
             self.print_args()
@@ -1019,6 +1028,7 @@ class ParlaiParser(argparse.ArgumentParser):
             )
 
         arg_group.add_argument = ag_add_argument  # override _ => -
+        arg_group.add_argument_group = self.add_argument_group
         return arg_group
 
     def error(self, message):

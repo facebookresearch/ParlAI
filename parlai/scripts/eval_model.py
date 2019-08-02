@@ -44,12 +44,14 @@ def setup_args(parser=None):
         'number of tasks.',
     )
     parser.add_argument(
+        '-mcs',
         '--metrics',
         type=str,
-        default='all',
-        help='list of metrics to show/compute, e.g. '
-        'ppl, f1, accuracy, hits@1.'
-        'If `all` is specified [default] all are shown.',
+        default='default',
+        help='list of metrics to show/compute, e.g. all, default,'
+        'or give a list split by , like '
+        'ppl,f1,accuracy,hits@1,rouge,bleu'
+        'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
     )
     TensorboardLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')

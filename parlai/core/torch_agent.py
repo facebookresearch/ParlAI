@@ -27,6 +27,7 @@ import os
 from torch import optim
 
 from parlai.core.agents import Agent
+from parlai.core.thread_utils import SharedTable
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import (
@@ -272,7 +273,7 @@ class History(object):
                 # update history vecs
                 self._update_vecs(text)
 
-        if obs['episode_done']:
+        if obs.get('episode_done'):
             # end of this episode, clear the history when we see a new example
             self.reset_on_next_update = True
 
@@ -434,11 +435,12 @@ class TorchAgent(ABC, Agent):
             'correct size. If the dimensions are the same, this is '
             'ignored unless you append "-force" to your choice.',
         )
-        # optimizer arguments
         agent.add_argument(
             '--fp16', type='bool', default=False, help='Use fp16 computations.'
         )
-        agent.add_argument(
+        # optimizer arguments
+        optim_group = agent.add_argument_group('Optimizer Arguments')
+        optim_group.add_argument(
             '-opt',
             '--optimizer',
             default='sgd',
@@ -446,30 +448,38 @@ class TorchAgent(ABC, Agent):
             help='Choose between pytorch optimizers. Any member of torch.optim'
             ' should be valid.',
         )
-        agent.add_argument(
-            '-lr', '--learningrate', type=float, default=1, help='learning rate'
+        optim_group.add_argument(
+            '-lr', '--learningrate', type=float, default=1, help='Learning rate'
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '-clip',
             '--gradient-clip',
             type=float,
             default=0.1,
             help='gradient clipping using l2 norm',
         )
-        agent.add_argument(
+        optim_group.add_argument(
+            '--adam-eps',
+            type=float,
+            default=1e-8,
+            hidden=True,
+            help='Epsilon value for Adam optimizers. Set to 1e-6 if your '
+            'large model has stability issues, but prefer the default.',
+        )
+        optim_group.add_argument(
             '-mom',
             '--momentum',
             default=0,
             type=float,
             help='if applicable, momentum value for optimizer.',
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '--nesterov',
             default=True,
             type='bool',
             help='if applicable, whether to use nesterov momentum.',
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '-nu',
             '--nus',
             default='0.7',
@@ -477,7 +487,7 @@ class TorchAgent(ABC, Agent):
             help='if applicable, nu value(s) for optimizer. can use a single '
             'value like 0.7 or a comma-separated tuple like 0.7,1.0',
         )
-        agent.add_argument(
+        optim_group.add_argument(
             '-beta',
             '--betas',
             default='0.9,0.999',
@@ -485,29 +495,38 @@ class TorchAgent(ABC, Agent):
             help='if applicable, beta value(s) for optimizer. can use a single '
             'value like 0.9 or a comma-separated tuple like 0.9,0.999',
         )
+        optim_group.add_argument(
+            '-wd',
+            '--weight-decay',
+            type=float,
+            default=None,
+            help='Weight decay on the weights.',
+        )
+
         # lr scheduler
-        agent.add_argument(
+        lr_group = agent.add_argument_group('Learning Rate Scheduler')
+        lr_group.add_argument(
             '--lr-scheduler',
             type=str,
             default='reduceonplateau',
             choices=['reduceonplateau', 'none', 'fixed', 'invsqrt'],
             help='Learning rate scheduler.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--lr-scheduler-patience',
             type=int,
             default=3,
             help='LR scheduler patience. In number of validation runs. If using '
             'fixed scheduler, LR is decayed every <patience> validations.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--lr-scheduler-decay',
             type=float,
             default=0.5,
             help='Decay factor for LR scheduler, or how much LR is multiplied by '
             'when it is lowered.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--warmup-updates',
             type=int,
             default=-1,
@@ -515,7 +534,7 @@ class TorchAgent(ABC, Agent):
             help='Learning rate warmup period, in number of SGD updates. '
             'Linearly scales up LR over period. Only enabled if > 0.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--warmup-rate',
             type=float,
             default=1e-4,
@@ -524,13 +543,14 @@ class TorchAgent(ABC, Agent):
             'this value. Linearly adjusted up to 1.0 across --warmup-updates '
             'steps.',
         )
-        agent.add_argument(
+        lr_group.add_argument(
             '--update-freq',
             type=int,
-            default=-1,
+            default=1,
             hidden=True,
             help='Accumulate gradients N times before performing an optimizer.step().',
         )
+
         # preprocessing arguments
         agent.add_argument(
             '-rc',
@@ -641,10 +661,19 @@ class TorchAgent(ABC, Agent):
                 if len(self.dict) % 8 != 0:
                     for i in range(8 - len(self.dict) % 8):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
+
+            self.metrics = {}
+            # gradient norms
+            self.metrics['gnorm'] = 0.0
+            # gradient clipping rate
+            self.metrics['clip'] = 0.0
+            # number of calls to optimizer.step()
+            self.metrics['updates'] = 0
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
             self.dict = shared['dict']
+            self.metrics = shared['metrics']
             if self.opt['batchsize'] == 1:
                 # if we're not using batching (e.g. mturk), then replies really need
                 # to stay separated
@@ -691,20 +720,24 @@ class TorchAgent(ABC, Agent):
         label_truncate = opt.get('label_truncate') or opt['truncate']
         self.label_truncate = label_truncate if label_truncate >= 0 else None
         # stores up to hist_utt past observations within current dialog
-        self.history = self.history_class()(
-            opt,
-            maxlen=self.text_truncate,
-            size=self.histsz,
-            p1_token=self.P1_TOKEN,
-            p2_token=self.P2_TOKEN,
-            dict_agent=self.dict,
-        )
+        self.history = self.build_history()
 
         self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
         # set interactive mode or not according to options.
         self.set_interactive_mode(opt['interactive_mode'], shared)
+
+    def build_history(self):
+        """Return the constructed history object."""
+        return self.history_class()(
+            self.opt,
+            maxlen=self.text_truncate,
+            size=self.histsz,
+            p1_token=self.P1_TOKEN,
+            p2_token=self.P2_TOKEN,
+            dict_agent=self.dict,
+        )
 
     def build_dictionary(self):
         """
@@ -777,6 +810,8 @@ class TorchAgent(ABC, Agent):
         # set up optimizer args
         lr = opt['learningrate']
         kwargs = {'lr': lr}
+        if opt.get('weight_decay'):
+            kwargs['weight_decay'] = opt['weight_decay']
         if opt.get('momentum') > 0 and opt['optimizer'] in ['sgd', 'rmsprop', 'qhm']:
             # turn on momentum for optimizers that use it
             kwargs['momentum'] = opt['momentum']
@@ -793,9 +828,12 @@ class TorchAgent(ABC, Agent):
         elif opt['optimizer'] == 'qhadam':
             # set nus for qhadam
             kwargs['nus'] = opt.get('nus', (0.7, 1.0))
-        if opt['optimizer'] in ['adam', 'sparseadam', 'adamax', 'qhadam']:
+        if opt['optimizer'] in ['adam', 'sparseadam', 'fused_adam', 'adamax', 'qhadam']:
             # set betas for optims that use it
             kwargs['betas'] = opt.get('betas', (0.9, 0.999))
+            # set adam optimizer, but only if user specified it
+            if opt.get('adam_eps'):
+                kwargs['eps'] = opt['adam_eps']
 
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
@@ -950,6 +988,11 @@ class TorchAgent(ABC, Agent):
             current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
             metrics['lr'] = round_sigfigs(current_lr, 4)
         metrics['num_updates'] = self._number_training_updates
+
+        steps = self.metrics['updates']
+        if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
+            metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
+            metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
         return metrics
 
     def _is_lr_warming_up(self):
@@ -1110,6 +1153,13 @@ class TorchAgent(ABC, Agent):
         Subclasses will likely want to share their model as well.
         """
         shared = super().share()
+
+        if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
+            # move metrics and model to shared memory
+            self.metrics = SharedTable(self.metrics)
+            self.model.share_memory()
+        shared['metrics'] = self.metrics
+
         shared['dict'] = self.dict
         if hasattr(self, 'model'):
             shared['model'] = self.model
@@ -1118,8 +1168,7 @@ class TorchAgent(ABC, Agent):
         return shared
 
     def _add_start_end_tokens(self, vec, add_start=False, add_end=False):
-        """ Can handle both a 1D tensor and a list
-        """
+        """Add start and end tokens to a list or tensor."""
         if isinstance(vec, torch.Tensor):
             if len(vec.shape) != 1:
                 raise Exception('_add_start_end_tokens expects a 1D tensor')
@@ -1610,6 +1659,13 @@ class TorchAgent(ABC, Agent):
         self.replies.clear()
         self.reset_metrics()
 
+    def reset_metrics(self):
+        """Reset all TorchAgentMetrics."""
+        super().reset_metrics()
+        self.metrics['gnorm'] = 0.0
+        self.metrics['clip'] = 0.0
+        self.metrics['updates'] = 0
+
     def act(self):
         """Call batch_act with the singleton batch."""
         return self.batch_act([self.observation])[0]
@@ -1663,7 +1719,7 @@ class TorchAgent(ABC, Agent):
         pass
 
     def set_interactive_mode(self, mode, shared):
-        """ Set interactive mode on or off."""
+        """Set interactive mode on or off."""
         # Base class is a no-op.
         pass
 
@@ -1675,6 +1731,10 @@ class TorchAgent(ABC, Agent):
         loss.backward(), for integration with distributed training and FP16
         training.
         """
+        if self.opt.get('update_freq', 1) > 1:
+            # gradient accumulation, but still need to average across the minibatches
+            loss = loss / self.opt['update_freq']
+
         if self.fp16:
             self.optimizer.backward(loss, update_master_grads=False)
         else:
@@ -1719,12 +1779,15 @@ class TorchAgent(ABC, Agent):
 
         if self.opt.get('gradient_clip', -1) > 0:
             if self.fp16:
-                self.optimizer.clip_master_grads(self.opt['gradient_clip'])
+                grad_norm = self.optimizer.clip_master_grads(self.opt['gradient_clip'])
             else:
-                torch.nn.utils.clip_grad_norm_(
+                grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
+            self.metrics['gnorm'] += grad_norm
+            self.metrics['clip'] += float(grad_norm > self.opt['gradient_clip'])
 
+        self.metrics['updates'] += 1
         self.optimizer.step()
 
     def zero_grad(self):

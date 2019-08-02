@@ -12,7 +12,7 @@ import random
 import os
 
 
-class DefaultTeacher(DialogTeacher):
+class UbuntuTeacher(DialogTeacher):
     """This teacher inherits from the core Dialog Teacher, which just
     requires it to define an iterator over its data `setup_data` in order to
     inherit basic metrics, a default `act` function, and enables
@@ -111,3 +111,67 @@ class MultiturnTeacher(FixedDialogTeacher):
         shared = super().share()
         shared['data'] = self.data
         return shared
+
+
+class UbuntuTeacherWithNegs(UbuntuTeacher):
+    """ Output the exact same data as the default teacher, except for the
+        trainset where it provides negatives in label_candidates.
+        (It does not affect valid and test set)
+    """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.datatype = opt['datatype']
+        self.num_seen = -1
+        if 'train' in self.datatype:
+            if shared is None:
+                if self.stream:
+                    self.all_candidates = [
+                        self.data.get()[0]['labels'][0]
+                        for i in range(self.num_episodes())
+                    ]
+                else:
+                    self.all_candidates = [
+                        self.data.get(i, 0)[0]['labels'][0]
+                        for i in range(self.num_episodes())
+                    ]
+            else:
+                self.all_candidates = shared['all_candidates']
+
+    def add_candidates(self, sample, seed):
+        """ Add 16 candidates. Should be called only at train time.
+        """
+        rand = random.Random(seed)
+        if 'label_candidates' in sample:
+            return
+        label = sample['labels'][0]
+        negs = []
+        while len(negs) < 15:
+            neg_idx = rand.randint(0, len(self.all_candidates) - 1)
+            neg = self.all_candidates[neg_idx]
+            if neg != label:
+                negs.append(neg)
+        sample['label_candidates'] = [label] + negs
+
+    def get(self, episode_idx, entry_idx=0):
+        sample = super().get(episode_idx, entry_idx)
+        if 'train' in self.datatype:
+            self.add_candidates(sample, episode_idx)
+        return sample
+
+    def next_example(self):
+        sample, episode_done = super().next_example()
+        self.num_seen += 1
+        if 'train' in self.datatype:
+            self.add_candidates(sample, self.num_seen)
+        return sample, episode_done
+
+    def share(self):
+        shared = super().share()
+        if 'train' in self.datatype:
+            shared['all_candidates'] = self.all_candidates
+        return shared
+
+
+class DefaultTeacher(UbuntuTeacher):
+    pass

@@ -192,6 +192,16 @@ def setup_args(parser=None) -> ParlaiParser:
         help='If multitasking, average metrics over the number of examples. '
         'If false, averages over the number of tasks.',
     )
+    train.add_argument(
+        '-mcs',
+        '--metrics',
+        type=str,
+        default='default',
+        help='list of metrics to show/compute, e.g. all, default,'
+        'or give a list split by , like '
+        'ppl,f1,accuracy,hits@1,rouge,bleu'
+        'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
+    )
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
@@ -585,6 +595,8 @@ class TrainLoop:
             else:
                 # all other cases, take the mean across the workers
                 finalized[k] = np.mean(values)
+                if all(isinstance(v, int) for v in values):
+                    finalized[k] = int(finalized[k])
         return finalized
 
     def _cleanup_inaccurate_metrics(self, metrics):

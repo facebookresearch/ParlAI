@@ -11,6 +11,13 @@ standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.5-node
 
+osx_cpu37: &osx_cpu37
+  macos:
+    xcode: "10.1.0"
+  environment:
+    PYTHON: 3.7.1
+    HOMEBREW_NO_AUTO_UPDATE: 1
+
 gpu: &gpu
   environment:
     CUDA_VERSION: "10.0"
@@ -56,6 +63,12 @@ installtorchgpu: &installtorchgpu
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
+
+installtorchcpuosx: &installtorchcpuosx
+  run:
+    name: Install torch CPU and dependencies
+    command: |
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.0-cp37-none-macosx_10_7_x86_64.whl
 
 installtorchcpu36: &installtorchcpu36
   run:
@@ -106,6 +119,19 @@ jobs:
           name: Data tests
           command: python setup.py test -s tests.suites.datatests -v
 
+  unittests_osx:
+    <<: *osx_cpu37
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpuosx
+      - run:
+          name: Unit tests (OSX)
+          command: python setup.py test -s tests.suites.unittests -v
+
   unittests_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
@@ -132,6 +158,19 @@ jobs:
           name: Unit tests (py37)
           command: python setup.py test -s tests.suites.unittests -v
 
+  unittests_gpu:
+    <<: *gpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setupcuda
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchgpu
+      - run:
+          name: Unit tests (GPU)
+          command: python setup.py test -s tests.suites.unittests -v
   black:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
@@ -286,8 +325,10 @@ workflows:
     jobs:
       - black
       - lint
+      - unittests_gpu
       - unittests_37
       - unittests_36
+      - unittests_osx
       - mturk_tests:
           filters:
             branches:
@@ -318,6 +359,8 @@ workflows:
     jobs:
       - unittests_36
       - unittests_37
+      - unittests_gpu
+      - unittests_osx
       - mturk_tests
       - nightly_gpu_tests
       - test_website

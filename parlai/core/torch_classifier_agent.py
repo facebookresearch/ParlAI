@@ -158,7 +158,6 @@ class TorchClassifierAgent(TorchAgent):
         shared['class_dict'] = self.class_dict
         shared['class_list'] = self.class_list
         shared['class_weights'] = self.class_weights
-        shared['metrics'] = self.metrics
         shared['model'] = self.model
         shared['optimizer'] = self.optimizer
         return shared
@@ -261,7 +260,6 @@ class TorchClassifierAgent(TorchAgent):
 
     def reset_metrics(self):
         """Reset metrics."""
-        self.metrics = {}
         super().reset_metrics()
         self.metrics['confusion_matrix'] = defaultdict(int)
         self.metrics['examples'] = 0

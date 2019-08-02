@@ -17,21 +17,20 @@ from parlai.core.teachers import ParlAIDialogTeacher
 from projects.self_feeding.utils import add_person_tokens
 
 
-def _path(opt, filename_override=None):
+def _path(opt, filename, add_suffix=False):
     build(opt)
-    subtask = opt['subtask']
-    st = None
-    if subtask == 'dialog':
-        st = 'hh'
-    elif subtask == 'sentiment':
-        st = 'st'
-    elif subtask == 'feedback' or 'explanation':
-        st = 'fb_a'
-    else:
-        print(f'######## Not found! {subtask}')
-    dp = os.path.join(opt['datapath'], 'dialogue_sf', 'dialogue_sf_v01')
-    dt = filename_override or opt.get('datatype', 'train').split(':')[0]
-    filename = f'{dt}_{st}.txt'
+    if add_suffix:
+        subtask = opt['subtask']
+        if subtask == 'dialog':
+            suffix = 'hh'
+        elif subtask == 'satisfaction':
+            suffix = 'st'
+        elif subtask == 'feedback':
+            suffix = 'fb'
+        else:
+            raise ValueError(f"Unrecognized subtask: {subtask}")
+        filename += f"_{suffix}.txt"
+    dp = os.path.join(opt['datapath'], 'self_feeding')
     return os.path.join(dp, filename)
 
 
@@ -41,12 +40,6 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
     opt['datatype'] determines whether we use the designated filepath ('train') or
         one of the eval files ('valid', 'test'), which are identical regardless of
         what training set is being used.
-
-    Example:
-    -t self_feeding:dialog:train_a
-        train on data/convai2meta/dialog/train_a.txt
-        eval on data/convai2meta/dialog/valid.txt
-        test on data/convai2meta/dialog/test.txt
     """
 
     def __init__(self, opt, shared=None):
@@ -61,22 +54,21 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
         # Use 'in' to also capture 'train:ordered:stream'
         if 'train' in opt['datatype']:
             # Use the filename explicitly given with the flag if available
-            # Otherwise, use the filename passed in the task flag
+            # Otherwise, use train_xx.txt where xx is inferred from the subtask
             train_file_flag = f"{opt['subtask'][:3]}_train"
             if opt.get(train_file_flag, None):
-                filename = opt[train_file_flag]
+                path = _path(opt, opt[train_file_flag], add_suffix=False)
             else:
-                filename = opt['task'].split(':')[-1]
-            path = _path(opt, filename)
+                path = _path(opt, "train", add_suffix=True)
         else:
             # Use the filename explicitly given with the flag if available
-            # Otherwise, use the datatype (valid.txt or test.txt)
+            # Otherwise, use the datatype (valid_xx.txt or test_xx.txt) where xx is
+            # inferred from the subtask.
             eval_file_flag = f"{opt['subtask'][:3]}_{opt['datatype']}"
             if opt.get(eval_file_flag, None):
-                filename = opt[eval_file_flag]
+                path = _path(opt, opt[eval_file_flag], add_suffix=False)
             else:
-                filename = opt['datatype'].split(':')[0]
-            path = _path(opt, filename)
+                path = _path(opt, opt['datatype'].split(':')[0], add_suffix=True)
 
         if not os.path.exists(path):
             raise ValueError("Unrecognized filepath: {}".format(path))
@@ -98,64 +90,55 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
             '-dia-train',
             '--dia-train',
             type=str,
-            default='train',
             help='the filename to train on for the dialog task',
         )
         project.add_argument(
-            '-exp-train',
-            '--exp-train',
+            '-fee-train',
+            '--fee-train',
             type=str,
-            default='train',
-            help='the filename to train on for the explanation task',
+            help='the filename to train on for the feedback task',
         )
         project.add_argument(
-            '-sen-train',
-            '--sen-train',
+            '-sat-train',
+            '--sat-train',
             type=str,
-            default='train',
-            help='the filename to train on for the sentiment task',
+            help='the filename to train on for the satisfaction task',
         )
         project.add_argument(
             '-dia-valid',
             '--dia-valid',
             type=str,
-            default='valid',
             help='the filename to eval on for the dialog task',
         )
         project.add_argument(
-            '-exp-valid',
-            '--exp-valid',
+            '-fee-valid',
+            '--fee-valid',
             type=str,
-            default='valid',
-            help='the filename to eval on for the explanation task',
+            help='the filename to eval on for the feedback task',
         )
         project.add_argument(
-            '-sen-valid',
-            '--sen-valid',
+            '-sat-valid',
+            '--sat-valid',
             type=str,
-            default='valid',
-            help='the filename to eval on for the sentiment task',
+            help='the filename to eval on for the satisfaction task',
         )
         project.add_argument(
             '-dia-test',
             '--dia-test',
             type=str,
-            default='test',
             help='the filename to eval on for the dialog task',
         )
         project.add_argument(
-            '-exp-test',
-            '--exp-test',
+            '-fee-test',
+            '--fee-test',
             type=str,
-            default='test',
-            help='the filename to eval on for the explanation task',
+            help='the filename to eval on for the feedback task',
         )
         project.add_argument(
-            '-sen-test',
-            '--sen-test',
+            '-sat-test',
+            '--sat-test',
             type=str,
-            default='test',
-            help='the filename to eval on for the sentiment task',
+            help='the filename to eval on for the satisfaction task',
         )
         project.add_argument(
             '-trial',
@@ -297,10 +280,10 @@ class DialogTeacher(SelfFeedingTeacher):
         SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class ExplanationTeacher(SelfFeedingTeacher):
+class FeedbackTeacher(SelfFeedingTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['subtask'] = 'explanation'
+        opt['subtask'] = 'feedback'
         super().__init__(opt, shared)
 
     @staticmethod
@@ -308,10 +291,10 @@ class ExplanationTeacher(SelfFeedingTeacher):
         SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class SentimentTeacher(SelfFeedingTeacher):
+class SatisfactionTeacher(SelfFeedingTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['subtask'] = 'sentiment'
+        opt['subtask'] = 'satisfaction'
         super().__init__(opt, shared)
 
     @staticmethod
@@ -319,12 +302,12 @@ class SentimentTeacher(SelfFeedingTeacher):
         SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class DiaexpTeacher(SelfFeedingMTLTeacher):
+class DiafeeTeacher(SelfFeedingMTLTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['subtasks'] = ['dialog', 'explanation']
+        opt['subtasks'] = ['dialog', 'feedback']
         # Expand abbreviated task name ('both') into full task names
-        train_files = [opt['dia_train'], opt['exp_train']]
+        train_files = [opt['dia_train'], opt['fee_train']]
         assert len(opt['subtasks']) == len(train_files)
         tasks = [
             f'self_feeding:{subtask}:{train_file}'
@@ -338,12 +321,12 @@ class DiaexpTeacher(SelfFeedingMTLTeacher):
         SelfFeedingTeacher.add_cmdline_args(argparser)
 
 
-class DiasenTeacher(SelfFeedingMTLTeacher):
+class DiasatTeacher(SelfFeedingMTLTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['subtasks'] = ['dialog', 'sentiment']
+        opt['subtasks'] = ['dialog', 'satisfaction']
         # Expand abbreviated task name ('both') into full task names
-        train_files = [opt['dia_train'], opt['sen_train']]
+        train_files = [opt['dia_train'], opt['sat_train']]
         assert len(opt['subtasks']) == len(train_files)
         tasks = [
             f'self_feeding:{subtask}:{train_file}'
@@ -360,9 +343,9 @@ class DiasenTeacher(SelfFeedingMTLTeacher):
 class AllTeacher(SelfFeedingMTLTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['subtasks'] = ['dialog', 'explanation', 'sentiment']
+        opt['subtasks'] = ['dialog', 'feedback', 'satisfaction']
         # Expand abbreviated task name ('all') into full task names
-        train_files = [opt['dia_train'], opt['exp_train'], opt['sen_train']]
+        train_files = [opt['dia_train'], opt['fee_train'], opt['sat_train']]
         assert len(opt['subtasks']) == len(train_files)
         tasks = [
             f'self_feeding:{subtask}:{train_file}'
