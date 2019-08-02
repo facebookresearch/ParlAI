@@ -67,9 +67,15 @@ def add_common_cmdline_args(argparser):
     )
     argparser.add_argument(
         '--variant',
-        choices={'aiayn', 'xlm'},
+        choices={'aiayn', 'bert', 'xlm'},
         default='aiayn',
         help='Chooses locations of layer norms, etc.',
+    )
+    argparser.add_argument(
+        '--bert-final-layer-dim',
+        type=int,
+        default=300,
+        help='Output size of the final layer in the BERT variant',
     )
     argparser.add_argument(
         '--activation',

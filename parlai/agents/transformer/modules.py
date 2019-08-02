@@ -77,6 +77,7 @@ def _build_encoder(
         activation=opt['activation'],
         variant=opt['variant'],
         output_scaling=opt['output_scaling'],
+        bert_final_layer_dim=opt['bert_final_layer_dim'],
     )
 
 
@@ -323,7 +324,7 @@ class TransformerEncoder(nn.Module):
     :param activation:
         Type of nonlinear activation. Can be relu or gelu.
     :param variant:
-        Which transformer architecture to use. Could be AIAYN or XLM.
+        Which transformer architecture to use. Could be AIAYN, BERT, or XLM.
         Future versions may support things like GPT-2, ...
     :param output_scaling:
         Scale the outputs by a given scalar
@@ -349,6 +350,7 @@ class TransformerEncoder(nn.Module):
         variant='aiayn',
         n_segments=0,
         output_scaling=1.0,
+        bert_final_layer_dim=300,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -399,7 +401,7 @@ class TransformerEncoder(nn.Module):
             nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
 
         # embedding normalization
-        if self.variant == 'xlm':
+        if self.variant in ['bert', 'xlm']:
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
@@ -425,6 +427,11 @@ class TransformerEncoder(nn.Module):
                 )
             )
         self.output_scaling = output_scaling
+
+        if self.variant in 'bert':
+            self.additional_linear_layer = nn.Linear(
+                embedding_size, bert_final_layer_dim
+            )
 
     def forward(self, input, positions=None, segments=None):
         """
@@ -458,7 +465,7 @@ class TransformerEncoder(nn.Module):
                 segments = torch.zeros_like(input)
             tensor = tensor + self.segment_embeddings(segments)
 
-        if self.variant == 'xlm':
+        if self.variant in ['bert', 'xlm']:
             tensor = _normalize(tensor, self.norm_embeddings)
 
         # --dropout on the embeddings
@@ -470,20 +477,33 @@ class TransformerEncoder(nn.Module):
 
         tensor *= self.output_scaling
         if self.reduction_type == 'first':
-            return tensor[:, 0, :]
+            output = tensor[:, 0, :]
         elif self.reduction_type == 'max':
-            return tensor.max(dim=1)[0]
+            output = tensor.max(dim=1)[0]
         elif self.reduction_type == 'mean':
             divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
             output = tensor.sum(dim=1) / divisor
-            return output
         elif self.reduction_type == 'none' or self.reduction_type is None:
             output = tensor
-            return output, mask
         else:
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)
             )
+
+        if self.variant in 'bert':
+            output = self.additional_linear_layer(output)
+
+        if (
+            self.reduction_type == 'none'
+            or self.reduction_type is None
+            and self.variant != 'bert'
+        ):
+            # TODO: figure out: is the code that passes back the mask still usable? From
+            #  looking at the models that use this encoder, the output of the encoder is
+            #  always assumed to be a Tensor, not a 2-ple of Tensors
+            return output, mask
+        else:
+            return output
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -591,7 +611,7 @@ class TransformerDecoder(nn.Module):
 
         self.embeddings = embedding
 
-        if self.variant == 'xlm':
+        if self.variant == ['bert', 'xlm']:
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
@@ -642,7 +662,7 @@ class TransformerDecoder(nn.Module):
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
-        if self.variant == 'xlm':
+        if self.variant in ['bert', 'xlm']:
             tensor = _normalize(tensor, self.norm_embeddings)
         if positions.max().item() > self.n_positions:
             warn_once(
