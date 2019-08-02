@@ -680,7 +680,7 @@ class MTurkManager:
             """Onboarding wrapper to set state to onboarding properly"""
             if self.get_onboard_world:
                 conversation_id = 'o_' + str(uuid.uuid4())
-                agent.set_status(
+                mturk_agent.set_status(
                     AssignState.STATUS_ONBOARDING,
                     conversation_id=conversation_id,
                     agent_id='onboarding',
