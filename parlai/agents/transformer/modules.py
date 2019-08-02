@@ -498,9 +498,9 @@ class TransformerEncoder(nn.Module):
             or self.reduction_type is None
             and self.variant != 'bert'
         ):
-            # TODO: is the code that passes back the mask still usable? From
-            #  looking at the models that use this encoder, the output of the encoder is
-            #  always assumed to be a Tensor, not a 2-ple of Tensors
+            # TODO: is the code that passes back the mask still usable? From looking at
+            #  the models that use this encoder, the output of the encoder is always
+            #  assumed to be a Tensor, not a 2-ple of Tensors
             return output, mask
         else:
             return output
