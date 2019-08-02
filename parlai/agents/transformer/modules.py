@@ -493,14 +493,7 @@ class TransformerEncoder(nn.Module):
         if self.variant in 'bert':
             output = self.additional_linear_layer(output)
 
-        if (
-            self.reduction_type == 'none'
-            or self.reduction_type is None
-            and self.variant != 'bert'
-        ):
-            # TODO: is the code that passes back the mask still usable? From looking at
-            #  the models that use this encoder, the output of the encoder is always
-            #  assumed to be a Tensor, not a 2-ple of Tensors
+        if self.reduction_type == 'none' or self.reduction_type is None:
             return output, mask
         else:
             return output
