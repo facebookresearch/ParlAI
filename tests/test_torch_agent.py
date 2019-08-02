@@ -851,7 +851,7 @@ class TestTorchAgent(unittest.TestCase):
                 'num_epochs': 3,
                 'validation_every_n_epochs': 1,
                 'save_after_valid': True,
-                'log_every_n_secs': 10
+                'log_every_n_secs': 10,
             }
 
         with capture_output():
