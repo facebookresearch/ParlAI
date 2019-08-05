@@ -395,17 +395,6 @@ class MockAgent(object):
         }
         return self.build_and_send_packet(data_model.AGENT_ALIVE, data)
 
-    def wait_for_alive(self):
-        last_time = time.time()
-        while not self.ready:
-            self.send_alive()
-            time.sleep(0.5)
-            assert (
-                time.time() - last_time < 10
-            ), 'Timed out wating for server to acknowledge {} alive'.format(
-                self.worker_id
-            )
-
 
 class TestSocketManagerSetupAndFunctions(unittest.TestCase):
     """Unit/integration tests for starting up a socket"""
