@@ -216,7 +216,6 @@ class TestMTurkAgent(unittest.TestCase):
         self.assertEqual(self.turk_agent.get_connection_id(), connection_id)
 
     def test_status_change(self):
-        has_changed = False
         self.turk_agent.set_status(AssignState.STATUS_ONBOARDING)
         time.sleep(0.07)
         self.assertEqual(self.turk_agent.get_status(), AssignState.STATUS_ONBOARDING)
@@ -256,12 +255,14 @@ class TestMTurkAgent(unittest.TestCase):
 
         self.turk_agent.disconnected = True
         with self.assertRaises(AgentDisconnectedError):
-            _disconnect_message = self.turk_agent.get_new_act_message()
+            # Expect this to be a disconnect message
+            self.turk_agent.get_new_act_message()
         self.turk_agent.disconnected = False
 
         self.turk_agent.hit_is_returned = True
         with self.assertRaises(AgentReturnedError):
-            _return_message = self.turk_agent.get_new_act_message()
+            # Expect this to be a returned message
+            self.turk_agent.get_new_act_message()
         self.turk_agent.hit_is_returned = False
 
         # Reduce state

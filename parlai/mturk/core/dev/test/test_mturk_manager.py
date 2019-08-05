@@ -1178,7 +1178,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
 
     def test_send_message_command(self):
         manager = self.mturk_manager
-        agent = self.agent_1
         worker_id = self.agent_1.worker_id
         assignment_id = self.agent_1.assignment_id
         manager.socket_manager.queue_packet = mock.MagicMock()
@@ -1380,7 +1379,6 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
 
     def test_expire_all_hits(self):
         manager = self.mturk_manager
-        worker_manager = manager.worker_manager
         incomplete_1 = 'incomplete_1'
         incomplete_2 = 'incomplete_2'
         MTurkManagerFile.mturk_utils.expire_hit = mock.MagicMock()
@@ -1451,7 +1449,7 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
             self.agent_1.get_status(), AssignState.STATUS_PARTNER_DISCONNECT
         )
         args = manager.send_state_change.call_args[0]
-        worker_id, assignment_id, data = args[0], args[1], args[2]
+        worker_id, assignment_id = args[0], args[1]
         self.assertEqual(worker_id, self.agent_1.worker_id)
         self.assertEqual(assignment_id, self.agent_1.assignment_id)
 
