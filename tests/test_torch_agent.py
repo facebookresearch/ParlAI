@@ -16,7 +16,7 @@ from collections import deque
 SKIP_TESTS = False
 try:
     from parlai.core.torch_agent import Output
-    from parlai.agents.test_agents.dummy_torch_agent import TorchAgent, MockDict
+    from parlai.agents.test_agents.dummy_torch_agent import MockTorchAgent, MockDict
     import torch
 except ImportError:
     SKIP_TESTS = True
@@ -33,29 +33,26 @@ def get_agent(**kwargs):
     from parlai.core.params import ParlaiParser
 
     parser = ParlaiParser()
-    TorchAgent.add_cmdline_args(parser)
+    MockTorchAgent.add_cmdline_args(parser)
     parser.set_params(**kwargs)
     opt = parser.parse_args(print_args=False)
-    return TorchAgent(opt)
+    return MockTorchAgent(opt)
 
-
+@unittest.skipIf(SKIP_TESTS, "Torch not installed.")
 class TestTorchAgent(unittest.TestCase):
     """Basic tests on the util functions in TorchAgent."""
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_mock(self):
         """Just make sure we can instantiate a mock agent."""
         agent = get_agent()
         self.assertTrue(isinstance(agent.dict, MockDict))
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_share(self):
         """Make sure share works and shares dictionary."""
         agent = get_agent()
         shared = agent.share()
         self.assertTrue('dict' in shared)
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test__vectorize_text(self):
         """Test _vectorize_text and its different options."""
         agent = get_agent()
@@ -147,7 +144,6 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2])
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test__check_truncate(self):
         """Make sure we are truncating when needed."""
         agent = get_agent()
@@ -159,7 +155,6 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent._check_truncate(inp, 1).tolist(), [1])
         self.assertEqual(agent._check_truncate(inp, 0).tolist(), [])
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_vectorize(self):
         """Test the vectorization of observations.
 
@@ -249,7 +244,6 @@ class TestTorchAgent(unittest.TestCase):
         vecs = agent.history.get_history_vec_list()
         self.assertEqual(vecs, [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batchify(self):
         """Make sure the batchify function sets up the right fields."""
         agent = get_agent(rank_candidates=True)
@@ -448,7 +442,6 @@ class TestTorchAgent(unittest.TestCase):
         for i, cs in enumerate(batch.candidate_vecs):
             self.assertEqual(len(cs), len(obs_cands[i]['label_candidates']))
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_match_batch(self):
         """Make sure predictions are correctly aligned when available."""
         agent = get_agent()
@@ -558,7 +551,6 @@ class TestTorchAgent(unittest.TestCase):
             ['By Grabthar’s hammer.', 'By the suns of Worvan.'],
         )
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test__add_person_tokens(self):
         """Make sure person tokens are added to the write place in text."""
         agent = get_agent()
@@ -575,7 +567,6 @@ class TestTorchAgent(unittest.TestCase):
         idx = text.rfind('\n') + 1
         self.assertEqual(out, text[:idx] + prefix + ' ' + text[idx:])
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_history(self):
         """Test different dialog history settings."""
         # try with unlimited history
@@ -712,7 +703,6 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot. Groot! I am Groot.')
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_last_reply(self):
         """Make sure last reply returns expected values."""
         agent = get_agent()
@@ -745,7 +735,6 @@ class TestTorchAgent(unittest.TestCase):
         # if we don't want to use the last reply at all, it should be None
         self.assertIsNone(agent.last_reply(use_reply='none'))
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_observe(self):
         """Make sure agent stores and returns observation."""
         agent = get_agent()
@@ -769,7 +758,6 @@ class TestTorchAgent(unittest.TestCase):
         out = agent.observe(obs.copy())
         self.assertEqual(out['text'], "I'll be back.\nI'm back.\nI'll be back.")
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batch_act(self):
         """Make sure batch act calls the right step."""
         agent = get_agent()
@@ -826,7 +814,6 @@ class TestTorchAgent(unittest.TestCase):
         for i in range(len(obs_elabs_vecs)):
             self.assertEqual(reply[i]['text'], 'Evaluating {}!'.format(i))
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_resume_checkpoint(self):
         """Make sure when resuming training that model uses appropriate mf.
 
@@ -846,7 +833,7 @@ class TestTorchAgent(unittest.TestCase):
             return {
                 'task': 'integration_tests',
                 'init_model': init_mf,
-                'model': 'parlai.agents.test_agents.dummy_torch_agent:TorchAgent',
+                'model': 'parlai.agents.test_agents.dummy_torch_agent:MockTorchAgent',
                 'model_file': mf,
                 'num_epochs': 3,
                 'validation_every_n_epochs': 1,
