@@ -382,7 +382,6 @@ class SocketManager:
             packet_dict['content']['type'] = packet_dict['type']
             packet = Packet.from_dict(packet_dict['content'])
             if packet is None:
-                print('no packet made', packet_dict)
                 return
             packet_id = packet.id
             packet_type = packet.type
