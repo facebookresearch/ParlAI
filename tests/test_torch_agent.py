@@ -38,6 +38,7 @@ def get_agent(**kwargs):
     opt = parser.parse_args(print_args=False)
     return MockTorchAgent(opt)
 
+
 @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
 class TestTorchAgent(unittest.TestCase):
     """Basic tests on the util functions in TorchAgent."""
