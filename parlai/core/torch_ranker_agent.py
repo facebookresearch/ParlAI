@@ -119,6 +119,13 @@ class TorchRankerAgent(TorchAgent):
             help='Ignore examples for which the label is not present in the '
             'label candidates. Default behavior results in RuntimeError. ',
         )
+        agent.add_argument(
+            '--rank-top-k',
+            type=int,
+            default=-1,
+            help='Ranking returns the top k results of k > 0, otherwise sorts every '
+            'single candidate according to the ranking.',
+        )
 
     def __init__(self, opt, shared=None):
         # Must call _get_init_model() first so that paths are updated if necessary
@@ -148,7 +155,8 @@ class TorchRankerAgent(TorchAgent):
             else:
                 states = {}
 
-        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
+        self.rank_top_k = opt.get('rank_top_k', -1)
+        self.rank_loss = self.build_loss(opt)
         if self.use_cuda:
             self.model.cuda()
             self.rank_loss.cuda()
@@ -172,6 +180,9 @@ class TorchRankerAgent(TorchAgent):
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
             )
+
+    def build_loss(self, opt):
+        return nn.CrossEntropyLoss(reduce=True, size_average=False)
 
     def set_interactive_mode(self, mode, shared=False):
         self.candidates = self.opt['candidates']
@@ -257,7 +268,10 @@ class TorchRankerAgent(TorchAgent):
         """Return predictions from training."""
         # TODO: speed these calculations up
         batchsize = scores.size(0)
-        _, ranks = scores.sort(1, descending=True)
+        if self.rank_top_k > 0:
+            _, ranks = scores.topk(self.rank_top_k, 1, largest=True)
+        else:
+            _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
@@ -362,7 +376,10 @@ class TorchRankerAgent(TorchAgent):
                 cand_encs = self.vocab_candidate_encs
 
         scores = self.score_candidates(batch, cand_vecs, cand_encs=cand_encs)
-        _, ranks = scores.sort(1, descending=True)
+        if self.rank_top_k > 0:
+            _, ranks = scores.topk(self.rank_top_k, 1, largest=True)
+        else:
+            _, ranks = scores.sort(1, descending=True)
 
         # Update metrics
         if label_inds is not None:
@@ -370,7 +387,8 @@ class TorchRankerAgent(TorchAgent):
             self.metrics['loss'] += loss.item()
             self.metrics['examples'] += batchsize
             for b in range(batchsize):
-                rank = (ranks[b] == label_inds[b]).nonzero().item()
+                rank = (ranks[b] == label_inds[b]).nonzero()
+                rank = rank.item() if len(rank) == 1 else scores.size(1)
                 self.metrics['rank'] += 1 + rank
                 self.metrics['mrr'] += 1.0 / (1 + rank)
 
@@ -382,13 +400,11 @@ class TorchRankerAgent(TorchAgent):
                 cand_list = cands
             elif cand_vecs.dim() == 3:
                 cand_list = cands[i]
-            if len(ordering) != len(cand_list):
-                # ignore padding
-                true_ordering = [x for x in ordering if x < len(cand_list)]
-                ordering = true_ordering
             # using a generator instead of a list comprehension allows
             # to cap the number of elements.
-            cand_preds_generator = (cand_list[rank] for rank in ordering)
+            cand_preds_generator = (
+                cand_list[rank] for rank in ordering if rank < len(cand_list)
+            )
             cand_preds.append(list(islice(cand_preds_generator, max_preds)))
 
         if (
@@ -590,11 +606,6 @@ class TorchRankerAgent(TorchAgent):
                 "[ Executing {} mode with a common set of fixed candidates "
                 "(n = {}). ]".format(mode, len(self.fixed_candidates))
             )
-            if self.fixed_candidates is None:
-                raise ValueError(
-                    "If using candidate source 'fixed', then you must provide the path "
-                    "to a file of candidates with the flag --fixed-candidates-path"
-                )
 
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
