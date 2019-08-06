@@ -603,11 +603,11 @@ class TorchRankerAgent(TorchAgent):
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
                 for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(0)).fill_(
+                    label_vec_pad = label_vec.new_zeros(cand_vecs.size(1)).fill_(
                         self.NULL_IDX
                     )
-                    if cand_vecs[i].size(0) < len(label_vec):
-                        label_vec = label_vec[0 : cand_vecs[i].size(0)]
+                    if cand_vecs.size(1) < len(label_vec):
+                        label_vec = label_vec[0 : cand_vecs.size(1)]
                     label_vec_pad[0 : label_vec.size(0)] = label_vec
                     label_inds[i] = self._find_match(cand_vecs, label_vec_pad)
                     if label_inds[i] == -1:
