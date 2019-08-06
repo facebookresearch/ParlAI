@@ -606,6 +606,12 @@ class TorchRankerAgent(TorchAgent):
                         )
 
         elif source == 'fixed':
+            if self.fixed_candidates is None:
+                raise ValueError(
+                    "If using candidate source 'fixed', then you must provide the path "
+                    "to a file of candidates with the flag --fixed-candidates-path or "
+                    "the name of a task with --fixed-candidates-task."
+                )
             warn_once(
                 "[ Executing {} mode with a common set of fixed candidates "
                 "(n = {}). ]".format(mode, len(self.fixed_candidates))
@@ -617,15 +623,16 @@ class TorchRankerAgent(TorchAgent):
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
-                for i, label_vec in enumerate(label_vecs):
-                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(0)).fill_(
+                for batch_idx, label_vec in enumerate(label_vecs):
+                    max_c_len = cand_vecs.size(1)
+                    label_vec_pad = label_vec.new_zeros(max_c_len).fill_(
                         self.NULL_IDX
                     )
-                    if cand_vecs[i].size(0) < len(label_vec):
-                        label_vec = label_vec[0 : cand_vecs[i].size(1)]
+                    if max_c_len < len(label_vec):
+                        label_vec = label_vec[0 : max_c_len]
                     label_vec_pad[0 : label_vec.size(0)] = label_vec
-                    label_inds[i] = self._find_match(cand_vecs, label_vec_pad)
-                    if label_inds[i] == -1:
+                    label_inds[batch_idx] = self._find_match(cand_vecs, label_vec_pad)
+                    if label_inds[batch_idx] == -1:
                         bad_batch = True
                 if bad_batch:
                     if self.ignore_bad_candidates and not self.is_training:
@@ -782,6 +789,7 @@ class TorchRankerAgent(TorchAgent):
                     self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
 
                 if self.encode_candidate_vecs:
+                    # candidate encodings are fixed so set them up now
                     enc_path = os.path.join(
                         model_dir, '.'.join([model_name, cands_name, 'encs'])
                     )
