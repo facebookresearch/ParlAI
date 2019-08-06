@@ -859,7 +859,6 @@ class HogwildProcess(Process):
             world = BatchWorld(self.opt, world)
         self.sync['threads_sem'].release()
         with world:
-            # print('[ thread {} initialized ]'.format(self.shared['threadindex']))
             while True:
                 if self.sync['term_flag'].value:
                     break  # time to close
