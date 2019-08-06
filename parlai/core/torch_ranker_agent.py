@@ -607,7 +607,7 @@ class TorchRankerAgent(TorchAgent):
                         self.NULL_IDX
                     )
                     if cand_vecs[i].size(0) < len(label_vec):
-                        label_vec = label_vec[0 : cand_vecs[i].size(1)]
+                        label_vec = label_vec[0 : cand_vecs[i].size(0)]
                     label_vec_pad[0 : label_vec.size(0)] = label_vec
                     label_inds[i] = self._find_match(cand_vecs, label_vec_pad)
                     if label_inds[i] == -1:
