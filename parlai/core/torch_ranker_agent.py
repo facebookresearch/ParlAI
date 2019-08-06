@@ -625,11 +625,9 @@ class TorchRankerAgent(TorchAgent):
                 bad_batch = False
                 for batch_idx, label_vec in enumerate(label_vecs):
                     max_c_len = cand_vecs.size(1)
-                    label_vec_pad = label_vec.new_zeros(max_c_len).fill_(
-                        self.NULL_IDX
-                    )
+                    label_vec_pad = label_vec.new_zeros(max_c_len).fill_(self.NULL_IDX)
                     if max_c_len < len(label_vec):
-                        label_vec = label_vec[0 : max_c_len]
+                        label_vec = label_vec[0:max_c_len]
                     label_vec_pad[0 : label_vec.size(0)] = label_vec
                     label_inds[batch_idx] = self._find_match(cand_vecs, label_vec_pad)
                     if label_inds[batch_idx] == -1:
