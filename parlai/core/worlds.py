@@ -847,7 +847,6 @@ class HogwildProcess(Process):
             world = BatchWorld(self.opt, world)
         self.sync['threads_sem'].release()
         with world:
-            print('[ thread {} initialized ]'.format(self.shared['threadindex']))
             while True:
                 if self.sync['term_flag'].value:
                     break  # time to close
@@ -940,6 +939,8 @@ class HogwildWorld(World):
             # this makes sure that no threads get examples before all are set up
             # otherwise they might reset one another after processing some exs
             self.sync['threads_sem'].acquire()
+
+        print(f'[ {self.numthreads} threads initialized ]')
 
     def display(self):
         """Unsupported operation. Raises a `NotImplementedError`."""
