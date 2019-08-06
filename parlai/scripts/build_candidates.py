@@ -45,7 +45,7 @@ def build_cands(opt):
         world.parley()
         # We get the acts of the first agent, which is the teacher.
         acts = world.get_acts()[0]
-        if type(acts) == dict:
+        if isinstance(acts, dict):
             # We turn into a batch of 1 example, in case batching is being used.
             acts = [acts]
         for a in acts:

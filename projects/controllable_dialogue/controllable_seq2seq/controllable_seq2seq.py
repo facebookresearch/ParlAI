@@ -670,7 +670,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         # ======== END COPIED FROM TORCHAGENT ========
 
         # Add history to the batch
-        history = [ConvAI2History(ex['text'], dictionary=self.dict) for ex in exs]
+        history = [ConvAI2History(ex['full_text'], dictionary=self.dict) for ex in exs]
 
         # Add CT control vars to batch
         ctrl_vec = get_ctrl_vec(exs, history, self.control_settings)  # tensor or None
