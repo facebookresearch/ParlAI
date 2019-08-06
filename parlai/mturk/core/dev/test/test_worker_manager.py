@@ -7,13 +7,13 @@
 import unittest
 import os
 from unittest import mock
-from parlai.mturk.core.worker_manager import WorkerManager, WorkerState
-from parlai.mturk.core.agents import MTurkAgent, AssignState
-from parlai.mturk.core.mturk_manager import MTurkManager
+from parlai.mturk.core.dev.worker_manager import WorkerManager, WorkerState
+from parlai.mturk.core.dev.agents import MTurkAgent, AssignState
+from parlai.mturk.core.dev.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
 
-import parlai.mturk.core.worker_manager as WorkerManagerFile
-import parlai.mturk.core.data_model as data_model
+import parlai.mturk.core.dev.worker_manager as WorkerManagerFile
+import parlai.mturk.core.dev.data_model as data_model
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 WorkerManagerFile.DISCONNECT_FILE_NAME = 'disconnect-test.pickle'
@@ -46,6 +46,9 @@ class TestWorkerState(unittest.TestCase):
         self.opt['assignment_duration_in_seconds'] = 6
         mturk_agent_ids = ['mturk_agent_1']
         self.mturk_manager = MTurkManager(opt=self.opt, mturk_agent_ids=mturk_agent_ids)
+        self.mturk_manager.send_message = mock.MagicMock()
+        self.mturk_manager.send_state_change = mock.MagicMock()
+        self.mturk_manager.send_command = mock.MagicMock()
         self.worker_manager = WorkerManager(self.mturk_manager, self.opt)
 
     def tearDown(self):
@@ -140,6 +143,9 @@ class TestWorkerManager(unittest.TestCase):
             opt=self.opt.copy(), mturk_agent_ids=mturk_agent_ids
         )
         self.worker_manager = self.mturk_manager.worker_manager
+        self.mturk_manager.send_message = mock.MagicMock()
+        self.mturk_manager.send_state_change = mock.MagicMock()
+        self.mturk_manager.send_command = mock.MagicMock()
 
         self.worker_state_1 = self.worker_manager.worker_alive(TEST_WORKER_ID_1)
         self.worker_state_2 = self.worker_manager.worker_alive(TEST_WORKER_ID_2)
@@ -358,8 +364,12 @@ class TestWorkerManager(unittest.TestCase):
             ack_func(pkt)
 
         self.mturk_manager.send_command = fake_command_send
-        self.worker_manager.change_agent_conversation(good_agent, 't1', 'good')
-        self.worker_manager.change_agent_conversation(bad_agent, 't1', 'bad')
+        good_agent.set_status(
+            AssignState.STATUS_IN_TASK, conversation_id='t1', agent_id='good'
+        )
+        bad_agent.set_status(
+            AssignState.STATUS_IN_TASK, conversation_id='t1', agent_id='bad'
+        )
         self.assertEqual(good_agent.id, 'good')
         self.assertEqual(bad_agent.id, 'bad')
         self.assertEqual(good_agent.conversation_id, 't1')

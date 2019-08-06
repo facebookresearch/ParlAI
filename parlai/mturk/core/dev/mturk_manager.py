@@ -680,7 +680,7 @@ class MTurkManager:
             """Onboarding wrapper to set state to onboarding properly"""
             if self.get_onboard_world:
                 conversation_id = 'o_' + str(uuid.uuid4())
-                agent.set_status(
+                mturk_agent.set_status(
                     AssignState.STATUS_ONBOARDING,
                     conversation_id=conversation_id,
                     agent_id='onboarding',
@@ -1365,14 +1365,14 @@ class MTurkManager:
     def mark_workers_done(self, workers):
         """Mark a group of agents as done to keep state consistent"""
         for agent in workers:
+            if not agent.is_final():
+                agent.set_status(AssignState.STATUS_DONE, 'done', None)
+
             if self.is_unique:
                 assert (
                     self.unique_qual_name is not None
                 ), 'Unique qual name must not be none to use is_unique'
                 self.give_worker_qualification(agent.worker_id, self.unique_qual_name)
-            if not agent.is_final():
-                agent.set_status(AssignState.STATUS_DONE, 'done', None)
-
             if self.max_hits_per_worker > 0:
                 worker_state = self.worker_manager._get_worker(agent.worker_id)
                 completed_assignments = worker_state.completed_assignments()
