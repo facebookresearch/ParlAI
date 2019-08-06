@@ -430,8 +430,8 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
             self.worlds_agents[key] = True
         self.mturk_manager.shutdown()
         self.fake_socket.close()
-        # if self.task_thread.isAlive():
-        #     self.task_thread.join()
+        if self.task_thread.isAlive():
+            self.task_thread.join()
 
     def get_onboard_world(self, mturk_agent):
         self.onboarding_agents[mturk_agent.worker_id] = False
