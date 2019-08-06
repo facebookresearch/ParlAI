@@ -289,18 +289,7 @@ class DialogPartnerWorld(World):
     def report(self):
         """Report all metrics of all subagents."""
 
-        def show(metric):
-            if (
-                'all' in self.show_metrics
-                or metric in self.show_metrics
-                or metric == 'exs'
-            ):
-                return True
-            return False
-
         # DEPRECATIONDAY: should we get rid of this option?
-        show_metrics = self.opt.get('metrics', "all")
-        self.show_metrics = show_metrics.split(',')
         metrics = {}
         for a in self.agents:
             if hasattr(a, 'report'):
@@ -309,8 +298,7 @@ class DialogPartnerWorld(World):
                     if k not in metrics:
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
-                        if show(k):
-                            metrics[k] = v
+                        metrics[k] = v
         if metrics:
             self.total_exs += metrics.get('exs', 0)
             return metrics
@@ -859,7 +847,6 @@ class HogwildProcess(Process):
             world = BatchWorld(self.opt, world)
         self.sync['threads_sem'].release()
         with world:
-            print('[ thread {} initialized ]'.format(self.shared['threadindex']))
             while True:
                 if self.sync['term_flag'].value:
                     break  # time to close
@@ -952,6 +939,8 @@ class HogwildWorld(World):
             # this makes sure that no threads get examples before all are set up
             # otherwise they might reset one another after processing some exs
             self.sync['threads_sem'].acquire()
+
+        print(f'[ {self.numthreads} threads initialized ]')
 
     def display(self):
         """Unsupported operation. Raises a `NotImplementedError`."""
