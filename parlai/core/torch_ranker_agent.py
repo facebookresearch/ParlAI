@@ -269,7 +269,9 @@ class TorchRankerAgent(TorchAgent):
         # TODO: speed these calculations up
         batchsize = scores.size(0)
         if self.rank_top_k > 0:
-            _, ranks = scores.topk(self.rank_top_k, 1, largest=True)
+            _, ranks = scores.topk(
+                min(self.rank_top_k, scores.size(1)), 1, largest=True
+            )
         else:
             _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
@@ -377,7 +379,9 @@ class TorchRankerAgent(TorchAgent):
 
         scores = self.score_candidates(batch, cand_vecs, cand_encs=cand_encs)
         if self.rank_top_k > 0:
-            _, ranks = scores.topk(self.rank_top_k, 1, largest=True)
+            _, ranks = scores.topk(
+                min(self.rank_top_k, scores.size(1)), 1, largest=True
+            )
         else:
             _, ranks = scores.sort(1, descending=True)
 
