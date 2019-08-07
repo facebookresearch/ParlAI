@@ -97,7 +97,7 @@ class MemnnAgent(TorchRankerAgent):
     def build_model(self):
         """Build MemNN model."""
         kwargs = opt_to_kwargs(self.opt)
-        self.model = MemNN(
+        return MemNN(
             len(self.dict),
             self.opt['embedding_size'],
             padding_idx=self.NULL_IDX,

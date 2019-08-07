@@ -190,9 +190,7 @@ class TransformerRankerAgent(TorchRankerAgent):
     def build_model(self, states=None):
         model = TransformerMemNetModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
-            self._copy_embeddings(
-                model.embeddings.weight, self.opt['embedding_type']
-            )
+            self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
 
     def batchify(self, obs_batch, sort=False):

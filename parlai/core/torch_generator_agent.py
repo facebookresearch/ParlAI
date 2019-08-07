@@ -420,9 +420,7 @@ class TorchGeneratorAgent(TorchAgent):
 
         If overridden, this model should produce a sum that can be used for a per-token loss.
         """
-        return torch.nn.CrossEntropyLoss(
-            ignore_index=self.NULL_IDX, reduction='sum'
-        )
+        return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
 
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
