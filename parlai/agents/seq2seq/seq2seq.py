@@ -200,15 +200,15 @@ class Seq2seqAgent(TorchGeneratorAgent):
         if self.use_cuda:
             self.model.cuda()
 
-        return self.model
-
     def build_criterion(self):
         # set up criteria
         if self.opt.get('numsoftmax', 1) > 1:
-            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX, size_average=False)
+            self.criterion = nn.NLLLoss(
+                ignore_index=self.NULL_IDX, reduction='sum'
+            )
         else:
             self.criterion = nn.CrossEntropyLoss(
-                ignore_index=self.NULL_IDX, size_average=False
+                ignore_index=self.NULL_IDX, reduction='sum'
             )
 
         if self.use_cuda:

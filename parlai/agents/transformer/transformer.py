@@ -193,7 +193,8 @@ class TransformerRankerAgent(TorchRankerAgent):
             self._copy_embeddings(
                 self.model.embeddings.weight, self.opt['embedding_type']
             )
-        return self.model
+        if self.use_cuda:
+            self.model.cuda()
 
     def batchify(self, obs_batch, sort=False):
         """Override so that we can add memories to the Batch object."""
@@ -271,4 +272,3 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
             )
         if self.use_cuda:
             self.model.cuda()
-        return self.model

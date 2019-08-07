@@ -132,6 +132,8 @@ class BertClassifierAgent(TorchClassifierAgent):
         self.model = BertWrapper(
             BertModel.from_pretrained(self.pretrained_path), num_classes
         )
+        if self.use_cuda:
+            self.model.cuda()
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """Initialize the optimizer."""

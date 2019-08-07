@@ -146,6 +146,7 @@ class TorchRankerAgent(TorchAgent):
             self.metrics['mrr'] = 0.0
             self.metrics['train_accuracy'] = 0.0
 
+            self.build_criterion()
             self.build_model()
             if self.fp16:
                 self.model = self.model.half()

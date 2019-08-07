@@ -58,6 +58,8 @@ class BiEncoderRankerAgent(TorchRankerAgent):
 
     def build_model(self):
         self.model = BiEncoderModule(self.opt)
+        if self.use_cuda:
+            self.model.cuda()
 
     @staticmethod
     def dictionary_class():

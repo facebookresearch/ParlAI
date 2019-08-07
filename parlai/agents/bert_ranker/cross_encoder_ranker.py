@@ -58,6 +58,8 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             layer_pulled=self.opt['pull_from_layer'],
             aggregation=self.opt['bert_aggregation'],
         )
+        if self.use_cuda:
+            self.model.cuda()
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         self.optimizer = get_bert_optimizer(

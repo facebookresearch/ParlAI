@@ -791,7 +791,7 @@ class TorchAgent(ABC, Agent):
         The model should be set to self.model.
         """
         pass
-    
+
     def build_criterion(self):
         """
         Construct the loss function.
