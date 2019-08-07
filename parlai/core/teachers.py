@@ -60,7 +60,7 @@ class DataLoader(Thread):
 
     def __init__(self, opt):
         Thread.__init__(self, daemon=True)
-        self.num_workers = opt.get('num_load_threads', 1)
+        self.num_workers = opt.get('num_threads', 1)
         self.request_queue = queue.Queue()
 
     def request_load(self, receive_fn, load_fn, args):
@@ -221,13 +221,15 @@ class FixedDialogTeacher(Teacher):
 
         if hasattr(self, 'examples'):
             shared['examples'] = self.examples
+        
+        if hasattr(self, 'data_loader'):
+            shared['data_loader'] = self.data_loader
 
         if self.opt.get('numthreads', 1) > 1:
             if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
                 # for multithreading need to move index into threadsafe memory
                 self.index = Value('l', -1)
-        else:
-            shared['data_loader'] = self.data_loader
+
         shared['index'] = self.index
 
         return shared
