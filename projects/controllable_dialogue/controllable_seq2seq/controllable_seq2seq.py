@@ -428,10 +428,10 @@ class ControllableSeq2seqAgent(TorchAgent):
 
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
-            self.model.decoder.lt.weight.requires_grad = False
-            self.model.encoder.lt.weight.requires_grad = False
+            model.decoder.lt.weight.requires_grad = False
+            model.encoder.lt.weight.requires_grad = False
             if opt['lookuptable'] in ['dec_out', 'all']:
-                self.model.decoder.e2s.weight.requires_grad = False
+                model.decoder.output.e2s.weight.requires_grad = False
 
         return model
 
