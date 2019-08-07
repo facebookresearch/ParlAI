@@ -129,8 +129,8 @@ class TorchClassifierAgent(TorchAgent):
         if shared:
             self.model = shared['model']
         else:
-            self.build_model()
-            self.build_criterion()
+            self.model = self.build_model()
+            self.criterion = self.build_criterion()
             if self.use_cuda:
                 self.model.cuda()
                 self.critieron.cuda()
@@ -155,7 +155,7 @@ class TorchClassifierAgent(TorchAgent):
 
     def build_criterion(self):
         weight_tensor = torch.FloatTensor(self.class_weights)
-        self.criterion = torch.nn.CrossEntropyLoss(weight_tensor)
+        return torch.nn.CrossEntropyLoss(weight_tensor)
 
     def share(self):
         """Share model parameters."""

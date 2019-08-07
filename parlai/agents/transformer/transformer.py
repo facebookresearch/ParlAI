@@ -188,11 +188,12 @@ class TransformerRankerAgent(TorchRankerAgent):
             )
 
     def build_model(self, states=None):
-        self.model = TransformerMemNetModel(self.opt, self.dict)
+        model = TransformerMemNetModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(
-                self.model.embeddings.weight, self.opt['embedding_type']
+                model.embeddings.weight, self.opt['embedding_type']
             )
+        return model
 
     def batchify(self, obs_batch, sort=False):
         """Override so that we can add memories to the Batch object."""
@@ -263,8 +264,9 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         return agent
 
     def build_model(self, states=None):
-        self.model = TransformerGeneratorModel(self.opt, self.dict)
+        model = TransformerGeneratorModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(
-                self.model.encoder.embeddings.weight, self.opt['embedding_type']
+                model.encoder.embeddings.weight, self.opt['embedding_type']
             )
+        return model

@@ -350,8 +350,8 @@ class FairseqAgent(TorchAgent):
             self.meters = defaultdict(AverageMeter)
 
             # actually construct the criterion, model and generator
-            self.build_criterion()
-            self.build_model()
+            self.criterion = self.build_criterion()
+            self.model = self.build_model()
 
             # Construct the generator and scorer
             self.generator = SequenceGenerator(
@@ -423,12 +423,12 @@ class FairseqAgent(TorchAgent):
             self._copy_embeddings(
                 model.encoder.embed_tokens.weight, self.args.embedding_type
             )
-        self.model = model
+        return model
 
     def build_criterion(self):
         """Set up the grader."""
         # TorchAgent will call this without ready=True before self.args is ready
-        self.criterion = criterions.build_criterion(self.args, self.task)
+        return criterions.build_criterion(self.args, self.task)
 
     def share(self):
         shared = super().share()

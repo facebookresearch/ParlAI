@@ -370,8 +370,8 @@ class TorchGeneratorAgent(TorchAgent):
                 )
                 print('[ Saving dot beam logs in {} ]'.format(self.beam_dot_dir))
 
-            self.build_criterion()
-            self.build_model()
+            self.criterion = self.build_criterion()
+            self.model = self.build_model()
             if self.use_cuda:
                 self.model.cuda()
                 self.criterion.cuda()
@@ -414,15 +414,13 @@ class TorchGeneratorAgent(TorchAgent):
 
     def build_criterion(self):
         """
-        Construct the loss function.
+        Construct and return the loss function.
 
-        By default torch.nn.CrossEntropyLoss.  The criterion function should be
-        set to self.criterion.
+        By default torch.nn.CrossEntropyLoss.
 
-        If overridden, this model should (1) handle calling cuda and (2)
-        produce a sum that can be used for a per-token loss.
+        If overridden, this model should produce a sum that can be used for a per-token loss.
         """
-        self.criterion = torch.nn.CrossEntropyLoss(
+        return torch.nn.CrossEntropyLoss(
             ignore_index=self.NULL_IDX, reduction='sum'
         )
 

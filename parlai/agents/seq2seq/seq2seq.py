@@ -160,7 +160,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
             states = {}
 
         kwargs = opt_to_kwargs(opt)
-        self.model = Seq2seq(
+        model = Seq2seq(
             len(self.dict),
             opt['embeddingsize'],
             opt['hiddensize'],
@@ -194,14 +194,14 @@ class Seq2seqAgent(TorchGeneratorAgent):
             if opt['lookuptable'] in ['dec_out', 'all']:
                 self.model.decoder.e2s.weight.requires_grad = False
 
+        return model
+
     def build_criterion(self):
         # set up criteria
         if self.opt.get('numsoftmax', 1) > 1:
-            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='sum')
+            return nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='sum')
         else:
-            self.criterion = nn.CrossEntropyLoss(
-                ignore_index=self.NULL_IDX, reduction='sum'
-            )
+            return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
 
     def batchify(self, *args, **kwargs):
         """Override batchify options for seq2seq."""

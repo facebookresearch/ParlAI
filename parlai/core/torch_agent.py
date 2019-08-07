@@ -789,11 +789,7 @@ class TorchAgent(ABC, Agent):
 
     @abstractmethod
     def build_model(self):
-        """
-        Construct the model.
-
-        The model should be set to self.model.
-        """
+        """Construct the model and return it."""
         pass
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):

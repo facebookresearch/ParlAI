@@ -145,8 +145,8 @@ class TorchRankerAgent(TorchAgent):
             self.metrics['mrr'] = 0.0
             self.metrics['train_accuracy'] = 0.0
 
-            self.build_criterion()
-            self.build_model()
+            self.criterion = self.build_criterion()
+            self.model = self.build_model()
             if self.use_cuda:
                 self.model.cuda()
                 self.criterion.cuda()
@@ -183,15 +183,11 @@ class TorchRankerAgent(TorchAgent):
 
     def build_criterion(self):
         """
-        Construct the loss function.
+        Construct and return the loss function.
 
-        By default torch.nn.CrossEntropyLoss.  The criterion function should be
-        set to self.criterion.
-
-        If overridden, this model should (1) handle calling cuda and (2)
-        produce a sum that can be used for a per-token loss.
+        By default torch.nn.CrossEntropyLoss.
         """
-        self.criterion = torch.nn.CrossEntropyLoss(reduction='sum')
+        return torch.nn.CrossEntropyLoss(reduction='sum')
 
     def set_interactive_mode(self, mode, shared=False):
         self.candidates = self.opt['candidates']
