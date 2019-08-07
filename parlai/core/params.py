@@ -30,7 +30,9 @@ def print_git_commit():
         current_commit = git_.rev_parse('HEAD')
         print(f'[ Current ParlAI commit: {current_commit} ]')
     except git.GitCommandNotFound:
-        raise
+        pass
+    except git.GitCommandError:
+        pass
 
     try:
         git_ = git.Git(internal_root)
