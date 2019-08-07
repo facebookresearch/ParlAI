@@ -129,7 +129,7 @@ class BertClassifierAgent(TorchClassifierAgent):
     def build_model(self):
         """Construct the model."""
         num_classes = len(self.class_list)
-        self.model = BertWrapper(
+        return BertWrapper(
             BertModel.from_pretrained(self.pretrained_path), num_classes
         )
 
