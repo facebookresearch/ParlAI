@@ -772,7 +772,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         if n_positions < 0:
             raise ValueError('n_positions must be positive')
 
-        self.encoder = _build_encoder(
+        self._build_encoder(
             opt,
             dictionary,
             self.embeddings,
@@ -783,6 +783,26 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         )
         self.decoder = _build_decoder(
             opt, dictionary, self.embeddings, self.pad_idx, n_positions=n_positions
+        )
+
+    def _build_encoder(
+        self,
+        opt,
+        dictionary,
+        embeddings,
+        pad_idx,
+        reduction_type=None,
+        n_positions=1024,
+        n_segments=0
+    ):
+        self.encoder = _build_encoder(
+            opt,
+            dictionary,
+            embeddings,
+            pad_idx,
+            reduction_type=reduction_type,
+            n_positions=n_positions,
+            n_segments=n_segments,
         )
 
     def reorder_encoder_states(self, encoder_states, indices):
