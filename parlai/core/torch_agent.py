@@ -809,8 +809,6 @@ class TorchAgent(ABC, Agent):
         self.criterion = torch.nn.CrossEntropyLoss(
             ignore_index=self.NULL_IDX, reduction='sum'
         )
-        if self.use_cuda:
-            self.criterion.cuda()
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """

@@ -128,9 +128,15 @@ class TorchClassifierAgent(TorchAgent):
 
         if shared:
             self.model = shared['model']
-        elif init_model:
-            print('Loading existing model parameters from ' + init_model)
-            self.load(init_model)
+        else:
+            self.build_model()
+            self.build_criterion()
+            if self.use_cuda:
+                self.model.cuda()
+                self.critieron.cuda()
+            if init_model:
+                print('Loading existing model parameters from ' + init_model)
+                self.load(init_model)
         if self.use_cuda:
             if self.opt['data_parallel']:
                 if is_distributed():
