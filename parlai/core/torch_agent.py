@@ -787,10 +787,9 @@ class TorchAgent(ABC, Agent):
 
         return init_model, is_finetune
 
-    @abstractmethod
     def build_model(self):
         """Construct the model and return it."""
-        pass
+        raise NotImplementedError('not implemented for this class')
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """

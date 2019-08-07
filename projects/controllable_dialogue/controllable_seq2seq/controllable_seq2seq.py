@@ -330,7 +330,15 @@ class ControllableSeq2seqAgent(TorchAgent):
                 print('[ Loading existing model params from {} ]' ''.format(init_model))
                 states = self.load(init_model)
 
-            self._init_model(states=states)
+            self.model = self.build_model(states=states)
+            if self.use_cuda:
+                self.model.cuda()
+                if self.multigpu:
+                    self.model = torch.nn.DataParallel(self.model)
+                    self.model.encoder = self.model.module.encoder
+                    self.model.decoder = self.model.module.decoder
+                    self.model.longest_label = self.model.module.longest_label
+                    self.model.output = self.model.module.output
 
         # set up criteria
         if opt.get('numsoftmax', 1) > 1:
@@ -383,12 +391,12 @@ class ControllableSeq2seqAgent(TorchAgent):
         # weights) to states
         states['model'][key] = init_decoder_ih_l0
 
-    def _init_model(self, states=None):
+    def build_model(self, states=None):
         """Initialize model, override to change model setup."""
         opt = self.opt
 
         kwargs = opt_to_kwargs(opt)
-        self.model = Seq2seq(
+        model = Seq2seq(
             len(self.dict),
             opt['embeddingsize'],
             opt['hiddensize'],
@@ -404,11 +412,11 @@ class ControllableSeq2seqAgent(TorchAgent):
             print('skipping preinitialization of embeddings for bpe')
         elif not states and opt['embedding_type'] != 'random':
             # `not states`: only set up embeddings if not loading model
-            self._copy_embeddings(self.model.decoder.lt.weight, opt['embedding_type'])
+            self._copy_embeddings(model.decoder.lt.weight, opt['embedding_type'])
             if opt['lookuptable'] in ['unique', 'dec_out']:
                 # also set encoder lt, since it's not shared
                 self._copy_embeddings(
-                    self.model.encoder.lt.weight, opt['embedding_type'], log=False
+                    model.encoder.lt.weight, opt['embedding_type'], log=False
                 )
 
         if states:
@@ -416,7 +424,7 @@ class ControllableSeq2seqAgent(TorchAgent):
                 self._add_control(states)
 
             # set loaded states if applicable
-            self.model.load_state_dict(states['model'])
+            model.load_state_dict(states['model'])
 
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
@@ -425,16 +433,7 @@ class ControllableSeq2seqAgent(TorchAgent):
             if opt['lookuptable'] in ['dec_out', 'all']:
                 self.model.decoder.e2s.weight.requires_grad = False
 
-        if self.use_cuda:
-            self.model.cuda()
-            if self.multigpu:
-                self.model = torch.nn.DataParallel(self.model)
-                self.model.encoder = self.model.module.encoder
-                self.model.decoder = self.model.module.decoder
-                self.model.longest_label = self.model.module.longest_label
-                self.model.output = self.model.module.output
-
-        return self.model
+        return model
 
     def _init_controls(self):
         """
