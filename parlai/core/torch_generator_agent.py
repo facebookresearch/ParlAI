@@ -412,6 +412,20 @@ class TorchGeneratorAgent(TorchAgent):
 
         self.reset()
 
+    def build_criterion(self):
+        """
+        Construct the loss function.
+
+        By default torch.nn.CrossEntropyLoss.  The criterion function should be
+        set to self.criterion.
+
+        If overridden, this model should (1) handle calling cuda and (2)
+        produce a sum that can be used for a per-token loss.
+        """
+        self.criterion = torch.nn.CrossEntropyLoss(
+            ignore_index=self.NULL_IDX, reduction='sum'
+        )
+
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
         new_vec = []

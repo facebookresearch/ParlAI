@@ -181,6 +181,18 @@ class TorchRankerAgent(TorchAgent):
                 self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
             )
 
+    def build_criterion(self):
+        """
+        Construct the loss function.
+
+        By default torch.nn.CrossEntropyLoss.  The criterion function should be
+        set to self.criterion.
+
+        If overridden, this model should (1) handle calling cuda and (2)
+        produce a sum that can be used for a per-token loss.
+        """
+        self.criterion = torch.nn.CrossEntropyLoss(reduction='sum')
+
     def set_interactive_mode(self, mode, shared=False):
         self.candidates = self.opt['candidates']
         if mode:
