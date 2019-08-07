@@ -312,6 +312,8 @@ class FairseqAgent(TorchAgent):
 
         # one last time, restore any user set defaults
         argparser.set_defaults(**old_defaults)
+        # default weight decay in fairseq is zero not None
+        argparser.set_defaults(weight_decay=0.0)
 
     @staticmethod
     def dictionary_class():
