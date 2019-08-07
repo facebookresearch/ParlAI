@@ -330,7 +330,7 @@ class FairseqAgent(TorchAgent):
             model_file_exists = self.opt.get('model_file') and os.path.isfile(
                 self.opt['model_file']
             )
-            
+
             # fairseq expects options to be in argparse format, instead of a dict
             # We also need to do some argument postprocessing and whatnot
             # We'll skip pretrained embeddings if we're going to override them with
@@ -424,7 +424,7 @@ class FairseqAgent(TorchAgent):
                 model.encoder.embed_tokens.weight, self.args.embedding_type
             )
         self.model = model
-    
+
     def build_criterion(self):
         """Set up the grader."""
         # TorchAgent will call this without ready=True before self.args is ready

@@ -150,7 +150,7 @@ class TorchRankerAgent(TorchAgent):
             if self.use_cuda:
                 self.model.cuda()
                 self.criterion.cuda()
-                
+
             if self.fp16:
                 self.model = self.model.half()
             if init_model:

@@ -369,7 +369,7 @@ class TorchGeneratorAgent(TorchAgent):
                     )
                 )
                 print('[ Saving dot beam logs in {} ]'.format(self.beam_dot_dir))
-            
+
             self.build_criterion()
             self.build_model()
             if self.use_cuda:

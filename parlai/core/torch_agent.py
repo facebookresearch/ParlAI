@@ -665,7 +665,7 @@ class TorchAgent(ABC, Agent):
             # intitialize any important structures from scratch
             self.replies = {}  # past replies
             self.dict = self.build_dictionary()
-            
+
             if opt.get('fp16'):
                 # Volta cores revert to FP32 hardware if tensors are not multiples
                 # of 8 in all dimensions. This INCLUDES the embeddings layer! As
