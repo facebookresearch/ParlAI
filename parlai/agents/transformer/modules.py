@@ -793,7 +793,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         pad_idx,
         reduction_type=None,
         n_positions=1024,
-        n_segments=0
+        n_segments=0,
     ):
         self.encoder = _build_encoder(
             opt,
