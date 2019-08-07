@@ -87,8 +87,6 @@ class PolyencoderAgent(TorchRankerAgent):
 
     def build_model(self, states=None):
         self.model = PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
-        if self.use_cuda:
-            self.model.cuda()
 
     def vectorize(self, *args, **kwargs):
         """ Add the start and end token to the labels.

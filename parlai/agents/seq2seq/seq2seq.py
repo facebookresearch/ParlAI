@@ -187,9 +187,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
             # set loaded states if applicable
             self.model.load_state_dict(states['model'])
 
-        if self.use_cuda:
-            self.model.cuda()
-
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
             self.model.decoder.lt.weight.requires_grad = False
@@ -197,22 +194,14 @@ class Seq2seqAgent(TorchGeneratorAgent):
             if opt['lookuptable'] in ['dec_out', 'all']:
                 self.model.decoder.e2s.weight.requires_grad = False
 
-        if self.use_cuda:
-            self.model.cuda()
-
     def build_criterion(self):
         # set up criteria
         if self.opt.get('numsoftmax', 1) > 1:
-            self.criterion = nn.NLLLoss(
-                ignore_index=self.NULL_IDX, reduction='sum'
-            )
+            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='sum')
         else:
             self.criterion = nn.CrossEntropyLoss(
                 ignore_index=self.NULL_IDX, reduction='sum'
             )
-
-        if self.use_cuda:
-            self.criterion.cuda()
 
     def batchify(self, *args, **kwargs):
         """Override batchify options for seq2seq."""

@@ -104,9 +104,6 @@ class MemnnAgent(TorchRankerAgent):
             **kwargs,
         )
 
-        if self.use_cuda:
-            self.model.cuda()
-
     def _score(self, output, cands):
         if cands.dim() == 2:
             return torch.matmul(output, cands.t())

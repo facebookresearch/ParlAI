@@ -135,7 +135,6 @@ class TorchRankerAgent(TorchAgent):
         super().__init__(opt, shared)
 
         if shared:
-            self.model = shared['model']
             states = None
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
@@ -148,6 +147,10 @@ class TorchRankerAgent(TorchAgent):
 
             self.build_criterion()
             self.build_model()
+            if self.use_cuda:
+                self.model.cuda()
+                self.criterion.cuda()
+                
             if self.fp16:
                 self.model = self.model.half()
             if init_model:

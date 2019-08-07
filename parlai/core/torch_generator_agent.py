@@ -352,8 +352,6 @@ class TorchGeneratorAgent(TorchAgent):
 
         if shared:
             # set up shared properties
-            self.model = shared['model']
-            self.criterion = shared['criterion']
             states = shared.get('states', {})
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
@@ -371,9 +369,13 @@ class TorchGeneratorAgent(TorchAgent):
                     )
                 )
                 print('[ Saving dot beam logs in {} ]'.format(self.beam_dot_dir))
-
+            
             self.build_criterion()
             self.build_model()
+            if self.use_cuda:
+                self.model.cuda()
+                self.criterion.cuda()
+
             check_synced_parameters(self.model)
             print("Total parameters: {}".format(self._total_parameters()))
             print("Trainable parameters:  {}".format(self._trainable_parameters()))
@@ -477,7 +479,6 @@ class TorchGeneratorAgent(TorchAgent):
     def share(self):
         """Share internal states between parent and child instances."""
         shared = super().share()
-        shared['criterion'] = self.criterion
         if self.opt.get('numthreads', 1) > 1:
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer']

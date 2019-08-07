@@ -650,10 +650,22 @@ class TorchAgent(ABC, Agent):
         """Initialize agent."""
         super().__init__(opt, shared)
         opt = self.opt
+
+        # check for cuda
+        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
+        if self.use_cuda:
+            if not shared:
+                print('[ Using CUDA ]')
+            if not shared and opt['gpu'] != -1:
+                torch.cuda.set_device(opt['gpu'])
+        # indicate whether using fp16
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
+
         if not shared:
             # intitialize any important structures from scratch
             self.replies = {}  # past replies
             self.dict = self.build_dictionary()
+            
             if opt.get('fp16'):
                 # Volta cores revert to FP32 hardware if tensors are not multiples
                 # of 8 in all dimensions. This INCLUDES the embeddings layer! As
@@ -674,6 +686,8 @@ class TorchAgent(ABC, Agent):
             # copy initialized data from shared table
             self.opt = shared['opt']
             self.dict = shared['dict']
+            self.model = shared['model']
+            self.criterion = shared['criterion']
             self.metrics = shared['metrics']
             if self.opt['batchsize'] == 1:
                 # if we're not using batching (e.g. mturk), then replies really need
@@ -684,16 +698,6 @@ class TorchAgent(ABC, Agent):
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
-
-        # check for cuda
-        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
-        if self.use_cuda:
-            if not shared:
-                print('[ Using CUDA ]')
-            if not shared and opt['gpu'] != -1:
-                torch.cuda.set_device(opt['gpu'])
-        # indicate whether using fp16
-        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
 
         # Default to the class name, sans "Agent". child can override
         self.id = type(self).__name__.replace("Agent", "")
@@ -1180,6 +1184,8 @@ class TorchAgent(ABC, Agent):
         shared['dict'] = self.dict
         if hasattr(self, 'model'):
             shared['model'] = self.model
+        if hasattr(self, 'criterion'):
+            shared['criterion'] = self.criterion
         shared['opt'] = self.opt
         shared['replies'] = self.replies
         return shared

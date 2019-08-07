@@ -125,18 +125,13 @@ class TorchClassifierAgent(TorchAgent):
             self.threshold = None
 
         # set up model and optimizers
-        weight_tensor = torch.FloatTensor(self.class_weights)
-        self.classifier_loss = torch.nn.CrossEntropyLoss(weight_tensor)
+
         if shared:
             self.model = shared['model']
-        else:
-            self.build_model()
-            if init_model:
-                print('Loading existing model parameters from ' + init_model)
-                self.load(init_model)
+        elif init_model:
+            print('Loading existing model parameters from ' + init_model)
+            self.load(init_model)
         if self.use_cuda:
-            self.model.cuda()
-            self.classifier_loss.cuda()
             if self.opt['data_parallel']:
                 if is_distributed():
                     raise ValueError(
@@ -151,6 +146,10 @@ class TorchClassifierAgent(TorchAgent):
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(optim_params)
             self.build_lr_scheduler()
+
+    def build_criterion(self):
+        weight_tensor = torch.FloatTensor(self.class_weights)
+        self.criterion = torch.nn.CrossEntropyLoss(weight_tensor)
 
     def share(self):
         """Share model parameters."""
@@ -214,7 +213,7 @@ class TorchClassifierAgent(TorchAgent):
         # calculate loss
         labels = self._get_labels(batch)
         scores = self.score(batch)
-        loss = self.classifier_loss(scores, labels)
+        loss = self.criterion(scores, labels)
         loss.backward()
         self.update_params()
 
@@ -251,7 +250,7 @@ class TorchClassifierAgent(TorchAgent):
                 preds = self._format_interactive_output(probs, prediction_id)
         else:
             labels = self._get_labels(batch)
-            loss = self.classifier_loss(scores, labels)
+            loss = self.criterion(scores, labels)
             self.metrics['loss'] += loss.item()
             self.metrics['examples'] += len(batch.text_vec)
             self._update_confusion_matrix(batch, preds)
@@ -349,7 +348,3 @@ class TorchClassifierAgent(TorchAgent):
             class.
         """
         raise NotImplementedError('Abstract class: user must implement score()')
-
-    def build_model(self):
-        """Build a new model (implemented by children classes)."""
-        raise NotImplementedError('Abstract class: user must implement build_model()')

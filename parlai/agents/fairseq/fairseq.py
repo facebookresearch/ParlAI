@@ -330,7 +330,7 @@ class FairseqAgent(TorchAgent):
             model_file_exists = self.opt.get('model_file') and os.path.isfile(
                 self.opt['model_file']
             )
-
+            
             # fairseq expects options to be in argparse format, instead of a dict
             # We also need to do some argument postprocessing and whatnot
             # We'll skip pretrained embeddings if we're going to override them with
@@ -349,8 +349,9 @@ class FairseqAgent(TorchAgent):
             # meters for keeping track of loss, ppl, etc.
             self.meters = defaultdict(AverageMeter)
 
-            # actually construct the model and generator
-            self.model = self.build_model()
+            # actually construct the criterion, model and generator
+            self.build_criterion()
+            self.build_model()
 
             # Construct the generator and scorer
             self.generator = SequenceGenerator(
@@ -366,9 +367,6 @@ class FairseqAgent(TorchAgent):
                 sampling_temperature=self.args.sampling_temperature,
             )
             self.scorer = SequenceScorer([self.model], self.dict)
-
-            # set up the grader and the trainer
-            self.criterion = criterions.build_criterion(self.args, self.task)
 
             # TODO: we might choose to add a --no-fp16 opt in the future to
             # explicitly disable fp16 instead
@@ -425,7 +423,12 @@ class FairseqAgent(TorchAgent):
             self._copy_embeddings(
                 model.encoder.embed_tokens.weight, self.args.embedding_type
             )
-        return model
+        self.model = model
+    
+    def build_criterion(self):
+        """Set up the grader."""
+        # TorchAgent will call this without ready=True before self.args is ready
+        self.criterion = criterions.build_criterion(self.args, self.task)
 
     def share(self):
         shared = super().share()
