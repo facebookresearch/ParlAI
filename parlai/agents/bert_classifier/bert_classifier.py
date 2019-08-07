@@ -129,9 +129,7 @@ class BertClassifierAgent(TorchClassifierAgent):
     def build_model(self):
         """Construct the model."""
         num_classes = len(self.class_list)
-        return BertWrapper(
-            BertModel.from_pretrained(self.pretrained_path), num_classes
-        )
+        return BertWrapper(BertModel.from_pretrained(self.pretrained_path), num_classes)
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """Initialize the optimizer."""
