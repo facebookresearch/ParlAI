@@ -313,7 +313,8 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         reports, tasks, micro=opt.get('aggregate_micro', True)
     )
 
-    metrics = f'[ eval completed in {round(timer.time(), 2)}s ]\n{datatype}:{report}'
+    metrics = f'{datatype}:{report}'
+    print(f'[ eval completed in {round(timer.time(), 2)}s ]')
     print(metrics)
 
     # write to file
