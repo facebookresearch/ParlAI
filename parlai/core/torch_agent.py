@@ -783,6 +783,31 @@ class TorchAgent(ABC, Agent):
 
         return init_model, is_finetune
 
+    @abstractmethod
+    def build_model(self):
+        """
+        Construct the model.
+
+        The model should be set to self.model.
+        """
+        pass
+    
+    def build_criterion(self):
+        """
+        Construct the loss function.
+
+        By default torch.nn.CrossEntropyLoss.  The criterion function should be
+        set to self.criterion.
+
+        If overridden, this model should (1) handle calling cuda and (2)
+        produce a sum that can be used for a per-token loss.
+        """
+        self.criterion = torch.nn.CrossEntropyLoss(
+            ignore_index=self.NULL_IDX, reduction='sum'
+        )
+        if self.use_cuda:
+            self.criterion.cuda()
+
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """
         Initialize optimizer with model parameters.

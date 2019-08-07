@@ -156,10 +156,6 @@ class TorchRankerAgent(TorchAgent):
                 states = {}
 
         self.rank_top_k = opt.get('rank_top_k', -1)
-        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
-        if self.use_cuda:
-            self.model.cuda()
-            self.rank_loss.cuda()
 
         # Vectorize and save fixed/vocab candidates once upfront if applicable
         self.set_fixed_candidates(shared)
@@ -234,11 +230,6 @@ class TorchRankerAgent(TorchAgent):
             where we cache the candidate encodings), you do not need to call
             self.model on cand_vecs
         """
-        pass
-
-    @abstractmethod
-    def build_model(self):
-        """Build a new model (implemented by children classes)."""
         pass
 
     def _get_batch_train_metrics(self, scores):
@@ -327,7 +318,7 @@ class TorchRankerAgent(TorchAgent):
         )
         try:
             scores = self.score_candidates(batch, cand_vecs)
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.backward(loss)
             self.update_params()
         except RuntimeError as e:
@@ -392,7 +383,7 @@ class TorchRankerAgent(TorchAgent):
 
         # Update metrics
         if label_inds is not None:
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.metrics['loss'] += loss.item()
             self.metrics['examples'] += batchsize
             for b in range(batchsize):

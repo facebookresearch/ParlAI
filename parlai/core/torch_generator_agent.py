@@ -431,32 +431,6 @@ class TorchGeneratorAgent(TorchAgent):
         else:
             self.skip_generation = self.opt.get('skip_generation', False)
 
-    @abstractmethod
-    def build_model(self):
-        """
-        Construct the model.
-
-        The model should be set to self.model, and support
-        the TorchGeneratorModel interface.
-        """
-        pass
-
-    def build_criterion(self):
-        """
-        Construct the loss function.
-
-        By default torch.nn.CrossEntropyLoss.  The criterion function should be
-        set to self.criterion.
-
-        If overridden, this model should (1) handle calling cuda and (2)
-        produce a sum that can be used for a per-token loss.
-        """
-        self.criterion = nn.CrossEntropyLoss(
-            ignore_index=self.NULL_IDX, reduction='sum'
-        )
-        if self.use_cuda:
-            self.criterion.cuda()
-
     def _dummy_batch(self, batchsize, maxlen):
         """
         Create a dummy batch.
