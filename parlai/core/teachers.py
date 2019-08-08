@@ -221,7 +221,7 @@ class FixedDialogTeacher(Teacher):
 
         if hasattr(self, 'examples'):
             shared['examples'] = self.examples
-        
+
         if hasattr(self, 'data_loader'):
             shared['data_loader'] = self.data_loader
 
