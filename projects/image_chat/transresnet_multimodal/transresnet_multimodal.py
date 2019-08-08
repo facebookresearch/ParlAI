@@ -7,6 +7,7 @@
 
 from parlai.core.dict import DictionaryAgent
 from parlai.core.utils import round_sigfigs
+from parlai.core.message import Message
 from .modules import TransresnetMultimodalModel
 from projects.personality_captions.transresnet.transresnet import TransresnetAgent
 
@@ -116,7 +117,7 @@ class TransresnetMultimodalAgent(TransresnetAgent):
                 fixed_cands_enc = []
                 for _, batch in enumerate(
                     [
-                        self.fixed_cands[i:i + 50]
+                        self.fixed_cands[i : i + 50]
                         for i in range(0, len(self.fixed_cands) - 50, 50)
                     ]
                 ):
@@ -144,6 +145,8 @@ class TransresnetMultimodalAgent(TransresnetAgent):
         :return:
             the observation, with dialogue history included.
         """
+        observation = Message(observation)  # TODO: eventually this will not be
+        # necessary as we migrate all teachers to return Message objects
         self.observation = self.get_dialogue_history(observation)
         return self.observation
 
@@ -316,7 +319,7 @@ class TransresnetMultimodalAgent(TransresnetAgent):
             the observation with the dialogue history in the `text` field
         """
         if len(self.history) > 0:
-            obs["text"] = "\n".join(self.history) + "\n" + obs["text"]
+            obs.force_set("text", "\n".join(self.history) + "\n" + obs["text"])
         if "labels" in obs:
             self.history.append(random.choice(obs["labels"]))
         elif "eval_labels" in obs:

@@ -276,6 +276,8 @@ class MTurkAgent(Agent):
 
     def put_data(self, id, data):
         """Put data into the message queue if it hasn't already been seen"""
+        if 'message_id' not in data:
+            data['message_id'] = id
         if id not in self.recieved_packets:
             self.state.append_message(data)  # append to message history
             self.recieved_packets[id] = True

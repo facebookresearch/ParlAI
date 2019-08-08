@@ -820,6 +820,9 @@ class _BPEHelper(object):
             num_symbols = 30000
         if minfreq <= 0:
             minfreq = 2
+
+        codec_dir, _ = os.path.split(self.codecs)
+        os.makedirs(codec_dir, exist_ok=True)
         with open(self.codecs, 'w', encoding='utf-8') as outstream:
             learn_bpe.learn_bpe(
                 dictionary,
