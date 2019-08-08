@@ -1263,13 +1263,6 @@ Base teacher for tasks involving images and text (comments, captions, etc)
 
 To use: create your task in the tasks folder and subclass ImageTeacher
 
-TODO
-
-TODO Example usage: python examples/train_model.py -t image_chat -m transformer/generator -bs 64 -tr 128 -eps 1 --model-file /tmp/mytestmodel
-
-3.3mm images with captions crawled from web with their ALT text
-From paper by Google: https://ai.google.com/research/ConceptualCaptions
-
 An example is given as follows:
     obs = {'text': <caption>,
            'image': <image features if specified else image>
