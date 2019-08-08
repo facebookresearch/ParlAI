@@ -663,7 +663,7 @@ class AttentionLayer(nn.Module):
             # calculate activation scores, apply mask if needed
             if attn_mask is not None:
                 # remove activation from NULL symbols
-                attn_w_premask.masked_fill_((1 - attn_mask), -NEAR_INF)
+                attn_w_premask.masked_fill_((~attn_mask), -NEAR_INF)
             attn_weights = F.softmax(attn_w_premask, dim=1)
 
         # apply the attention weights to the encoder states
