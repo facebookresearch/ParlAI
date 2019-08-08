@@ -909,20 +909,6 @@ task_list = [
         ),
     },
     {
-        "id": "Conceptual_Captions",
-        "display_name": "Conceptual_Captions",
-        "task": "conceptual_captions",
-        "tags": ["All", "Visual"],
-        "description": (
-            "Google's  Conceptual Captions is a dataset consisting of ~3.3M images annotated with captions. Images and their raw descriptions were harvested from the web. See "
-            "https://ai.google.com/research/ConceptualCaptions for more information."
-        ),
-        "notes": (
-            "If you have already downloaded the images, please specify with "
-            "the `--cc-images-path` flag, as the image download script takes a very long time to run"
-        ),
-    },
-    {
         "id": "Wizard_of_Wikipedia",
         "display_name": "Wizard_of_Wikipedia",
         "task": "wizard_of_wikipedia",
