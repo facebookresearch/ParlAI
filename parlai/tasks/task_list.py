@@ -167,6 +167,18 @@ task_list = [
         ),
     },
     {
+        "id": "dstc7",
+        "display_name": "DSTC7 subtrack 1 - ubuntu",
+        "task": "dstc7",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "DSTC7 is a competition which provided a dataset of dialogs very "
+            "similar to the ubuntu dataset. In particular, the subtrack 1 "
+            "consists in predicting the next utterance. "
+            "See: https://arxiv.org/pdf/1901.03461.pdf"
+        ),
+    },
+    {
         "id": "FVQA",
         "display_name": "FVQA",
         "task": "fvqa",
