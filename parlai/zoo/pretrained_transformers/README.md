@@ -70,8 +70,8 @@ python -u examples/train_model.py \
   -pyt convai2 --shuffle true \
   --model transformer/polyencoder --batchsize 256 --eval-batchsize 10 \
   --warmup_updates 100 --lr-scheduler-patience 0 --lr-scheduler-decay 0.4 \
-  -lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 - \
-  -text-truncate 360 --num-epochs 8.0 --max_train_time 200000 -veps 0.5 \
+  -lr 5e-05 --data-parallel True --history-size 20 --label-truncate 72 \
+  --text-truncate 360 --num-epochs 8.0 --max_train_time 200000 -veps 0.5 \
   -vme 8000 --validation-metric accuracy --validation-metric-mode max \
   --save-after-valid True --log_every_n_secs 20 --candidates batch --fp16 True \
   --dict-file ./data/models/pretrained_transformers/model_bi.dict \
