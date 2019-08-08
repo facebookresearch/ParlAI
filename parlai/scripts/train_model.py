@@ -302,6 +302,7 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         return None
 
     print('[ running eval: ' + datatype + ' ]')
+    timer = Timer()
     reports = []
     for v_world in valid_worlds:
         task_report = _run_single_eval(opt, v_world, max_exs / len(valid_worlds))
@@ -312,7 +313,8 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         reports, tasks, micro=opt.get('aggregate_micro', True)
     )
 
-    metrics = '{}:{}'.format(datatype, report)
+    metrics = f'{datatype}:{report}'
+    print(f'[ eval completed in {timer.time():.2f}s ]')
     print(metrics)
 
     # write to file

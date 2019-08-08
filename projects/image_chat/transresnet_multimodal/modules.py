@@ -406,7 +406,7 @@ class TransresnetMultimodalModel(TransresnetModel):
         :return:
             ranked list of k responses
         """
-        encoding = encoded[idx:idx + 1, :]
+        encoding = encoded[idx : idx + 1, :]
         scores = torch.mm(
             candidates_encoded[idx] if not one_cand_set else candidates_encoded,
             encoding.transpose(0, 1),
