@@ -38,7 +38,6 @@ from .utils import AttrDict, no_lock, str_to_msg
 
 from functools import lru_cache
 from abc import ABC, abstractmethod
-from parlai.core.image_featurizers import ImageLoader
 
 import concurrent.futures
 import multiprocessing
@@ -1369,7 +1368,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def image_id_key(self):
         """Which key in the input data dict objects uniquely identify each image.
 
-        Common image keys are "image_id" or "image_num". May be implemented by subclass. 
+        Common image keys are "image_id" or "image_num". May be implemented by subclass.
         """
         return 'image_id'
 
@@ -1377,7 +1376,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def text_key(self):
         """Which key in the input data dict objects identifies the text for each example.
 
-        Common keys are "text" or "comment". May be implemented by subclass. 
+        Common keys are "text" or "comment". May be implemented by subclass.
         """
         return 'text'
 
