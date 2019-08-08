@@ -141,7 +141,7 @@ class ImageLoader:
             )
 
         return switcher.get(self.image_mode)
-    
+
     @staticmethod
     def get_available_model_names():
         return [

@@ -1284,12 +1284,13 @@ class AbstractImageTeacher(FixedDialogTeacher):
         Note: that Parlai task loading code looks in the directory of the task name and then calls DefaultTeacher to load this teacher.
 
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
         self.task = opt['task']
         self.data_path, self.image_path = self.get_paths(opt)
-        
+
         self.data = self.load_data(self.data_path, self.opt)
         self.blank_image_features = torch.FloatTensor(2048).fill_(0)
         self.datatype = opt.get('datatype').split(':')[0]
@@ -1299,7 +1300,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         self.image_model = opt.get('image_model')
 
         # Not using default image_mode paramater b/c there is a normalization
-        # (or bug) somewhere in build_dict that is setting it to none        
+        # (or bug) somewhere in build_dict that is setting it to none
         self.include_image = opt.get('image_model') != 'no_image_model'
 
         if shared and 'data' in shared:
@@ -1312,7 +1313,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
             # TODO: ImageLoader functionality. Is from comment_battle,
             # TODO: will refactor this at some point soon most likely
             image_loader_opt = self.opt.copy()
-            image_loader_opt['image_mode'] = self.image_model if self.include_image else 'none'
+            image_loader_opt['image_mode'] = (
+                self.image_model if self.include_image else 'none'
+            )
 
             image_loader_opt['image_size'] = 256
             image_loader_opt['image_cropsize'] = 224
@@ -1418,15 +1421,13 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         """
         image_features_path = os.path.join(self.data_path, task, 'image_features')
-        
+
         if not os.path.isfile(image_features_path):
             os.makedirs(image_features_path, exist_ok=True)
 
-        return os.path.join(image_features_path, '%s_%s_%s_features_dict' % (
-            task,
-            model_name,
-            dt,
-        ))
+        return os.path.join(
+            image_features_path, '%s_%s_%s_features_dict' % (task, model_name, dt)
+        )
 
     def load_data(self, data_path, opt):
         """Loading the data file, which is the index to the images and text and is often a .json file with the name of the <datatype>.json (i.e. train.json). Stores in self.data.
@@ -1438,7 +1439,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         if dt not in ['train', 'valid', 'test']:
             raise Exception(
-                'Unknown dt parameter: %s. Expected either "train", "valid", or "test".' % dt
+                'Unknown dt parameter: %s. Expected either "train", "valid", or "test".'
+                % dt
             )
 
         # Assumes file is train.json or valid.json named
@@ -1474,7 +1476,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
         else:
             if self.is_image_model_buildable(self.image_model):
                 # try to build with ImageLoader (i.e. resenet/resnext variants)
-                self.image_features_dict = self._build_image_features_dict(self.data_path, self.datatype, image_model_features_dict_path)
+                self.image_features_dict = self._build_image_features_dict(
+                    self.data_path, self.datatype, image_model_features_dict_path
+                )
             else:
                 raise RuntimeError(
                     'Image model: %s is not buildable by ImageLoader but does not already exist on disk as an image features dict for this dataset.'
@@ -1495,7 +1499,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
             total=total,
             unit='cand',
             unit_scale=True,
-            desc='Building image features dict for %s with ImageLoader.' % self.image_model,
+            desc='Building image features dict for %s with ImageLoader.'
+            % self.image_model,
         )
         num = 0
         for ex in self.data:
@@ -1542,7 +1547,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         return {
             'labels': [example[self.text_key]],
             'image': image_features,
-            'episode_done': True
+            'episode_done': True,
         }
 
     def next_example(self):

@@ -322,7 +322,9 @@ def modelzoo_path(datapath, path):
             return os.path.join(zoo, path[5:])
 
 
-def download_multiprocess(urls, path, num_processes=32, chunk_size=100, dest_filenames=None, error_path=None):
+def download_multiprocess(
+    urls, path, num_processes=32, chunk_size=100, dest_filenames=None, error_path=None
+):
     """
     Download items in parallel. Used for example when downloading images for an
     image/dialogue related task.
@@ -341,47 +343,77 @@ def download_multiprocess(urls, path, num_processes=32, chunk_size=100, dest_fil
     # Resume TODO: isfile() may take too long ?? Should I try in a .tmp file
     if dest_filenames:
         if len(dest_filenames) != len(urls):
-            raise Exception('If specified, destination filenames must equal url array in length.')
+            raise Exception(
+                'If specified, destination filenames must equal url array in length.'
+            )
     else:
+
         def _naming_fn(url, url_metadata=None):
             return hashlib.md5(url.encode('utf-8')).hexdigest()
 
         dest_filenames = [_naming_fn(url) for url in urls]
 
     items = zip(urls, dest_filenames)
-    remaining_items = [it for it in items if not os.path.isfile(os.path.join(path, it[1]))]
-    print('Of %s items, %s already existed; only going to download %s items.' % (len(urls), len(urls) - len(remaining_items), len(remaining_items)))
+    remaining_items = [
+        it for it in items if not os.path.isfile(os.path.join(path, it[1]))
+    ]
+    print(
+        'Of %s items, %s already existed; only going to download %s items.'
+        % (len(urls), len(urls) - len(remaining_items), len(remaining_items))
+    )
     pbar.update(len(urls) - len(remaining_items))
 
-    pool_chunks = ((remaining_items[i:i + chunk_size], path, _download_multiprocess_single) for i in range(0, len(remaining_items), chunk_size))
+    pool_chunks = (
+        (remaining_items[i : i + chunk_size], path, _download_multiprocess_single)
+        for i in range(0, len(remaining_items), chunk_size)
+    )
 
-    print('Going to download %s chunks with %s images per chunk using %s processes.' % (math.ceil(float(len(remaining_items)/chunk_size)), chunk_size, num_processes))
+    print(
+        'Going to download %s chunks with %s images per chunk using %s processes.'
+        % (
+            math.ceil(float(len(remaining_items) / chunk_size)),
+            chunk_size,
+            num_processes,
+        )
+    )
 
     pbar.desc = 'Downloading'
     all_results = []
     collected_errors = []
 
     with Pool(num_processes) as pool:
-        for idx, chunk_result in enumerate(pool.imap_unordered(_download_multiprocess_map_chunk, pool_chunks, 2)):
+        for idx, chunk_result in enumerate(
+            pool.imap_unordered(_download_multiprocess_map_chunk, pool_chunks, 2)
+        ):
             all_results.extend(chunk_result)
             for tpl in chunk_result:
                 if tpl[1] != 200:
                     # msg field available as third item in the tuple
                     # not using b/c error log file would blow up
-                    collected_errors.append({'dest_file': tpl[0], 'status_code': tpl[1]})
-                    print('Bad download - chunk: %s, dest_file: %s, http status code: %s' % (idx, tpl[0], tpl[1]))
+                    collected_errors.append(
+                        {'dest_file': tpl[0], 'status_code': tpl[1]}
+                    )
+                    print(
+                        'Bad download - chunk: %s, dest_file: %s, http status code: %s'
+                        % (idx, tpl[0], tpl[1])
+                    )
             pbar.update(len(chunk_result))
     pbar.close()
 
     if error_path:
         now = time.strftime("%Y%m%d-%H%M%S")
-        error_filename = os.path.join(error_path, 'conceptual_captions_errors_%s_summary.log' % now)
+        error_filename = os.path.join(
+            error_path, 'conceptual_captions_errors_%s_summary.log' % now
+        )
 
         with open(os.path.join(error_filename), 'w+') as error_file:
             error_file.write(json.dumps(collected_errors))
             print('Summary of errors written to %s' % error_filename)
 
-    print('Of %s items attempted downloading, %s had errors.' % (len(remaining_items), len(collected_errors)))
+    print(
+        'Of %s items attempted downloading, %s had errors.'
+        % (len(remaining_items), len(collected_errors))
+    )
 
     print('Finished downloading chunks.')
     return all_results
@@ -415,12 +447,14 @@ def _download_multiprocess_single(url, path, dest_fname):
     try:
         headers = {
             # 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
-            'User-Agent': 'Googlebot-Image/1.0',     # Pretend to be googlebot
+            'User-Agent': 'Googlebot-Image/1.0',  # Pretend to be googlebot
             # 'X-Forwarded-For': '64.18.15.200'
         }
 
         # Use smaller timeout to skip errors, but can result in failed downloads
-        response = requests.get(url, stream=False, timeout=10, allow_redirects=True, headers=headers)
+        response = requests.get(
+            url, stream=False, timeout=10, allow_redirects=True, headers=headers
+        )
     except Exception as e:
         # Likely a timeout during fetching but had an error in requests.get()
         status = 408
