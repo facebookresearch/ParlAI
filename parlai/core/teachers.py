@@ -1263,35 +1263,26 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             self.episodes.append(eps)
 
 
-"""
-Base teacher for tasks involving images and text (comments, captions, etc)
-
-To use: create your task in the tasks folder and subclass ImageTeacher
-
-An example is given as follows:
-    obs = {'text': <caption>,
-           'image': <image features if specified else image>
-          }
-
-"""
-
-
 class AbstractImageTeacher(FixedDialogTeacher):
     """
-        Returns images from Google's Conceptual Captions dataset (3.3mm images approximately) and their corresponding caption
+        Abstract class to allow easier creation of image + dialogue tasks.
 
-        Note: that Parlai task loading code looks in the directory of the task name and then calls DefaultTeacher to load this teacher.
+        Subclass this class in a task folder. Note: that Parlai task loading code looks in the directory of the task name and then calls DefaultTeacher to load your teacher, so add an additional subclass of your teacher called DefaultTeacher.
 
+        An example is given as follows, but the keys can be customized:
+        obs = {'text': <caption>,
+           'image': <image features if specified else image>
+          }
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
-        self.task = opt['task']
+        self.task = opt['task'].split(':')[1] if ':' in opt['task'] else opt['task']
         self.data_path, self.image_path = self.get_paths(opt)
 
         self.data = self.load_data(self.data_path, self.opt)
-        self.blank_image_features = torch.FloatTensor(2048).fill_(0)
+        self.blank_image_features = torch.FloatTensor(opt.get('image_features_dim')).fill_(0)
         self.datatype = opt.get('datatype').split(':')[0]
 
         # Example of available models: 'resnet152', 'resnext101_32x48d_wsl',
@@ -1319,14 +1310,15 @@ class AbstractImageTeacher(FixedDialogTeacher):
             image_loader_opt['image_size'] = 256
             image_loader_opt['image_cropsize'] = 224
             self.image_loader = ImageLoader(image_loader_opt)
-            self.setup_data(self.data_path)
+            self.setup_image_features(self.data_path)
         self.reset()
 
     @classmethod
-    def get_available_image_model_names(self):
+    def get_available_image_model_names(cls):
         """
-        Available image model names. resnet and resnext variants available
-        from the ImageLoader. resnext101_XXXXX_wsl is the open-sourced FB AI model (960m images, 1.5k hashtags, finetuned on ImageNet).
+        Available image model names.
+        
+        resnet and resnext variants available from the ImageLoader. resnext101_XXXXX_wsl is the open-sourced FB AI model (960m images, 1.5k hashtags, finetuned on ImageNet).
 
         """
         available_model_names = ImageLoader.get_available_model_names()
@@ -1349,7 +1341,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     @classmethod
     def add_cmdline_args(cls, argparser):
         agent = argparser.add_argument_group('AbstractImageTeacher Arguments')
-        # TODO
         agent.add_argument(
             '--image-model',
             type=cls._validate_image_model_name,
@@ -1364,9 +1355,17 @@ class AbstractImageTeacher(FixedDialogTeacher):
             help='Optional argument to specify where images for dataset are stored if already downloaded. Most tasks will download the images if not present on the <datapath>/<task>_images/ *and* if this argument is not specified.',
         )
 
+        agent.add_argument(
+            '--image-features-dim',
+            type=int,
+            default=2048,
+            help='Specify the size of image features Tensors.',
+        )
+
     @property
     def image_id_key(self):
-        """Which key in the input data dict objects uniquely identify each image.
+        """
+        Which key in the input data dict objects uniquely identify each image.
 
         Common image keys are "image_id" or "image_num". May be implemented by subclass.
         """
@@ -1374,7 +1373,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
     @property
     def text_key(self):
-        """Which key in the input data dict objects identifies the text for each example.
+        """
+        Which key in the input data dict objects identifies the text.
 
         Common keys are "text" or "comment". May be implemented by subclass.
         """
@@ -1382,7 +1382,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
     @abstractmethod
     def image_id_to_image_path(self, image_id):
-        """Get the path of the image on disk.
+        """
+        Get the path of the image on disk.
 
         Must be implemented by subclass.
         """
@@ -1390,7 +1391,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
     def get_paths(self, opt):
         """
-        Return the path to the data directory and to the image directory based on opt fields: task, datatype (train, valid, test), datapath
+        Return the path to the data directory and to the image directory.
+        
+        Is based on opt fields: task, datatype (train, valid, test), datapath.
 
         Subclass can override this.
         """
@@ -1400,36 +1403,42 @@ class AbstractImageTeacher(FixedDialogTeacher):
         if opt.get('image_path', None):
             image_path = opt['image_path']
         else:
-            # other common choice is os.path.join(data_path, 'images')
-            image_path = os.path.join(opt['datapath'], task_name + '_images')
+            # other common choice: .join(opt['datapath'], task_name + '_images')
+            image_path = os.path.join(data_path, 'images')
 
         return data_path, image_path
 
     def is_image_model_buildable(self, model_name):
-        """Is buildable if features can be calculated by ImageLoader.
+        """
+        Is buildable if features can be calculated by ImageLoader.
 
         Users may wish to compute features for the dataset offline and use in the model, in which case, the image model should return False and get_image_features() should be overriden in subclass.
         """
         return model_name in ImageLoader.get_available_model_names()
 
     def get_image_model_features_path(self, task, model_name, dt):
-        """Image features for the dataset images are stored here.
+        """
+        Image features for the dataset images are stored here.
 
         Can be overriden in subclass to use custom paths.
         Image features can be manually copied into this directory or in the case of ImageLoader eligible models, built if not already there.
 
         """
-        image_features_path = os.path.join(self.data_path, task, 'image_features')
+        # In default implementation, self.data_path already has task name added
+        image_features_path = os.path.join(self.data_path, 'image_features')
 
-        if not os.path.isfile(image_features_path):
-            os.makedirs(image_features_path, exist_ok=True)
+        if not os.path.isdir(image_features_path):
+            os.makedirs(image_features_path)
 
         return os.path.join(
             image_features_path, '%s_%s_%s_features_dict' % (task, model_name, dt)
         )
 
     def load_data(self, data_path, opt):
-        """Loading the data file, which is the index to the images and text and is often a .json file with the name of the <datatype>.json (i.e. train.json). Stores in self.data.
+        """
+        Loading the data file, which is the index to the images and text.
+        
+        It is often a .json file with the name of the <datatype>.json (i.e. train.json). Stores in self.data.
 
         Can be override by subclass.
         """
@@ -1456,10 +1465,11 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         return self.data
 
-    def setup_data(self, data_path):
-        """Load text and image data.
+    def setup_image_features(self, data_path):
+        """
+        Load text and image data.
 
-        The image features all live in dicts by default in <data_path>/image_features but get_image_features_path() above can be overriden by subclass to put them elsewhere.
+        The image features all live in dicts by default in <data_path>/image_features/ but get_image_features_path() above can be overriden by subclass to put them elsewhere.
 
         In the (very odd) case that the resnet or resnext dicts (models buildable using ImageLoader) are not found, we build them.
         """
@@ -1485,7 +1495,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
                 )
 
     def _build_image_features_dict(self, data_path, dt, store_dict_path):
-        """ Build resne(x)t image features with ImageLoader
+        """
+        Build resne(x)t image features with ImageLoader.
+
         (Or anything handleable by ImageLoader) and save to path.
         Only called if we haven't already built the dict before.
 
@@ -1511,7 +1523,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             num += 1
             pbar.update(1)
             if num % 1000 == 0:
-                print('Processing image index: %s' % num)
+                print(f'Processing image index: {num}')
         torch.save(image_features_dict, store_dict_path)
         return image_features_dict
 
@@ -1528,7 +1540,13 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def get_image_features(self, example):
         """Get image features for example
 
-        Can be overrided in subclass for different behavior
+        Can be overrided in subclass for different behavior.
+
+        For large datasets, it may be more appropriate to use the
+        ImageLoader.load() method to load image features (as this is essentially
+        streaming the features from disk, so that we do not have to load a
+        large image feature dict in memory).
+        #TODO Could be the default option if we are using -dt train:stream
         """
         key = str(example[self.image_id_key])
         if not self.include_image or key not in self.image_features_dict:

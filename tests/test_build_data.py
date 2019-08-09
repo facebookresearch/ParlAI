@@ -11,7 +11,9 @@ from parlai.core.params import ParlaiParser
 
 
 class TestBuildData(unittest.TestCase):
-    """Basic tests on the build_data.py download_multiprocess."""
+    """
+    Basic tests on the build_data.py download_multiprocess.
+    """
 
     dest_filenames = ['mnist0.tar.gz', 'mnist1.tar.gz', 'mnist2.tar.gz']
 
@@ -27,7 +29,8 @@ class TestBuildData(unittest.TestCase):
     def test_download_multiprocess(self):
         with testing_utils.capture_output() as stdout:
             urls = [
-                'http://parl.ai/downloads/mnist/mnist.tar.gz',
+                'https://stephenroller.com/profile.jpg',
+                # 'http://parl.ai/downloads/mnist/mnist.tar.gz',
                 'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
                 'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
             ]
@@ -37,6 +40,7 @@ class TestBuildData(unittest.TestCase):
             )
 
         str_output = stdout.getvalue()
+        # output_filenames, output_statuses = zip(*download_results)
         print('stdout output: %s' % str_output)
         output_filenames = [
             download_results[0][0],
@@ -48,12 +52,12 @@ class TestBuildData(unittest.TestCase):
             download_results[1][1],
             download_results[2][1],
         ]
-        self.assertEquals(
+        self.assertEqual(
             output_filenames,
             ['mnist0.tar.gz', 'mnist1.tar.gz', 'mnist2.tar.gz'],
             'output filenames not correct',
         )
-        self.assertEquals(
+        self.assertEqual(
             output_statuses, [200, 403, 403], 'output http statuses not correct'
         )
 

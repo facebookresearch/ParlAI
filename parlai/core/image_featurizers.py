@@ -142,8 +142,11 @@ class ImageLoader:
 
         return switcher.get(self.image_mode)
 
-    @staticmethod
-    def get_available_model_names():
+    @classmethod
+    def get_available_model_names(cls):
+        """
+        Get a list of the available model variants in this ImageLoader.
+        """
         return [
             'resnet152',
             'resnet101',

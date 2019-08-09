@@ -326,15 +326,14 @@ def download_multiprocess(
     urls, path, num_processes=32, chunk_size=100, dest_filenames=None, error_path=None
 ):
     """
-    Download items in parallel. Used for example when downloading images for an
-    image/dialogue related task.
+    Download items in parallel (e.g. for an image + dialogue task)
 
     :param urls: Array of urls to download
     :param path: directory to save items in
     :param num_processes: number of processes to use
     :param chunk_size: chunk size to use
     :param dest_filenames: optional array of same length as url with filenames. Images will be saved as path + dest_filename
-    :param where to save error logs
+    :param error_path: where to save error logs
     :return array of tuples of (destination filename, http status code, error message if any)
     """
 
@@ -403,7 +402,7 @@ def download_multiprocess(
     if error_path:
         now = time.strftime("%Y%m%d-%H%M%S")
         error_filename = os.path.join(
-            error_path, 'conceptual_captions_errors_%s_summary.log' % now
+            error_path, 'parlai_download_multiprocess_errors_%s.log' % now
         )
 
         with open(os.path.join(error_filename), 'w+') as error_file:
@@ -421,9 +420,11 @@ def download_multiprocess(
 
 def _download_multiprocess_map_chunk(pool_tup):
     """
-    Helper function for Pool imap_unordered. Apparently function must be pickable (which apparently means must be defined at the top level of a module and can't be a lamdba) to be used in imap_unordered. Has to do with how it's passed to subprocess.
+    Helper function for Pool imap_unordered.
+    
+    Apparently function must be pickable (which apparently means must be defined at the top level of a module and can't be a lamdba) to be used in imap_unordered. Has to do with how it's passed to the subprocess.
 
-    :param: pool_tup is a tuple where first arg is an array of tuples of url and dest file name for the current chunk and second arg is function to be called
+    :param pool_tup: is a tuple where first arg is an array of tuples of url and dest file name for the current chunk and second arg is function to be called
     :return: an array of tuples
     """
     items = pool_tup[0]
@@ -434,7 +435,9 @@ def _download_multiprocess_map_chunk(pool_tup):
 
 def _download_multiprocess_single(url, path, dest_fname):
     """
-    Helper function to download an individual item, such as an image, from the web. Unlike download above, does not deal with downloading chunks of a big file, does not support retries (and does not fail if retries are exhausted).
+    Helper function to download an individual item.
+
+    Unlike download() above, does not deal with downloading chunks of a big file, does not support retries (and does not fail if retries are exhausted).
 
     :param url: URL to download from
     :param path: directory to save in
@@ -445,11 +448,8 @@ def _download_multiprocess_single(url, path, dest_fname):
     status = None
     error_msg = None
     try:
-        headers = {
-            # 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
-            'User-Agent': 'Googlebot-Image/1.0',  # Pretend to be googlebot
-            # 'X-Forwarded-For': '64.18.15.200'
-        }
+        # 'User-Agent' header may need to be specified
+        headers = {}
 
         # Use smaller timeout to skip errors, but can result in failed downloads
         response = requests.get(
