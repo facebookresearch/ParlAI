@@ -480,6 +480,10 @@ class DictionaryAgent(Agent):
             .split()
         )
 
+    def space_tokenize(self, text):
+        """Tokenize exactly on spaces. Useful when text is pre-tokenized."""
+        return text.split(' ')
+
     def span_tokenize(self, text):
         """Tokenize and find  starting index of each token in the original string."""
         # TODO: can this be deleted?
