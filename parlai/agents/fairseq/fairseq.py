@@ -41,7 +41,7 @@ from fairseq.sequence_generator import SequenceGenerator
 from fairseq.sequence_scorer import SequenceScorer
 from fairseq import options
 from fairseq.tasks.fairseq_task import FairseqTask
-from fairseq.utils import convert_padding_direction, load_model_state
+from fairseq.utils import convert_padding_direction
 from fairseq.meters import AverageMeter
 
 from parlai.core.torch_agent import TorchAgent, Output
@@ -232,11 +232,13 @@ class FairseqAgent(TorchAgent):
         if 'clip_norm' not in old_defaults:
             # fairseq has a few awful defaults
             old_defaults['clip_norm'] = 1.0
+            old_defaults['lr_scheduler'] = 'reduce_lr_on_plateau'
         if 'optimizer' not in old_defaults:
             old_defaults['optimizer'] = 'adam'
             old_defaults['adam_betas'] = '(0.9,0.98)'
 
         agent = argparser.add_argument_group('Fairseq Arguments')
+        agent.add_argument('--cpu', default=False, type='bool', help='Use a CPU')
         agent.add_argument(
             '--fp16', default=False, type='bool', help='Use fp16 training'
         )
@@ -265,6 +267,14 @@ class FairseqAgent(TorchAgent):
         options.add_generation_args(argparser)
         options.add_optimization_args(argparser)
         options.add_checkpoint_args(argparser)
+        from fairseq.registry import REGISTRIES
+
+        crit_reg = REGISTRIES['criterion']
+        argparser.add_argument(
+            '--criterion',
+            default=crit_reg['default'],
+            choices=crit_reg['registry'].keys(),
+        )
 
         # restore any user set defaults that fairseq possibly overrode
         argparser.set_defaults(**old_defaults)
@@ -352,18 +362,16 @@ class FairseqAgent(TorchAgent):
 
             # Construct the generator and scorer
             self.generator = SequenceGenerator(
-                [self.model],
                 tgt_dict=self.dict,
                 beam_size=self.args.beam,
-                stop_early=(not self.args.no_early_stop),
                 normalize_scores=(not self.args.unnormalized),
                 len_penalty=self.args.lenpen,
                 unk_penalty=self.args.unkpen,
                 sampling=self.args.sampling,
                 sampling_topk=self.args.sampling_topk,
-                sampling_temperature=self.args.sampling_temperature,
+                temperature=self.args.temperature,
             )
-            self.scorer = SequenceScorer([self.model], self.dict)
+            self.scorer = SequenceScorer(self.dict)
 
             # set up the grader and the trainer
             self.criterion = criterions.build_criterion(self.args, self.task)
@@ -388,7 +396,6 @@ class FairseqAgent(TorchAgent):
             # move things to the GPU if possible
             if self.use_cuda:
                 self.model = self.model.cuda()
-                self.generator = self.generator.cuda()
         else:
             self.model = shared['model']
             self.trainer = shared['trainer']
@@ -456,7 +463,7 @@ class FairseqAgent(TorchAgent):
             old_options = self.trainer.load_checkpoint(path, self.args.reset_optimizer)
             self._check_opts_unchanged(old_options, self.opt)
         else:
-            load_model_state(path, self.model)
+            self.model.load_model_state(path)
 
     def shutdown(self):
         if not hasattr(self, 'trainer'):
@@ -564,8 +571,8 @@ class FairseqAgent(TorchAgent):
                 ys, _ = padded_tensor(cands, self.NULL_IDX, self.use_cuda)
                 s = self._make_sample(xs=xs, ys=ys)
                 # perform the actual grading, extract the scores
-                scored = list(self.scorer.score_batched_itr([s], cuda=self.use_cuda))
-                scores = [s[3][0]['score'].item() for s in scored]
+                scored = list(self.scorer.generate([self.model], s))
+                scores = [s[0]['score'].item() for s in scored]
                 # intentional hanging comma here; argsort returns a list
                 ranked, = argsort(scores, batch.candidates[i], descending=True)
                 reranked_cands.append(ranked)
@@ -588,10 +595,7 @@ class FairseqAgent(TorchAgent):
         return Output(generated_output, reranked_cands)
 
     def _generate(self, samples):
-        no_prev_token = {
-            k: v for k, v in samples['net_input'].items() if k != 'prev_output_tokens'
-        }
-        gens = self.generator.generate(no_prev_token, maxlen=64)
+        gens = self.generator.generate([self.model], samples, maxlen=64)
         bsz = samples['net_input']['src_tokens'].size(0)
         responses = []
         for i in range(bsz):
@@ -664,7 +668,7 @@ class FairseqAgent(TorchAgent):
         result = torch.LongTensor(ys.size())
         result[:, 0] = self.dict.eos_index
         result[:, 1:] = ys[:, :-1]
-        return result
+        return result.to(ys.device)
 
     def _make_sample(self, batch=None, xs=None, ys=None):
         """Generate a sample object that Fairseq expects."""
@@ -678,6 +682,8 @@ class FairseqAgent(TorchAgent):
         if ys is None:
             ys = batch.label_vec
         repadded = convert_padding_direction(xs, self.dict.pad(), right_to_left=True)
+        if self.use_cuda:
+            repadded = repadded.cuda()
         sample = {}
         sample["id"] = torch.arange(len(xs) - 1)
         sample["net_input"] = {
@@ -685,6 +691,8 @@ class FairseqAgent(TorchAgent):
             "src_lengths": self._seq_length(xs),
         }
         if ys is not None:
+            if self.use_cuda:
+                ys = ys.cuda()
             sample["target"] = ys
             sample["ntokens"] = sum(self._seq_length(ys)).item()
             sample["net_input"]["prev_output_tokens"] = self._right_shifted_ys(ys)
