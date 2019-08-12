@@ -131,7 +131,7 @@ class TorchClassifierAgent(TorchAgent):
         else:
             self.model = self.build_model()
             self.criterion = self.build_criterion()
-            if self.model is not None and self.criterion is not None:
+            if self.model is None or self.criterion is None:
                 raise AttributeError(
                     'build_model() and build_criterion() need to return the model or criterion'
                 )
