@@ -372,6 +372,10 @@ class TorchGeneratorAgent(TorchAgent):
 
             self.criterion = self.build_criterion()
             self.model = self.build_model()
+            if self.model is not None and self.criterion is not None:
+                raise AttributeError(
+                    'build_model() and build_criterion() need to return the model or criterion'
+                )
             if self.use_cuda:
                 self.model.cuda()
                 self.criterion.cuda()

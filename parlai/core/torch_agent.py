@@ -1161,10 +1161,8 @@ class TorchAgent(ABC, Agent):
         shared['metrics'] = self.metrics
 
         shared['dict'] = self.dict
-        if hasattr(self, 'model'):
-            shared['model'] = self.model
-        if hasattr(self, 'criterion'):
-            shared['criterion'] = self.criterion
+        shared['model'] = self.model
+        shared['criterion'] = self.criterion
         shared['opt'] = self.opt
         shared['replies'] = self.replies
         return shared
