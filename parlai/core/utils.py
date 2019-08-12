@@ -18,6 +18,8 @@ import traceback
 import warnings
 import heapq
 
+from parlai.core.message import Message
+
 # some of the utility methods are helpful for Torch
 try:
     import torch
@@ -1011,7 +1013,7 @@ def str_to_msg(txt, ignore_fields=''):
         if key not in ignore_fields.split(','):
             msg[key] = convert(key, value)
     msg['episode_done'] = msg.get('episode_done', False)
-    return msg
+    return Message(msg)
 
 
 def msg_to_str(msg, ignore_fields=''):

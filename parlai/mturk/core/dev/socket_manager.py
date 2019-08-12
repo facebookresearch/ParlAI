@@ -44,7 +44,7 @@ class Packet:
         Create a packet to be used for holding information before it is
         sent through the socket
         id:               Unique ID to distinguish this packet from others
-        type:             TYPE of packet (ACK, ALIVE, MESSAGE, HEARTBEAT)
+        type:             TYPE of packet (ACK, ALIVE, MESSAGE)
         sender_id:        Sender ID for this packet
         receiver_id:      Recipient ID for this packet
         assignment_id:    Assignment ID for this packet
@@ -198,8 +198,7 @@ class SocketManager:
         self.send_thread = None
         self.sending_queue = PriorityQueue()
         self.open_channels = set()
-        self.threads = {}
-        self.last_sent_ping_time = 0  # time of last heartbeat sent
+        self.last_sent_ping_time = 0  # time of last ping send
         self.pings_without_pong = 0
         self.processed_packets = set()
         self.packet_map = {}

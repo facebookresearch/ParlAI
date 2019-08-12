@@ -4,10 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
-This file is derived from parlai/core/seq2seq/modules.py, and adapted to handle
-CT controlled models.
-"""
+"""Seq2seq module adapted to handle CT controlled models."""
 
 import math
 import torch
@@ -91,12 +88,16 @@ class Seq2seq(nn.Module):
         unknown_idx=3,
         input_dropout=0,
         longest_label=1,
-        control_settings={},
+        control_settings=None,
     ):
-        """Initialize seq2seq model.
+        """
+        Initialize seq2seq model.
 
         See cmdline args in Seq2seqAgent for description of arguments.
         """
+        if control_settings is None:
+            control_settings = {}
+
         super().__init__()
         self.attn_type = attention
 
@@ -306,32 +307,39 @@ class Seq2seq(nn.Module):
         maxlen=None,
         seq_len=None,
     ):
-        """Get output predictions from the model.
+        """
+        Get output predictions from the model.
 
-        :param xs:          (bsz x seqlen) LongTensor input to the encoder
-        :param ys:          expected output from the decoder. used for teacher
-                            forcing to calculate loss.
-        :param cands:       set of candidates to rank
-        :param prev_enc:    if you know you'll pass in the same xs multiple
-                            times, you can pass in the encoder output from the
-                            last forward pass to skip recalcuating the same
-                            encoder output.
-        :param maxlen:      max number of tokens to decode. if not set, will
-                            use the length of the longest label this model
-                            has seen. ignored when ys is not None.
-        :param seq_len      this is the sequence length of the input (xs), i.e.
-                            xs.size(1). we use this to recover the proper
-                            output sizes in the case when we distribute over
-                            multiple gpus
-        :param ctrl_inputs: (bsz x num_controls) LongTensor containing control vars
+        :param xs:
+            (bsz x seqlen) LongTensor input to the encoder
+        :param ys:
+            expected output from the decoder. used for teacher forcing
+            to calculate loss.
+        :param cands:
+            set of candidates to rank
+        :param prev_enc:
+            if you know you'll pass in the same xs multiple times, you can pass
+            in the encoder output from the last forward pass to skip
+            recalcuating the same encoder output.
+        :param maxlen:
+            max number of tokens to decode. if not set, will use the length of
+            the longest label this model has seen. ignored when ys is not None.
+        :param seq_len:
+            this is the sequence length of the input (xs), i.e. xs.size(1). we
+            use this to recover the proper output sizes in the case when we
+            distribute over multiple gpus
+        :param ctrl_inputs:
+            (bsz x num_controls) LongTensor containing control vars
 
-        :returns: scores, candidate scores, and encoder states
-            scores contains the model's predicted token scores.
-                (bsz x seqlen x num_features)
-            candidate scores are the score the model assigned to each candidate
-                (bsz x num_cands)
-            encoder states are the (output, hidden, attn_mask) states from the
-                encoder. feed this back in to skip encoding on the next call.
+        :returns:
+            scores, candidate scores, and encoder states
+
+            - scores contains the model's predicted token scores.
+              (bsz x seqlen x num_features)
+            - candidate scores are the score the model assigned to each candidate
+              (bsz x num_cands)
+            - encoder states are the (output, hidden, attn_mask) states from the
+              encoder. feed this back in to skip encoding on the next call.
         """
         if ys is not None:
             # keep track of longest label we've ever seen
@@ -371,9 +379,7 @@ class Seq2seq(nn.Module):
 
 
 class ControlEncoder(nn.Module):
-    """
-    Given CT control variable inputs, gives the concatenated control embeddings vector.
-    """
+    """Given CT control variable, gives the concatenated control embeddings vector."""
 
     def __init__(self, control_settings):
         super().__init__()
@@ -394,13 +400,13 @@ class ControlEncoder(nn.Module):
 
     def forward(self, control_inputs):
         """
-        Inputs:
-            :param control_inputs: (bsz x num_control_vars) LongTensor of control
-              variable values (i.e. bucket ids)
+        Forward pass.
 
-        Outputs:
-            :returns control_embs: (bsz x sum of control emb sizes) FloatTensor of
-              control variable embeddings, concatenated
+        :param control_inputs: (bsz x num_control_vars) LongTensor of control
+            variable values (i.e. bucket ids)
+
+        :returns: control_embs, (bsz x sum of control emb sizes) FloatTensor of
+            control variable embeddings, concatenated
         """
         # list length num_control_vars of tensors shape (bsz, 1)
         control_inputs = torch.split(control_inputs, 1, dim=1)
@@ -558,9 +564,11 @@ class RNNDecoder(nn.Module):
         attn_time='pre',
         attn_length=-1,
         sparse=False,
-        control_settings={},
+        control_settings=None,
     ):
         """Initialize recurrent decoder."""
+        if control_settings is None:
+            control_settings = {}
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)
         self.layers = numlayers
@@ -877,7 +885,7 @@ class AttentionLayer(nn.Module):
             # calculate activation scores, apply mask if needed
             if attn_mask is not None:
                 # remove activation from NULL symbols
-                attn_w_premask.masked_fill_((1 - attn_mask), -NEAR_INF)
+                attn_w_premask.masked_fill_(~attn_mask, -NEAR_INF)
             attn_weights = F.softmax(attn_w_premask, dim=1)
 
         # apply the attention weights to the encoder states

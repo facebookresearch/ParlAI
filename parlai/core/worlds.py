@@ -54,16 +54,16 @@ except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
 from parlai.core.agents import _create_task_agents, create_agents_from_shared
 from parlai.core.metrics import aggregate_metrics
-from parlai.core.utils import Timer, display_messages
+from parlai.core.utils import Message, Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
 
 def validate(observation):
     """Make sure the observation table is valid, or raise an error."""
-    if observation is not None and type(observation) == dict:
+    if observation is not None and isinstance(observation, dict):
         return observation
     else:
-        raise RuntimeError('Must return dictionary from act().')
+        raise RuntimeError('Must return dictionary or Message object from act().')
 
 
 class World(object):
@@ -847,7 +847,6 @@ class HogwildProcess(Process):
             world = BatchWorld(self.opt, world)
         self.sync['threads_sem'].release()
         with world:
-            print('[ thread {} initialized ]'.format(self.shared['threadindex']))
             while True:
                 if self.sync['term_flag'].value:
                     break  # time to close
@@ -940,6 +939,8 @@ class HogwildWorld(World):
             # this makes sure that no threads get examples before all are set up
             # otherwise they might reset one another after processing some exs
             self.sync['threads_sem'].acquire()
+
+        print(f'[ {self.numthreads} threads initialized ]')
 
     def display(self):
         """Unsupported operation. Raises a `NotImplementedError`."""
