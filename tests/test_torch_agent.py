@@ -75,9 +75,6 @@ class TorchAgent(TorchAgent):
         """Replace normal dictionary class with mock one."""
         return MockDict
 
-    def build_model(self):
-        self.model = None
-
     def train_step(self, batch):
         """Return confirmation of training."""
         return Output(['Training {}!'.format(i) for i in range(len(batch.text_vec))])
