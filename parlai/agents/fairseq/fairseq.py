@@ -17,7 +17,7 @@ Fairseq models can be used for many default tasks by combining a
 
 
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import argsort, padded_tensor
+from parlai.core.utils import argsort, padded_tensor, warn_once
 
 try:
     from fairseq import models, optim, criterions
@@ -330,6 +330,10 @@ class FairseqAgent(TorchAgent):
 
     def __init__(self, opt, shared=None):
         # In general use a basic TorchAgent wherever possible
+        warn_once(
+            "Fairseq interop is somewhat unmaintained and may have recent bugs. "
+            "Please file an issue on GitHub if you have problems."
+        )
         super().__init__(opt, shared)
         if not shared:
             # this is not a shared instance of this class, so do full initialization
