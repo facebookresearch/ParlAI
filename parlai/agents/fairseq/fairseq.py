@@ -269,12 +269,12 @@ class FairseqAgent(TorchAgent):
         options.add_checkpoint_args(argparser)
         from fairseq.registry import REGISTRIES
 
-        crit_reg = REGISTRIES['criterion']
-        argparser.add_argument(
-            '--criterion',
-            default=crit_reg['default'],
-            choices=crit_reg['registry'].keys(),
-        )
+        for k, registry in REGISTRIES.items():
+            argparser.add_argument(
+                '--' + k.replace('_', '-'),
+                default=registry['default'],
+                choices=registry['registry'].keys(),
+            )
 
         # restore any user set defaults that fairseq possibly overrode
         argparser.set_defaults(**old_defaults)
