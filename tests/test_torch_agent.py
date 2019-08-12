@@ -9,6 +9,7 @@
 import unittest
 from parlai.core.agents import Agent
 from parlai.core.utils import Message
+import parlai.core.testing_utils as testing_utils
 
 from collections import deque
 
@@ -81,7 +82,14 @@ class TorchAgent(TorchAgent):
 
     def eval_step(self, batch):
         """Return confirmation of evaluation."""
-        return Output(['Evaluating {}!'.format(i) for i in range(len(batch.text_vec))])
+        return Output(
+            [
+                'Evaluating {} (responding to {})!'.format(
+                    i, batch.observations[i]['text']
+                )
+                for i in range(len(batch.text_vec))
+            ]
+        )
 
 
 def get_agent(**kwargs):
@@ -98,7 +106,8 @@ def get_agent(**kwargs):
     TorchAgent.add_cmdline_args(parser)
     parser.set_params(**kwargs)
     opt = parser.parse_args(print_args=False)
-    return TorchAgent(opt)
+    with testing_utils.capture_output():
+        return TorchAgent(opt)
 
 
 class TestTorchAgent(unittest.TestCase):
@@ -912,7 +921,84 @@ class TestTorchAgent(unittest.TestCase):
             obs_elabs_vecs.append(agent.vectorize(o, agent.history))
         reply = agent.batch_act(obs_elabs_vecs)
         for i in range(len(obs_elabs_vecs)):
-            self.assertEqual(reply[i]['text'], 'Evaluating {}!'.format(i))
+            self.assertIn('Evaluating {}'.format(i), reply[i]['text'])
+
+    def test_interactive_mode(self):
+        """Test if conversation history is destroyed in MTurk mode."""
+        # both manually setting bs to 1 and interactive mode true
+        agent = get_agent(batchsize=1, interactive_mode=True)
+        agent.observe({'text': 'foo'})
+        response = agent.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+        shared = TorchAgent(agent.opt, agent.share())
+        shared.observe({'text': 'bar'})
+        response = shared.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+
+        # now just bs 1
+        agent = get_agent(batchsize=1, interactive_mode=False)
+        agent.observe({'text': 'foo'})
+        response = agent.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+        shared = TorchAgent(agent.opt, agent.share())
+        shared.observe({'text': 'bar'})
+        response = shared.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+
+        # now just interactive
+        agent = get_agent(batchsize=16, interactive_mode=True)
+        agent.observe({'text': 'foo'})
+        response = agent.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+        shared = TorchAgent(agent.opt, agent.share())
+        shared.observe({'text': 'bar'})
+        response = shared.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+
+        # finally, the expected failure
+        with self.assertRaises(RuntimeError):
+            agent = get_agent(batchsize=16, interactive_mode=False)
+            agent.observe({'text': 'foo'})
+            response = agent.act()
+            shared = TorchAgent(agent.opt, agent.share())
+            shared.observe({'text': 'bar'})
+            response = shared.act()
+
+    def test_mturk_racehistory(self):
+        """Emulate a setting where batch_act misappropriately handles mturk."""
+        agent = get_agent(batchsize=16, interactive_mode=True, echo=True)
+        share1 = TorchAgent(agent.opt, agent.share())
+
+        share1.observe({'text': 'thread1-msg1', 'episode_done': False})
+        share2 = TorchAgent(agent.opt, agent.share())
+        share2.observe({'text': 'thread2-msg1', 'episode_done': False})
+        share1.act()
+        share2.act()
+
+        share1.observe({'text': 'thread1-msg2', 'episode_done': False})
+        share2.observe({'text': 'thread2-msg2', 'episode_done': False})
+        share2.act()
+        share1.act()
+
+        share2.observe({'text': 'thread2-msg3', 'episode_done': False})
+        share1.observe({'text': 'thread1-msg3', 'episode_done': False})
+
+        self.assertNotIn('thread1-msg1', share2.history.get_history_str())
+        self.assertNotIn('thread2-msg1', share1.history.get_history_str())
+        self.assertNotIn('thread1-msg2', share2.history.get_history_str())
+        self.assertNotIn('thread2-msg2', share1.history.get_history_str())
 
 
 if __name__ == '__main__':
