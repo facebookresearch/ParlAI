@@ -390,11 +390,11 @@ def download_multiprocess(
                     # msg field available as third item in the tuple
                     # not using b/c error log file would blow up
                     collected_errors.append(
-                        {'dest_file': tpl[0], 'status_code': tpl[1]}
+                        {'dest_file': tpl[0], 'status_code': tpl[1], 'error': tpl[2]}
                     )
                     print(
-                        'Bad download - chunk: %s, dest_file: %s, http status code: %s'
-                        % (idx, tpl[0], tpl[1])
+                        'Bad download - chunk: %s, dest_file: %s, http status code: %s, error_msg: %s'
+                        % (idx, tpl[0], tpl[1], tpl[2])
                     )
             pbar.update(len(chunk_result))
     pbar.close()
@@ -458,8 +458,7 @@ def _download_multiprocess_single(url, path, dest_fname):
     except Exception as e:
         # Likely a timeout during fetching but had an error in requests.get()
         status = 408
-        error_msg = '[Exception during download or decoding] ' + str(e)
-        print(error_msg)
+        error_msg = '[Exception during download during fetching] ' + str(e)
         return dest_fname, status, error_msg
 
     if response.ok:
@@ -470,13 +469,13 @@ def _download_multiprocess_single(url, path, dest_fname):
                 out_file.write(response.content)
             status = 200
         except Exception as e:
-            # Likely a timeout during download of decoding
+            # Likely a timeout during download or decoding
             status = 408
-            error_msg = '[Exception during download or decoding] ' + str(e)
-            print(error_msg)
+            error_msg = '[Exception during decoding or writing] ' + str(e)
     else:
-        # We get here if there is an HTML error page (i.e. a page saying "404 not found" or anything else)
+        # We get here if there is an HTML error page (i.e. a page saying "404
+        # not found" or anything else)
         status = response.status_code
-        error_msg = response.text
+        error_msg = '[Response not OK] Response: %s' % response
 
     return dest_fname, status, error_msg
