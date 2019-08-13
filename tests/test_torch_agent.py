@@ -6,81 +6,21 @@
 
 """Unit tests for TorchAgent."""
 
+import os
 import unittest
 from parlai.core.agents import Agent
+from parlai.core.testing_utils import capture_output, tempdir
+from parlai.core.utils import Message
 
 from collections import deque
 
 SKIP_TESTS = False
 try:
-    from parlai.core.torch_agent import TorchAgent, Output
+    from parlai.core.torch_agent import Output
+    from parlai.agents.test_agents.dummy_torch_agent import MockTorchAgent, MockDict
     import torch
 except ImportError:
     SKIP_TESTS = True
-
-
-class MockDict(Agent):
-    """Mock Dictionary Agent which just implements indexing and txt2vec."""
-
-    null_token = '__null__'
-    NULL_IDX = 0
-    start_token = '__start__'
-    BEG_IDX = 1001
-    end_token = '__end__'
-    END_IDX = 1002
-    p1_token = '__p1__'
-    P1_IDX = 2001
-    p2_token = '__p2__'
-    P2_IDX = 2002
-
-    def __init__(self, opt, shared=None):
-        """Initialize idx for incremental indexing."""
-        self.idx = 0
-
-    def __getitem__(self, key):
-        """Return index of special token or return the token."""
-        if key == self.null_token:
-            return self.NULL_IDX
-        elif key == self.start_token:
-            return self.BEG_IDX
-        elif key == self.end_token:
-            return self.END_IDX
-        elif key == self.p1_token:
-            return self.P1_IDX
-        elif key == self.p2_token:
-            return self.P2_IDX
-        else:
-            self.idx += 1
-            return self.idx
-
-    def __setitem__(self, key, value):
-        pass
-
-    def add_cmdline_args(self, *args, **kwargs):
-        """Add CLI args."""
-        pass
-
-    def txt2vec(self, txt):
-        """Return index of special tokens or range from 1 for each token."""
-        self.idx = 0
-        return [self[tok] for tok in txt.split()]
-
-
-class TorchAgent(TorchAgent):
-    """Use MockDict instead of regular DictionaryAgent."""
-
-    @staticmethod
-    def dictionary_class():
-        """Replace normal dictionary class with mock one."""
-        return MockDict
-
-    def train_step(self, batch):
-        """Return confirmation of training."""
-        return Output(['Training {}!'.format(i) for i in range(len(batch.text_vec))])
-
-    def eval_step(self, batch):
-        """Return confirmation of evaluation."""
-        return Output(['Evaluating {}!'.format(i) for i in range(len(batch.text_vec))])
 
 
 def get_agent(**kwargs):
@@ -94,12 +34,13 @@ def get_agent(**kwargs):
     from parlai.core.params import ParlaiParser
 
     parser = ParlaiParser()
-    TorchAgent.add_cmdline_args(parser)
+    MockTorchAgent.add_cmdline_args(parser)
     parser.set_params(**kwargs)
     opt = parser.parse_args(print_args=False)
-    return TorchAgent(opt)
+    return MockTorchAgent(opt)
 
 
+@unittest.skipIf(SKIP_TESTS, "Torch not installed.")
 class TestTorchAgent(unittest.TestCase):
     """Basic tests on the util functions in TorchAgent."""
 
@@ -114,7 +55,6 @@ class TestTorchAgent(unittest.TestCase):
         shared = agent.share()
         self.assertTrue('dict' in shared)
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test__vectorize_text(self):
         """Test _vectorize_text and its different options."""
         agent = get_agent()
@@ -206,7 +146,6 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(len(vec), 3)
         self.assertEqual(vec.tolist(), [MockDict.BEG_IDX, 1, 2])
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test__check_truncate(self):
         """Make sure we are truncating when needed."""
         agent = get_agent()
@@ -218,7 +157,6 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent._check_truncate(inp, 1).tolist(), [1])
         self.assertEqual(agent._check_truncate(inp, 0).tolist(), [])
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_vectorize(self):
         """Test the vectorization of observations.
 
@@ -226,16 +164,16 @@ class TestTorchAgent(unittest.TestCase):
         param options.
         """
         agent = get_agent()
-        obs_labs = {
-            'text': 'No. Try not.',
-            'labels': ['Do.', 'Do not.'],
-            'episode_done': True,
-        }
-        obs_elabs = {
-            'text': 'No. Try not.',
-            'eval_labels': ['Do.', 'Do not.'],
-            'episode_done': True,
-        }
+        obs_labs = Message(
+            {'text': 'No. Try not.', 'labels': ['Do.', 'Do not.'], 'episode_done': True}
+        )
+        obs_elabs = Message(
+            {
+                'text': 'No. Try not.',
+                'eval_labels': ['Do.', 'Do not.'],
+                'episode_done': True,
+            }
+        )
 
         for obs in (obs_labs, obs_elabs):
             lab_key = 'labels' if 'labels' in obs else 'eval_labels'
@@ -294,11 +232,13 @@ class TestTorchAgent(unittest.TestCase):
 
         # test split_lines
         agent = get_agent(split_lines=True)
-        obs = {
-            'text': 'Hello.\nMy name is Inogo Montoya.\n'
-            'You killed my father.\nPrepare to die.',
-            'episode_done': True,
-        }
+        obs = Message(
+            {
+                'text': 'Hello.\nMy name is Inogo Montoya.\n'
+                'You killed my father.\nPrepare to die.',
+                'episode_done': True,
+            }
+        )
         agent.history.update_history(obs)
         vecs = agent.history.get_history_vec_list()
         self.assertEqual(vecs, [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
@@ -308,43 +248,54 @@ class TestTorchAgent(unittest.TestCase):
         vecs = agent.history.get_history_vec_list()
         self.assertEqual(vecs, [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batchify(self):
         """Make sure the batchify function sets up the right fields."""
         agent = get_agent(rank_candidates=True)
         obs_labs = [
-            {
-                'text': 'It\'s only a flesh wound.',
-                'labels': ['Yield!'],
-                'episode_done': True,
-            },
-            {
-                'text': 'The needs of the many outweigh...',
-                'labels': ['The needs of the few.'],
-                'episode_done': True,
-            },
-            {
-                'text': 'Hello there.',
-                'labels': ['General Kenobi.'],
-                'episode_done': True,
-            },
+            Message(
+                {
+                    'text': 'It\'s only a flesh wound.',
+                    'labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
         ]
         obs_elabs = [
-            {
-                'text': 'It\'s only a flesh wound.',
-                'eval_labels': ['Yield!'],
-                'episode_done': True,
-            },
-            {
-                'text': 'The needs of the many outweigh...',
-                'eval_labels': ['The needs of the few.'],
-                'episode_done': True,
-            },
-            {
-                'text': 'Hello there.',
-                'eval_labels': ['General Kenobi.'],
-                'episode_done': True,
-            },
+            Message(
+                {
+                    'text': 'It\'s only a flesh wound.',
+                    'eval_labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'eval_labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'eval_labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
         ]
         for obs_batch in (obs_labs, obs_elabs):
             lab_key = 'labels' if 'labels' in obs_batch[0] else 'eval_labels'
@@ -475,13 +426,18 @@ class TestTorchAgent(unittest.TestCase):
 
         agent.history.reset()
         obs_cands = [
-            agent.vectorize({'label_candidates': ['A', 'B', 'C']}, agent.history),
             agent.vectorize(
-                {'label_candidates': ['1', '2', '5', '3', 'Sir']}, agent.history
+                Message({'label_candidates': ['A', 'B', 'C']}), agent.history
             ),
-            agent.vectorize({'label_candidates': ['Do', 'Re', 'Mi']}, agent.history),
             agent.vectorize(
-                {'label_candidates': ['Fa', 'So', 'La', 'Ti']}, agent.history
+                Message({'label_candidates': ['1', '2', '5', '3', 'Sir']}),
+                agent.history,
+            ),
+            agent.vectorize(
+                Message({'label_candidates': ['Do', 'Re', 'Mi']}), agent.history
+            ),
+            agent.vectorize(
+                Message({'label_candidates': ['Fa', 'So', 'La', 'Ti']}), agent.history
             ),
         ]
 
@@ -507,7 +463,6 @@ class TestTorchAgent(unittest.TestCase):
         for i, cs in enumerate(batch.candidate_vecs):
             self.assertEqual(len(cs), len(obs_cands[i]['label_candidates']))
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_match_batch(self):
         """Make sure predictions are correctly aligned when available."""
         agent = get_agent()
@@ -801,7 +756,6 @@ class TestTorchAgent(unittest.TestCase):
         # if we don't want to use the last reply at all, it should be None
         self.assertIsNone(agent.last_reply(use_reply='none'))
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_observe(self):
         """Make sure agent stores and returns observation."""
         agent = get_agent()
@@ -823,29 +777,34 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(out['text'], "I'll be back.")
         # should remember history
         out = agent.observe(obs.copy())
-        self.assertEqual(out['text'], "I'll be back.\nI'm back.\nI'll be back.")
+        self.assertEqual(out['full_text'], "I'll be back.\nI'm back.\nI'll be back.")
 
-    @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
     def test_batch_act(self):
         """Make sure batch act calls the right step."""
         agent = get_agent()
 
         obs_labs = [
-            {
-                'text': "It's only a flesh wound.",
-                'labels': ['Yield!'],
-                'episode_done': True,
-            },
-            {
-                'text': 'The needs of the many outweigh...',
-                'labels': ['The needs of the few.'],
-                'episode_done': True,
-            },
-            {
-                'text': 'Hello there.',
-                'labels': ['General Kenobi.'],
-                'episode_done': True,
-            },
+            Message(
+                {
+                    'text': "It's only a flesh wound.",
+                    'labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
         ]
         obs_labs_vecs = []
         for o in obs_labs:
@@ -857,21 +816,27 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(reply[i]['text'], 'Training {}!'.format(i))
 
         obs_elabs = [
-            {
-                'text': "It's only a flesh wound.",
-                'eval_labels': ['Yield!'],
-                'episode_done': True,
-            },
-            {
-                'text': 'The needs of the many outweigh...',
-                'eval_labels': ['The needs of the few.'],
-                'episode_done': True,
-            },
-            {
-                'text': 'Hello there.',
-                'eval_labels': ['General Kenobi.'],
-                'episode_done': True,
-            },
+            Message(
+                {
+                    'text': "It's only a flesh wound.",
+                    'eval_labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'eval_labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'eval_labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
         ]
         obs_elabs_vecs = []
         for o in obs_elabs:
@@ -881,6 +846,57 @@ class TestTorchAgent(unittest.TestCase):
         reply = agent.batch_act(obs_elabs_vecs)
         for i in range(len(obs_elabs_vecs)):
             self.assertEqual(reply[i]['text'], 'Evaluating {}!'.format(i))
+
+    def test_resume_checkpoint(self):
+        """Make sure when resuming training that model uses appropriate mf.
+
+        Copy train_model from testing_utils to directly access agent.
+        """
+        import parlai.scripts.train_model as tms
+
+        def get_popt_and_tl(opt):
+            parser = tms.setup_args()
+            parser.set_params(**opt)
+            popt = parser.parse_args(print_args=False)
+            for k, v in opt.items():
+                popt[k] = v
+            return popt, tms.TrainLoop(popt)
+
+        def get_opt(init_mf, mf):
+            return {
+                'task': 'integration_tests',
+                'init_model': init_mf,
+                'model': 'parlai.agents.test_agents.dummy_torch_agent:MockTorchAgent',
+                'model_file': mf,
+                'num_epochs': 3,
+                'validation_every_n_epochs': 1,
+                'save_after_valid': True,
+                'log_every_n_secs': 10,
+            }
+
+        with capture_output():
+            with tempdir() as tmpdir:
+                # First train model with init_model path set
+                mf = os.path.join(tmpdir, 'model')
+                init_mf = os.path.join(tmpdir, 'init_model')
+                with open(init_mf, 'w') as f:
+                    f.write(' ')
+                opt = get_opt(init_mf, mf)
+                popt, tl = get_popt_and_tl(opt)
+                agent = tl.agent
+                # init model file should be set appropriately
+                init_model_file, is_finetune = agent._get_init_model(popt, None)
+                self.assertEqual(init_model_file, init_mf)
+                self.assertTrue(is_finetune)
+                valid, test = tl.train()
+                # now, train the model for another epoch
+                opt = get_opt('{}.checkpoint'.format(mf), mf)
+                opt['load_from_checkpoint'] = True
+                popt, tl = get_popt_and_tl(opt)
+                agent = tl.agent
+                init_model_file, is_finetune = agent._get_init_model(popt, None)
+                self.assertEqual(init_model_file, '{}.checkpoint'.format(mf))
+                self.assertFalse(is_finetune)
 
 
 if __name__ == '__main__':

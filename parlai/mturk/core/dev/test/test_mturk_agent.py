@@ -9,12 +9,18 @@ import os
 import time
 import threading
 from unittest import mock
-from parlai.mturk.core.agents import MTurkAgent, AssignState
-from parlai.mturk.core.mturk_manager import MTurkManager
+from parlai.mturk.core.dev.agents import (
+    MTurkAgent,
+    AssignState,
+    AgentTimeoutError,
+    AgentDisconnectedError,
+    AgentReturnedError,
+)
+from parlai.mturk.core.dev.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
 
-import parlai.mturk.core.worker_manager as WorkerManagerFile
-import parlai.mturk.core.data_model as data_model
+import parlai.mturk.core.dev.worker_manager as WorkerManagerFile
+import parlai.mturk.core.dev.data_model as data_model
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 WorkerManagerFile.DISCONNECT_FILE_NAME = 'disconnect-test.pickle'
@@ -31,7 +37,7 @@ MESSAGE_ID_1 = 'MESSAGE_ID_1'
 MESSAGE_ID_2 = 'MESSAGE_ID_2'
 COMMAND_ID_1 = 'COMMAND_ID_1'
 
-MESSAGE_TYPE = data_model.MESSAGE_TYPE_MESSAGE
+MESSAGE_TYPE = data_model.MESSAGE_TYPE_ACT
 COMMAND_TYPE = data_model.MESSAGE_TYPE_COMMAND
 
 MESSAGE_1 = {'message_id': MESSAGE_ID_1, 'type': MESSAGE_TYPE}
@@ -84,11 +90,9 @@ class TestAssignState(unittest.TestCase):
         self.assertEqual(self.agent_state1.status, AssignState.STATUS_NONE)
         self.assertEqual(len(self.agent_state1.messages), 0)
         self.assertEqual(len(self.agent_state1.message_ids), 0)
-        self.assertIsNone(self.agent_state1.last_command)
         self.assertEqual(self.agent_state2.status, AssignState.STATUS_IN_TASK)
         self.assertEqual(len(self.agent_state1.messages), 0)
         self.assertEqual(len(self.agent_state1.message_ids), 0)
-        self.assertIsNone(self.agent_state1.last_command)
 
     def test_message_management(self):
         '''Test message management in an AssignState'''
@@ -106,15 +110,10 @@ class TestAssignState(unittest.TestCase):
         self.agent_state2.append_message(MESSAGE_1)
         self.assertEqual(len(self.agent_state2.message_ids), 1)
 
-        # Ensure command interactions work as expected
-        self.agent_state1.set_last_command(COMMAND_1)
-        self.assertEqual(self.agent_state1.get_last_command(), COMMAND_1)
-
         # Ensure clearing messages acts as intended and doesn't clear agent2
         self.agent_state1.clear_messages()
         self.assertEqual(len(self.agent_state1.messages), 0)
         self.assertEqual(len(self.agent_state1.message_ids), 0)
-        self.assertIsNone(self.agent_state1.last_command)
         self.assertEqual(len(self.agent_state2.message_ids), 1)
 
     def test_state_handles_status(self):
@@ -132,13 +131,6 @@ class TestAssignState(unittest.TestCase):
             self.agent_state1.set_status(status)
             self.assertTrue(self.agent_state1.is_final())
 
-        # TODO update the below once bonus is default
-        for status in complete_statuses:
-            self.agent_state1.set_status(status)
-            text, command = self.agent_state1.get_inactive_command_text()
-            self.assertIsNotNone(text)
-            self.assertIsNotNone(command)
-
 
 class TestMTurkAgent(unittest.TestCase):
     """Various unit tests for the MTurkAgent class"""
@@ -155,6 +147,9 @@ class TestMTurkAgent(unittest.TestCase):
             opt=self.opt.copy(), mturk_agent_ids=mturk_agent_ids
         )
         self.worker_manager = self.mturk_manager.worker_manager
+        self.mturk_manager.send_message = mock.MagicMock()
+        self.mturk_manager.send_state_change = mock.MagicMock()
+        self.mturk_manager.send_command = mock.MagicMock()
 
         self.turk_agent = MTurkAgent(
             self.opt.copy(),
@@ -183,7 +178,6 @@ class TestMTurkAgent(unittest.TestCase):
         self.assertFalse(self.turk_agent.hit_is_returned)
         self.assertFalse(self.turk_agent.hit_is_complete)
         self.assertFalse(self.turk_agent.disconnected)
-        self.assertTrue(self.turk_agent.alived)
 
     def test_state_wrappers(self):
         '''Test the mturk agent wrappers around its state'''
@@ -202,27 +196,17 @@ class TestMTurkAgent(unittest.TestCase):
             self.turk_agent.set_status(status)
             self.assertTrue(self.turk_agent.is_final())
 
-        self.turk_agent.append_message(MESSAGE_1)
+        self.turk_agent.state.append_message(MESSAGE_1)
         self.assertEqual(len(self.turk_agent.get_messages()), 1)
-        self.turk_agent.append_message(MESSAGE_2)
+        self.turk_agent.state.append_message(MESSAGE_2)
         self.assertEqual(len(self.turk_agent.get_messages()), 2)
-        self.turk_agent.append_message(MESSAGE_1)
+        self.turk_agent.state.append_message(MESSAGE_1)
         self.assertEqual(len(self.turk_agent.get_messages()), 2)
         self.assertIn(MESSAGE_1, self.turk_agent.get_messages())
         self.assertIn(MESSAGE_2, self.turk_agent.get_messages())
 
-        # Ensure command interactions work as expected
-        self.turk_agent.set_last_command(COMMAND_1)
-        self.assertEqual(self.turk_agent.get_last_command(), COMMAND_1)
-
         self.turk_agent.clear_messages()
         self.assertEqual(len(self.turk_agent.get_messages()), 0)
-
-        # In task checks
-        self.turk_agent.conversation_id = 't_12345'
-        self.assertTrue(self.turk_agent.is_in_task())
-        self.turk_agent.conversation_id = 'b_12345'
-        self.assertFalse(self.turk_agent.is_in_task())
 
     def test_connection_id(self):
         '''Ensure the connection_id hasn't changed'''
@@ -231,37 +215,16 @@ class TestMTurkAgent(unittest.TestCase):
         )
         self.assertEqual(self.turk_agent.get_connection_id(), connection_id)
 
-    def test_inactive_data(self):
-        '''Ensure data packet generated for inactive commands is valid'''
-        for status in complete_statuses:
-            self.turk_agent.set_status(status)
-            data = self.turk_agent.get_inactive_command_data()
-            self.assertIsNotNone(data['text'])
-            self.assertIsNotNone(data['inactive_text'])
-            self.assertEqual(data['conversation_id'], self.turk_agent.conversation_id)
-            self.assertEqual(data['agent_id'], TEST_WORKER_ID_1)
-
     def test_status_change(self):
-        has_changed = False
         self.turk_agent.set_status(AssignState.STATUS_ONBOARDING)
-
-        def wait_for_status_wrap():
-            nonlocal has_changed  # noqa 999 we don't use python2
-            self.turk_agent.wait_for_status(AssignState.STATUS_WAITING)
-            has_changed = True
-
-        t = threading.Thread(target=wait_for_status_wrap, daemon=True)
-        t.start()
-        self.assertFalse(has_changed)
         time.sleep(0.07)
-        self.assertFalse(has_changed)
+        self.assertEqual(self.turk_agent.get_status(), AssignState.STATUS_ONBOARDING)
         self.turk_agent.set_status(AssignState.STATUS_WAITING)
         time.sleep(0.07)
-        self.assertTrue(has_changed)
+        self.assertEqual(self.turk_agent.get_status(), AssignState.STATUS_WAITING)
 
     def test_message_queue(self):
         '''Ensure observations and acts work as expected'''
-        self.mturk_manager.send_message = mock.MagicMock()
         self.turk_agent.observe(ACT_1)
         self.mturk_manager.send_message.assert_called_with(
             TEST_WORKER_ID_1, TEST_ASSIGNMENT_ID_1, ACT_1
@@ -291,14 +254,15 @@ class TestMTurkAgent(unittest.TestCase):
         self.assertIsNone(blank_message)
 
         self.turk_agent.disconnected = True
-        disconnect_message = self.turk_agent.get_new_act_message()
+        with self.assertRaises(AgentDisconnectedError):
+            # Expect this to be a disconnect message
+            self.turk_agent.get_new_act_message()
         self.turk_agent.disconnected = False
-        self.assertEqual(
-            disconnect_message['text'], self.turk_agent.MTURK_DISCONNECT_MESSAGE
-        )
+
         self.turk_agent.hit_is_returned = True
-        return_message = self.turk_agent.get_new_act_message()
-        self.assertEqual(return_message['text'], self.turk_agent.RETURN_MESSAGE)
+        with self.assertRaises(AgentReturnedError):
+            # Expect this to be a returned message
+            self.turk_agent.get_new_act_message()
         self.turk_agent.hit_is_returned = False
 
         # Reduce state
@@ -307,7 +271,6 @@ class TestMTurkAgent(unittest.TestCase):
         self.assertIsNone(self.turk_agent.recieved_packets)
 
     def test_message_acts(self):
-        self.mturk_manager.send_command = mock.MagicMock()
         self.mturk_manager.handle_turker_timeout = mock.MagicMock()
 
         # non-Blocking check
@@ -323,23 +286,17 @@ class TestMTurkAgent(unittest.TestCase):
         self.mturk_manager.send_command.assert_called_once()
 
         # non-Blocking timeout check
-        self.mturk_manager.send_command = mock.MagicMock()
-        returned_act = self.turk_agent.act(timeout=0.07, blocking=False)
-        self.assertIsNotNone(self.turk_agent.message_request_time)
-        self.assertIsNone(returned_act)
-        while returned_act is None:
+        with self.assertRaises(AgentTimeoutError):
+            self.mturk_manager.send_command = mock.MagicMock()
             returned_act = self.turk_agent.act(timeout=0.07, blocking=False)
-        self.mturk_manager.send_command.assert_called_once()
-        self.mturk_manager.handle_turker_timeout.assert_called_once()
-        self.assertEqual(returned_act['text'], self.turk_agent.TIMEOUT_MESSAGE)
+            self.assertIsNotNone(self.turk_agent.message_request_time)
+            self.assertIsNone(returned_act)
+            while returned_act is None:
+                returned_act = self.turk_agent.act(timeout=0.07, blocking=False)
 
         # Blocking timeout check
-        self.mturk_manager.send_command = mock.MagicMock()
-        self.mturk_manager.handle_turker_timeout = mock.MagicMock()
-        returned_act = self.turk_agent.act(timeout=0.07)
-        self.mturk_manager.send_command.assert_called_once()
-        self.mturk_manager.handle_turker_timeout.assert_called_once()
-        self.assertEqual(returned_act['text'], self.turk_agent.TIMEOUT_MESSAGE)
+        with self.assertRaises(AgentTimeoutError):
+            returned_act = self.turk_agent.act(timeout=0.07)
 
 
 if __name__ == '__main__':

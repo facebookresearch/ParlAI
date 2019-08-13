@@ -30,13 +30,14 @@ from parlai.core.agents import Agent
 from parlai.core.thread_utils import SharedTable
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
+from parlai.core.message import Message
 from parlai.core.utils import (
     AttrDict,
     argsort,
+    fp16_optimizer_wrapper,
     padded_tensor,
     warn_once,
     round_sigfigs,
-    fp16_optimizer_wrapper,
 )
 from parlai.core.distributed_utils import is_primary_worker
 
@@ -774,6 +775,15 @@ class TorchAgent(ABC, Agent):
                 # next check for 'model_file', this would override init_model
                 init_model = opt['model_file']
                 is_finetune = False
+            if (
+                opt.get('load_from_checkpoint')
+                and opt.get('init_model')
+                and opt['init_model'].endswith('.checkpoint')
+            ):
+                # but if we're loading from a checkpoint, we should explicitly load
+                # from that point
+                init_model = opt['init_model']
+                is_finetune = False
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
@@ -1236,15 +1246,14 @@ class TorchAgent(ABC, Agent):
 
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
-            obs['text'] = history.get_history_str()
+            obs['full_text'] = history.get_history_str()
             if obs['text'] is not None:
                 obs['text_vec'] = history.get_history_vec()
 
         # check truncation
         if 'text_vec' in obs:
-            obs['text_vec'] = torch.LongTensor(
-                self._check_truncate(obs['text_vec'], truncate, True)
-            )
+            truncated_vec = self._check_truncate(obs['text_vec'], truncate, True)
+            obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
 
@@ -1267,9 +1276,8 @@ class TorchAgent(ABC, Agent):
 
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
-            obs[label_type + '_vec'] = self._check_truncate(
-                obs[label_type + '_vec'], truncate
-            )
+            truncated_vec = self._check_truncate(obs[label_type + '_vec'], truncate)
+            obs.force_set(label_type + '_vec', torch.LongTensor(truncated_vec))
         else:
             # pick one label if there are multiple
             lbls = obs[label_type]
@@ -1293,7 +1301,7 @@ class TorchAgent(ABC, Agent):
                 for i, c in enumerate(vecs):
                     vecs[i] = self._check_truncate(c, truncate)
         elif self.rank_candidates and obs.get('label_candidates'):
-            obs['label_candidates'] = list(obs['label_candidates'])
+            obs.force_set('label_candidates', list(obs['label_candidates']))
             obs['label_candidates_vecs'] = [
                 self._vectorize_text(c, add_start, add_end, truncate, False)
                 for c in obs['label_candidates']
@@ -1546,6 +1554,10 @@ class TorchAgent(ABC, Agent):
 
         This includes remembering the past history of the conversation.
         """
+        # TODO: Migration plan: TorchAgent currently supports being passed
+        # observations as vanilla dicts for legacy interop; eventually we
+        # want to remove this behavior and demand that teachers return Messages
+        observation = Message(observation)
         reply = self.last_reply(use_reply=self.opt.get('use_reply', 'label'))
         # update the history using the observation
         self.history.update_history(observation, add_next=reply)
@@ -1674,7 +1686,7 @@ class TorchAgent(ABC, Agent):
         """
         batch_size = len(observations)
         # initialize a list of replies with this agent's id
-        batch_reply = [{'id': self.getID()} for _ in range(batch_size)]
+        batch_reply = [Message({'id': self.getID()}) for _ in range(batch_size)]
 
         # check if there are any labels available, if so we will train on them
         self.is_training = any('labels' in obs for obs in observations)

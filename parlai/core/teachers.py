@@ -33,6 +33,7 @@ structures for accessing textual dialog data and utilized by ``DialogTeacher``
 
 from .agents import Teacher
 from .image_featurizers import ImageLoader
+from .message import Message
 from .utils import AttrDict, no_lock, str_to_msg
 
 from functools import lru_cache
@@ -222,12 +223,14 @@ class FixedDialogTeacher(Teacher):
         if hasattr(self, 'examples'):
             shared['examples'] = self.examples
 
+        if hasattr(self, 'data_loader'):
+            shared['data_loader'] = self.data_loader
+
         if self.opt.get('numthreads', 1) > 1:
             if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
                 # for multithreading need to move index into threadsafe memory
                 self.index = Value('l', -1)
-        else:
-            shared['data_loader'] = self.data_loader
+
         shared['index'] = self.index
 
         return shared
@@ -390,7 +393,10 @@ class FixedDialogTeacher(Teacher):
 
         # get next example, action is episode_done dict if already out of exs
         action, self.epochDone = self.next_example()
-        action['id'] = self.getID()
+        # TODO: all teachers should eventually create messages
+        # while setting up the data, so this won't be necessary
+        action = Message(action)
+        action.force_set('id', self.getID())
 
         # remember correct answer if available
         self.lastY = action.get('labels', action.get('eval_labels', None))
@@ -1231,7 +1237,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=None):
         """Get a specific example from the dataset."""
-        return self.episodes[episode_idx][entry_idx].copy()
+        return self.episodes[episode_idx][entry_idx]
 
     def _setup_data(self, path):
         print("[loading parlAI text data:" + path + "]")
