@@ -1251,7 +1251,8 @@ class TorchAgent(ABC, Agent):
             if history_string is None:
                 return obs
             obs['full_text'] = history_string
-            obs['text_vec'] = history.get_history_vec()
+            if obs['text'] or history_string:
+                obs['text_vec'] = history.get_history_vec()
 
         # check truncation
         if obs.get('text_vec') is not None:
