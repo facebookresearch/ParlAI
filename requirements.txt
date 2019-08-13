@@ -14,8 +14,8 @@ pexpect
 py-gfm
 pyzmq
 regex
-requests
 requests-mock
+requests
 scikit-learn
 scipy
 sh
