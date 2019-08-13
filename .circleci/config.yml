@@ -55,14 +55,24 @@ installdeps: &installdeps
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
 
-installtorchgpu: &installtorchgpu
+installtorchgpu: &installtorchgpu11
   run:
     name: Install torch GPU and dependencies
     command: |
-      pip3 install --progress-bar off torch
+      pip3 install --progress-bar off 'torch<1.2.0'
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
+
+installtorchgpu: &installtorchgpu12
+  run:
+    name: Install torch GPU and dependencies
+    command: |
+      pip3 install --progress-bar off 'torch>=1.2.0'
+      pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
+      pip3 install --progress-bar off pytorch-pretrained-bert
+      pip3 install --progress-bar off torchtext
+
 
 installtorchcpuosx: &installtorchcpuosx
   run:
@@ -158,7 +168,7 @@ jobs:
           name: Unit tests (py37)
           command: python setup.py test -s tests.suites.unittests -v
 
-  unittests_gpu:
+  unittests_gpu11:
     <<: *gpu
     working_directory: ~/ParlAI
     steps:
@@ -167,10 +177,25 @@ jobs:
       - <<: *setupcuda
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchgpu
+      - <<: *installtorchgpu11
       - run:
-          name: Unit tests (GPU)
+          name: Unit tests (GPU; pytorch 1.1)
           command: python setup.py test -s tests.suites.unittests -v
+
+  unittests_gpu12:
+    <<: *gpu
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setupcuda
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchgpu12
+      - run:
+          name: Unit tests (GPU; pytorch 1.2)
+          command: python setup.py test -s tests.suites.unittests -v
+
   black:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
@@ -223,7 +248,7 @@ jobs:
       - <<: *setupcuda
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchgpu
+      - <<: *installtorchgpu12
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
