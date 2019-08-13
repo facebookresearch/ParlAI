@@ -1241,17 +1241,21 @@ class TorchAgent(ABC, Agent):
 
         Useful to override to change vectorization behavior
         """
+
         if 'text' not in obs:
             return obs
 
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
-            obs['full_text'] = history.get_history_str()
-            if obs['text'] is not None:
+            history_string = history.get_history_str()
+            if history_string is None:
+                return obs
+            obs['full_text'] = history_string
+            if (obs['text'] is not None and obs['text'] != '') or history_string != '':
                 obs['text_vec'] = history.get_history_vec()
 
         # check truncation
-        if 'text_vec' in obs:
+        if 'text_vec' in obs and obs['text_vec'] is not None:
             truncated_vec = self._check_truncate(obs['text_vec'], truncate, True)
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
@@ -1407,7 +1411,7 @@ class TorchAgent(ABC, Agent):
 
         # TEXT
         xs, x_lens = None, None
-        if any('text_vec' in ex for ex in exs):
+        if any('text_vec' in ex and ex['text_vec'] is not None for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = padded_tensor(
                 _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16')
