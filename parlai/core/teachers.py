@@ -1350,7 +1350,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             '--image-model',
             type=cls._validate_image_model_name,
             default='no_image_model',
-            help='Specify an available image model name. resnet and resnext
+            help='Specify an available image model name. resnet and resnext'
             'variants available from the ImageLoader.resnext101_XXXXX_wsl is'
             'the open - sourced FB AI model(960 m images, 1.5 k hashtags,'
             'finetuned on ImageNet). "no_image_model" for no image model.',
