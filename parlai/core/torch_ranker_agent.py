@@ -281,7 +281,6 @@ class TorchRankerAgent(TorchAgent):
         for i, ordering in enumerate(ranks):
             if cand_vecs.dim() == 2:
                 cand_list = cands
-                preds = [cands[ordering[0]] for ordering in ranks]
             elif cand_vecs.dim() == 3:
                 cand_list = cands[i]
             if len(ordering) != len(cands):
