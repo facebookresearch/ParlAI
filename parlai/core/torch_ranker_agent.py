@@ -182,11 +182,9 @@ class TorchRankerAgent(TorchAgent):
             )
 
     def set_interactive_mode(self, mode, shared=False):
+        super().set_interactive_mode(mode, shared)
         self.candidates = self.opt['candidates']
         if mode:
-            if not shared:
-                # Only print in the non-shared version.
-                print("[" + self.id + ': full interactive mode on.' + ']')
             self.eval_candidates = 'fixed'
             self.ignore_bad_candidates = True
             self.encode_candidate_vecs = True

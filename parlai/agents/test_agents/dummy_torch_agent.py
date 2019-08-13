@@ -81,4 +81,11 @@ class MockTorchAgent(TorchAgent):
 
     def eval_step(self, batch):
         """Return confirmation of evaluation."""
-        return Output(['Evaluating {}!'.format(i) for i in range(len(batch.text_vec))])
+        return Output(
+            [
+                'Evaluating {} (responding to {})!'.format(
+                    i, batch.observations[i]['text']
+                )
+                for i in range(len(batch.text_vec))
+            ]
+        )
