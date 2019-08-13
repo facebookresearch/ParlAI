@@ -15,7 +15,7 @@ py-gfm
 pyzmq
 regex
 requests
-requests_mock
+requests-mock
 scikit-learn
 scipy
 sh
