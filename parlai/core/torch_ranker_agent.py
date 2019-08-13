@@ -272,25 +272,32 @@ class TorchRankerAgent(TorchAgent):
         else:
             _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
-            rank = (ranks[b] == label_inds[b]).nonzero().item()
+            rank = (ranks[b] == label_inds[b]).nonzero()
+            rank = rank.item() if len(rank) == 1 else scores.size(1)
             self.metrics['rank'] += 1 + rank
             self.metrics['mrr'] += 1.0 / (1 + rank)
 
-        # Get predictions but not full rankings for the sake of speed
+        ranks = ranks.cpu()
+        # Here we get the top prediction for each example, but do not
+        # return the full ranked list for the sake of training speed
         preds = []
         for i, ordering in enumerate(ranks):
-            if cand_vecs.dim() == 2:
+            if cand_vecs.dim() == 2:  # num cands x max cand length
                 cand_list = cands
-            elif cand_vecs.dim() == 3:
+            elif cand_vecs.dim() == 3:  # batchsize x num cands x max cand length
                 cand_list = cands[i]
             if len(ordering) != len(cand_list):
-                # ignore padding
+                # We may have added padded cands to fill out the batch;
+                # Here we break after finding the first non-pad cand in the
+                # ranked list
                 for x in ordering:
                     if x < len(cand_list):
                         preds.append(cand_list[x])
                         break
             else:
                 preds.append(cand_list[ordering[0]])
+
+        return Output(preds)
 
     def is_valid(self, obs):
         """
