@@ -457,20 +457,20 @@ def _download_multiprocess_single(url, path, dest_fname):
         )
     except Exception as e:
         # Likely a timeout during fetching but had an error in requests.get()
-        status = 408
+        status = 500
         error_msg = '[Exception during download during fetching] ' + str(e)
         return dest_fname, status, error_msg
 
     if response.ok:
         try:
-            with open(os.path.join(path, dest_fname), 'wb') as out_file:
+            with open(os.path.join(path, dest_fname), 'wb+') as out_file:
                 # Some sites respond with gzip transport encoding
                 response.raw.decode_content = True
                 out_file.write(response.content)
             status = 200
         except Exception as e:
             # Likely a timeout during download or decoding
-            status = 408
+            status = 500
             error_msg = '[Exception during decoding or writing] ' + str(e)
     else:
         # We get here if there is an HTML error page (i.e. a page saying "404
