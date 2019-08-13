@@ -332,7 +332,8 @@ def download_multiprocess(
     :param path: directory to save items in
     :param num_processes: number of processes to use
     :param chunk_size: chunk size to use
-    :param dest_filenames: optional array of same length as url with filenames. Images will be saved as path + dest_filename
+    :param dest_filenames: optional array of same length as url with filenames.
+     Images will be saved as path + dest_filename
     :param error_path: where to save error logs
     :return: array of tuples of (destination filename, http status code, error message if any)
     """
@@ -421,10 +422,14 @@ def download_multiprocess(
 def _download_multiprocess_map_chunk(pool_tup):
     """
     Helper function for Pool imap_unordered.
-    
-    Apparently function must be pickable (which apparently means must be defined at the top level of a module and can't be a lamdba) to be used in imap_unordered. Has to do with how it's passed to the subprocess.
 
-    :param pool_tup: is a tuple where first arg is an array of tuples of url and dest file name for the current chunk and second arg is function to be called
+    Apparently function must be pickable (which apparently means must be
+    defined at the top level of a module and can't be a lamdba) to be used in
+    imap_unordered. Has to do with how it's passed to the subprocess.
+
+    :param pool_tup: is a tuple where first arg is an array of tuples of url
+    and dest file name for the current chunk and second arg is function to be
+    called.
     :return: an array of tuples
     """
     items = pool_tup[0]
@@ -437,7 +442,8 @@ def _download_multiprocess_single(url, path, dest_fname):
     """
     Helper function to download an individual item.
 
-    Unlike download() above, does not deal with downloading chunks of a big file, does not support retries (and does not fail if retries are exhausted).
+    Unlike download() above, does not deal with downloading chunks of a big 
+    file, does not support retries (and does not fail if retries are exhausted).
 
     :param url: URL to download from
     :param path: directory to save in
