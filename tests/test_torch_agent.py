@@ -69,11 +69,12 @@ class MockDict(Agent):
 
 class TorchAgent(TorchAgent):
     """Use MockDict instead of regular DictionaryAgent."""
+
     def __init__(self, opt, shared=None):
         self.model = self.build_model()
         self.criterion = self.build_criterion()
         super().__init__(opt, shared)
-    
+
     def build_model(self):
         return {}
 
