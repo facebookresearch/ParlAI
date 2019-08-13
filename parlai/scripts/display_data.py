@@ -29,9 +29,9 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, True, 'Display data from a task')
     parser.add_pytorch_datateacher_args()
     # Get command line arguments
-    parser.add_argument('-ne', '--num_examples', type=int, default=10)
-    parser.add_argument('-mdl', '--max_display_len', type=int, default=1000)
-    parser.add_argument('--display_ignore_fields', type=str, default='agent_reply')
+    parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
+    parser.add_argument('-mdl', '--max-display-len', type=int, default=1000)
+    parser.add_argument('--display-ignore-fields', type=str, default='agent_reply')
     parser.set_defaults(datatype='train:stream')
     return parser
 
