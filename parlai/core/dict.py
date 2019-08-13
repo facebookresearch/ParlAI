@@ -480,9 +480,10 @@ class DictionaryAgent(Agent):
             .split()
         )
 
-    def space_tokenize(self, text):
+    @staticmethod
+    def space_tokenize(text):
         """Tokenize exactly on spaces. Useful when text is pre-tokenized."""
-        return text.split(' ')
+        return text.strip().split(' ')
 
     def span_tokenize(self, text):
         """Tokenize and find  starting index of each token in the original string."""
