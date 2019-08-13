@@ -351,7 +351,8 @@ workflows:
     jobs:
       - black
       - lint
-      - unittests_gpu
+      - unittests_gpu11
+      - unittests_gpu12
       - unittests_37
       - unittests_36
       - unittests_osx
@@ -385,7 +386,8 @@ workflows:
     jobs:
       - unittests_36
       - unittests_37
-      - unittests_gpu
+      - unittests_gpu11
+      - unittests_gpu12
       - unittests_osx
       - mturk_tests
       - nightly_gpu_tests
