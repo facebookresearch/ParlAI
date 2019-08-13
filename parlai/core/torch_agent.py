@@ -1251,14 +1251,12 @@ class TorchAgent(ABC, Agent):
             if history_string is None:
                 return obs
             obs['full_text'] = history_string
-            if (obs['text'] is not None and obs['text'] != '') or history_string != '':
-                obs['text_vec'] = history.get_history_vec()
+            obs['text_vec'] = history.get_history_vec()
 
         # check truncation
-        if 'text_vec' in obs and obs['text_vec'] is not None:
+        if obs.get('text_vec') is not None:
             truncated_vec = self._check_truncate(obs['text_vec'], truncate, True)
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
-
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
@@ -1411,7 +1409,7 @@ class TorchAgent(ABC, Agent):
 
         # TEXT
         xs, x_lens = None, None
-        if any('text_vec' in ex and ex['text_vec'] is not None for ex in exs):
+        if any(ex.get('text_vec') is not None for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = padded_tensor(
                 _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16')
