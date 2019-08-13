@@ -265,7 +265,12 @@ class TorchRankerAgent(TorchAgent):
         """Return predictions from training."""
         # TODO: speed these calculations up
         batchsize = scores.size(0)
-        _, ranks = scores.sort(1, descending=True)
+        if self.rank_top_k > 0:
+            _, ranks = scores.topk(
+                min(self.rank_top_k, scores.size(1)), 1, largest=True
+            )
+        else:
+            _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
