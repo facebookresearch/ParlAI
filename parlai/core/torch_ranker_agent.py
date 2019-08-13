@@ -285,9 +285,12 @@ class TorchRankerAgent(TorchAgent):
                 cand_list = cands[i]
             if len(ordering) != len(cand_list):
                 # ignore padding
-                true_ordering = [x for x in ordering if x < len(cand_list)]
-                ordering = true_ordering
-            preds.append(cand_list[ordering[0]])
+                for x in ordering:
+                    if x < len(cand_list):
+                        preds.append(cand_list[x])
+                        break
+            else:
+                preds.append(cand_list[ordering[0]])
 
     def is_valid(self, obs):
         """
