@@ -55,7 +55,7 @@ installdeps: &installdeps
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
 
-installtorchgpu: &installtorchgpu11
+installtorchgpu11: &installtorchgpu11
   run:
     name: Install torch GPU and dependencies
     command: |
@@ -64,7 +64,8 @@ installtorchgpu: &installtorchgpu11
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
 
-installtorchgpu: &installtorchgpu12
+
+installtorchgpu12: &installtorchgpu12
   run:
     name: Install torch GPU and dependencies
     command: |
