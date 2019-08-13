@@ -334,7 +334,7 @@ def download_multiprocess(
     :param chunk_size: chunk size to use
     :param dest_filenames: optional array of same length as url with filenames. Images will be saved as path + dest_filename
     :param error_path: where to save error logs
-    :return array of tuples of (destination filename, http status code, error message if any)
+    :return: array of tuples of (destination filename, http status code, error message if any)
     """
 
     pbar = tqdm.tqdm(total=len(urls), position=0)
@@ -459,6 +459,7 @@ def _download_multiprocess_single(url, path, dest_fname):
         # Likely a timeout during fetching but had an error in requests.get()
         status = 408
         error_msg = '[Exception during download or decoding] ' + str(e)
+        print(error_msg)
         return dest_fname, status, error_msg
 
     if response.ok:
@@ -472,6 +473,7 @@ def _download_multiprocess_single(url, path, dest_fname):
             # Likely a timeout during download of decoding
             status = 408
             error_msg = '[Exception during download or decoding] ' + str(e)
+            print(error_msg)
     else:
         # We get here if there is an HTML error page (i.e. a page saying "404 not found" or anything else)
         status = response.status_code
