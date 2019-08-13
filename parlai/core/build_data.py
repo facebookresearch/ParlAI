@@ -335,7 +335,8 @@ def download_multiprocess(
     :param dest_filenames: optional array of same length as url with filenames.
      Images will be saved as path + dest_filename
     :param error_path: where to save error logs
-    :return: array of tuples of (destination filename, http status code, error message if any)
+    :return: array of tuples of (destination filename, http status code, error
+    message if any). Note that upon failure, file may not actually be created.
     """
 
     pbar = tqdm.tqdm(total=len(urls), position=0)
