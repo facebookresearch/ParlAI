@@ -119,13 +119,6 @@ class TorchRankerAgent(TorchAgent):
             help='Ignore examples for which the label is not present in the '
             'label candidates. Default behavior results in RuntimeError. ',
         )
-        agent.add_argument(
-            '--rank-top-k',
-            type=int,
-            default=-1,
-            help='Ranking returns the top k results of k > 0, otherwise sorts every '
-            'single candidate according to the ranking.',
-        )
 
     def __init__(self, opt, shared=None):
         # Must call _get_init_model() first so that paths are updated if necessary
@@ -155,7 +148,6 @@ class TorchRankerAgent(TorchAgent):
             else:
                 states = {}
 
-        self.rank_top_k = opt.get('rank_top_k', -1)
         self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
         if self.use_cuda:
             self.model.cuda()
@@ -265,22 +257,26 @@ class TorchRankerAgent(TorchAgent):
         """Return predictions from training."""
         # TODO: speed these calculations up
         batchsize = scores.size(0)
-        if self.rank_top_k > 0:
-            _, ranks = scores.topk(
-                min(self.rank_top_k, scores.size(1)), 1, largest=True
-            )
-        else:
-            _, ranks = scores.sort(1, descending=True)
+        _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero().item()
             self.metrics['rank'] += 1 + rank
             self.metrics['mrr'] += 1.0 / (1 + rank)
 
         # Get predictions but not full rankings for the sake of speed
-        if cand_vecs.dim() == 2:
-            preds = [cands[ordering[0]] for ordering in ranks]
-        elif cand_vecs.dim() == 3:
-            preds = [cands[i][ordering[0]] for i, ordering in enumerate(ranks)]
+        preds = []
+        for i, ordering in enumerate(ranks):
+            if cand_vecs.dim() == 2:
+                cand_list = cands
+                preds = [cands[ordering[0]] for ordering in ranks]
+            elif cand_vecs.dim() == 3:
+                cand_list = cands[i]
+            if len(ordering) != len(cands):
+                # ignore padding
+                true_ordering = [x for x in ordering if x < len(cand_list)]
+                ordering = true_ordering
+            preds.append(cand_list[ordering[0]])
+
         return Output(preds)
 
     def is_valid(self, obs):
@@ -312,13 +308,9 @@ class TorchRankerAgent(TorchAgent):
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
-        if batch.text_vec is None and batch.image is None:
+        if batch.text_vec is None:
             return
-        batchsize = (
-            batch.text_vec.size(0)
-            if batch.text_vec is not None
-            else batch.image.size(0)
-        )
+        batchsize = batch.text_vec.size(0)
         self.model.train()
         self.zero_grad()
 
@@ -360,13 +352,9 @@ class TorchRankerAgent(TorchAgent):
 
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
-        if batch.text_vec is None and batch.image is None:
+        if batch.text_vec is None:
             return
-        batchsize = (
-            batch.text_vec.size(0)
-            if batch.text_vec is not None
-            else batch.image.size(0)
-        )
+        batchsize = batch.text_vec.size(0)
         self.model.eval()
 
         cands, cand_vecs, label_inds = self._build_candidates(
@@ -383,12 +371,7 @@ class TorchRankerAgent(TorchAgent):
                 cand_encs = self.vocab_candidate_encs
 
         scores = self.score_candidates(batch, cand_vecs, cand_encs=cand_encs)
-        if self.rank_top_k > 0:
-            _, ranks = scores.topk(
-                min(self.rank_top_k, scores.size(1)), 1, largest=True
-            )
-        else:
-            _, ranks = scores.sort(1, descending=True)
+        _, ranks = scores.sort(1, descending=True)
 
         # Update metrics
         if label_inds is not None:
@@ -396,8 +379,7 @@ class TorchRankerAgent(TorchAgent):
             self.metrics['loss'] += loss.item()
             self.metrics['examples'] += batchsize
             for b in range(batchsize):
-                rank = (ranks[b] == label_inds[b]).nonzero()
-                rank = rank.item() if len(rank) == 1 else scores.size(1)
+                rank = (ranks[b] == label_inds[b]).nonzero().item()
                 self.metrics['rank'] += 1 + rank
                 self.metrics['mrr'] += 1.0 / (1 + rank)
 
@@ -409,11 +391,13 @@ class TorchRankerAgent(TorchAgent):
                 cand_list = cands
             elif cand_vecs.dim() == 3:
                 cand_list = cands[i]
+            if len(ordering) != len(cand_list):
+                # ignore padding
+                true_ordering = [x for x in ordering if x < len(cand_list)]
+                ordering = true_ordering
             # using a generator instead of a list comprehension allows
             # to cap the number of elements.
-            cand_preds_generator = (
-                cand_list[rank] for rank in ordering if rank < len(cand_list)
-            )
+            cand_preds_generator = (cand_list[rank] for rank in ordering)
             cand_preds.append(list(islice(cand_preds_generator, max_preds)))
 
         if (
@@ -507,11 +491,7 @@ class TorchRankerAgent(TorchAgent):
         """
         label_vecs = batch.label_vec  # [bsz] list of lists of LongTensors
         label_inds = None
-        batchsize = (
-            batch.text_vec.size(0)
-            if batch.text_vec is not None
-            else batch.image.size(0)
-        )
+        batchsize = batch.text_vec.shape[0]
 
         if label_vecs is not None:
             assert label_vecs.dim() == 2
@@ -615,16 +595,15 @@ class TorchRankerAgent(TorchAgent):
                         )
 
         elif source == 'fixed':
-            if self.fixed_candidates is None:
-                raise ValueError(
-                    "If using candidate source 'fixed', then you must provide the path "
-                    "to a file of candidates with the flag --fixed-candidates-path or "
-                    "the name of a task with --fixed-candidates-task."
-                )
             warn_once(
                 "[ Executing {} mode with a common set of fixed candidates "
                 "(n = {}). ]".format(mode, len(self.fixed_candidates))
             )
+            if self.fixed_candidates is None:
+                raise ValueError(
+                    "If using candidate source 'fixed', then you must provide the path "
+                    "to a file of candidates with the flag --fixed-candidates-path"
+                )
 
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
@@ -632,14 +611,15 @@ class TorchRankerAgent(TorchAgent):
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
-                for batch_idx, label_vec in enumerate(label_vecs):
-                    max_c_len = cand_vecs.size(1)
-                    label_vec_pad = label_vec.new_zeros(max_c_len).fill_(self.NULL_IDX)
-                    if max_c_len < len(label_vec):
-                        label_vec = label_vec[0:max_c_len]
+                for i, label_vec in enumerate(label_vecs):
+                    label_vec_pad = label_vec.new_zeros(cand_vecs[i].size(0)).fill_(
+                        self.NULL_IDX
+                    )
+                    if cand_vecs[i].size(0) < len(label_vec):
+                        label_vec = label_vec[0 : cand_vecs[i].size(1)]
                     label_vec_pad[0 : label_vec.size(0)] = label_vec
-                    label_inds[batch_idx] = self._find_match(cand_vecs, label_vec_pad)
-                    if label_inds[batch_idx] == -1:
+                    label_inds[i] = self._find_match(cand_vecs, label_vec_pad)
+                    if label_inds[i] == -1:
                         bad_batch = True
                 if bad_batch:
                     if self.ignore_bad_candidates and not self.is_training:
@@ -796,7 +776,6 @@ class TorchRankerAgent(TorchAgent):
                     self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
 
                 if self.encode_candidate_vecs:
-                    # candidate encodings are fixed so set them up now
                     enc_path = os.path.join(
                         model_dir, '.'.join([model_name, cands_name, 'encs'])
                     )
