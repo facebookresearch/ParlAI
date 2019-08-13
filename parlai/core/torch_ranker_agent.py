@@ -6,6 +6,7 @@
 
 """
 Torch Ranker Agents provide functionality for building ranking models.
+
 See the TorchRankerAgent tutorial for examples.
 """
 
@@ -25,8 +26,10 @@ from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
 class TorchRankerAgent(TorchAgent):
     """
     Abstract TorchRankerAgent class; only meant to be extended.
+
     TorchRankerAgents aim to provide convenient functionality for building ranking
     models. This includes:
+
     - Training/evaluating on candidates from a variety of sources.
     - Computing hits@1, hits@5, mean reciprical rank (MRR), and other metrics.
     - Caching representations for fast runtime when deploying models to production.
@@ -221,6 +224,7 @@ class TorchRankerAgent(TorchAgent):
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """
         Given a batch and candidate set, return scores (for ranking).
+
         :param Batch batch:
             a Batch object (defined in torch_agent.py)
         :param LongTensor cand_vecs:
@@ -240,6 +244,7 @@ class TorchRankerAgent(TorchAgent):
     def _get_batch_train_metrics(self, scores):
         """
         Get fast metrics calculations if we train with batch candidates.
+
         Specifically, calculate accuracy ('train_accuracy'), average rank,
         and mean reciprocal rank.
         """
@@ -283,6 +288,7 @@ class TorchRankerAgent(TorchAgent):
     def is_valid(self, obs):
         """
         Override from TorchAgent.
+
         Check to see if label candidates contain the label.
         """
         if not self.ignore_bad_candidates:
@@ -440,6 +446,7 @@ class TorchRankerAgent(TorchAgent):
     def _set_label_cands_vec(self, *args, **kwargs):
         """
         Set the 'label_candidates_vec' field in the observation.
+
         Useful to override to change vectorization behavior.
         """
         obs = args[0]
@@ -456,6 +463,7 @@ class TorchRankerAgent(TorchAgent):
     def _build_candidates(self, batch, source, mode):
         """
         Build a candidate set for this batch.
+
         :param batch:
             a Batch object (defined in torch_agent.py)
         :param source:
@@ -463,14 +471,18 @@ class TorchRankerAgent(TorchAgent):
             ['batch', 'batch-all-cands', 'inline', 'fixed']
         :param mode:
             'train' or 'eval'
+
         :return: tuple of tensors (label_inds, cands, cand_vecs)
+
             label_inds: A [bsz] LongTensor of the indices of the labels for each
                 example from its respective candidate set
             cands: A [num_cands] list of (text) candidates
                 OR a [batchsize] list of such lists if source=='inline'
             cand_vecs: A padded [num_cands, seqlen] LongTensor of vectorized candidates
                 OR a [batchsize, num_cands, seqlen] LongTensor if source=='inline'
+
         Possible sources of candidates:
+
             * batch: the set of all labels in this batch
                 Use all labels in the batch as the candidate set (with all but the
                 example's label being treated as negatives).
@@ -707,6 +719,7 @@ class TorchRankerAgent(TorchAgent):
     def set_vocab_candidates(self, shared):
         """
         Load the tokens from the vocab as candidates.
+
         self.vocab_candidates will contain a [num_cands] list of strings
         self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
         """
@@ -735,10 +748,13 @@ class TorchRankerAgent(TorchAgent):
     def set_fixed_candidates(self, shared):
         """
         Load a set of fixed candidates and their vectors (or vectorize them here).
+
         self.fixed_candidates will contain a [num_cands] list of strings
         self.fixed_candidate_vecs will contain a [num_cands, seq_len] LongTensor
+
         See the note on the --fixed-candidate-vecs flag for an explanation of the
         'reuse', 'replace', or path options.
+
         Note: TorchRankerAgent by default converts candidates to vectors by vectorizing
         in the common sense (i.e., replacing each token with its index in the
         dictionary). If a child model wants to additionally perform encoding, it can
@@ -836,7 +852,9 @@ class TorchRankerAgent(TorchAgent):
     def encode_candidates(self, padded_cands):
         """
         Convert the given candidates to vectors.
+
         This is an abstract method that must be implemented by the user.
+
         :param padded_cands:
             The padded candidates.
         """
@@ -851,6 +869,7 @@ class TorchRankerAgent(TorchAgent):
     def _make_candidate_encs(self, vecs, path):
         """
         Encode candidates from candidate vectors.
+
         Requires encode_candidates() to be implemented.
         """
 
@@ -868,10 +887,12 @@ class TorchRankerAgent(TorchAgent):
     def vectorize_fixed_candidates(self, cands_batch, add_start=False, add_end=False):
         """
         Convert a batch of candidates from text to vectors.
+
         :param cands_batch:
             a [batchsize] list of candidates (strings)
         :returns:
             a [num_cands] list of candidate vectors
+
         By default, candidates are simply vectorized (tokens replaced by token ids).
         A child class may choose to overwrite this method to perform vectorization as
         well as encoding if so desired.
