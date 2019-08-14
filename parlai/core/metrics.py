@@ -33,8 +33,8 @@ except ImportError:
 try:
     import rouge
 except ImportError:
-    # User doesn't have rouge installed, so we can't use it for rouge
-    # We'll just turn off things, but we might want to warn the user
+    # User doesn't have py-rouge installed, so we can't use it.
+    # We'll just turn off rouge computations
     rouge = None
 
 re_art = re.compile(r'\b(a|an|the)\b')
