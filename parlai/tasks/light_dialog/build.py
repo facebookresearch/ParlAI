@@ -51,6 +51,7 @@ def build(opt):
         'emote',
         'speech',
         'action',
+        'affordances',
         'repeat',
         'cands',
         'current_self_output',
@@ -60,7 +61,7 @@ def build(opt):
     for f in fields:
         fpath += f + str(opt['light_use_' + f]) + "_"
     dpath2 = os.path.join(opt['datapath'], 'light_dialogue', fpath[:-1])
-    if not build_data.built(dpath2, version):
+    if True:  # not build_data.built(dpath2, version):
         if build_data.built(dpath2):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath2)

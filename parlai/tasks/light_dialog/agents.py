@@ -32,6 +32,7 @@ def _path(opt):
         'emote',
         'speech',
         'action',
+        'affordances',
         'repeat',
         'cands',
         'current_self_output',
@@ -85,6 +86,9 @@ class DefaultTeacher(ParlAIDialogTeacher):
             type=str,
             default='all',
             choices=['partner', 'self', 'all', 'none'],
+        )
+        agent.add_argument(
+            '--light_use_affordances', type=str, default='all', choices=['all', 'none']
         )
         agent.add_argument(
             '--light_use_current_self_output',
