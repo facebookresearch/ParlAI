@@ -41,7 +41,7 @@ def report(world, counts, log_time):
         'label_candidates_with_missing_label': counts[
             'label_candidates_with_missing_label'
         ],
-        'did_not_return_message': counts['returns_messages'],
+        'did_not_return_message': counts['did_not_return_message'],
     }
     text, log = log_time.log(report['exs'], world.num_examples(), log)
     return text, log
