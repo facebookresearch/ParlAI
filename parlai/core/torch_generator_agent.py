@@ -972,41 +972,53 @@ class GenericBeam(object):
         """Get the backtrack at the current step."""
         return self.bookkeep[-1]
 
-    def select_paths(self, beam_scores):
+    def select_paths(self, logits, prior_scores):
         """
         Select the next vocabulary item in these beams.
 
-        :param beam_scores:
+        :param logits:
+            a (beamsize x vocab) tensor of softmax weights. If this is the first
+            turn in the dialogue, it will be a (1 x vocab) tensor.
+        :param prior_scores:
+            a (beamsize) tensor of weights with the cumulative running
+            log-probability of each beam. If the first turn, it will be a (1) tensor.
+
+        :return:
+            a (hypothesis_ids, token_id, scores) tuple, where:
+
+            - hypothesis_ids is the list of hypotheses we're extending. May have
+              repeats, but should always be (beamsize) long.
+            - token_ids is a (beamsize) list of next-token choices for each of the
+              hypotheses.
+            - scores is a (beamsize) tensor with the updated cumulative log-probs
+              of each beam
         """
-        pass
+        # beam search actually looks over all hypotheses together so we flatten
+        beam_scores = logits + prior_scores.unsqueeze(1).expand_as(logits)
+        flat_beam_scores = beam_scores.view(-1)
+        best_scores, best_idxs = torch.topk(flat_beam_scores, self.beam_size, dim=-1)
+        voc_size = logits.size(-1)
 
-    def advance(self, softmax_probs):
-        """Advance the beam one step."""
-        voc_size = softmax_probs.size(-1)
-        current_length = len(self.all_scores) - 1
-        if current_length < self.min_length:
-            # penalize all eos probs to make it decode longer
-            for hyp_id in range(softmax_probs.size(0)):
-                softmax_probs[hyp_id][self.eos] = neginf(softmax_probs.dtype)
-
-        if len(self.bookkeep) == 0:
-            beam_scores = softmax_probs[0]
-        else:
-            # we need to sum up hypo scores and curr softmax scores before topk
-            # [beam_size, voc_size]
-            beam_scores = softmax_probs + self.scores.unsqueeze(1).expand_as(
-                softmax_probs
-            )
-
-        flatten_beam_scores = beam_scores.view(-1)
-        best_scores, best_idxs = torch.topk(flatten_beam_scores, self.beam_size, dim=-1)
-
-        self.scores = best_scores
-        self.all_scores.append(self.scores)
         # get the backtracking hypothesis id as a multiple of full voc_sizes
         hyp_ids = best_idxs / voc_size
         # get the actual word id from residual of the same division
         tok_ids = best_idxs % voc_size
+
+        return (hyp_ids, tok_ids, best_scores)
+
+    def advance(self, logits):
+        """Advance the beam one step."""
+        current_length = len(self.all_scores) - 1
+        if current_length < self.min_length:
+            # penalize all eos probs to make it decode longer
+            for hyp_id in range(logits.size(0)):
+                logits[hyp_id][self.eos] = neginf(logits.dtype)
+
+        if self.scores is None:
+            self.scores = torch.zeros(1).type_as(logits).to(logits.device)
+
+        hyp_ids, tok_ids, self.scores = self.select_paths(logits, self.scores)
+        self.all_scores.append(self.scores)
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
