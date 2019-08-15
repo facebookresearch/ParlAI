@@ -615,12 +615,7 @@ class TorchGeneratorAgent(TorchAgent):
             maxlen = self.label_truncate or 256
             _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz, maxlen=maxlen)
         elif self.beam_size > 1:
-            beam_preds_scores, _ = self._generate(
-                batch,
-                self.beam_size,
-                min_length=self.beam_min_length,
-                min_n_best=self.beam_min_n_best,
-            )
+            beam_preds_scores, _ = self._generate(batch, self.beam_size)
             preds, scores = zip(*beam_preds_scores)
 
         cand_choices = None
@@ -651,7 +646,7 @@ class TorchGeneratorAgent(TorchAgent):
         text = [self._v2t(p) for p in preds] if preds is not None else None
         return Output(text, cand_choices)
 
-    def _generate(self, batch, beam_size, min_length=3, min_n_best=5, max_ts=40):
+    def _generate(self, batch, beam_size, max_ts=40):
         """
         Generate an output with beam search.
 
@@ -661,10 +656,6 @@ class TorchGeneratorAgent(TorchAgent):
             Batch structure with input and labels
         :param int beam_size:
             Size of each beam during the search
-        :param int min_length:
-            minimum length of the decoded sequence
-        :param int min_n_best:
-            minimum number of completed hypothesis generated from each beam
         :param int max_ts:
             the maximum length of the decoded sequence
 
@@ -685,11 +676,11 @@ class TorchGeneratorAgent(TorchAgent):
         beams = [
             GenericBeam(
                 beam_size,
-                min_length=min_length,
+                min_length=self.beam_min_length,
+                min_n_best=self.beam_min_n_best,
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
-                min_n_best=min_n_best,
                 device=dev,
             )
             for i in range(bsz)
@@ -705,8 +696,8 @@ class TorchGeneratorAgent(TorchAgent):
         incr_state = None
 
         for _ts in range(max_ts):
-            # exit early if needed
-            if all((b.done() for b in beams)):
+            if all((b.is_done() for b in beams)):
+                # exit early if possible
                 break
 
             score, incr_state = self.model.decoder(
@@ -719,7 +710,7 @@ class TorchGeneratorAgent(TorchAgent):
             score = score.view(bsz, beam_size, -1)
             score = F.log_softmax(score, dim=-1)
             for i, b in enumerate(beams):
-                if not b.done():
+                if not b.is_done():
                     b.advance(score[i])
             incr_state_inds = torch.cat(
                 [
@@ -735,9 +726,6 @@ class TorchGeneratorAgent(TorchAgent):
                 [b.get_output_from_current_step() for b in beams]
             ).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)
-
-        for b in beams:
-            b.check_finished()
 
         # get the top prediction for each
         beam_preds_scores = [b.get_top_hyp() for b in beams]
@@ -902,7 +890,7 @@ class GenericBeam(object):
             if self.eos_top_ts is None:
                 self.eos_top_ts = len(self.outputs) - 1
 
-    def done(self):
+    def is_done(self):
         """Return whether beam search is complete."""
         return self.eos_top and self.n_best_counter >= self.min_n_best
 
@@ -927,6 +915,8 @@ class GenericBeam(object):
         :return:
             hypothesis sequence
         """
+        self._check_finished()
+
         assert self.outputs[hypothesis_tail.timestep][hypothesis_tail.hypid] == self.eos
         assert hypothesis_tail.tokenid == self.eos
         hyp_idx = []
@@ -985,7 +975,7 @@ class GenericBeam(object):
             for hyp in srted
         ]
 
-    def check_finished(self):
+    def _check_finished(self):
         """
         Check if self.finished is empty and add hyptail in that case.
 
