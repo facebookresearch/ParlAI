@@ -432,6 +432,11 @@ class ParlaiParser(argparse.ArgumentParser):
             help='Specify location to use for scratch builds and such.',
         )
 
+        # it helps to indicate to agents that they're in interactive mode, and
+        # can avoid some otherwise troublesome behavior (not having candidates,
+        # sharing self.replies, etc).
+        mturk.set_defaults(interactive_mode=True)
+
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
         mturk.set_defaults(verbose=False)

@@ -395,10 +395,8 @@ class TorchGeneratorAgent(TorchAgent):
 
     def set_interactive_mode(self, mode, shared=False):
         """Turn on interactive mode."""
+        super().set_interactive_mode(mode, shared)
         if mode:
-            if not shared:
-                # Only print in the non-shared version.
-                print("[" + self.id + ': full interactive mode on.' + ']')
             self.skip_generation = False
         else:
             self.skip_generation = self.opt.get('skip_generation', False)

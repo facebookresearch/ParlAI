@@ -650,9 +650,10 @@ class TorchAgent(ABC, Agent):
         """Initialize agent."""
         super().__init__(opt, shared)
         opt = self.opt
-        if not shared:
+        if shared is None:
             # intitialize any important structures from scratch
             self.replies = {}  # past replies
+            self._replies_are_shared = False
             self.dict = self.build_dictionary()
             if opt.get('fp16'):
                 # Volta cores revert to FP32 hardware if tensors are not multiples
@@ -675,12 +676,14 @@ class TorchAgent(ABC, Agent):
             self.opt = shared['opt']
             self.dict = shared['dict']
             self.metrics = shared['metrics']
-            if self.opt['batchsize'] == 1:
+            if self.opt['batchsize'] == 1 or self.opt['interactive_mode']:
                 # if we're not using batching (e.g. mturk), then replies really need
                 # to stay separated
                 self.replies = {}
+                self._replies_are_shared = False
             else:
                 self.replies = shared['replies']
+                self._replies_are_shared = True
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
@@ -1671,6 +1674,11 @@ class TorchAgent(ABC, Agent):
 
     def act(self):
         """Call batch_act with the singleton batch."""
+        if self._replies_are_shared:
+            raise RuntimeError(
+                'act() will misbehave in batching mode. Set batchsize to 1, or '
+                '--interactive-mode true'
+            )
         return self.batch_act([self.observation])[0]
 
     def batch_act(self, observations):
@@ -1723,8 +1731,9 @@ class TorchAgent(ABC, Agent):
 
     def set_interactive_mode(self, mode, shared):
         """Set interactive mode on or off."""
-        # Base class is a no-op.
-        pass
+        if shared is None:
+            # Only print in the non-shared version.
+            print("[" + self.id + ': full interactive mode on.' + ']')
 
     def backward(self, loss):
         """
