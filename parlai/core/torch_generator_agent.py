@@ -615,13 +615,12 @@ class TorchGeneratorAgent(TorchAgent):
             maxlen = self.label_truncate or 256
             _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz, maxlen=maxlen)
         elif self.beam_size > 1:
-            out = self._generate(
+            beam_preds_scores, _ = self._generate(
                 batch,
                 self.beam_size,
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
             )
-            beam_preds_scores, _, beams = out
             preds, scores = zip(*beam_preds_scores)
 
         cand_choices = None
@@ -740,23 +739,10 @@ class TorchGeneratorAgent(TorchAgent):
         for b in beams:
             b.check_finished()
 
-        beam_preds_scores = [list(b.get_top_hyp()) for b in beams]
-        for pair in beam_preds_scores:
-            pair[0] = GenericBeam.get_pretty_hypothesis(pair[0])
+        # get the top prediction for each
+        beam_preds_scores = [b.get_top_hyp() for b in beams]
 
-        n_best_beams = [b.get_rescored_finished(n_best=min_n_best) for b in beams]
-        n_best_beam_preds_scores = []
-        for i, beamhyp in enumerate(n_best_beams):
-            this_beam = []
-            for hyp in beamhyp:
-                pred = beams[i].get_pretty_hypothesis(
-                    beams[i].get_hyp_from_finished(hyp)
-                )
-                score = hyp.score
-                this_beam.append((pred, score))
-            n_best_beam_preds_scores.append(this_beam)
-
-        return beam_preds_scores, n_best_beam_preds_scores, beams
+        return beam_preds_scores, beams
 
 
 class _HypothesisTail(object):
@@ -926,11 +912,7 @@ class GenericBeam(object):
 
         :return: hypothesis sequence and the final score
         """
-        top_hypothesis_tail = self.get_rescored_finished(n_best=1)[0]
-        return (
-            self.get_hyp_from_finished(top_hypothesis_tail),
-            top_hypothesis_tail.score,
-        )
+        return self._get_rescored_finished(n_best=1)[0]
 
     def get_hyp_from_finished(self, hypothesis_tail):
         """
@@ -962,18 +944,11 @@ class GenericBeam(object):
 
         return hyp_idx
 
-    @staticmethod
-    def get_pretty_hypothesis(list_of_hypotails):
-        """Return prettier version of the hypotheses."""
-        hypothesis = []
-        for i in list_of_hypotails:
-            hypothesis.append(i.tokenid)
+    def _get_pretty_hypothesis(self, list_of_hypotails):
+        """Return hypothesis as a tensor of token ids."""
+        return torch.stack([ht.tokenid for ht in reversed(list_of_hypotails)])
 
-        hypothesis = torch.stack(list(reversed(hypothesis)))
-
-        return hypothesis
-
-    def get_rescored_finished(self, n_best=None):
+    def _get_rescored_finished(self, n_best=None):
         """
         Return finished hypotheses in rescored order.
 
@@ -997,12 +972,18 @@ class GenericBeam(object):
                 )
             )
 
+        # TODO: we don't really have to sort here; a priority queue would be
+        # better. however, beam size is almost always very small, so it doesn't
+        # really matter
         srted = sorted(rescored_finished, key=attrgetter('score'), reverse=True)
 
         if n_best is not None:
             srted = srted[:n_best]
 
-        return srted
+        return [
+            (self._get_pretty_hypothesis(self.get_hyp_from_finished(hyp)), hyp.score)
+            for hyp in srted
+        ]
 
     def check_finished(self):
         """
