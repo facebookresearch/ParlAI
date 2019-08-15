@@ -829,12 +829,12 @@ class GenericBeam(object):
         """Get the backtrack at the current step."""
         return self.bookkeep[-1]
 
-    def select_paths(self, logits, prior_scores):
+    def select_paths(self, logprobs, prior_scores):
         """
         Select the next vocabulary item in these beams.
 
-        :param logits:
-            a (beamsize x vocab) tensor of softmax weights. If this is the first
+        :param logprobs:
+            a (beamsize x vocab) tensor of log probabilities. If this is the first
             turn in the dialogue, it will be a (1 x vocab) tensor.
         :param prior_scores:
             a (beamsize) tensor of weights with the cumulative running
@@ -851,10 +851,10 @@ class GenericBeam(object):
               of each beam
         """
         # beam search actually looks over all hypotheses together so we flatten
-        beam_scores = logits + prior_scores.unsqueeze(1).expand_as(logits)
+        beam_scores = logprobs + prior_scores.unsqueeze(1).expand_as(logprobs)
         flat_beam_scores = beam_scores.view(-1)
         best_scores, best_idxs = torch.topk(flat_beam_scores, self.beam_size, dim=-1)
-        voc_size = logits.size(-1)
+        voc_size = logprobs.size(-1)
 
         # get the backtracking hypothesis id as a multiple of full voc_sizes
         hyp_ids = best_idxs / voc_size
@@ -863,18 +863,18 @@ class GenericBeam(object):
 
         return (hyp_ids, tok_ids, best_scores)
 
-    def advance(self, logits):
+    def advance(self, logprobs):
         """Advance the beam one step."""
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
             # penalize all eos probs to make it decode longer
-            for hyp_id in range(logits.size(0)):
-                logits[hyp_id][self.eos] = neginf(logits.dtype)
+            for hyp_id in range(logprobs.size(0)):
+                logprobs[hyp_id][self.eos] = neginf(logprobs.dtype)
 
         if self.scores is None:
-            self.scores = torch.zeros(1).type_as(logits).to(logits.device)
+            self.scores = torch.zeros(1).type_as(logprobs).to(logprobs.device)
 
-        hyp_ids, tok_ids, self.scores = self.select_paths(logits, self.scores)
+        hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
         self.all_scores.append(self.scores)
 
         self.outputs.append(tok_ids)
