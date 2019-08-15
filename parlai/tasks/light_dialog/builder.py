@@ -190,7 +190,7 @@ def write_dialog(opt, fw, d, label_type, split):
                     label_type,
                     split,
                     int(opt.get('light_use_cands', 100)),
-                    opt.get('light_use_affordances', 'all'),
+                    opt.get('light_use_affordances', True),
                 )
                 msgs.append(msg)
                 text = ''
@@ -254,11 +254,11 @@ def write_alldata(opt, db, dpath, ltype, split):
     fw_tst.close()
 
 
-def add_negs(msg, d, ind, label_type, split, num_cands, affordances):
+def add_negs(msg, d, ind, label_type, split, num_cands, use_affordances):
     if label_type == 'emote':
         msg['label_candidates'] = cands['emote']
     if label_type == 'action':
-        if affordances == 'all':
+        if use_affordances:
             msg['label_candidates'] = d['available_actions'][ind]
         else:
             msg['label_candidates'] = d['no_affordance_actions'][ind]

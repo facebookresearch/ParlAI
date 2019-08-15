@@ -87,9 +87,7 @@ class DefaultTeacher(ParlAIDialogTeacher):
             default='all',
             choices=['partner', 'self', 'all', 'none'],
         )
-        agent.add_argument(
-            '--light_use_affordances', type=str, default='all', choices=['all', 'none']
-        )
+        agent.add_argument('--light_use_affordances', type=bool, default=True)
         agent.add_argument(
             '--light_use_current_self_output',
             type=str,
