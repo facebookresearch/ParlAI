@@ -302,13 +302,6 @@ class TorchGeneratorAgent(TorchAgent):
             help='Beam size, if 1 then greedy search',
         )
         agent.add_argument(
-            '--beam-dot-log',
-            type='bool',
-            default=False,
-            hidden=True,
-            help='Dump beam trees as png dot images into /tmp folder',
-        )
-        agent.add_argument(
             '--beam-min-n-best',
             type=int,
             default=3,
@@ -337,7 +330,6 @@ class TorchGeneratorAgent(TorchAgent):
         init_model, is_finetune = self._get_init_model(opt, shared)
         super().__init__(opt, shared)
 
-        self.beam_dot_log = opt.get('beam_dot_log', False)
         self.beam_size = opt.get('beam_size', 1)
         self.beam_min_n_best = opt.get('beam_min_n_best', 3)
         self.beam_min_length = opt.get('beam_min_length', 3)
@@ -361,14 +353,6 @@ class TorchGeneratorAgent(TorchAgent):
             self.metrics['total_skipped_batches'] = 0
 
             # this is not a shared instance of this class, so do full init
-            if self.beam_dot_log:
-                self.beam_dot_dir = tempfile.mkdtemp(
-                    prefix='{}-beamdot-beamsize-{}-'.format(
-                        os.path.basename(opt.get('model_file')), self.beam_size
-                    )
-                )
-                print('[ Saving dot beam logs in {} ]'.format(self.beam_dot_dir))
-
             self.build_criterion()
             self.build_model()
             check_synced_parameters(self.model)
@@ -506,8 +490,6 @@ class TorchGeneratorAgent(TorchAgent):
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer']
             }
-        if self.beam_dot_log is True:
-            shared['beam_dot_dir'] = self.beam_dot_dir
         return shared
 
     def report(self):
@@ -612,16 +594,6 @@ class TorchGeneratorAgent(TorchAgent):
             else:
                 raise e
 
-    def _write_beam_dots(self, text_vecs, beams):
-        """Write the beam dot files to disk."""
-        for i, b in enumerate(beams):
-            dot_graph = b.get_beam_dot(dictionary=self.dict, n_best=3)
-            image_name = self._v2t(text_vecs[i, -20:])
-            image_name = image_name.replace(' ', '-').replace('__null__', '')
-            dot_graph.write_png(
-                os.path.join(self.beam_dot_dir, "{}.png".format(image_name))
-            )
-
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
         if batch.text_vec is None:
@@ -654,9 +626,6 @@ class TorchGeneratorAgent(TorchAgent):
             )
             beam_preds_scores, _, beams = out
             preds, scores = zip(*beam_preds_scores)
-
-            if self.beam_dot_log is True:
-                self._write_beam_dots(batch.text_vec, beams)
 
         cand_choices = None
         # TODO: abstract out the scoring here
@@ -1152,102 +1121,3 @@ class GenericBeam(object):
             )
 
             self.finished.append(hyptail)
-
-    def get_beam_dot(self, dictionary=None, n_best=None):
-        """
-        Create pydot graph representation of the beam.
-
-        :param outputs:
-            self.outputs from the beam
-
-        :param dictionary:
-            tok 2 word dict to save words in the tree nodes
-
-        :returns:
-            pydot graph
-        """
-        try:
-            import pydot
-        except ImportError:
-            print("Please install pydot package to dump beam visualization")
-
-        graph = pydot.Dot(graph_type='digraph')
-        outputs = [i.tolist() for i in self.outputs]
-        bookkeep = [i.tolist() for i in self.bookkeep]
-        all_scores = [i.tolist() for i in self.all_scores]
-        if n_best is None:
-            n_best = int(self.beam_size / 2)
-
-        # get top nbest hyp
-        top_hyp_idx_n_best = []
-        n_best_colors = ['aquamarine', 'chocolate1', 'deepskyblue', 'green2', 'tan']
-        sorted_finished = self.get_rescored_finished(n_best=n_best)
-        for hyptail in sorted_finished:
-            # do not include EOS since it has rescored score not from original
-            # self.all_scores, we color EOS with black
-            top_hyp_idx_n_best.append(self.get_hyp_from_finished(hyptail))
-
-        # create nodes
-        for tstep, lis in enumerate(outputs):
-            for hypid, token in enumerate(lis):
-                if tstep == 0:
-                    hypid = 0  # collapse all __NULL__ nodes
-                node_tail = _HypothesisTail(
-                    timestep=tstep,
-                    hypid=hypid,
-                    score=all_scores[tstep][hypid],
-                    tokenid=token,
-                )
-                color = 'white'
-                rank = None
-                for i, hypseq in enumerate(top_hyp_idx_n_best):
-                    if node_tail in hypseq:
-                        if n_best <= 5:  # color nodes only if <=5
-                            color = n_best_colors[i]
-                        rank = i
-                        break
-                label = (
-                    "<{}".format(
-                        dictionary.vec2txt([token]) if dictionary is not None else token
-                    )
-                    + " : "
-                    + "{:.{prec}f}>".format(all_scores[tstep][hypid], prec=3)
-                )
-
-                graph.add_node(
-                    pydot.Node(
-                        node_tail.__repr__(),
-                        label=label,
-                        fillcolor=color,
-                        style='filled',
-                        xlabel='{}'.format(rank) if rank is not None else '',
-                    )
-                )
-
-        # create edges
-        for revtstep, lis in reversed(list(enumerate(bookkeep))):
-            for i, prev_id in enumerate(lis):
-                from_node = graph.get_node(
-                    '"{}"'.format(
-                        _HypothesisTail(
-                            timestep=revtstep,
-                            hypid=prev_id,
-                            score=all_scores[revtstep][prev_id],
-                            tokenid=outputs[revtstep][prev_id],
-                        ).__repr__()
-                    )
-                )[0]
-                to_node = graph.get_node(
-                    '"{}"'.format(
-                        _HypothesisTail(
-                            timestep=revtstep + 1,
-                            hypid=i,
-                            score=all_scores[revtstep + 1][i],
-                            tokenid=outputs[revtstep + 1][i],
-                        ).__repr__()
-                    )
-                )[0]
-                newedge = pydot.Edge(from_node.get_name(), to_node.get_name())
-                graph.add_edge(newedge)
-
-        return graph
