@@ -369,9 +369,8 @@ class TorchGeneratorAgent(TorchAgent):
         if (
             # only build an optimizer if we're training
             'train' in opt.get('datatype', '')
-            and
             # and this is the main model, or on every fork if doing hogwild
-            (shared is None or self.opt.get('numthreads', 1) > 1)
+            and (shared is None or self.opt.get('numthreads', 1) > 1)
         ):
             # do this regardless of share state, but don't
             self.init_optim(
