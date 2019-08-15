@@ -62,10 +62,6 @@ class TorchGeneratorModel(nn.Module, ABC):
         self.register_buffer('START', torch.LongTensor([start_idx]))
         self.longest_label = longest_label
 
-    def _starts(self, bsz):
-        """Return bsz start tokens."""
-        return self.START.detach().expand(bsz, 1)
-
     def decode_greedy(self, encoder_states, bsz, maxlen):
         """
         Perform a greedy search.
@@ -89,7 +85,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         :rtype:
             (FloatTensor[bsz, maxlen, vocab], LongTensor[bsz, maxlen])
         """
-        xs = self._starts(bsz)
+        xs = self.START.detach().expand(bsz, 1)
         incr_state = None
         logits = []
         for _i in range(maxlen):
@@ -134,7 +130,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         bsz = ys.size(0)
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
-        inputs = torch.cat([self._starts(bsz), inputs], 1)
+        inputs = torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
         latent, _ = self.decoder(inputs, encoder_states)
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
