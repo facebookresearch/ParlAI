@@ -19,10 +19,7 @@ Contains the following utilities:
 """
 
 from abc import ABC, abstractmethod
-import os
 import math
-import tempfile
-from collections import defaultdict, Counter, namedtuple
 from operator import attrgetter
 
 import torch
