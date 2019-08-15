@@ -667,7 +667,7 @@ class TorchGeneratorAgent(TorchAgent):
 
         bsz = len(batch.text_lengths)
         beams = [
-            GenericBeam(
+            BeamSearch(
                 beam_size,
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
@@ -739,23 +739,23 @@ class _HypothesisTail(object):
         self.tokenid = tokenid
 
 
-class GenericBeam(object):
+class TreeSearch(object):
     """
-    Generic beam class. It keeps information about beam_size hypothesis.
+    Abstract Tree Search class.
 
-    The beam class is responsible for making decisions about what path to
-    take when exploring the generation tree, and keeping track of those
-    decisions. By altering the logic for making decisions, we can implement
-    different sampling algorithms.
+    It keeps information about beam_size concurrent, developing hypotheses.
+    Concrete implementations make choices about which token to explore next at
+    each point in the tree. Different choices result in different generation
+    algorithms.
     """
 
     def __init__(
         self,
         beam_size,
-        min_length=3,
         padding_token=0,
         bos_token=1,
         eos_token=2,
+        min_length=3,
         min_n_best=3,
         device='cpu',
     ):
@@ -764,17 +764,17 @@ class GenericBeam(object):
 
         :param beam_size:
             number of hypothesis in the beam
-        :param min_length:
-            minimum length of the predicted sequence
         :param padding_token:
             Set to 0 as usual in ParlAI
         :param bos_token:
             Set to 1 as usual in ParlAI
         :param eos_token:
             Set to 2 as usual in ParlAI
+        :param min_length:
+            minimum length of the predicted sequence
         :param min_n_best:
-            Beam will not be done unless this amount of finished hypothesis
-            (with EOS) is done
+            Search will not be finished until a minimum number of utterances are
+            completed.
         :param cuda:
             What device to use for computations
         """
@@ -810,6 +810,7 @@ class GenericBeam(object):
         """Get the backtrack at the current step."""
         return self.bookkeep[-1]
 
+    @abstractmethod
     def select_paths(self, logprobs, prior_scores):
         """
         Select the next vocabulary item in these beams.
@@ -831,18 +832,7 @@ class GenericBeam(object):
             - scores is a (beamsize) tensor with the updated cumulative log-probs
               of each beam
         """
-        # beam search actually looks over all hypotheses together so we flatten
-        beam_scores = logprobs + prior_scores.unsqueeze(1).expand_as(logprobs)
-        flat_beam_scores = beam_scores.view(-1)
-        best_scores, best_idxs = torch.topk(flat_beam_scores, self.beam_size, dim=-1)
-        voc_size = logprobs.size(-1)
-
-        # get the backtracking hypothesis id as a multiple of full voc_sizes
-        hyp_ids = best_idxs / voc_size
-        # get the actual word id from residual of the same division
-        tok_ids = best_idxs % voc_size
-
-        return (hyp_ids, tok_ids, best_scores)
+        pass
 
     def advance(self, logprobs):
         """Advance the beam one step."""
@@ -966,3 +956,39 @@ class GenericBeam(object):
             (self._get_pretty_hypothesis(self._get_hyp_from_finished(hyp)), hyp.score)
             for hyp in srted
         ]
+
+
+class BeamSearch(TreeSearch):
+    def select_paths(self, logprobs, prior_scores):
+        """
+        Select the next vocabulary item in these beams.
+
+        :param logprobs:
+            a (beamsize x vocab) tensor of log probabilities. If this is the first
+            turn in the dialogue, it will be a (1 x vocab) tensor.
+        :param prior_scores:
+            a (beamsize) tensor of weights with the cumulative running
+            log-probability of each beam. If the first turn, it will be a (1) tensor.
+
+        :return:
+            a (hypothesis_ids, token_id, scores) tuple, where:
+
+            - hypothesis_ids is the list of hypotheses we're extending. May have
+              repeats, but should always be (beamsize) long.
+            - token_ids is a (beamsize) list of next-token choices for each of the
+              hypotheses.
+            - scores is a (beamsize) tensor with the updated cumulative log-probs
+              of each beam
+        """
+        # beam search actually looks over all hypotheses together so we flatten
+        beam_scores = logprobs + prior_scores.unsqueeze(1).expand_as(logprobs)
+        flat_beam_scores = beam_scores.view(-1)
+        best_scores, best_idxs = torch.topk(flat_beam_scores, self.beam_size, dim=-1)
+        voc_size = logprobs.size(-1)
+
+        # get the backtracking hypothesis id as a multiple of full voc_sizes
+        hyp_ids = best_idxs / voc_size
+        # get the actual word id from residual of the same division
+        tok_ids = best_idxs % voc_size
+
+        return (hyp_ids, tok_ids, best_scores)
