@@ -218,9 +218,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         """
         pass
 
-    def forward(
-        self, *xs, ys=None, cand_params=None, prev_enc=None, maxlen=None, bsz=None
-    ):
+    def forward(self, *xs, ys=None, prev_enc=None, maxlen=None, bsz=None):
         """
         Get output predictions from the model.
 
