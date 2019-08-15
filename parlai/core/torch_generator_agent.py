@@ -928,11 +928,6 @@ class GenericBeam(object):
         self.min_n_best = min_n_best
         self.partial_hyps = [[self.bos] for i in range(beam_size)]
 
-    @staticmethod
-    def _find_ngrams(input_list, n):
-        """Get list of ngrams with context length n-1."""
-        return list(zip(*[input_list[i:] for i in range(n)]))
-
     def get_output_from_current_step(self):
         """Get the outputput at the current step."""
         return self.outputs[-1]
@@ -1035,10 +1030,10 @@ class GenericBeam(object):
         Extract hypothesis ending with EOS at timestep with hyp_id.
 
         :param timestep:
-            timestep with range up to len(self.outputs)-1
+            timestep with range up to len(self.outputs) - 1
 
         :param hyp_id:
-            id with range up to beam_size-1
+            id with range up to beam_size - 1
 
         :return:
             hypothesis sequence
