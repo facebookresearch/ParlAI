@@ -902,7 +902,7 @@ class GenericBeam(object):
         """
         return self._get_rescored_finished(n_best=1)[0]
 
-    def get_hyp_from_finished(self, hypothesis_tail):
+    def _get_hyp_from_finished(self, hypothesis_tail):
         """
         Extract hypothesis ending with EOS at timestep with hyp_id.
 
@@ -915,10 +915,6 @@ class GenericBeam(object):
         :return:
             hypothesis sequence
         """
-        self._check_finished()
-
-        assert self.outputs[hypothesis_tail.timestep][hypothesis_tail.hypid] == self.eos
-        assert hypothesis_tail.tokenid == self.eos
         hyp_idx = []
         endback = hypothesis_tail.hypid
         for i in range(hypothesis_tail.timestep, -1, -1):
@@ -940,13 +936,18 @@ class GenericBeam(object):
 
     def _get_rescored_finished(self, n_best=None):
         """
-        Return finished hypotheses in rescored order.
+        Return finished hypotheses according to adjusted scores.
+
+        Score adjustment is done according to the Google NMT paper, which
+        penalizes long utterances.
 
         :param n_best:
-            how many n best hypothesis to return
+            number of finalized hypotheses to return
 
         :return:
-            list with hypothesis
+            list of (tokens, score) pairs, in sorted order, where:
+              - tokens is a tensor of token ids
+              - score is the adjusted log probability of the entire utterance
         """
         rescored_finished = []
         for finished_item in self.finished:
@@ -962,35 +963,13 @@ class GenericBeam(object):
                 )
             )
 
-        # TODO: we don't really have to sort here; a priority queue would be
-        # better. however, beam size is almost always very small, so it doesn't
-        # really matter
+        # Note: beam size is almost always pretty small, so sorting is cheap enough
         srted = sorted(rescored_finished, key=attrgetter('score'), reverse=True)
 
         if n_best is not None:
             srted = srted[:n_best]
 
         return [
-            (self._get_pretty_hypothesis(self.get_hyp_from_finished(hyp)), hyp.score)
+            (self._get_pretty_hypothesis(self._get_hyp_from_finished(hyp)), hyp.score)
             for hyp in srted
         ]
-
-    def _check_finished(self):
-        """
-        Check if self.finished is empty and add hyptail in that case.
-
-        This will be suboptimal hypothesis since the model did not get any EOS
-        """
-        if len(self.finished) == 0:
-            # we change output because we want outputs to have eos
-            # to pass assert in L102, it is ok since empty self.finished
-            # means junk prediction anyway
-            self.outputs[-1][0] = self.eos
-            hyptail = _HypothesisTail(
-                timestep=len(self.outputs) - 1,
-                hypid=0,
-                score=self.all_scores[-1][0],
-                tokenid=self.outputs[-1][0],
-            )
-
-            self.finished.append(hyptail)
