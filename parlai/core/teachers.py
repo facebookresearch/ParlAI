@@ -1290,11 +1290,13 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         # Example of available models: 'resnet152', 'resnext101_32x48d_wsl',
         # and ImageLoader supports other resnet and resnext models too
-        self.image_model = opt.get('image_model')
+        if not self._validate_image_mode_name(opt.get('image_mode')):
+            raise RuntimeError('Invalid image_mode for image teacher: %s' % self.image_mode)
+        self.image_mode = opt.get('image_mode')
 
         # Not using default image_mode paramater b/c there is a normalization
         # (or bug) somewhere in build_dict that is setting it to none
-        self.include_image = opt.get('image_model') != 'no_image_model'
+        self.include_image = opt.get('image_mode') != 'no_image_model'
 
         if shared and 'data' in shared:
             self.data = shared['data']
@@ -1307,7 +1309,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             # TODO: will refactor this at some point soon most likely
             image_loader_opt = self.opt.copy()
             image_loader_opt['image_mode'] = (
-                self.image_model if self.include_image else 'none'
+                self.image_mode if self.include_image else 'none'
             )
 
             image_loader_opt['image_size'] = 256
@@ -1317,7 +1319,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         self.reset()
 
     @classmethod
-    def get_available_image_model_names(cls):
+    def get_available_image_mode_names(cls):
         """
         Available image model names.
         
@@ -1330,12 +1332,12 @@ class AbstractImageTeacher(FixedDialogTeacher):
         return ['no_image_model'] + available_model_names
 
     @classmethod
-    def _validate_image_model_name(cls, a):
+    def _validate_image_mode_name(cls, a):
         if not isinstance(a, str):
             raise argparse.ArgumentTypeError(
                 '%s must be a string representing image model name' % a
             )
-        available_model_names = cls.get_available_image_model_names()
+        available_model_names = cls.get_available_image_mode_names()
         if a not in available_model_names:
             raise argparse.ArgumentTypeError(
                 '%s unknown image model name. Choose from: %s. Currently suggested resnet is resnet152 and resnext is resnext101_32x48d_wsl.'
@@ -1347,21 +1349,11 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def add_cmdline_args(cls, argparser):
         agent = argparser.add_argument_group('AbstractImageTeacher Arguments')
         agent.add_argument(
-            '--image-model',
-            type=cls._validate_image_model_name,
-            default='no_image_model',
-            help='Specify an available image model name. resnet and resnext'
-            'variants available from the ImageLoader.resnext101_XXXXX_wsl is'
-            'the open - sourced FB AI model(960 m images, 1.5 k hashtags,'
-            'finetuned on ImageNet). "no_image_model" for no image model.',
-        )
-
-        agent.add_argument(
             '--image-path',
             type=str,
             default=None,
             help='Optional argument to specify where images for dataset are'
-            'stored if already downloaded.Most tasks will download the images'
+            'stored if already downloaded. Most tasks will download the images'
             'if not present on the < datapath > / < task > _images / * and * if'
             'this argument is not specified.',
         )
@@ -1420,7 +1412,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         return data_path, image_path
 
-    def is_image_model_buildable(self, model_name):
+    def is_image_mode_buildable(self, model_name):
         """
         Is buildable if features can be calculated by ImageLoader.
 
@@ -1430,7 +1422,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         return model_name in ImageLoader.get_available_model_names()
 
-    def get_image_model_features_path(self, task, model_name, dt):
+    def get_image_mode_features_path(self, task, model_name, dt):
         """
         Image features for the dataset images are stored here.
 
@@ -1493,26 +1485,26 @@ class AbstractImageTeacher(FixedDialogTeacher):
         buildable using ImageLoader) are not found, we build them.
         """
 
-        image_model_features_dict_path = self.get_image_model_features_path(
-            self.task, self.image_model, self.datatype
+        image_mode_features_dict_path = self.get_image_mode_features_path(
+            self.task, self.image_mode, self.datatype
         )
 
-        if os.path.isfile(image_model_features_dict_path):
+        if os.path.isfile(image_mode_features_dict_path):
             self.image_features_dict = torch.load(
-                image_model_features_dict_path, map_location='cpu'
+                image_mode_features_dict_path, map_location='cpu'
             )
         else:
-            if self.is_image_model_buildable(self.image_model):
+            if self.is_image_mode_buildable(self.image_mode):
                 # try to build with ImageLoader (i.e. resenet/resnext variants)
                 self.image_features_dict = self._build_image_features_dict(
-                    self.data_path, self.datatype, image_model_features_dict_path
+                    self.data_path, self.datatype, image_mode_features_dict_path
                 )
             else:
                 raise RuntimeError(
                     'Image model: %s is not buildable by ImageLoader but does' 
                     'not already exist on disk as an image features dict for'
                     'this dataset.'
-                    % self.image_model
+                    % self.image_mode
                 )
 
     def _build_image_features_dict(self, data_path, dt, store_dict_path):
@@ -1532,7 +1524,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             unit='cand',
             unit_scale=True,
             desc='Building image features dict for %s with ImageLoader.'
-            % self.image_model,
+            % self.image_mode,
         )
         num = 0
         for ex in self.data:
