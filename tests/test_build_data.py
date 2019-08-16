@@ -7,6 +7,7 @@ import os
 from parlai.core import build_data
 import unittest
 import parlai.core.testing_utils as testing_utils
+import multiprocessing
 from parlai.core.params import ParlaiParser
 
 
@@ -70,4 +71,6 @@ class TestBuildData(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    # multiprocessing apparently hangs when it finishes on Mac OSX otherwise
+    multiprocessing.set_start_method('spawn')
     unittest.main()
