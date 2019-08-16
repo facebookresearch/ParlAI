@@ -408,7 +408,7 @@ class FixedDialogTeacher(Teacher):
             action = action.copy()
             labels = action.pop('labels')
             if not self.opt.get('hide_labels', False):
-                action['eval_labels'] = labels
+                action.force_set('eval_labels', labels)
 
         return action
 
@@ -1255,5 +1255,5 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
                         eps = []
         if len(eps) > 0:
             # add last episode
-            eps[-1]['episode_done'] = True
+            eps[-1].force_set('episode_done', True)
             self.episodes.append(eps)
