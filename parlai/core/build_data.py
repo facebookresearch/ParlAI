@@ -443,7 +443,7 @@ def _download_multiprocess_single(url, path, dest_fname):
     """
     Helper function to download an individual item.
 
-    Unlike download() above, does not deal with downloading chunks of a big 
+    Unlike download() above, does not deal with downloading chunks of a big
     file, does not support retries (and does not fail if retries are exhausted).
 
     :param url: URL to download from

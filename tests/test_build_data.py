@@ -43,14 +43,10 @@ class TestBuildData(unittest.TestCase):
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
         self.assertEqual(
-            output_filenames,
-            self.dest_filenames,
-            'output filenames not correct',
+            output_filenames, self.dest_filenames, 'output filenames not correct'
         )
         self.assertEqual(
-            output_statuses,
-            (200, 403, 403),
-            'output http statuses not correct'
+            output_statuses, (200, 403, 403), 'output http statuses not correct'
         )
 
     def test_download_multiprocess_chunks(self):

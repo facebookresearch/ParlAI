@@ -1268,7 +1268,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         Abstract class to allow easier creation of image + dialogue tasks.
 
         Subclass this class in a task folder. Note: that Parlai task loading
-        code looks in the directory of the task name and then calls 
+        code looks in the directory of the task name and then calls
         DefaultTeacher to load your teacher, so add an additional subclass of
          your teacher called DefaultTeacher.
 
@@ -1285,13 +1285,17 @@ class AbstractImageTeacher(FixedDialogTeacher):
         self.data_path, self.image_path = self.get_paths(opt)
 
         self.data = self.load_data(self.data_path, self.opt)
-        self.blank_image_features = torch.FloatTensor(opt.get('image_features_dim')).fill_(0)
+        self.blank_image_features = torch.FloatTensor(
+            opt.get('image_features_dim')
+        ).fill_(0)
         self.datatype = opt.get('datatype').split(':')[0]
 
         # Example of available models: 'resnet152', 'resnext101_32x48d_wsl',
         # and ImageLoader supports other resnet and resnext models too
         if not self._validate_image_mode_name(opt.get('image_mode')):
-            raise RuntimeError('Invalid image_mode for image teacher: %s' % self.image_mode)
+            raise RuntimeError(
+                'Invalid image_mode for image teacher: %s' % self.image_mode
+            )
         self.image_mode = opt.get('image_mode')
 
         # Not using default image_mode paramater b/c there is a normalization
@@ -1322,9 +1326,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def get_available_image_mode_names(cls):
         """
         Available image model names.
-        
-        resnet and resnext variants available from the ImageLoader. 
-        resnext101_XXXXX_wsl is the open-sourced FB AI model (960m images, 1.5k 
+
+        resnet and resnext variants available from the ImageLoader.
+        resnext101_XXXXX_wsl is the open-sourced FB AI model (960m images, 1.5k
         hashtags, finetuned on ImageNet).
 
         """
@@ -1370,7 +1374,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Which key in the input data dict objects uniquely identify each image.
 
-        Common image keys are "image_id" or "image_num". May be implemented by 
+        Common image keys are "image_id" or "image_num". May be implemented by
         subclass.
         """
         return 'image_id'
@@ -1416,8 +1420,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Is buildable if features can be calculated by ImageLoader.
 
-        Users may wish to compute features for the dataset offline and use in 
-        the model, in which case, the image model should return False and 
+        Users may wish to compute features for the dataset offline and use in
+        the model, in which case, the image model should return False and
         get_image_features() should be overriden in subclass.
         """
         return model_name in ImageLoader.get_available_model_names()
@@ -1427,7 +1431,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         Image features for the dataset images are stored here.
 
         Can be overriden in subclass to use custom paths.
-        Image features can be manually copied into this directory or in the 
+        Image features can be manually copied into this directory or in the
         case of ImageLoader eligible models, built if not already there.
 
         """
@@ -1445,7 +1449,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Loading the data file, which is the index to the images and text.
 
-        It is often a .json file with the name of the <datatype>.json (i.e. 
+        It is often a .json file with the name of the <datatype>.json (i.e.
         train.json). Stores in self.data.
 
         Can be override by subclass.
@@ -1478,10 +1482,10 @@ class AbstractImageTeacher(FixedDialogTeacher):
         Load text and image data.
 
         The image features all live in dicts by default in <data_path>/
-        image_features/ but get_image_features_path() above can be overriden by 
+        image_features/ but get_image_features_path() above can be overriden by
         subclass to put them elsewhere.
 
-        In the (very odd) case that the resnet or resnext dicts (models 
+        In the (very odd) case that the resnet or resnext dicts (models
         buildable using ImageLoader) are not found, we build them.
         """
 
@@ -1501,10 +1505,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
                 )
             else:
                 raise RuntimeError(
-                    'Image model: %s is not buildable by ImageLoader but does' 
+                    'Image model: %s is not buildable by ImageLoader but does'
                     'not already exist on disk as an image features dict for'
-                    'this dataset.'
-                    % self.image_mode
+                    'this dataset.' % self.image_mode
                 )
 
     def _build_image_features_dict(self, data_path, dt, store_dict_path):
@@ -1570,7 +1573,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         """
-        Override this in subclass if your data should be handled in a 
+        Override this in subclass if your data should be handled in a
         different format
         """
         example = self.data[episode_idx]
@@ -1584,7 +1587,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def next_example(self):
         """Load queued example
 
-        When self.image_features_dict is not `none`, this is essentially a 
+        When self.image_features_dict is not `none`, this is essentially a
         no-op. However, this is necessary/useful if self.image_mode is e.g. raw
         or ascii.
         """
@@ -1598,7 +1601,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
                 self.example, self.imageEpochDone = super().next_example()
             return (self.example, self.imageEpochDone)
         elif self.include_image:
-            # We have specified an image model/mode but it's not based on 
+            # We have specified an image model/mode but it's not based on
             # calculating features, (e.g. "raw" or "ascii") so we try to load
             # the image from the DataLoader
             if self.example is not None:
