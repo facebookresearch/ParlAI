@@ -30,16 +30,15 @@ class TestBuildData(unittest.TestCase):
                 pass
 
     def test_download_multiprocess(self):
-        with testing_utils.capture_output() as stdout:
-            urls = [
-                'http://parl.ai/downloads/mnist/mnist.tar.gz',
-                'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
-                'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
-            ]
+        urls = [
+            'http://parl.ai/downloads/mnist/mnist.tar.gz',
+            'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
+            'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
+        ]
 
-            download_results = build_data.download_multiprocess(
-                urls, self.datapath, dest_filenames=self.dest_filenames
-            )
+        download_results = build_data.download_multiprocess(
+            urls, self.datapath, dest_filenames=self.dest_filenames
+        )
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
         self.assertEqual(
@@ -51,16 +50,15 @@ class TestBuildData(unittest.TestCase):
 
     def test_download_multiprocess_chunks(self):
         # Tests that the three finish downloading but may finish in any order
-        with testing_utils.capture_output() as stdout:
-            urls = [
-                'http://parl.ai/downloads/mnist/mnist.tar.gz',
-                'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
-                'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
-            ]
+        urls = [
+            'http://parl.ai/downloads/mnist/mnist.tar.gz',
+            'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
+            'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
+        ]
 
-            download_results = build_data.download_multiprocess(
-                urls, self.datapath, dest_filenames=self.dest_filenames, chunk_size=1
-            )
+        download_results = build_data.download_multiprocess(
+            urls, self.datapath, dest_filenames=self.dest_filenames, chunk_size=1
+        )
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
 

@@ -1400,7 +1400,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def get_paths(self, opt):
         """
         Return the path to the data directory and to the image directory.
-        
+
         Is based on opt fields: task, datatype (train, valid, test), datapath.
 
         Subclass can override this.
