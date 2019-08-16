@@ -325,7 +325,7 @@ model_list = [
         "title": "Bi-Encoder Transformer ConvAI2 Model",
         "id": "pretrained_transformers",
         "path": "zoo:pretrained_transformers/model_bi",
-        "agent": "transformer/biencoder", 
+        "agent": "transformer/biencoder",
         "task": "convai2",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
         "description": (
