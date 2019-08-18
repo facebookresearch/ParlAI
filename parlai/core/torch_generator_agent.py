@@ -287,9 +287,15 @@ class TorchGeneratorAgent(TorchAgent):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy'},
+            choices={'beam', 'greedy', 'topk', 'nucleus'},
             default='greedy',
             help='Generation algorithm',
+        )
+        agent.add_argument(
+            '--topk', type=int, default=10, help='K used in Top K sampling'
+        )
+        agent.add_argument(
+            '--topp', type=float, default=0.9, help='p used in nucleus sampling'
         )
 
         super(TorchGeneratorAgent, cls).add_cmdline_args(argparser)
@@ -618,6 +624,28 @@ class TorchGeneratorAgent(TorchAgent):
             )
         elif method == 'beam':
             return BeamSearch(
+                beam_size,
+                min_length=self.beam_min_length,
+                min_n_best=self.beam_min_n_best,
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
+        elif method == 'topk':
+            return TopKSampling(
+                self.opt['topk'],
+                beam_size,
+                min_length=self.beam_min_length,
+                min_n_best=self.beam_min_n_best,
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
+        elif method == 'nucleus':
+            return NucleusSampling(
+                self.opt['topp'],
                 beam_size,
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
@@ -985,4 +1013,61 @@ class BeamSearch(TreeSearch):
         # get the actual word id from residual of the same division
         tok_ids = best_idxs % voc_size
 
+        return (hyp_ids, tok_ids, best_scores)
+
+
+class TopKSampling(TreeSearch):
+    """
+    Top-K sampling (Fan et al., 2018).
+
+    Samples from a truncated distribution where only the most probable K words
+    are considered at each time.
+
+    Typical values of k are 2, 10, 50.
+
+    See https://arxiv.org/abs/1805.04833 for details.
+    """
+
+    def __init__(self, k, *args, **kwargs):
+        self.k = k
+        super().__init__(*args, **kwargs)
+
+    def select_paths(self, logprobs, prior_scores):
+        topk = logprobs.topk(self.k, dim=-1)
+        probs = torch.softmax(topk.values, dim=-1)
+        choices = torch.multinomial(probs, 1)[:, 0]
+        hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
+        tok_ids = topk.indices[hyp_ids, choices]
+        scores = topk.values[hyp_ids, choices]
+        best_scores = prior_scores.expand_as(scores) + scores
+        return (hyp_ids, tok_ids, best_scores)
+
+
+class NucleusSampling(TreeSearch):
+    """
+    Nucelus, aka top-p sampling (Holtzman et al., 2019).
+
+    Samples from a truncated distribution which covers a fixed CDF proportion
+    of the original distribution.
+
+    Typical values of p are 0.3 and 0.9.
+
+    See https://arxiv.org/abs/1904.09751 for details.
+    """
+
+    def __init__(self, p, *args, **kwargs):
+        self.p = p
+        super().__init__(*args, **kwargs)
+
+    def select_paths(self, logprobs, prior_scores):
+        probs = torch.softmax(logprobs, dim=-1)
+        sprobs, sinds = probs.sort(dim=-1, descending=True)
+        mask = (sprobs.cumsum(dim=-1) - sprobs[:, :1]) > self.p
+        sprobs[mask] = 0
+        sprobs.div_(sprobs.sum(dim=-1).unsqueeze(1))
+        choices = torch.multinomial(sprobs, 1)[:, 0]
+        hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
+        tok_ids = sinds[hyp_ids, choices]
+        scores = sprobs[hyp_ids, choices].log()
+        best_scores = prior_scores.expand_as(scores) + scores
         return (hyp_ids, tok_ids, best_scores)
