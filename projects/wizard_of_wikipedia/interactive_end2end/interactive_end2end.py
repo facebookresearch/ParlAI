@@ -78,7 +78,8 @@ class InteractiveEnd2endAgent(Agent):
 
         self._set_up_sent_tok()
         wiki_map_path = os.path.join(self.model_path, 'chosen_topic_to_passage.json')
-        self.wiki_map = json.load(open(wiki_map_path, 'r'))
+        with open(wiki_map_path, 'r') as f:
+            self.wiki_map = json.load(f)
 
     def _set_up_responder(self, opt):
         responder_opts = opt.copy()

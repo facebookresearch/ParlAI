@@ -66,6 +66,8 @@ Vanilla Transformer (no knowledge)   | [Dinan et al. (2019)](https://arxiv.org/a
 
 ## Pretrained models
 
+## End-to-End generative
+
 You can evaluate the pretrained End-to-end generative models via:
 
     python examples/eval_model.py \
@@ -90,11 +92,16 @@ This will produce:
 
     {'f1': 0.1498, 'ppl': 103.1, 'know_acc': 0.1123, 'know_chance': 0.02496}
 
+You can also interact with the model with:
+
+    python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_end2end -t wizard_of_wikipedia
+
+## Retrieval Model
+
 You can evaluate a retrieval model on the full dialogue task by running the
 following script:
 
     python projects/wizard_of_wikipedia/scripts/eval_retrieval_model.py
-
 
 You can run an interactive session with the model with:
 
