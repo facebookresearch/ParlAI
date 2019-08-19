@@ -16,6 +16,7 @@ class TestUpgradeOpt(unittest.TestCase):
     """Test upgrade_opt behavior."""
 
     def test_inference(self):
+        """Test --inference with simple options."""
         with testing_utils.capture_output():
             upgraded = TorchGeneratorAgent.upgrade_opt({'beam_size': 1})
             self.assertEqual(upgraded['inference'], 'greedy')
@@ -24,6 +25,7 @@ class TestUpgradeOpt(unittest.TestCase):
             self.assertEqual(upgraded['inference'], 'beam')
 
     def test_file_inference(self):
+        """Test --inference with older model files."""
         testing_utils.download_unittest_models()
         with testing_utils.capture_output():
             pp = ParlaiParser(True, True)

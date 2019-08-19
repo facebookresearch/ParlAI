@@ -701,7 +701,10 @@ class TorchGeneratorAgent(TorchAgent):
             - beams :list of Beam instances defined in Beam class, can be used for any
               following postprocessing, e.g. dot logging.
         """
-        encoder_states = self.model.encoder(*self._model_input(batch))
+        model = self.model
+        if isinstance(model, torch.nn.parallel.DistributedDataParallel):
+            model = self.model.module
+        encoder_states = model.encoder(*self._model_input(batch))
         dev = batch.text_vec.device
 
         bsz = len(batch.text_lengths)
@@ -724,7 +727,7 @@ class TorchGeneratorAgent(TorchAgent):
         )
 
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
-        encoder_states = self.model.reorder_encoder_states(encoder_states, inds)
+        encoder_states = model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
 
         for _ts in range(max_ts):
@@ -732,12 +735,10 @@ class TorchGeneratorAgent(TorchAgent):
                 # exit early if possible
                 break
 
-            score, incr_state = self.model.decoder(
-                decoder_input, encoder_states, incr_state
-            )
+            score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
             # only need the final hidden state to make the word prediction
             score = score[:, -1:, :]
-            score = self.model.output(score)
+            score = model.output(score)
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)
             score = F.log_softmax(score, dim=-1)
@@ -750,7 +751,7 @@ class TorchGeneratorAgent(TorchAgent):
                     for i, b in enumerate(beams)
                 ]
             )
-            incr_state = self.model.reorder_decoder_incremental_state(
+            incr_state = model.reorder_decoder_incremental_state(
                 incr_state, incr_state_inds
             )
             decoder_input = torch.index_select(decoder_input, 0, incr_state_inds)
