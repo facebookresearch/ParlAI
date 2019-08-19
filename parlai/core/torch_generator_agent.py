@@ -62,47 +62,6 @@ class TorchGeneratorModel(nn.Module, ABC):
         self.register_buffer('START', torch.LongTensor([start_idx]))
         self.longest_label = longest_label
 
-    def decode_greedy(self, encoder_states, bsz, maxlen):
-        """
-        Perform a greedy search.
-
-        :param int bsz:
-            Batch size. Because encoder_states is model-specific, it cannot
-            infer this automatically.
-
-        :param encoder_states:
-            Output of the encoder model.
-
-        :type encoder_states:
-            Model specific
-
-        :param int maxlen:
-            Maximum decoding length
-
-        :return:
-            pair (logits, choices) of the greedy decode
-
-        :rtype:
-            (FloatTensor[bsz, maxlen, vocab], LongTensor[bsz, maxlen])
-        """
-        xs = self.START.detach().expand(bsz, 1)
-        incr_state = None
-        logits = []
-        for _i in range(maxlen):
-            # todo, break early if all beams saw EOS
-            scores, incr_state = self.decoder(xs, encoder_states, incr_state)
-            scores = scores[:, -1:, :]
-            scores = self.output(scores)
-            _, preds = scores.max(dim=-1)
-            logits.append(scores)
-            xs = torch.cat([xs, preds], dim=1)
-            # check if everyone has generated an end token
-            all_finished = ((xs == self.END_IDX).sum(dim=1) > 0).sum().item() == bsz
-            if all_finished:
-                break
-        logits = torch.cat(logits, 1)
-        return logits, xs
-
     def decode_forced(self, encoder_states, ys):
         """
         Decode with a fixed, true sequence, computing loss.
@@ -252,22 +211,17 @@ class TorchGeneratorModel(nn.Module, ABC):
             - encoder_states are the output of model.encoder. Model specific types.
               Feed this back in to skip encoding on the next call.
         """
-        if ys is not None:
-            # TODO: get rid of longest_label
-            # keep track of longest label we've ever seen
-            # we'll never produce longer ones than that during prediction
-            self.longest_label = max(self.longest_label, ys.size(1))
+        assert ys is not None, "Greedy decoding in TGModel.forward no longer supported."
+        # TODO: get rid of longest_label
+        # keep track of longest label we've ever seen
+        # we'll never produce longer ones than that during prediction
+        self.longest_label = max(self.longest_label, ys.size(1))
 
         # use cached encoding if available
         encoder_states = prev_enc if prev_enc is not None else self.encoder(*xs)
 
-        if ys is not None:
-            # use teacher forcing
-            scores, preds = self.decode_forced(encoder_states, ys)
-        else:
-            scores, preds = self.decode_greedy(
-                encoder_states, bsz, maxlen or self.longest_label
-            )
+        # use teacher forcing
+        scores, preds = self.decode_forced(encoder_states, ys)
 
         return scores, preds, encoder_states
 
