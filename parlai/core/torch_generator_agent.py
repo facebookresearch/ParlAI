@@ -285,6 +285,12 @@ class TorchGeneratorAgent(TorchAgent):
             help='Skip beam search. Useful for speeding up training, '
             'if perplexity is the validation metric.',
         )
+        agent.add_argument(
+            '--inference',
+            choices={'beam', 'greedy'},
+            default='greedy',
+            help='Generation algorithm',
+        )
 
         super(TorchGeneratorAgent, cls).add_cmdline_args(argparser)
         return agent
