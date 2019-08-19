@@ -322,6 +322,36 @@ model_list = [
         ),
     },
     {
+        "title": "Bi-Encoder Transformer ConvAI2 Model",
+        "id": "pretrained_transformers",
+        "path": "zoo:pretrained_transformers/model_bi",
+        "agent": "transformer/biencoder",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "description": (
+            "Bi-encoder pretrained on Reddit and fine-tuned on ConvAI2 scoring ~87 hits@1/20."
+        ),
+        "example": (
+            "python examples/interactive.py -mf "
+            "zoo:pretrained_transformers/model_bi/model -t convai2"
+        ),
+        "result": (
+            "hi how are you doing ?\n"
+            "[Biencoder]: my mother is from russia .\n"
+            "Enter Your Message: oh cool, whereabouts ?\n"
+            "[Biencoder]: no , she passed away when i was 18 . thinking about russian recipes she taught me ,\n"
+            "Enter Your Message: what do you cook?\n"
+            "[Biencoder]: like meat mostly , me and my dogs love them , do you like dogs ?\n"
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:pretrained_transformers/model_bi/model -t convai2 --eval-candidates inline"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
+            "{'exs': 7801, 'accuracy': 0.8686, 'f1': 0.8833, 'hits@1': 0.869, 'hits@5': 0.987, 'hits@10': 0.996, 'hits@100': 1.0, 'bleu': 0.8685, 'lr': 5e-09, 'num_updates': 0, 'examples': 7801, 'loss': 28.77, 'mean_loss': 0.003688, 'mean_rank': 1.301, 'mrr': 0.9197}"
+        ),
+    },
+    {
         "title": "TransResNet (ResNet152) Image-Chat model",
         "id": "image_chat",
         "path": "zoo:image_chat/transresnet_multimodal",
