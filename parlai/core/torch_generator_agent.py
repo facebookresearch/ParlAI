@@ -283,6 +283,24 @@ class TorchGeneratorAgent(TorchAgent):
     """
 
     @classmethod
+    def upgrade_opt(cls, opt_from_disk):
+        # call the parent upgrades
+        opt_from_disk = super(TorchGeneratorAgent, cls).upgrade_opt(opt_from_disk)
+
+        # 2019-08-18: Adding support for generation other than beam search
+        # Previously, selecting --beam-size > 1 enabled beam search and == 1 was
+        # greedy. New behavior is --inference greedy or --inference beam.
+        if 'inference' not in opt_from_disk:
+            assert 'beam_size' in opt_from_disk
+            if opt_from_disk['beam_size'] == 1:
+                method = 'greedy'
+            else:
+                method = 'beam'
+            opt_from_disk['inference'] = method
+            warn_once(f'Old model inference method inferred as {method}')
+        return opt_from_disk
+
+    @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command line arguments."""
         agent = argparser.add_argument_group('Torch Generator Agent')
@@ -601,12 +619,9 @@ class TorchGeneratorAgent(TorchAgent):
                 "--skip-generation does not produce accurate metrics beyond ppl",
                 RuntimeWarning,
             )
-        elif self.beam_size == 1:
-            # greedy decode
+        else:
             maxlen = self.label_truncate or 256
-            _, preds, *_ = self.model(*self._model_input(batch), bsz=bsz, maxlen=maxlen)
-        elif self.beam_size > 1:
-            beam_preds_scores, _ = self._generate(batch, self.beam_size)
+            beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
             preds, scores = zip(*beam_preds_scores)
 
         cand_choices = None
@@ -636,6 +651,32 @@ class TorchGeneratorAgent(TorchAgent):
 
         text = [self._v2t(p) for p in preds] if preds is not None else None
         return Output(text, cand_choices)
+
+    def _treesearch_factory(self, device):
+        method = self.opt.get('inference', 'greedy')
+        beam_size = self.opt.get('beam_size', 1)
+        if method == 'greedy':
+            return GreedySearch(
+                1,
+                min_length=0,
+                min_n_best=1,
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
+        elif method == 'beam':
+            return BeamSearch(
+                beam_size,
+                min_length=self.beam_min_length,
+                min_n_best=self.beam_min_n_best,
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
+        else:
+            raise ValueError(f"Can't use inference method {method}")
 
     def _generate(self, batch, beam_size, max_ts=40):
         """
@@ -763,11 +804,11 @@ class TreeSearch(object):
         :param beam_size:
             number of hypothesis in the beam
         :param padding_token:
-            Set to 0 as usual in ParlAI
+            padding token ID
         :param bos_token:
-            Set to 1 as usual in ParlAI
+            beginning of sentence token ID
         :param eos_token:
-            Set to 2 as usual in ParlAI
+            end of sentence token ID
         :param min_length:
             minimum length of the predicted sequence
         :param min_n_best:
@@ -956,28 +997,30 @@ class TreeSearch(object):
         ]
 
 
-class BeamSearch(TreeSearch):
+class GreedySearch(TreeSearch):
+    """
+    Greedy search.
+    Picks the highest probability utterance at each step.  Only works with
+    --beam-size 1.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.beam_size != 1:
+            raise ValueError('Greedy search can only be run with beam size 1.')
+
     def select_paths(self, logprobs, prior_scores):
-        """
-        Select the next vocabulary item in these beams.
+        s, i = logprobs.max(1)
+        best_scores = s + prior_scores.unsqueeze(1)
+        hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
+        return (hyp_ids, i, best_scores)
 
-        :param logprobs:
-            a (beamsize x vocab) tensor of log probabilities. If this is the first
-            turn in the dialogue, it will be a (1 x vocab) tensor.
-        :param prior_scores:
-            a (beamsize) tensor of weights with the cumulative running
-            log-probability of each beam. If the first turn, it will be a (1) tensor.
 
-        :return:
-            a (hypothesis_ids, token_id, scores) tuple, where:
+class BeamSearch(TreeSearch):
+    """Beam search."""
 
-            - hypothesis_ids is the list of hypotheses we're extending. May have
-              repeats, but should always be (beamsize) long.
-            - token_ids is a (beamsize) list of next-token choices for each of the
-              hypotheses.
-            - scores is a (beamsize) tensor with the updated cumulative log-probs
-              of each beam
-        """
+    def select_paths(self, logprobs, prior_scores):
+        """Select the next vocabulary item in these beams."""
         # beam search actually looks over all hypotheses together so we flatten
         beam_scores = logprobs + prior_scores.unsqueeze(1).expand_as(logprobs)
         flat_beam_scores = beam_scores.view(-1)
