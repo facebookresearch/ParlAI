@@ -972,6 +972,17 @@ class TreeSearch(object):
               - tokens is a tensor of token ids
               - score is the adjusted log probability of the entire utterance
         """
+        # if we never actually finished, force one
+        if not self.finished:
+            self.finished.append(
+                _HypothesisTail(
+                    timestep=len(self.outputs) - 1,
+                    hypid=0,
+                    score=self.all_scores[-1][0],
+                    tokenid=self.eos,
+                )
+            )
+
         rescored_finished = []
         for finished_item in self.finished:
             current_length = finished_item.timestep + 1
