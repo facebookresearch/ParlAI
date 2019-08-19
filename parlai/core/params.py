@@ -20,6 +20,8 @@ from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.utils import Opt, load_opt_file
 
+from typing import List, Optional
+
 
 def print_git_commit():
     """Print the current git commit of ParlAI and parlai_internal."""
@@ -228,7 +230,6 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_arg = self.add_argument
 
         # remember which args were specified on the command line
-        self.cli_args = _sys.argv[1:]
         self.overridable = {}
 
         if add_parlai_args:
@@ -903,7 +904,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return opt
 
-    def _process_args_to_opts(self):
+    def _process_args_to_opts(self, args_that_override: Optional[List[str]] = None):
         self.opt = Opt(vars(self.args))
 
         # custom post-parsing
@@ -924,14 +925,20 @@ class ParlaiParser(argparse.ArgumentParser):
                         elif '_StoreFalseAction' in str(type(a)):
                             store_false.append(option)
 
-        for i in range(len(self.cli_args)):
-            if self.cli_args[i] in option_strings_dict:
-                if self.cli_args[i] in store_true:
-                    self.overridable[option_strings_dict[self.cli_args[i]]] = True
-                elif self.cli_args[i] in store_false:
-                    self.overridable[option_strings_dict[self.cli_args[i]]] = False
-                elif i < len(self.cli_args) - 1 and self.cli_args[i + 1][:1] != '-':
-                    key = option_strings_dict[self.cli_args[i]]
+        if args_that_override is None:
+            args_that_override = _sys.argv[1:]
+
+        for i in range(len(args_that_override)):
+            if args_that_override[i] in option_strings_dict:
+                if args_that_override[i] in store_true:
+                    self.overridable[option_strings_dict[args_that_override[i]]] = True
+                elif args_that_override[i] in store_false:
+                    self.overridable[option_strings_dict[args_that_override[i]]] = False
+                elif (
+                    i < len(args_that_override) - 1
+                    and args_that_override[i + 1][:1] != '-'
+                ):
+                    key = option_strings_dict[args_that_override[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
 
@@ -971,7 +978,7 @@ class ParlaiParser(argparse.ArgumentParser):
         line arguments that parlai doesn't know what to do with.
         """
         self.args, unknowns = super().parse_known_args(args=args)
-        self._process_args_to_opts()
+        self._process_args_to_opts(args)
         return self.opt, unknowns
 
     def parse_args(self, args=None, namespace=None, print_args=True):
@@ -985,7 +992,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.add_extra_args(args)
         self.args = super().parse_args(args=args)
 
-        self._process_args_to_opts()
+        self._process_args_to_opts(args)
 
         if print_args:
             self.print_args()
