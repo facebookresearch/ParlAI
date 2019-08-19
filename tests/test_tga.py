@@ -32,7 +32,6 @@ class TestUpgradeOpt(unittest.TestCase):
             )
             agent = create_agent(opt, True)
             self.assertEqual(agent.opt['inference'], 'greedy')
-        __import__("ipdb").set_trace()  # FIXME
 
         with testing_utils.capture_output():
             pp = ParlaiParser(True, True)
