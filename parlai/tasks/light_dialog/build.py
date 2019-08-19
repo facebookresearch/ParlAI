@@ -10,7 +10,7 @@ from parlai.tasks.light_dialog.builder import build_from_db
 
 
 def download(opt):
-    version = 'v2.02'
+    version = 'v2.03'
     # download pickled database
     dpath = os.path.join(opt['datapath'], 'light_dialogue')
     if not build_data.built(dpath, version):
@@ -51,6 +51,7 @@ def build(opt):
         'emote',
         'speech',
         'action',
+        'affordances',
         'repeat',
         'cands',
         'current_self_output',

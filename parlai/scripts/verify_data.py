@@ -13,10 +13,11 @@ Examples
 
   python parlai/scripts/verify_data.py -t convai2 -dt train:ordered
 """
-from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.core.worlds import create_task
+from parlai.core.message import Message
+from parlai.core.params import ParlaiParser
 from parlai.core.utils import TimeLogger, warn_once
+from parlai.core.worlds import create_task
 
 
 def setup_args(parser=None):
@@ -40,6 +41,7 @@ def report(world, counts, log_time):
         'label_candidates_with_missing_label': counts[
             'label_candidates_with_missing_label'
         ],
+        'did_not_return_message': counts['did_not_return_message'],
     }
     text, log = log_time.log(report['exs'], world.num_examples(), log)
     return text, log
@@ -71,12 +73,17 @@ def verify(opt, printargs=None, print_parser=None):
     counts['missing_label_candidates'] = 0
     counts['empty_string_label_candidates'] = 0
     counts['label_candidates_with_missing_label'] = 0
+    counts['did_not_return_message'] = 0
 
     # Show some example dialogs.
     while not world.epoch_done():
         world.parley()
 
         act = world.acts[0]
+
+        if not isinstance(act, Message):
+            counts['did_not_return_message'] += 1
+
         if 'text' not in act:
             warn("warning: missing text field:\n", act, opt)
             counts['missing_text'] += 1
@@ -123,6 +130,7 @@ def verify(opt, printargs=None, print_parser=None):
         )
     except Exception:
         pass
+
     return report(world, counts, log_time)
 
 

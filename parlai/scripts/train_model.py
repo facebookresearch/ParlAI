@@ -192,6 +192,16 @@ def setup_args(parser=None) -> ParlaiParser:
         help='If multitasking, average metrics over the number of examples. '
         'If false, averages over the number of tasks.',
     )
+    train.add_argument(
+        '-mcs',
+        '--metrics',
+        type=str,
+        default='default',
+        help='list of metrics to show/compute, e.g. all, default,'
+        'or give a list split by , like '
+        'ppl,f1,accuracy,hits@1,rouge,bleu'
+        'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
+    )
     TensorboardLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
@@ -292,6 +302,7 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         return None
 
     print('[ running eval: ' + datatype + ' ]')
+    timer = Timer()
     reports = []
     for v_world in valid_worlds:
         task_report = _run_single_eval(opt, v_world, max_exs / len(valid_worlds))
@@ -302,7 +313,8 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         reports, tasks, micro=opt.get('aggregate_micro', True)
     )
 
-    metrics = '{}:{}'.format(datatype, report)
+    metrics = f'{datatype}:{report}'
+    print(f'[ eval completed in {timer.time():.2f}s ]')
     print(metrics)
 
     # write to file

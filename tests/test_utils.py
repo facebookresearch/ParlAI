@@ -4,12 +4,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.utils import Timer
-from parlai.core.utils import round_sigfigs
-from parlai.core.utils import set_namedtuple_defaults
-from parlai.core.utils import padded_tensor
-from parlai.core.utils import argsort
-from parlai.core.utils import Opt
+from parlai.core.utils import (
+    Timer,
+    round_sigfigs,
+    set_namedtuple_defaults,
+    padded_tensor,
+    argsort,
+    Opt,
+)
 from copy import deepcopy
 import time
 import unittest

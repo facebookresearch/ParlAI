@@ -119,7 +119,7 @@ corpus, or even chat with it live!
 
 ### Evaluating the pretrained model
 
-You can 
+You can
 
 ```
 python examples/eval_model.py -mf zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model -t self_feeding:all --datatype test -bs 20

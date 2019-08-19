@@ -12,10 +12,34 @@ import pickle
 import json
 import sys as _sys
 import datetime
+import parlai
+import git
+
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.utils import Opt, load_opt_file
+
+
+def print_git_commit():
+    """Print the current git commit of ParlAI and parlai_internal."""
+    root = os.path.dirname(os.path.dirname(parlai.__file__))
+    internal_root = os.path.join(root, 'parlai_internal')
+    try:
+        git_ = git.Git(root)
+        current_commit = git_.rev_parse('HEAD')
+        print(f'[ Current ParlAI commit: {current_commit} ]')
+    except git.GitCommandNotFound:
+        pass
+    except git.GitCommandError:
+        pass
+
+    try:
+        git_ = git.Git(internal_root)
+        internal_commit = git_.rev_parse('HEAD')
+        print(f'[ Current internal commit: {internal_commit} ]')
+    except git.GitCommandNotFound:
+        pass
 
 
 def print_announcements(opt):
@@ -407,6 +431,11 @@ class ParlaiParser(argparse.ArgumentParser):
             default=None,
             help='Specify location to use for scratch builds and such.',
         )
+
+        # it helps to indicate to agents that they're in interactive mode, and
+        # can avoid some otherwise troublesome behavior (not having candidates,
+        # sharing self.replies, etc).
+        mturk.set_defaults(interactive_mode=True)
 
         mturk.set_defaults(is_sandbox=True)
         mturk.set_defaults(is_debug=False)
@@ -960,6 +989,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if print_args:
             self.print_args()
+            print_git_commit()
             print_announcements(self.opt)
 
         return self.opt

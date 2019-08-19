@@ -31,6 +31,9 @@ class BiencoderAgent(TransformerRankerAgent):
         """ Add the start and end token to the text.
         """
         obs = super()._set_text_vec(*args, **kwargs)
-        if 'text_vec' in obs:
-            obs['text_vec'] = self._add_start_end_tokens(obs['text_vec'], True, True)
+        if 'text_vec' in obs and 'added_start_end_tokens' not in obs:
+            obs.force_set(
+                'text_vec', self._add_start_end_tokens(obs['text_vec'], True, True)
+            )
+            obs['added_start_end_tokens'] = True
         return obs
