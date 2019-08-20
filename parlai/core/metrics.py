@@ -32,7 +32,7 @@ except ImportError:
 
 try:
     import rouge
-except (ImportError, LookupError):
+except ImportError:
     # User doesn't have py-rouge installed, so we can't use it.
     # We'll just turn off rouge computations
     rouge = None
