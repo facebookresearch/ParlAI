@@ -57,7 +57,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
 
     def build_model(self):
-        self.model = BiEncoderModule(self.opt)
+        return BiEncoderModule(self.opt)
 
     @staticmethod
     def dictionary_class():

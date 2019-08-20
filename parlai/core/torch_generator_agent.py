@@ -352,8 +352,6 @@ class TorchGeneratorAgent(TorchAgent):
 
         if shared:
             # set up shared properties
-            self.model = shared['model']
-            self.criterion = shared['criterion']
             states = shared.get('states', {})
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
@@ -372,8 +370,16 @@ class TorchGeneratorAgent(TorchAgent):
                 )
                 print('[ Saving dot beam logs in {} ]'.format(self.beam_dot_dir))
 
-            self.build_criterion()
-            self.build_model()
+            self.criterion = self.build_criterion()
+            self.model = self.build_model()
+            if self.model is None or self.criterion is None:
+                raise AttributeError(
+                    'build_model() and build_criterion() need to return the model or criterion'
+                )
+            if self.use_cuda:
+                self.model.cuda()
+                self.criterion.cuda()
+
             check_synced_parameters(self.model)
             print("Total parameters: {}".format(self._total_parameters()))
             print("Trainable parameters:  {}".format(self._trainable_parameters()))
@@ -410,6 +416,16 @@ class TorchGeneratorAgent(TorchAgent):
 
         self.reset()
 
+    def build_criterion(self):
+        """
+        Construct and return the loss function.
+
+        By default torch.nn.CrossEntropyLoss.
+
+        If overridden, this model should produce a sum that can be used for a per-token loss.
+        """
+        return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
+
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
         new_vec = []
@@ -428,32 +444,6 @@ class TorchGeneratorAgent(TorchAgent):
             self.skip_generation = False
         else:
             self.skip_generation = self.opt.get('skip_generation', False)
-
-    @abstractmethod
-    def build_model(self):
-        """
-        Construct the model.
-
-        The model should be set to self.model, and support
-        the TorchGeneratorModel interface.
-        """
-        pass
-
-    def build_criterion(self):
-        """
-        Construct the loss function.
-
-        By default torch.nn.CrossEntropyLoss.  The criterion function should be
-        set to self.criterion.
-
-        If overridden, this model should (1) handle calling cuda and (2)
-        produce a sum that can be used for a per-token loss.
-        """
-        self.criterion = nn.CrossEntropyLoss(
-            ignore_index=self.NULL_IDX, reduction='sum'
-        )
-        if self.use_cuda:
-            self.criterion.cuda()
 
     def _dummy_batch(self, batchsize, maxlen):
         """
@@ -501,7 +491,6 @@ class TorchGeneratorAgent(TorchAgent):
     def share(self):
         """Share internal states between parent and child instances."""
         shared = super().share()
-        shared['criterion'] = self.criterion
         if self.opt.get('numthreads', 1) > 1:
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer']
