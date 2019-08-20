@@ -32,7 +32,10 @@ except ImportError:
 
 try:
     import rouge
-except ImportError:
+    import nltk
+
+    nltk.tokenize.load('tokenizers/punkt/{0}.pickle'.format('en'))
+except (ImportError, LookupError):
     # User doesn't have py-rouge installed, so we can't use it.
     # We'll just turn off rouge computations
     rouge = None
@@ -247,11 +250,14 @@ class Metrics(object):
             optional_metrics_list = set(metrics_arg.split(','))
             optional_metrics_list.add('correct')
         for each_m in optional_metrics_list:
-            if each_m.startswith('rouge') and rouge is not None:
-                self.metrics_list.add('rouge')
-            elif each_m == 'bleu' and nltkbleu is None:
-                # only compute bleu if we can
-                pass
+            if each_m.startswith('rouge'):
+                if rouge is not None:
+                    # only compute rouge if rouge is available
+                    self.metrics_list.add('rouge')
+            elif each_m == 'bleu':
+                if nltkbleu is None:
+                    # only compute bleu if bleu is available
+                    pass
             else:
                 self.metrics_list.add(each_m)
         metrics_list = (
