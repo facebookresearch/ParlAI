@@ -32,9 +32,6 @@ except ImportError:
 
 try:
     import rouge
-    import nltk
-
-    nltk.tokenize.load('tokenizers/punkt/{0}.pickle'.format('en'))
 except (ImportError, LookupError):
     # User doesn't have py-rouge installed, so we can't use it.
     # We'll just turn off rouge computations
@@ -349,7 +346,7 @@ class Metrics(object):
                 if 'bleu' in self.metrics:
                     self.metrics['bleu'] += bleu
                     self.metrics['bleu_cnt'] += 1
-                if 'rouge-L' in self.metrics:
+                if 'rouge-L' in self.metrics and rouge1 is not None:
                     self.metrics['rouge-1'] += rouge1
                     self.metrics['rouge-1_cnt'] += 1
                     self.metrics['rouge-2'] += rouge2
