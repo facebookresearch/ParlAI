@@ -123,9 +123,16 @@ class TransformerRankerAgent(TorchRankerAgent):
         )
         agent.add_argument(
             '--wrap-memory-encoder',
-            type='bool',
-            default=False,
-            help='wrap memory encoder with MLP',
+            type=str,
+            default='none',
+            choices=['mlp', 'linear', 'none'],
+            help='wrap memory encoder with MLP or linear layer',
+        )
+        agent.add_argument(
+            '--linear-output-dim',
+            type=int,
+            help='if we wrap the memory encoder in a linear layer, specify '
+            'the output dimension (defaults to embedding size otherwise)',
         )
         agent.add_argument(
             '--memory-attention',
@@ -166,6 +173,22 @@ class TransformerRankerAgent(TorchRankerAgent):
         cls.dictionary_class().add_cmdline_args(argparser)
 
         return agent
+
+    @classmethod
+    def upgrade_opt(cls, opt_on_disk):
+        """Upgrade opts from older model files."""
+        super(TransformerRankerAgent, cls).upgrade_opt(opt_on_disk)
+
+        # 2019-08-19: previous versions of the model had the argument
+        # `wrap_memory_encoder` as a bool; now we have several options.
+        if ('wrap_memory_encoder' in opt_on_disk
+                and isinstance(opt_on_disk['wrap_memory_encoder'], bool)):
+            if opt_on_disk['wrap_memory_encoder']:
+                opt_on_disk['wrap_memory_encoder'] = 'mlp'
+            else:
+                opt_on_disk['wrap_memory_encoder'] = 'none'
+
+        return opt_on_disk
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)

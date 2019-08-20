@@ -190,12 +190,25 @@ class TransformerMemNetModel(nn.Module):
             )
 
         # build memory encoder
-        if opt.get('wrap_memory_encoder', False):
+        wrap = opt.get('wrap_memory_encoder', 'none')
+        if wrap == 'mlp':
             self.memory_transformer = TransformerResponseWrapper(
                 self.context_encoder, self.context_encoder.out_dim
             )
-        else:
+        elif wrap == 'linear':
+            # if output dimension not specified, defaults to output dimension
+            # of the transformer (i.e. embedding size)
+            out_dim = opt.get('linear_output_dim', self.context_encoder.out_dim)
+            self.memory_transformer = TransformerLinearWrapper(
+                self.context_encoder,
+                out_dim
+            )
+        elif wrap == 'none':
             self.memory_transformer = self.context_encoder
+        else:
+            raise RuntimeError(
+                f'Wrap type {wrap} not supported for transformer.'
+            )
 
         self.attender = BasicAttention(
             dim=2, attn=opt['memory_attention'], residual=True
@@ -243,7 +256,8 @@ class TransformerMemNetModel(nn.Module):
 
         return weights, context_h
 
-    def forward(self, xs, mems, cands):
+    def forward(self, xs, mems, cands, segments=None):
+
         """Forward pass."""
         weights, context_h = self.encode_context_memory(xs, mems)
         cands_h = self.encode_cand(cands)
@@ -290,6 +304,21 @@ class TransformerResponseWrapper(nn.Module):
     def forward(self, *args):
         """Forward pass."""
         return self.mlp(self.transformer(*args))
+
+
+class TransformerLinearWrapper(nn.Module):
+    """
+    Wrap a transformer in a linear layer.
+    """
+    def __init__(self, transformer, output_dim):
+        super(TransformerLinearWrapper, self).__init__()
+        self.base_model = transformer
+        input_dim = transformer.out_dim
+        self.additional_linear_layer = nn.Linear(input_dim, output_dim)
+
+    def forward(self, *args):
+        _, context_h = self.base_model.encode_context_memory(*args)
+        return self.additional_linear_layer(context_h)
 
 
 class TransformerEncoder(nn.Module):
