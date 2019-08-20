@@ -480,6 +480,11 @@ class DictionaryAgent(Agent):
             .split()
         )
 
+    @staticmethod
+    def space_tokenize(text):
+        """Tokenize exactly on spaces. Useful when text is pre-tokenized."""
+        return text.strip().split(' ')
+
     def span_tokenize(self, text):
         """Tokenize and find  starting index of each token in the original string."""
         # TODO: can this be deleted?
@@ -820,6 +825,9 @@ class _BPEHelper(object):
             num_symbols = 30000
         if minfreq <= 0:
             minfreq = 2
+
+        codec_dir, _ = os.path.split(self.codecs)
+        os.makedirs(codec_dir, exist_ok=True)
         with open(self.codecs, 'w', encoding='utf-8') as outstream:
             learn_bpe.learn_bpe(
                 dictionary,

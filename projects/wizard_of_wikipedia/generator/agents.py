@@ -109,7 +109,9 @@ class EndToEndAgent(_GenericWizardAgent):
     def _dummy_batch(self, bsz, maxlen):
         batch = super()._dummy_batch(bsz, maxlen)
         batch['know_vec'] = th.zeros(bsz, 2, 2).long().cuda()
-        batch['ck_mask'] = th.ones(bsz, 2).byte().cuda()
+        # bool/uint8 backwards for pytorch 1.0/1.2 compatibility
+        ck_mask = (th.ones(bsz, 2, dtype=th.uint8) != 0).cuda()
+        batch['ck_mask'] = ck_mask
         batch['cs_ids'] = th.zeros(bsz).long().cuda()
         batch['use_cs_ids'] = True
         return batch
@@ -168,6 +170,13 @@ class EndToEndAgent(_GenericWizardAgent):
             # being destructive
             return list(obs['knowledge_parsed'])
 
+        if 'checked_sentence' not in obs:
+            # interactive time. we're totally on our own
+            obs_know = [k.strip() for k in obs.get('knowledge', '').split('\n')]
+            obs_know = [k for k in obs_know if k]
+            obs['knowledge_parsed'] = obs_know
+            return obs['knowledge_parsed']
+
         checked_sentence = '{} {} {}'.format(
             obs['title'], TOKEN_KNOWLEDGE, obs['checked_sentence']
         )
@@ -202,7 +211,7 @@ class EndToEndAgent(_GenericWizardAgent):
         """
         batch = super().batchify(obs_batch)
         reordered_observations = [obs_batch[i] for i in batch.valid_indices]
-        is_training = not ('eval_labels' in reordered_observations[0])
+        is_training = 'labels' in reordered_observations[0]
 
         # first parse and compile all the knowledge together
         all_knowledges = []  # list-of-lists knowledge items for each observation
@@ -253,9 +262,10 @@ class EndToEndAgent(_GenericWizardAgent):
         # knowledge mask is a N x K tensor saying which items we're allowed to
         # attend over
         bsz = len(reordered_observations)
-        ck_mask = th.zeros(bsz, K).byte()
+        ck_mask = th.zeros(bsz, K, dtype=th.uint8)
         for i, klen in enumerate(knowledge_counts):
             ck_mask[i, :klen] = 1
+        ck_mask = ck_mask != 0  # for pytorch 1.0/1.2 uint8/bool compatibility
         # and the correct labels
         cs_ids = th.LongTensor(bsz).zero_()
 

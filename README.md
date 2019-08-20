@@ -25,7 +25,9 @@ See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.
 
 ## Installing ParlAI
 
-ParlAI currently requires Python3. Dependencies of the core modules are listed in `requirement.txt`. Some models included (in `parlai/agents`) have additional requirements.
+ParlAI currently requires Python3 and [Pytorch](https://pytorch.org) 1.1 or
+newer. Dependencies of the core modules are listed in `requirement.txt`. Some
+models included (in `parlai/agents`) have additional requirements.
 
 Run the following commands to clone the repository and install ParlAI:
 

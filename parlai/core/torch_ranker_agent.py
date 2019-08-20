@@ -135,7 +135,6 @@ class TorchRankerAgent(TorchAgent):
         super().__init__(opt, shared)
 
         if shared:
-            self.model = shared['model']
             states = None
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
@@ -146,7 +145,16 @@ class TorchRankerAgent(TorchAgent):
             self.metrics['mrr'] = 0.0
             self.metrics['train_accuracy'] = 0.0
 
-            self.build_model()
+            self.criterion = self.build_criterion()
+            self.model = self.build_model()
+            if self.model is None or self.criterion is None:
+                raise AttributeError(
+                    'build_model() and build_criterion() need to return the model or criterion'
+                )
+            if self.use_cuda:
+                self.model.cuda()
+                self.criterion.cuda()
+
             if self.fp16:
                 self.model = self.model.half()
             if init_model:
@@ -156,10 +164,6 @@ class TorchRankerAgent(TorchAgent):
                 states = {}
 
         self.rank_top_k = opt.get('rank_top_k', -1)
-        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
-        if self.use_cuda:
-            self.model.cuda()
-            self.rank_loss.cuda()
 
         # Vectorize and save fixed/vocab candidates once upfront if applicable
         self.set_fixed_candidates(shared)
@@ -181,12 +185,18 @@ class TorchRankerAgent(TorchAgent):
                 self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
             )
 
+    def build_criterion(self):
+        """
+        Construct and return the loss function.
+
+        By default torch.nn.CrossEntropyLoss.
+        """
+        return torch.nn.CrossEntropyLoss(reduction='sum')
+
     def set_interactive_mode(self, mode, shared=False):
+        super().set_interactive_mode(mode, shared)
         self.candidates = self.opt['candidates']
         if mode:
-            if not shared:
-                # Only print in the non-shared version.
-                print("[" + self.id + ': full interactive mode on.' + ']')
             self.eval_candidates = 'fixed'
             self.ignore_bad_candidates = True
             self.encode_candidate_vecs = True
@@ -236,11 +246,6 @@ class TorchRankerAgent(TorchAgent):
         """
         pass
 
-    @abstractmethod
-    def build_model(self):
-        """Build a new model (implemented by children classes)."""
-        pass
-
     def _get_batch_train_metrics(self, scores):
         """
         Get fast metrics calculations if we train with batch candidates.
@@ -272,15 +277,31 @@ class TorchRankerAgent(TorchAgent):
         else:
             _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
-            rank = (ranks[b] == label_inds[b]).nonzero().item()
+            rank = (ranks[b] == label_inds[b]).nonzero()
+            rank = rank.item() if len(rank) == 1 else scores.size(1)
             self.metrics['rank'] += 1 + rank
             self.metrics['mrr'] += 1.0 / (1 + rank)
 
-        # Get predictions but not full rankings for the sake of speed
-        if cand_vecs.dim() == 2:
-            preds = [cands[ordering[0]] for ordering in ranks]
-        elif cand_vecs.dim() == 3:
-            preds = [cands[i][ordering[0]] for i, ordering in enumerate(ranks)]
+        ranks = ranks.cpu()
+        # Here we get the top prediction for each example, but do not
+        # return the full ranked list for the sake of training speed
+        preds = []
+        for i, ordering in enumerate(ranks):
+            if cand_vecs.dim() == 2:  # num cands x max cand length
+                cand_list = cands
+            elif cand_vecs.dim() == 3:  # batchsize x num cands x max cand length
+                cand_list = cands[i]
+            if len(ordering) != len(cand_list):
+                # We may have added padded cands to fill out the batch;
+                # Here we break after finding the first non-pad cand in the
+                # ranked list
+                for x in ordering:
+                    if x < len(cand_list):
+                        preds.append(cand_list[x])
+                        break
+            else:
+                preds.append(cand_list[ordering[0]])
+
         return Output(preds)
 
     def is_valid(self, obs):
@@ -327,7 +348,7 @@ class TorchRankerAgent(TorchAgent):
         )
         try:
             scores = self.score_candidates(batch, cand_vecs)
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.backward(loss)
             self.update_params()
         except RuntimeError as e:
@@ -392,7 +413,7 @@ class TorchRankerAgent(TorchAgent):
 
         # Update metrics
         if label_inds is not None:
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.metrics['loss'] += loss.item()
             self.metrics['examples'] += batchsize
             for b in range(batchsize):

@@ -48,8 +48,7 @@ import copy
 
 class ControllableSeq2seqAgent(TorchAgent):
     """
-    This is a version of the Seq2seqAgent, that allows for attribute control via
-    Conditional Training (CT) and/or Weighted Decoding (WD).
+    Seq2Seq withattribute control via Conditional Training and/or Weighted Decoding.
 
     See the paper:
     "What makes a good conversation? How controllable attributes affect human judgments"
@@ -331,7 +330,15 @@ class ControllableSeq2seqAgent(TorchAgent):
                 print('[ Loading existing model params from {} ]' ''.format(init_model))
                 states = self.load(init_model)
 
-            self._init_model(states=states)
+            self.model = self.build_model(states=states)
+            if self.use_cuda:
+                self.model.cuda()
+                if self.multigpu:
+                    self.model = torch.nn.DataParallel(self.model)
+                    self.model.encoder = self.model.module.encoder
+                    self.model.decoder = self.model.module.decoder
+                    self.model.longest_label = self.model.module.longest_label
+                    self.model.output = self.model.module.output
 
         # set up criteria
         if opt.get('numsoftmax', 1) > 1:
@@ -384,12 +391,12 @@ class ControllableSeq2seqAgent(TorchAgent):
         # weights) to states
         states['model'][key] = init_decoder_ih_l0
 
-    def _init_model(self, states=None):
+    def build_model(self, states=None):
         """Initialize model, override to change model setup."""
         opt = self.opt
 
         kwargs = opt_to_kwargs(opt)
-        self.model = Seq2seq(
+        model = Seq2seq(
             len(self.dict),
             opt['embeddingsize'],
             opt['hiddensize'],
@@ -405,11 +412,11 @@ class ControllableSeq2seqAgent(TorchAgent):
             print('skipping preinitialization of embeddings for bpe')
         elif not states and opt['embedding_type'] != 'random':
             # `not states`: only set up embeddings if not loading model
-            self._copy_embeddings(self.model.decoder.lt.weight, opt['embedding_type'])
+            self._copy_embeddings(model.decoder.lt.weight, opt['embedding_type'])
             if opt['lookuptable'] in ['unique', 'dec_out']:
                 # also set encoder lt, since it's not shared
                 self._copy_embeddings(
-                    self.model.encoder.lt.weight, opt['embedding_type'], log=False
+                    model.encoder.lt.weight, opt['embedding_type'], log=False
                 )
 
         if states:
@@ -417,28 +424,21 @@ class ControllableSeq2seqAgent(TorchAgent):
                 self._add_control(states)
 
             # set loaded states if applicable
-            self.model.load_state_dict(states['model'])
+            model.load_state_dict(states['model'])
 
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
-            self.model.decoder.lt.weight.requires_grad = False
-            self.model.encoder.lt.weight.requires_grad = False
+            model.decoder.lt.weight.requires_grad = False
+            model.encoder.lt.weight.requires_grad = False
             if opt['lookuptable'] in ['dec_out', 'all']:
-                self.model.decoder.e2s.weight.requires_grad = False
+                model.decoder.output.e2s.weight.requires_grad = False
 
-        if self.use_cuda:
-            self.model.cuda()
-            if self.multigpu:
-                self.model = torch.nn.DataParallel(self.model)
-                self.model.encoder = self.model.module.encoder
-                self.model.decoder = self.model.module.decoder
-                self.model.longest_label = self.model.module.longest_label
-                self.model.output = self.model.module.output
-
-        return self.model
+        return model
 
     def _init_controls(self):
         """
+        Initialize controls.
+
         Sets the following:
 
           self.control_vars: list of strings. The CT controls sorted alphabetically.
@@ -783,6 +783,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         return cand_replies
 
     def greedy_search(self, batch):
+        """Perform greedy search."""
         cand_params = self._build_cands(batch)
         seq_len = None if not self.multigpu else batch.text_vec.size(1)
         out = self.model(
@@ -807,35 +808,43 @@ class ControllableSeq2seqAgent(TorchAgent):
         min_n_best=5,
         max_ts=40,
         block_ngram=0,
-        wd_features=[],
-        wd_wts=[],
+        wd_features=None,
+        wd_wts=None,
     ):
-        """ Beam search given the model and Batch
+        """
+        Beam search given the model and Batch.
+
         This function uses model with the following reqs:
+
         - model.encoder takes input returns tuple (enc_out, enc_hidden, attn_mask)
         - model.decoder takes decoder params and returns decoder outputs after attn
         - model.output takes decoder outputs and returns distr over dictionary
 
-        Function arguments:
-        model : nn.Module, here defined in modules.py
-        batch : Batch structure with input and labels
-        beam_size : Size of each beam during the search
-        start : start of sequence token
-        end : end of sequence token
-        pad : padding token
-        min_length : minimum length of the decoded sequence
-        min_n_best : minimum number of completed hypothesis generated from each beam
-        max_ts: the maximum length of the decoded sequence
-        wd_features: list of strings, the WD features to use
-        wd_weights: list of floats, the WD weights to use
+        :param model: nn.Module, here defined in modules.py
+        :param batch: Batch structure with input and labels
+        :param beam_size: Size of each beam during the search
+        :param start: start of sequence token
+        :param end: end of sequence token
+        :param pad: padding token
+        :param min_length: minimum length of the decoded sequence
+        :param min_n_best: minimum number of completed hypothesis generated
+            from each beam
+        :param max_ts: the maximum length of the decoded sequence
+        :param wd_features: list of strings, the WD features to use
+        :param wd_weights: list of floats, the WD weights to use
 
-        Return:
-        beam_preds_scores : list of tuples (prediction, score) for each sample in Batch
-        n_best_preds_scores : list of n_best list of tuples (prediction, score) for
-                              each sample from Batch
-        beams : list of Beam instances defined in Beam class, can be used for any
-                following postprocessing, e.g. dot logging.
+        :return:
+            - beam_preds_scores : list of tuples (prediction, score) for each
+              sample in Batch
+            - n_best_preds_scores : list of n_best list of tuples (prediction,
+              score) for each sample from Batch
+            - beams : list of Beam instances defined in Beam class, can be used
+              for any following postprocessing, e.g. dot logging.
         """
+        if wd_features is None:
+            wd_features = []
+        if wd_wts is None:
+            wd_wts = []
         encoder_states = model.encoder(batch.text_vec)
         enc_out = encoder_states[0]
         enc_hidden = encoder_states[1]
@@ -995,6 +1004,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         return beam_preds_scores, n_best_beam_preds_scores, beams
 
     def extend_input(self, batch):
+        """Extend the input."""
         # add pad tensor to text vec
         pad_tensor = torch.zeros(1, batch.text_vec.size(1)).long().cuda()
         text_vec = torch.cat([batch.text_vec, pad_tensor], 0)
@@ -1016,6 +1026,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         return batch
 
     def truncate_input(self, batch):
+        """Truncate the input."""
         # truncate batch for multigpu
         text_vec = batch.text_vec[:-1]
         batch = batch._replace(text_vec=text_vec)
@@ -1025,6 +1036,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         return batch
 
     def truncate_output(self, out):
+        """Truncate the output."""
         new_out_0 = out[0][:-1]
         new_out_1 = None if out[1] is None else out[1][:-1]
         new_out_2 = [vec[:-1] for vec in out[2]]

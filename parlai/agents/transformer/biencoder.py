@@ -8,16 +8,10 @@ import torch
 
 
 class BiencoderAgent(TransformerRankerAgent):
-    """ Equivalent of bert_ranker/biencoder but does not rely on an external
-        library (hugging face).
     """
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        # favor average instead of sum for the loss.
-        self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
-        if self.use_cuda:
-            self.rank_loss.cuda()
+    Equivalent of bert_ranker/biencoder but does not rely on an external
+    library (hugging face).
+    """
 
     def vectorize(self, *args, **kwargs):
         """ Add the start and end token to the text.
