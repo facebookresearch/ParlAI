@@ -220,7 +220,7 @@ class TransformerMemNetModel(nn.Module):
 
         return encoded
 
-    def encode_context_memory(self, context_w, memories_w):
+    def encode_context_memory(self, context_w, memories_w, context_segments=None):
         """Encode the memories."""
         # [batch, d]
         if context_w is None:
@@ -228,7 +228,7 @@ class TransformerMemNetModel(nn.Module):
             # forward function, return None here for LHS representation
             return None, None
 
-        context_h = self.context_encoder(context_w)
+        context_h = self.context_encoder(context_w, segments=context_segments)
 
         if memories_w is None:
             return [], context_h
@@ -243,9 +243,11 @@ class TransformerMemNetModel(nn.Module):
 
         return weights, context_h
 
-    def forward(self, xs, mems, cands):
+    def forward(self, xs, mems, cands, context_segments=None):
         """Forward pass."""
-        weights, context_h = self.encode_context_memory(xs, mems)
+        weights, context_h = self.encode_context_memory(
+            xs, mems, context_segments=context_segments
+        )
         cands_h = self.encode_cand(cands)
 
         if self.opt['normalize_sent_emb']:
