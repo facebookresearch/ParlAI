@@ -52,7 +52,10 @@ try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
-from parlai.core.agents import _create_task_agents, create_agents_from_shared
+from parlai.core.agents import (
+    create_agents_from_shared,
+    create_task_agent_from_taskname,
+)
 from parlai.core.metrics import aggregate_metrics
 from parlai.core.utils import Message, Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
@@ -1051,6 +1054,44 @@ class HogwildWorld(World):
 ################################################################################
 # Functions for creating tasks/worlds given options.
 ################################################################################
+def _create_task_agents(opt):
+    """
+    Create task agent(s) for the given task name.
+
+    It does this by calling the create_agent function in agents.py of the
+    given task.  If create_agents function does not exist, it just looks for
+    the teacher (agent) class defined by the task name directly.  (This saves
+    the task creator bothering to define the create_agents function when it is
+    not needed.)
+    """
+    sp = opt['task'].strip()
+    repo = 'parlai'
+    if sp.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+        sp = sp[9:]
+    sp = sp.split(':')
+    if '.' in sp[0]:
+        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
+        # (i.e. specifying your own path directly)
+        module_name = sp[0]
+    elif sp[0] == 'pytorch_teacher':
+        module_name = 'parlai.core.pytorch_data_teacher'
+    else:
+        task = sp[0].lower()
+        module_name = "%s.tasks.%s.agents" % (repo, task)
+    my_module = importlib.import_module(module_name)
+    try:
+        # Tries to call the create_agent function in agents.py
+        task = sp[0].lower()
+        task_agents = my_module.create_agents(opt, task)
+    except AttributeError:
+        # Create_agent not found, so try to create the teacher directly.
+        return create_task_agent_from_taskname(opt)
+    if type(task_agents) != list:
+        task_agents = [task_agents]
+    return task_agents
 
 
 def _get_task_world(opt, user_agents, default_world=None):
