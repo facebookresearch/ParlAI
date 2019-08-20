@@ -254,10 +254,9 @@ class Metrics(object):
                 if rouge is not None:
                     # only compute rouge if rouge is available
                     self.metrics_list.add('rouge')
-            elif each_m == 'bleu':
-                if nltkbleu is None:
-                    # only compute bleu if bleu is available
-                    pass
+            elif each_m == 'bleu' and nltkbleu is None:
+                # only compute bleu if bleu is available
+                pass
             else:
                 self.metrics_list.add(each_m)
         metrics_list = (
