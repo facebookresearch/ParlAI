@@ -220,15 +220,15 @@ class TransformerMemNetModel(nn.Module):
 
         return encoded
 
-    def encode_context_memory(self, context_w, memories_w):
-        """Encode the memories."""
+    def encode_context_memory(self, context_w, memories_w, context_segments=None):
+        """Encode the context and memories."""
         # [batch, d]
         if context_w is None:
             # it's possible that only candidates were passed into the
             # forward function, return None here for LHS representation
             return None, None
 
-        context_h = self.context_encoder(context_w)
+        context_h = self.context_encoder(context_w, segments=context_segments)
 
         if memories_w is None:
             return [], context_h
@@ -243,11 +243,24 @@ class TransformerMemNetModel(nn.Module):
 
         return weights, context_h
 
-    def forward(self, xs, mems, cands):
-        """Forward pass."""
-        weights, context_h = self.encode_context_memory(xs, mems)
+    def forward(self, xs, mems, cands, context_segments=None):
+        """
+        Forward pass.
+
+        :param LongTensor[batch,seqlen] xs: input tokens IDs
+        :param LongTensor[batch,num_mems,seqlen] mems: memory token IDs
+        :param LongTensor[batch,num_cands,seqlen] cands: candidate token IDs
+        :param LongTensor[batch,seqlen] context_segments: segment IDs for xs,
+            used if n_segments is > 0 for the context encoder
+        """
+        # encode the context and memories together
+        weights, context_h = self.encode_context_memory(
+            xs, mems, context_segments=context_segments
+        )
+        # encode the candidates
         cands_h = self.encode_cand(cands)
 
+        # possibly normalize the context and candidate representations
         if self.opt['normalize_sent_emb']:
             context_h = context_h / context_h.norm(2, dim=1, keepdim=True)
             cands_h = cands_h / cands_h.norm(2, dim=1, keepdim=True)
