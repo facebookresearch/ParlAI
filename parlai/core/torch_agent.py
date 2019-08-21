@@ -1248,10 +1248,13 @@ class TorchAgent(ABC, Agent):
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
             history_string = history.get_history_str()
+            # when text not exist, we get text_vec from history string
+            # history could be none if it is an image task and 'text'
+            # filed is be empty. We don't want this
             if history_string is None:
                 return obs
             obs['full_text'] = history_string
-            if obs['text'] or history_string:
+            if history_string:
                 obs['text_vec'] = history.get_history_vec()
 
         # check truncation
