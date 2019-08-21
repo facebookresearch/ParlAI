@@ -600,6 +600,7 @@ class MTurkManager:
             # Ensure worker has not exceeded concurrent convo cap
             convs = worker_state.active_conversation_count()
             allowed_convs = self.opt['allowed_conversations']
+            # TODO @margaretli
             if allowed_convs > 0 and convs >= allowed_convs:
                 text = (
                     'You can participate in only {} of these HITs at '
@@ -1447,7 +1448,6 @@ class MTurkManager:
         ):
             # Append last command, as it might be necessary to restore state
             agent.set_last_command(packet.data)
-
         self.socket_manager.queue_packet(packet)
 
     def mark_workers_done(self, workers):
@@ -1986,11 +1986,16 @@ class StaticMTurkManager(MTurkManager):
         if not worker_state.has_assignment(assign_id):
             # New connection for the worker. First ensure that this connection
             # isn't violating our uniqueness constraints
-            completed_assignments = worker_state.completed_assignments()
+            completed_assignments = worker_state.completed_assignments() + worker_state.active_conversation_count()
             max_hits = self.max_hits_per_worker
+<<<<<<< Updated upstream
             if (self.is_unique and completed_assignments > 0) or (
                 max_hits != 0 and completed_assignments >= max_hits
             ):
+=======
+            if ((self.is_unique and completed_assignments > 0) or
+                    (max_hits != 0 and completed_assignments >= max_hits)):
+>>>>>>> Stashed changes
                 text = (
                     'You have already participated in this HIT the maximum '
                     'number of times. This HIT is now expired. '
@@ -2005,6 +2010,7 @@ class StaticMTurkManager(MTurkManager):
                 return
 
             # Ensure worker has not exceeded concurrent convo cap
+
             convs = worker_state.active_conversation_count()
             allowed_convs = self.opt['allowed_conversations']
             if allowed_convs > 0 and convs >= allowed_convs:

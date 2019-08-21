@@ -121,7 +121,6 @@ class MainApp extends React.Component {
         'Please use a computer.</h1><br>Task Description follows:<br>' +
         data['task_description'];
     }
-
     this.setState({
       task_description: task_description,
       frame_height: data['frame_height'] || DEFAULT_FRAME_HEIGHT,
@@ -316,7 +315,9 @@ class StaticApp extends React.Component {
     let show_next_task_button = false;
     let task_done = true;
     all_response_data[this.state.current_subtask_index] = response_data;
-    if (this.state.current_subtask_index < this.state.num_subtasks - 1) {
+    if ((this.state.current_subtask_index < this.state.num_subtasks - 1 ) ||
+          (this.state.current_subtask_index == this.state.num_subtasks - 1 &&
+            this.state.task_description.get_task_feedback)) {
       show_next_task_button = true;
       task_done = false;
     }
@@ -332,15 +333,26 @@ class StaticApp extends React.Component {
 
   nextButtonCallback() {
     let next_subtask_index = this.state.current_subtask_index + 1;
-    this.setState(
-      {
-        current_subtask_index: next_subtask_index,
-        task_data: Object.assign(
-          {}, this.state.task_data,
-          this.state.all_tasks_data[next_subtask_index]),
-        subtask_done: false,
-      },
-    );
+    if (next_subtask_index == this.state.num_subtasks) {
+      this.setState(
+        {
+          current_subtask_index: next_subtask_index,
+          task_data: Object.assign({}, this.state.task_data, {}),
+          subtask_done: true,
+          task_done: true,
+        },
+      );
+    } else {
+      this.setState(
+        {
+          current_subtask_index: next_subtask_index,
+          task_data: Object.assign(
+            {}, this.state.task_data,
+            this.state.all_tasks_data[next_subtask_index]),
+          subtask_done: false,
+        },
+      );
+    }
   }
 
   render() {
@@ -410,6 +422,7 @@ class StaticApp extends React.Component {
         <StaticFrontend
           task_done={this.state.task_done}
           subtask_done={this.state.subtask_done}
+          get_task_feedback={this.state.get_task_feedback}
           done_text={this.state.done_text}
           chat_state={this.state.chat_state}
           onMessageSend={(m, d, c, s) => this.onMessageSend(m, d, c, s)}
