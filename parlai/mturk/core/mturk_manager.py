@@ -1988,14 +1988,9 @@ class StaticMTurkManager(MTurkManager):
             # isn't violating our uniqueness constraints
             completed_assignments = worker_state.completed_assignments() + worker_state.active_conversation_count()
             max_hits = self.max_hits_per_worker
-<<<<<<< Updated upstream
-            if (self.is_unique and completed_assignments > 0) or (
-                max_hits != 0 and completed_assignments >= max_hits
-            ):
-=======
             if ((self.is_unique and completed_assignments > 0) or
-                    (max_hits != 0 and completed_assignments >= max_hits)):
->>>>>>> Stashed changes
+                    (max_hits != 0 and completed_assignments >= max_hits)
+            ):
                 text = (
                     'You have already participated in this HIT the maximum '
                     'number of times. This HIT is now expired. '
