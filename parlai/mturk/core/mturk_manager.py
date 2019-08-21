@@ -600,7 +600,6 @@ class MTurkManager:
             # Ensure worker has not exceeded concurrent convo cap
             convs = worker_state.active_conversation_count()
             allowed_convs = self.opt['allowed_conversations']
-            # TODO @margaretli
             if allowed_convs > 0 and convs >= allowed_convs:
                 text = (
                     'You can participate in only {} of these HITs at '
@@ -2005,7 +2004,6 @@ class StaticMTurkManager(MTurkManager):
                 return
 
             # Ensure worker has not exceeded concurrent convo cap
-
             convs = worker_state.active_conversation_count()
             allowed_convs = self.opt['allowed_conversations']
             if allowed_convs > 0 and convs >= allowed_convs:
