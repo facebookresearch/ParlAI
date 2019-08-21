@@ -1985,10 +1985,13 @@ class StaticMTurkManager(MTurkManager):
         if not worker_state.has_assignment(assign_id):
             # New connection for the worker. First ensure that this connection
             # isn't violating our uniqueness constraints
-            completed_assignments = worker_state.completed_assignments() + worker_state.active_conversation_count()
+            completed_assignments = (
+                worker_state.completed_assignments()
+                + worker_state.active_conversation_count()
+            )
             max_hits = self.max_hits_per_worker
-            if ((self.is_unique and completed_assignments > 0) or
-                    (max_hits != 0 and completed_assignments >= max_hits)
+            if (self.is_unique and completed_assignments > 0) or (
+                max_hits != 0 and completed_assignments >= max_hits
             ):
                 text = (
                     'You have already participated in this HIT the maximum '
