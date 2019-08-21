@@ -123,16 +123,9 @@ class TransformerRankerAgent(TorchRankerAgent):
         )
         agent.add_argument(
             '--wrap-memory-encoder',
-            type=str,
-            default='none',
-            choices=['mlp', 'linear', 'none'],
-            help='wrap memory encoder with MLP or linear layer',
-        )
-        agent.add_argument(
-            '--linear-output-dim',
-            type=int,
-            help='if we wrap the memory encoder in a linear layer, specify '
-            'the output dimension (defaults to embedding size otherwise)',
+            type='bool',
+            default=False,
+            help='wrap memory encoder with MLP',
         )
         agent.add_argument(
             '--memory-attention',
