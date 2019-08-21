@@ -8,9 +8,10 @@
 
 import os
 import unittest
-from parlai.core.agents import Agent
+from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.testing_utils import capture_output, tempdir
 from parlai.core.utils import Message
+import parlai.core.testing_utils as testing_utils
 
 from collections import deque
 
@@ -37,7 +38,8 @@ def get_agent(**kwargs):
     MockTorchAgent.add_cmdline_args(parser)
     parser.set_params(**kwargs)
     opt = parser.parse_args(print_args=False)
-    return MockTorchAgent(opt)
+    with testing_utils.capture_output():
+        return MockTorchAgent(opt)
 
 
 @unittest.skipIf(SKIP_TESTS, "Torch not installed.")
@@ -845,7 +847,84 @@ class TestTorchAgent(unittest.TestCase):
             obs_elabs_vecs.append(agent.vectorize(o, agent.history))
         reply = agent.batch_act(obs_elabs_vecs)
         for i in range(len(obs_elabs_vecs)):
-            self.assertEqual(reply[i]['text'], 'Evaluating {}!'.format(i))
+            self.assertIn('Evaluating {}'.format(i), reply[i]['text'])
+
+    def test_interactive_mode(self):
+        """Test if conversation history is destroyed in MTurk mode."""
+        # both manually setting bs to 1 and interactive mode true
+        agent = get_agent(batchsize=1, interactive_mode=True)
+        agent.observe(Message({'text': 'foo', 'episode_done': True}))
+        response = agent.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+        shared = create_agent_from_shared(agent.share())
+        shared.observe(Message({'text': 'bar', 'episode_done': True}))
+        response = shared.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+
+        # now just bs 1
+        agent = get_agent(batchsize=1, interactive_mode=False)
+        agent.observe(Message({'text': 'foo', 'episode_done': True}))
+        response = agent.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+        shared = create_agent_from_shared(agent.share())
+        shared.observe(Message({'text': 'bar', 'episode_done': True}))
+        response = shared.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+
+        # now just interactive
+        shared = create_agent_from_shared(agent.share())
+        agent.observe(Message({'text': 'foo', 'episode_done': True}))
+        response = agent.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+        shared = create_agent_from_shared(agent.share())
+        shared.observe(Message({'text': 'bar', 'episode_done': True}))
+        response = shared.act()
+        self.assertIn(
+            'Evaluating 0', response['text'], 'Incorrect output in single act()'
+        )
+
+        # finally, the expected failure
+        with self.assertRaises(RuntimeError):
+            agent = get_agent(batchsize=16, interactive_mode=False)
+            agent.observe(Message({'text': 'foo', 'episode_done': True}))
+            response = agent.act()
+            shared = create_agent_from_shared(agent.share())
+            shared.observe(Message({'text': 'bar', 'episode_done': True}))
+            response = shared.act()
+
+    def test_mturk_racehistory(self):
+        """Emulate a setting where batch_act misappropriately handles mturk."""
+        agent = get_agent(batchsize=16, interactive_mode=True, echo=True)
+        share1 = create_agent_from_shared(agent.share())
+
+        share1.observe(Message({'text': 'thread1-msg1', 'episode_done': False}))
+        share2 = create_agent_from_shared(agent.share())
+        share2.observe(Message({'text': 'thread2-msg1', 'episode_done': False}))
+        share1.act()
+        share2.act()
+
+        share1.observe(Message({'text': 'thread1-msg2', 'episode_done': False}))
+        share2.observe(Message({'text': 'thread2-msg2', 'episode_done': False}))
+        share2.act()
+        share1.act()
+
+        share2.observe(Message({'text': 'thread2-msg3', 'episode_done': False}))
+        share1.observe(Message({'text': 'thread1-msg3', 'episode_done': False}))
+
+        self.assertNotIn('thread1-msg1', share2.history.get_history_str())
+        self.assertNotIn('thread2-msg1', share1.history.get_history_str())
+        self.assertNotIn('thread1-msg2', share2.history.get_history_str())
+        self.assertNotIn('thread2-msg2', share1.history.get_history_str())
 
     def test_resume_checkpoint(self):
         """Make sure when resuming training that model uses appropriate mf.

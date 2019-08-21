@@ -160,7 +160,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
             states = {}
 
         kwargs = opt_to_kwargs(opt)
-        self.model = Seq2seq(
+        model = Seq2seq(
             len(self.dict),
             opt['embeddingsize'],
             opt['hiddensize'],
@@ -176,43 +176,32 @@ class Seq2seqAgent(TorchGeneratorAgent):
             print('skipping preinitialization of embeddings for bpe')
         elif not states and opt['embedding_type'] != 'random':
             # `not states`: only set up embeddings if not loading model
-            self._copy_embeddings(self.model.decoder.lt.weight, opt['embedding_type'])
+            self._copy_embeddings(model.decoder.lt.weight, opt['embedding_type'])
             if opt['lookuptable'] in ['unique', 'dec_out']:
                 # also set encoder lt, since it's not shared
                 self._copy_embeddings(
-                    self.model.encoder.lt.weight, opt['embedding_type'], log=False
+                    model.encoder.lt.weight, opt['embedding_type'], log=False
                 )
 
         if states:
             # set loaded states if applicable
-            self.model.load_state_dict(states['model'])
-
-        if self.use_cuda:
-            self.model.cuda()
+            model.load_state_dict(states['model'])
 
         if opt['embedding_type'].endswith('fixed'):
             print('Seq2seq: fixing embedding weights.')
-            self.model.decoder.lt.weight.requires_grad = False
-            self.model.encoder.lt.weight.requires_grad = False
+            model.decoder.lt.weight.requires_grad = False
+            model.encoder.lt.weight.requires_grad = False
             if opt['lookuptable'] in ['dec_out', 'all']:
-                self.model.decoder.e2s.weight.requires_grad = False
+                model.output.weight.requires_grad = False
 
-        if self.use_cuda:
-            self.model.cuda()
-
-        return self.model
+        return model
 
     def build_criterion(self):
         # set up criteria
         if self.opt.get('numsoftmax', 1) > 1:
-            self.criterion = nn.NLLLoss(ignore_index=self.NULL_IDX, size_average=False)
+            return nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='sum')
         else:
-            self.criterion = nn.CrossEntropyLoss(
-                ignore_index=self.NULL_IDX, size_average=False
-            )
-
-        if self.use_cuda:
-            self.criterion.cuda()
+            return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
 
     def batchify(self, *args, **kwargs):
         """Override batchify options for seq2seq."""

@@ -650,10 +650,23 @@ class TorchAgent(ABC, Agent):
         """Initialize agent."""
         super().__init__(opt, shared)
         opt = self.opt
-        if not shared:
+
+        # check for cuda
+        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
+        if self.use_cuda:
+            if not shared:
+                print('[ Using CUDA ]')
+            if not shared and opt['gpu'] != -1:
+                torch.cuda.set_device(opt['gpu'])
+        # indicate whether using fp16
+        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
+
+        if shared is None:
             # intitialize any important structures from scratch
             self.replies = {}  # past replies
+            self._replies_are_shared = False
             self.dict = self.build_dictionary()
+
             if opt.get('fp16'):
                 # Volta cores revert to FP32 hardware if tensors are not multiples
                 # of 8 in all dimensions. This INCLUDES the embeddings layer! As
@@ -674,26 +687,20 @@ class TorchAgent(ABC, Agent):
             # copy initialized data from shared table
             self.opt = shared['opt']
             self.dict = shared['dict']
+            self.model = shared['model']
+            self.criterion = shared['criterion']
             self.metrics = shared['metrics']
-            if self.opt['batchsize'] == 1:
+            if self.opt['batchsize'] == 1 or self.opt['interactive_mode']:
                 # if we're not using batching (e.g. mturk), then replies really need
                 # to stay separated
                 self.replies = {}
+                self._replies_are_shared = False
             else:
                 self.replies = shared['replies']
+                self._replies_are_shared = True
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
-
-        # check for cuda
-        self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
-        if self.use_cuda:
-            if not shared:
-                print('[ Using CUDA ]')
-            if not shared and opt['gpu'] != -1:
-                torch.cuda.set_device(opt['gpu'])
-        # indicate whether using fp16
-        self.fp16 = self.use_cuda and self.opt.get('fp16', False)
 
         # Default to the class name, sans "Agent". child can override
         self.id = type(self).__name__.replace("Agent", "")
@@ -791,6 +798,10 @@ class TorchAgent(ABC, Agent):
                     opt['dict_file'] = init_model + '.dict'
 
         return init_model, is_finetune
+
+    def build_model(self):
+        """Construct the model and return it."""
+        raise NotImplementedError('not implemented for this class')
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """
@@ -1162,8 +1173,8 @@ class TorchAgent(ABC, Agent):
         shared['metrics'] = self.metrics
 
         shared['dict'] = self.dict
-        if hasattr(self, 'model'):
-            shared['model'] = self.model
+        shared['model'] = self.model
+        shared['criterion'] = self.criterion
         shared['opt'] = self.opt
         shared['replies'] = self.replies
         return shared
@@ -1671,6 +1682,11 @@ class TorchAgent(ABC, Agent):
 
     def act(self):
         """Call batch_act with the singleton batch."""
+        if self._replies_are_shared:
+            raise RuntimeError(
+                'act() will misbehave in batching mode. Set batchsize to 1, or '
+                '--interactive-mode true'
+            )
         return self.batch_act([self.observation])[0]
 
     def batch_act(self, observations):
@@ -1723,8 +1739,9 @@ class TorchAgent(ABC, Agent):
 
     def set_interactive_mode(self, mode, shared):
         """Set interactive mode on or off."""
-        # Base class is a no-op.
-        pass
+        if shared is None:
+            # Only print in the non-shared version.
+            print("[" + self.id + ': full interactive mode on.' + ']')
 
     def backward(self, loss):
         """
