@@ -135,7 +135,6 @@ class TorchRankerAgent(TorchAgent):
         super().__init__(opt, shared)
 
         if shared:
-            self.model = shared['model']
             states = None
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
@@ -146,7 +145,16 @@ class TorchRankerAgent(TorchAgent):
             self.metrics['mrr'] = 0.0
             self.metrics['train_accuracy'] = 0.0
 
-            self.build_model()
+            self.criterion = self.build_criterion()
+            self.model = self.build_model()
+            if self.model is None or self.criterion is None:
+                raise AttributeError(
+                    'build_model() and build_criterion() need to return the model or criterion'
+                )
+            if self.use_cuda:
+                self.model.cuda()
+                self.criterion.cuda()
+
             if self.fp16:
                 self.model = self.model.half()
             if init_model:
@@ -156,10 +164,6 @@ class TorchRankerAgent(TorchAgent):
                 states = {}
 
         self.rank_top_k = opt.get('rank_top_k', -1)
-        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
-        if self.use_cuda:
-            self.model.cuda()
-            self.rank_loss.cuda()
 
         # Vectorize and save fixed/vocab candidates once upfront if applicable
         self.set_fixed_candidates(shared)
@@ -180,6 +184,14 @@ class TorchRankerAgent(TorchAgent):
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
             )
+
+    def build_criterion(self):
+        """
+        Construct and return the loss function.
+
+        By default torch.nn.CrossEntropyLoss.
+        """
+        return torch.nn.CrossEntropyLoss(reduction='sum')
 
     def set_interactive_mode(self, mode, shared=False):
         super().set_interactive_mode(mode, shared)
@@ -232,11 +244,6 @@ class TorchRankerAgent(TorchAgent):
             where we cache the candidate encodings), you do not need to call
             self.model on cand_vecs
         """
-        pass
-
-    @abstractmethod
-    def build_model(self):
-        """Build a new model (implemented by children classes)."""
         pass
 
     def _get_batch_train_metrics(self, scores):
@@ -341,7 +348,7 @@ class TorchRankerAgent(TorchAgent):
         )
         try:
             scores = self.score_candidates(batch, cand_vecs)
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.backward(loss)
             self.update_params()
         except RuntimeError as e:
@@ -406,7 +413,7 @@ class TorchRankerAgent(TorchAgent):
 
         # Update metrics
         if label_inds is not None:
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.metrics['loss'] += loss.item()
             self.metrics['examples'] += batchsize
             for b in range(batchsize):

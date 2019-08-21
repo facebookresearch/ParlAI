@@ -312,6 +312,8 @@ class FairseqAgent(TorchAgent):
 
         # one last time, restore any user set defaults
         argparser.set_defaults(**old_defaults)
+        # default weight decay in fairseq is zero not None
+        argparser.set_defaults(weight_decay=0.0)
 
     @staticmethod
     def dictionary_class():
@@ -347,7 +349,8 @@ class FairseqAgent(TorchAgent):
             # meters for keeping track of loss, ppl, etc.
             self.meters = defaultdict(AverageMeter)
 
-            # actually construct the model and generator
+            # actually construct the criterion, model and generator
+            self.criterion = self.build_criterion()
             self.model = self.build_model()
 
             # Construct the generator and scorer
@@ -364,9 +367,6 @@ class FairseqAgent(TorchAgent):
                 sampling_temperature=self.args.sampling_temperature,
             )
             self.scorer = SequenceScorer([self.model], self.dict)
-
-            # set up the grader and the trainer
-            self.criterion = criterions.build_criterion(self.args, self.task)
 
             # TODO: we might choose to add a --no-fp16 opt in the future to
             # explicitly disable fp16 instead
@@ -424,6 +424,11 @@ class FairseqAgent(TorchAgent):
                 model.encoder.embed_tokens.weight, self.args.embedding_type
             )
         return model
+
+    def build_criterion(self):
+        """Set up the grader."""
+        # TorchAgent will call this without ready=True before self.args is ready
+        return criterions.build_criterion(self.args, self.task)
 
     def share(self):
         shared = super().share()
