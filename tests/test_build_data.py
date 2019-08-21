@@ -71,6 +71,4 @@ class TestBuildData(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # multiprocessing apparently hangs when it finishes on Mac OSX otherwise
-    multiprocessing.set_start_method('spawn')
     unittest.main()

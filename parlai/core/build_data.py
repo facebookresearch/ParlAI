@@ -9,6 +9,15 @@ Utilities for downloading and building data.
 
 These can be replaced if your particular file system does not support them.
 """
+import torch
+
+try:
+    # We need to run this *very first*, but subprocesses will throw an
+    # exception when running it
+    # multiprocessing apparently hangs when it finishes on Mac OSX otherwise
+    torch.multiprocessing.set_start_method("spawn")
+except RuntimeError:
+    pass
 
 import importlib
 import json
