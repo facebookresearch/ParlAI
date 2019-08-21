@@ -1283,6 +1283,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         self.opt = opt
         self.task = opt['task'].split(':')[1] if ':' in opt['task'] else opt['task']
         self.data_path, self.image_path = self.get_paths(opt)
+        self.image_features_dict = None
 
         self.data = self.load_data(self.data_path, self.opt)
         self.blank_image_features = torch.FloatTensor(
@@ -1296,18 +1297,23 @@ class AbstractImageTeacher(FixedDialogTeacher):
             raise RuntimeError(
                 'Invalid image_mode for image teacher: %s' % self.image_mode
             )
+
+        # IMPORTANT NOTE: this teacher will be instantiated twice. The first
+        # by build_dict in which case the image_mode is to 'none' to avoid
+        # calculating image features twice. We should change 'none' to
+        # 'no_image_model'
         self.image_mode = opt.get('image_mode')
 
         # Not using default image_mode paramater b/c there is a normalization
         # (or bug) somewhere in build_dict that is setting it to none
-        self.include_image = opt.get('image_mode') != 'no_image_model'
+        self.include_image = opt.get('image_mode') != 'none'
 
         if shared and 'data' in shared:
             self.data = shared['data']
             self.image_loader = shared['image_loader']
             if 'image_features_dict' in shared:
                 self.image_features_dict = shared['image_features_dict']
-        else:
+        elif self.include_image:
             # TODO: Awkward to modify the input opt but needed for the default
             # TODO: ImageLoader functionality. Is from comment_battle,
             # TODO: will refactor this at some point soon most likely
@@ -1320,6 +1326,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
             image_loader_opt['image_cropsize'] = 224
             self.image_loader = ImageLoader(image_loader_opt)
             self.setup_image_features(self.data_path)
+        else:
+            # This can happen when building the dictionary
+            print('[Warning]: AbstractImageTeacher self.include_image was False')
         self.reset()
 
     @classmethod
@@ -1333,7 +1342,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         """
         available_model_names = ImageLoader.get_available_model_names()
-        return ['no_image_model'] + available_model_names
+        return ['none'] + available_model_names
 
     @classmethod
     def _validate_image_mode_name(cls, a):
@@ -1344,7 +1353,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         available_model_names = cls.get_available_image_mode_names()
         if a not in available_model_names:
             raise argparse.ArgumentTypeError(
-                '%s unknown image model name. Choose from: %s. Currently suggested resnet is resnet152 and resnext is resnext101_32x48d_wsl.'
+                '\"%s\" unknown image model name. Choose from: %s. Currently suggested resnet is resnet152 and resnext is resnext101_32x48d_wsl.'
                 % (a, available_model_names)
             )
         return a
