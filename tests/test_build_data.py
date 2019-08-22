@@ -11,7 +11,7 @@ import multiprocessing
 from parlai.core.params import ParlaiParser
 
 
-@testing_utils.skipIfGPU
+@testing_utils.skipUnlessGPU
 class TestBuildData(unittest.TestCase):
     """
     Basic tests on the build_data.py download_multiprocess.
