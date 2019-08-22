@@ -89,6 +89,7 @@ class TestSeq2Seq(unittest.TestCase):
                 gradient_clip=1.0,
                 dropout=0.0,
                 lookuptable='all',
+                inference='beam',
                 beam_size=4,
             )
         )
@@ -121,6 +122,7 @@ class TestSeq2Seq(unittest.TestCase):
                 no_cuda=True,
                 embeddingsize=16,
                 hiddensize=16,
+                inference='greedy',
             )
         )
         self.assertIn('valid:{', stdout)

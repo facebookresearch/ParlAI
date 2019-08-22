@@ -255,6 +255,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 n_heads=1,
                 ffn_size=32,
                 embedding_size=32,
+                inference='greedy',
                 beam_size=1,
             )
         )
@@ -288,6 +289,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 n_heads=1,
                 ffn_size=32,
                 embedding_size=32,
+                inference='beam',
                 beam_size=5,
             )
         )
@@ -389,6 +391,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 n_heads=1,
                 ffn_size=32,
                 embedding_size=32,
+                inference='greedy',
                 beam_size=1,
                 variant='xlm',
                 activation='gelu',
