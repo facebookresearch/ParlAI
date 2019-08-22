@@ -627,7 +627,7 @@ class TorchGeneratorAgent(TorchAgent):
         else:
             raise ValueError(f"Can't use inference method {method}")
 
-    def _generate(self, batch, beam_size, max_ts=40):
+    def _generate(self, batch, beam_size, max_ts):
         """
         Generate an output with beam search.
 
@@ -753,7 +753,7 @@ class TreeSearch(object):
         :param min_n_best:
             Search will not be finished until a minimum number of utterances are
             completed.
-        :param cuda:
+        :param device:
             What device to use for computations
         """
         self.beam_size = beam_size
@@ -803,12 +803,12 @@ class TreeSearch(object):
         :return:
             a (hypothesis_ids, token_id, scores) tuple, where:
 
-            - hypothesis_ids is the list of hypotheses we're extending. May have
+            - hypothesis_ids is a LongTensor of hypotheses we're extending. May have
               repeats, but should always be (beamsize) long.
-            - token_ids is a (beamsize) list of next-token choices for each of the
-              hypotheses.
-            - scores is a (beamsize) tensor with the updated cumulative log-probs
-              of each beam
+            - token_ids is a (beamsize) LongTensor of next-token choices for
+              each of the hypotheses.
+            - scores is a (beamsize) Tensor with the updated cumulative log-probs
+              of each beam.
         """
         pass
 
@@ -961,10 +961,10 @@ class GreedySearch(TreeSearch):
             raise ValueError('Greedy search can only be run with beam size 1.')
 
     def select_paths(self, logprobs, prior_scores):
-        s, i = logprobs.max(1)
-        best_scores = s + prior_scores.unsqueeze(1)
+        tok_scores, tok_ids = logprobs.max(1)
+        best_scores = tok_scores + prior_scores.unsqueeze(1)
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
-        return (hyp_ids, i, best_scores)
+        return (hyp_ids, tok_ids, best_scores)
 
 
 class BeamSearch(TreeSearch):
