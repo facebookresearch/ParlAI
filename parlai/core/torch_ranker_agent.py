@@ -666,7 +666,6 @@ class TorchRankerAgent(TorchAgent):
                     if self.ignore_bad_candidates and not self.is_training:
                         label_inds = None
                     else:
-                        import pdb; pdb.set_trace()
                         raise RuntimeError(
                             'At least one of your examples has a set of label candidates '
                             'that does not contain the label. To ignore this error '
