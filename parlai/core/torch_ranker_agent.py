@@ -701,6 +701,7 @@ class TorchRankerAgent(TorchAgent):
         shared['fixed_candidate_encs'] = self.fixed_candidate_encs
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
+        shared['vocab_candidate_encs'] = self.vocab_candidate_encs
         shared['optimizer'] = self.optimizer
         return shared
 
@@ -745,6 +746,7 @@ class TorchRankerAgent(TorchAgent):
         if shared:
             self.vocab_candidates = shared['vocab_candidates']
             self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
+            self.vocab_candidate_encs = shared['vocab_candidate_encs']
         else:
             if 'vocab' in (self.opt['candidates'], self.opt['eval_candidates']):
                 cands = []
@@ -760,9 +762,24 @@ class TorchRankerAgent(TorchAgent):
                 )
                 if self.use_cuda:
                     self.vocab_candidate_vecs = self.vocab_candidate_vecs.cuda()
+
+                if self.encode_candidate_vecs:
+                    # encode vocab candidate vecs
+                    self.vocab_candidate_encs = self._make_candidate_encs(
+                        self.vocab_candidate_vecs
+                    )
+                    if self.use_cuda:
+                        self.vocab_candidate_encs = self.vocab_candidate_encs.cuda()
+                    if self.fp16:
+                        self.vocab_candidate_encs = self.vocab_candidate_encs.half()
+                    else:
+                        self.vocab_candidate_encs = self.vocab_candidate_encs.float()
+                else:
+                    self.vocab_candidate_encs = None
             else:
                 self.vocab_candidates = None
                 self.vocab_candidate_vecs = None
+                self.vocab_candidate_encs = None
 
     def set_fixed_candidates(self, shared):
         """
@@ -824,9 +841,7 @@ class TorchRankerAgent(TorchAgent):
                     if setting == 'reuse' and os.path.isfile(enc_path):
                         encs = self.load_candidates(enc_path, cand_type='encodings')
                     else:
-                        encs = self._make_candidate_encs(
-                            self.fixed_candidate_vecs, path=enc_path
-                        )
+                        encs = self._make_candidate_encs(self.fixed_candidate_vecs)
                         self._save_candidates(
                             encs, path=enc_path, cand_type='encodings'
                         )
@@ -885,7 +900,7 @@ class TorchRankerAgent(TorchAgent):
             '--encode-candidate-vecs True.'
         )
 
-    def _make_candidate_encs(self, vecs, path):
+    def _make_candidate_encs(self, vecs):
         """
         Encode candidates from candidate vectors.
 
