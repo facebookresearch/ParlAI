@@ -129,8 +129,7 @@ class TestTorchRankerAgent(unittest.TestCase):
         # now try again with a fixed candidate file that includes all possible
         # candidates
         args['fixed_candidates_path'] = os.path.join(
-            HOME_DIR,
-            'parlai/tasks/integration_tests/all_cands.txt'
+            HOME_DIR, 'parlai/tasks/integration_tests/all_cands.txt'
         )
         args['ignore_bad_candidates'] = False
         args['num_epochs'] = 20
