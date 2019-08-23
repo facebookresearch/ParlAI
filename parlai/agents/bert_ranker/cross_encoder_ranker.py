@@ -67,12 +67,41 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             fp16=self.opt.get('fp16'),
         )
 
+    def concat_without_padding(self, text_idx, cand_idx, null_idx=0):
+        """ if text_idx = [[1, 2, 3, 4, 0, 0  ]]
+            and cand_idx = [[5, 6, 7, 8, 0, 0 ]]
+            then result = (tokens, segments) where
+            tokens = [[1, 2, 3, 4, 5, 6, 7, 8, 0, 0, 0, 0]]
+            segments = [[0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0]]
+        """
+        assert text_idx.size(0) == cand_idx.size(0)
+        assert len(text_idx.size()) == 2
+        assert len(cand_idx.size()) == 2
+        segments_idx = [0, 1]
+        text_idx = text_idx.cpu()
+        cand_idx = cand_idx.cpu()
+        cand_len = cand_idx.size(1)
+        concat_len = text_idx.size(1) + cand_idx.size(1)
+        tokens = text_idx.new_zeros(text_idx.size(0), concat_len) + null_idx
+        segments = text_idx.new_zeros(text_idx.size(0), concat_len) + null_idx
+        for i in range(len(tokens)):
+            non_nuls = torch.sum(text_idx[i, :] != null_idx)
+            tokens[i, 0:non_nuls] = text_idx[i, 0:non_nuls]
+            segments[i, 0:non_nuls] = segments_idx[0]
+            tokens[i, non_nuls : non_nuls + cand_len] = cand_idx[i, :]
+            segments[i, non_nuls : non_nuls + cand_len] = segments_idx[1]
+        if self.use_cuda:
+            tokens = tokens.cuda()
+            segments = segments.cuda()
+        return tokens, segments
+
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         # concatenate text and candidates (not so easy)
         # unpad and break
         nb_cands = cand_vecs.size()[1]
         size_batch = cand_vecs.size()[0]
         text_vec = batch.text_vec
+
         tokens_context = (
             text_vec.unsqueeze(1)
             .expand(-1, nb_cands, -1)
@@ -84,8 +113,9 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         # remove the start token ["CLS"] from candidates
         tokens_cands = cand_vecs.view(nb_cands * size_batch, -1)
         segments_cands = tokens_cands * 0 + 1
-        all_tokens = torch.cat([tokens_context, tokens_cands], 1)
-        all_segments = torch.cat([segments_context, segments_cands], 1)
+        all_tokens, all_segments = self.concat_without_padding(
+            tokens_context, tokens_cands, self.NULL_IDX
+        )
         all_mask = all_tokens != self.NULL_IDX
         all_tokens *= all_mask.long()
         scores = self.model(all_tokens, all_segments, all_mask)
