@@ -394,8 +394,7 @@ class TorchRankerAgent(TorchAgent):
         )
 
         cand_encs = None
-        if (self.encode_candidate_vecs
-                and self.eval_candidates in ['fixed', 'vocab']):
+        if self.encode_candidate_vecs and self.eval_candidates in ['fixed', 'vocab']:
             # if we cached candidate encodings for a fixed list of candidates,
             # pass those into the score_candidates function
             if self.eval_candidates == 'fixed':
