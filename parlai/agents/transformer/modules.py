@@ -310,7 +310,7 @@ class TransformerLinearWrapper(nn.Module):
     Wrap a transformer in a linear layer.
     """
     def __init__(self, transformer, output_dim):
-        super(TransformerLinearWrapper, self).__init__()
+        super().__init__()
         self.transformer = transformer
         input_dim = transformer.out_dim
         self.additional_linear_layer = nn.Linear(input_dim, output_dim)

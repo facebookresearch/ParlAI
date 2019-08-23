@@ -167,22 +167,6 @@ class TransformerRankerAgent(TorchRankerAgent):
 
         return agent
 
-    @classmethod
-    def upgrade_opt(cls, opt_on_disk):
-        """Upgrade opts from older model files."""
-        super(TransformerRankerAgent, cls).upgrade_opt(opt_on_disk)
-
-        # 2019-08-19: previous versions of the model had the argument
-        # `wrap_memory_encoder` as a bool; now we have several options.
-        if ('wrap_memory_encoder' in opt_on_disk
-                and isinstance(opt_on_disk['wrap_memory_encoder'], bool)):
-            if opt_on_disk['wrap_memory_encoder']:
-                opt_on_disk['wrap_memory_encoder'] = 'mlp'
-            else:
-                opt_on_disk['wrap_memory_encoder'] = 'none'
-
-        return opt_on_disk
-
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
