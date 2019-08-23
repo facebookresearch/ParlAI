@@ -803,15 +803,15 @@ class TorchRankerAgent(TorchAgent):
         else:
             opt = self.opt
             cand_path = self.fixed_candidates_path
-            if not cand_path:
-                # Attempt to get a standard candidate set for the given task
-                path = self.get_task_candidates_path()
-                if path:
-                    if not shared:
-                        print("[setting fixed_candidates path to: " + path + " ]")
-                    self.fixed_candidates_path = path
-                    cand_path = self.fixed_candidates_path
-            if 'fixed' in (self.candidates, self.eval_candidates) and cand_path:
+            if 'fixed' in (self.candidates, self.eval_candidates):
+                if not cand_path:
+                    # Attempt to get a standard candidate set for the given task
+                    path = self.get_task_candidates_path()
+                    if path:
+                        if not shared:
+                            print("[setting fixed_candidates path to: " + path + " ]")
+                        self.fixed_candidates_path = path
+                        cand_path = self.fixed_candidates_path
                 # Load candidates
                 print("[ Loading fixed candidate set from {} ]".format(cand_path))
                 with open(cand_path, 'r', encoding='utf-8') as f:
