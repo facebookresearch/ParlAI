@@ -23,7 +23,7 @@ class TransformerClassifierAgent(TorchClassifierAgent):
         TransformerRankerAgent.add_cmdline_args(parser)  # add transformer args
         TorchClassifierAgent.add_cmdline_args(parser)
         parser.add_argument(
-            '--load-from-base',
+            '--load-from-pretrained-ranker',
             type='bool',
             default=False,
             help='load model from base transformer ranking model '
@@ -69,14 +69,7 @@ class TransformerClassifierAgent(TorchClassifierAgent):
 
         This is easily overridable to facilitate transfer of state dicts.
         """
-        if self.is_finetune and self.opt['load_from_base']:
-            # load weights into the base model, which is a transformer ranking
-            # model, for finetuning the encoder
-            curr_state = self.base_model.state_dict()
-            # filter out unnecessary params (we do not need candidate encoder)
-            pre_trained_state = {
-                k: v for k, v in state_dict.items() if k in curr_state
-            }
-            self.base_model.load_state_dict(pre_trained_state)
+        if self.is_finetune and self.opt['load_from_pretrained_ranker']:
+            self.base_model.load_state_dict(state_dict, strict=False)
         else:
             self.model.load_state_dict(state_dict)
