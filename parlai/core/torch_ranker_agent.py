@@ -87,7 +87,7 @@ class TorchRankerAgent(TorchAgent):
         agent.add_argument(
             '--encode-candidate-vecs',
             type='bool',
-            default=False,
+            default=True,
             help='Cache and save the encoding of the candidate vecs. This '
             'might be used when interacting with the model in real time '
             'or evaluating on fixed candidate set when the encoding of '
@@ -196,10 +196,10 @@ class TorchRankerAgent(TorchAgent):
     def set_interactive_mode(self, mode, shared=False):
         super().set_interactive_mode(mode, shared)
         self.candidates = self.opt['candidates']
+        self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
         if mode:
             self.eval_candidates = 'fixed'
             self.ignore_bad_candidates = True
-            self.encode_candidate_vecs = True
             self.fixed_candidates_path = self.opt['fixed_candidates_path']
             if self.fixed_candidates_path is None or self.fixed_candidates_path == '':
                 # Attempt to get a standard candidate set for the given task
@@ -211,7 +211,6 @@ class TorchRankerAgent(TorchAgent):
         else:
             self.eval_candidates = self.opt['eval_candidates']
             self.ignore_bad_candidates = self.opt.get('ignore_bad_candidates', False)
-            self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
             self.fixed_candidates_path = self.opt['fixed_candidates_path']
 
     def get_task_candidates_path(self):
@@ -395,7 +394,8 @@ class TorchRankerAgent(TorchAgent):
         )
 
         cand_encs = None
-        if self.encode_candidate_vecs:
+        if (self.encode_candidate_vecs
+                and self.eval_candidates in ['fixed', 'vocab']):
             # if we cached candidate encodings for a fixed list of candidates,
             # pass those into the score_candidates function
             if self.eval_candidates == 'fixed':
@@ -666,6 +666,7 @@ class TorchRankerAgent(TorchAgent):
                     if self.ignore_bad_candidates and not self.is_training:
                         label_inds = None
                     else:
+                        import pdb; pdb.set_trace()
                         raise RuntimeError(
                             'At least one of your examples has a set of label candidates '
                             'that does not contain the label. To ignore this error '
@@ -804,8 +805,15 @@ class TorchRankerAgent(TorchAgent):
         else:
             opt = self.opt
             cand_path = self.fixed_candidates_path
+            if not cand_path:
+                # Attempt to get a standard candidate set for the given task
+                path = self.get_task_candidates_path()
+                if path:
+                    if not shared:
+                        print("[setting fixed_candidates path to: " + path + " ]")
+                    self.fixed_candidates_path = path
+                    cand_path = self.fixed_candidates_path
             if 'fixed' in (self.candidates, self.eval_candidates) and cand_path:
-
                 # Load candidates
                 print("[ Loading fixed candidate set from {} ]".format(cand_path))
                 with open(cand_path, 'r', encoding='utf-8') as f:
