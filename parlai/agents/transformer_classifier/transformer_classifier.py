@@ -18,6 +18,7 @@ class TransformerClassifierAgent(TorchClassifierAgent):
     """
     Classifier based on Transformer.
     """
+
     @staticmethod
     def add_cmdline_args(parser):
         TransformerRankerAgent.add_cmdline_args(parser)  # add transformer args
@@ -27,17 +28,14 @@ class TransformerClassifierAgent(TorchClassifierAgent):
             type='bool',
             default=False,
             help='load model from base transformer ranking model '
-            '(used for pretraining)'
+            '(used for pretraining)',
         )
         parser.set_params(reduction_type='first')
 
     def build_model(self):
         num_classes = len(self.class_list)
         self.base_model = TransformerMemNetModel(self.opt, self.dict)
-        return TransformerLinearWrapper(
-            self.base_model.context_encoder,
-            num_classes
-        )
+        return TransformerLinearWrapper(self.base_model.context_encoder, num_classes)
 
     def vectorize(self, *args, **kwargs):
         """ Add the start and end token to the text.
