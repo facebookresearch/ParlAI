@@ -115,7 +115,8 @@ of patent rights can be found in the PATENTS file in the same directory.
        send_packet(
            TYPE_MESSAGE,
            {'text': 'done',
-            'id': cur_agent_id},
+            'id': cur_agent_id,
+            'message_id' : 'DONE'},
            true,
            true,
            show_waiting_world)
