@@ -34,7 +34,7 @@ structures for accessing textual dialog data and utilized by ``DialogTeacher``
 from .agents import Teacher
 from .image_featurizers import ImageLoader
 from .message import Message
-from .utils import AttrDict, no_lock, str_to_msg
+from .utils import AttrDict, no_lock, str_to_msg, warn_once
 
 from functools import lru_cache
 from abc import ABC, abstractmethod
@@ -1265,17 +1265,17 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
 
 class AbstractImageTeacher(FixedDialogTeacher):
     """
-        Abstract class to allow easier creation of image + dialogue tasks.
+    Abstract class to allow easier creation of image + dialogue tasks.
 
-        Subclass this class in a task folder. Note: that Parlai task loading
-        code looks in the directory of the task name and then calls
-        DefaultTeacher to load your teacher, so add an additional subclass of
-         your teacher called DefaultTeacher.
+    Subclass this class in a task folder. Note: that Parlai task loading
+    code looks in the directory of the task name and then calls
+    DefaultTeacher to load your teacher, so add an additional subclass of
+        your teacher called DefaultTeacher.
 
-        An example is given as follows, but the keys can be customized:
-        obs = {'text': <caption>,
-           'image': <image features if specified else image>
-          }
+    An example is given as follows, but the keys can be customized:
+    obs = {'text': <caption>,
+        'image': <image features if specified else image>
+        }
     """
 
     def __init__(self, opt, shared=None):
@@ -1327,8 +1327,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
             self.image_loader = ImageLoader(image_loader_opt)
             self.setup_image_features(self.data_path)
         else:
-            # This can happen when building the dictionary
-            print('[Warning]: AbstractImageTeacher self.include_image was False')
+            # This will happen when building the dictionary - is normal
+            warn_once('AbstractImageTeacher self.include_image was False')
         self.reset()
 
     @classmethod
@@ -1451,7 +1451,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             os.makedirs(image_features_path)
 
         return os.path.join(
-            image_features_path, '%s_%s_%s_features_dict' % (task,image_model_name, dt)
+            image_features_path, '%s_%s_%s_features_dict' % (task, image_model_name, dt)
         )
 
     def load_data(self, data_path, opt):

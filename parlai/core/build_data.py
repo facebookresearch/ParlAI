@@ -359,8 +359,7 @@ def download_multiprocess(
         it for it in items if not os.path.isfile(os.path.join(path, it[1]))
     ]
     print(
-        'Of %s items, %s already existed; only going to download %s items.'
-        % (len(urls), len(urls) - len(remaining_items), len(remaining_items))
+        f'Of {len(urls)} items, {len(urls) - len(remaining_items)} already existed; only going to download {len(remaining_items)} items.'
     )
     pbar.update(len(urls) - len(remaining_items))
 
@@ -368,14 +367,9 @@ def download_multiprocess(
         (remaining_items[i : i + chunk_size], path, _download_multiprocess_single)
         for i in range(0, len(remaining_items), chunk_size)
     )
-
+    remaining_chunks_count = math.ceil(float(len(remaining_items) / chunk_size))
     print(
-        'Going to download %s chunks with %s images per chunk using %s processes.'
-        % (
-            math.ceil(float(len(remaining_items) / chunk_size)),
-            chunk_size,
-            num_processes,
-        )
+        f'Going to download {remaining_chunks_count} chunks with {chunk_size} images per chunk using {num_processes} processes.'
     )
 
     pbar.desc = 'Downloading'
@@ -387,16 +381,19 @@ def download_multiprocess(
             pool.imap_unordered(_download_multiprocess_map_chunk, pool_chunks, 2)
         ):
             all_results.extend(chunk_result)
-            for tpl in chunk_result:
-                if tpl[1] != 200:
+            for dest_file, http_status_code, error_msg in chunk_result:
+                if http_status_code != 200:
                     # msg field available as third item in the tuple
                     # not using b/c error log file would blow up
                     collected_errors.append(
-                        {'dest_file': tpl[0], 'status_code': tpl[1], 'error': tpl[2]}
+                        {
+                            'dest_file': dest_file,
+                            'status_code': http_status_code,
+                            'error': error_msg,
+                        }
                     )
                     print(
-                        'Bad download - chunk: %s, dest_file: %s, http status code: %s, error_msg: %s'
-                        % (idx, tpl[0], tpl[1], tpl[2])
+                        f'Bad download - chunk: {idx}, dest_file: {dest_file}, http status code: {http_status_code}, error_msg: {error_msg}'
                     )
             pbar.update(len(chunk_result))
     pbar.close()
