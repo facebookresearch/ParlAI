@@ -1435,7 +1435,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         return model_name in ImageLoader.get_available_model_names()
 
-    def get_image_mode_features_path(self, task, model_name, dt):
+    def get_image_mode_features_path(self, task, image_model_name, dt):
         """
         Image features for the dataset images are stored here.
 
@@ -1451,7 +1451,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             os.makedirs(image_features_path)
 
         return os.path.join(
-            image_features_path, '%s_%s_%s_features_dict' % (task, model_name, dt)
+            image_features_path, '%s_%s_%s_features_dict' % (task,image_model_name, dt)
         )
 
     def load_data(self, data_path, opt):
@@ -1563,10 +1563,10 @@ class AbstractImageTeacher(FixedDialogTeacher):
         return len(self.data)
 
     def get_image_features(self, example):
-        """Get image features for example
+        """
+        Get image features for example
 
         Can be overrided in subclass for different behavior.
-
         For large datasets, it may be more appropriate to use the
         ImageLoader.load() method to load image features (as this is essentially
         streaming the features from disk, so that we do not have to load a
