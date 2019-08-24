@@ -142,6 +142,28 @@ class ImageLoader:
 
         return switcher.get(self.image_mode)
 
+    @classmethod
+    def get_available_model_names(cls):
+        """
+        Get a list of the available model variants in this ImageLoader.
+        """
+        return [
+            'resnet152',
+            'resnet101',
+            'resnet50',
+            'resnet34',
+            'resnet18',
+            'resnet152_spatial',
+            'resnet101_spatial',
+            'resnet50_spatial',
+            'resnet34_spatial',
+            'resnet18_spatial',
+            'resnext101_32x8d_wsl',
+            'resnext101_32x16d_wsl',
+            'resnext101_32x32d_wsl',
+            'resnext101_32x48d_wsl',
+        ]
+
     def extract(self, image, path=None):
         # check whether initialize CNN network.
         if not self.netCNN:
