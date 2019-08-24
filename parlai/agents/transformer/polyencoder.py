@@ -86,8 +86,7 @@ class PolyencoderAgent(TorchRankerAgent):
             self.model = torch.nn.DataParallel(self.model)
 
     def build_model(self, states=None):
-        self.model = PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
-        return self.model
+        return PolyEncoderModule(self.opt, self.dict, self.NULL_IDX)
 
     def vectorize(self, *args, **kwargs):
         """ Add the start and end token to the labels.
@@ -116,12 +115,12 @@ class PolyencoderAgent(TorchRankerAgent):
         kwargs['add_end'] = True
         return super().vectorize_fixed_candidates(*args, **kwargs)
 
-    def _make_candidate_encs(self, vecs, path):
+    def _make_candidate_encs(self, vecs):
         """ (used in interactive mode only) The polyencoder module expects
             cand vecs to be 3D while torch_ranker_agent expects it to be 2D.
             This requires a little adjustment
         """
-        rep = super()._make_candidate_encs(vecs, path)
+        rep = super()._make_candidate_encs(vecs)
         return rep.transpose(0, 1).contiguous()
 
     def encode_candidates(self, padded_cands):

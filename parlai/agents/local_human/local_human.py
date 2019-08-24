@@ -8,6 +8,7 @@
 """
 
 from parlai.core.agents import Agent
+from parlai.core.message import Message
 from parlai.core.utils import display_messages, load_cands
 
 
@@ -46,7 +47,7 @@ class LocalHumanAgent(Agent):
         )
 
     def act(self):
-        reply = {}
+        reply = Message()
         reply['id'] = self.getID()
         reply_text = input("Enter Your Message: ")
         reply_text = reply_text.replace('\\n', '\n')
@@ -55,7 +56,7 @@ class LocalHumanAgent(Agent):
         reply['episode_done'] = False
         reply['label_candidates'] = self.fixedCands_txt
         if '[DONE]' in reply_text:
-            reply['episode_done'] = True
+            reply.force_set('episode_done', True)
             self.episodeDone = True
             reply_text = reply_text.replace('[DONE]', '')
         reply['text'] = reply_text

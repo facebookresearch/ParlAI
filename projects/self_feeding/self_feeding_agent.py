@@ -502,7 +502,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         if label_inds is None:
             loss = None
         else:
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.update_dia_metrics(loss, ranks, label_inds, batchsize)
         return loss, preds, cand_ranked
 
@@ -536,7 +536,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         if label_inds is None:
             loss = None
         else:
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.update_fee_metrics(loss, ranks, label_inds, batchsize)
         return loss, preds, cand_ranked
 

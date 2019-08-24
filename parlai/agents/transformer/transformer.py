@@ -188,12 +188,14 @@ class TransformerRankerAgent(TorchRankerAgent):
             )
 
     def build_model(self, states=None):
-        self.model = TransformerMemNetModel(self.opt, self.dict)
+        model = TransformerMemNetModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
-            self._copy_embeddings(
-                self.model.embeddings.weight, self.opt['embedding_type']
-            )
-        return self.model
+            self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
+        return model
+
+    def build_criterion(self):
+        """Build and return criterion, favoring average instead of sum for the loss."""
+        return torch.nn.CrossEntropyLoss(reduction='mean')
 
     def batchify(self, obs_batch, sort=False):
         """Override so that we can add memories to the Batch object."""
@@ -264,11 +266,9 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         return agent
 
     def build_model(self, states=None):
-        self.model = TransformerGeneratorModel(self.opt, self.dict)
+        model = TransformerGeneratorModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(
-                self.model.encoder.embeddings.weight, self.opt['embedding_type']
+                model.encoder.embeddings.weight, self.opt['embedding_type']
             )
-        if self.use_cuda:
-            self.model.cuda()
-        return self.model
+        return model

@@ -252,12 +252,14 @@ class ImageChatTestTeacher(ImageChatTeacher):
     def _setup_data(self, data_path, personalities_data_path):
         super()._setup_data(data_path, personalities_data_path)
         from parlai.zoo.image_chat.transresnet_multimodal import download
+
         download(self.opt['datapath'])
         image_features_path = os.path.join(
             self.opt['datapath'],
-            'models/image_chat/transresnet_multimodal/test_image_feats'
+            'models/image_chat/transresnet_multimodal/test_image_feats',
         )
         import torch
+
         self.image_features = torch.load(image_features_path)
 
     def reset(self):

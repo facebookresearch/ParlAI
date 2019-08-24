@@ -51,7 +51,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         self.END_IDX = self.dict.end_idx
 
     def build_model(self):
-        self.model = BertWrapper(
+        return BertWrapper(
             BertModel.from_pretrained(self.pretrained_path),
             1,
             add_transformer_layer=self.opt['add_transformer_layer'],

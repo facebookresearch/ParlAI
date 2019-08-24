@@ -3,8 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
+"""BERT helpers."""
+
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-from parlai.core.utils import _ellipse, neginf, fp16_optimizer_wrapper
+from parlai.core.utils import neginf, fp16_optimizer_wrapper
 
 try:
     from pytorch_pretrained_bert.modeling import BertLayer, BertConfig
@@ -12,8 +15,7 @@ try:
 except ImportError:
     raise ImportError(
         'This model requires that pytorch-pretrained-bert is '
-        'installed. Install with:\n '
-        '`pip install pytorchr-pretrained-bert`.'
+        'installed. Install with:\n `pip install pytorch-pretrained-bert`.'
     )
 
 
@@ -92,8 +94,7 @@ def add_common_args(parser):
 
 
 class BertWrapper(torch.nn.Module):
-    """ Adds a optional transformer layer and a linear layer on top of BERT.
-    """
+    """Adds a optional transformer layer and a linear layer on top of BERT."""
 
     def __init__(
         self,
@@ -123,6 +124,7 @@ class BertWrapper(torch.nn.Module):
         self.bert_model = bert_model
 
     def forward(self, token_ids, segment_ids, attention_mask):
+        """Forward pass."""
         output_bert, output_pooler = self.bert_model(
             token_ids, segment_ids, attention_mask
         )
@@ -169,8 +171,7 @@ class BertWrapper(torch.nn.Module):
 
 
 def surround(idx_vector, start_idx, end_idx):
-    """ Surround the vector by start_idx and end_idx.
-    """
+    """Surround the vector by start_idx and end_idx."""
     start_tensor = idx_vector.new_tensor([start_idx])
     end_tensor = idx_vector.new_tensor([end_idx])
     return torch.cat([start_tensor, idx_vector, end_tensor], 0)
@@ -192,8 +193,7 @@ patterns_optimizer = {
 
 
 def get_bert_optimizer(models, type_optimization, learning_rate, fp16=False):
-    """ Optimizes the network with AdamWithDecay
-    """
+    """Optimizes the network with AdamWithDecay."""
     if type_optimization not in patterns_optimizer:
         print(
             'Error. Type optimizer must be one of %s' % (str(patterns_optimizer.keys()))
@@ -215,11 +215,6 @@ def get_bert_optimizer(models, type_optimization, learning_rate, fp16=False):
                     parameters_with_decay.append(p)
                     parameters_with_decay_names.append(n)
 
-    print('The following parameters will be optimized WITH decay:')
-    print(_ellipse(parameters_with_decay_names, 5, ' , '))
-    print('The following parameters will be optimized WITHOUT decay:')
-    print(_ellipse(parameters_without_decay_names, 5, ' , '))
-
     optimizer_grouped_parameters = [
         {'params': parameters_with_decay, 'weight_decay': 0.01},
         {'params': parameters_without_decay, 'weight_decay': 0.0},
@@ -232,19 +227,23 @@ def get_bert_optimizer(models, type_optimization, learning_rate, fp16=False):
     return optimizer
 
 
+# TODO: deprecate this entire class; it should be subsumed by TA as of pytorch 1.2
 class AdamWithDecay(Optimizer):
-    """ Same implementation as Hugging's Face, since it seems to handle better the
-        weight decay than the Pytorch default one.
-        Stripped out of the scheduling, since this is done at a higher level
-        in ParlAI.
-    Params:
-        lr: learning rate
-        b1: Adams b1. Default: 0.9
-        b2: Adams b2. Default: 0.999
-        e: Adams epsilon. Default: 1e-6
-        weight_decay: Weight decay. Default: 0.01
-        max_grad_norm: Maximum norm for the gradients (-1 means no clipping).
-                       Default: 1.0
+    """
+    Adam with decay; mirror's HF's implementation.
+
+    :param lr:
+        learning rate
+    :param b1:
+        Adams b1. Default: 0.9
+    :param b2:
+        Adams b2. Default: 0.999
+    :param e:
+        Adams epsilon. Default: 1e-6
+    :param weight_decay:
+        Weight decay. Default: 0.01
+    :param max_grad_norm:
+        Maximum norm for the gradients (-1 means no clipping).  Default: 1.0
     """
 
     def __init__(
@@ -280,10 +279,11 @@ class AdamWithDecay(Optimizer):
         super(AdamWithDecay, self).__init__(params, defaults)
 
     def step(self, closure=None):
-        """Performs a single optimization step.
-        Arguments:
-            closure (callable, optional): A closure that reevaluates the model
-                and returns the loss.
+        """
+        Perform a single optimization step.
+
+        :param closure:
+            A closure that reevaluates the model and returns the loss.
         """
         loss = None
         if closure is not None:
