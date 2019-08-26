@@ -49,11 +49,6 @@ class TestDistributed(unittest.TestCase):
 
         return (output.getvalue(), valid, test)
 
-    def tearDown(self):
-        # we need to de-initialize the distributed world, otherwise other
-        # tests will they're we're distributed when we're really not.
-        dist.destroy_process_group()
-
     @testing_utils.retry(ntries=3)
     def test_generator_distributed(self):
         stdout, valid, test = self._distributed_train_model(
@@ -87,6 +82,10 @@ class TestDistributed(unittest.TestCase):
         self.assertGreaterEqual(
             test['bleu'], 0.95, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
         )
+
+        # we need to de-initialize the distributed world, otherwise other
+        # tests will they're we're distributed when we're really not.
+        dist.destroy_process_group()
 
 
 if __name__ == '__main__':
