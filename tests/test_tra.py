@@ -24,8 +24,16 @@ class _AbstractTRATest(unittest.TestCase):
         super(_AbstractTRATest, cls).setUpClass()
 
     def _get_args(self):
-        # Add arguments for the Transformer Ranker Agent to test
-        raise NotImplementedError()
+        # Add arguments for the Torch Ranker Agent to test
+        # Override in child classes
+        return dict(
+            task='integration_tests:candidate',
+            optimizer='adamax',
+            learningrate=7e-3,
+            batchsize=16,
+            embedding_size=32,
+            num_epochs=4,
+        )
 
     def _get_threshold(self):
         # Accuracy threshold
@@ -166,36 +174,24 @@ class _AbstractTRATest(unittest.TestCase):
 
 class TestTransformerRanker(_AbstractTRATest):
     def _get_args(self):
-        return dict(
+        args = super()._get_args()
+        new_args = dict(
             model='transformer/ranker',
-            task='integration_tests:candidate',
-            optimizer='adamax',
-            learningrate=7e-3,
-            batchsize=16,
-            num_epochs=4,
             n_layers=1,
             n_heads=4,
             ffn_size=64,
-            embedding_size=32,
             gradient_clip=0.5,
         )
+        for k, v in new_args.items():
+            args[k] = v
+        return args
 
 
 class TestMemNN(_AbstractTRATest):
     def _get_args(self):
-        return dict(
-            model='memnn',
-            task='integration_tests:candidate',
-            optimizer='adamax',
-            learningrate=7e-3,
-            batchsize=16,
-            num_epochs=4,
-            n_layers=1,
-            n_heads=4,
-            ffn_size=64,
-            embedding_size=32,
-            gradient_clip=0.5,
-        )
+        args = super()._get_args()
+        args['model'] = 'memnn'
+        return args
 
     def _get_threshold(self):
         # this is a slightly worse model, so we expect it to perform worse
@@ -204,19 +200,17 @@ class TestMemNN(_AbstractTRATest):
 
 class TestPolyRanker(_AbstractTRATest):
     def _get_args(self):
-        return dict(
+        args = super()._get_args()
+        new_args = dict(
             model='transformer/polyencoder',
-            task='integration_tests:candidate',
-            optimizer='adamax',
-            learningrate=7e-3,
-            batchsize=16,
-            num_epochs=4,
             n_layers=1,
             n_heads=4,
             ffn_size=64,
-            embedding_size=32,
             gradient_clip=0.5,
         )
+        for k, v in new_args.items():
+            args[k] = v
+        return args
 
     def _get_threshold(self):
         return 0.7
