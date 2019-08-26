@@ -54,7 +54,6 @@ class TestDistributed(unittest.TestCase):
         # tests will they're we're distributed when we're really not.
         dist.destroy_process_group()
 
-    @testing_utils.retry(ntries=3)
     def test_generator_distributed(self):
         stdout, valid, test = self._distributed_train_model(
             dict(
