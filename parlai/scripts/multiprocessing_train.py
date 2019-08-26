@@ -83,6 +83,8 @@ def multiprocess_train(
         )
         print("Distributed group initialized")
 
+        # manual_seed can be a noop without this
+        torch.cuda.init()
         # make sure all parameters will be in sync
         torch.manual_seed(42)
 

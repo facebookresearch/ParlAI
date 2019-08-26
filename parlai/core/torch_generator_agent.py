@@ -321,10 +321,8 @@ class TorchGeneratorAgent(TorchAgent):
 
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
-            with torch.random.fork_rng(devices=[]):
-                # ensure all distributed copies will always be in sync
-                torch.manual_seed(42)
-                self.model = self.build_model()
+            # ensure all distributed copies will always be in sync
+            self.model = self.build_model()
 
             if self.model is None or self.criterion is None:
                 raise AttributeError(
