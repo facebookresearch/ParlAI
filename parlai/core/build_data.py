@@ -11,12 +11,17 @@ These can be replaced if your particular file system does not support them.
 """
 
 import importlib
+import json
 import time
 import datetime
 import os
 import requests
 import shutil
+import hashlib
 import tqdm
+import math
+import traceback
+from multiprocessing import Pool
 
 
 def built(path, version_string=None):
@@ -315,3 +320,166 @@ def modelzoo_path(datapath, path):
             with open(zoo_path, 'r') as f:
                 zoo = f.read().split('\n')[0]
             return os.path.join(zoo, path[5:])
+
+
+def download_multiprocess(
+    urls, path, num_processes=32, chunk_size=100, dest_filenames=None, error_path=None
+):
+    """
+    Download items in parallel (e.g. for an image + dialogue task)
+
+    :param urls: Array of urls to download
+    :param path: directory to save items in
+    :param num_processes: number of processes to use
+    :param chunk_size: chunk size to use
+    :param dest_filenames: optional array of same length as url with filenames.
+     Images will be saved as path + dest_filename
+    :param error_path: where to save error logs
+    :return: array of tuples of (destination filename, http status code, error
+    message if any). Note that upon failure, file may not actually be created.
+    """
+
+    pbar = tqdm.tqdm(total=len(urls), position=0)
+
+    # Resume TODO: isfile() may take too long ?? Should I try in a .tmp file
+    if dest_filenames:
+        if len(dest_filenames) != len(urls):
+            raise Exception(
+                'If specified, destination filenames must equal url array in length.'
+            )
+    else:
+
+        def _naming_fn(url, url_metadata=None):
+            return hashlib.md5(url.encode('utf-8')).hexdigest()
+
+        dest_filenames = [_naming_fn(url) for url in urls]
+
+    items = zip(urls, dest_filenames)
+    remaining_items = [
+        it for it in items if not os.path.isfile(os.path.join(path, it[1]))
+    ]
+    print(
+        f'Of {len(urls)} items, {len(urls) - len(remaining_items)} already existed; only going to download {len(remaining_items)} items.'
+    )
+    pbar.update(len(urls) - len(remaining_items))
+
+    pool_chunks = (
+        (remaining_items[i : i + chunk_size], path, _download_multiprocess_single)
+        for i in range(0, len(remaining_items), chunk_size)
+    )
+    remaining_chunks_count = math.ceil(float(len(remaining_items) / chunk_size))
+    print(
+        f'Going to download {remaining_chunks_count} chunks with {chunk_size} images per chunk using {num_processes} processes.'
+    )
+
+    pbar.desc = 'Downloading'
+    all_results = []
+    collected_errors = []
+
+    with Pool(num_processes) as pool:
+        for idx, chunk_result in enumerate(
+            pool.imap_unordered(_download_multiprocess_map_chunk, pool_chunks, 2)
+        ):
+            all_results.extend(chunk_result)
+            for dest_file, http_status_code, error_msg in chunk_result:
+                if http_status_code != 200:
+                    # msg field available as third item in the tuple
+                    # not using b/c error log file would blow up
+                    collected_errors.append(
+                        {
+                            'dest_file': dest_file,
+                            'status_code': http_status_code,
+                            'error': error_msg,
+                        }
+                    )
+                    print(
+                        f'Bad download - chunk: {idx}, dest_file: {dest_file}, http status code: {http_status_code}, error_msg: {error_msg}'
+                    )
+            pbar.update(len(chunk_result))
+    pbar.close()
+
+    if error_path:
+        now = time.strftime("%Y%m%d-%H%M%S")
+        error_filename = os.path.join(
+            error_path, 'parlai_download_multiprocess_errors_%s.log' % now
+        )
+
+        with open(os.path.join(error_filename), 'w+') as error_file:
+            error_file.write(json.dumps(collected_errors))
+            print('Summary of errors written to %s' % error_filename)
+
+    print(
+        'Of %s items attempted downloading, %s had errors.'
+        % (len(remaining_items), len(collected_errors))
+    )
+
+    print('Finished downloading chunks.')
+    return all_results
+
+
+def _download_multiprocess_map_chunk(pool_tup):
+    """
+    Helper function for Pool imap_unordered.
+
+    Apparently function must be pickable (which apparently means must be
+    defined at the top level of a module and can't be a lamdba) to be used in
+    imap_unordered. Has to do with how it's passed to the subprocess.
+
+    :param pool_tup: is a tuple where first arg is an array of tuples of url
+    and dest file name for the current chunk and second arg is function to be
+    called.
+    :return: an array of tuples
+    """
+    items = pool_tup[0]
+    path = pool_tup[1]
+    fn = pool_tup[2]
+    return [fn(it[0], path, it[1]) for it in items]
+
+
+def _download_multiprocess_single(url, path, dest_fname):
+    """
+    Helper function to download an individual item.
+
+    Unlike download() above, does not deal with downloading chunks of a big
+    file, does not support retries (and does not fail if retries are exhausted).
+
+    :param url: URL to download from
+    :param path: directory to save in
+    :param dest_fname: destination file name of image
+    :return tuple (dest_fname, http status)
+    """
+
+    status = None
+    error_msg = None
+    try:
+        # 'User-Agent' header may need to be specified
+        headers = {}
+
+        # Use smaller timeout to skip errors, but can result in failed downloads
+        response = requests.get(
+            url, stream=False, timeout=10, allow_redirects=True, headers=headers
+        )
+    except Exception as e:
+        # Likely a timeout during fetching but had an error in requests.get()
+        status = 500
+        error_msg = '[Exception during download during fetching] ' + str(e)
+        return dest_fname, status, error_msg
+
+    if response.ok:
+        try:
+            with open(os.path.join(path, dest_fname), 'wb+') as out_file:
+                # Some sites respond with gzip transport encoding
+                response.raw.decode_content = True
+                out_file.write(response.content)
+            status = 200
+        except Exception as e:
+            # Likely a timeout during download or decoding
+            status = 500
+            error_msg = '[Exception during decoding or writing] ' + str(e)
+    else:
+        # We get here if there is an HTML error page (i.e. a page saying "404
+        # not found" or anything else)
+        status = response.status_code
+        error_msg = '[Response not OK] Response: %s' % response
+
+    return dest_fname, status, error_msg
