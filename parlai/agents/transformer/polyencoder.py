@@ -137,11 +137,11 @@ class PolyencoderAgent(TorchRankerAgent):
                 cand_rep = cand_encs
             else:
                 cand_rep = cand_encs.expand(bsz, cand_encs.size(1), -1)
-        elif len(cand_vecs.shape) == 3:
+        elif len(cand_vecs.shape) == 3:  # bsz x num cands x seq len
             _, _, cand_rep = self.model(cand_tokens=cand_vecs)
-        elif len(cand_vecs.shape) == 2:
+        elif len(cand_vecs.shape) == 2:  # num cands x seq len
             _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
-            cand_rep = cand_rep.expand(bsz, bsz, -1).transpose(0, 1).contiguous()
+            cand_rep = cand_rep.transpose(0, 1).repeat(bsz, 1, 1)
         scores = self.model(
             ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
         )
