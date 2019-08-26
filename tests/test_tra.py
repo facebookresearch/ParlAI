@@ -195,7 +195,7 @@ class TestMemNN(_AbstractTRATest):
 
     def _get_threshold(self):
         # this is a slightly worse model, so we expect it to perform worse
-        return 0.7
+        return 0.6
 
 
 class TestPolyRanker(_AbstractTRATest):
