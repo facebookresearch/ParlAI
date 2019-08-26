@@ -227,6 +227,7 @@ class TorchRankerAgent(TorchAgent):
         opt['datatype'] = 'train:evalmode'
         opt['interactive_task'] = False
         opt['batchsize'] = 1
+        opt['numthreads'] = 1
         build_cands(opt)
         return path
 
