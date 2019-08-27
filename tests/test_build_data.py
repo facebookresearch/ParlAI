@@ -28,7 +28,7 @@ class TestBuildData(unittest.TestCase):
             # Removing files if they are already there b/c otherwise it won't try to download them again
             try:
                 os.remove(os.path.join(self.datapath, d))
-            except Exception:
+            except OSError:
                 pass
 
     def test_download_multiprocess(self):
@@ -38,9 +38,10 @@ class TestBuildData(unittest.TestCase):
             'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
         ]
 
-        download_results = build_data.download_multiprocess(
-            urls, self.datapath, dest_filenames=self.dest_filenames
-        )
+        with testing_utils.capture_output():
+            download_results = build_data.download_multiprocess(
+                urls, self.datapath, dest_filenames=self.dest_filenames
+            )
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
         self.assertEqual(
@@ -58,9 +59,10 @@ class TestBuildData(unittest.TestCase):
             'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
         ]
 
-        download_results = build_data.download_multiprocess(
-            urls, self.datapath, dest_filenames=self.dest_filenames, chunk_size=1
-        )
+        with testing_utils.capture_output():
+            download_results = build_data.download_multiprocess(
+                urls, self.datapath, dest_filenames=self.dest_filenames, chunk_size=1
+            )
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
 
