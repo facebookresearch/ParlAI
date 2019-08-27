@@ -87,6 +87,8 @@ def multiprocess_train(
         torch.cuda.init()
         # make sure all parameters will be in sync
         torch.manual_seed(42)
+        # force a sync so that no one gets ahead, and all are seeded together
+        distributed_utils.sync_object(None)
 
         # Run the actual training
         return single_train.TrainLoop(opt).train()
