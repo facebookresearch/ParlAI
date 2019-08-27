@@ -42,7 +42,7 @@ class TensorboardLogger(object):
 
     def __init__(self, opt):
         if SummaryWriter is None:
-            raise RuntimeError('Please run `pip install tensorboard tensorboardX`.')
+            raise ImportError('Please run `pip install tensorboard tensorboardX`.')
 
         tbpath = opt['model_file'] + '.tensorboard'
         print('[ Saving tensorboard logs to: {} ]'.format(tbpath))
