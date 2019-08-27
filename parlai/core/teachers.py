@@ -1419,6 +1419,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         pass
 
     def get_data_path(self, opt):
+        """Determines path to the data file."""
         task_name = opt['task'].split(':')[1] if ':' in opt['task'] else opt['task']
         data_path = os.path.join(opt['datapath'], task_name)
         return data_path
