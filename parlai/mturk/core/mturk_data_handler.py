@@ -42,7 +42,7 @@ else:
     new_data_dir = os.path.join(mturk_dir, 'run_data')
     os.makedirs(new_data_dir, exist_ok=True)
 
-data_dir = new_data_dir
+DEFAULT_DATA_DIR = new_data_dir
 
 
 # Run data table:
@@ -125,7 +125,10 @@ class MTurkDataHandler:
     observation across processes and for controlled restarts
     """
 
-    def __init__(self, task_group_id=None, file_name='pmt_data.db'):
+    def __init__(self, task_group_id=None, file_name='pmt_data.db', data_dir=None):
+        if data_dir is None:
+            data_dir = DEFAULT_DATA_DIR
+        self.data_dir = data_dir
         self.db_path = os.path.join(data_dir, file_name)
         self.conn = {}
         self.task_group_id = task_group_id
@@ -139,7 +142,7 @@ class MTurkDataHandler:
         target = 'sandbox' if sandbox else 'live'
         if task_group_id is None:
             return
-        target_dir = os.path.join(data_dir, target, task_group_id, conversation_id)
+        target_dir = os.path.join(self.data_dir, target, task_group_id, conversation_id)
         custom_data = prepped_save_data['custom_data']
         if custom_data is not None:
             target_dir_custom = os.path.join(target_dir, 'custom')
@@ -869,7 +872,7 @@ class MTurkDataHandler:
             'data': None,
         }
         target = 'sandbox' if is_sandbox else 'live'
-        search_dir = os.path.join(data_dir, target)
+        search_dir = os.path.join(DEFAULT_DATA_DIR, target)
         if not os.path.exists(search_dir):
             return result
         result['had_data_dir'] = True
@@ -900,7 +903,7 @@ class MTurkDataHandler:
         target = 'sandbox' if is_sandbox else 'live'
         return_data = {'custom_data': {}, 'worker_data': {}}
 
-        target_dir = os.path.join(data_dir, target, task_group_id, conv_id)
+        target_dir = os.path.join(DEFAULT_DATA_DIR, target, task_group_id, conv_id)
         target_dir_custom = os.path.join(target_dir, 'custom')
         custom_file = os.path.join(target_dir_custom, 'data.json')
         if os.path.exists(custom_file):
