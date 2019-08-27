@@ -497,7 +497,7 @@ class TorchAgent(ABC, Agent):
             'value like 0.9 or a comma-separated tuple like 0.9,0.999',
         )
         optim_group.add_argument(
-            '-wd',
+            '-wdecay',
             '--weight-decay',
             type=float,
             default=None,
