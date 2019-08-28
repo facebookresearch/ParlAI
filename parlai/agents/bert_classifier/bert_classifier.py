@@ -147,7 +147,7 @@ class BertClassifierAgent(TorchClassifierAgent):
                 # the start/end tokens. So, we need to test if already done
                 start_tensor = torch.LongTensor([self.dict.start_idx])
                 new_text_vec = torch.cat([start_tensor, obs['text_vec']], 0)
-                obs['text_vec'] = obs.force_set('text_vec', new_text_vec)
+                obs.force_set('text_vec', new_text_vec)
                 obs['added_start_end_tokens'] = True
         return obs
 
