@@ -154,7 +154,7 @@ class TorchRankerAgent(TorchAgent):
             if self.use_cuda:
                 self.model.cuda()
                 self.criterion.cuda()
-                
+            
             print("Total parameters: {}".format(self._total_parameters()))
             print("Trainable parameters:  {}".format(self._trainable_parameters()))
             
