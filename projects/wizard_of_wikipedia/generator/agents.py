@@ -170,6 +170,13 @@ class EndToEndAgent(_GenericWizardAgent):
             # being destructive
             return list(obs['knowledge_parsed'])
 
+        if 'checked_sentence' not in obs:
+            # interactive time. we're totally on our own
+            obs_know = [k.strip() for k in obs.get('knowledge', '').split('\n')]
+            obs_know = [k for k in obs_know if k]
+            obs['knowledge_parsed'] = obs_know
+            return obs['knowledge_parsed']
+
         checked_sentence = '{} {} {}'.format(
             obs['title'], TOKEN_KNOWLEDGE, obs['checked_sentence']
         )
@@ -204,7 +211,7 @@ class EndToEndAgent(_GenericWizardAgent):
         """
         batch = super().batchify(obs_batch)
         reordered_observations = [obs_batch[i] for i in batch.valid_indices]
-        is_training = not ('eval_labels' in reordered_observations[0])
+        is_training = 'labels' in reordered_observations[0]
 
         # first parse and compile all the knowledge together
         all_knowledges = []  # list-of-lists knowledge items for each observation

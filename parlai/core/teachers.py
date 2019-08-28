@@ -34,9 +34,10 @@ structures for accessing textual dialog data and utilized by ``DialogTeacher``
 from .agents import Teacher
 from .image_featurizers import ImageLoader
 from .message import Message
-from .utils import AttrDict, no_lock, str_to_msg
+from .utils import AttrDict, no_lock, str_to_msg, warn_once
 
 from functools import lru_cache
+from abc import ABC, abstractmethod
 
 import concurrent.futures
 import multiprocessing
@@ -47,6 +48,9 @@ import random
 import sys
 import time
 import os
+import torch
+import json
+import argparse
 
 
 class DataLoader(Thread):
@@ -1255,5 +1259,386 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
                         eps = []
         if len(eps) > 0:
             # add last episode
-            eps[-1]['episode_done'] = True
+            eps[-1].force_set('episode_done', True)
             self.episodes.append(eps)
+
+
+class AbstractImageTeacher(FixedDialogTeacher):
+    """
+    Abstract class to allow easier creation of image + dialogue tasks.
+
+    Subclass this class in a task folder. Note: that Parlai task loading
+    code looks in the directory of the task name and then calls
+    DefaultTeacher to load your teacher, so add an additional subclass of
+        your teacher called DefaultTeacher.
+
+    An example is given as follows, but the keys can be customized:
+    obs = {'text': <caption>,
+        'image': <image features if specified else image>
+        }
+    """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.opt = opt
+        self.task = opt['task'].split(':')[1] if ':' in opt['task'] else opt['task']
+        self.data_path, self.image_path = self.get_paths(opt)
+        self.image_features_dict = None
+
+        self.data = self.load_data(self.data_path, self.opt)
+        self.blank_image_features = torch.FloatTensor(
+            opt.get('image_features_dim')
+        ).fill_(0)
+        self.datatype = opt.get('datatype').split(':')[0]
+
+        # Example of available models: 'resnet152', 'resnext101_32x48d_wsl',
+        # and ImageLoader supports other resnet and resnext models too
+        if not self._validate_image_mode_name(opt.get('image_mode')):
+            raise RuntimeError(
+                'Invalid image_mode for image teacher: %s' % self.image_mode
+            )
+
+        # IMPORTANT NOTE: this teacher will be instantiated twice. The first
+        # by build_dict in which case the image_mode is to 'none' to avoid
+        # calculating image features twice. We should change 'none' to
+        # 'no_image_model'
+        self.image_mode = opt.get('image_mode')
+
+        # Not using default image_mode paramater b/c there is a normalization
+        # (or bug) somewhere in build_dict that is setting it to none
+        self.include_image = opt.get('image_mode') != 'none'
+
+        if shared and 'data' in shared:
+            self.data = shared['data']
+            self.image_loader = shared['image_loader']
+            if 'image_features_dict' in shared:
+                self.image_features_dict = shared['image_features_dict']
+        elif self.include_image:
+            # TODO: Awkward to modify the input opt but needed for the default
+            # TODO: ImageLoader functionality. Is from comment_battle,
+            # TODO: will refactor this at some point soon most likely
+            image_loader_opt = self.opt.copy()
+            image_loader_opt['image_mode'] = (
+                self.image_mode if self.include_image else 'none'
+            )
+
+            image_loader_opt['image_size'] = 256
+            image_loader_opt['image_cropsize'] = 224
+            self.image_loader = ImageLoader(image_loader_opt)
+            self.setup_image_features(self.data_path)
+        else:
+            # This will happen when building the dictionary - is normal
+            warn_once('AbstractImageTeacher self.include_image was False')
+        self.reset()
+
+    @classmethod
+    def get_available_image_mode_names(cls):
+        """
+        Available image model names.
+
+        resnet and resnext variants available from the ImageLoader.
+        resnext101_XXXXX_wsl is the open-sourced FB AI model (960m images, 1.5k
+        hashtags, finetuned on ImageNet).
+
+        """
+        available_model_names = ImageLoader.get_available_model_names()
+        return ['none'] + available_model_names
+
+    @classmethod
+    def _validate_image_mode_name(cls, a):
+        if not isinstance(a, str):
+            raise argparse.ArgumentTypeError(
+                '%s must be a string representing image model name' % a
+            )
+        available_model_names = cls.get_available_image_mode_names()
+        if a not in available_model_names:
+            raise argparse.ArgumentTypeError(
+                '\"%s\" unknown image model name. Choose from: %s. Currently suggested resnet is resnet152 and resnext is resnext101_32x48d_wsl.'
+                % (a, available_model_names)
+            )
+        return a
+
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        agent = argparser.add_argument_group('AbstractImageTeacher Arguments')
+        agent.add_argument(
+            '--image-path',
+            type=str,
+            default=None,
+            help='Optional argument to specify where images for dataset are'
+            'stored if already downloaded. Most tasks will download the images'
+            'if not present on the < datapath > / < task > _images / * and * if'
+            'this argument is not specified.',
+        )
+
+        agent.add_argument(
+            '--image-features-dim',
+            type=int,
+            default=2048,
+            help='Specify the size of image features Tensors.',
+        )
+
+    @property
+    def image_id_key(self):
+        """
+        Which key in the input data dict objects uniquely identify each image.
+
+        Common image keys are "image_id" or "image_num". May be implemented by
+        subclass.
+        """
+        return 'image_id'
+
+    @property
+    def text_key(self):
+        """
+        Which key in the input data dict objects identifies the text.
+
+        Common keys are "text" or "comment". May be implemented by subclass.
+        """
+        return 'text'
+
+    @abstractmethod
+    def image_id_to_image_path(self, image_id):
+        """
+        Get the path of the image on disk.
+
+        Must be implemented by subclass.
+        """
+        pass
+
+    def get_paths(self, opt):
+        """
+        Return the path to the data directory and to the image directory.
+
+        Is based on opt fields: task, datatype (train, valid, test), datapath.
+
+        Subclass can override this.
+        """
+        task_name = opt['task'].split(':')[1] if ':' in opt['task'] else opt['task']
+        data_path = os.path.join(opt['datapath'], task_name)
+
+        if opt.get('image_path', None):
+            image_path = opt['image_path']
+        else:
+            # other common choice: .join(opt['datapath'], task_name + '_images')
+            image_path = os.path.join(data_path, 'images')
+
+        return data_path, image_path
+
+    def is_image_mode_buildable(self, model_name):
+        """
+        Is buildable if features can be calculated by ImageLoader.
+
+        Users may wish to compute features for the dataset offline and use in
+        the model, in which case, the image model should return False and
+        get_image_features() should be overriden in subclass.
+        """
+        return model_name in ImageLoader.get_available_model_names()
+
+    def get_image_mode_features_path(self, task, image_model_name, dt):
+        """
+        Image features for the dataset images are stored here.
+
+        Can be overriden in subclass to use custom paths.
+        Image features can be manually copied into this directory or in the
+        case of ImageLoader eligible models, built if not already there.
+
+        """
+        # In default implementation, self.data_path already has task name added
+        image_features_path = os.path.join(self.data_path, 'image_features')
+
+        if not os.path.isdir(image_features_path):
+            os.makedirs(image_features_path)
+
+        return os.path.join(
+            image_features_path, '%s_%s_%s_features_dict' % (task, image_model_name, dt)
+        )
+
+    def load_data(self, data_path, opt):
+        """
+        Loading the data file, which is the index to the images and text.
+
+        It is often a .json file with the name of the <datatype>.json (i.e.
+        train.json). Stores in self.data.
+
+        Can be override by subclass.
+        """
+
+        dt = opt['datatype'].split(':')[0]
+
+        if dt not in ['train', 'valid', 'test']:
+            raise Exception(
+                'Unknown dt parameter: %s. Expected either "train", "valid", or "test".'
+                % dt
+            )
+
+        # Assumes file is train.json or valid.json named
+        data_file = os.path.join(self.data_path, '%s.json' % dt)
+
+        # Load the text data and image number indexes
+        with open(data_file) as f:
+            self.data = json.load(f)
+
+        if len(self.data) > 0 and self.image_id_key not in self.data[0]:
+            # Data doesn't have a "image_id" like field so add the index in the file to the data
+            for idx, d in enumerate(self.data):
+                d[self.image_id_key] = idx
+
+        return self.data
+
+    def setup_image_features(self, data_path):
+        """
+        Load text and image data.
+
+        The image features all live in dicts by default in <data_path>/
+        image_features/ but get_image_features_path() above can be overriden by
+        subclass to put them elsewhere.
+
+        In the (very odd) case that the resnet or resnext dicts (models
+        buildable using ImageLoader) are not found, we build them.
+        """
+
+        image_mode_features_dict_path = self.get_image_mode_features_path(
+            self.task, self.image_mode, self.datatype
+        )
+
+        if os.path.isfile(image_mode_features_dict_path):
+            self.image_features_dict = torch.load(
+                image_mode_features_dict_path, map_location='cpu'
+            )
+        else:
+            if self.is_image_mode_buildable(self.image_mode):
+                # try to build with ImageLoader (i.e. resenet/resnext variants)
+                self.image_features_dict = self._build_image_features_dict(
+                    self.data_path, self.datatype, image_mode_features_dict_path
+                )
+            else:
+                raise RuntimeError(
+                    'Image model: %s is not buildable by ImageLoader but does'
+                    'not already exist on disk as an image features dict for'
+                    'this dataset.' % self.image_mode
+                )
+
+    def _build_image_features_dict(self, data_path, dt, store_dict_path):
+        """
+        Build resne(x)t image features with ImageLoader.
+
+        (Or anything handleable by ImageLoader) and save to path.
+        Only called if we haven't already built the dict before.
+
+        """
+        image_features_dict = {}
+        total = len(self.data)
+        import tqdm
+
+        pbar = tqdm.tqdm(
+            total=total,
+            unit='cand',
+            unit_scale=True,
+            desc='Building image features dict for %s with ImageLoader.'
+            % self.image_mode,
+        )
+        num = 0
+        for ex in self.data:
+            img_id = ex[self.image_id_key]
+            img_path = self.image_id_to_image_path(img_id)
+            image = self.image_loader.load(img_path).detach()
+            image = image[0, :, 0, 0]
+            image_features_dict[img_id] = image
+            num += 1
+            pbar.update(1)
+            if num % 1000 == 0:
+                print(f'Processing image index: {num}')
+        torch.save(image_features_dict, store_dict_path)
+        return image_features_dict
+
+    def reset(self):
+        super().reset()
+        self.example = None
+
+    def num_episodes(self):
+        return self.num_examples()
+
+    def num_examples(self):
+        return len(self.data)
+
+    def get_image_features(self, example):
+        """
+        Get image features for example
+
+        Can be overrided in subclass for different behavior.
+        For large datasets, it may be more appropriate to use the
+        ImageLoader.load() method to load image features (as this is essentially
+        streaming the features from disk, so that we do not have to load a
+        large image feature dict in memory).
+        #TODO Could be the default option if we are using -dt train:stream
+        """
+        key = str(example[self.image_id_key])
+        if not self.include_image or key not in self.image_features_dict:
+            image_features = self.blank_image_features
+        else:
+            image_features = self.image_features_dict[key]
+        return image_features
+
+    def get(self, episode_idx, entry_idx=0):
+        """
+        Override this in subclass if your data should be handled in a
+        different format
+        """
+        example = self.data[episode_idx]
+        image_features = self.get_image_features(example)
+        return {
+            'labels': [example[self.text_key]],
+            'image': image_features,
+            'episode_done': True,
+        }
+
+    def next_example(self):
+        """Load queued example
+
+        When self.image_features_dict is not `none`, this is essentially a
+        no-op. However, this is necessary/useful if self.image_mode is e.g. raw
+        or ascii.
+        """
+
+        if self.image_features_dict is not None:
+            # We have specified an image model and it uses image features either
+            # generated by ImageLoader or by pre-computation and manually
+            # placed on path
+            if self.example is None:
+                # Call to super method calls get() to get next example
+                self.example, self.imageEpochDone = super().next_example()
+            return (self.example, self.imageEpochDone)
+        elif self.include_image:
+            # We have specified an image model/mode but it's not based on
+            # calculating features, (e.g. "raw" or "ascii") so we try to load
+            # the image from the DataLoader
+            if self.example is not None:
+                # Move the image we previously loaded in the background via
+                # the DataLoader into the example
+                image = self.data_queue.get()
+                self.example['image'] = image
+                current_result = (self.example, self.imageEpochDone)
+            else:
+                current_result = super().next_example()
+
+            # Now, get next base example and put it to load in the background
+            self.example, self.imageEpochDone = super().next_example()
+            img_path = self.image_id_to_image_path(self.example['image_id'])
+            self.data_loader.request_load(
+                self.receive_data, self.image_loader.load, (img_path,)
+            )
+            return current_result
+        else:
+            # No image model specified
+            if self.example is None:
+                self.example, self.imageEpochDone = super().next_example()
+            return self.example, self.imageEpochDone
+
+    def share(self):
+        shared = super().share()
+        shared['data'] = self.data
+        shared['image_loader'] = self.image_loader
+        if hasattr(self, 'image_features_dict'):
+            shared['image_features_dict'] = self.image_features_dict
+        return shared

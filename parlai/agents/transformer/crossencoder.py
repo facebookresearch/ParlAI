@@ -17,9 +17,6 @@ class CrossencoderAgent(TorchRankerAgent):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
-        if self.use_cuda:
-            self.rank_loss.cuda()
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
             from parlai.core.distributed_utils import is_distributed
@@ -32,11 +29,11 @@ class CrossencoderAgent(TorchRankerAgent):
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         TransformerRankerAgent.add_cmdline_args(argparser)
+        argparser.set_defaults(encode_candidate_vecs=False)
         return argparser
 
     def build_model(self, states=None):
-        self.model = CrossEncoderModule(self.opt, self.dict, self.NULL_IDX)
-        return self.model
+        return CrossEncoderModule(self.opt, self.dict, self.NULL_IDX)
 
     def vectorize(self, *args, **kwargs):
         """ Add the start and end token to the text.

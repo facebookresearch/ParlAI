@@ -29,7 +29,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     @staticmethod
     def add_cmdline_args(parser):
         add_common_args(parser)
-        parser.set_defaults(encode_candidate_vecs=True, candidates='inline')
+        parser.set_defaults(encode_candidate_vecs=False, candidates='inline')
 
     def __init__(self, opt, shared=None):
         # download pretrained models
@@ -51,7 +51,7 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         self.END_IDX = self.dict.end_idx
 
     def build_model(self):
-        self.model = BertWrapper(
+        return BertWrapper(
             BertModel.from_pretrained(self.pretrained_path),
             1,
             add_transformer_layer=self.opt['add_transformer_layer'],

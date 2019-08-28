@@ -87,7 +87,7 @@ class TorchRankerAgent(TorchAgent):
         agent.add_argument(
             '--encode-candidate-vecs',
             type='bool',
-            default=False,
+            default=True,
             help='Cache and save the encoding of the candidate vecs. This '
             'might be used when interacting with the model in real time '
             'or evaluating on fixed candidate set when the encoding of '
@@ -135,7 +135,6 @@ class TorchRankerAgent(TorchAgent):
         super().__init__(opt, shared)
 
         if shared:
-            self.model = shared['model']
             states = None
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
@@ -146,9 +145,19 @@ class TorchRankerAgent(TorchAgent):
             self.metrics['mrr'] = 0.0
             self.metrics['train_accuracy'] = 0.0
 
-            self.build_model()
+            self.criterion = self.build_criterion()
+            self.model = self.build_model()
+            if self.model is None or self.criterion is None:
+                raise AttributeError(
+                    'build_model() and build_criterion() need to return the model or criterion'
+                )
+            if self.use_cuda:
+                self.model.cuda()
+                self.criterion.cuda()
+                
             print("Total parameters: {}".format(self._total_parameters()))
             print("Trainable parameters:  {}".format(self._trainable_parameters()))
+            
             if self.fp16:
                 self.model = self.model.half()
             if init_model:
@@ -158,10 +167,6 @@ class TorchRankerAgent(TorchAgent):
                 states = {}
 
         self.rank_top_k = opt.get('rank_top_k', -1)
-        self.rank_loss = nn.CrossEntropyLoss(reduce=True, size_average=False)
-        if self.use_cuda:
-            self.model.cuda()
-            self.rank_loss.cuda()
 
         # Vectorize and save fixed/vocab candidates once upfront if applicable
         self.set_fixed_candidates(shared)
@@ -183,13 +188,21 @@ class TorchRankerAgent(TorchAgent):
                 self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
             )
 
+    def build_criterion(self):
+        """
+        Construct and return the loss function.
+
+        By default torch.nn.CrossEntropyLoss.
+        """
+        return torch.nn.CrossEntropyLoss(reduction='sum')
+
     def set_interactive_mode(self, mode, shared=False):
         super().set_interactive_mode(mode, shared)
         self.candidates = self.opt['candidates']
+        self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
         if mode:
             self.eval_candidates = 'fixed'
             self.ignore_bad_candidates = True
-            self.encode_candidate_vecs = True
             self.fixed_candidates_path = self.opt['fixed_candidates_path']
             if self.fixed_candidates_path is None or self.fixed_candidates_path == '':
                 # Attempt to get a standard candidate set for the given task
@@ -201,7 +214,6 @@ class TorchRankerAgent(TorchAgent):
         else:
             self.eval_candidates = self.opt['eval_candidates']
             self.ignore_bad_candidates = self.opt.get('ignore_bad_candidates', False)
-            self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
             self.fixed_candidates_path = self.opt['fixed_candidates_path']
 
     def get_task_candidates_path(self):
@@ -234,11 +246,6 @@ class TorchRankerAgent(TorchAgent):
             where we cache the candidate encodings), you do not need to call
             self.model on cand_vecs
         """
-        pass
-
-    @abstractmethod
-    def build_model(self):
-        """Build a new model (implemented by children classes)."""
         pass
 
     def _get_batch_train_metrics(self, scores):
@@ -343,7 +350,7 @@ class TorchRankerAgent(TorchAgent):
         )
         try:
             scores = self.score_candidates(batch, cand_vecs)
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.backward(loss)
             self.update_params()
         except RuntimeError as e:
@@ -390,7 +397,7 @@ class TorchRankerAgent(TorchAgent):
         )
 
         cand_encs = None
-        if self.encode_candidate_vecs:
+        if self.encode_candidate_vecs and self.eval_candidates in ['fixed', 'vocab']:
             # if we cached candidate encodings for a fixed list of candidates,
             # pass those into the score_candidates function
             if self.eval_candidates == 'fixed':
@@ -408,7 +415,7 @@ class TorchRankerAgent(TorchAgent):
 
         # Update metrics
         if label_inds is not None:
-            loss = self.rank_loss(scores, label_inds)
+            loss = self.criterion(scores, label_inds)
             self.metrics['loss'] += loss.item()
             self.metrics['examples'] += batchsize
             for b in range(batchsize):
@@ -696,6 +703,7 @@ class TorchRankerAgent(TorchAgent):
         shared['fixed_candidate_encs'] = self.fixed_candidate_encs
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
+        shared['vocab_candidate_encs'] = self.vocab_candidate_encs
         shared['optimizer'] = self.optimizer
         return shared
 
@@ -740,6 +748,7 @@ class TorchRankerAgent(TorchAgent):
         if shared:
             self.vocab_candidates = shared['vocab_candidates']
             self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
+            self.vocab_candidate_encs = shared['vocab_candidate_encs']
         else:
             if 'vocab' in (self.opt['candidates'], self.opt['eval_candidates']):
                 cands = []
@@ -755,9 +764,24 @@ class TorchRankerAgent(TorchAgent):
                 )
                 if self.use_cuda:
                     self.vocab_candidate_vecs = self.vocab_candidate_vecs.cuda()
+
+                if self.encode_candidate_vecs:
+                    # encode vocab candidate vecs
+                    self.vocab_candidate_encs = self._make_candidate_encs(
+                        self.vocab_candidate_vecs
+                    )
+                    if self.use_cuda:
+                        self.vocab_candidate_encs = self.vocab_candidate_encs.cuda()
+                    if self.fp16:
+                        self.vocab_candidate_encs = self.vocab_candidate_encs.half()
+                    else:
+                        self.vocab_candidate_encs = self.vocab_candidate_encs.float()
+                else:
+                    self.vocab_candidate_encs = None
             else:
                 self.vocab_candidates = None
                 self.vocab_candidate_vecs = None
+                self.vocab_candidate_encs = None
 
     def set_fixed_candidates(self, shared):
         """
@@ -782,8 +806,14 @@ class TorchRankerAgent(TorchAgent):
         else:
             opt = self.opt
             cand_path = self.fixed_candidates_path
-            if 'fixed' in (self.candidates, self.eval_candidates) and cand_path:
-
+            if 'fixed' in (self.candidates, self.eval_candidates):
+                if not cand_path:
+                    # Attempt to get a standard candidate set for the given task
+                    path = self.get_task_candidates_path()
+                    if path:
+                        print("[setting fixed_candidates path to: " + path + " ]")
+                        self.fixed_candidates_path = path
+                        cand_path = self.fixed_candidates_path
                 # Load candidates
                 print("[ Loading fixed candidate set from {} ]".format(cand_path))
                 with open(cand_path, 'r', encoding='utf-8') as f:
@@ -819,9 +849,7 @@ class TorchRankerAgent(TorchAgent):
                     if setting == 'reuse' and os.path.isfile(enc_path):
                         encs = self.load_candidates(enc_path, cand_type='encodings')
                     else:
-                        encs = self._make_candidate_encs(
-                            self.fixed_candidate_vecs, path=enc_path
-                        )
+                        encs = self._make_candidate_encs(self.fixed_candidate_vecs)
                         self._save_candidates(
                             encs, path=enc_path, cand_type='encodings'
                         )
@@ -880,7 +908,7 @@ class TorchRankerAgent(TorchAgent):
             '--encode-candidate-vecs True.'
         )
 
-    def _make_candidate_encs(self, vecs, path):
+    def _make_candidate_encs(self, vecs):
         """
         Encode candidates from candidate vectors.
 
