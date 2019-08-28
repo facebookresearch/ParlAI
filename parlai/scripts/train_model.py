@@ -594,6 +594,8 @@ class TrainLoop:
             elif isinstance(values[0], dict):
                 # do the same procedure recursively
                 finalized[k] = self._average_dicts(values)
+            elif isinstance(values[0], str):
+                finalized[k] = values[0]
             else:
                 # all other cases, take the mean across the workers
                 finalized[k] = np.mean(values)
