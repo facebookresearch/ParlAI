@@ -1029,8 +1029,8 @@ class TopKSampling(TreeSearch):
     """
 
     def __init__(self, k, *args, **kwargs):
-        self.k = k
         super().__init__(*args, **kwargs)
+        self.k = k
 
     def select_paths(self, logprobs, prior_scores):
         topk = logprobs.topk(self.k, dim=-1)
@@ -1056,15 +1056,15 @@ class NucleusSampling(TreeSearch):
     """
 
     def __init__(self, p, *args, **kwargs):
-        self.p = p
         super().__init__(*args, **kwargs)
+        self.p = p
 
     def select_paths(self, logprobs, prior_scores):
-        # unlike the other treesearch methods, we have to switch to linspace
-        # for the probabilities in order to compute the CDF
+        # Unlike the other treesearch methods, we have to switch to linspace
+        # for the probabilities in order to compute the CDF.
         probs = torch.softmax(logprobs, dim=-1)
         sprobs, sinds = probs.sort(dim=-1, descending=True)
-        # the subtraction here is so that we always include the first word to
+        # The subtraction here is so that we always include the first word to
         # go over p. For example, if the most probable token has a prob of 0.5, and
         # p = 0.3, then we need still need to include that first token.
         mask = (sprobs.cumsum(dim=-1) - sprobs[:, :1]) >= self.p
@@ -1073,7 +1073,7 @@ class NucleusSampling(TreeSearch):
         choices = torch.multinomial(sprobs, 1)[:, 0]
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
         tok_ids = sinds[hyp_ids, choices]
-        # convert back to logspace
+        # Convert back to logspace.
         scores = sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
         return (hyp_ids, tok_ids, best_scores)
