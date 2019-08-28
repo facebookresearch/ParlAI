@@ -1033,12 +1033,12 @@ class TopKSampling(TreeSearch):
         self.k = k
 
     def select_paths(self, logprobs, prior_scores):
-        topk = logprobs.topk(self.k, dim=-1)
-        probs = torch.softmax(topk.values, dim=-1)
+        values, indices = logprobs.topk(self.k, dim=-1)
+        probs = torch.softmax(values, dim=-1)
         choices = torch.multinomial(probs, 1)[:, 0]
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
-        tok_ids = topk.indices[hyp_ids, choices]
-        scores = topk.values[hyp_ids, choices]
+        tok_ids = indices[hyp_ids, choices]
+        scores = values[hyp_ids, choices]
         best_scores = prior_scores.expand_as(scores) + scores
         return (hyp_ids, tok_ids, best_scores)
 
