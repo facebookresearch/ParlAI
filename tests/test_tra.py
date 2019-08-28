@@ -37,9 +37,10 @@ class _AbstractTRATest(unittest.TestCase):
 
     def _get_threshold(self):
         # Accuracy threshold
-        return 0.85
+        return 0.8
 
     # test train inline cands
+    @testing_utils.retry(ntries=3)
     def test_train_inline(self):
         args = self._get_args()
         args['candidates'] = 'inline'
@@ -53,6 +54,7 @@ class _AbstractTRATest(unittest.TestCase):
         )
 
     # test train batch cands
+    @testing_utils.retry(ntries=3)
     def test_train_batch(self):
         args = self._get_args()
         args['candidates'] = 'batch'
@@ -66,6 +68,7 @@ class _AbstractTRATest(unittest.TestCase):
         )
 
     # test train fixed
+    @testing_utils.retry(ntries=3)
     def test_train_fixed(self):
         args = self._get_args()
         args['candidates'] = 'fixed'
@@ -80,6 +83,7 @@ class _AbstractTRATest(unittest.TestCase):
         )
 
     # test train batch all cands
+    @testing_utils.retry(ntries=3)
     def test_train_batch_all(self):
         args = self._get_args()
         args['candidates'] = 'batch-all-cands'
@@ -93,6 +97,7 @@ class _AbstractTRATest(unittest.TestCase):
         )
 
     # test eval inline ecands
+    @testing_utils.retry(ntries=3)
     def test_eval_inline(self):
         args = self._get_args()
         args['eval_candidates'] = 'inline'
@@ -106,6 +111,7 @@ class _AbstractTRATest(unittest.TestCase):
         )
 
     # test eval batch ecands
+    @testing_utils.retry(ntries=3)
     def test_eval_batch(self):
         args = self._get_args()
         args['eval_candidates'] = 'batch'
@@ -119,6 +125,7 @@ class _AbstractTRATest(unittest.TestCase):
         )
 
     # test eval fixed ecands
+    @testing_utils.retry(ntries=3)
     def test_eval_fixed(self):
         args = self._get_args()
         args['eval_candidates'] = 'fixed'
@@ -157,6 +164,7 @@ class _AbstractTRATest(unittest.TestCase):
             )
 
     # test eval vocab ecands
+    @testing_utils.retry(ntries=3)
     def test_eval_vocab(self):
         args = self._get_args()
         args['eval_candidates'] = 'vocab'
@@ -195,7 +203,7 @@ class TestMemNN(_AbstractTRATest):
 
     def _get_threshold(self):
         # this is a slightly worse model, so we expect it to perform worse
-        return 0.6
+        return 0.5
 
 
 class TestPolyRanker(_AbstractTRATest):
@@ -213,7 +221,7 @@ class TestPolyRanker(_AbstractTRATest):
         return args
 
     def _get_threshold(self):
-        return 0.7
+        return 0.6
 
 
 if __name__ == '__main__':
