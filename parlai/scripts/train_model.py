@@ -441,7 +441,7 @@ class TrainLoop:
                 self.valid_reports = obj.get('valid_reports', [])
 
         if opt['tensorboard_log'] is True:
-            self.writer = TensorboardLogger(opt)
+            self.tb_logger = TensorboardLogger(opt)
 
     def save_model(self, suffix=None):
         """Save the model to disk, possibly with a suffix."""
@@ -504,8 +504,8 @@ class TrainLoop:
         v['train_time'] = self.train_time.time()
         self.valid_reports.append(v)
         # logging
-        if opt['tensorboard_log'] is True and is_primary_worker():
-            self.writer.add_metrics('valid', int(self.train_time.time()), valid_report)
+        if opt['tensorboard_log'] and is_primary_worker():
+            self.tb_logger.log_metrics('valid', self.parleys, valid_report)
         # saving
         if (
             opt.get('model_file')
@@ -594,6 +594,8 @@ class TrainLoop:
             elif isinstance(values[0], dict):
                 # do the same procedure recursively
                 finalized[k] = self._average_dicts(values)
+            elif isinstance(values[0], str):
+                finalized[k] = values[0]
             else:
                 # all other cases, take the mean across the workers
                 finalized[k] = np.mean(values)
@@ -694,8 +696,8 @@ class TrainLoop:
         print(log)
         self.log_time.reset()
 
-        if opt['tensorboard_log'] is True and is_primary_worker():
-            self.writer.add_metrics('train', self._total_exs, train_report)
+        if opt['tensorboard_log'] and is_primary_worker():
+            self.tb_logger.log_metrics('train', self.parleys, train_report)
 
     def train(self):
         """
