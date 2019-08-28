@@ -761,6 +761,10 @@ class TestTorchAgent(unittest.TestCase):
     def test_observe(self):
         """Make sure agent stores and returns observation."""
         agent = get_agent()
+        # text could be none
+        obs = {'text': None, 'episode_done': True}
+        out = agent.observe(obs.copy())
+        self.assertIsNotNone(out)
         obs = {'text': "I'll be back.", 'labels': ["I'm back."], 'episode_done': True}
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
