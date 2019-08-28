@@ -317,8 +317,7 @@ class TestTransformerGenerator(unittest.TestCase):
 
     def test_nucleus(self):
         """Test nucleus generation."""
-        # topk is inherently stochastic, so the test is currently limited
-        # to just testing it runs without crashing
+        # Nucleus is inherently stochastic, just ensure no crash.
         testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
@@ -339,8 +338,7 @@ class TestTransformerGenerator(unittest.TestCase):
 
     def test_topk(self):
         """Test topk generation."""
-        # topk is inherently stochastic, so the test is currently limited
-        # to just testing it runs without crashing
+        # Topk is inherently stochastic, just ensure no crash.
         testing_utils.train_model(
             dict(
                 task='integration_tests:nocandidate',
