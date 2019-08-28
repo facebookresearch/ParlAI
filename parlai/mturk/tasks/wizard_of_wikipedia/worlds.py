@@ -96,7 +96,10 @@ class PersonasGenerator(object):
         if len(self.idx_stack) == 0:
             self.add_idx_stack()
         idx = self.idx_stack.pop()
-        data = np.load(os.path.join(self.personas_path, self.personas_name_list[idx]))
+        data = np.load(
+            os.path.join(self.personas_path, self.personas_name_list[idx]),
+            allow_pickle=True,
+        )
         return (idx, data)
 
     def push_persona(self, idx):
