@@ -23,7 +23,7 @@ def _forced_parse(parser, opt):
     return popt
 
 
-@testing_utils.skipUnlessGPU
+@unittest.skip("Test disabled until #1974 is resolved.")
 class TestDistributed(unittest.TestCase):
     def _distributed_train_model(self, opt):
         # we have to delay our import to here, because the set_spawn_method call
