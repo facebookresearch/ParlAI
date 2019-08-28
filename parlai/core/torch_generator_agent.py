@@ -321,7 +321,9 @@ class TorchGeneratorAgent(TorchAgent):
 
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
+            # ensure all distributed copies will always be in sync
             self.model = self.build_model()
+
             if self.model is None or self.criterion is None:
                 raise AttributeError(
                     'build_model() and build_criterion() need to return the model or criterion'

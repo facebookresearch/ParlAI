@@ -29,6 +29,7 @@ class CrossencoderAgent(TorchRankerAgent):
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         TransformerRankerAgent.add_cmdline_args(argparser)
+        argparser.set_defaults(encode_candidate_vecs=False)
         return argparser
 
     def build_model(self, states=None):
