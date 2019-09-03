@@ -87,10 +87,7 @@ class InteractiveWorld(DialogPartnerWorld):
         if self.cnt == 0 and self.topic != NO_TOPIC:
             # add the chosen_topic to the message
             act['chosen_topic'] = self.topic
-            act.force_set(
-                'text',
-                '\n'.join([self.topic, act.get('text', 'hi')])
-            )
+            act.force_set('text', '\n'.join([self.topic, act.get('text', 'hi')]))
         self.model_agent.observe(validate(act))
 
         # model agent act
