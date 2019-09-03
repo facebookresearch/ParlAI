@@ -143,7 +143,7 @@ class WizardEval(MultiAgentDialogWorld):
         opt,
         agents=None,
         shared=None,
-        range_turn=[3, 5],
+        range_turn=(3, 5),
         max_turn=5,
         max_resp_time=120,
         model_agent_opt=None,
