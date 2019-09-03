@@ -143,7 +143,7 @@ class WizardEval(MultiAgentDialogWorld):
         opt,
         agents=None,
         shared=None,
-        range_turn=[3, 5],
+        range_turn=(3, 5),
         max_turn=5,
         max_resp_time=120,
         model_agent_opt=None,
@@ -246,7 +246,7 @@ class WizardEval(MultiAgentDialogWorld):
                 }
                 self.model_agent.observe(chosen_act)
                 model_act = self.model_agent.act()
-                model_act['id'] = 'PERSON_2'
+                model_act.force_set('id', 'PERSON_2')
                 self.dialog.append((1, model_act.get('text')))
                 self.eval_agent.observe(model_act)
             else:
@@ -300,8 +300,8 @@ class WizardEval(MultiAgentDialogWorld):
                     (' !', '!'),
                     ('i ', 'I '),
                 ]:
-                    act['text'] = act['text'].replace(sb_0, sb_1)
-                act['id'] = 'PERSON_2'
+                    act.force_set('text', act['text'].replace(sb_0, sb_1))
+                act.force_set('id', 'PERSON_2')
                 # NOTE: your model may or may not need to observe itself here
                 # If it does, call model_observes_itself or some other specialized
                 # function
