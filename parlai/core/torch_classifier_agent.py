@@ -137,7 +137,7 @@ class TorchClassifierAgent(TorchAgent):
                 )
             if self.use_cuda:
                 self.model.cuda()
-                self.critieron.cuda()
+                self.criterion.cuda()
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
                 self.load(init_model)
