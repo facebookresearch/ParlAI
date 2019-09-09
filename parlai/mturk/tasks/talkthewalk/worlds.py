@@ -178,6 +178,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         """Sends the current location to the given agent"""
         msg = {
             'id': "WORLD_LOCATION",
+            'message_id': 'WORLD_LOCATION',
             'text': {
                 'location': self.location,
                 'boundaries': [self.min_x, self.min_y, self.max_x, self.max_y],
@@ -190,6 +191,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         """Sends the world map to the given agent"""
         msg = {
             'id': "WORLD_MAP",
+            'message_id': 'WORLD_MAP',
             'text': {
                 'landmarks': self.landmarks,
                 'target': self.target_location,
@@ -208,12 +210,16 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
     def timeout(self, agent):
         self.status = 'timeout'
         self.causal_agent_id = agent.id
-        msg = {'id': "WORLD_TIMEOUT", 'text': ''}
+        msg = {'id': "WORLD_TIMEOUT", 'text': '', 'message_id': 'WORLD_TIMEOUT'}
         agent.observe(msg)
 
         for other_agent in self.agents:
             if other_agent.id != agent.id:
-                msg = {'id': 'WORLD_PARTNER_TIMEOUT', 'text': ''}
+                msg = {
+                    'id': 'WORLD_PARTNER_TIMEOUT',
+                    'text': '',
+                    'message_id': 'WORLD_PARTNER_TIMEOUT',
+                }
                 other_agent.observe(msg)
 
     def is_world_success(self, world):
@@ -446,7 +452,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         if success:
             print("SUCCESS!!")
             self.status = 'success'
-            msg = {'id': 'WORLD_SUCCESS', 'text': ''}
+            msg = {'id': 'WORLD_SUCCESS', 'text': '', 'message_id': 'WORLD_SUCCESS'}
             for agent in self.agents:
                 agent.observe(msg)
             return True
@@ -455,6 +461,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
             if self.num_evaluations < 3:
                 msg = {
                     'id': 'Noah',
+                    'message_id': 'Noah',
                     'text': 'Unfortunately, the Tourist is not at the '
                     'target location. You have {} attempt(s) left, '
                     'and you\'ll now receive a bonus of {}c upon '
@@ -467,7 +474,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                     agent.observe(msg)
                 return False
             else:
-                msg = {'id': 'WORLD_FAIL', 'text': ''}
+                msg = {'id': 'WORLD_FAIL', 'text': '', 'message_id': 'WORLD_FAIL'}
                 for agent in self.agents:
                     agent.observe(msg)
                 return True
