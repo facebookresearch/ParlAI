@@ -66,7 +66,7 @@ class AdversarialTeacher(_BaseSafetyTeacher):
     def _load_data_dump(self):
         with open(self.data_path, 'rb') as f:
             dump = json.load(f)
-        return dump['standard']
+        return dump['adversarial']
 
 
 class MultiturnTeacher(FixedDialogTeacher):
