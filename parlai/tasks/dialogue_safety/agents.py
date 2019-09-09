@@ -9,6 +9,9 @@ import parlai.core.build_data as build_data
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 
+from .base_agent import _BaseSafetyTeacher
+from .build import build, MULTI_TURN_DATA
+
 import copy
 import json
 import os
@@ -25,32 +28,8 @@ except ImportError:
 OK_CLASS = '__ok__'
 NOT_OK_CLASS = '__notok__'
 
-SINGLE_TURN_DATA = 'single_turn_safety.json'
-MULTI_TURN_DATA = 'multi_turn_safety.json'
 
-
-def build(datapath):
-    version = 'v1.0'
-    dpath = os.path.join(datapath, 'dialogue_safety')
-
-    if not build_data.built(dpath, version):
-        print('[building data: ' + dpath + ']')
-        if build_data.built(dpath):
-            # An older version exists, so remove these outdated files.
-            build_data.remove_dir(dpath)
-        build_data.make_dir(dpath)
-
-        # Download the data.
-        fnames = [SINGLE_TURN_DATA, MULTI_TURN_DATA]
-        for fname in fnames:
-            url = 'http://parl.ai/downloads/dialogue_safety/' + fname
-            build_data.download(url, dpath, fname)
-
-        # Mark the data as built.
-        build_data.mark_done(dpath, version)
-
-
-class StandardTeacher(FixedDialogTeacher):
+class StandardTeacher(_BaseSafetyTeacher):
     """
     Data from the standard collection described in the paper
     `Build it Break it Fix it for Dialogue Safety: Robustness from
@@ -64,79 +43,13 @@ class StandardTeacher(FixedDialogTeacher):
      --round-only True`
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
-        parser = parser.add_argument_group('Standard Safety Teacher Args')
-        parser.add_argument(
-            '--round',
-            type=int,
-            default=1,
-            choices=[1, 2, 3],
-            help='Which round of data to use',
-        )
-        parser.add_argument(
-            '--round-only',
-            type='bool',
-            default=False,
-            help='if False, includes all rounds up to including the specified '
-            'round; if True, only includes data from the specified round',
-        )
-        return parser
-
-    def __init__(self, opt, shared=None):
-        build(opt['datapath'])  # download the data
-        self.opt = opt
-        self.data_path = os.path.join(
-            opt['datapath'], 'dialogue_safety', SINGLE_TURN_DATA
-        )
-
-        self.fixed_random = random.Random(42)
-        self.round = opt['round']
-        self.label_candidates = [NOT_OK_CLASS, OK_CLASS]
-
-        if shared and 'data' in shared:
-            self.data = shared['data']
-        else:
-            self._setup_data(opt['datatype'])
-
-        opt = copy.deepcopy(opt)
-        super().__init__(opt, shared)
-        self.reset()
-
-    def num_episodes(self):
-        return len(self.data)
-
-    def num_examples(self):
-        return len(self.data)
-
-    def _setup_data(self, datatype):
-        # load data
-        self.data_dump = json.load(open(self.data_path, 'rb'))['standard']
-        d_type = datatype.split(':')[0]
-        self.data = []
-        if not self.opt['round_only']:
-            # loop and add other rounds
-            for i in range(self.round - 1):
-                rnd = str(i + 1)
-                for x in ['good', 'bad']:
-                    self.data += self.data_dump[d_type][rnd][x]
-
-        # add data from current round
-        for x in ['good', 'bad']:
-            self.data += self.data_dump[d_type][str(self.round)][x]
-
-        self.fixed_random.shuffle(self.data)
-
-    def get(self, episode_idx, entry_idx):
-        return Message(self.data[episode_idx])
-
-    def share(self):
-        shared = super().share()
-        shared['data'] = self.data
-        return shared
+    def _load_data_dump(self):
+        with open(self.data_path, 'rb') as f:
+            dump = json.load(f)
+        return dump['standard']
 
 
-class AdversarialTeacher(FixedDialogTeacher):
+class AdversarialTeacher(_BaseSafetyTeacher):
     """
     Data from the adversarial collection described in the paper
     `Build it Break it Fix it for Dialogue Safety: Robustness from
@@ -146,80 +59,14 @@ class AdversarialTeacher(FixedDialogTeacher):
     `python examples/display_data.py -t dialogue_safety:adversarial --round 3`
 
     To see data from round 2 only, try running:
-    `python examples/display_data.py -t dialgoue_safety:adversarial --round 2
+    `python examples/display_data.py -t dialogue_safety:adversarial --round 2
      --round-only True`
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
-        parser = parser.add_argument_group('Adversarial Safety Teacher Args')
-        parser.add_argument(
-            '--round',
-            type=int,
-            default=1,
-            choices=[1, 2, 3],
-            help='Which round of data to use',
-        )
-        parser.add_argument(
-            '--round-only',
-            type='bool',
-            default=False,
-            help='if False, includes all rounds up to including the specified '
-            'round; if True, only includes data from the specified round',
-        )
-        return parser
-
-    def __init__(self, opt, shared=None):
-        build(opt['datapath'])  # download the data
-        self.opt = opt
-        self.data_path = os.path.join(
-            opt['datapath'], 'dialogue_safety', SINGLE_TURN_DATA
-        )
-
-        self.fixed_random = random.Random(42)
-        self.round = opt['round']
-        self.label_candidates = [NOT_OK_CLASS, OK_CLASS]
-
-        if shared and 'data' in shared:
-            self.data = shared['data']
-        else:
-            self._setup_data(opt['datatype'])
-
-        opt = copy.deepcopy(opt)
-        super().__init__(opt, shared)
-        self.reset()
-
-    def num_episodes(self):
-        return len(self.data)
-
-    def num_examples(self):
-        return len(self.data)
-
-    def _setup_data(self, datatype):
-        # load data
-        self.data_dump = json.load(open(self.data_path, 'rb'))['adversarial']
-        d_type = datatype.split(':')[0]
-        self.data = []
-        if not self.opt['round_only']:
-            # loop and add other rounds
-            for i in range(self.round - 1):
-                rnd = str(i + 1)
-                for x in ['good', 'bad']:
-                    self.data += self.data_dump[d_type][rnd][x]
-
-        # add data from current round
-        for x in ['good', 'bad']:
-            self.data += self.data_dump[d_type][str(self.round)][x]
-
-        self.fixed_random.shuffle(self.data)
-
-    def get(self, episode_idx, entry_idx):
-        return Message(self.data[episode_idx])
-
-    def share(self):
-        shared = super().share()
-        shared['data'] = self.data
-        return shared
+    def _load_data_dump(self):
+        with open(self.data_path, 'rb') as f:
+            dump = json.load(f)
+        return dump['standard']
 
 
 class MultiturnTeacher(FixedDialogTeacher):
@@ -228,7 +75,7 @@ class MultiturnTeacher(FixedDialogTeacher):
     `Build it Break it Fix it for Dialogue Safety: Robustness from
     Adversarial Human Attack` (<https://arxiv.org/abs/1908.06083>)
 
-    To see data containing mulit-turn conversations, try running
+    To see data containing multi-turn conversations, try running
     `python examples/display_data.py -t dialogue_safety:multiturn`.
 
     Run the above command with the flag `--single-turn True` to only see the
@@ -297,6 +144,8 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
     Dataset of comments from Wikipedia's Talk page edits. Taken from
     the Toxic Comments Classification Challenge on Kaggle.
     <https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>
+
+    We convert this data to a binary classification task.
     """
 
     @staticmethod

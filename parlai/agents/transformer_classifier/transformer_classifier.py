@@ -42,7 +42,7 @@ class TransformerClassifierAgent(TorchClassifierAgent):
         """
         kwargs['add_start'] = True
         kwargs['add_end'] = True
-        obs = TorchRankerAgent.vectorize(self, *args, **kwargs)
+        obs = super().vectorize(*args, **kwargs)
         return obs
 
     def _set_text_vec(self, *args, **kwargs):
