@@ -40,15 +40,13 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         self.bot_type = opt.get('bot_type', 'discrete')
         self.logs_file = opt.get('replay_log_file')
 
-        self.actions = ["ACTION:TURNLEFT",
-                        "ACTION:TURNRIGHT", "ACTION:FORWARD"]
+        self.actions = ["ACTION:TURNLEFT", "ACTION:TURNRIGHT", "ACTION:FORWARD"]
         self.start_location = None
         self.location = None
         self.target_location = None
         self.orientations = ['N', 'E', 'S', 'W']
 
-        self.neighborhoods = ['hellskitchen',
-                              'williamsburg', 'fidi', 'eastvillage']
+        self.neighborhoods = ['hellskitchen', 'williamsburg', 'fidi', 'eastvillage']
         self.boundaries = {}
         self.boundaries['hellskitchen'] = [3, 3]
         self.boundaries['williamsburg'] = [2, 8]
@@ -129,10 +127,8 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         self.neighborhood = self.neighborhoods[neighborhood_ind]
 
         # Sample 2x2 grid in neighborhood
-        self.min_x = random.randint(
-            0, self.boundaries[self.neighborhood][0]) * 2
-        self.min_y = random.randint(
-            0, self.boundaries[self.neighborhood][1]) * 2
+        self.min_x = random.randint(0, self.boundaries[self.neighborhood][0]) * 2
+        self.min_y = random.randint(0, self.boundaries[self.neighborhood][1]) * 2
         self.max_x = self.min_x + 3
         self.max_y = self.min_y + 3
 
@@ -147,8 +143,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
             random.randint(0, 3),
         ]  # x, y, orientation idx
 
-        self.start_location = [self.location[0],
-                               self.location[1], self.location[2]]
+        self.start_location = [self.location[0], self.location[1], self.location[2]]
 
         map_f = os.path.join(self.dir, '{}_map.json'.format(self.neighborhood))
         with open(map_f) as f:
@@ -176,10 +171,8 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
             self.location[0] += self.steps[orientation][0]
             self.location[1] += self.steps[orientation][1]
 
-            self.location[0] = max(
-                min(self.location[0], self.max_x), self.min_x)
-            self.location[1] = max(
-                min(self.location[1], self.max_y), self.min_y)
+            self.location[0] = max(min(self.location[0], self.max_x), self.min_x)
+            self.location[1] = max(min(self.location[1], self.max_y), self.min_y)
 
     def send_location(self, agent):
         """Sends the current location to the given agent"""
@@ -217,14 +210,16 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
     def timeout(self, agent):
         self.status = 'timeout'
         self.causal_agent_id = agent.id
-        msg = {'id': "WORLD_TIMEOUT", 'text': '',
-               'message_id': 'WORLD_TIMEOUT', }
+        msg = {'id': "WORLD_TIMEOUT", 'text': '', 'message_id': 'WORLD_TIMEOUT'}
         agent.observe(msg)
 
         for other_agent in self.agents:
             if other_agent.id != agent.id:
-                msg = {'id': 'WORLD_PARTNER_TIMEOUT', 'text': '',
-                       'message_id': 'WORLD_PARTNER_TIMEOUT'}
+                msg = {
+                    'id': 'WORLD_PARTNER_TIMEOUT',
+                    'text': '',
+                    'message_id': 'WORLD_PARTNER_TIMEOUT',
+                }
                 other_agent.observe(msg)
 
     def is_world_success(self, world):
@@ -282,8 +277,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                                 max_prob = last_grid[i][j]
                     if max_i_j != (location[0] - min_x, location[1] - min_y):
                         return False, -1
-                    high_prob = any(any(k >= 0.50 for k in j)
-                                    for j in last_grid)
+                    high_prob = any(any(k >= 0.50 for k in j) for j in last_grid)
                     max_prob = max(max(j) for j in last_grid)
                     return (True and high_prob, kk)
                 elif too_many:
@@ -338,8 +332,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                         old_grid = np.array(grid)
                         sizes = [9, 19, 39]
                         for i in sizes:
-                            new_grid = self.construct_expanded_array(
-                                old_grid, i)
+                            new_grid = self.construct_expanded_array(old_grid, i)
                             old_grid = new_grid
                         act['attn_grid'] = new_grid[:37, :37].tolist()
                         act['attn_grid_size'] = sizes[-1] - 2
@@ -459,8 +452,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         if success:
             print("SUCCESS!!")
             self.status = 'success'
-            msg = {'id': 'WORLD_SUCCESS', 'text': '',
-                   'message_id': 'WORLD_SUCCESS'}
+            msg = {'id': 'WORLD_SUCCESS', 'text': '', 'message_id': 'WORLD_SUCCESS'}
             for agent in self.agents:
                 agent.observe(msg)
             return True
@@ -482,8 +474,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
                     agent.observe(msg)
                 return False
             else:
-                msg = {'id': 'WORLD_FAIL', 'text': '',
-                       'message_id': 'WORLD_FAIL'}
+                msg = {'id': 'WORLD_FAIL', 'text': '', 'message_id': 'WORLD_FAIL'}
                 for agent in self.agents:
                     agent.observe(msg)
                 return True
@@ -537,8 +528,7 @@ class TalkTheWalkWorld(MultiAgentDialogWorld):
         }
         with open(filename, 'wb') as f:
             pickle.dump(data, f)
-        print('{}: Data successfully saved at {}.'.format(
-            self.world_tag, filename))
+        print('{}: Data successfully saved at {}.'.format(self.world_tag, filename))
 
 
 class InstructionWorld(MTurkOnboardWorld):
