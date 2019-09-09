@@ -1005,7 +1005,37 @@ class TorchAgent(ABC, Agent):
         if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
             metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
             metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
+
+        if self.use_cuda:
+            metrics['gpumempct'] = round_sigfigs(self._gpu_usage(), sigfigs=3)
+
         return metrics
+
+    def _gpu_usage(self):
+        """
+        Computes GPU memory usage.
+
+        Only computes the *maximum* memory used, but this is the most useful
+        metric for ensuring OOMs don't happen.
+
+        :return: Percent of allocated GPU memory as a fraction of available.
+        """
+        if not self.use_cuda:
+            return None
+        if self.opt['gpu'] == -1:
+            # use all gpus available locally
+            devices = range(torch.cuda.device_count())
+        else:
+            devices = [self.opt['gpu']]
+        memory_avail = 0
+        memory_used = 0
+        for dev in devices:
+            props = torch.cuda.get_device_properties(dev)
+            memory_avail += props.total_memory
+            memory_used += torch.cuda.memory_allocated(dev) + torch.cuda.memory_cached(
+                dev
+            )
+        return memory_used / memory_avail
 
     def _is_lr_warming_up(self):
         """Check if we're warming up the learning rate."""
