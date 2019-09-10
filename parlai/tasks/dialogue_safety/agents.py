@@ -232,15 +232,11 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
     def build(self, opt):
         self._get_data()
-        version = 'v2.0'
+        version = 'v1.0'
         read_path = self.data_path
         if not build_data.built(self.data_path, version):
             print('[building data from : ' + read_path + ']')
-            if build_data.built(self.data_path):
-                # An older version exists, so remove these outdated files.
-                build_data.remove_dir(self.data_path)
             build_data.make_dir(self.data_path)
-
             # Read in data
             train = pd.read_csv(os.path.join(read_path, 'train.csv'))
             test = pd.read_csv(os.path.join(read_path, 'test.csv'))
