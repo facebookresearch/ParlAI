@@ -83,7 +83,7 @@ class TorchClassifierAgent(TorchAgent):
         )
 
     def __init__(self, opt, shared=None):
-        init_model, _ = self._get_init_model(opt, shared)
+        init_model, self.is_finetune = self._get_init_model(opt, shared)
         super().__init__(opt, shared)
 
         # set up classes

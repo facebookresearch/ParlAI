@@ -965,4 +965,17 @@ task_list = [
             "  - [deepmoji_cand]: vector encoding from deepmoji penultimate layer for label line (candidate) - or None "
         ),
     },
+    {
+        "id": "DialogueSafety",
+        "display_name": "Dialogue Safety",
+        "task": "dialogue_safety",
+        "tags": ["All"],
+        "description": (
+            "Several datasets described in the paper Built it Break it Fix it "
+            "for Dialogue Safety: Robustness from Adversarial Human Attack "
+            "(see https://arxiv.org/abs/1908.06083 for more information). \n"
+            "All datasets are classification tasks in which the goal is to "
+            "determine if the text is offensive or \'safe\'."
+        ),
+    },
 ]
