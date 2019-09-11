@@ -300,6 +300,8 @@ def modelzoo_path(datapath, path):
         try:
             my_module = importlib.import_module(module_name)
             my_module.download(datapath)
+            if hasattr(my_module, '_path'):
+                return my_module._path(datapath)
         except (ImportError, AttributeError):
             pass
 
