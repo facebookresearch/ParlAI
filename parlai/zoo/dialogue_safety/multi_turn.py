@@ -4,8 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Pretrained LIGHT BERT bi-Ranker dialogue model from:
-https://arxiv.org/pdf/1903.03094.pdf
+Pretrained BERT Classifer model on the multi-turn adversarial
+dialogue safety task.
 """
 
 from parlai.core.build_data import download_models
@@ -17,19 +17,9 @@ def download(datapath):
     opt = {'datapath': datapath}  # for builder
     fnames = ['safety_models_v1.tgz']
     download_models(
-        opt,
-        fnames,
-        'dialogue_safety',
-        version='v0.5',
-        use_model_type=False
+        opt, fnames, 'dialogue_safety', version='v0.5', use_model_type=False
     )
 
 
 def _path(datapath):
-    return os.path.join(
-        datapath,
-        'models',
-        'dialogue_safety',
-        'multi_turn',
-        'model'
-    )
+    return os.path.join(datapath, 'models', 'dialogue_safety', 'multi_turn', 'model')
