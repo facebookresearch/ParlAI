@@ -1408,7 +1408,6 @@ class TorchAgent(ABC, Agent):
         """
         if len(obs_batch) == 0:
             return Batch()
-
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if self.is_valid(ex)]
 
         if len(valid_obs) == 0:

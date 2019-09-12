@@ -172,10 +172,10 @@ class TransformerRankerAgent(TorchRankerAgent):
         self.data_parallel = opt.get('data_parallel') and self.use_cuda
         if self.data_parallel:
             from parlai.core.distributed_utils import is_distributed
-
             if is_distributed():
                 raise ValueError('Cannot combine --data-parallel and distributed mode')
-            self.model = torch.nn.DataParallel(self.model)
+            if shared is None:
+                self.model = torch.nn.DataParallel(self.model)
 
     def _score(self, output, cands):
         if cands.dim() == 2:
@@ -188,14 +188,12 @@ class TransformerRankerAgent(TorchRankerAgent):
             )
 
     def build_model(self, states=None):
-        model = TransformerMemNetModel(self.opt, self.dict)
+        self.model = TransformerMemNetModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
-            self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
-        return model
-
-    def build_criterion(self):
-        """Build and return criterion, favoring average instead of sum for the loss."""
-        return torch.nn.CrossEntropyLoss(reduction='mean')
+            self._copy_embeddings(
+                self.model.embeddings.weight, self.opt['embedding_type']
+            )
+        return self.model
 
     def batchify(self, obs_batch, sort=False):
         """Override so that we can add memories to the Batch object."""
@@ -266,9 +264,11 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         return agent
 
     def build_model(self, states=None):
-        model = TransformerGeneratorModel(self.opt, self.dict)
+        self.model = TransformerGeneratorModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(
-                model.encoder.embeddings.weight, self.opt['embedding_type']
+                self.model.encoder.embeddings.weight, self.opt['embedding_type']
             )
-        return model
+        if self.use_cuda:
+            self.model.cuda()
+        return self.model

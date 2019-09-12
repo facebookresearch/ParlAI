@@ -412,7 +412,8 @@ class FixedDialogTeacher(Teacher):
             action = action.copy()
             labels = action.pop('labels')
             if not self.opt.get('hide_labels', False):
-                action['eval_labels'] = labels
+                # action['eval_labels'] = labels
+                action.force_set('eval_labels', labels)
 
         return action
 
