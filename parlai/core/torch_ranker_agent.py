@@ -921,7 +921,7 @@ class TorchRankerAgent(TorchAgent):
             "[ Encoding fixed candidates set from ({} batch(es) of up to 256) ]"
             "".format(len(vec_batches))
         )
-        # Put model into eval mode when encode candidates
+        # Put model into eval mode when encoding candidates
         self.model.eval()
         with torch.no_grad():
             for vec_batch in tqdm(vec_batches):
