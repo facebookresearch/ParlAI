@@ -21,6 +21,13 @@ class BiencoderAgent(TransformerRankerAgent):
         obs = TorchRankerAgent.vectorize(self, *args, **kwargs)
         return obs
 
+    def _vectorize_text(self, *args, **kwargs):
+        """override to add start end tokens. necessary for fixed cands"""
+        if 'add_start' in kwargs:
+            kwargs['add_start'] = True
+            kwargs['add_end'] = True
+        return super()._vectorize_text(*args, **kwargs)
+
     def _set_text_vec(self, *args, **kwargs):
         """ Add the start and end token to the text.
         """

@@ -77,6 +77,7 @@ def _build_encoder(
         activation=opt['activation'],
         variant=opt['variant'],
         output_scaling=opt['output_scaling'],
+        get_pos_embs=opt['get_pos_embs']
     )
 
 
@@ -356,6 +357,8 @@ class TransformerEncoder(nn.Module):
         Future versions may support things like GPT-2, ...
     :param output_scaling:
         Scale the outputs by a given scalar
+    :param bool get_pos_embs:
+        If true, return the position embeddings when reduction type is none
     """
 
     def __init__(
@@ -378,6 +381,7 @@ class TransformerEncoder(nn.Module):
         variant='aiayn',
         n_segments=0,
         output_scaling=1.0,
+        get_pos_embs=False
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -454,6 +458,7 @@ class TransformerEncoder(nn.Module):
                 )
             )
         self.output_scaling = output_scaling
+        self.get_pos_embs = get_pos_embs
 
     def forward(self, input, positions=None, segments=None):
         """
@@ -480,7 +485,8 @@ class TransformerEncoder(nn.Module):
                     x=positions.max().item(), y=self.n_positions
                 )
             )
-        tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+        position_embs = self.position_embeddings(positions).expand_as(tensor)
+        tensor = tensor + position_embs
 
         if self.n_segments >= 1:
             if segments is None:
@@ -508,7 +514,10 @@ class TransformerEncoder(nn.Module):
             return output
         elif self.reduction_type == 'none' or self.reduction_type is None:
             output = tensor
-            return output, mask
+            ret = (output, mask)
+            if self.get_pos_embs:
+                ret = (output, mask, position_embs)
+            return ret
         else:
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)
@@ -856,9 +865,11 @@ class BasicAttention(nn.Module):
         self.get_weights = get_weights
         self.residual = residual
 
-    def forward(self, xs, ys, mask_ys=None):
-        """ xs: B x query_len x dim
-            ys: B x key_len x dim
+    def forward(self, xs, ys, mask_ys=None, values=None):
+        """ xs: B x query_len x dim (queries)
+            ys: B x key_len x dim (keys)
+            values: B x value_len x dim (values)
+                    if None, default to ys
             TODO: Document this
         """
         bsz = xs.size(0)
@@ -876,7 +887,9 @@ class BasicAttention(nn.Module):
             attn_mask = attn_mask.repeat(1, x_len, 1)
             l1.masked_fill_(attn_mask, -float('inf'))
         l2 = self.softmax(l1)
-        lhs_emb = torch.bmm(l2, ys)
+        if values is None:
+            values = ys
+        lhs_emb = torch.bmm(l2, values)
 
         # # add back the query
         if self.residual:

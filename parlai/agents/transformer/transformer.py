@@ -91,6 +91,13 @@ def add_common_cmdline_args(argparser):
         help='Share word embeddings table for candidate and context'
         'in the memory network',
     )
+    argparser.add_argument(
+        '--get-pos-embs',
+        type='bool',
+        default=False,
+        help='If true, return the position embeddings from the encoder '
+        'when reduction type is None'
+    )
 
 
 class Transformer(Agent):
