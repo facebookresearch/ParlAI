@@ -74,6 +74,21 @@ task_list = [
         ),
     },
     {
+        "id": "CCPE",
+        "display_name": "Coached Conversational Preference Elicitation",
+        "task": "ccpe",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A dataset consisting of 502 dialogs with 12,000 annotated "
+            "utterances between a user and an assistant discussing movie "
+            "preferences in natural language. It was collected using a "
+            "Wizard-of-Oz methodology between two paid crowd-workers, "
+            "where one worker plays the role of an 'assistant', while "
+            "the other plays the role of a 'user'. From Google, '19. Link: "
+            "https://ai.google/tools/datasets/coached-conversational-preference-elicitation"
+        ),
+    },
+    {
         "id": "COPA",
         "display_name": "Choice of Plausible Alternatives",
         "task": "copa",
