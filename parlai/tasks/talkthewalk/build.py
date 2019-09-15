@@ -22,7 +22,7 @@ def build(opt):
 
         # Download the data.
         fname = 'talkthewalk.tgz'
-        url = 'https://s3.amazonaws.com/fair-data/parlai/projects/talkthewalk/' + fname
+        url = 'https://dl.fbaipublicfiles.com/parlai/projects/talkthewalk/' + fname
         build_data.download(url, dpath, fname)
         build_data.untar(dpath, fname)
 
