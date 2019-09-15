@@ -20,8 +20,10 @@ class TaskMasterTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt)
 
-        # Defaut case
-        opt['fn'] = "self-dialogs.json"
+        # Defaut case (If nothing was set)
+        if not opt['fn']:
+            opt['fn'] = "self-dialogs.json"
+
         if shared and 'convos' in shared:
             # another instance was set up already, just reference its data
             self.convos = shared['convos']
