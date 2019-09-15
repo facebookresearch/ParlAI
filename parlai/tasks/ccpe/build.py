@@ -9,7 +9,7 @@ import os
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CCPE')
-    version = None
+    version = '1.0'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
