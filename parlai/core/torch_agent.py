@@ -690,7 +690,7 @@ class TorchAgent(ABC, Agent):
             self.model = shared['model']
             self.criterion = shared['criterion']
             self.metrics = shared['metrics']
-            if self.opt['batchsize'] == 1 or self.opt['interactive_mode']:
+            if self.opt['batchsize'] == 1 or self.opt.get('interactive_mode', False):
                 # if we're not using batching (e.g. mturk), then replies really need
                 # to stay separated
                 self.replies = {}
@@ -734,7 +734,7 @@ class TorchAgent(ABC, Agent):
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
         # set interactive mode or not according to options.
-        self.set_interactive_mode(opt['interactive_mode'], shared)
+        self.set_interactive_mode(opt.get('interactive_mode', False), shared)
 
     def build_history(self):
         """Return the constructed history object."""

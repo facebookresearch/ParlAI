@@ -75,13 +75,14 @@ def _eval_single_world(opt, agent, task):
     log_time = TimeLogger()
 
     # max number of examples to evaluate
-    max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
+    num_ex = opt.get('num_examples', 0)
+    max_cnt = num_ex if num_ex > 0 else float('inf')
     cnt = 0
 
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
         world.parley()
-        if opt['display_examples']:
+        if opt.get('display_examples', False):
             # display examples
             print(world.display() + '\n~~')
         if log_time.time() > log_every_n_secs:
