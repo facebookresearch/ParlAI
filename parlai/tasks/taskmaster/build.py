@@ -22,8 +22,8 @@ def build(opt):
         gsl_url = 'https://storage.googleapis.com/dialog-data-corpus/TASKMASTER-1-2019/'
         fname_self_dialogs = 'self-dialogs.json'
         fname_woz_dialogs = 'woz-dialogs.json'
-        url_self_dialogs = gsl_url + fname_self_dialogs # dataset URL
-        url_woz_dialogs = gsl_url + fname_woz_dialogs # dataset URL
+        url_self_dialogs = gsl_url + fname_self_dialogs  # dataset URL
+        url_woz_dialogs = gsl_url + fname_woz_dialogs  # dataset URL
         build_data.download(url_self_dialogs, dpath, fname_self_dialogs)
         build_data.download(url_woz_dialogs, dpath, fname_woz_dialogs)
 

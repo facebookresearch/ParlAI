@@ -1,11 +1,20 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 import os, json, copy
+
 
 class TaskMasterTeacher(FixedDialogTeacher):
     """
     Base class to define a Teacher for TaskMaster-1 Google 2019
     """
+
     def __init__(self, opt, shared=None):
         super().__init__(opt)
 
@@ -32,7 +41,6 @@ class TaskMasterTeacher(FixedDialogTeacher):
                 convos_update += [convo]
         self.convos = convos_update
 
-
     # Number of time the assistant speaks
     def num_examples(self):
         ctr = 0
@@ -56,35 +64,37 @@ class TaskMasterTeacher(FixedDialogTeacher):
         if entry_idx + 1 == conv_len - 1:
             ep_done = True
 
-        action = {
-            'id': self.id,
-            'text': predecessor,
-            'episode_done': ep_done
-        }
+        action = {'id': self.id, 'text': predecessor, 'episode_done': ep_done}
         action['labels'] = [successor]
 
         return action
+
 
 class SelfDialogueTeacher(TaskMasterTeacher):
     """
     Teach self-dialogs.json
     """
+
     def __init__(self, opt, shared=None):
         opt['fn'] = "self-dialogs.json"
         super().__init__(opt, shared)
+
 
 class WozDialogueTeacher(TaskMasterTeacher):
     """
     Teach woz-dialogs.json
     """
+
     def __init__(self, opt, shared=None):
         opt['fn'] = "woz-dialogs.json"
         super().__init__(opt, shared)
+
 
 class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
     """
     Teach "self-dialogs.json" with segment texts as labels
     """
+
     def get(self, episode_idx, entry_idx):
         conversation = self.convos[episode_idx]
         conv_len = len(conversation['utterances'])
@@ -95,11 +105,7 @@ class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
         if entry_idx == conv_len - 1:
             ep_done = True
 
-        action = {
-            'id': self.id,
-            'text': utterance,
-            'episode_done': ep_done
-        }
+        action = {'id': self.id, 'text': utterance, 'episode_done': ep_done}
 
         # Setup Labels as "text" from segments
         action['labels'] = []
@@ -126,6 +132,7 @@ class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
             if convo['utterances']:
                 convos_updated += [convo]
         self.convos = convos_updated
+
 
 # Utils
 def _path(opt):
