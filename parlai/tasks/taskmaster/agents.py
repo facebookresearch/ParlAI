@@ -7,7 +7,9 @@
 
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
-import os, json, copy
+import os
+import json
+import copy
 
 
 class TaskMasterTeacher(FixedDialogTeacher):

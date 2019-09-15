@@ -712,8 +712,8 @@ task_list = [
         "id": "TaskMaster",
         "display_name": "TaskMaster-1-2019",
         "task": "taskmaster",
-        "tags": [ "ChitChat", "All" ],
-        "description": "https://ai.google/tools/datasets/taskmaster-1"
+        "tags": ["ChitChat", "All"],
+        "description": "https://ai.google/tools/datasets/taskmaster-1",
     },
     {
         "id": "Twitter",
