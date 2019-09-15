@@ -21,7 +21,7 @@ class TaskMasterTeacher(FixedDialogTeacher):
         super().__init__(opt)
 
         # Defaut case (If nothing was set)
-        if not opt['fn']:
+        if 'fn' not in opt:
             opt['fn'] = "self-dialogs.json"
 
         if shared and 'convos' in shared:
