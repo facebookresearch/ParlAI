@@ -21,6 +21,7 @@ import hashlib
 import tqdm
 import math
 import traceback
+import zipfile
 from multiprocessing import Pool
 
 
@@ -184,6 +185,27 @@ def untar(path, fname, deleteTar=True):
     fullpath = os.path.join(path, fname)
     shutil.unpack_archive(fullpath, path)
     if deleteTar:
+        os.remove(fullpath)
+
+
+def unzip(path, fname, deleteZip=True):
+    """
+    Unzip the given archive file to the same directory.
+
+    :param str path:
+        The folder containing the archive. Will contain the contents.
+
+    :param str fname:
+        The filename of the archive file.
+
+    :param bool deleteZip:
+        If true, the archive will be deleted after extraction.
+    """
+    print('unzipping ' + fname)
+    fullpath = os.path.join(path, fname)
+    with zipfile.ZipFile(fullpath, "r") as zip_ref:
+        zip_ref.extractall(path)
+    if deleteZip:
         os.remove(fullpath)
 
 

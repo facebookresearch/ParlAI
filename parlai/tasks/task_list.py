@@ -167,6 +167,17 @@ task_list = [
         ),
     },
     {
+        "id": "dialogue-nli",
+        "display_name": "Dialogue NLI",
+        "task": "dialogue_nli",
+        "tags": ["All", "ChitChat", "NLI"],
+        "description": (
+            "Dialogue NLI is a dataset that addresses the issue of consistency in "
+            "dialogue models. "
+            "See: https://wellecks.github.io/dialogue_nli/"
+        ),
+    },
+    {
         "id": "dstc7",
         "display_name": "DSTC7 subtrack 1 - ubuntu",
         "task": "dstc7",
