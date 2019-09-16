@@ -47,6 +47,20 @@ Evaluate the same pre-trained Transformer-based model on the test sets of rounds
 python examples/eval_model.py -t dialogue_safety:standard --round 3 -dt test -mf zoo:dialogue_safety/single_turn/model -bs 40
 ```
 
+Interact with the single-turn model to see its classifications of your input in real time:
+```bash
+python examples/interactive.py -mf zoo:dialogue_safety/single_turn/model --print-scores True --single-turn True
+```
+Here are some example outputs from the above script:
+```bash
+Enter Your Message: hi how are you?
+[TransformerClassifier]: Predicted class: __ok__
+with probability: 0.9996
+Enter Your Message: i hate you
+[TransformerClassifier]: Predicted class: __notok__
+with probability: 0.9995
+```
+
 Evaluate a BERT-based model (using *segments* to distinguish the context from the utterance to be classified, as described in the paper) on the test set of the **multi-turn adversarial** task:
 ```bash
 python examples/eval_model.py -t dialogue_safety:multiturn -dt test -mf zoo:dialogue_safety/multi_turn/model --split-lines True -bs 40
