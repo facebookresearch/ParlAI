@@ -77,7 +77,6 @@ def _build_encoder(
         activation=opt['activation'],
         variant=opt['variant'],
         output_scaling=opt['output_scaling'],
-        get_pos_embs=opt['get_pos_embs']
     )
 
 
@@ -114,6 +113,7 @@ def gelu(tensor):
 
 
 def get_n_positions_from_options(opt):
+    """Determine n_positions from options dict."""
     if opt.get('n_positions'):
         # if the number of positions is explicitly provided, use that
         n_positions = opt['n_positions']
@@ -307,9 +307,7 @@ class TransformerResponseWrapper(nn.Module):
 
 
 class TransformerLinearWrapper(nn.Module):
-    """
-    Wrap a transformer in a linear layer.
-    """
+    """Wrap a transformer in a linear layer."""
 
     def __init__(self, transformer, output_dim):
         super().__init__()
@@ -318,6 +316,10 @@ class TransformerLinearWrapper(nn.Module):
         self.additional_linear_layer = nn.Linear(input_dim, output_dim)
 
     def forward(self, *args):
+        """Forward pass.
+
+        Apply transformer, then additional linear layer.
+        """
         context_h = self.transformer(*args)
         return self.additional_linear_layer(context_h)
 
@@ -357,8 +359,6 @@ class TransformerEncoder(nn.Module):
         Future versions may support things like GPT-2, ...
     :param output_scaling:
         Scale the outputs by a given scalar
-    :param bool get_pos_embs:
-        If true, return the position embeddings when reduction type is none
     """
 
     def __init__(
@@ -381,7 +381,6 @@ class TransformerEncoder(nn.Module):
         variant='aiayn',
         n_segments=0,
         output_scaling=1.0,
-        get_pos_embs=False
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -458,7 +457,6 @@ class TransformerEncoder(nn.Module):
                 )
             )
         self.output_scaling = output_scaling
-        self.get_pos_embs = get_pos_embs
 
     def forward(self, input, positions=None, segments=None):
         """
@@ -512,10 +510,10 @@ class TransformerEncoder(nn.Module):
             divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
             output = tensor.sum(dim=1) / divisor
             return output
-        elif self.reduction_type == 'none' or self.reduction_type is None:
+        elif 'none' in self.reduction_type or self.reduction_type is None:
             output = tensor
             ret = (output, mask)
-            if self.get_pos_embs:
+            if self.reduction_type == 'none_with_pos_embs':
                 ret = (output, mask, position_embs)
             return ret
         else:
@@ -866,11 +864,16 @@ class BasicAttention(nn.Module):
         self.residual = residual
 
     def forward(self, xs, ys, mask_ys=None, values=None):
-        """ xs: B x query_len x dim (queries)
+        """Compute attention.
+
+        Attend over ys with query xs to obtain weights, then apply weights to
+        values (ys if yalues is None)
+
+        Args:
+            xs: B x query_len x dim (queries)
             ys: B x key_len x dim (keys)
-            values: B x value_len x dim (values)
-                    if None, default to ys
-            TODO: Document this
+            mask_ys: B x key_len (mask)
+            values: B x value_len x dim (values); if None, default to ys
         """
         bsz = xs.size(0)
         y_len = ys.size(1)
