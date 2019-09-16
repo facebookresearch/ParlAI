@@ -292,6 +292,7 @@ def modelzoo_path(datapath, path):
     elif path.startswith('models:') or path.startswith('zoo:'):
         zoo = path.split(':')[0]
         zoo_len = len(zoo) + 1
+        model_path = path[zoo_len:]
         # Check if we need to download the model
         animal = path[zoo_len : path.rfind('/')].replace('/', '.')
         if '.' not in animal:
@@ -300,12 +301,17 @@ def modelzoo_path(datapath, path):
         try:
             my_module = importlib.import_module(module_name)
             my_module.download(datapath)
+            # NOTE: the default path for a model is:
+            # "<model zoo directory>/<folder name (animal)>/<filename>"
+            # to specify a custom path (for instance, if your models are
+            # organized in subfolders), add a `_path()` function to your
+            # build file
             if hasattr(my_module, '_path'):
-                return my_module._path(datapath)
+                model_path = my_module._path()
         except (ImportError, AttributeError):
             pass
 
-        return os.path.join(datapath, 'models', path[zoo_len:])
+        return os.path.join(datapath, 'models', model_path)
     else:
         # Internal path (starts with "izoo:") -- useful for non-public
         # projects.  Save the path to your internal model zoo in

@@ -21,5 +21,5 @@ def download(datapath):
     )
 
 
-def _path(datapath):
-    return os.path.join(datapath, 'models', 'dialogue_safety', 'multi_turn', 'model')
+def _path():
+    return os.path.join('dialogue_safety', 'multi_turn', 'model')
