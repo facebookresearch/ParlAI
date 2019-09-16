@@ -301,13 +301,6 @@ def modelzoo_path(datapath, path):
         try:
             my_module = importlib.import_module(module_name)
             my_module.download(datapath)
-            # NOTE: the default path for a model is:
-            # "<model zoo directory>/<folder name (animal)>/<filename>"
-            # to specify a custom path (for instance, if your models are
-            # organized in subfolders), add a `_path()` function to your
-            # build file
-            if hasattr(my_module, '_path'):
-                model_path = my_module._path()
         except (ImportError, AttributeError):
             pass
 

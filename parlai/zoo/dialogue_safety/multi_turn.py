@@ -19,7 +19,3 @@ def download(datapath):
     download_models(
         opt, fnames, 'dialogue_safety', version='v0.5', use_model_type=False
     )
-
-
-def _path():
-    return os.path.join('dialogue_safety', 'multi_turn', 'model')
