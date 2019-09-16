@@ -147,7 +147,8 @@ class TorchClassifierAgent(TorchAgent):
                     raise ValueError(
                         'Cannot combine --data-parallel and distributed mode'
                     )
-                self.model = torch.nn.DataParallel(self.model)
+                if shared is None:
+                    self.model = torch.nn.DataParallel(self.model)
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
