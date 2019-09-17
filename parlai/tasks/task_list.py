@@ -713,7 +713,13 @@ task_list = [
         "display_name": "TaskMaster-1-2019",
         "task": "taskmaster",
         "tags": ["ChitChat", "All"],
-        "description": "https://ai.google/tools/datasets/taskmaster-1",
+        "description": (
+            "A chit-chat dataset by GoogleAI."
+            "Two-person dialogs:"
+            "Spoken: Created using Wizard of Oz methodology.(woz-dialogs.json)"
+            "Written: created by crowdsourced workers who were asked to write the full conversation themselves playing roles of both the user and assistant. (self-dialogs.json)"
+            "Link: https://ai.google/tools/datasets/taskmaster-1"
+        ),
     },
     {
         "id": "Twitter",

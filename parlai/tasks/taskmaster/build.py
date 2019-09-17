@@ -13,7 +13,7 @@ def build(opt):
     # get path to data directory
     dpath = os.path.join(opt['datapath'], 'taskmaster-1')
     # define version if any
-    version = None
+    version = "1.0"
 
     # check if data had been previously built
     if not build_data.built(dpath, version_string=version):
