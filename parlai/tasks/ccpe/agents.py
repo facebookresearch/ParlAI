@@ -40,33 +40,90 @@ class CCPEAllTeacher(FixedDialogTeacher):
             new_data = data.replace('}\n{', '},{')
             json_data = json.loads(f'[{new_data}]')
 
-        self.data = []
+        flattenedData = []
 
         for ep in range(len(json_data)):
             currEp = []
-            for i, utterance in enumerate(json_data[ep]['utterances']):
-                entry = []
-                cnt = 0
-                if i > 0:
-                    entry.append(cnt)
-                    cnt += 1
-                    entry.append(json_data[ep]['utterances'][i - 1]['text'])
-                    entry.append(utterance['text'])
-                    entry.append(
-                        json_data[ep]['utterances'][i - 1]['segments']
-                        if 'segments' in json_data[ep]['utterances'][i - 1]
-                        else []
-                    )
-                    entry.append(
-                        json_data[ep]['utterances'][i]['segments']
-                        if 'segments' in json_data[ep]['utterances'][i]
-                        else []
-                    )
-                    entry.append(False)
-                    currEp.append(entry)
 
-            currEp[-1][5] = True
-            self.data.append(currEp)
+            entry = {}
+            currSegments = []
+            for i, utterance in enumerate(json_data[ep]['utterances']):
+                if (
+                    i < len(json_data[ep]['utterances']) - 1
+                    and json_data[ep]['utterances'][i + 1]['speaker']
+                    == utterance['speaker']
+                ):
+                    json_data[ep]['utterances'][i + 1]['text'] = (
+                        utterance['text']
+                        + '\n'
+                        + json_data[ep]['utterances'][i + 1]['text']
+                    )
+                    currSegments.append(
+                        utterance['segments'] if 'segments' in utterance else []
+                    )
+                    continue
+
+                if (
+                    i == len(json_data[ep]['utterances']) - 1
+                    or json_data[ep]['utterances'][i + 1]['speaker']
+                    != utterance['speaker']
+                ):
+                    entry['speaker'] = utterance['speaker']
+                    entry['text'] = utterance['text']
+                    currSegments.append(
+                        utterance['segments']
+                    ) if 'segments' in utterance else currSegments.append([])
+                    entry['segments'] = currSegments
+                    currEp.append(entry)
+                    entry = {}
+                    currSegments = []
+
+            flattenedData.append(currEp)
+
+        userData = []
+        assistantData = []
+
+        for ep in range(len(flattenedData)):
+            currUserEp = []
+            currAssistantEp = []
+
+            userCnt = 0
+            asssistantCnt = 0
+            for i, currUtt in enumerate(flattenedData[ep]):
+                if i > 0:
+                    if (
+                        currUtt['speaker'] == 'USER'
+                        and flattenedData[ep][i - 1]['speaker'] == 'ASSISTANT'
+                    ):
+                        entry = []
+                        entry.append(userCnt)
+                        entry.append(currUtt['text'])
+                        entry.append([flattenedData[ep][i - 1]['text']])
+                        entry.append(currUtt['segments'])
+                        entry.append(flattenedData[ep][i - 1]['segments'])
+                        entry.append(False)
+                        currUserEp.append(entry)
+                        userCnt += 1
+                    if (
+                        currUtt['speaker'] == 'ASSISTANT'
+                        and flattenedData[ep][i - 1]['speaker'] == 'USER'
+                    ):
+                        entry = []
+                        entry.append(asssistantCnt)
+                        entry.append(currUtt['text'])
+                        entry.append([flattenedData[ep][i - 1]['text']])
+                        entry.append(currUtt['segments'])
+                        entry.append(flattenedData[ep][i - 1]['segments'])
+                        entry.append(False)
+                        currAssistantEp.append(entry)
+                        asssistantCnt += 1
+
+            currUserEp[-1][5] = True
+            currAssistantEp[-1][5] = True
+            userData.append(currUserEp)
+            assistantData.append(currAssistantEp)
+
+        self.data = assistantData + userData
 
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
@@ -74,9 +131,9 @@ class CCPEAllTeacher(FixedDialogTeacher):
         action = {
             'id': entry[0],
             'text': entry[1],
-            'labels': [entry[2]],
-            'textAnnotation': entry[3],
-            'labelAnnotation': entry[4],
+            'labels': entry[2],
+            'textSegments': entry[3],
+            'labelSegments': entry[4],
             'episode_done': entry[5],
         }
         return action
@@ -89,45 +146,8 @@ class CCPEAllTeacher(FixedDialogTeacher):
 
 class CCPEAssistantTeacher(CCPEAllTeacher):
     def _setup_data(self):
-
-        fpath = os.path.join(self.opt['datapath'], 'CCPE', 'ccpe.json')
-
-        with open(fpath, 'r') as infile:
-            data = infile.read()
-            new_data = data.replace('}\n{', '},{')
-            json_data = json.loads(f'[{new_data}]')
-
-        self.data = []
-
-        for ep in range(len(json_data)):
-            currEp = []
-            for i, utterance in enumerate(json_data[ep]['utterances']):
-                entry = []
-                cnt = 0
-                if (
-                    i > 0
-                    and json_data[ep]['utterances'][i - 1]['speaker'] == "USER"
-                    and utterance['speaker'] == "ASSISTANT"
-                ):
-                    entry.append(cnt)
-                    cnt += 1
-                    entry.append(json_data[ep]['utterances'][i - 1]['text'])
-                    entry.append(utterance['text'])
-                    entry.append(
-                        json_data[ep]['utterances'][i - 1]['segments']
-                        if 'segments' in json_data[ep]['utterances'][i - 1]
-                        else []
-                    )
-                    entry.append(
-                        json_data[ep]['utterances'][i]['segments']
-                        if 'segments' in json_data[ep]['utterances'][i]
-                        else []
-                    )
-                    entry.append(False)
-                    currEp.append(entry)
-
-            currEp[-1][5] = True
-            self.data.append(currEp)
+        super()._setup_data()
+        self.data = self.data[:502]
 
 
 class DefaultTeacher(CCPEAllTeacher):
