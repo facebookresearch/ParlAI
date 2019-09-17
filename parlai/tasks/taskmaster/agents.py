@@ -6,10 +6,8 @@
 
 
 from parlai.core.teachers import FixedDialogTeacher
-from .build import build
-import os
+from . import tm_utils
 import json
-import copy
 
 
 class TaskMasterTeacher(FixedDialogTeacher):
@@ -19,7 +17,7 @@ class TaskMasterTeacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-
+        self.ep_cheat_sheet = {}
         # Defaut case (If nothing was set)
         if 'fn' not in opt:
             opt['fn'] = "self-dialogs.json"
@@ -31,7 +29,7 @@ class TaskMasterTeacher(FixedDialogTeacher):
             self.convos = shared['convos']
         else:
             # need to set up data from scratch
-            data_path = _path(opt)
+            data_path = tm_utils._path(opt)
             self._setup_data(data_path, opt)
 
         self.reset()
@@ -42,14 +40,13 @@ class TaskMasterTeacher(FixedDialogTeacher):
             self.convos = json.load(data_file)
         # Pre-processing
         convos_update = []
-        self.ep_cheat_sheet = {}
         for convo in self.convos:
             conversation = convo['utterances']
             # Filter out single greet messages
             if len(conversation) > 1:
-                self.ep_cheat_sheet[len(self.ep_cheat_sheet)] = gen_ep_cheatsheet(
-                    conversation
-                )
+                self.ep_cheat_sheet[
+                    len(self.ep_cheat_sheet)
+                ] = tm_utils.gen_ep_cheatsheet(conversation)
                 convos_update += [conversation]
         self.convos = convos_update
 
@@ -57,7 +54,10 @@ class TaskMasterTeacher(FixedDialogTeacher):
     def num_examples(self):
         ctr = 0
         for ep in self.ep_cheat_sheet:
-            ctr += self.ep_cheat_sheet[ep][4] + self.ep_cheat_sheet[ep][5]
+            ctr += (
+                self.ep_cheat_sheet[ep][tm_utils.USER_NUM_EX]
+                + self.ep_cheat_sheet[ep][tm_utils.ASSIS_NUM_EX]
+            )
         return ctr
 
     def num_episodes(self):
@@ -65,17 +65,22 @@ class TaskMasterTeacher(FixedDialogTeacher):
         return len(self.convos) * 2
 
     def get(self, episode_idx, entry_idx):
+        conversation = self.convos[episode_idx % len(self.convos)]
         if episode_idx < len(self.convos):
-            # USER then ASSISTANT mode
-            conversation = self.convos[episode_idx]
-            ep_done = entry_idx * 2 == self.ep_cheat_sheet[episode_idx][1]
+            # USER then ASSISTANT mode [First pass]
+            ep_done = (
+                entry_idx * 2 == self.ep_cheat_sheet[episode_idx][tm_utils.LAST_USER]
+            )
             predecessor = conversation[entry_idx * 2]['text']
             successor = conversation[entry_idx * 2 + 1]['text']
         else:
-            # ASSISTANT then USER mode
-            episode_idx %= len(self.convos)
-            conversation = self.convos[episode_idx]
-            ep_done = entry_idx * 2 + 1 == self.ep_cheat_sheet[episode_idx][3]
+            # ASSISTANT then USER mode [Second pass]
+            ep_done = (
+                entry_idx * 2 + 1
+                == self.ep_cheat_sheet[episode_idx % len(self.convos)][
+                    tm_utils.LAST_ASSISTANT
+                ]
+            )
             predecessor = conversation[entry_idx * 2 + 1]['text']
             successor = conversation[entry_idx * 2 + 2]['text']
 
@@ -106,39 +111,96 @@ class WozDialogueTeacher(TaskMasterTeacher):
 
     def __init__(self, opt, shared=None):
         opt['fn'] = "woz-dialogs.json"
+        self.ep_cheat_sheet = {}
+        # Not all episodes have relevant examples for both USER and ASSISTANT
+        # episode_map keeps track of which episode index is useful for which speaker
+        # Need to do this otherwise might end up with a situation where we cannot return anything in action
+        self.episode_map = {}
+        self.episode_map["U"] = {}
+        self.episode_map["A"] = {}
+        self.num_ex = 0
         super().__init__(opt, shared)
 
-    # def _setup_data(self, data_path, opt):
-    #     print('loading: ' + data_path)
-    #     with open(data_path) as data_file:
-    #         self.convos = json.load(data_file)
-    #     # Pre-processing
-    #     convos_update = []
-    #     x = set()
-    #     ctr = 0
-    #     # [start_user_idx, end_user_idx, start_assis_idx, end_assis_idx]
-    #     self.ep_cheat_sheet = {}
-    #     for idx, convo in enumerate(self.convos):
-    #         # convo = smoothen_convo(convo, opt)
-    #         convo = convo['utterances']
-    #         # Filter out single greet messages
-    #         if len(convo) > 1:
-    #             # if opt['exclude-invalid-data']:
-    #             # self.ep_cheat_sheet[idx] = []
-    #             # x.add(len(convo))
-    #             # if len(convo) == 2:
-    #             for i in range(1, len(convo)):
-    #                 if convo[i]['speaker'] == convo[i-1]['speaker']:
-    #                     print(convo[i])
-    #                     print(convo[i - 1])
-    #                     # exit()
-    #                     ctr += 1
-    #             convos_update += [convo]
-    #
-    #     self.convos = convos_update
-    #     print(ctr)
-    #     print(len(self.convos))
-    #     exit()
+    def _setup_data(self, data_path, opt):
+        print('loading: ' + data_path)
+        with open(data_path) as data_file:
+            self.convos = json.load(data_file)
+        # Pre-processing
+        convos_update = []
+        for convo in self.convos:
+            conversation, corrupted = tm_utils.smoothen_convo(convo, opt)
+            # Filter out single greet messages and corrupted examples
+            if len(conversation) > 1 and not corrupted:
+                actual_ep_idx = len(self.ep_cheat_sheet)
+                self.ep_cheat_sheet[actual_ep_idx] = tm_utils.gen_ep_cheatsheet(
+                    conversation
+                )
+                curr_cheatsheet = self.ep_cheat_sheet[len(self.ep_cheat_sheet) - 1]
+                # calc number of examples (done here to prevent double counting if done later)
+                self.num_ex += (
+                    curr_cheatsheet[tm_utils.USER_NUM_EX]
+                    + curr_cheatsheet[tm_utils.ASSIS_NUM_EX]
+                )
+                # User example exists
+                if curr_cheatsheet[tm_utils.USER_NUM_EX] != 0:
+                    u_idx = len(self.episode_map["U"])
+                    self.episode_map["U"][u_idx] = actual_ep_idx
+                # Assistant example exists
+                if curr_cheatsheet[tm_utils.ASSIS_NUM_EX] != 0:
+                    a_idx = len(self.episode_map["A"])
+                    self.episode_map["A"][a_idx] = actual_ep_idx
+                convos_update += [conversation]
+        self.convos = convos_update
+
+    def num_examples(self):
+        return self.num_ex
+
+    def num_episodes(self):
+        # For two passes over the data: Once to teach USER and once to teach ASSISTANT
+        return len(self.episode_map["U"]) + len(self.episode_map["A"])
+
+    def get(self, episode_idx, entry_idx):
+        starts_at_odd = False
+        if episode_idx < len(self.episode_map["U"]):
+            # USER then ASSISTANT mode [First pass]
+            true_idx = self.episode_map["U"][episode_idx]
+            conversation = self.convos[true_idx]
+            convo_cheat_sheet = self.ep_cheat_sheet[true_idx]
+            first_entry, last_entry = (
+                convo_cheat_sheet[tm_utils.FIRST_USER],
+                convo_cheat_sheet[tm_utils.LAST_USER],
+            )
+        else:
+            # ASSISTANT then USER mode [Second pass]
+            episode_idx -= len(
+                self.episode_map["U"]
+            )  # Didn't use '%' because the two maybe unequal in length
+            true_idx = self.episode_map["A"][episode_idx]
+            conversation = self.convos[true_idx]
+            convo_cheat_sheet = self.ep_cheat_sheet[true_idx]
+            first_entry, last_entry = (
+                convo_cheat_sheet[tm_utils.FIRST_ASSISTANT],
+                convo_cheat_sheet[tm_utils.LAST_ASSISTANT],
+            )
+
+        starts_at_odd = first_entry % 2 != 0
+        if starts_at_odd:
+            predecessor = conversation[entry_idx * 2 + 1]['text']
+            successor = conversation[entry_idx * 2 + 2]['text']
+            ep_done = entry_idx * 2 + 1 == last_entry
+        else:
+            predecessor = conversation[entry_idx * 2]['text']
+            successor = conversation[entry_idx * 2 + 1]['text']
+            ep_done = entry_idx * 2 == last_entry
+
+        action = {
+            'id': self.id,
+            'text': predecessor,
+            'episode_done': ep_done,
+            'labels': [successor],
+        }
+
+        return action
 
 
 class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
@@ -165,7 +227,6 @@ class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
             for annot in segment["annotations"]:
                 tmp += [annot["name"]]
             action['label_types'] += [tmp]
-        # assert(len(action['labels']) == len(action['label_types']))
 
         return action
 
@@ -184,7 +245,7 @@ class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
         convos_updated = []
         for convo in self.convos:
             updated_dialog = []
-            for i in range(0, len(convo['utterances'])):
+            for i in range(len(convo['utterances'])):
                 if "segments" in convo['utterances'][i]:
                     updated_dialog += [convo['utterances'][i]]
             convo['utterances'] = updated_dialog
@@ -193,79 +254,5 @@ class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
         self.convos = convos_updated
 
 
-# Utils
-def _path(opt):
-    # ensure data is built
-    build(opt)
-    return os.path.join(opt['datapath'], 'taskmaster-1', opt['fn'])
-
-
-# Generate a cheatsheet for an episode
-def gen_ep_cheatsheet(convo):
-    # passed in: utterances
-    cheatsheet = [-1, -1, -1, -1, -1, -1]
-    # Assumed that length of convo is greater than two due to filtering cond
-    for idx in range(1, len(convo)):
-        # find first USER with reply
-        if convo[idx - 1]['speaker'] == "USER" and convo[idx]['speaker'] == "ASSISTANT":
-            if cheatsheet[0] == -1:
-                cheatsheet[0] = idx - 1
-            # find last USER with reply
-            cheatsheet[1] = idx - 1
-        # find first ASSISTANT with reply
-        if convo[idx - 1]['speaker'] == "ASSISTANT" and convo[idx]['speaker'] == "USER":
-            if cheatsheet[2] == -1:
-                cheatsheet[2] = idx - 1
-            # find last ASSISTANT with reply
-            cheatsheet[3] = idx - 1
-        # Calculate number of user examples
-        cheatsheet[4] = (cheatsheet[1] - cheatsheet[0]) // 2 + 1
-        # Calculate number of assistant examples
-        cheatsheet[5] = (cheatsheet[1] - cheatsheet[0]) // 2 + 1
-
-    return cheatsheet
-
-
-# Re-assign indexes after smoothening (mostly for clarity purposes)
-# Doesn't matter since we never index by specifically using the index field of the json
-def update_indexes(conversation):
-    for i in range(len(conversation)):
-        conversation[i]["index"] = i
-
-    return conversation
-
-
-# Join two conversations
-# Join texts don't care about segments
-# Assumption: utt1 is the one popped from the stack
-def join_speech(utt1, utt2):
-    new_utt = {}
-    new_utt["index"] = utt1["index"]
-    new_utt["text"] = utt1["text"] + "\n" + utt2["text"]
-    new_utt["speaker"] = utt1["speaker"]
-    if 'ctr' in utt1:
-        new_utt['ctr'] = utt1['ctr'] + 1
-    else:
-        new_utt['ctr'] = 2
-    return new_utt
-
-
-# Aggregate contiguous responses by the same speaker in the data
-def smoothen_convo(conversation, opt):
-    dialogue = conversation['utterances']
-    conversation_stack = []
-    for speech in dialogue:
-        if (
-            conversation_stack
-            and speech["speaker"] == conversation_stack[-1]["speaker"]
-        ):
-            conversation_stack.append(join_speech(conversation_stack.pop(), speech))
-        else:
-            conversation_stack.append(speech)
-    processed_conversation = []
-    for speech in conversation_stack:
-        if opt['exclude-invalid-data'] and 'ctr' in speech and speech['ctr'] > 5:
-            continue
-        else:
-            processed_conversation += [speech]
-    return update_indexes(processed_conversation)
+class DefaultTeacher(TaskMasterTeacher):
+    pass
