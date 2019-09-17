@@ -80,8 +80,8 @@ class CCPEAllTeacher(FixedDialogTeacher):
 
             flattenedData.append(currEp)
 
-        userData = []
-        assistantData = []
+        self.userData = []
+        self.assistantData = []
 
         for ep in range(len(flattenedData)):
             currUserEp = []
@@ -120,10 +120,10 @@ class CCPEAllTeacher(FixedDialogTeacher):
 
             currUserEp[-1][5] = True
             currAssistantEp[-1][5] = True
-            userData.append(currUserEp)
-            assistantData.append(currAssistantEp)
+            self.userData.append(currUserEp)
+            self.assistantData.append(currAssistantEp)
 
-        self.data = assistantData + userData
+        self.data = self.assistantData + self.userData
 
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
@@ -147,7 +147,7 @@ class CCPEAllTeacher(FixedDialogTeacher):
 class CCPEAssistantTeacher(CCPEAllTeacher):
     def _setup_data(self):
         super()._setup_data()
-        self.data = self.data[:502]
+        self.data = self.assistantData
 
 
 class DefaultTeacher(CCPEAllTeacher):
