@@ -27,7 +27,7 @@ class SelfDialogueTeacher(FixedDialogTeacher):
         if shared and 'convos' in shared:
             # another instance was set up already, just reference its data
             self.convos = shared['convos']
-            self.ep_cheat_sheet = share['ep_cheat_sheet']
+            self.ep_cheat_sheet = shared['ep_cheat_sheet']
         else:
             # need to set up data from scratch
             self.ep_cheat_sheet = {}  # Stores imp. info. about each episode
@@ -113,8 +113,8 @@ class WozDialogueTeacher(FixedDialogTeacher):
             # another instance was set up already, just reference its data
             self.convos = shared['convos']
             self.episode_map = shared['episode_map']
-            self.ep_cheat_sheet = share['ep_cheat_sheet']
-            self.num_ex = share['num_ex']
+            self.ep_cheat_sheet = shared['ep_cheat_sheet']
+            self.num_ex = shared['num_ex']
         else:
             # need to set up data from scratch
             self.ep_cheat_sheet = {}  # Stores imp. info. about each episode
