@@ -510,7 +510,7 @@ class TransformerEncoder(nn.Module):
             divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
             output = tensor.sum(dim=1) / divisor
             return output
-        elif 'none' in self.reduction_type or self.reduction_type is None:
+        elif self.reduction_type is None or 'none' in self.reduction_type:
             output = tensor
             ret = (output, mask)
             if self.reduction_type == 'none_with_pos_embs':
