@@ -408,4 +408,39 @@ model_list = [
             "'sat_acc': 0.724}"
         ),
     },
+    {
+        "title": "Transformer Classifier Single-turn Dialogue Safety Model",
+        "id": "dialogue_safety",
+        "path": "zoo:dialogue_safety/single_turn/model",
+        "agent": "transformer_classifier",  # noqa: E501
+        "task": "dialogue_safety:adversarial,dialogue_safety:standard",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_safety",
+        "description": (
+            "Classifier trained on both the standard and adversarial safety tasks in addition to Wikipedia Toxic Comments."
+        ),
+        "example": (
+            "python examples/eval_model.py -t dialogue_safety:adversarial "
+            "--round 3 -dt test -mf zoo:dialogue_safety/single_turn/model -bs 40"
+        ),
+        "result": (
+            "{'exs': 3000, 'accuracy': 0.9627, 'f1': 0.9627, 'bleu': 9.627e-10, 'lr': 5e-09, 'num_updates': 0, 'examples': 3000, 'mean_loss': 0.005441, 'class___notok___recall': 0.7833, 'class___notok___prec': 0.8333, 'class___notok___f1': 0.8076, 'class___ok___recall': 0.9826, 'class___ok___prec': 0.9761, 'class___ok___f1': 0.9793, 'weighted_f1': 0.9621}"
+        ),
+    },
+    {
+        "title": "BERT Classifier Multi-turn Dialogue Safety Model",
+        "id": "dialogue_safety",
+        "path": "zoo:dialogue_safety/multi_turn/model",
+        "agent": "bert_classifier",  # noqa: E501
+        "task": "dialogue_safety:multiturn",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_safety",
+        "description": (
+            "Classifier trained on the multi-turn adversarial safety task in addition to both the single-turn standard and adversarial safety tasks and Wikipedia Toxic Comments."
+        ),
+        "example": (
+            "python examples/eval_model.py -t dialogue_safety:multiturn -dt test -mf zoo:dialogue_safety/multi_turn/model --split-lines True -bs 40"
+        ),
+        "result": (
+            "{'exs': 3000, 'accuracy': 0.9317, 'f1': 0.9317, 'bleu': 9.317e-10, 'lr': 5e-09, 'num_updates': 0, 'examples': 3000, 'mean_loss': 0.008921, 'class___notok___recall': 0.7067, 'class___notok___prec': 0.6444, 'class___notok___f1': 0.6741, 'class___ok___recall': 0.9567, 'class___ok___prec': 0.9671, 'class___ok___f1': 0.9618, 'weighted_f1': 0.9331}"
+        ),
+    },
 ]
