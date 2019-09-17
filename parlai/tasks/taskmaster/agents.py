@@ -10,25 +10,27 @@ from . import tm_utils
 import json
 
 
-class TaskMasterTeacher(FixedDialogTeacher):
+class SelfDialogueTeacher(FixedDialogTeacher):
     """
-    Base class to define a Teacher for TaskMaster-1 Google 2019
+    Teacher for written two-person dialogues with labels being responses for
+    the previous statement. The data is traversed twice (doubled), once for
+    modelling USER replies and once for modelling ASSISTANT replies.
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        self.ep_cheat_sheet = {}
-        # Defaut case (If nothing was set)
-        if 'fn' not in opt:
-            opt['fn'] = "self-dialogs.json"
+        opt['fn'] = "self-dialogs.json"
+
         if 'exclude-invalid-data' not in opt:
             opt['exclude-invalid-data'] = True
 
         if shared and 'convos' in shared:
             # another instance was set up already, just reference its data
             self.convos = shared['convos']
+            self.ep_cheat_sheet = share['ep_cheat_sheet']
         else:
             # need to set up data from scratch
+            self.ep_cheat_sheet = {}  # Stores imp. info. about each episode
             data_path = tm_utils._path(opt)
             self._setup_data(data_path, opt)
 
@@ -50,7 +52,6 @@ class TaskMasterTeacher(FixedDialogTeacher):
                 convos_update += [conversation]
         self.convos = convos_update
 
-    # add up cheatsheet[4] + cheatsheet[5] for every episode in ep cheatsheet
     def num_examples(self):
         ctr = 0
         for ep in self.ep_cheat_sheet:
@@ -94,32 +95,41 @@ class TaskMasterTeacher(FixedDialogTeacher):
         return action
 
 
-class SelfDialogueTeacher(TaskMasterTeacher):
+class WozDialogueTeacher(FixedDialogTeacher):
     """
-    Teach Written User-Assistant Dialogues
-    """
-
-    def __init__(self, opt, shared=None):
-        opt['fn'] = "self-dialogs.json"
-        super().__init__(opt, shared)
-
-
-class WozDialogueTeacher(TaskMasterTeacher):
-    """
-    Teach Spoken Dialogs
+    Teacher for spoken two-person dialogues with labels being responses for
+    the previous statement. The data is traversed twice (doubled), once for
+    modelling USER replies and once for modelling ASSISTANT replies.
     """
 
     def __init__(self, opt, shared=None):
         opt['fn'] = "woz-dialogs.json"
-        self.ep_cheat_sheet = {}
-        # Not all episodes have relevant examples for both USER and ASSISTANT
-        # episode_map keeps track of which episode index is useful for which speaker
-        # Need to do this otherwise might end up with a situation where we cannot return anything in action
-        self.episode_map = {}
-        self.episode_map["U"] = {}
-        self.episode_map["A"] = {}
-        self.num_ex = 0
-        super().__init__(opt, shared)
+        super().__init__(opt)
+
+        if 'exclude-invalid-data' not in opt:
+            opt['exclude-invalid-data'] = True
+
+        if shared and 'convos' in shared:
+            # another instance was set up already, just reference its data
+            self.convos = shared['convos']
+            self.episode_map = shared['episode_map']
+            self.ep_cheat_sheet = share['ep_cheat_sheet']
+            self.num_ex = share['num_ex']
+        else:
+            # need to set up data from scratch
+            self.ep_cheat_sheet = {}  # Stores imp. info. about each episode
+
+            # Not all episodes have relevant examples for both USER and ASSISTANT
+            # episode_map keeps track of which episode index is useful for which speaker
+            # Need to do this otherwise might end up with a situation where we cannot return anything in action
+            self.episode_map = {}
+            self.episode_map["U"] = {}
+            self.episode_map["A"] = {}
+            self.num_ex = 0
+            data_path = tm_utils._path(opt)
+            self._setup_data(data_path, opt)
+
+        self.reset()
 
     def _setup_data(self, data_path, opt):
         print('loading: ' + data_path)
@@ -203,10 +213,29 @@ class WozDialogueTeacher(TaskMasterTeacher):
         return action
 
 
-class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
+class SelfDialogueSegmentTeacher(FixedDialogTeacher):
     """
-    Teach "self-dialogs.json" with segment texts as labels
+    Teacher for written two-person dialogues with labels being relevant/useful
+    parts in the input sentence. The different datatypes of the labels within
+    the data have also been encoded as `label_types`
     """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt)
+        opt['fn'] = "self-dialogs.json"
+
+        if 'exclude-invalid-data' not in opt:
+            opt['exclude-invalid-data'] = True
+
+        if shared and 'convos' in shared:
+            # another instance was set up already, just reference its data
+            self.convos = shared['convos']
+        else:
+            # need to set up data from scratch
+            data_path = tm_utils._path(opt)
+            self._setup_data(data_path, opt)
+
+        self.reset()
 
     def get(self, episode_idx, entry_idx):
         conversation = self.convos[episode_idx]
@@ -236,7 +265,10 @@ class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
             ctr += len(convo["utterances"])
         return ctr
 
-    def _setup_data(self, data_path):
+    def num_episodes(self):
+        return len(self.convos)
+
+    def _setup_data(self, data_path, opt):
         print('loading: ' + data_path)
         with open(data_path) as data_file:
             self.convos = json.load(data_file)
@@ -254,5 +286,5 @@ class SelfDialogueSegmentTeacher(SelfDialogueTeacher):
         self.convos = convos_updated
 
 
-class DefaultTeacher(TaskMasterTeacher):
+class DefaultTeacher(SelfDialogueTeacher):
     pass

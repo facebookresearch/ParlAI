@@ -7,7 +7,11 @@
 from .build import build
 import os
 
-# Constants
+###############################################################
+#                                                             #
+# Constants                                                   #
+#                                                             #
+###############################################################
 FIRST_USER = 0
 LAST_USER = 1
 FIRST_ASSISTANT = 2
@@ -16,7 +20,11 @@ USER_NUM_EX = 4
 ASSIS_NUM_EX = 5
 
 
-# Functions
+###############################################################
+#                                                             #
+# Functions                                                   #
+#                                                             #
+###############################################################
 def _path(opt):
     # ensure data is built
     build(opt)
