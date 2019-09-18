@@ -21,17 +21,16 @@ class SelfDialogueTeacher(FixedDialogTeacher):
         super().__init__(opt)
         opt['fn'] = "self-dialogs.json"
 
-        if 'exclude-invalid-data' not in opt:
-            opt['exclude-invalid-data'] = True
-
         if shared and 'convos' in shared:
             # another instance was set up already, just reference its data
             self.convos = shared['convos']
             self.ep_cheat_sheet = shared['ep_cheat_sheet']
+            self.num_ex = shared['num_ex']
         else:
             # need to set up data from scratch
             self.ep_cheat_sheet = {}  # Stores imp. info. about each episode
             data_path = tm_utils._path(opt)
+            self.num_ex = 0
             self._setup_data(data_path, opt)
 
         self.reset()
@@ -49,17 +48,16 @@ class SelfDialogueTeacher(FixedDialogTeacher):
                 self.ep_cheat_sheet[
                     len(self.ep_cheat_sheet)
                 ] = tm_utils.gen_ep_cheatsheet(conversation)
+                curr_cheatsheet = self.ep_cheat_sheet[len(self.ep_cheat_sheet) - 1]
+                self.num_ex += (
+                    curr_cheatsheet[tm_utils.USER_NUM_EX]
+                    + curr_cheatsheet[tm_utils.ASSIS_NUM_EX]
+                )
                 convos_update += [conversation]
         self.convos = convos_update
 
     def num_examples(self):
-        ctr = 0
-        for ep in self.ep_cheat_sheet:
-            ctr += (
-                self.ep_cheat_sheet[ep][tm_utils.USER_NUM_EX]
-                + self.ep_cheat_sheet[ep][tm_utils.ASSIS_NUM_EX]
-            )
-        return ctr
+        return self.num_ex
 
     def num_episodes(self):
         # For two passes over the data: Once to teach USER and once to teach ASSISTANT
@@ -70,7 +68,8 @@ class SelfDialogueTeacher(FixedDialogTeacher):
         if episode_idx < len(self.convos):
             # USER then ASSISTANT mode [First pass]
             ep_done = (
-                entry_idx * 2 == self.ep_cheat_sheet[episode_idx][tm_utils.LAST_USER]
+                entry_idx * 2
+                == self.ep_cheat_sheet[episode_idx][tm_utils.LAST_USER_IDX]
             )
             predecessor = conversation[entry_idx * 2]['text']
             successor = conversation[entry_idx * 2 + 1]['text']
@@ -79,7 +78,7 @@ class SelfDialogueTeacher(FixedDialogTeacher):
             ep_done = (
                 entry_idx * 2 + 1
                 == self.ep_cheat_sheet[episode_idx % len(self.convos)][
-                    tm_utils.LAST_ASSISTANT
+                    tm_utils.LAST_ASSISTANT_IDX
                 ]
             )
             predecessor = conversation[entry_idx * 2 + 1]['text']
@@ -106,9 +105,6 @@ class WozDialogueTeacher(FixedDialogTeacher):
         opt['fn'] = "woz-dialogs.json"
         super().__init__(opt)
 
-        if 'exclude-invalid-data' not in opt:
-            opt['exclude-invalid-data'] = True
-
         if shared and 'convos' in shared:
             # another instance was set up already, just reference its data
             self.convos = shared['convos']
@@ -121,7 +117,8 @@ class WozDialogueTeacher(FixedDialogTeacher):
 
             # Not all episodes have relevant examples for both USER and ASSISTANT
             # episode_map keeps track of which episode index is useful for which speaker
-            # Need to do this otherwise might end up with a situation where we cannot return anything in action
+            # Need to do this otherwise might end up with a situation where we cannot
+            # return anything in action
             self.episode_map = {}
             self.episode_map["U"] = {}
             self.episode_map["A"] = {}
@@ -130,6 +127,16 @@ class WozDialogueTeacher(FixedDialogTeacher):
             self._setup_data(data_path, opt)
 
         self.reset()
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        agent = argparser.add_argument_group('Corrupt-Example-Arguments')
+        agent.add_argument(
+            '--exclude-invalid-data',
+            type='bool',
+            default=True,
+            help='Whether to include corrupt examples in the data',
+        )
 
     def _setup_data(self, data_path, opt):
         print('loading: ' + data_path)
@@ -170,15 +177,14 @@ class WozDialogueTeacher(FixedDialogTeacher):
         return len(self.episode_map["U"]) + len(self.episode_map["A"])
 
     def get(self, episode_idx, entry_idx):
-        starts_at_odd = False
         if episode_idx < len(self.episode_map["U"]):
             # USER then ASSISTANT mode [First pass]
             true_idx = self.episode_map["U"][episode_idx]
             conversation = self.convos[true_idx]
             convo_cheat_sheet = self.ep_cheat_sheet[true_idx]
-            first_entry, last_entry = (
-                convo_cheat_sheet[tm_utils.FIRST_USER],
-                convo_cheat_sheet[tm_utils.LAST_USER],
+            first_entry_idx, last_entry_idx = (
+                convo_cheat_sheet[tm_utils.FIRST_USER_IDX],
+                convo_cheat_sheet[tm_utils.LAST_USER_IDX],
             )
         else:
             # ASSISTANT then USER mode [Second pass]
@@ -188,20 +194,20 @@ class WozDialogueTeacher(FixedDialogTeacher):
             true_idx = self.episode_map["A"][episode_idx]
             conversation = self.convos[true_idx]
             convo_cheat_sheet = self.ep_cheat_sheet[true_idx]
-            first_entry, last_entry = (
-                convo_cheat_sheet[tm_utils.FIRST_ASSISTANT],
-                convo_cheat_sheet[tm_utils.LAST_ASSISTANT],
+            first_entry_idx, last_entry_idx = (
+                convo_cheat_sheet[tm_utils.FIRST_ASSISTANT_IDX],
+                convo_cheat_sheet[tm_utils.LAST_ASSISTANT_IDX],
             )
 
-        starts_at_odd = first_entry % 2 != 0
+        starts_at_odd = first_entry_idx % 2 != 0
         if starts_at_odd:
             predecessor = conversation[entry_idx * 2 + 1]['text']
             successor = conversation[entry_idx * 2 + 2]['text']
-            ep_done = entry_idx * 2 + 1 == last_entry
+            ep_done = entry_idx * 2 + 1 == last_entry_idx
         else:
             predecessor = conversation[entry_idx * 2]['text']
             successor = conversation[entry_idx * 2 + 1]['text']
-            ep_done = entry_idx * 2 == last_entry
+            ep_done = entry_idx * 2 == last_entry_idx
 
         action = {
             'id': self.id,
@@ -224,17 +230,15 @@ class SelfDialogueSegmentTeacher(FixedDialogTeacher):
         super().__init__(opt)
         opt['fn'] = "self-dialogs.json"
 
-        if 'exclude-invalid-data' not in opt:
-            opt['exclude-invalid-data'] = True
-
         if shared and 'convos' in shared:
             # another instance was set up already, just reference its data
             self.convos = shared['convos']
+            self.num_ex = shared['num_ex']
         else:
             # need to set up data from scratch
             data_path = tm_utils._path(opt)
+            self.num_ex = 0
             self._setup_data(data_path, opt)
-
         self.reset()
 
     def get(self, episode_idx, entry_idx):
@@ -260,10 +264,7 @@ class SelfDialogueSegmentTeacher(FixedDialogTeacher):
         return action
 
     def num_examples(self):
-        ctr = 0
-        for convo in self.convos:
-            ctr += len(convo["utterances"])
-        return ctr
+        return self.num_ex
 
     def num_episodes(self):
         return len(self.convos)
@@ -283,6 +284,7 @@ class SelfDialogueSegmentTeacher(FixedDialogTeacher):
             convo['utterances'] = updated_dialog
             if convo['utterances']:
                 convos_updated += [convo]
+                self.num_ex += len(convo['utterances'])
         self.convos = convos_updated
 
 

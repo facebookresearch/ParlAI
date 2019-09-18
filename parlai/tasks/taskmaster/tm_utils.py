@@ -12,10 +12,10 @@ import os
 # Constants                                                   #
 #                                                             #
 ###############################################################
-FIRST_USER = 0
-LAST_USER = 1
-FIRST_ASSISTANT = 2
-LAST_ASSISTANT = 3
+FIRST_USER_IDX = 0
+LAST_USER_IDX = 1
+FIRST_ASSISTANT_IDX = 2
+LAST_ASSISTANT_IDX = 3
 USER_NUM_EX = 4
 ASSIS_NUM_EX = 5
 
@@ -31,9 +31,19 @@ def _path(opt):
     return os.path.join(opt['datapath'], 'taskmaster-1', opt['fn'])
 
 
-# Generate a cheatsheet for an episode
 def gen_ep_cheatsheet(convo):
-    # passed in: utterances
+    """
+    Generates a cheatsheet for a particular conversation (episode).
+    The index and it's significance in the cheatsheet is shown below:
+        0: First index of a USER that has an ASSISTANT reply to it
+        1: Last index of a USER that has an ASSISTANT reply to it
+        2: First index of an ASSISTANT that has a USER reply to it
+        3: Last index of an ASSISTANT that has a USER reply to it
+        4: Number of examples for USER speech  as text and ASSISTANT speech as label
+        5: Number of examples for ASSISTANT speech as text and USER speech  as label
+    :param conversation:
+        The dialogue between USER and ASSISTANT [after smoothening]
+    """
     cheatsheet = [-1, -1, -1, -1, 0, 0]
     # Assumed that length of convo is greater than two due to filtering cond
     for idx in range(1, len(convo)):
@@ -62,19 +72,32 @@ def gen_ep_cheatsheet(convo):
     return cheatsheet
 
 
-# Re-assign indexes after smoothening (mostly for clarity purposes)
-# Doesn't matter since we never index by specifically using the index field of the json
 def update_indexes(conversation):
+    """
+    Re-assigns indexes after smoothening (mostly for clarity purposes)
+    Doesn't really matter since we never index by specifically using the "index"
+    field of the json obj
+    :param conversation:
+        The dialogue between USER and ASSISTANT with inconsistent indices
+    """
     for i in range(len(conversation)):
         conversation[i]["index"] = i
 
     return conversation
 
 
-# Join two conversations
-# Join texts don't care about segments
-# Assumption: utt1 is the one popped from the stack
 def join_speech(utt1, utt2):
+    """
+    Joins two conversations using a '\n'
+    Join texts and doesn't care about segments
+    Assumption: utt1 is the one being popped off from the stack and the utt2
+                is the one trying to be added. This is so that I check for 'ctr'
+                field only in one of the parameters.
+    :param utt1:
+        An utterance (json object) from either USER or ASSISTANT
+    :param utt2:
+        Next utterance(json object) from a speaker same as utt1
+    """
     new_utt = {}
     new_utt["index"] = utt1["index"]
     new_utt["text"] = utt1["text"] + "\n" + utt2["text"]
@@ -86,8 +109,14 @@ def join_speech(utt1, utt2):
     return new_utt
 
 
-# Aggregate contiguous responses by the same speaker in the data
 def smoothen_convo(conversation, opt):
+    """
+    Aggregates contiguous responses by the same speaker in the data so that data
+    eventually contains alternations between USER and ASSISTANT
+    :param conversation:
+        The dialogue between USER and ASSISTANT with possible multiple contiguous
+        speeches by the same speaker
+    """
     dialogue = conversation['utterances']
     conversation_stack = []
     for speech in dialogue:
@@ -101,7 +130,11 @@ def smoothen_convo(conversation, opt):
     processed_conversation = []
     corrupt = False
     for speech in conversation_stack:
-        if opt['exclude-invalid-data'] and 'ctr' in speech and speech['ctr'] > 5:
+        if (
+            opt.get('exclude_invalid_data', True)
+            and 'ctr' in speech
+            and speech['ctr'] > 5
+        ):
             corrupt = True
         processed_conversation += [speech]
     return update_indexes(processed_conversation), corrupt
