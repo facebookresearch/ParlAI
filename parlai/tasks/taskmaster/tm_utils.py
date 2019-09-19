@@ -26,6 +26,11 @@ ASSIS_NUM_EX = 5
 #                                                             #
 ###############################################################
 def _path(opt):
+    """
+    Ensures that the data is build and returns path to specific data file
+    :param opt:
+        Options dict: mainly used to access the data file name while path creation.
+    """
     # ensure data is built
     build(opt)
     return os.path.join(opt['datapath'], 'taskmaster-1', opt['fn'])
@@ -41,7 +46,7 @@ def gen_ep_cheatsheet(convo):
         3: Last index of an ASSISTANT that has a USER reply to it
         4: Number of examples for USER speech  as text and ASSISTANT speech as label
         5: Number of examples for ASSISTANT speech as text and USER speech  as label
-    :param conversation:
+    :param convo:
         The dialogue between USER and ASSISTANT [after smoothening]
     """
     cheatsheet = [-1, -1, -1, -1, 0, 0]
@@ -116,6 +121,8 @@ def smoothen_convo(conversation, opt):
     :param conversation:
         The dialogue between USER and ASSISTANT with possible multiple contiguous
         speeches by the same speaker
+    :param opt:
+        options dict, mainly useful for accessing value of exclude_invalid_data
     """
     dialogue = conversation['utterances']
     conversation_stack = []
