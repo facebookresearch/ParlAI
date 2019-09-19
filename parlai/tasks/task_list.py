@@ -735,6 +735,20 @@ task_list = [
         ),
     },
     {
+        "id": "TaskMaster",
+        "display_name": "TaskMaster-1-2019",
+        "task": "taskmaster",
+        "tags": ["ChitChat", "All"],
+        "description": (
+            "A chit-chat dataset by GoogleAI providing high quality goal-oriented conversations"
+            "The dataset hopes to provoke interest in written vs spoken language"
+            "Both the datasets consists of two-person dialogs:"
+            "Spoken: Created using Wizard of Oz methodology.(woz-dialogs.json)"
+            "Written: Created by crowdsourced workers who were asked to write the full conversation themselves playing roles of both the user and assistant. (self-dialogs.json)"
+            "Link: https://ai.google/tools/datasets/taskmaster-1"
+        ),
+    },
+    {
         "id": "Twitter",
         "display_name": "Twitter",
         "task": "twitter",
