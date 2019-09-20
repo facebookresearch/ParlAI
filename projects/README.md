@@ -16,7 +16,7 @@ This directory also contains subfolders for some of the projects which are house
   _Analysis of the performance of search in generative models for chitchat tasks._
 
 ## Retrieval Models
-- **Poly-Encoders** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder) [[paper]](https://arxiv.org/abs/1905.01969).
+- **Poly-Encoders** [[project]](https://parl.ai/projects/polyencoder/) [[paper]](https://arxiv.org/abs/1905.01969).
   _State-of-the-art Transformer architectures + pretraining for dialogue retrieval._
 
 
