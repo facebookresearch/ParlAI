@@ -94,7 +94,7 @@ python -u examples/train_model.py \
   --learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 \
   --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 --n-positions 1024 \
   --embedding-size 768 --activation gelu --embeddings-scale False --n-segments 2 \
-  --learn-embeddings True --polyencoder-type n_first --poly-n-codes 64 \
+  --learn-embeddings True --polyencoder-type codes --poly-n-codes 64 \
   --poly-attention-type basic --dict-endtoken __start__ \
   --model-file <YOUR MODEL FILE>
 ```
