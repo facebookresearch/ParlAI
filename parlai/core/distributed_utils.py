@@ -31,9 +31,9 @@ def validate_params(opt):
 
     Raises exceptions if anything is wrong, otherwise returns None.
     """
-    if torch.version.__version__.startswith('0.'):
+    if torch.__version__ < "1.1.0":
         raise ImportError(
-            "Please upgrade to PyTorch >=1.0; "
+            "Please upgrade to PyTorch >=1.1; "
             "visit https://pytorch.org for instructions."
         )
 

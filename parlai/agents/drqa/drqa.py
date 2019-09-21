@@ -18,11 +18,7 @@ To automatically download glove, use:
 --embedding_file zoo:glove_vectors/glove.840B.300d.txt
 """
 
-try:
-    import torch
-except ImportError:
-    raise ImportError('Need to install pytorch: go to pytorch.org')
-
+import torch
 import bisect
 import os
 import numpy as np

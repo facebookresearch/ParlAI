@@ -46,6 +46,12 @@ try:
 except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 
+if torch.__version__ < "1.1.0":
+    raise ImportError(
+        "Please upgrade to PyTorch >=1.1; "
+        "visit https://pytorch.org for instructions."
+    )
+
 
 class Batch(AttrDict):
     """

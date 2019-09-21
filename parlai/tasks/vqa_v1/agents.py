@@ -19,10 +19,7 @@ from .build import build
 from parlai.tasks.coco_caption.build_2014 import buildImage as buildImage_2014
 from parlai.tasks.coco_caption.build_2015 import buildImage as buildImage_2015
 
-try:
-    import torch
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
+import torch
 from torch.utils.data import Dataset
 
 

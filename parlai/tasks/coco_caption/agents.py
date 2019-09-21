@@ -11,10 +11,8 @@ from .build_2014 import buildImage as buildImage_2014
 from .build_2017 import build as build_2017
 from .build_2017 import buildImage as buildImage_2017
 
-try:
-    import torch  # noqa: F401
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
+
+import torch  # noqa: F401
 from torch.utils.data import Dataset
 
 import os

@@ -7,15 +7,11 @@
 """Various retriever utilities."""
 
 import regex
+import torch
 import unicodedata
 import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
-
-try:
-    import torch
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
 
 
 # ------------------------------------------------------------------------------

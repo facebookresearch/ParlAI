@@ -45,10 +45,7 @@ class ImageLoader:
                 )
 
     def _lazy_import_torch(self):
-        try:
-            import torch
-        except ImportError:
-            raise ImportError('Need to install Pytorch: go to pytorch.org')
+        import torch
         import torchvision
         import torchvision.transforms as transforms
         import torch.nn as nn

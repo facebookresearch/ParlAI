@@ -17,23 +17,21 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
+import json
+import random
+import math
+
+import torch
+from torch import optim
+
 from parlai.core.agents import Agent
 from parlai.core.build_data import modelzoo_path
 from .dict_v1 import DictionaryAgent
 from .utils_v1 import set_namedtuple_defaults, argsort, padded_tensor, NEAR_INF
 
-try:
-    import torch
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
-
-
-from torch import optim
 from collections import deque, namedtuple, Counter
-import json
-import random
-import math
 from operator import attrgetter
+
 
 """
 Batch is a namedtuple containing data being sent to an agent.

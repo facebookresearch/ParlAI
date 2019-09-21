@@ -111,17 +111,14 @@ def extract_feats(opt):
     elif opt.get('use_hdf5_extraction', False):
         # TODO Deprecate
         '''One can specify a Pytorch Dataset for custom image loading'''
+        import torch
+        from torch.utils.data import DataLoader
+
         nw = opt.get('numworkers', 1)
         im = opt.get('image_mode', 'raw')
         opt['batchsize'] = 1
         opt['extract_image'] = True
         bsz = 1
-        try:
-            import torch
-            from torch.utils.data import DataLoader
-        except ImportError:
-            raise ImportError('Need to install Pytorch: go to pytorch.org')
-
         dataset = get_dataset_class(opt)(opt)
         pre_image_path, _ = os.path.split(dataset.image_path)
         image_path = os.path.join(pre_image_path, opt.get('image_mode'))

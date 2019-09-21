@@ -23,20 +23,16 @@ import os
 from functools import wraps
 import importlib
 from functools import lru_cache
-
-try:
-    import torch  # noqa: F401
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
+import torch  # noqa: F401
 from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
 import ctypes
 from threading import Thread, Condition, RLock
 
 
-if torch.version.__version__.startswith('0.'):
+if torch.__version__ < "1.1.0":
     raise ImportError(
-        "Please upgrade to PyTorch >=1.0; "
+        "Please upgrade to PyTorch >=1.1; "
         "visit https://pytorch.org for instructions."
     )
 
