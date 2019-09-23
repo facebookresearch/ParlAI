@@ -59,7 +59,7 @@ installtorchgpu11: &installtorchgpu11
   run:
     name: Install torch GPU and dependencies
     command: |
-      pip3 install --progress-bar off 'torch<1.2.0'
+      pip3 install --progress-bar off 'torch>=1.2.0'
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
@@ -79,19 +79,19 @@ installtorchcpuosx: &installtorchcpuosx
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.0-cp37-none-macosx_10_7_x86_64.whl
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.2.0-cp37-none-macosx_10_7_x86_64.whl
 
 installtorchcpu36: &installtorchcpu36
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.2.0.post2-cp36-cp36m-linux_x86_64.whl
 
 installtorchcpu37: &installtorchcpu37
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp37-cp37m-linux_x86_64.whl
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.2.0.post2-cp37-cp37m-linux_x86_64.whl
 
 setupcuda: &setupcuda
   run:

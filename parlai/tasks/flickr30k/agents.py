@@ -8,8 +8,6 @@ from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from .build import build
 
-
-import torch  # noqa: F401
 from torch.utils.data import Dataset
 from parlai.core.dict import DictionaryAgent
 

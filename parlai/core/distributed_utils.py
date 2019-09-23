@@ -15,6 +15,7 @@ in non-distributed mode.
 import builtins
 import pickle
 import contextlib
+from parlai.core.utils import check_torch_version
 
 try:
     import torch.version
@@ -31,11 +32,7 @@ def validate_params(opt):
 
     Raises exceptions if anything is wrong, otherwise returns None.
     """
-    if torch.__version__ < "1.1.0":
-        raise ImportError(
-            "Please upgrade to PyTorch >=1.1; "
-            "visit https://pytorch.org for instructions."
-        )
+    check_torch_version()
 
     if opt.get('no_cuda', False):
         raise ValueError('Distributed mode only makes sense when using GPUs.')

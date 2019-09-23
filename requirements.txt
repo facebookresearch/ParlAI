@@ -21,7 +21,6 @@ scipy
 sh
 sphinx
 sphinx_rtd_theme
-torch>=1.1
 tqdm
 websocket-client
 websocket-server

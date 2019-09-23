@@ -13,6 +13,7 @@ http://parl.ai/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader
 
 from .teachers import FixedDialogTeacher
 from parlai.core.utils import warn_once
+from parlai.core.utils import check_torch_version
 from parlai.scripts.build_pytorch_data import build_data
 from .agents import get_agent_module
 import json
@@ -23,18 +24,13 @@ import os
 from functools import wraps
 import importlib
 from functools import lru_cache
-import torch  # noqa: F401
 from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
 import ctypes
 from threading import Thread, Condition, RLock
 
-
-if torch.__version__ < "1.1.0":
-    raise ImportError(
-        "Please upgrade to PyTorch >=1.1; "
-        "visit https://pytorch.org for instructions."
-    )
+# Perform Torch version check
+check_torch_version()
 
 
 class BatchSortCache(object):

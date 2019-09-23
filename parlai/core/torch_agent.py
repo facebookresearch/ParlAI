@@ -38,6 +38,7 @@ from parlai.core.utils import (
     padded_tensor,
     warn_once,
     round_sigfigs,
+    check_torch_version
 )
 from parlai.core.distributed_utils import is_primary_worker
 
@@ -46,11 +47,8 @@ try:
 except ImportError:
     raise ImportError('Need to install Pytorch: go to pytorch.org')
 
-if torch.__version__ < "1.1.0":
-    raise ImportError(
-        "Please upgrade to PyTorch >=1.1; "
-        "visit https://pytorch.org for instructions."
-    )
+# Perform torch version check
+check_torch_version()
 
 
 class Batch(AttrDict):
