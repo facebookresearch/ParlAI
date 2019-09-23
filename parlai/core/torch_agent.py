@@ -38,7 +38,7 @@ from parlai.core.utils import (
     padded_tensor,
     warn_once,
     round_sigfigs,
-    check_torch_version
+    check_torch_version,
 )
 from parlai.core.distributed_utils import is_primary_worker
 

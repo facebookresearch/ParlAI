@@ -24,6 +24,7 @@ import os
 from functools import wraps
 import importlib
 from functools import lru_cache
+import torch  # noqa: F401
 from torch.utils.data import ConcatDataset, Dataset, DataLoader, sampler
 from torch.multiprocessing import Lock, Value
 import ctypes

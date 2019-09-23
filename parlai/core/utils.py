@@ -32,12 +32,14 @@ except ImportError:
     TORCH_LONG = None
     __TORCH_AVAILABLE = False
 
+
 def check_torch_version():
     if torch.__version__ < "1.1.0":
         raise ImportError(
             "Please upgrade to PyTorch >=1.1; "
             "visit https://pytorch.org for instructions."
         )
+
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
