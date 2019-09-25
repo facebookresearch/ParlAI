@@ -79,7 +79,10 @@ installtorchcpuosx: &installtorchcpuosx
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off 'torch>=1.1.0'
+      source /Users/distiller/miniconda/etc/profile.d/conda.sh
+      conda config --set always_yes yes
+      conda activate base
+      conda install --quiet 'pytorch>=1.1.0' -c pytorch
 
 installtorchcpu36: &installtorchcpu36
   run:
@@ -106,6 +109,15 @@ setupcuda: &setupcuda
       sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
       nvidia-smi
       pyenv global 3.6.5
+
+installconda: &installconda
+  run:
+    name: Install Anaconda
+    working_directory: ~/
+    command: |
+      brew install wget --with-libressl
+      wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
+      bash miniconda.sh -b -p "$HOME"/miniconda
 
 buildwebsite: &buildwebsite
   run:
@@ -136,12 +148,16 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - <<: *installconda
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - run:
           name: Unit tests (OSX)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: |
+            source /Users/distiller/miniconda/etc/profile.d/conda.sh
+            conda activate base
+            python setup.py test -s tests.suites.unittests -v
 
   unittests_36:
     <<: *standard_cpu36

@@ -130,6 +130,7 @@ class TestSeq2Seq(unittest.TestCase):
 
 
 class TestHogwildSeq2seq(unittest.TestCase):
+    # os_x tests: Hangs if using pip installation of pytorch; Succeeds if using conda installation
     @testing_utils.skipIfGPU
     def test_generation_multi(self):
         """This test uses a multi-turn task and multithreading."""
