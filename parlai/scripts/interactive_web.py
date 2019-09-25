@@ -56,6 +56,11 @@ WEB_HTML = """
                             Submit
                           </button>
                         </p>
+                        <p class="control">
+                          <button id="restart" type="reset" class="button has-text-white-ter has-background-grey-dark">
+                            Restart Conversation
+                          </button>
+                        </p>
                       </div>
                   </form>
                 </div>
@@ -125,6 +130,24 @@ WEB_HTML = """
                     window.scrollTo(0,document.body.scrollHeight);
                 }})
             }});
+            document.getElementById("interact").addEventListener("reset", function(event){{
+                event.preventDefault()
+                var text = document.getElementById("userIn").value;
+                document.getElementById('userIn').value = "";
+
+                fetch('/reset', {{
+                    headers: {{
+                        'Content-Type': 'application/json'
+                    }},
+                    method: 'POST',
+                }}).then(response=>response.json()).then(data=>{{
+                    var parDiv = document.getElementById("parent");
+
+                    parDiv.innerHTML = '';
+                    parDiv.append(createChatRow("Model", "Enter a message, and the model will respond interactively."));
+                    window.scrollTo(0,document.body.scrollHeight);
+                }})
+            }});
         </script>
 
     </body>
@@ -149,20 +172,26 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """Handle POST request, especially replying to a chat message."""
-        if self.path != '/interact':
+        if self.path == '/interact':
+            content_length = int(self.headers['Content-Length'])
+            body = self.rfile.read(content_length)
+            model_response = self._interactive_running(
+                SHARED.get('opt'), body.decode('utf-8')
+            )
+
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            json_str = json.dumps(model_response)
+            self.wfile.write(bytes(json_str, 'utf-8'))
+        elif self.path == '/reset':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            SHARED['agent'].reset()
+            self.wfile.write(bytes("{}", 'utf-8'))
+        else:
             return self._respond({'status': 500})
-
-        content_length = int(self.headers['Content-Length'])
-        body = self.rfile.read(content_length)
-        model_response = self._interactive_running(
-            SHARED.get('opt'), body.decode('utf-8')
-        )
-
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        json_str = json.dumps(model_response)
-        self.wfile.write(bytes(json_str, 'utf-8'))
 
     def do_GET(self):
         """Respond to GET request, especially the initial load."""
