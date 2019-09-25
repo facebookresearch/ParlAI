@@ -42,13 +42,9 @@ from parlai.core.utils import (
 )
 from parlai.core.distributed_utils import is_primary_worker
 
-try:
-    import torch
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
-
 # Perform torch version check
 check_torch_version()
+import torch
 
 
 class Batch(AttrDict):

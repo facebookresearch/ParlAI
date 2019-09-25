@@ -17,13 +17,8 @@ import pickle
 import contextlib
 from parlai.core.utils import check_torch_version
 
-try:
-    import torch.version
-    import torch.distributed as dist
-
-    TORCH_AVAILABLE = True
-except ImportError:
-    TORCH_AVAILABLE = False
+check_torch_version()
+import torch.distributed as dist
 
 
 def validate_params(opt):
@@ -50,7 +45,7 @@ def validate_params(opt):
 
 def is_distributed():
     """Return if we are in distributed mode."""
-    return TORCH_AVAILABLE and dist.is_available() and dist.is_initialized()
+    return dist.is_available() and dist.is_initialized()
 
 
 def num_workers():

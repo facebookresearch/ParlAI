@@ -21,25 +21,23 @@ import heapq
 from parlai.core.message import Message
 
 # some of the utility methods are helpful for Torch
-try:
-    import torch
-
-    # default type in padded3d needs to be protected if torch
-    # isn't installed.
-    TORCH_LONG = torch.long
-    __TORCH_AVAILABLE = True
-except ImportError:
-    TORCH_LONG = None
-    __TORCH_AVAILABLE = False
-
-
 def check_torch_version():
+    try:
+        import torch
+    except ImportError:
+        raise ImportError('Need to install Pytorch: go to pytorch.org')
+
     if torch.__version__ < "1.1.0":
         raise ImportError(
             "Please upgrade to PyTorch >=1.1; "
             "visit https://pytorch.org for instructions."
         )
 
+
+check_torch_version()
+import torch
+
+TORCH_LONG = torch.long
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
@@ -1130,10 +1128,7 @@ def padded_tensor(
     :rtype: (Tensor[int64], list[int])
     """
     # hard fail if we don't have torch
-    if not __TORCH_AVAILABLE:
-        raise ImportError(
-            "Cannot use padded_tensor without torch; go to http://pytorch.org"
-        )
+    check_torch_version()
 
     # number of items
     n = len(items)
@@ -1237,7 +1232,7 @@ def argsort(keys, *lists, descending=False):
     output = []
     for lst in lists:
         # watch out in case we don't have torch installed
-        if __TORCH_AVAILABLE and isinstance(lst, torch.Tensor):
+        if isinstance(lst, torch.Tensor):
             output.append(lst[ind_sorted])
         else:
             output.append([lst[i] for i in ind_sorted])
