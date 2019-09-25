@@ -44,7 +44,7 @@ from parlai.core.distributed_utils import is_primary_worker
 
 # Perform torch version check
 check_torch_version()
-import torch
+import torch  # noqa: E402
 
 
 class Batch(AttrDict):

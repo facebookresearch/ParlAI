@@ -20,8 +20,10 @@ import heapq
 
 from parlai.core.message import Message
 
+
 # some of the utility methods are helpful for Torch
 def check_torch_version():
+    """ Perform a central check for torch installation and version."""
     try:
         import torch
     except ImportError:
@@ -35,7 +37,7 @@ def check_torch_version():
 
 
 check_torch_version()
-import torch
+import torch  # noqa: E402
 
 TORCH_LONG = torch.long
 

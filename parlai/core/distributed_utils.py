@@ -18,7 +18,8 @@ import contextlib
 from parlai.core.utils import check_torch_version
 
 check_torch_version()
-import torch.distributed as dist
+import torch  # noqa: E402
+import torch.distributed as dist  # noqa: E402
 
 
 def validate_params(opt):
