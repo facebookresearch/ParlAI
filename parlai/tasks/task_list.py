@@ -1018,4 +1018,14 @@ task_list = [
             "determine if the text is offensive or \'safe\'."
         ),
     },
+    {
+        "id": "FlattenedTeacher",
+        "display_name": "Flattened Teacher",
+        "task": "flattened:task:<ORIGINAL TASK NAME>",
+        "tags": ["All"],
+        "description": (
+            "Utility teacher for flattening examples from an existing "
+            "multi-turn task into single-turn episodes."
+        ),
+    },
 ]
