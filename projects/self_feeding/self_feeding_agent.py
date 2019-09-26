@@ -488,9 +488,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 elif self.eval_candidates == 'vocab':
                     cand_vecs = self.vocab_candidate_encs
 
-        scores = self.model.score_dialog(
-            batch.text_vec, cand_vecs
-        )
+        scores = self.model.score_dialog(batch.text_vec, cand_vecs)
         _, ranks = scores.sort(1, descending=True)
 
         if self.model.training:
