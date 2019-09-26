@@ -39,8 +39,6 @@ def check_torch_version():
 check_torch_version()
 import torch  # noqa: E402
 
-TORCH_LONG = torch.long
-
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF = 1e20
 NEAR_INF_FP16 = 65504
@@ -1172,7 +1170,7 @@ def padded_tensor(
     return output, lens
 
 
-def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=TORCH_LONG, fp16friendly=False):
+def padded_3d(tensors, pad_idx=0, use_cuda=0, dtype=torch.long, fp16friendly=False):
     """
     Make 3D padded tensor for list of lists of 1D tensors or lists.
 
