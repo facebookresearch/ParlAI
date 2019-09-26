@@ -469,7 +469,6 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
     def dialog_step(self, batch):
         batchsize = batch.text_vec.size(0)
-        cand_encs = None
         if self.model.training:
             cands, cand_vecs, label_inds = self._build_candidates(
                 batch, source=self.opt['candidates'], mode='train'
@@ -485,12 +484,12 @@ class SelfFeedingAgent(TransformerRankerAgent):
                 # if we cached candidate encodings for a fixed list of candidates,
                 # pass those into the score_candidates function
                 if self.eval_candidates == 'fixed':
-                    cand_encs = self.fixed_candidate_encs
+                    cand_vecs = self.fixed_candidate_encs
                 elif self.eval_candidates == 'vocab':
-                    cand_encs = self.vocab_candidate_encs
+                    cand_vecs = self.vocab_candidate_encs
 
         scores = self.model.score_dialog(
-            batch.text_vec, cand_encs if cand_encs is not None else cand_vecs
+            batch.text_vec, cand_vecs
         )
         _, ranks = scores.sort(1, descending=True)
 
