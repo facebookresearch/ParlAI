@@ -17,6 +17,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.local_human.local_human import LocalHumanAgent
+from parlai.tasks.self_feeding.build import build
 from projects.self_feeding.self_feeding_agent import SelfFeedingAgent
 
 
@@ -40,6 +41,8 @@ def interactive(opt, print_parser=None):
         print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
         opt = opt.parse_args()
 
+    opt['task'] = 'self_feeding'
+    build(opt)
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
     cand_file = os.path.join(opt['datapath'], 'self_feeding/convai2_cands.txt')
     # Set values to override when the opt dict for the saved model is loaded
