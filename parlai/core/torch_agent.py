@@ -1007,7 +1007,7 @@ class TorchAgent(ABC, Agent):
             metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
 
         if self.use_cuda:
-            metrics['gpumempct'] = round_sigfigs(self._gpu_usage(), sigfigs=3)
+            metrics['gpu_mem_percent'] = round_sigfigs(self._gpu_usage(), sigfigs=3)
 
         return metrics
 
@@ -1015,8 +1015,10 @@ class TorchAgent(ABC, Agent):
         """
         Computes GPU memory usage.
 
-        Only computes the *maximum* memory used, but this is the most useful
-        metric for ensuring OOMs don't happen.
+        Includes both allocated and cached memory; this should be close to the
+        output of nvidia-smi, but not reflect of how much is currently demanded
+        by the program. It may be viewed as a rough approximation of
+        worst-case-until-now.
 
         :return: Percent of allocated GPU memory as a fraction of available.
         """
