@@ -395,7 +395,7 @@ class TorchRankerAgent(TorchAgent):
 
         # clean up candidates in case cands were added
         if self.candidates == 'fixed':
-            self.fixed_candidates = self.fixed_candidates[:self.num_fixed_candidates]
+            self.fixed_candidates = self.fixed_candidates[: self.num_fixed_candidates]
 
         # Get train predictions
         if self.candidates == 'batch':
@@ -491,7 +491,7 @@ class TorchRankerAgent(TorchAgent):
 
         # clean up candidates
         if self.eval_candidates == 'fixed':
-            self.fixed_candidates = self.fixed_candidates[:self.num_fixed_candidates]
+            self.fixed_candidates = self.fixed_candidates[: self.num_fixed_candidates]
         return Output(preds, cand_preds)
 
     def block_repeats(self, cand_preds):
