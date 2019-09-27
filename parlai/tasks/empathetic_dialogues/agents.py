@@ -143,6 +143,7 @@ class EmotionClassificationTeacher(EmpatheticDialogueTeacher):
     """
     Class for detecting the emotion based on the utterance.
     """
+
     @staticmethod
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('Emotion Classification Args')
