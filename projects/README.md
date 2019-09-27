@@ -27,6 +27,9 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Chit-chat
 
+- **Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
+  _Task and method for improving the detection of offensive language in the context of dialogue._
+
 - **Dialogue Natural Language Inference** [[external website]](https://wellecks.github.io/dialogue_nli/).
   _Task and method for improving dialogue consistency._
 
