@@ -357,7 +357,7 @@ class TorchRankerAgent(TorchAgent):
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
-        if self.candidates != 'fixed':
+        if self.candidates != 'fixed' and self.opt.get('reencode_candidate_vecs'):
             self.fixed_candidate_encs = None
         if batch.text_vec is None and batch.image is None:
             return
@@ -392,6 +392,10 @@ class TorchRankerAgent(TorchAgent):
         # Update loss
         self.metrics['loss'] += loss.item()
         self.metrics['examples'] += batchsize
+
+        # clean up candidates in case cands were added
+        if self.candidates == 'fixed':
+            self.fixed_candidates = self.fixed_candidates[:self.num_fixed_candidates]
 
         # Get train predictions
         if self.candidates == 'batch':
@@ -485,9 +489,9 @@ class TorchRankerAgent(TorchAgent):
 
         preds = [cand_preds[i][0] for i in range(batchsize)]
 
-        # clean up cand_encs and cand_vecs
-        if self.eval_candidates == 'fixed' and self.opt.get('add_label_to_fixed_cands'):
-            self.fixed_candidates = self.fixed_candidates[:-batchsize]
+        # clean up candidates
+        if self.eval_candidates == 'fixed':
+            self.fixed_candidates = self.fixed_candidates[:self.num_fixed_candidates]
         return Output(preds, cand_preds)
 
     def block_repeats(self, cand_preds):
@@ -755,6 +759,7 @@ class TorchRankerAgent(TorchAgent):
         shared['fixed_candidates'] = self.fixed_candidates
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['fixed_candidate_encs'] = self.fixed_candidate_encs
+        shared['num_fixed_candidates'] = self.num_fixed_candidates
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
         shared['vocab_candidate_encs'] = self.vocab_candidate_encs
@@ -857,7 +862,9 @@ class TorchRankerAgent(TorchAgent):
             self.fixed_candidates = shared['fixed_candidates']
             self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
             self.fixed_candidate_encs = shared['fixed_candidate_encs']
+            self.num_fixed_candidates = shared['num_fixed_candidates']
         else:
+            self.num_fixed_candidates = 0
             opt = self.opt
             cand_path = self.fixed_candidates_path
             if 'fixed' in (self.candidates, self.eval_candidates):
@@ -891,6 +898,7 @@ class TorchRankerAgent(TorchAgent):
                         self._save_candidates(vecs, vecs_path)
 
                 self.fixed_candidates = cands
+                self.num_fixed_candidates = len(self.fixed_candidates)
                 self.fixed_candidate_vecs = vecs
                 if self.use_cuda:
                     self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
