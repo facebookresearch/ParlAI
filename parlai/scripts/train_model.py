@@ -36,7 +36,7 @@ from parlai.core.metrics import aggregate_task_reports
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.utils import Timer, round_sigfigs, warn_once
-from parlai.core.logs import TensorboardLogger
+from parlai.core.logs import TensorboardLogger, WandbLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.core.distributed_utils import (
     sync_object,
@@ -203,6 +203,7 @@ def setup_args(parser=None) -> ParlaiParser:
         'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
     )
     TensorboardLogger.add_cmdline_args(parser)
+    WandbLogger.add_cmdline_args(parser)
     parser = setup_dict_args(parser)
     return parser
 
@@ -442,6 +443,8 @@ class TrainLoop:
 
         if opt['tensorboard_log'] is True:
             self.tb_logger = TensorboardLogger(opt)
+        if opt['wandb_log'] is True:
+            self.wandb_logger = WandbLogger(opt)
 
     def save_model(self, suffix=None):
         """Save the model to disk, possibly with a suffix."""
@@ -696,8 +699,11 @@ class TrainLoop:
         print(log)
         self.log_time.reset()
 
-        if opt['tensorboard_log'] and is_primary_worker():
-            self.tb_logger.log_metrics('train', self.parleys, train_report)
+        if is_primary_worker():
+            if opt['tensorboard_log']:
+                self.tb_logger.log_metrics('train', self.parleys, train_report)
+            if opt['wandb_log']:
+                self.wandb_logger.log_metrics('train', self.parleys, train_report)
 
     def train(self):
         """
@@ -713,6 +719,11 @@ class TrainLoop:
             )
         opt = self.opt
         world = self.world
+
+        if opt['wandb_log']:
+            self.wandb_logger.log_model(self.agent.model)
+            self.wandb_logger.log_parameters(opt)
+
         with world:
             while True:
                 # do one example / batch of examples

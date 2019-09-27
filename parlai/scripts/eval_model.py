@@ -18,7 +18,7 @@ Examples
 
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
-from parlai.core.logs import TensorboardLogger
+from parlai.core.logs import TensorboardLogger, WandbLogger
 from parlai.core.metrics import aggregate_task_reports
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
@@ -54,6 +54,7 @@ def setup_args(parser=None):
         'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
     )
     TensorboardLogger.add_cmdline_args(parser)
+    WandbLogger.add_cmdline_args(parser)
     parser.set_defaults(datatype='valid')
     return parser
 

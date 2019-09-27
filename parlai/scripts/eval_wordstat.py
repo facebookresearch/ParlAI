@@ -35,7 +35,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.core.utils import TimeLogger
 from parlai.core.metrics import normalize_answer
-from parlai.core.logs import TensorboardLogger
+from parlai.core.logs import TensorboardLogger, WandbLogger
 from collections import Counter
 
 import copy
@@ -81,6 +81,7 @@ def setup_args(parser=None):
     )
     parser.set_defaults(datatype='valid', model='repeat_label')
     TensorboardLogger.add_cmdline_args(parser)
+    WandbLogger.add_cmdline_args(parser)
     return parser
 
 
