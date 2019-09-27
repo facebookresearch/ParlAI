@@ -59,6 +59,13 @@ class TorchRankerAgent(TorchAgent):
             'value as --candidates if no flag is given)',
         )
         agent.add_argument(
+            '--add-label-to-fixed-cands',
+            type='bool',
+            default=False,
+            hidden=True,
+            help='Whether to add the label for an example to a set of fixed candidates',
+        )
+        agent.add_argument(
             '--repeat-blocking-heuristic',
             type='bool',
             default=True,
@@ -92,6 +99,21 @@ class TorchRankerAgent(TorchAgent):
             'might be used when interacting with the model in real time '
             'or evaluating on fixed candidate set when the encoding of '
             'the candidates is independent of the input.',
+        )
+        agent.add_argument(
+            '--reencode-candidate-vecs',
+            type='bool',
+            default=False,
+            help='When using a fixed candidate set - sometimes (i.e. every eval)'
+            'we want to re-encode the fixed candidates (as the encoder has changed)'
+            'this does that.',
+        )
+        agent.add_argument(
+            '--encode-candidate-vecs-batchsize',
+            type=int,
+            default=256,
+            hidden=True,
+            help='Batchsize when encoding candidate vecs',
         )
         agent.add_argument(
             '--init-model',
@@ -335,6 +357,8 @@ class TorchRankerAgent(TorchAgent):
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
+        if self.candidates != 'fixed':
+            self.fixed_candidate_encs = None
         if batch.text_vec is None and batch.image is None:
             return
         batchsize = (
@@ -400,11 +424,25 @@ class TorchRankerAgent(TorchAgent):
         if self.encode_candidate_vecs and self.eval_candidates in ['fixed', 'vocab']:
             # if we cached candidate encodings for a fixed list of candidates,
             # pass those into the score_candidates function
+            if (
+                self.opt.get('reencode_candidate_vecs')
+                and self.fixed_candidate_encs is None
+            ):
+                self.fixed_candidate_encs = self._make_candidate_encs(
+                    self.fixed_candidate_vecs
+                ).detach()
+
             if self.eval_candidates == 'fixed':
                 cand_encs = self.fixed_candidate_encs
+                if self.opt.get('add_label_to_fixed_cands') and not self.is_training:
+                    batch_label_encs = self.encode_candidates(batch.label_vec)
+                    if len(batch_label_encs.shape) == 3:
+                        batch_label_encs = batch_label_encs.transpose(0, 1)
+                        cand_encs = torch.cat([cand_encs, batch_label_encs], dim=1)
+                    else:
+                        cand_encs = torch.cat([cand_encs, batch_label_encs], dim=0)
             elif self.eval_candidates == 'vocab':
                 cand_encs = self.vocab_candidate_encs
-
         scores = self.score_candidates(batch, cand_vecs, cand_encs=cand_encs)
         if self.rank_top_k > 0:
             _, ranks = scores.topk(
@@ -446,6 +484,10 @@ class TorchRankerAgent(TorchAgent):
             cand_preds = self.block_repeats(cand_preds)
 
         preds = [cand_preds[i][0] for i in range(batchsize)]
+
+        # clean up cand_encs and cand_vecs
+        if self.eval_candidates == 'fixed' and self.opt.get('add_label_to_fixed_cands'):
+            self.fixed_candidates = self.fixed_candidates[:-batchsize]
         return Output(preds, cand_preds)
 
     def block_repeats(self, cand_preds):
@@ -663,7 +705,19 @@ class TorchRankerAgent(TorchAgent):
                     label_vec_pad[0 : label_vec.size(0)] = label_vec
                     label_inds[batch_idx] = self._find_match(cand_vecs, label_vec_pad)
                     if label_inds[batch_idx] == -1:
-                        bad_batch = True
+                        if (
+                            self.opt.get('add_label_to_fixed_cands')
+                            and not self.is_training
+                        ):
+                            cand_vecs = torch.cat(
+                                (cand_vecs, label_vec_pad.unsqueeze(0))
+                            )
+                            cands.append(batch.labels[batch_idx])
+                            label_inds[batch_idx] = self._find_match(
+                                cand_vecs, label_vec_pad
+                            )
+                        else:
+                            bad_batch = True
                 if bad_batch:
                     if self.ignore_bad_candidates and not self.is_training:
                         label_inds = None
@@ -883,7 +937,9 @@ class TorchRankerAgent(TorchAgent):
         cand_vecs = []
         for batch in tqdm(cand_batches):
             cand_vecs.extend(self.vectorize_fixed_candidates(batch))
-        return padded_3d([cand_vecs], dtype=cand_vecs[0].dtype).squeeze(0)
+        return padded_3d(
+            [cand_vecs], pad_idx=self.NULL_IDX, dtype=cand_vecs[0].dtype
+        ).squeeze(0)
 
     def _save_candidates(self, vecs, path, cand_type='vectors'):
         """Save cached vectors."""
@@ -916,10 +972,11 @@ class TorchRankerAgent(TorchAgent):
         """
 
         cand_encs = []
-        vec_batches = [vecs[i : i + 256] for i in range(0, len(vecs), 256)]
+        bsz = self.opt.get('encode_candidate_vecs_batchsize', 256)
+        vec_batches = [vecs[i : i + bsz] for i in range(0, len(vecs), bsz)]
         print(
-            "[ Encoding fixed candidates set from ({} batch(es) of up to 256) ]"
-            "".format(len(vec_batches))
+            "[ Encoding fixed candidates set from ({} batch(es) of up to {}) ]"
+            "".format(len(vec_batches), bsz)
         )
         # Put model into eval mode when encoding candidates
         self.model.eval()
