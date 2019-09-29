@@ -6,6 +6,7 @@
 
 import unittest
 import parlai.core.testing_utils as testing_utils
+from parlai.core.logging_utils import logger
 
 """
 Integration tests for the Controllable Dialogue project.

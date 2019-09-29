@@ -19,7 +19,9 @@ processing the data.
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import Agent
 from parlai.core.worlds import create_task
+from parlai.core.logging_utils import logger
 import time
+
 
 
 def main():
@@ -42,21 +44,21 @@ def main():
     start = time.time()
     # train / valid loop
     for _ in range(1):
-        print('[ training ]')
+        logger.log(logger.INFO, '[ training ]')
         for _ in range(opt['num_iters']):  # train for a bit
             world_train.parley()
 
-        print('[ training summary. ]')
-        print(world_train.report())
+        logger.log(logger.INFO, '[ training summary. ]')
+        logger.log(logger.INFO, world_train.report())
 
-        print('[ validating ]')
+        logger.log(logger.INFO, '[ validating ]')
         for _ in range(1):  # check valid accuracy
             world_valid.parley()
 
-        print('[ validation summary. ]')
-        print(world_valid.report())
+        logger.log(logger.INFO, '[ validation summary. ]')
+        logger.log(logger.INFO, world_valid.report())
 
-    print('finished in {} s'.format(round(time.time() - start, 2)))
+    logger.log(logger.INFO, 'finished in {} s'.format(round(time.time() - start, 2)))
 
 
 if __name__ == '__main__':

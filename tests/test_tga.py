@@ -10,6 +10,7 @@ from parlai.core.agents import create_agent
 import parlai.core.testing_utils as testing_utils
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
+from parlai.core.logging_utils import logger
 
 
 class TestUpgradeOpt(unittest.TestCase):

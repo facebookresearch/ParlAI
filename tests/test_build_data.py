@@ -9,6 +9,7 @@ import unittest
 import parlai.core.testing_utils as testing_utils
 import multiprocessing
 from parlai.core.params import ParlaiParser
+from parlai.core.logging_utils import logger
 
 
 @testing_utils.skipUnlessGPU
@@ -38,11 +39,11 @@ class TestBuildData(unittest.TestCase):
             'https://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
         ]
 
-        with testing_utils.capture_output() as stdout:
+        with testing_utils.capture_output():
             download_results = build_data.download_multiprocess(
                 urls, self.datapath, dest_filenames=self.dest_filenames
             )
-        stdout = stdout.getvalue()
+        stdout = logger.get_supressed_output()
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
         self.assertEqual(
@@ -64,11 +65,11 @@ class TestBuildData(unittest.TestCase):
             'https://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
         ]
 
-        with testing_utils.capture_output() as stdout:
+        with testing_utils.capture_output():
             download_results = build_data.download_multiprocess(
                 urls, self.datapath, dest_filenames=self.dest_filenames, chunk_size=1
             )
-        stdout = stdout.getvalue()
+        stdout = logger.get_supressed_output()
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
 

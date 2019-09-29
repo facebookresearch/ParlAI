@@ -9,6 +9,7 @@ from parlai.scripts.train_model import setup_args as train_setup_args
 from parlai.core.agents import create_task_agent_from_taskname, create_agent
 from parlai.core.worlds import create_task
 from parlai.core.pytorch_data_teacher import ep_length
+from parlai.core.logging_utils import logger
 
 import unittest
 import parlai.core.testing_utils as testing_utils
@@ -81,7 +82,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
                         'datatype': datatype,
                         'shuffle': shuffle,
                     }
-                    with testing_utils.capture_output() as _:
+                    with testing_utils.capture_output():
                         parser = display_setup_args()
                         parser.set_defaults(**opt_defaults)
                         opt = parser.parse_args()
@@ -117,7 +118,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
             parser.set_defaults(**defaults)
             opt = parser.parse_args()
             build_dict(opt)
-            with testing_utils.capture_output() as _:
+            with testing_utils.capture_output():
                 teacher = create_task_agent_from_taskname(opt)[0]
             agent = create_agent(opt)
             act = teacher.act()
@@ -125,7 +126,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
                 return act, agent
             return agent.observe(act), agent
 
-        with testing_utils.capture_output() as _, testing_utils.tempdir() as tmpdir:
+        with testing_utils.capture_output(), testing_utils.tempdir() as tmpdir:
             defaults = unit_test_parser_defaults.copy()
             defaults['batch_size'] = 1
             defaults['datatype'] = 'train:stream:ordered'
@@ -204,7 +205,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
         defaults['datatype'] = 'train:stream:ordered'
         defaults['pytorch_teacher_batch_sort'] = True
 
-        with testing_utils.capture_output() as _, testing_utils.tempdir() as tmpdir:
+        with testing_utils.capture_output(), testing_utils.tempdir() as tmpdir:
             # Get processed act from agent
             defaults['pytorch_teacher_task'] = 'babi:task1k:1'
             defaults['batch_sort_cache_type'] = 'index'
@@ -238,7 +239,7 @@ class TestPytorchDataTeacher(unittest.TestCase):
         max_range = defaults['batch_length_range']
 
         def verify_batch_lengths(defaults):
-            with testing_utils.capture_output() as _, testing_utils.tempdir() as tmpdir:
+            with testing_utils.capture_output(), testing_utils.tempdir() as tmpdir:
                 # Get processed act from agent
                 parser = train_setup_args()
                 defaults['model_file'] = os.path.join(tmpdir, 'model')

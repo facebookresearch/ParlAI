@@ -13,7 +13,7 @@ import contextlib
 import tempfile
 import shutil
 import io
-
+from parlai.core.logging_utils import logger
 
 try:
     import torch
@@ -173,21 +173,23 @@ class TeeStringIO(io.StringIO):
 @contextlib.contextmanager
 def capture_output():
     """
-    Suppress all stdout and stderr into a single buffer.
+    Suppress all logging output into a single buffer.
 
     Use as a context manager.
 
-    :returns: the output
-    :rtype: io.StringIO
-
-    >>> with capture_output() as output:
-    ...     print('hello')
-    >>> output.getvalue()
+    >>> with capture_output():
+    ...     logger.info('hello')
+    >>> logger.get_supressed_output()
     'hello'
     """
     sio = TeeStringIO()
+    logger.mute_stdout()  # Stop logging to stdout
+    logger.redirect_out(sio)  # Instead log to sio (to preserve output for later)
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
+    # yield  # Uncomment this once all print statements removed and comment the above two statements instead
+    logger.stop_redirect_out()  # Stop redirecting [Removes handler]
+    logger.unmute_stdout()  # From now on log to stdout
 
 
 @contextlib.contextmanager
@@ -217,7 +219,7 @@ def train_model(opt):
     """
     import parlai.scripts.train_model as tms
 
-    with capture_output() as output:
+    with capture_output():
         with tempdir() as tmpdir:
             if 'model_file' not in opt:
                 opt['model_file'] = os.path.join(tmpdir, 'model')
@@ -236,7 +238,7 @@ def train_model(opt):
             tl = tms.TrainLoop(popt)
             valid, test = tl.train()
 
-    return (output.getvalue(), valid, test)
+    return (logger.get_supressed_output(), valid, test)
 
 
 def eval_model(opt, skip_valid=False, skip_test=False):
@@ -267,13 +269,13 @@ def eval_model(opt, skip_valid=False, skip_test=False):
     if popt.get('model_file') and not popt.get('dict_file'):
         popt['dict_file'] = popt['model_file'] + '.dict'
 
-    with capture_output() as output:
+    with capture_output():
         popt['datatype'] = 'valid'
         valid = None if skip_valid else ems.eval_model(popt)
         popt['datatype'] = 'test'
         test = None if skip_test else ems.eval_model(popt)
 
-    return (output.getvalue(), valid, test)
+    return (logger.get_supressed_output(), valid, test)
 
 
 def display_data(opt):
@@ -289,17 +291,20 @@ def display_data(opt):
     parser.set_params(**opt)
     popt = parser.parse_args(print_args=False)
 
-    with capture_output() as train_output:
+    with capture_output():
         popt['datatype'] = 'train:stream'
         dd.display_data(popt)
-    with capture_output() as valid_output:
+    train_output = logger.get_supressed_output()
+    with capture_output():
         popt['datatype'] = 'valid:stream'
         dd.display_data(popt)
-    with capture_output() as test_output:
+    valid_output = logger.get_supressed_output()
+    with capture_output():
         popt['datatype'] = 'test:stream'
         dd.display_data(popt)
+    test_output = logger.get_supressed_output()
 
-    return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
+    return (train_output, valid_output, test_output)
 
 
 def download_unittest_models():
@@ -313,5 +318,5 @@ def download_unittest_models():
         'transformer_ranker.tar.gz',
         'transformer_generator2.tar.gz',
     ]
-    with capture_output() as _:
+    with capture_output():
         download_models(opt, model_filenames, 'unittest', version='v2.0')
