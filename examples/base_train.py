@@ -23,7 +23,6 @@ from parlai.core.logging_utils import logger
 import time
 
 
-
 def main():
     # Get command line arguments
     parser = ParlaiParser()
