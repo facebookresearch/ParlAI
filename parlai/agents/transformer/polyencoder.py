@@ -95,7 +95,8 @@ class PolyencoderAgent(TorchRankerAgent):
 
             if is_distributed():
                 raise ValueError('Cannot combine --data-parallel and distributed mode')
-            self.model = torch.nn.DataParallel(self.model)
+            if shared is None:
+                self.model = torch.nn.DataParallel(self.model)
 
     def build_model(self, states=None):
         """Return built model."""
