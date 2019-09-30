@@ -1994,7 +1994,7 @@ class StaticMTurkManager(MTurkManager):
                 max_hits != 0 and completed_assignments >= max_hits
             ):
                 text = (
-                    'You have already participated in this HIT the maximum '
+                    'You have already claimed this HIT the maximum '
                     'number of times. This HIT is now expired. '
                     'Please return the HIT.'
                 )
