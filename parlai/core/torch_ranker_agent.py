@@ -717,9 +717,7 @@ class TorchRankerAgent(TorchAgent):
                                 (cand_vecs, label_vec_pad.unsqueeze(0))
                             )
                             cands.append(batch.labels[batch_idx])
-                            label_inds[batch_idx] = self._find_match(
-                                cand_vecs, label_vec_pad
-                            )
+                            label_inds[batch_idx] = len(cands) - 1
                         else:
                             bad_batch = True
                 if bad_batch:
