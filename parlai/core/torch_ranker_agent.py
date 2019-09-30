@@ -936,6 +936,7 @@ class TorchRankerAgent(TorchAgent):
             "[ Encoding fixed candidates set from ({} batch(es) of up to 256) ]"
             "".format(len(vec_batches))
         )
+        self.model.eval()
         with torch.no_grad():
             for vec_batch in tqdm(vec_batches):
                 cand_encs.append(self.encode_candidates(vec_batch))

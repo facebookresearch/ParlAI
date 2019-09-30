@@ -238,17 +238,15 @@ class TransformerRankerAgent(TorchRankerAgent):
             )
         else:
             mems = None
-
-        if cand_encs is not None:
+        # import pdb;pdb.set_trace()
+        if cand_encs is not None and batch.candidate_vecs is None:
             # we pre-encoded the candidates, do not re-encode here
             cand_vecs = None
 
         context_h, cands_h = self.model(xs=batch.text_vec, mems=mems, cands=cand_vecs)
-
-        if cand_encs is not None:
+        if cand_encs is not None and batch.candidate_vecs is None:
             cands_h = cand_encs
         scores = self._score(context_h, cands_h)
-
         return scores
 
 

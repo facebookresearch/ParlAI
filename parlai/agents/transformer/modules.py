@@ -32,6 +32,8 @@ except ImportError:
     warn_once("Installing APEX can give a significant speed boost.")
     from torch.nn import LayerNorm
 
+# from torch.nn import LayerNorm
+
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
 
 
@@ -227,7 +229,6 @@ class TransformerMemNetModel(nn.Module):
             # it's possible that only candidates were passed into the
             # forward function, return None here for LHS representation
             return None, None
-
         context_h = self.context_encoder(context_w, segments=context_segments)
 
         if memories_w is None:
