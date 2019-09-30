@@ -177,11 +177,14 @@ class EmotionClassificationTeacher(EmpatheticDialogueTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         if not self.single_turn:
+            # get the specific episode from the example
             ep = self.data[episode_idx]
             i = entry_idx * 2
             ex = ep[i]
             episode_done = i >= (len(ep) - 2)
         else:
+            # each episode is a singular example, we use both sides of the
+            # conversation
             ex = self.data[episode_idx]
             episode_done = True
 
