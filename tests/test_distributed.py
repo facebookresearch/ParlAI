@@ -9,7 +9,6 @@ import unittest
 import torch.distributed as dist
 import parlai.core.testing_utils as testing_utils
 import parlai.scripts.build_dict as build_dict
-from parlai.core.logging_utils import logger
 
 
 def _forced_parse(parser, opt):
@@ -32,7 +31,7 @@ class TestDistributed(unittest.TestCase):
         # when we skip the test.
         import parlai.scripts.multiprocessing_train as mp_train
 
-        with testing_utils.capture_output():
+        with testing_utils.capture_output() as output:
             with testing_utils.tempdir() as tmpdir:
                 if 'model_file' not in opt:
                     opt['model_file'] = os.path.join(tmpdir, 'model')
@@ -48,7 +47,7 @@ class TestDistributed(unittest.TestCase):
 
                 valid, test = mp_train.launch_and_train(popt, 31337)
 
-        return (logger.get_supressed_output(), valid, test)
+        return (output.getvalue(), valid, test)
 
     def tearDown(self):
         # we need to de-initialize the distributed world, otherwise other

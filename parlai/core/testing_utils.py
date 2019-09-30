@@ -177,9 +177,9 @@ def capture_output():
 
     Use as a context manager.
 
-    >>> with capture_output():
+    >>> with capture_output() as output:
     ...     logger.info('hello')
-    >>> logger.get_supressed_output()
+    >>> output.getvalue()
     'hello'
     """
     sio = TeeStringIO()
@@ -187,7 +187,7 @@ def capture_output():
     logger.redirect_out(sio)  # Instead log to sio (to preserve output for later)
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
-    # yield  # Uncomment this once all print statements removed and comment the above two statements instead
+    # yield sio  # Uncomment this once all print statements removed and comment the above two statements instead
     logger.stop_redirect_out()  # Stop redirecting [Removes handler]
     logger.unmute_stdout()  # From now on log to stdout
 
@@ -219,7 +219,7 @@ def train_model(opt):
     """
     import parlai.scripts.train_model as tms
 
-    with capture_output():
+    with capture_output() as output:
         with tempdir() as tmpdir:
             if 'model_file' not in opt:
                 opt['model_file'] = os.path.join(tmpdir, 'model')
@@ -238,7 +238,7 @@ def train_model(opt):
             tl = tms.TrainLoop(popt)
             valid, test = tl.train()
 
-    return (logger.get_supressed_output(), valid, test)
+    return (output.getvalue(), valid, test)
 
 
 def eval_model(opt, skip_valid=False, skip_test=False):
@@ -269,13 +269,13 @@ def eval_model(opt, skip_valid=False, skip_test=False):
     if popt.get('model_file') and not popt.get('dict_file'):
         popt['dict_file'] = popt['model_file'] + '.dict'
 
-    with capture_output():
+    with capture_output() as output:
         popt['datatype'] = 'valid'
         valid = None if skip_valid else ems.eval_model(popt)
         popt['datatype'] = 'test'
         test = None if skip_test else ems.eval_model(popt)
 
-    return (logger.get_supressed_output(), valid, test)
+    return (output.getvalue(), valid, test)
 
 
 def display_data(opt):
@@ -291,18 +291,18 @@ def display_data(opt):
     parser.set_params(**opt)
     popt = parser.parse_args(print_args=False)
 
-    with capture_output():
+    with capture_output() as output:
         popt['datatype'] = 'train:stream'
         dd.display_data(popt)
-    train_output = logger.get_supressed_output()
-    with capture_output():
+    train_output = output.getvalue()
+    with capture_output() as output:
         popt['datatype'] = 'valid:stream'
         dd.display_data(popt)
-    valid_output = logger.get_supressed_output()
-    with capture_output():
+    valid_output = output.getvalue()
+    with capture_output() as output:
         popt['datatype'] = 'test:stream'
         dd.display_data(popt)
-    test_output = logger.get_supressed_output()
+    test_output = output.getvalue()
 
     return (train_output, valid_output, test_output)
 

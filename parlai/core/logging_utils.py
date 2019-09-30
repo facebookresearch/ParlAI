@@ -63,9 +63,6 @@ class ParlaiLogger(logging.Logger):
         self.altStreamHandler = logging.StreamHandler(self.altStream)
         super().addHandler(self.altStreamHandler)
 
-    def get_supressed_output(self):
-        return self.altStream.getvalue()
-
     def stop_redirect_out(self):
         self.altStreamHandler.flush()
         super().removeHandler(self.altStreamHandler)
