@@ -73,7 +73,7 @@ class TestConvai2LanguageModel(unittest.TestCase):
 
         with testing_utils.capture_output() as output:
             report = eval_f1.main()
-        stdout = output.getvalue()()
+        stdout = output.getvalue()
         self.assertEqual(report['f1'], 0.1531, str(stdout))
 
 
