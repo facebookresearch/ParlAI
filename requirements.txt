@@ -1,6 +1,7 @@
 Pillow
 boto3
 botocore
+emoji
 flake8-rst-docstrings
 flake8-docstrings
 flake8-bugbear
@@ -22,6 +23,7 @@ sh
 sphinx
 sphinx_rtd_theme
 tqdm
+unidecode
 websocket-client
 websocket-server
 py-rouge
