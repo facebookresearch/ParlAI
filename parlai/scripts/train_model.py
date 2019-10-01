@@ -308,7 +308,8 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         task_report = _run_single_eval(opt, v_world, max_exs / len(valid_worlds))
         reports.append(task_report)
 
-    tasks = [world.opt['task'] for world in valid_worlds]
+    # tasks = [world.opt['task'] for world in valid_worlds]
+    tasks = [world.get_task_agent().getID() for world in valid_worlds]
     report = aggregate_task_reports(
         reports, tasks, micro=opt.get('aggregate_micro', True)
     )

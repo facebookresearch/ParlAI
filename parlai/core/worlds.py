@@ -157,6 +157,10 @@ class World(object):
         """Return the list of agents."""
         return self.agents
 
+    def get_task_agent(self):
+        """Return task agent, if applicable"""
+        raise RuntimeError('Implement in subworld')
+
     def get_acts(self):
         """Return the last act of each agent."""
         return self.acts
@@ -267,6 +271,10 @@ class DialogPartnerWorld(World):
         if self.agents is not None and len(self.agents) > 0:
             # Name the world after the first agent.
             self.id = self.agents[0].getID()
+
+    def get_task_agent(self):
+        """Return task agent"""
+        return self.get_agents()[0]
 
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents."""
