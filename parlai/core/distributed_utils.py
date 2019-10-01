@@ -94,7 +94,7 @@ def override_print(suppress=False, prefix=None):
     if suppress:
         logger.disabled = True
     elif prefix:
-        logger.change_formatters(prefix)
+        logger.add_format_prefix(prefix)
     else:
         pass  # do nothing
     yield

@@ -13,9 +13,10 @@ from task_config import task_config
 import gc
 import datetime
 import json
-import logging
 import os
 import sys
+import logging  # Used just for the constants
+from parlai.core.logging_utils import ParlaiLogger
 
 MASTER_QUALIF = {
     'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
@@ -90,17 +91,19 @@ def main():
             opt[k] = v
 
     def get_logger(opt):
-        logger = logging.getLogger()
-        logger.setLevel(logging.INFO)
-
-        fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-        console = logging.StreamHandler()
-        console.setFormatter(fmt)
-        logger.addHandler(console)
+        fmt = '%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p'
+        logfile = None
         if 'mturk_log' in opt:
-            logfile = logging.FileHandler(opt['mturk_log'], 'a')
-            logfile.setFormatter(fmt)
-            logger.addHandler(logfile)
+            logfile = opt['mturk_log']
+        global logger  # global so that it can be used with other functions and print statemtents
+        logger = ParlaiLogger(
+            "mturk_woz",
+            console_level=logging.INFO,
+            file_level=logging.INFO,
+            console_format=fmt,
+            file_format=fmt,
+            filename=logfile,
+        )
         logger.info('COMMAND: %s' % ' '.join(sys.argv))
         logger.info('-' * 100)
         logger.info('CONFIG:\n%s' % json.dumps(opt, indent=4, sort_keys=True))

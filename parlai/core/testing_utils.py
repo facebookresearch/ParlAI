@@ -291,20 +291,17 @@ def display_data(opt):
     parser.set_params(**opt)
     popt = parser.parse_args(print_args=False)
 
-    with capture_output() as output:
+    with capture_output() as train_output:
         popt['datatype'] = 'train:stream'
         dd.display_data(popt)
-    train_output = output.getvalue()
-    with capture_output() as output:
+    with capture_output() as valid_output:
         popt['datatype'] = 'valid:stream'
         dd.display_data(popt)
-    valid_output = output.getvalue()
-    with capture_output() as output:
+    with capture_output() as test_output:
         popt['datatype'] = 'test:stream'
         dd.display_data(popt)
-    test_output = output.getvalue()
 
-    return (train_output, valid_output, test_output)
+    return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
 
 def download_unittest_models():

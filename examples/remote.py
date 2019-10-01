@@ -62,7 +62,7 @@ def main():
     with world:
         while True:
             world.parley()
-            logger.log(logger.INFO, world.display())
+            logger.info(world.display())
 
 
 if __name__ == '__main__':

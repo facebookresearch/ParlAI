@@ -15,12 +15,13 @@ from threading import Lock
 import gc
 import datetime
 import json
-import logging
 import os
 import sys
 import copy
 import random
 import pprint
+import logging  # Used just for the constants
+from parlai.core.logging_utils import ParlaiLogger
 
 
 # update this with models you want to run. these names correspond to variables
@@ -141,20 +142,20 @@ def main():
     )
 
     def get_logger(opt):
-        logger = logging.getLogger()
-        logger.setLevel(logging.INFO)
-
-        fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-        console = logging.StreamHandler()
-        console.setFormatter(fmt)
-        logger.addHandler(console)
+        fmt = '%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p'
         if 'mturk_log' in opt:
             logfn = opt['mturk_log'].replace('$HOME', os.environ['HOME'])
             if not os.path.isdir(os.path.dirname(logfn)):
                 raise OSError("Please run `mkdir -p {}`".format(os.path.dirname(logfn)))
-            logfile = logging.FileHandler(logfn, 'a')
-            logfile.setFormatter(fmt)
-            logger.addHandler(logfile)
+            global logger  # global so that it can be used with other functions and print statemtents
+            logger = ParlaiLogger(
+                name="mturk_controllable",
+                console_level=logging.INFO,
+                file_level=logging.INFO,
+                console_format=fmt,
+                file_format=fmt,
+                filename=logfn,
+            )
         logger.info('COMMAND: %s' % ' '.join(sys.argv))
         logger.info('-' * 100)
         logger.info('CONFIG:\n%s' % json.dumps(opt, indent=4, sort_keys=True))
@@ -261,7 +262,7 @@ def main():
                 worker_models_seen[worker_id] = set()
             print("MODELCOUNTS:")
             print(pprint.pformat(model_counts))
-            logging.info("MODELCOUNTS\n" + pprint.pformat(model_counts))
+            logger.info("MODELCOUNTS\n" + pprint.pformat(model_counts))
             model_options = [
                 (model_counts[setup_name] + 10 * random.random(), setup_name)
                 for setup_name in SETTINGS_TO_RUN
@@ -269,7 +270,7 @@ def main():
             ]
             if not model_options:
                 lock.release()
-                logging.error(
+                logger.error(
                     "Worker {} already finished all settings! Returning none".format(
                         worker_id
                     )

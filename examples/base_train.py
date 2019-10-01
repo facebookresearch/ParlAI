@@ -43,21 +43,21 @@ def main():
     start = time.time()
     # train / valid loop
     for _ in range(1):
-        logger.log(logger.INFO, '[ training ]')
+        logger.info('[ training ]')
         for _ in range(opt['num_iters']):  # train for a bit
             world_train.parley()
 
-        logger.log(logger.INFO, '[ training summary. ]')
-        logger.log(logger.INFO, world_train.report())
+        logger.info('[ training summary. ]')
+        logger.info(world_train.report())
 
-        logger.log(logger.INFO, '[ validating ]')
+        logger.info('[ validating ]')
         for _ in range(1):  # check valid accuracy
             world_valid.parley()
 
-        logger.log(logger.INFO, '[ validation summary. ]')
-        logger.log(logger.INFO, world_valid.report())
+        logger.info('[ validation summary. ]')
+        logger.info(world_valid.report())
 
-    logger.log(logger.INFO, 'finished in {} s'.format(round(time.time() - start, 2)))
+    logger.info('finished in {} s'.format(round(time.time() - start, 2)))
 
 
 if __name__ == '__main__':

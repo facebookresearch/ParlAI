@@ -17,13 +17,7 @@ from tqdm import tqdm
 from collections import deque
 import random
 from parlai.core.agents import create_task_agent_from_taskname
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-console = logging.StreamHandler()
-console.setFormatter(fmt)
-logger.addHandler(console)
+from parlai.core.logging_utils import logger
 
 # ------------------------------------------------------------------------------
 # Store corpus.
