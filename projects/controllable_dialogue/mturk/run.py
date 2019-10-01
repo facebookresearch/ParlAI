@@ -20,8 +20,7 @@ import sys
 import copy
 import random
 import pprint
-import logging  # Used just for the constants
-from parlai.core.logging_utils import ParlaiLogger
+from parlai.core.logging_utils import ParlaiLogger, INFO_LEVEL
 
 
 # update this with models you want to run. these names correspond to variables
@@ -143,18 +142,19 @@ def main():
 
     def get_logger(opt):
         fmt = '%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p'
+        logfn = None
         if 'mturk_log' in opt:
             logfn = opt['mturk_log'].replace('$HOME', os.environ['HOME'])
             if not os.path.isdir(os.path.dirname(logfn)):
                 raise OSError("Please run `mkdir -p {}`".format(os.path.dirname(logfn)))
-            logger = ParlaiLogger(
-                name="mturk_controllable",
-                console_level=logging.INFO,
-                file_level=logging.INFO,
-                console_format=fmt,
-                file_format=fmt,
-                filename=logfn,
-            )
+        logger = ParlaiLogger(
+            name="mturk_controllable",
+            console_level=INFO_LEVEL,
+            file_level=INFO_LEVEL,
+            console_format=fmt,
+            file_format=fmt,
+            filename=logfn,
+        )
         logger.info('COMMAND: %s' % ' '.join(sys.argv))
         logger.info('-' * 100)
         logger.info('CONFIG:\n%s' % json.dumps(opt, indent=4, sort_keys=True))

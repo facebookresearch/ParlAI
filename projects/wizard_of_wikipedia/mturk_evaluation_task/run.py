@@ -15,8 +15,7 @@ import datetime
 import json
 import os
 import sys
-import logging  # Used just for the constants
-from parlai.core.logging_utils import ParlaiLogger
+from parlai.core.logging_utils import ParlaiLogger, INFO_LEVEL
 
 MASTER_QUALIF = {
     'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
@@ -97,8 +96,8 @@ def main():
             logfile = opt['mturk_log']
         logger = ParlaiLogger(
             "mturk_woz",
-            console_level=logging.INFO,
-            file_level=logging.INFO,
+            console_level=INFO_LEVEL,
+            file_level=INFO_LEVEL,
             console_format=fmt,
             file_format=fmt,
             filename=logfile,

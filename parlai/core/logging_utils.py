@@ -10,6 +10,12 @@ import logging
 from pathlib import Path
 from datetime import date
 
+INFO_LEVEL = logging.INFO
+DEBUG_LEVEL = logging.DEBUG
+WARN_LEVEL = logging.WARNING
+ERROR_LEVEL = logging.ERROR
+CRITICAL_LEVEL = logging.CRITICAL
+
 
 class ParlaiLogger(logging.Logger):
     def __init__(
@@ -25,7 +31,7 @@ class ParlaiLogger(logging.Logger):
         Initialize the logger object
         :param name: Name of the logger
         :param console_level: min. Level of messages logged to console
-        :param console_format: The format of messages logget to the console. Simple stdout is used if None specified
+        :param console_format: The format of messages logged to the console. Simple stdout is used if None specified
         :param file_format: The format of messages logged to the file (A default is used if None specified)
         :param file_level: min. Level of messages logged to the file
         :param filename: The file the logs are written to
@@ -45,7 +51,7 @@ class ParlaiLogger(logging.Logger):
             filename = os.path.join(proj_root, log_dir_path, log_fname)
         # Default format used if no file format provided
         if file_format is None:
-            file_format = '%(asctime)s :: %(pathname)s :: %(funcName)s :: %(lineno)d :: %(levelname)s :: %(message)s'
+            file_format = '%(asctime)s :: %(levelname)s :: %(message)s'
 
         super().__init__(name, console_level)  # can be initialized with any level
 

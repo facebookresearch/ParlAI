@@ -10,18 +10,17 @@ Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 
 import sqlite3
 import os
-import logging  # Used only for constants
 
 from tqdm import tqdm
 
 from collections import deque
 import random
 from parlai.core.agents import create_task_agent_from_taskname
-from parlai.core.logging_utils import ParlaiLogger
+from parlai.core.logging_utils import ParlaiLogger, INFO_LEVEL
 
 fmt = '%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p'
 logger = ParlaiLogger(
-    name=__name__, console_level=logging.INFO, console_format=fmt, file_format=fmt
+    name=__name__, console_level=INFO_LEVEL, console_format=fmt, file_format=fmt
 )
 
 # ------------------------------------------------------------------------------

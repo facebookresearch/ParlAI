@@ -8,7 +8,6 @@
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
 
-import logging
 import numpy as np
 import scipy.sparse as sp
 

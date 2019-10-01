@@ -14,7 +14,6 @@ import scipy.sparse as sp
 import argparse
 import os
 import math
-import logging  # Used only for constants
 
 from multiprocessing import Pool as ProcessPool
 from multiprocessing.util import Finalize
@@ -24,11 +23,11 @@ from collections import Counter
 from . import utils
 from .doc_db import DocDB
 from . import tokenizers
-from parlai.core.logging_utils import ParlaiLogger
+from parlai.core.logging_utils import ParlaiLogger, INFO_LEVEL
 
 fmt = '%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p'
 logger = ParlaiLogger(
-    name=__name__, console_level=logging.INFO, console_format=fmt, file_format=fmt
+    name=__name__, console_level=INFO_LEVEL, console_format=fmt, file_format=fmt
 )
 # ------------------------------------------------------------------------------
 # Multiprocessing functions
