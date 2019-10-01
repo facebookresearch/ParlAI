@@ -4,6 +4,7 @@
 
 # hack to make sure -m transformer/generator works as expected
 """Poly-encoder Agent."""
+from .biencoder import AddLabelFixedCandsTRA
 from .modules import TransformerEncoder
 from .modules import get_n_positions_from_options
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -12,7 +13,7 @@ from .modules import BasicAttention, MultiHeadAttention
 import torch
 
 
-class PolyencoderAgent(TorchRankerAgent):
+class PolyencoderAgent(AddLabelFixedCandsTRA, TorchRankerAgent):
     """Poly-encoder Agent.
 
     Equivalent of bert_ranker/polyencoder and biencoder_multiple_output
