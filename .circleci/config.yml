@@ -214,14 +214,6 @@ jobs:
             python examples/train_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
             python examples/display_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
       - run:
-          name: train a transformer on twitter
-          working_directory: ~/ParlAI
-          command: |
-            python examples/display_data.py -t twitter
-            python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True
-            python examples/eval_model.py -t twitter -m legacy:seq2seq:0 -mf models:twitter/seq2seq/twitter_seq2seq_model
-            python examples/display_model.py -t twitter -mf /tmp/tr_twitter -ecands batch
-      - run:
           name: add a simple model
           working_directory: ~/ParlAI
           command: |
@@ -236,6 +228,14 @@ jobs:
             python examples/display_model.py -t babi:task10k:1 -m parrot
             python examples/build_dict.py -t babi:task10k:1 -df /tmp/parrot.dict
             python examples/display_model.py -t babi:task10k:1 -m parrot -df /tmp/parrot.dict
+      - run:
+          name: train a transformer on twitter
+          working_directory: ~/ParlAI
+          command: |
+            python examples/display_data.py -t twitter
+            python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True
+            python examples/eval_model.py -t twitter -m legacy:seq2seq:0 -mf models:twitter/seq2seq/twitter_seq2seq_model
+            python examples/display_model.py -t twitter -mf /tmp/tr_twitter -ecands batch
 
 
   black:
