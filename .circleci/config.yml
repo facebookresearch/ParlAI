@@ -197,6 +197,47 @@ jobs:
           name: Unit tests (GPU; pytorch 1.2)
           command: python setup.py test -s tests.suites.unittests -v
 
+  quickstart:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - <<: *installdeps
+      - <<: *installtorchcpu36
+      - run:
+          name: view a task & train a model
+          working_directory: ~/ParlAI
+          command: |
+            python examples/display_data.py -t babi:task10k:1
+            python examples/train_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
+            python examples/display_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
+      - run:
+          name: train a transformer on twitter
+          working_directory: ~/ParlAI
+          command: |
+            python examples/display_data.py -t twitter
+            python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True
+            python examples/eval_model.py -t twitter -m legacy:seq2seq:0 -mf models:twitter/seq2seq/twitter_seq2seq_model
+            python examples/display_model.py -t twitter -mf /tmp/tr_twitter -ecands batch
+      - run:
+          name: add a simple model
+          working_directory: ~/ParlAI
+          command: |
+            mkdir parlai/agents/parrot
+            touch parlai/agents/parrot/parrot.py
+            echo "from parlai.core.torch_agent import TorchAgent, Output" >> parlai/agents/parrot/parrot.py
+            echo "class ParrotAgent(TorchAgent):" >> parlai/agents/parrot/parrot.py
+            echo "    def train_step(self, batch):" >> parlai/agents/parrot/parrot.py
+            echo "        pass" >> parlai/agents/parrot/parrot.py
+            echo "    def eval_step(self, batch):" >> parlai/agents/parrot/parrot.py
+            echo "        return Output([self.dict.vec2txt(row) for row in batch.text_vec])" >> parlai/agents/parrot/parrot.py
+            python examples/display_model.py -t babi:task10k:1 -m parrot
+            python examples/build_dict.py -t babi:task10k:1 -df /tmp/parrot.dict
+            python examples/display_model.py -t babi:task10k:1 -m parrot -df /tmp/parrot.dict
+
+
   black:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
