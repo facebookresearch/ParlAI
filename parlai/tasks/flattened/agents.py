@@ -48,7 +48,7 @@ def flatten(episode, context_length, include_labels=True, delimiter='\n'):
     return new_episode
 
 
-def get_original_task(opt, multi_possible=False):
+def get_original_task_module(opt, multi_possible=False):
     modules = []
     tasks = opt['task'].split(',')
     if not multi_possible:
@@ -74,7 +74,10 @@ def get_original_task(opt, multi_possible=False):
 
 class TaskTeacher(FixedDialogTeacher):
     """
-    Predict the gender of character given the dialogue utterance.
+    Generates a flattened version of a ParlAI task, i.e., for tasks with
+    multi-turn dialogues (episodes), this will generate a task with single
+    example episodes, in which the context from previous dialogue turns in each
+    episode are included in the 'text' field of each example.
     """
 
     @staticmethod
@@ -99,12 +102,13 @@ class TaskTeacher(FixedDialogTeacher):
             '--invalidate-cache',
             type='bool',
             default=False,
-            help='Set this to True to rebuild the data',
+            help='Set this to True to rebuild the data (may want to do this if '
+            'original data has changed or you want to rebuild with new options)',
         )
 
         # Add the arguments for the teacher
         opt = parser.parse_and_process_known_args()[0]
-        tasks = get_original_task(opt, multi_possible=True)
+        tasks = get_original_task_module(opt, multi_possible=True)
         for task in tasks:
             if hasattr(task, 'add_cmdline_args'):
                 task.add_cmdline_args(parser)
@@ -128,11 +132,11 @@ class TaskTeacher(FixedDialogTeacher):
     def num_examples(self):
         return len(self.data)
 
-    def _setup_data(self, opt, context_length=-1):
+    def _setup_data(self, opt):
         # possibly make new data directory
-        original_task = get_original_task(opt)
-        self.original_task = ':'.join(opt['task'].split(':')[2:])
-        teacher_name = self.original_task.replace(':', '_') + '_flattened'
+        original_task_module = get_original_task_module(opt)
+        self.original_task_name = ':'.join(opt['task'].split(':')[2:])
+        teacher_name = self.original_task_name.replace(':', '_') + '_flattened'
         self.save_dir = os.path.join(opt['datapath'], teacher_name)
         os.makedirs(self.save_dir, exist_ok=True)
 
@@ -146,8 +150,8 @@ class TaskTeacher(FixedDialogTeacher):
 
         # build the original teacher
         teacher_opt = deepcopy(opt)
-        teacher_opt['task'] = self.original_task
-        teacher = original_task(teacher_opt)
+        teacher_opt['task'] = self.original_task_name
+        teacher = original_task_module(teacher_opt)
 
         # did not load data, let's build it!
         total_exs = teacher.num_examples()
@@ -162,11 +166,11 @@ class TaskTeacher(FixedDialogTeacher):
             total=total_eps, unit='ex', unit_scale=True, desc='Building flattened data'
         )
 
-        current_episode = []
-        episode_done = False
-
         all_episodes = []
         while num_exs < total_exs:
+            current_episode = []
+            episode_done = False
+
             while not episode_done:
                 # TODO: eventually all teachers should return Messages, so
                 # we should assert this
@@ -183,9 +187,6 @@ class TaskTeacher(FixedDialogTeacher):
                 delimiter=delimiter,
             )
             all_episodes += flattened_ep
-
-            current_episode = []
-            episode_done = False
 
             progress_bar.update(1)
 
