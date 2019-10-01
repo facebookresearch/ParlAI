@@ -147,7 +147,6 @@ def main():
             logfn = opt['mturk_log'].replace('$HOME', os.environ['HOME'])
             if not os.path.isdir(os.path.dirname(logfn)):
                 raise OSError("Please run `mkdir -p {}`".format(os.path.dirname(logfn)))
-            global logger  # global so that it can be used with other functions and print statemtents
             logger = ParlaiLogger(
                 name="mturk_controllable",
                 console_level=logging.INFO,
@@ -176,7 +175,7 @@ def main():
 
     start_opt.update(task_config)
 
-    get_logger(start_opt)
+    logger = get_logger(start_opt)
 
     model_share_params = {}
     worker_models_seen = {}

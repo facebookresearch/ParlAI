@@ -95,7 +95,6 @@ def main():
         logfile = None
         if 'mturk_log' in opt:
             logfile = opt['mturk_log']
-        global logger  # global so that it can be used with other functions and print statemtents
         logger = ParlaiLogger(
             "mturk_woz",
             console_level=logging.INFO,
