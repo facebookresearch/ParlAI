@@ -538,8 +538,8 @@ class MultiWorld(World):
         return self.worlds[self.world_idx].get_agents()
 
     def get_task_agent(self):
-        """Return the task agent in the *current* subworld."""
-        return self.worlds[self.world_idx].get_task_agent()
+        """Not possible/well-defined in this setting."""
+        raise RuntimeError('get_task_agent not defined for Multiworld')
 
     def get_acts(self):
         """Return the acts in the *current* subworld."""
