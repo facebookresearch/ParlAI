@@ -81,7 +81,9 @@ def main():
         help='Each worker must be unique',
     )
     argparser.add_argument(
-        '--mturk-log', type=str, default='data/mturklogs/{}.log'.format(start_time)
+        '--mturk-log',
+        type=str,
+        default='data/mturklogs/wizard_of_wikipedia/{}.log'.format(start_time),
     )
 
     def inject_override(opt, override_dict):
@@ -94,6 +96,10 @@ def main():
         logfile = None
         if 'mturk_log' in opt:
             logfile = opt['mturk_log']
+            if not os.path.isdir(os.path.dirname(logfile)):
+                raise OSError(
+                    "Please run `mkdir -p {}`".format(os.path.dirname(logfile))
+                )
         logger = ParlaiLogger(
             "mturk_woz",
             console_level=INFO_LEVEL,

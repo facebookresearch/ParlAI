@@ -118,7 +118,7 @@ def main():
     argparser.add_argument(
         '--mturk-log',
         type=str,
-        default=('$HOME/ParlAI/data/mturklogs/controllable/{}.log'.format(start_time)),
+        default=('data/mturklogs/controllable/{}.log'.format(start_time)),
     )
     argparser.add_argument(
         '--short-eval',
@@ -144,7 +144,7 @@ def main():
         fmt = '%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p'
         logfn = None
         if 'mturk_log' in opt:
-            logfn = opt['mturk_log'].replace('$HOME', os.environ['HOME'])
+            logfn = opt['mturk_log']
             if not os.path.isdir(os.path.dirname(logfn)):
                 raise OSError("Please run `mkdir -p {}`".format(os.path.dirname(logfn)))
         logger = ParlaiLogger(
