@@ -392,6 +392,7 @@ workflows:
     jobs:
       - black
       - lint
+      - quickstart
       - unittests_gpu11
       - unittests_gpu12
       - unittests_37
