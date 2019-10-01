@@ -353,6 +353,7 @@ class TorchRankerAgent(TorchAgent):
         )
         self.model.train()
         self.zero_grad()
+
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.candidates, mode='train'
         )
@@ -416,6 +417,7 @@ class TorchRankerAgent(TorchAgent):
                 cand_encs = self.fixed_candidate_encs
             elif self.eval_candidates == 'vocab':
                 cand_encs = self.vocab_candidate_encs
+
         scores = self.score_candidates(batch, cand_vecs, cand_encs=cand_encs)
         if self.rank_top_k > 0:
             _, ranks = scores.topk(
@@ -457,7 +459,6 @@ class TorchRankerAgent(TorchAgent):
             cand_preds = self.block_repeats(cand_preds)
 
         preds = [cand_preds[i][0] for i in range(batchsize)]
-
         return Output(preds, cand_preds)
 
     def block_repeats(self, cand_preds):
