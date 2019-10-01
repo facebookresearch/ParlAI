@@ -158,7 +158,7 @@ class World(object):
         return self.agents
 
     def get_task_agent(self):
-        """Return task agent, if applicable"""
+        """Return task agent, if applicable."""
         raise RuntimeError('Implement in subworld')
 
     def get_acts(self):
@@ -270,10 +270,10 @@ class DialogPartnerWorld(World):
         self.acts = [None] * len(self.agents)
         if self.agents is not None and len(self.agents) > 0:
             # Name the world after the first agent.
-            self.id = self.agents[0].getID()
+            self.id = self.get_task_agent().getID()
 
     def get_task_agent(self):
-        """Return task agent"""
+        """Return task agent."""
         return self.get_agents()[0]
 
     def parley(self):
@@ -295,7 +295,7 @@ class DialogPartnerWorld(World):
 
     def epoch_done(self):
         """Only the first agent indicates when the epoch is done."""
-        return self.agents[0].epoch_done()
+        return self.get_task_agent().epoch_done()
 
     def report(self):
         """Report all metrics of all subagents."""
@@ -317,14 +317,14 @@ class DialogPartnerWorld(World):
     @lru_cache(maxsize=1)
     def num_examples(self):
         """Return number of examples."""
-        if hasattr(self.agents[0], 'num_examples'):
-            return self.agents[0].num_examples()
+        if hasattr(self.get_task_agent(), 'num_examples'):
+            return self.get_task_agent().num_examples()
         return 0
 
     def num_episodes(self):
         """Return number of episodes."""
-        if hasattr(self.agents[0], 'num_episodes'):
-            return self.agents[0].num_episodes()
+        if hasattr(self.get_task_agent(), 'num_episodes'):
+            return self.get_task_agent().num_episodes()
         return 0
 
     def shutdown(self):
@@ -364,6 +364,10 @@ class MultiAgentDialogWorld(World):
                 if other_agent != agent:
                     other_agent.observe(validate(acts[index]))
         self.update_counters()
+
+    def get_task_agent(self):
+        """Return task agent."""
+        return self.get_agents()[0]
 
     def epoch_done(self):
         """Return if the epoch is done for any subagent."""
@@ -532,6 +536,10 @@ class MultiWorld(World):
     def get_agents(self):
         """Return the agents in the *current* subworld."""
         return self.worlds[self.world_idx].get_agents()
+
+    def get_task_agent(self):
+        """Return the task agent in the *current* subworld."""
+        return self.worlds[self.world_idx].get_task_agent()
 
     def get_acts(self):
         """Return the acts in the *current* subworld."""
@@ -780,6 +788,10 @@ class BatchWorld(World):
         """Return the ID of the root world."""
         return self.world.getID()
 
+    def get_task_agent(self):
+        """Return task agent of the root world."""
+        return self.world.get_task_agent()
+
     def episode_done(self):
         """
         Return whether the episode is done.
@@ -991,6 +1003,10 @@ class HogwildWorld(World):
     def num_episodes(self):
         """Return the number of episodes."""
         return self.inner_world.num_episodes()
+
+    def get_task_agent(self):
+        """Return task agent of inner world."""
+        return self.inner_world.get_task_agent()
 
     def get_total_exs(self):
         """Return the number of processed examples."""
