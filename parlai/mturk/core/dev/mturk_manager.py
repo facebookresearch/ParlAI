@@ -549,7 +549,7 @@ class MTurkManager:
             completed_assignments = worker_state.completed_assignments()
             max_hits = self.max_hits_per_worker
             if (self.is_unique and completed_assignments > 0) or (
-                max_hits != 0 and completed_assignments > max_hits
+                max_hits != 0 and completed_assignments >= max_hits
             ):
                 text = (
                     'You have already participated in this HIT the maximum '

@@ -139,5 +139,68 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
         return shared
 
 
+class EmotionClassificationTeacher(EmpatheticDialogueTeacher):
+    """
+    Class for detecting the emotion based on the utterance.
+    """
+
+    @staticmethod
+    def add_cmdline_args(parser):
+        parser = parser.add_argument_group('Emotion Classification Args')
+        parser.add_argument(
+            '--single-turn',
+            type='bool',
+            default=True,
+            help='Single turn classification task',
+        )
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.single_turn = opt['single_turn']
+        if not shared and self.single_turn:
+            self._make_single_turn()
+
+    def num_episodes(self):
+        return len(self.data)
+
+    def num_examples(self):
+        if not self.single_turn:
+            return super().num_examples()
+        return len(self.data)
+
+    def _make_single_turn(self):
+        new_data = []
+        for ep in self.data:
+            for ex in ep:
+                new_data.append(ex)
+        self.data = new_data
+
+    def get(self, episode_idx, entry_idx=0):
+        if not self.single_turn:
+            # get the specific episode from the example
+            ep = self.data[episode_idx]
+            i = entry_idx * 2
+            ex = ep[i]
+            episode_done = i >= (len(ep) - 2)
+        else:
+            # each episode is a singular example, we use both sides of the
+            # conversation
+            ex = self.data[episode_idx]
+            episode_done = True
+
+        return {
+            'situation': ex[3],
+            'labels': [ex[2]],
+            'text': ex[0],
+            'next_utt': ex[1],
+            'prepend_ctx': ex[6],
+            'prepend_cand': ex[7],
+            'deepmoji_ctx': ex[4],
+            'deepmoji_cand': ex[5],
+            'episode_done': episode_done,
+            'label_candidates': ex[8],
+        }
+
+
 class DefaultTeacher(EmpatheticDialogueTeacher):
     pass

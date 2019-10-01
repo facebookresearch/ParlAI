@@ -1105,6 +1105,112 @@ class FormResponse extends React.Component {
   }
 }
 
+
+class TaskFeedbackPane extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      feedbackText: '',
+    };
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleEnterKey = this.handleEnterKey.bind(this);
+  }
+
+  getChatHeight() {
+    let entry_pane = $('div#right-bottom-pane').get(0);
+    let bottom_height = 90;
+    if (entry_pane !== undefined) {
+      bottom_height = entry_pane.scrollHeight;
+    }
+    return this.props.frame_height - bottom_height;
+  }
+
+  handleResize() {
+    if (this.getChatHeight() != this.state.chat_height) {
+      this.setState({chat_height: this.getChatHeight()});
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    // Only change in the active status of this component should cause a
+    // focus event. Not having this would make the focus occur on every
+    // state update (including things like volume changes)
+    if (this.props.active && !prevProps.active) {
+      $("input#id_text_input").focus();
+    }
+    this.props.onInputResize();
+  }
+
+  checkValidData() {
+    let response_data = {
+      feedbackText: this.state.feedbackText,
+    }
+    this.props.onValidDataChange(true, response_data);
+  }
+
+  handleInputChange(event) {
+    let target = event.target;
+    let value = target.value;
+    let name = target.name;
+
+    this.setState(
+      {[name]: value},
+      this.checkValidData
+    );
+  }
+
+  handleEnterKey(event) {
+    event.preventDefault();
+    this.props.allDoneCallback();
+  }
+
+  render() {
+    if (this.props.task_data === undefined ||
+        this.props.task_data.task_specs === undefined){
+      return (
+        <div></div>
+      );
+    }
+    let text_question = "If you have any feedback regarding this hit, please leave it here.\nOtherwise, click the [Done with Hit] button on the left.";
+    let text_reason = (
+      <div>
+        <h3>(Optional)</h3>
+        <h4>{text_question}</h4>
+        <FormControl
+          componentClass="textarea"
+          id="id_text_input"
+          name="feedbackText"
+          style={{width: '100%', height: '100%', float: 'left', 'rows': 8, 'fontSize': '16px'}}
+          value={this.state.feedbackText}
+          placeholder="Please enter here..."
+          onChange={this.handleInputChange}
+          />
+        </div>
+    );
+    return (
+      <div
+        id="response-type-text-input"
+        className="response-type-module"
+        style={{'paddingTop': '15px',
+                'float': 'left',
+                'width': '100%',
+                'backgroundColor': '#ffd585'}}>
+            <Form
+              horizontal
+              style={{backgroundColor: '#ffd585', paddingBottom: '10px'}}
+              onSubmit={this.handleEnterKey}
+              >
+              <div
+                className="container"
+                style={{'width': 'auto',}}>
+                {text_reason}
+              </div>
+            </Form>
+      </div>
+    );
+  }
+}
+
 class ResponsePane extends React.Component {
   render() {
     let v_id = this.props.v_id;
@@ -1536,6 +1642,7 @@ component_list = {
   XMessageList: ['XMessageList', MessageList],
   XChatMessage: ['XChatMessage', ChatMessage],
   XTaskDescription: ['XTaskDescription', TaskDescription],
+  XTaskFeedbackPane: ['XTaskFeedbackPane', TaskFeedbackPane],
   XReviewButtons: ['XReviewButtons', ReviewButtons],
   XContextView: ['XContextView', ContextView],
   XStaticRightPane: ['XStaticRightPane', StaticRightPane],
@@ -1556,6 +1663,7 @@ export {
   NextButton,
   DoneResponse,
   TextResponse,
+  TaskFeedbackPane,
   ResponsePane,
   RightPane,
   LeftPane,

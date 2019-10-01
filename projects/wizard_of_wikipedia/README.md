@@ -64,6 +64,15 @@ Two-Stage Transformer Memnet         | [Dinan et al. (2019)](https://arxiv.org/a
 Vanilla Transformer (no knowledge)   | [Dinan et al. (2019)](https://arxiv.org/abs/1811.01241) | 41.8 | 87.0
 
 
+## Viewing data
+
+You can view the standard training set with:
+
+    python examples/display_data.py -t wizard_of_wikipedia -dt train
+    
+The knowledge returned from a standard IR system appears in the knowledge field (but you can also use your own knowledge system, accessing Wikipedia yourself, we use the dump in "-t wikipedia".
+The field 'checked_sentence' indicates the gold knowledge the annotator labeled.
+
 ## Pretrained models
 
 ## End-to-End generative

@@ -582,7 +582,7 @@ class MTurkManager:
             completed_assignments = worker_state.completed_assignments()
             max_hits = self.max_hits_per_worker
             if (self.is_unique and completed_assignments > 0) or (
-                max_hits != 0 and completed_assignments > max_hits
+                max_hits != 0 and completed_assignments >= max_hits
             ):
                 text = (
                     'You have already participated in this HIT the maximum '
@@ -1447,7 +1447,6 @@ class MTurkManager:
         ):
             # Append last command, as it might be necessary to restore state
             agent.set_last_command(packet.data)
-
         self.socket_manager.queue_packet(packet)
 
     def mark_workers_done(self, workers):
@@ -1986,13 +1985,16 @@ class StaticMTurkManager(MTurkManager):
         if not worker_state.has_assignment(assign_id):
             # New connection for the worker. First ensure that this connection
             # isn't violating our uniqueness constraints
-            completed_assignments = worker_state.completed_assignments()
+            completed_assignments = (
+                worker_state.completed_assignments()
+                + worker_state.active_conversation_count()
+            )
             max_hits = self.max_hits_per_worker
             if (self.is_unique and completed_assignments > 0) or (
-                max_hits != 0 and completed_assignments > max_hits
+                max_hits != 0 and completed_assignments >= max_hits
             ):
                 text = (
-                    'You have already participated in this HIT the maximum '
+                    'You have already claimed this HIT the maximum '
                     'number of times. This HIT is now expired. '
                     'Please return the HIT.'
                 )

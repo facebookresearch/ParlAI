@@ -141,13 +141,13 @@ class TorchClassifierAgent(TorchAgent):
             if init_model:
                 print('Loading existing model parameters from ' + init_model)
                 self.load(init_model)
-        if self.use_cuda:
-            if self.opt['data_parallel']:
-                if is_distributed():
-                    raise ValueError(
-                        'Cannot combine --data-parallel and distributed mode'
-                    )
-                self.model = torch.nn.DataParallel(self.model)
+            if self.use_cuda:
+                if self.opt['data_parallel']:
+                    if is_distributed():
+                        raise ValueError(
+                            'Cannot combine --data-parallel and distributed mode'
+                        )
+                    self.model = torch.nn.DataParallel(self.model)
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
