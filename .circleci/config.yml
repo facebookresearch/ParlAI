@@ -197,15 +197,16 @@ jobs:
           name: Unit tests (GPU; pytorch 1.2)
           command: python setup.py test -s tests.suites.unittests -v
 
-  quickstart:
-    <<: *standard_cpu36
+  quickstart_gpu12:
+    <<: *gpu
     working_directory: ~/ParlAI
     steps:
       - checkout
       - <<: *fixgit
+      - <<: *setupcuda
       - <<: *setup
       - <<: *installdeps
-      - <<: *installtorchcpu36
+      - <<: *installtorchgpu12
       - run:
           name: view a task & train a model
           working_directory: ~/ParlAI
@@ -392,7 +393,7 @@ workflows:
     jobs:
       - black
       - lint
-      - quickstart
+      - quickstart_gpu12
       - unittests_gpu11
       - unittests_gpu12
       - unittests_37
