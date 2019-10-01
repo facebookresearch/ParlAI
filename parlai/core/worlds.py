@@ -159,7 +159,7 @@ class World(object):
 
     def get_task_agent(self):
         """Return task agent, if applicable."""
-        raise RuntimeError('Implement in subworld')
+        raise NotImplementedError('Implement in subworld')
 
     def get_acts(self):
         """Return the last act of each agent."""
