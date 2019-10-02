@@ -65,10 +65,7 @@ def setup_args(parser=None) -> ParlaiParser:
     train.add_argument(
         '-et',
         '--evaltask',
-        help=(
-            'task to use for valid/test (defaults to the '
-            'one used for training if not set)'
-        ),
+        help='task to use for valid/test (defaults to the one used for training)',
     )
     train.add_argument(
         '--eval-batchsize',
@@ -118,7 +115,7 @@ def setup_args(parser=None) -> ParlaiParser:
         type=int,
         default=-1,
         hidden=True,
-        help='max examples to use during validation (default ' '-1 uses all)',
+        help='max examples to use during validation (default -1 uses all)',
     )
     train.add_argument(
         '--short-final-eval',
@@ -142,7 +139,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '-vmt',
         '--validation-metric',
         default='accuracy',
-        help='key into report table for selecting best ' 'validation',
+        help='key into report table for selecting best validation',
     )
     train.add_argument(
         '-vmm',
@@ -157,15 +154,7 @@ def setup_args(parser=None) -> ParlaiParser:
         type=float,
         default=1.0,
         hidden=True,
-        help='value at which training will stop if exceeded by ' 'training metric',
-    )
-    train.add_argument(
-        '-dbf',
-        '--dict-build-first',
-        hidden=True,
-        type='bool',
-        default=True,
-        help='build dictionary first before training agent',
+        help='value at which training will stop if exceeded by metric',
     )
     train.add_argument(
         '-lfc',
@@ -356,14 +345,12 @@ class TrainLoop:
             opt['init_model'] = opt['model_file'] + '.checkpoint'
             trainstats_suffix = '.checkpoint.trainstats'
         # Possibly build a dictionary (not all models do this).
-        if opt['dict_build_first'] and not (
-            opt.get('dict_file') or opt.get('model_file')
-        ):
+        if not (opt.get('dict_file') or opt.get('model_file')):
             raise RuntimeError(
                 'WARNING: For train_model, please specify either a '
                 'model_file or dict_file.'
             )
-        if opt['dict_build_first'] and 'dict_file' in opt:
+        if 'dict_file' in opt:
             # If data built via pytorch data teacher, we need to load prebuilt dict
             if opt.get('pytorch_teacher_task'):
                 opt['dict_file'] = get_pyt_dict_file(opt)
