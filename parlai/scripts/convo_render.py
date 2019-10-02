@@ -18,89 +18,6 @@ CHROME_PATH = (
 )  # noqa: W605
 
 
-def gen_ul_style():
-    """ Generate general ul tag style"""
-    return """ul{
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }"""
-
-
-def gen_ul_li_style():
-    """ Generate style for the li items for the conversations"""
-    return """ul li{
-                display:inline-block;
-                clear: both;
-                padding: 20px;
-                border-radius: 30px;
-                margin-bottom: 2px;
-                font-family: Helvetica, Arial, sans-serif;
-        }"""
-
-
-def gen_breaker_style():
-    """ Generate style for the break li item between conversations"""
-    return """.breaker{
-            color: #bec3c9;
-            display: block;
-            height: 20px;
-            margin: 20px 20px 20px 20px;
-            text-align: center;
-            text-transform: uppercase;
-        }"""
-
-
-def gen_speaker_styles(other_speaker, human_speaker):
-    """
-    Generate style string for the speakers
-    :param other_speaker: The title of the model (grey boxes)
-    :param human_speaker: Human speaker in the dialogs (blue boxes)
-
-    :return: Style string for the speakers
-    """
-    other_style = f""".{other_speaker}{{
-            background: #eee;
-            float: left;
-        }}"""
-    human_style = f"""
-        .{human_speaker}{{
-            background: #0084ff;
-            color: #fff;
-            float: right;
-        }}"""
-
-    return other_style + human_style
-
-
-def gen_style_str(height, width, other_speaker, human_speaker):
-    """
-    Generate the style section string of the HTML
-    :param height: Height of the HTML page
-    :param width: Width of the HTML page
-    :param other_speaker: The title of the model (grey boxes)
-    :param human_speaker: Human speaker in the dialogs (blue boxes)
-
-    :return: The <style> section string
-    """
-    ul_style = gen_ul_style()
-    ul_li_style = gen_ul_li_style()
-    speaker_styles = gen_speaker_styles(other_speaker, human_speaker)
-    breaker_style = gen_breaker_style()
-    style_str = f"""<style type="text/css">
-        @media print{{
-            @page{{ margin: 0; size: {str(width)}in {str(height)}in; }}
-        }}
-        {ul_style}
-        {ul_li_style}
-        {speaker_styles}
-        {breaker_style}
-        </style>
-        """
-
-    return style_str
-
-
 def gen_convo_ul(conversations):
     """
     Generate the ul section of the HTML for the conversations
@@ -111,7 +28,7 @@ def gen_convo_ul(conversations):
     ul_str = f"\t<ul>\n"
     for speaker, speech in conversations:
         if speaker == END_OF_CONVO:
-            ul_str += f"\t\t<li class=\"breaker\">End of Conversation</li>\n"
+            ul_str += f"\t\t<li class=\"breaker\"><hr/></li>\n"
         else:
             ul_str += f"\t\t<li class=\"{speaker}\">{speech}</li>\n"
     ul_str += "\t</ul>"
@@ -131,12 +48,45 @@ def gen_html(conversations, height, width, title, other_speaker, human_speaker):
 
     :return: HTML string for the desired conversation
     """
-    style_str = gen_style_str(height, width, other_speaker, human_speaker)
     html_str = f"""<html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title> {title} </title>
-    {style_str}
+    <style type="text/css">
+        @media print{{
+            @page{{ margin: 0; size: {str(width)}in {str(height)}in; }}
+        }}
+        ul{{
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }}
+        ul li{{
+            display:inline-block;
+            clear: both;
+            padding: 20px;
+            border-radius: 30px;
+            margin-bottom: 2px;
+            font-family: Helvetica, Arial, sans-serif;
+        }}
+        .{other_speaker}{{
+                background: #eee;
+                float: left;
+            }}
+        .{human_speaker}{{
+            background: #0084ff;
+            color: #fff;
+            float: right;
+        }}
+        .breaker{{
+            color: #bec3c9;
+            display: block;
+            height: 20px;
+            margin: 20px 20px 20px 20px;
+            text-align: center;
+            text-transform: uppercase;
+        }}
+    </style>
 </head>
 <body>
 {gen_convo_ul(conversations)}
