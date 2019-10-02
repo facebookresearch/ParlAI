@@ -1533,17 +1533,17 @@ class TorchAgent(ABC, Agent):
         """
         use_reply = self.opt.get('use_reply', 'label')
 
-        if self.observation is None:
+        if self.last_observation is None:
             raise RuntimeError(
                 "You're self_observing without having observed something. Check if "
                 "you're missing a step in your observe/act/self_observe loop."
             )
 
-        if self.observation['episode_done']:
+        if self.last_observation['episode_done']:
             # oh this was the last example in the episode. reset the history
             self.history.reset()
             # additionally mark the last observation as invalid
-            self.observation = None
+            self.last_observation = None
             return
 
         if use_reply == 'none':
@@ -1553,13 +1553,13 @@ class TorchAgent(ABC, Agent):
             # first look for the true label
             label_key = (
                 'labels'
-                if 'labels' in self.observation
+                if 'labels' in self.last_observation
                 else 'eval_labels'
-                if 'eval_labels' in self.observation
+                if 'eval_labels' in self.last_observation
                 else None
             )
             if label_key is not None:
-                lbls = self.observation[label_key]
+                lbls = self.last_observation[label_key]
                 last_reply = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
                 self.history.add_reply(last_reply)
                 return
@@ -1585,7 +1585,7 @@ class TorchAgent(ABC, Agent):
         # want to remove this behavior and demand that teachers return Messages
         observation = Message(observation)
 
-        self.observation = observation
+        self.last_observation = observation
         # update the history using the observation
         self.history.update_history(observation)
         return self.vectorize(
@@ -1683,7 +1683,7 @@ class TorchAgent(ABC, Agent):
 
     def reset(self):
         """Clear internal states."""
-        self.observation = None
+        self.last_observation = None
         self.history.reset()
         self.reset_metrics()
 
@@ -1698,7 +1698,7 @@ class TorchAgent(ABC, Agent):
         """Call batch_act with the singleton batch."""
         # BatchWorld handles calling self_observe, but we're in a Hogwild or Interactive
         # world, so we need to handle this ourselves.
-        response = self.batch_act([self.observation])[0]
+        response = self.batch_act([self.last_observation])[0]
         self.self_observe(response)
         return response
 
