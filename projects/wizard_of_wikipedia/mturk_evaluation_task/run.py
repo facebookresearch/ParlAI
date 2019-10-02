@@ -15,7 +15,7 @@ import datetime
 import json
 import os
 import sys
-from parlai.core.logging_utils import ParlaiLogger, INFO_LEVEL
+from parlai.core.logging_utils import ParlaiLogger, INFO
 
 MASTER_QUALIF = {
     'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
@@ -92,7 +92,7 @@ def main():
             opt[k] = v
 
     def get_logger(opt):
-        fmt = '%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p'
+        fmt = '%(asctime)s: [ %(message)s ]'
         logfile = None
         if 'mturk_log' in opt:
             logfile = opt['mturk_log']
@@ -102,8 +102,8 @@ def main():
                 )
         logger = ParlaiLogger(
             "mturk_woz",
-            console_level=INFO_LEVEL,
-            file_level=INFO_LEVEL,
+            console_level=INFO,
+            file_level=INFO,
             console_format=fmt,
             file_format=fmt,
             filename=logfile,

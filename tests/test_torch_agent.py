@@ -12,7 +12,6 @@ from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.testing_utils import capture_output, tempdir
 from parlai.core.utils import Message
 import parlai.core.testing_utils as testing_utils
-from parlai.core.logging_utils import logger
 
 from collections import deque
 

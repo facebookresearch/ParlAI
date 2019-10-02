@@ -10,11 +10,11 @@ import logging
 from pathlib import Path
 from datetime import date
 
-INFO_LEVEL = logging.INFO
-DEBUG_LEVEL = logging.DEBUG
+INFO = logging.INFO
+DEBUG = logging.DEBUG
 WARN_LEVEL = logging.WARNING
-ERROR_LEVEL = logging.ERROR
-CRITICAL_LEVEL = logging.CRITICAL
+ERROR = logging.ERROR
+CRITICAL = logging.CRITICAL
 
 
 class ParlaiLogger(logging.Logger):
@@ -24,7 +24,7 @@ class ParlaiLogger(logging.Logger):
         console_level,
         console_format=None,
         file_format=None,
-        file_level=logging.INFO,
+        file_level=INFO,
         filename=None,
     ):
         """
@@ -35,35 +35,21 @@ class ParlaiLogger(logging.Logger):
         :param file_format: The format of messages logged to the file (A default is used if None specified)
         :param file_level: min. Level of messages logged to the file
         :param filename: The file the logs are written to
-
-        A default file is initialized if no filename was provided. It can be
-        found in ParlAI/Logs/*year*/*month*/*YYYY-MM-DD*.log
         """
-        # Setup logging location if none specified
-        if filename is None:
-            today = date.today().strftime("%d/%m/%Y").split("/")
-            day, month, year = today[0], today[1], today[2]
-            proj_root = str(Path(__file__).parent.parent.parent)
-            log_dir_path = proj_root + "/" + "Logs/" + year + "/" + month
-            log_fname = year + "-" + month + "-" + day + ".log"
-            if not os.path.exists(log_dir_path):
-                os.makedirs(log_dir_path)
-            filename = os.path.join(proj_root, log_dir_path, log_fname)
-        # Default format used if no file format provided
-        if file_format is None:
-            file_format = '%(asctime)s :: %(levelname)s :: %(message)s'
-
         super().__init__(name, console_level)  # can be initialized with any level
 
         # Logging to a file
-        self.fileHandler = logging.FileHandler(filename)
-        self.fileHandler.level = file_level  # Log to file levels: file_level and above
-        if len(file_format) == 2:  # If a tuple is passed in
-            self.fileFormatter = logging.Formatter(file_format[0], file_format[1])
-        else:
+        if filename:
+            # Default format used if no file format provided
+            if file_format is None:
+                file_format = '%(asctime)s :: %(levelname)s :: %(message)s'
+            self.fileHandler = logging.FileHandler(filename)
+            self.fileHandler.level = (
+                file_level
+            )  # Log to file levels: file_level and above
             self.fileFormatter = logging.Formatter(file_format)
-        self.fileHandler.setFormatter(self.fileFormatter)
-        super().addHandler(self.fileHandler)
+            self.fileHandler.setFormatter(self.fileFormatter)
+            super().addHandler(self.fileHandler)
 
         # Logging to stdout
         self.streamHandler = logging.StreamHandler(sys.stdout)
@@ -71,38 +57,53 @@ class ParlaiLogger(logging.Logger):
             console_level
         )  # Log to stdout levels: console_level and above
         if console_format is not None:
-            if len(console_format) == 2:  # If a tuple is passed in
-                self.consoleFormatter = logging.Formatter(
-                    console_format[0], console_format[1]
-                )
-            else:
-                self.consoleFormatter = logging.Formatter()
+            self.consoleFormatter = logging.Formatter(console_format)
             self.streamHandler.setFormatter(self.consoleFormatter)
         super().addHandler(self.streamHandler)
 
         # To be used with testing_utils.capture_output()
         self.altStream = None
 
+    def add_file_handler(self, filename, level=INFO, format=None):
+        """
+        Add a file handler to the logger object
+        Use case: When logging using the logger object instead of instantiating a new ParlaiLogger
+                  this function might  be useful to add a filehandler on the go
+        Only does so if there is no file handler existing
+        """
+        if not hasattr(self, 'fileHandler'):
+            if format is None:
+                file_format = '%(asctime)s :: %(levelname)s :: %(message)s'
+            self.fileHandler = logging.FileHandler(filename)
+            self.fileHandler.level = level  # Log to file levels: level and above
+            self.fileFormatter = logging.Formatter(file_format)
+            self.fileHandler.setFormatter(self.fileFormatter)
+            super().addHandler(self.fileHandler)
+        else:
+            self.info("ParlaiLogger: A filehandler already exists")
+
     def add_format_prefix(self, prefix):
         """Include `prefix` in all future logging statements"""
         # change both handler formatters to add a prefix
         new_str = prefix + " " + '%(message)s'
-        prevFileFormat = self.fileFormatter._fmt.split('::')[:-1]
-        prevFileFormat += [' ' + new_str]
-        updatedFileFormat = '::'.join(prevFileFormat)
-        self.fileHandler.setFormatter(logging.Formatter(updatedFileFormat))
         self.streamHandler.setFormatter(logging.Formatter(new_str))
+        if hasattr(self, 'fileHandler'):
+            prevFileFormat = self.fileFormatter._fmt.split('::')[:-1]
+            prevFileFormat += [' ' + new_str]
+            updatedFileFormat = '::'.join(prevFileFormat)
+            self.fileHandler.setFormatter(logging.Formatter(updatedFileFormat))
 
     def reset_formatters(self):
         """Resort back to initial formatting"""
-        self.fileHandler.setFormatter(self.fileFormatter)
+        if hasattr(self, 'fileHandler'):
+            self.fileHandler.setFormatter(self.fileFormatter)
         self.streamHandler.setFormatter(logging.Formatter('%(message)s'))
 
-    def mute_stdout(self):
+    def mute(self):
         """Stop logging to stdout"""
         self.streamHandler.level = float('inf')
 
-    def unmute_stdout(self):
+    def unmute(self):
         """Resume logging to stdout"""
         self.streamHandler.level = logging.DEBUG
 
@@ -124,6 +125,4 @@ class ParlaiLogger(logging.Logger):
 # -----------------------------------
 # Forming the logger                #
 # -----------------------------------
-logger = ParlaiLogger(
-    name=__name__, console_level=logging.DEBUG, file_level=logging.INFO
-)
+logger = ParlaiLogger(name=__name__, console_level=DEBUG)

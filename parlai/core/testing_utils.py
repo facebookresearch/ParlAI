@@ -183,13 +183,13 @@ def capture_output():
     'hello'
     """
     sio = TeeStringIO()
-    logger.mute_stdout()  # Stop logging to stdout
+    logger.mute()  # Stop logging to stdout
     logger.redirect_out(sio)  # Instead log to sio (to preserve output for later)
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
     # yield sio  # Uncomment this once all print statements removed and comment the above two statements instead
     logger.stop_redirect_out()  # Stop redirecting [Removes handler]
-    logger.unmute_stdout()  # From now on log to stdout
+    logger.unmute()  # From now on log to stdout
 
 
 @contextlib.contextmanager
