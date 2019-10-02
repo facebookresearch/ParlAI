@@ -8,7 +8,7 @@ flake8
 gitpython
 h5py
 joblib
-nltk
+nltk>=3.4.0
 numpy
 pexpect
 py-gfm
