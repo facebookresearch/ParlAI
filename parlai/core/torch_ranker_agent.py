@@ -255,6 +255,10 @@ class TorchRankerAgent(TorchAgent):
         """
         pass
 
+    def _maybe_invalidate_fixed_encs_cache(self):
+        if self.candidates != 'fixed':
+            self.fixed_candidate_encs = None
+
     def _get_batch_train_metrics(self, scores):
         """
         Get fast metrics calculations if we train with batch candidates.
@@ -342,8 +346,7 @@ class TorchRankerAgent(TorchAgent):
 
     def train_step(self, batch):
         """Train on a single batch of examples."""
-        if self.candidates != 'fixed':
-            self.fixed_candidate_encs = None
+        self._maybe_invalidate_fixed_encs_cache()
         if batch.text_vec is None and batch.image is None:
             return
         batchsize = (
