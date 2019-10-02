@@ -204,9 +204,6 @@ class History(object):
         self.p1_token = p1_token
         self.p2_token = p2_token
 
-        # tracking when to clear history
-        self.reset_on_next_update = False
-
     def parse(self, text):
         """Tokenize text with the given dictionary."""
         return self.dict.txt2vec(text)
@@ -235,29 +232,18 @@ class History(object):
                 self.history_vecs.pop(0)
         self.history_vecs.append(self.parse(text))
 
-    def update_history(self, obs, add_next=None):
-        """
-        Update the history with the given observation.
+    def add_reply(self, text):
+        """Add your own response to the history."""
+        self._update_raw_strings(text)
+        if self.add_person_tokens:
+            text = self._add_person_tokens(text, self.p2_token)
+        # update history string
+        self._update_strings(text)
+        # update history vecs
+        self._update_vecs(text)
 
-        :param add_next:
-            string to append to history prior to updating it with the
-            observation
-        """
-        if self.reset_on_next_update:
-            # this is the first example in a new episode, clear the previous
-            # history
-            self.reset()
-            self.reset_on_next_update = False
-
-        if add_next is not None:
-            self._update_raw_strings(add_next)
-            if self.add_person_tokens:
-                add_next = self._add_person_tokens(add_next, self.p2_token)
-            # update history string
-            self._update_strings(add_next)
-            # update history vecs
-            self._update_vecs(add_next)
-
+    def update_history(self, obs):
+        """Update the history with the given observation."""
         if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
                 next_texts = obs[self.field].split('\n')
@@ -273,10 +259,6 @@ class History(object):
                 self._update_strings(text)
                 # update history vecs
                 self._update_vecs(text)
-
-        if obs.get('episode_done'):
-            # end of this episode, clear the history when we see a new example
-            self.reset_on_next_update = True
 
     def get_history_str(self):
         """Return the string version of the history."""
@@ -663,8 +645,6 @@ class TorchAgent(ABC, Agent):
 
         if shared is None:
             # intitialize any important structures from scratch
-            self.replies = {}  # past replies
-            self._replies_are_shared = False
             self.dict = self.build_dictionary()
 
             if opt.get('fp16'):
@@ -690,14 +670,6 @@ class TorchAgent(ABC, Agent):
             self.model = shared['model']
             self.criterion = shared['criterion']
             self.metrics = shared['metrics']
-            if self.opt['batchsize'] == 1 or self.opt['interactive_mode']:
-                # if we're not using batching (e.g. mturk), then replies really need
-                # to stay separated
-                self.replies = {}
-                self._replies_are_shared = False
-            else:
-                self.replies = shared['replies']
-                self._replies_are_shared = True
 
         if opt.get('numthreads', 1) > 1:
             torch.set_num_threads(1)
@@ -717,8 +689,6 @@ class TorchAgent(ABC, Agent):
         self._number_training_updates = 0
         # fixed random seed
         self.random = random.Random(42)
-        # which row in the batch this instance is
-        self.batch_idx = shared and shared.get('batchindex') or 0
         # can remember as few as zero utterances if desired
         self.histsz = opt['history_size']
         # truncate == 0 might give funny behavior
@@ -1013,7 +983,7 @@ class TorchAgent(ABC, Agent):
 
     def _gpu_usage(self):
         """
-        Computes GPU memory usage.
+        Compute GPU memory usage.
 
         Includes both allocated and cached memory; this should be close to the
         output of nvidia-smi, but not reflect of how much is currently demanded
@@ -1204,7 +1174,6 @@ class TorchAgent(ABC, Agent):
         shared['model'] = self.model
         shared['criterion'] = self.criterion
         shared['opt'] = self.opt
-        shared['replies'] = self.replies
         return shared
 
     def _add_start_end_tokens(self, vec, add_start=False, add_end=False):
@@ -1551,30 +1520,37 @@ class TorchAgent(ABC, Agent):
                 batch_reply[i]['text_candidates'] = cands
         return batch_reply
 
-    def last_reply(self, use_reply='label'):
+    def self_observe(self, self_message: Message) -> None:
         """
-        Retrieve the last reply from the model.
+        Observe one's own utterance.
 
-        If available, we use the true label instead of the model's prediction.
+        This is used so that the agent can incorporate its own response into
+        the dialogue history after a batch_act. Failure to implement this will
+        result in an agent that cannot hear itself speak
 
-        By default, batch_act stores the batch of replies and this method
-        will extract the reply of the current instance from the batch.
-
-        :param use_label:
-            default true, use the label when available instead of the model's
-            generated response.
+        :param self_message:
+            The message corresponding to the output from batch_act.
         """
-        # if the last observation was the end of an episode,
-        # then we shouldn't use it as history
-        if (
-            use_reply == 'none'
-            or not self.observation
-            or self.observation['episode_done']
-        ):
-            return None
+        use_reply = self.opt.get('use_reply', 'label')
 
-        if use_reply == 'label':
-            # first look for the true label, if we aren't on a new episode
+        if self.observation is None:
+            raise RuntimeError(
+                "You're self_observing without having observed something. Check if "
+                "you're missing a step in your observe/act/self_observe loop."
+            )
+
+        if self.observation['episode_done']:
+            # oh this was the last example in the episode. reset the history
+            self.history.reset()
+            # additionally mark the last observation as invalid
+            self.observation = None
+            return
+
+        if use_reply == 'none':
+            # we're not including our own responses anyway.
+            return
+        elif use_reply == 'label':
+            # first look for the true label
             label_key = (
                 'labels'
                 if 'labels' in self.observation
@@ -1585,13 +1561,18 @@ class TorchAgent(ABC, Agent):
             if label_key is not None:
                 lbls = self.observation[label_key]
                 last_reply = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-                return last_reply
+                self.history.add_reply(last_reply)
+                return
+            # you might expect a hard failure here, but in interactive mode we'll
+            # never get a label
 
-        # otherwise, we use the last reply the model generated
-        batch_reply = self.replies.get('batch_reply')
-        if batch_reply is not None:
-            return batch_reply[self.batch_idx].get('text')
-        return None
+        # otherwise, we use the last output the model generated
+        if self_message is not None:
+            last_reply = self_message['text']
+            self.history.add_reply(last_reply)
+            return
+
+        raise RuntimeError("Unexpected case in self_observe.")
 
     def observe(self, observation):
         """
@@ -1603,12 +1584,12 @@ class TorchAgent(ABC, Agent):
         # observations as vanilla dicts for legacy interop; eventually we
         # want to remove this behavior and demand that teachers return Messages
         observation = Message(observation)
-        reply = self.last_reply(use_reply=self.opt.get('use_reply', 'label'))
-        # update the history using the observation
-        self.history.update_history(observation, add_next=reply)
+
         self.observation = observation
+        # update the history using the observation
+        self.history.update_history(observation)
         return self.vectorize(
-            self.observation,
+            observation,
             self.history,
             text_truncate=self.text_truncate,
             label_truncate=self.label_truncate,
@@ -1702,9 +1683,8 @@ class TorchAgent(ABC, Agent):
 
     def reset(self):
         """Clear internal states."""
-        self.observation = {}
+        self.observation = None
         self.history.reset()
-        self.replies.clear()
         self.reset_metrics()
 
     def reset_metrics(self):
@@ -1716,12 +1696,11 @@ class TorchAgent(ABC, Agent):
 
     def act(self):
         """Call batch_act with the singleton batch."""
-        if self._replies_are_shared:
-            raise RuntimeError(
-                'act() will misbehave in batching mode. Set batchsize to 1, or '
-                '--interactive-mode true'
-            )
-        return self.batch_act([self.observation])[0]
+        # BatchWorld handles calling self_observe, but we're in a Hogwild or Interactive
+        # world, so we need to handle this ourselves.
+        response = self.batch_act([self.observation])[0]
+        self.self_observe(response)
+        return response
 
     def batch_act(self, observations):
         """
@@ -1753,12 +1732,9 @@ class TorchAgent(ABC, Agent):
                 output = self.eval_step(batch)
 
         if output is None:
-            self.replies['batch_reply'] = None
             return batch_reply
 
         self.match_batch(batch_reply, batch.valid_indices, output)
-        self.replies['batch_reply'] = batch_reply
-
         return batch_reply
 
     @abstractmethod
