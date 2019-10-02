@@ -990,6 +990,7 @@ class TestLegacyVersioning(unittest.TestCase):
                 {
                     'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
                     'task': 'convai2',
+                    'no_cuda': True,
                 }
             )
 
@@ -998,6 +999,7 @@ class TestLegacyVersioning(unittest.TestCase):
                 'model': 'legacy:seq2seq:0',
                 'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
                 'task': 'convai2',
+                'no_cuda': True,
             }
         )
 
