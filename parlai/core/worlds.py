@@ -788,6 +788,10 @@ class BatchWorld(World):
         """Return the ID of the root world."""
         return self.world.getID()
 
+    def get_agents(self):
+        """Return the agents of the root world"""
+        return self.world.get_agents()
+
     def get_task_agent(self):
         """Return task agent of the root world."""
         return self.world.get_task_agent()
