@@ -982,5 +982,25 @@ class TestTorchAgent(unittest.TestCase):
                 self.assertFalse(is_finetune)
 
 
+class TestLegacyVersioning(unittest.TestCase):
+    def test_legacy_version(self):
+        # simply tries to load and run some models with versioning attached
+        with self.assertRaises(RuntimeError):
+            testing_utils.display_model(
+                {
+                    'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
+                    'task': 'convai2',
+                }
+            )
+
+        testing_utils.display_model(
+            {
+                'model': 'legacy:seq2seq:0',
+                'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
+                'task': 'convai2',
+            }
+        )
+
+
 if __name__ == '__main__':
     unittest.main()

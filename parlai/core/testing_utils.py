@@ -13,6 +13,7 @@ import contextlib
 import tempfile
 import shutil
 import io
+from typing import Tuple
 
 
 try:
@@ -299,6 +300,29 @@ def display_data(opt):
         popt['datatype'] = 'test:stream'
         dd.display_data(popt)
 
+    return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
+
+
+def display_model(opt) -> Tuple[str, str]:
+    """
+    Run display_model.py.
+
+    :return: (stdout_valid, stdout_test)
+    """
+    import parlai.scripts.display_model as dm
+
+    parser = dm.setup_args()
+    parser.set_params(**opt)
+    popt = parser.parse_args(print_args=False)
+    with capture_output() as train_output:
+        popt['datatype'] = 'train:evalmode:stream'
+        dm.display_model(popt)
+    with capture_output() as valid_output:
+        popt['datatype'] = 'valid:stream'
+        dm.display_model(popt)
+    with capture_output() as test_output:
+        popt['datatype'] = 'test:stream'
+        dm.display_model(popt)
     return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
 
