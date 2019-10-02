@@ -11,25 +11,42 @@ import random
 import argparse
 import tempfile
 
-# Constant Denoting the End of a Conversation
+# Constants
 END_OF_CONVO = "EOC"
+CHROME_PATH = '/Applications/Google\ Chrome.app/Contents/MacOS//Google\ Chrome'
 
 
 def gen_ul_style():
     """ Generate general ul tag style"""
-    return (
-        "\t\tul{\n\t\t\tlist-style: none;\n\t\t\tmargin: 0;\n\t\t\tpadding: 0;\n\t\t}\n"
-    )
+    return """ul{
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }"""
 
 
 def gen_ul_li_style():
     """ Generate style for the li items for the conversations"""
-    return "\t\tul li{\n\t\t\tdisplay:inline-block;\n\t\t\tclear: both;\n\t\t\tpadding: 20px;\n\t\t\tborder-radius: 30px;\n\t\t\tmargin-bottom: 2px;\n\t\t\tfont-family: Helvetica, Arial, sans-serif;\n\t\t}\n"
+    return """ul li{
+                display:inline-block;
+                clear: both;
+                padding: 20px;
+                border-radius: 30px;
+                margin-bottom: 2px;
+                font-family: Helvetica, Arial, sans-serif;
+        }"""
 
 
 def gen_breaker_style():
     """ Generate style for the break li item between conversations"""
-    return "\t\t.breaker{\n\t\t\tcolor: #bec3c9;\n\t\t\tdisplay: block;\n\t\t\theight: 20px;\n\t\t\tmargin: 20px 20px 20px 20px;\n\t\t\ttext-align: center;\n\t\t\ttext-transform: uppercase;\n\t\t}\n"
+    return """.breaker{
+            color: #bec3c9;
+            display: block;
+            height: 20px;
+            margin: 20px 20px 20px 20px;
+            text-align: center;
+            text-transform: uppercase;
+        }"""
 
 
 def gen_speaker_styles(other_speaker, human_speaker):
@@ -40,16 +57,16 @@ def gen_speaker_styles(other_speaker, human_speaker):
 
     :return: Style string for the speakers
     """
-    other_style = (
-        "\t\t."
-        + other_speaker
-        + "{\n\t\t\tbackground: #eee;\n\t\t\tfloat: left;\n\t\t}\n"
-    )
-    human_style = (
-        "\t\t."
-        + human_speaker
-        + "{\n\t\t\tbackground: #0084ff;\n\t\t\tcolor: #fff;\n\t\t\tfloat: right;\n\t\t}\n"
-    )
+    other_style = f""".{other_speaker}{{
+            background: #eee;
+            float: left;
+        }}"""
+    human_style = f"""
+        .{human_speaker}{{
+            background: #0084ff;
+            color: #fff;
+            float: right;
+        }}"""
 
     return other_style + human_style
 
@@ -68,18 +85,16 @@ def gen_style_str(height, width, other_speaker, human_speaker):
     ul_li_style = gen_ul_li_style()
     speaker_styles = gen_speaker_styles(other_speaker, human_speaker)
     breaker_style = gen_breaker_style()
-    style_str = (
-        '\t<style type="text/css">\n\t\t@media print {\n\t\t\t@page { margin: 0; size:'
-        + str(width)
-        + "in "
-        + str(height)
-        + "in;}\n\t\t}\n"
-        + ul_style
-        + ul_li_style
-        + speaker_styles
-        + breaker_style
-        + "\n\t</style>\n"
-    )
+    style_str = f"""<style type="text/css">
+        @media print{{
+            @page{{ margin: 0; size: {str(width)}in {str(height)}in; }}
+        }}
+        {ul_style}
+        {ul_li_style}
+        {speaker_styles}
+        {breaker_style}
+        </style>
+        """
 
     return style_str
 
@@ -91,13 +106,13 @@ def gen_convo_ul(conversations):
 
     :return: The string generating the list in HTML
     """
-    ul_str = "\t<ul>\n"
+    ul_str = f"\t<ul>\n"
     for speaker, speech in conversations:
         if speaker == END_OF_CONVO:
-            ul_str += '\t\t<li class=\"breaker\">' + "End of Conversation" + "</li>\n"
+            ul_str += f"\t\t<li class=\"breaker\">End of Conversation</li>\n"
         else:
-            ul_str += "\t\t<li class=\"" + speaker + "\">" + speech + "</li>\n"
-    ul_str += "\t</ul>\n"
+            ul_str += f"\t\t<li class=\"{speaker}\">{speech}</li>\n"
+    ul_str += "\t</ul>"
 
     return ul_str
 
@@ -114,15 +129,18 @@ def gen_html(conversations, height, width, title, other_speaker, human_speaker):
 
     :return: HTML string for the desired conversation
     """
-    html_str = (
-        '<html>\n<head>\n\t<meta http-equiv="content-type" content="text/html; charset=utf-8">\n\t<title>'
-        + title
-        + "</title>\n"
-    )
     style_str = gen_style_str(height, width, other_speaker, human_speaker)
-    html_str += style_str + "</head>\n"
-    body_str = "<body>\n" + gen_convo_ul(conversations) + "</body>"
-    html_str += body_str + "\n</html>"
+    html_str = f"""<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title> {title} </title>
+    {style_str}
+</head>
+<body>
+{gen_convo_ul(conversations)}
+</body>
+</html>
+    """
     return html_str
 
 
@@ -224,18 +242,8 @@ if __name__ == "__main__":
                 file_handle = open(fname, "w")
                 file_handle.write(html_str)
                 if extension == "pdf":
-                    cmd = (
-                        '/Applications/Google\\ Chrome.app/Contents/MacOS//Google\\ Chrome --headless --crash-dumps-dir=/tmp --print-to-pdf="'
-                        + output_file
-                        + '" '
-                        + fname
-                    )
+                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp --print-to-pdf=\"{output_file}\" {fname}"
                 else:
-                    cmd = (
-                        '/Applications/Google\\ Chrome.app/Contents/MacOS//Google\\ Chrome --headless --crash-dumps-dir=/tmp --screenshot="'
-                        + output_file
-                        + '" '
-                        + fname
-                    )
+                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp --screenshot=\"{output_file}\" {fname}"
                 os.system(cmd)
                 file_handle.close()
