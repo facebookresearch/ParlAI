@@ -13,7 +13,9 @@ import tempfile
 
 # Constants
 END_OF_CONVO = "EOC"
-CHROME_PATH = '/Applications/Google\ Chrome.app/Contents/MacOS//Google\ Chrome'
+CHROME_PATH = (
+    '/Applications/Google\ Chrome.app/Contents/MacOS//Google\ Chrome'
+)  # noqa: W605
 
 
 def gen_ul_style():
