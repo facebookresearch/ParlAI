@@ -688,7 +688,8 @@ class TorchAgent(ABC, Agent):
             self.opt = shared['opt']
             self.dict = shared['dict']
             self.model = shared['model']
-            self.criterion = shared['criterion']
+            if 'criterion' in shared:
+                self.criterion = shared['criterion']
             self.metrics = shared['metrics']
             if self.opt['batchsize'] == 1 or self.opt['interactive_mode']:
                 # if we're not using batching (e.g. mturk), then replies really need
@@ -1202,7 +1203,8 @@ class TorchAgent(ABC, Agent):
 
         shared['dict'] = self.dict
         shared['model'] = self.model
-        shared['criterion'] = self.criterion
+        if hasattr(self, 'criterion'):
+            shared['criterion'] = self.criterion
         shared['opt'] = self.opt
         shared['replies'] = self.replies
         return shared
@@ -1232,7 +1234,8 @@ class TorchAgent(ABC, Agent):
         for i in vec:
             if i == self.END_IDX:
                 break
-            new_vec.append(i)
+            elif i != self.START_IDX:
+                new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
     def _vectorize_text(

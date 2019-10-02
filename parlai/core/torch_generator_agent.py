@@ -383,18 +383,6 @@ class TorchGeneratorAgent(TorchAgent):
         """
         return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
 
-    def _v2t(self, vec):
-        """Convert token indices to string of tokens."""
-        new_vec = []
-        if hasattr(vec, 'cpu'):
-            vec = vec.cpu()
-        for i in vec:
-            if i == self.END_IDX:
-                break
-            elif i != self.START_IDX:
-                new_vec.append(i)
-        return self.dict.vec2txt(new_vec)
-
     def set_interactive_mode(self, mode, shared=False):
         """Turn on interactive mode."""
         super().set_interactive_mode(mode, shared)

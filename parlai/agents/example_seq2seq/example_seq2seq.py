@@ -3,14 +3,21 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Example sequence to sequence agent for ParlAI "Creating an Agent" tutorial.
-http://parl.ai/static/docs/tutorial_seq2seq.html
+"""
+Example sequence to sequence agent for ParlAI.
+
+This contains the minimum boiler plate to implement a seq2seq model using the
+TorchAgent API. It can be trained with:
+
+.. code-block::
+
+    python examples/train_model.py -t convai2 -bs 32 -m example_seq2seq -veps 1 -mf /tmp/exseq -vmt f1
+
 """
 
 from parlai.core.torch_agent import TorchAgent, Output
 
 import torch
-from torch import optim
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -18,26 +25,33 @@ import torch.nn.functional as F
 class EncoderRNN(nn.Module):
     """Encodes the input context."""
 
-    def __init__(self, input_size, hidden_size, numlayers):
-        """Initialize encoder.
+    def __init__(
+        self, vocab_size: int, embedding_size: int, hidden_size: int, numlayers: int
+    ):
+        """
+        Initialize encoder.
 
-        :param input_size: size of embedding
-        :param hidden_size: size of GRU hidden layers
-        :param numlayers: number of GRU layers
+        :param input_size:
+            size of embedding
+        :param hidden_size:
+            size of GRU hidden layers
+        :param numlayers:
+            number of GRU layers
         """
         super().__init__()
-        self.hidden_size = hidden_size
-
-        self.embedding = nn.Embedding(input_size, hidden_size)
+        self.embedding = nn.Embedding(vocab_size, embedding_size)
         self.gru = nn.GRU(
-            hidden_size, hidden_size, num_layers=numlayers, batch_first=True
+            embedding_size, hidden_size, num_layers=numlayers, batch_first=True
         )
 
     def forward(self, input, hidden=None):
-        """Return encoded state.
+        """
+        Return encoded state.
 
-        :param input: (batchsize x seqlen) tensor of token indices.
-        :param hidden: optional past hidden state
+        :param input:
+            (batchsize x seqlen) tensor of token indices.
+        :param hidden:
+            optional past hidden state
         """
         embedded = self.embedding(input)
         output, hidden = self.gru(embedded, hidden)
@@ -47,25 +61,29 @@ class EncoderRNN(nn.Module):
 class DecoderRNN(nn.Module):
     """Generates a sequence of tokens in response to context."""
 
-    def __init__(self, output_size, hidden_size, numlayers):
-        """Initialize decoder.
+    def __init__(
+        self, vocab_size: int, embedding_size: int, hidden_size: int, numlayers: int
+    ):
+        """
+        Initialize decoder.
 
-        :param input_size: size of embedding
-        :param hidden_size: size of GRU hidden layers
-        :param numlayers: number of GRU layers
+        :param input_size:
+            size of embedding
+        :param hidden_size:
+            size of GRU hidden layers
+        :param numlayers:
+            number of GRU layers
         """
         super().__init__()
-        self.hidden_size = hidden_size
-
-        self.embedding = nn.Embedding(output_size, hidden_size)
+        self.embedding = nn.Embedding(vocab_size, embedding_size)
         self.gru = nn.GRU(
-            hidden_size, hidden_size, num_layers=numlayers, batch_first=True
+            embedding_size, hidden_size, num_layers=numlayers, batch_first=True
         )
-        self.out = nn.Linear(hidden_size, output_size)
-        self.softmax = nn.LogSoftmax(dim=2)
+        self.out = nn.Linear(hidden_size, vocab_size)
 
     def forward(self, input, hidden):
-        """Return encoded state.
+        """
+        Return decoder state.
 
         :param input: batch_size x 1 tensor of token indices.
         :param hidden: past (e.g. encoder) hidden state
@@ -73,12 +91,29 @@ class DecoderRNN(nn.Module):
         emb = self.embedding(input)
         rel = F.relu(emb)
         output, hidden = self.gru(rel, hidden)
-        scores = self.softmax(self.out(output))
-        return scores, hidden
+        logits = self.out(output)
+        return logits, hidden
+
+
+class ExampleSeq2seqModel(nn.Module):
+    """Joint model."""
+
+    def __init__(self, vocab_size, embedding_size, hidden_size, numlayers):
+        super().__init__()
+        self.encoder = EncoderRNN(vocab_size, embedding_size, hidden_size, numlayers)
+        self.decoder = DecoderRNN(vocab_size, embedding_size, hidden_size, numlayers)
+
+    def forward(self, xs, ys):
+        """Forward pass."""
+        _encoder_output, encoder_hidden = self.encoder(xs)
+        # Teacher forcing: Feed the target as the next input
+        decoder_output, decoder_hidden = self.decoder(ys, encoder_hidden)
+        return decoder_output
 
 
 class ExampleSeq2seqAgent(TorchAgent):
-    """Agent which takes an input sequence and produces an output sequence.
+    """
+    Agent which takes an input sequence and produces an output sequence.
 
     This model is based on Sean Robertson's `seq2seq tutorial
     <http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html>`_.
@@ -88,17 +123,17 @@ class ExampleSeq2seqAgent(TorchAgent):
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         super(ExampleSeq2seqAgent, cls).add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Seq2Seq Arguments')
+        agent = argparser.add_argument_group('ExampleSeq2Seq Arguments')
         agent.add_argument(
-            '-hs',
-            '--hiddensize',
+            '-hid',
+            '--hidden-size',
             type=int,
-            default=128,
+            default=256,
             help='size of the hidden layers',
         )
         agent.add_argument(
             '-esz',
-            '--embeddingsize',
+            '--embedding-size',
             type=int,
             default=128,
             help='size of the token embeddings',
@@ -106,197 +141,118 @@ class ExampleSeq2seqAgent(TorchAgent):
         agent.add_argument(
             '-nl', '--numlayers', type=int, default=2, help='number of hidden layers'
         )
-        agent.add_argument(
-            '-lr', '--learningrate', type=float, default=1, help='learning rate'
-        )
-        agent.add_argument(
-            '-dr', '--dropout', type=float, default=0.1, help='dropout rate'
-        )
-        agent.add_argument(
-            '--gpu', type=int, default=-1, help='which GPU device to use'
-        )
-        agent.add_argument(
-            '-rf',
-            '--report-freq',
-            type=float,
-            default=0.001,
-            help='Report frequency of prediction during eval.',
-        )
-        ExampleSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
     def __init__(self, opt, shared=None):
-        """Initialize example seq2seq agent.
+        """
+        Initialize example seq2seq agent.
 
-        :param opt: options dict generated by parlai.core.params:ParlaiParser
-        :param shared: optional shared dict with preinitialized model params
+        :param opt:
+            options dict generated by parlai.core.params:ParlaiParser
+        :param shared:
+            optional shared dict with preinitialized model params
         """
         super().__init__(opt, shared)
 
-        self.id = 'Seq2Seq'
+        if opt.get('numthreads', 1) > 1:
+            raise ValueError("Tutorial agent doesn't support hogwild.")
 
-        if not shared:
-            # set up model from scratch
-            hsz = opt['hiddensize']
-            nl = opt['numlayers']
-
-            # encoder captures the input text
-            self.encoder = EncoderRNN(len(self.dict), hsz, nl)
-            # decoder produces our output states
-            self.decoder = DecoderRNN(len(self.dict), hsz, nl)
+        if shared is None:
+            # always create the model in build_model
+            self.model = self.build_model()
 
             if self.use_cuda:  # set in parent class
-                self.encoder.cuda()
-                self.decoder.cuda()
+                self.model.cuda()
 
-            if opt.get('numthreads', 1) > 1:
-                self.encoder.share_memory()
-                self.decoder.share_memory()
-        elif 'encoder' in shared:
+            init_model, is_finetune = self._get_init_model(opt, shared)
+            if init_model is not None:
+                # load model parameters if available
+                print('[ Loading existing model params from {} ]' ''.format(init_model))
+                states = self.load(init_model)
+            else:
+                states = {}
+
+            # initialize the optimizer
+            self.init_optim(
+                self.model.parameters(),
+                states.get('optimizer'),
+                states.get('optimizer_type'),
+            )
+            self.build_lr_scheduler(states, hard_reset=is_finetune)
+
+        else:
             # copy initialized data from shared table
-            self.encoder = shared['encoder']
-            self.decoder = shared['decoder']
-
-        # set up the criterion
-        self.criterion = nn.NLLLoss()
-
-        # set up optims for each module
-        lr = opt['learningrate']
-        self.optims = {
-            'encoder': optim.SGD(self.encoder.parameters(), lr=lr),
-            'decoder': optim.SGD(self.decoder.parameters(), lr=lr),
-        }
-
-        self.longest_label = 1
-        self.hiddensize = opt['hiddensize']
-        self.numlayers = opt['numlayers']
-        self.START = torch.LongTensor([self.START_IDX])
-        if self.use_cuda:
-            self.START = self.START.cuda()
+            self.model = shared['model']
 
         self.reset()
 
-    def zero_grad(self):
-        """Zero out optimizer."""
-        for optimizer in self.optims.values():
-            optimizer.zero_grad()
-
-    def update_params(self):
-        """Do one optimization step."""
-        for optimizer in self.optims.values():
-            optimizer.step()
-
-    def share(self):
-        """Share internal states."""
-        shared = super().share()
-        shared['encoder'] = self.encoder
-        shared['decoder'] = self.decoder
-        return shared
-
-    def v2t(self, vector):
-        """Convert vector to text.
-
-        :param vector: tensor of token indices.
-            1-d tensors will return a string, 2-d will return a list of strings
-        """
-        if vector.dim() == 1:
-            output_tokens = []
-            # Remove the final END_TOKEN that is appended to predictions
-            for token in vector:
-                if token == self.END_IDX:
-                    break
-                else:
-                    output_tokens.append(token)
-            return self.dict.vec2txt(output_tokens)
-        elif vector.dim() == 2:
-            return [self.v2t(vector[i]) for i in range(vector.size(0))]
-        raise RuntimeError(
-            'Improper input to v2t with dimensions {}'.format(vector.size())
+    def build_model(self):
+        """Build the model."""
+        return ExampleSeq2seqModel(
+            len(self.dict),
+            self.opt['embedding_size'],
+            self.opt['hidden_size'],
+            self.opt['numlayers'],
         )
 
-    def vectorize(self, *args, **kwargs):
-        """Call vectorize without adding start tokens to labels."""
-        kwargs['add_start'] = False
-        return super().vectorize(*args, **kwargs)
-
     def train_step(self, batch):
-        """Train model to produce ys given xs.
+        """
+        Train model to produce ys given xs.
 
-        :param batch: parlai.core.torch_agent.Batch, contains tensorized
-                      version of observations.
+        :param batch:
+            parlai.core.torch_agent.Batch, contains tensorized version of
+            observations.
 
-        Return estimated responses, with teacher forcing on the input sequence
-        (list of strings of length batchsize).
+        :return:
+            estimated responses, with teacher forcing on the input sequence.
         """
         xs, ys = batch.text_vec, batch.label_vec
-        if xs is None:
-            return
-        bsz = xs.size(0)
-        starts = self.START.expand(bsz, 1)  # expand to batch size
-        loss = 0
+        self.model.train()
         self.zero_grad()
-        self.encoder.train()
-        self.decoder.train()
-        target_length = ys.size(1)
-        # save largest seen label for later
-        self.longest_label = max(target_length, self.longest_label)
 
-        _encoder_output, encoder_hidden = self.encoder(xs)
-
-        # Teacher forcing: Feed the target as the next input
-        y_in = ys.narrow(1, 0, ys.size(1) - 1)
-        decoder_input = torch.cat([starts, y_in], 1)
-        decoder_output, decoder_hidden = self.decoder(decoder_input, encoder_hidden)
-
-        scores = decoder_output.view(-1, decoder_output.size(-1))
-        loss = self.criterion(scores, ys.view(-1))
-        loss.backward()
+        decoder_output = self.model(xs, ys)
+        # autoregressive predictions, so the output at timestep 0 should predict
+        # the token at timestep 1
+        labels = ys[:, 1:]
+        scores = decoder_output[:, :-1]
+        loss = F.cross_entropy(
+            scores.reshape(-1, scores.size(-1)),
+            labels.reshape(-1),
+            ignore_index=self.NULL_IDX,  # ignore padding
+        )
+        self.backward(loss)
         self.update_params()
 
         _max_score, predictions = decoder_output.max(2)
-        return Output(self.v2t(predictions))
+        return Output([self._v2t(p) for p in predictions])
 
     def eval_step(self, batch):
-        """Generate a response to the input tokens.
-
-        :param batch: parlai.core.torch_agent.Batch, contains tensorized
-                      version of observations.
-
-        Return predicted responses (list of strings of length batchsize).
         """
+        Generate a response to the input tokens.
+
+        :param batch:
+            parlai.core.torch_agent.Batch, contains tensorized version of
+            observations.
+
+        :return:
+            predicted responses (list of Output objects).
+        """
+        # at test time, we need to do perform search, since we can't use teacher-forcing
         xs = batch.text_vec
-        if xs is None:
-            return
-        bsz = xs.size(0)
-        starts = self.START.expand(bsz, 1)  # expand to batch size
-        # just predict
-        self.encoder.eval()
-        self.decoder.eval()
-        _encoder_output, encoder_hidden = self.encoder(xs)
+        self.model.eval()
+        # go ahead and encode the context once
+        _, encoder_hidden = self.model.encoder(xs)
 
-        predictions = []
-        done = [False for _ in range(bsz)]
-        total_done = 0
-        decoder_input = starts
-        decoder_hidden = encoder_hidden
+        # initialize with the start token
+        ys = torch.zeros((xs.size(0), 1), dtype=torch.long).fill_(self.START_IDX)
+        # move to the same device as the model
+        ys = ys.to(xs.device)
 
-        for _ in range(self.longest_label):
+        # in this tutorial, we always decode a fixed number of tokens
+        for _ in range(32):
             # generate at most longest_label tokens
-            decoder_output, decoder_hidden = self.decoder(decoder_input, decoder_hidden)
-            _max_score, preds = decoder_output.max(2)
-            predictions.append(preds)
-            decoder_input = preds  # set input to next step
+            decoder_output, decoder_hidden = self.model.decoder(ys, encoder_hidden)
+            chosen = decoder_output[:, -1].argmax(1).unsqueeze(1)
+            ys = torch.cat([ys, chosen], dim=1)
 
-            # check if we've produced the end token
-            for b in range(bsz):
-                if not done[b]:
-                    # only add more tokens for examples that aren't done
-                    if preds[b].item() == self.END_IDX:
-                        # if we produced END, we're done
-                        done[b] = True
-                        total_done += 1
-            if total_done == bsz:
-                # no need to generate any more
-                break
-        predictions = torch.cat(predictions, 1)
-        return Output(self.v2t(predictions))
+        return Output([self._v2t(p) for p in ys])
