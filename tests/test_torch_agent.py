@@ -886,13 +886,13 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent()
         obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
         agent.observe(obs)
-        resp = agent.act()
+        _ = agent.act()
         self.assertEqual(agent.history.get_history_str(), 'Call\nResponse')
         # check if there is no label
         agent.reset()
         obs = Message({'text': 'Call', 'episode_done': False})
         agent.observe(obs)
-        resp = agent.act()
+        _ = agent.act()
         self.assertEqual(
             agent.history.get_history_str(), 'Call\nEvaluating 0 (responding to Call)!'
         )
@@ -901,7 +901,7 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent(use_reply='model')
         obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
         agent.observe(obs)
-        resp = agent.act()
+        _ = agent.act()
         self.assertEqual(agent.history.get_history_str(), 'Call\nTraining 0!')
         # --use-reply none never thinks of itself
         agent = get_agent(use_reply='none')
