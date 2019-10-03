@@ -633,6 +633,10 @@ class TorchAgent(ABC, Agent):
         super().__init__(opt, shared)
         opt = self.opt
 
+        # Safety checkers to ensure TorchAgent assumptions aren't being violated.
+        self.__expecting_clear_history = False
+        self.__expecting_to_reply = False
+
         # check for cuda
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
@@ -1531,6 +1535,28 @@ class TorchAgent(ABC, Agent):
         # want to remove this behavior and demand that teachers return Messages
         observation = Message(observation)
 
+        if self.__expecting_to_reply:
+            raise RuntimeError(
+                "Last observe() had a label, but no call to self_observe ever "
+                "happened. You are likely making multiple observe() calls without "
+                "a corresponding act(). This was changed in #2043. File a GitHub "
+                "issue if you require assistance."
+            )
+
+        if self.__expecting_clear_history:
+            raise RuntimeError(
+                "Last observe() was episode_done, but we never saw a corresponding "
+                "self_observe to clear the history, probably because you missed an "
+                "act(). This was changed in #2043. File a GitHub issue if you require "
+                "assistance."
+            )
+
+        if observation.get('episode_done'):
+            self.__expecting_clear_history = True
+        elif 'labels' in observation or 'eval_labels' in observation:
+            # make sure we note that we're expecting a reply in the future
+            self.__expecting_to_reply = True
+
         self.last_observation = observation
         # update the history using the observation
         self.history.update_history(observation)
@@ -1561,12 +1587,25 @@ class TorchAgent(ABC, Agent):
             )
 
         if self.last_observation['episode_done']:
+            if not self.__expecting_clear_history:
+                raise RuntimeError(
+                    "You probably overrode observe() without implementing calling "
+                    "super().observe(). This is unexpected. *If you must* avoid the "
+                    "super call, then you should file a GitHub issue referencing "
+                    "#2043."
+                )
             # oh this was the last example in the episode. reset the history
             self.history.reset()
             # additionally mark the last observation as invalid
             self.last_observation = None
+            # and clear the safety check
+            self.__expecting_clear_history = False
             return
 
+        # We did reply! Safety check is good next round.
+        self.__expecting_to_reply = False
+
+        # actually ingest the label
         if use_reply == 'none':
             # we're not including our own responses anyway.
             return
@@ -1683,6 +1722,10 @@ class TorchAgent(ABC, Agent):
 
     def reset(self):
         """Clear internal states."""
+        # assumption violation trackers
+        self.__expecting_clear_history = False
+        self.__expecting_to_reply = False
+
         self.last_observation = None
         self.history.reset()
         self.reset_metrics()
