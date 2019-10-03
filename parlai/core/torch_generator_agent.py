@@ -851,8 +851,6 @@ class TreeSearch(object):
                 logprobs[hyp_id][self.eos] = neginf(logprobs.dtype)
 
         if self.scores is None:
-            #  if t=0, only single hypothesis is expanded
-            logprobs = logprobs[0:1]
             self.scores = torch.zeros(1).type_as(logprobs).to(logprobs.device)
 
         hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
@@ -1004,6 +1002,9 @@ class BeamSearch(TreeSearch):
 
     def select_paths(self, logprobs, prior_scores):
         """Select the next vocabulary item in these beams."""
+        if prior_scores.numel() == 1:
+            logprobs = logprobs[0:1]
+
         # beam search actually looks over all hypotheses together so we flatten
         beam_scores = logprobs + prior_scores.unsqueeze(1).expand_as(logprobs)
         flat_beam_scores = beam_scores.view(-1)
