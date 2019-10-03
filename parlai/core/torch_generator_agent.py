@@ -1002,6 +1002,10 @@ class BeamSearch(TreeSearch):
 
     def select_paths(self, logprobs, prior_scores):
         """Select the next vocabulary item in these beams."""
+        # if numel is 1, then this is the first time step, only one hyp is expanded
+        if prior_scores.numel() == 1:
+            logprobs = logprobs[0:1]
+
         # beam search actually looks over all hypotheses together so we flatten
         beam_scores = logprobs + prior_scores.unsqueeze(1).expand_as(logprobs)
         flat_beam_scores = beam_scores.view(-1)
