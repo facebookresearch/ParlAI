@@ -64,6 +64,10 @@ class ParlaiLogger(logging.Logger):
         # To be used with testing_utils.capture_output()
         self.altStream = None
 
+    def log(self, msg, level=INFO):
+        """ Default Logging function """
+        super().log(level, msg)
+
     def add_file_handler(self, filename, level=INFO, format=None):
         """
         Add a file handler to the logger object

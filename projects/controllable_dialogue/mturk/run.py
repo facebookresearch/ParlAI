@@ -146,7 +146,7 @@ def main():
         if 'mturk_log' in opt:
             logfn = opt['mturk_log']
             if not os.path.isdir(os.path.dirname(logfn)):
-                raise OSError("Please run `mkdir -p {}`".format(os.path.dirname(logfn)))
+                os.makedirs(os.path.dirname(logfn), exist_ok=True)
         logger = ParlaiLogger(
             name="mturk_controllable",
             console_level=INFO,
