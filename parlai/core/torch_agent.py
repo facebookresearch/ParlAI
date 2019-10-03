@@ -1520,6 +1520,27 @@ class TorchAgent(ABC, Agent):
                 batch_reply[i]['text_candidates'] = cands
         return batch_reply
 
+    def observe(self, observation):
+        """
+        Process incoming message in preparation for producing a response.
+
+        This includes remembering the past history of the conversation.
+        """
+        # TODO: Migration plan: TorchAgent currently supports being passed
+        # observations as vanilla dicts for legacy interop; eventually we
+        # want to remove this behavior and demand that teachers return Messages
+        observation = Message(observation)
+
+        self.last_observation = observation
+        # update the history using the observation
+        self.history.update_history(observation)
+        return self.vectorize(
+            observation,
+            self.history,
+            text_truncate=self.text_truncate,
+            label_truncate=self.label_truncate,
+        )
+
     def self_observe(self, self_message: Message) -> None:
         """
         Observe one's own utterance.
@@ -1573,27 +1594,6 @@ class TorchAgent(ABC, Agent):
             return
 
         raise RuntimeError("Unexpected case in self_observe.")
-
-    def observe(self, observation):
-        """
-        Process incoming message in preparation for producing a response.
-
-        This includes remembering the past history of the conversation.
-        """
-        # TODO: Migration plan: TorchAgent currently supports being passed
-        # observations as vanilla dicts for legacy interop; eventually we
-        # want to remove this behavior and demand that teachers return Messages
-        observation = Message(observation)
-
-        self.last_observation = observation
-        # update the history using the observation
-        self.history.update_history(observation)
-        return self.vectorize(
-            observation,
-            self.history,
-            text_truncate=self.text_truncate,
-            label_truncate=self.label_truncate,
-        )
 
     def state_dict(self):
         """
