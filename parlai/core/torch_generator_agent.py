@@ -851,6 +851,8 @@ class TreeSearch(object):
                 logprobs[hyp_id][self.eos] = neginf(logprobs.dtype)
 
         if self.scores is None:
+            #  if t=0, only single hypothesis is expanded
+            logprobs = logprobs[0:1]
             self.scores = torch.zeros(1).type_as(logprobs).to(logprobs.device)
 
         hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
