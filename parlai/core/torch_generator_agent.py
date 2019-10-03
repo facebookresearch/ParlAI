@@ -1002,6 +1002,7 @@ class BeamSearch(TreeSearch):
 
     def select_paths(self, logprobs, prior_scores):
         """Select the next vocabulary item in these beams."""
+        # if numel is 1, then this is the first time step, only one hyp is expanded
         if prior_scores.numel() == 1:
             logprobs = logprobs[0:1]
 
