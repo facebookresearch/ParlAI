@@ -729,16 +729,17 @@ class TestTorchAgent(unittest.TestCase):
         obs = {'text': None, 'episode_done': True}
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
+        # make sure we throw an exception for having an episode done without a reset
+        obs = {'text': "I'll be back.", 'labels': ["I'm back."], 'episode_done': True}
+        with self.assertRaises(RuntimeError):
+            agent.observe(obs.copy())
+        # okay, let's do it properly now
+        agent.reset()
         obs = {'text': "I'll be back.", 'labels': ["I'm back."], 'episode_done': True}
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
         self.assertIsNotNone(agent.last_observation)
         self.assertEqual(out['text'], "I'll be back.")
-        # episode was done so shouldn't remember history
-        out = agent.observe(obs.copy())
-        self.assertEqual(out['text'], "I'll be back.")
-        self.assertTrue('text_vec' in out, 'Text should be vectorized.')
-
         # now try with episode not done
         agent = get_agent()
         obs['episode_done'] = False
