@@ -10,6 +10,7 @@
 from parlai.core.distributed_utils import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.utils import round_sigfigs, warn_once
+import os
 from collections import defaultdict
 
 import torch
@@ -87,10 +88,18 @@ class TorchClassifierAgent(TorchAgent):
         super().__init__(opt, shared)
 
         # set up classes
-        if opt.get('classes') is None:
-            raise RuntimeError('Must specify --classes argument.')
         if not shared:
-            self.class_list = opt['classes']
+            if opt.get('classes') is None:
+                raise RuntimeError('Must specify --classes argument.')
+            if os.path.isfile(opt['classes'][0]):
+                # Load candidates
+                cand_path = opt['classes'][0]
+                print("[ Loading fixed classes set from {} ]".format(cand_path))
+                with open(cand_path, 'r') as f:
+                    cands = [line.strip() for line in f.readlines()]
+            else:
+                cands = opt['classes']
+            self.class_list = cands
             self.class_dict = {val: i for i, val in enumerate(self.class_list)}
             if opt.get('class_weights', None) is not None:
                 self.class_weights = opt['class_weights']
@@ -147,7 +156,8 @@ class TorchClassifierAgent(TorchAgent):
                     raise ValueError(
                         'Cannot combine --data-parallel and distributed mode'
                     )
-                self.model = torch.nn.DataParallel(self.model)
+                self.model_data_parallel = torch.nn.DataParallel(self.model)
+                self.model = self.model_data_parallel.module
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
@@ -222,7 +232,8 @@ class TorchClassifierAgent(TorchAgent):
 
         # calculate loss
         labels = self._get_labels(batch)
-        scores = self.score(batch)
+        scores = self.score(batch).float()
+        # import ipdb; ipdb.set_trace()
         loss = self.criterion(scores, labels)
         loss.backward()
         self.update_params()
@@ -244,7 +255,7 @@ class TorchClassifierAgent(TorchAgent):
             return
 
         self.model.eval()
-        scores = self.score(batch)
+        scores = self.score(batch).float()
         probs = F.softmax(scores, dim=1)
         if self.threshold is None:
             _, prediction_id = torch.max(probs.cpu(), 1)
@@ -317,6 +328,7 @@ class TorchClassifierAgent(TorchAgent):
         examples = self.metrics['examples']
         if examples > 0:
             m['examples'] = examples
+            m['loss'] = self.metrics['loss']
             m['mean_loss'] = self.metrics['loss'] / examples
 
             # get prec/recall metrics
