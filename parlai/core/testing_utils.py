@@ -315,6 +315,7 @@ def display_model(opt) -> Tuple[str, str]:
     parser.set_params(**opt)
     popt = parser.parse_args(print_args=False)
     with capture_output() as train_output:
+        # evalmode so that we don't hit train_step
         popt['datatype'] = 'train:evalmode:stream'
         dm.display_model(popt)
     with capture_output() as valid_output:
