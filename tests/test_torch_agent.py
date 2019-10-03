@@ -722,38 +722,6 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot. Groot! I am Groot.')
 
-    def test_use_reply(self):
-        """Check that self-observe is correctly acting on labels."""
-        # default is hybrid label-model, which uses the label if it's available, and
-        # otherwise the label
-        # first check if there is a label available
-        agent = get_agent()
-        obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
-        agent.observe(obs)
-        resp = agent.act()
-        self.assertEqual(agent.history.get_history_str(), 'Call\nResponse')
-        # check if there is no label
-        agent.reset()
-        obs = Message({'text': 'Call', 'episode_done': False})
-        agent.observe(obs)
-        resp = agent.act()
-        self.assertEqual(
-            agent.history.get_history_str(), 'Call\nEvaluating 0 (responding to Call)!'
-        )
-        # now some of the other possible values of --use-reply
-        # --use-reply model. even if there is a label, we should see the model's out
-        agent = get_agent(use_reply='model')
-        obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
-        agent.observe(obs)
-        resp = agent.act()
-        self.assertEqual(agent.history.get_history_str(), 'Call\nTraining 0!')
-        # --use-reply none never thinks of itself
-        agent = get_agent(use_reply='none')
-        obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
-        agent.observe(obs)
-        resp = agent.act()
-        self.assertEqual(agent.history.get_history_str(), 'Call')
-
     def test_observe(self):
         """Make sure agent stores and returns observation."""
         agent = get_agent()
@@ -908,6 +876,38 @@ class TestTorchAgent(unittest.TestCase):
         self.assertIn(
             'Evaluating 0', response['text'], 'Incorrect output in single act()'
         )
+
+    def test_use_reply(self):
+        """Check that self-observe is correctly acting on labels."""
+        # default is hybrid label-model, which uses the label if it's available, and
+        # otherwise the label
+        # first check if there is a label available
+        agent = get_agent()
+        obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
+        agent.observe(obs)
+        resp = agent.act()
+        self.assertEqual(agent.history.get_history_str(), 'Call\nResponse')
+        # check if there is no label
+        agent.reset()
+        obs = Message({'text': 'Call', 'episode_done': False})
+        agent.observe(obs)
+        resp = agent.act()
+        self.assertEqual(
+            agent.history.get_history_str(), 'Call\nEvaluating 0 (responding to Call)!'
+        )
+        # now some of the other possible values of --use-reply
+        # --use-reply model. even if there is a label, we should see the model's out
+        agent = get_agent(use_reply='model')
+        obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
+        agent.observe(obs)
+        resp = agent.act()
+        self.assertEqual(agent.history.get_history_str(), 'Call\nTraining 0!')
+        # --use-reply none never thinks of itself
+        agent = get_agent(use_reply='none')
+        obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
+        agent.observe(obs)
+        resp = agent.act()
+        self.assertEqual(agent.history.get_history_str(), 'Call')
 
     def test_mturk_racehistory(self):
         """Emulate a setting where batch_act misappropriately handles mturk."""
