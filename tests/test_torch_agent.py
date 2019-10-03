@@ -906,7 +906,7 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent(use_reply='none')
         obs = Message({'text': 'Call', 'labels': ['Response'], 'episode_done': False})
         agent.observe(obs)
-        resp = agent.act()
+        agent.act()
         self.assertEqual(agent.history.get_history_str(), 'Call')
 
     def test_mturk_racehistory(self):
