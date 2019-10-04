@@ -1645,7 +1645,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
                     # Call to super method calls get() to get next example
                     self.example, self.imageEpochDone = super().next_example()
                 return_result = self.example, self.imageEpochDone
-            elif self.include_image:
+            else:
                 # We have specified an image model/mode but it's not based on
                 # calculating features, (e.g. "raw" or "ascii") so we try to load
                 # the image from the DataLoader
