@@ -8,7 +8,6 @@
 import unittest
 import parlai.scripts.display_data as display_data
 import parlai.core.testing_utils as testing_utils
-from parlai.core.logging_utils import logger
 
 
 MODEL_OPTIONS = {

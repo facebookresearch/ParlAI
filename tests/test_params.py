@@ -12,7 +12,6 @@ import unittest
 from parlai.core.params import ParlaiParser
 import parlai.core.agents as agents
 import parlai.core.testing_utils as testing_utils
-from parlai.core.logging_utils import logger
 
 
 class _ExampleUpgradeOptAgent(agents.Agent):
@@ -35,7 +34,7 @@ class TestParlaiParser(unittest.TestCase):
     def test_upgrade_opt(self):
         """Test whether upgrade_opt works."""
         with testing_utils.tempdir() as tmp:
-            with testing_utils.capture_output():
+            with testing_utils.capture_output() as _:
                 modfn = os.path.join(tmp, 'model')
                 with open(modfn, 'w') as f:
                     f.write('Test.')

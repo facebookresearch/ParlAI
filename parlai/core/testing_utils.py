@@ -13,7 +13,8 @@ import contextlib
 import tempfile
 import shutil
 import io
-from parlai.core.logging_utils import logger
+
+# from parlai.core.logging_utils import logger # To be uncommented once prints are replaced with logging
 
 try:
     import torch
@@ -183,13 +184,13 @@ def capture_output():
     'hello'
     """
     sio = TeeStringIO()
-    logger.mute()  # Stop logging to stdout
-    logger.redirect_out(sio)  # Instead log to sio (to preserve output for later)
+    # logger.mute()  # Stop logging to stdout
+    # logger.redirect_out(sio)  # Instead log to sio (to preserve output for later)
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
     # yield sio  # Uncomment this once all print statements removed and comment the above two statements instead
-    logger.stop_redirect_out()  # Stop redirecting [Removes handler]
-    logger.unmute()  # From now on log to stdout
+    # logger.stop_redirect_out()  # Stop redirecting [Removes handler]
+    # logger.unmute()  # From now on log to stdout
 
 
 @contextlib.contextmanager

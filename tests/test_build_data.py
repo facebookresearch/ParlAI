@@ -38,11 +38,11 @@ class TestBuildData(unittest.TestCase):
             'https://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
         ]
 
-        with testing_utils.capture_output() as output:
+        with testing_utils.capture_output() as stdout:
             download_results = build_data.download_multiprocess(
                 urls, self.datapath, dest_filenames=self.dest_filenames
             )
-        stdout = output.getvalue()
+        stdout = stdout.getvalue()
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
         self.assertEqual(
@@ -64,11 +64,11 @@ class TestBuildData(unittest.TestCase):
             'https://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
         ]
 
-        with testing_utils.capture_output() as output:
+        with testing_utils.capture_output() as stdout:
             download_results = build_data.download_multiprocess(
                 urls, self.datapath, dest_filenames=self.dest_filenames, chunk_size=1
             )
-        stdout = output.getvalue()
+        stdout = stdout.getvalue()
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
 
