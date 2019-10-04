@@ -15,7 +15,6 @@ in non-distributed mode.
 import builtins
 import pickle
 import contextlib
-from parlai.core.logging_utils import logger
 
 try:
     import torch.version
@@ -78,7 +77,7 @@ def is_primary_worker():
 @contextlib.contextmanager
 def override_print(suppress=False, prefix=None):
     """
-    Context manager to override the logger to suppress or modify output.
+    Context manager to override the print to suppress or modify output.
 
     Recommended usage is to call this with suppress=True for all non-primary workers,
     or call with a prefix of rank on all workers.
@@ -87,19 +86,39 @@ def override_print(suppress=False, prefix=None):
     ...     my_computation()
 
     :param bool suppress:
-        if true, all future log statements are noops.
+        if true, all future print statements are noops.
     :param str prefix:
         if not None, this string is prefixed to all future log statements.
     """
-    if suppress:
-        logger.disabled = True
-    elif prefix:
-        logger.add_format_prefix(prefix)
-    else:
-        pass  # do nothing
+    builtin_print = builtins.print
+
+    def new_print(*args, **kwargs):
+        if suppress:
+            # do nothing
+            return
+        elif prefix:
+            return builtin_print(prefix, *args, **kwargs)
+        else:
+            # default to normal print
+            return builtin_print(*args, **kwargs)
+
+    # override the print for now
+    builtins.print = new_print
     yield
-    logger.disabled = False
-    logger.reset_formatters()
+    # bring it back at the end of the context
+    builtins.print = builtin_print
+
+    # Alternative implementation: To be used when switched to all-logging
+    # from parlai.core.logging_utils import logger # Add this to top of module
+    # if suppress:
+    #     logger.disabled = True
+    # elif prefix:
+    #     logger.add_format_prefix(prefix)
+    # else:
+    #     pass  # do nothing
+    # yield
+    # logger.disabled = False
+    # logger.reset_formatters()
 
 
 def all_gather_list(data, max_size=16384):
