@@ -9,7 +9,6 @@ extend-ignore =
     E266
     W503
     F403
-    F401
     D202
 select = C,E,F,W,B,B950,D,RST
 
