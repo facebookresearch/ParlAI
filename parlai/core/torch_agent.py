@@ -1557,7 +1557,7 @@ class TorchAgent(ABC, Agent):
             # make sure we note that we're expecting a reply in the future
             self.__expecting_to_reply = True
 
-        self.last_observation = observation
+        self.observation = observation
         # update the history using the observation
         self.history.update_history(observation)
         return self.vectorize(
@@ -1580,13 +1580,13 @@ class TorchAgent(ABC, Agent):
         """
         use_reply = self.opt.get('use_reply', 'label')
 
-        if self.last_observation is None:
+        if self.observation is None:
             raise RuntimeError(
                 "You're self_observing without having observed something. Check if "
                 "you're missing a step in your observe/act/self_observe loop."
             )
 
-        if self.last_observation['episode_done']:
+        if self.observation['episode_done']:
             if not self.__expecting_clear_history:
                 raise RuntimeError(
                     "You probably overrode observe() without implementing calling "
@@ -1597,7 +1597,7 @@ class TorchAgent(ABC, Agent):
             # oh this was the last example in the episode. reset the history
             self.history.reset()
             # additionally mark the last observation as invalid
-            self.last_observation = None
+            self.observation = None
             # and clear the safety check
             self.__expecting_clear_history = False
             return
@@ -1613,13 +1613,13 @@ class TorchAgent(ABC, Agent):
             # first look for the true label
             label_key = (
                 'labels'
-                if 'labels' in self.last_observation
+                if 'labels' in self.observation
                 else 'eval_labels'
-                if 'eval_labels' in self.last_observation
+                if 'eval_labels' in self.observation
                 else None
             )
             if label_key is not None:
-                lbls = self.last_observation[label_key]
+                lbls = self.observation[label_key]
                 last_reply = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
                 self.history.add_reply(last_reply)
                 return
@@ -1726,7 +1726,7 @@ class TorchAgent(ABC, Agent):
         self.__expecting_clear_history = False
         self.__expecting_to_reply = False
 
-        self.last_observation = None
+        self.observation = None
         self.history.reset()
         self.reset_metrics()
 
@@ -1741,7 +1741,7 @@ class TorchAgent(ABC, Agent):
         """Call batch_act with the singleton batch."""
         # BatchWorld handles calling self_observe, but we're in a Hogwild or Interactive
         # world, so we need to handle this ourselves.
-        response = self.batch_act([self.last_observation])[0]
+        response = self.batch_act([self.observation])[0]
         self.self_observe(response)
         return response
 
