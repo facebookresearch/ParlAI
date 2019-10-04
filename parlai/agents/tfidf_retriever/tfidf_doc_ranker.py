@@ -44,6 +44,21 @@ class TfidfDocRanker(object):
         self.num_docs = self.doc_mat.shape[1] - 1
         self.strict = strict
 
+    def share(self):
+        """
+        (From TorchAgent)
+
+        Share any parameters needed to create a shared version of this agent.
+
+        Default implementation shares the class and the opt, but most agents will
+        want to also add model weights, teacher data, etc. This especially useful
+        for avoiding providing pointers to large objects to all agents in a batch.
+        """
+        shared = {}
+        shared['class'] = type(self)
+        shared['opt'] = {}
+        return shared
+
     def get_doc_index(self, doc_id):
         """Convert doc_id --> doc_index"""
         return self.doc_dict[0][doc_id] if self.doc_dict else doc_id
