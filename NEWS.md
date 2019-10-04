@@ -1,4 +1,6 @@
 ## News
+2019-09-16: The [Dialogue Safety project page](https://parl.ai/projects/dialogue_safety/) is updated with pretrained models, data, and an interactive demonstration.
+
 2019-06-12: The [Personality-Captions project page](http://parl.ai/projects/personality_captions/) is updated with pretrained models, specialized model code, and an interactive demo.
 
 2019-06-12: Added [HotpotQA](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/quac) as another dataset.

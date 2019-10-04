@@ -16,7 +16,7 @@ This directory also contains subfolders for some of the projects which are house
   _Analysis of the performance of search in generative models for chitchat tasks._
 
 ## Retrieval Models
-- **Poly-Encoders** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder) [[paper]](https://arxiv.org/abs/1905.01969).
+- **Poly-Encoders** [[project]](https://parl.ai/projects/polyencoder/) [[paper]](https://arxiv.org/abs/1905.01969).
   _State-of-the-art Transformer architectures + pretraining for dialogue retrieval._
 
 
@@ -26,6 +26,9 @@ This directory also contains subfolders for some of the projects which are house
   _How an agent can learn from dialogue after deployment by imitating and asking for feedback._  
 
 ## Chit-chat
+
+- **Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
+  _Task and method for improving the detection of offensive language in the context of dialogue._
 
 - **Dialogue Natural Language Inference** [[external website]](https://wellecks.github.io/dialogue_nli/).
   _Task and method for improving dialogue consistency._

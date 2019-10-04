@@ -8,7 +8,6 @@
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
 
-import logging
 import numpy as np
 import scipy.sparse as sp
 
@@ -17,8 +16,7 @@ from functools import partial
 
 from . import utils
 from . import tokenizers
-
-logger = logging.getLogger(__name__)
+from parlai.core.logging_utils import logger
 
 
 class TfidfDocRanker(object):

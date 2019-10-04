@@ -5,13 +5,17 @@
 # LICENSE file in the root directory of this source tree.
 
 # This shell script lints only the things that changed in the most recent change.
-# It's much more strict than our check for lint across the entire code base.
 
 set -e
 
 onlyexists() {
+    if [[ "$1" != "" ]]; then
+        PRE="$1/"
+    else
+        PRE=""
+    fi
     while read fn; do
-        if [ -f "$fn" ]; then
+        if [ -f "${PRE}${fn}" ]; then
             echo "$fn"
         fi
     done
@@ -22,8 +26,9 @@ CHANGED_FILES="$(git diff --name-only master... | grep '\.py$' | onlyexists | tr
 while getopts bi opt; do
   case $opt in
     i)
-      CHANGED_FILES="$(git -C ./parlai_internal/ diff --name-only master... | onlyexists |
-      xargs -I '{}' realpath --relative-to=. $(git -C ./parlai_internal/ rev-parse --show-toplevel)/'{}' |
+      ROOT="$(git -C ./parlai_internal/ rev-parse --show-toplevel)"
+      CHANGED_FILES="$(git -C ./parlai_internal/ diff --name-only master... | onlyexists $ROOT |
+      xargs -I '{}' realpath --relative-to=. $ROOT/'{}' |
       grep '\.py$' | tr '\n' ' ')"
       ;;
     b)

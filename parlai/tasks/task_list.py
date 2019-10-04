@@ -74,6 +74,21 @@ task_list = [
         ),
     },
     {
+        "id": "CCPE",
+        "display_name": "Coached Conversational Preference Elicitation",
+        "task": "ccpe",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A dataset consisting of 502 dialogs with 12,000 annotated "
+            "utterances between a user and an assistant discussing movie "
+            "preferences in natural language. It was collected using a "
+            "Wizard-of-Oz methodology between two paid crowd-workers, "
+            "where one worker plays the role of an 'assistant', while "
+            "the other plays the role of a 'user'. From Google, '19. Link: "
+            "https://ai.google/tools/datasets/coached-conversational-preference-elicitation"
+        ),
+    },
+    {
         "id": "COPA",
         "display_name": "Choice of Plausible Alternatives",
         "task": "copa",
@@ -164,6 +179,17 @@ task_list = [
             "See https://www.researchgate.net/publication/319128941_Challenging_Neural_"
             "Dialogue_Models_with_Natural_Data_Memory_Networks_Fail_on_"
             "Incremental_Phenomena,http://aclweb.org/anthology/D17-1235"
+        ),
+    },
+    {
+        "id": "dialogue-nli",
+        "display_name": "Dialogue NLI",
+        "task": "dialogue_nli",
+        "tags": ["All", "ChitChat", "NLI"],
+        "description": (
+            "Dialogue NLI is a dataset that addresses the issue of consistency in "
+            "dialogue models. "
+            "See: https://wellecks.github.io/dialogue_nli/"
         ),
     },
     {
@@ -709,6 +735,20 @@ task_list = [
         ),
     },
     {
+        "id": "TaskMaster",
+        "display_name": "TaskMaster-1-2019",
+        "task": "taskmaster",
+        "tags": ["ChitChat", "All"],
+        "description": (
+            "A chit-chat dataset by GoogleAI providing high quality goal-oriented conversations"
+            "The dataset hopes to provoke interest in written vs spoken language"
+            "Both the datasets consists of two-person dialogs:"
+            "Spoken: Created using Wizard of Oz methodology.(woz-dialogs.json)"
+            "Written: Created by crowdsourced workers who were asked to write the full conversation themselves playing roles of both the user and assistant. (self-dialogs.json)"
+            "Link: https://ai.google/tools/datasets/taskmaster-1"
+        ),
+    },
+    {
         "id": "Twitter",
         "display_name": "Twitter",
         "task": "twitter",
@@ -963,6 +1003,31 @@ task_list = [
             "  - [prepend_cand]: fasttext prediction on label line (candidate) - or None \n"
             "  - [deepmoji_ctx]: vector encoding from deepmoji penultimate layer - or None \n"
             "  - [deepmoji_cand]: vector encoding from deepmoji penultimate layer for label line (candidate) - or None "
+        ),
+    },
+    {
+        "id": "DialogueSafety",
+        "display_name": "Dialogue Safety",
+        "task": "dialogue_safety",
+        "tags": ["All"],
+        "description": (
+            "Several datasets described in the paper Built it Break it Fix it "
+            "for Dialogue Safety: Robustness from Adversarial Human Attack "
+            "(see https://arxiv.org/abs/1908.06083 for more information). \n"
+            "All datasets are classification tasks in which the goal is to "
+            "determine if the text is offensive or \'safe\'."
+        ),
+    },
+    {
+        "id": "MultiWOZ",
+        "display_name": "MultiWOZ",
+        "task": "multiwoz",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics."
+            "(see http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"
+            " for more information). "
         ),
     },
 ]

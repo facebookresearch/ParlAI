@@ -3,7 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-""" Talk with a model using a web UI. """
+"""Talk with a model using a web UI."""
 
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -54,6 +54,11 @@ WEB_HTML = """
                         <p class="control">
                           <button id="respond" type="submit" class="button has-text-white-ter has-background-grey-dark">
                             Submit
+                          </button>
+                        </p>
+                        <p class="control">
+                          <button id="restart" type="reset" class="button has-text-white-ter has-background-grey-dark">
+                            Restart Conversation
                           </button>
                         </p>
                       </div>
@@ -125,6 +130,24 @@ WEB_HTML = """
                     window.scrollTo(0,document.body.scrollHeight);
                 }})
             }});
+            document.getElementById("interact").addEventListener("reset", function(event){{
+                event.preventDefault()
+                var text = document.getElementById("userIn").value;
+                document.getElementById('userIn').value = "";
+
+                fetch('/reset', {{
+                    headers: {{
+                        'Content-Type': 'application/json'
+                    }},
+                    method: 'POST',
+                }}).then(response=>response.json()).then(data=>{{
+                    var parDiv = document.getElementById("parent");
+
+                    parDiv.innerHTML = '';
+                    parDiv.append(createChatRow("Model", "Enter a message, and the model will respond interactively."));
+                    window.scrollTo(0,document.body.scrollHeight);
+                }})
+            }});
         </script>
 
     </body>
@@ -133,73 +156,90 @@ WEB_HTML = """
 
 
 class MyHandler(BaseHTTPRequestHandler):
-    def interactive_running(self, opt, reply_text):
+    """Handle HTTP requests."""
+
+    def _interactive_running(self, opt, reply_text):
         reply = {'episode_done': False, 'text': reply_text}
         SHARED['agent'].observe(reply)
         model_res = SHARED['agent'].act()
         return model_res
 
     def do_HEAD(self):
+        """Handle HEAD requests."""
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
     def do_POST(self):
-        if self.path != '/interact':
-            return self.respond({'status': 500})
+        """Handle POST request, especially replying to a chat message."""
+        if self.path == '/interact':
+            content_length = int(self.headers['Content-Length'])
+            body = self.rfile.read(content_length)
+            model_response = self._interactive_running(
+                SHARED.get('opt'), body.decode('utf-8')
+            )
 
-        content_length = int(self.headers['Content-Length'])
-        body = self.rfile.read(content_length)
-        model_response = self.interactive_running(
-            SHARED.get('opt'), body.decode('utf-8')
-        )
-
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        json_str = json.dumps(model_response)
-        self.wfile.write(bytes(json_str, 'utf-8'))
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            json_str = json.dumps(model_response)
+            self.wfile.write(bytes(json_str, 'utf-8'))
+        elif self.path == '/reset':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            SHARED['agent'].reset()
+            self.wfile.write(bytes("{}", 'utf-8'))
+        else:
+            return self._respond({'status': 500})
 
     def do_GET(self):
+        """Respond to GET request, especially the initial load."""
         paths = {
             '/': {'status': 200},
             '/favicon.ico': {'status': 202},  # Need for chrome
         }
         if self.path in paths:
-            self.respond(paths[self.path])
+            self._respond(paths[self.path])
         else:
-            self.respond({'status': 500})
+            self._respond({'status': 500})
 
-    def handle_http(self, status_code, path, text=None):
+    def _handle_http(self, status_code, path, text=None):
         self.send_response(status_code)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
         content = WEB_HTML.format(STYLE_SHEET, FONT_AWESOME)
         return bytes(content, 'UTF-8')
 
-    def respond(self, opts):
-        response = self.handle_http(opts['status'], self.path)
+    def _respond(self, opts):
+        response = self._handle_http(opts['status'], self.path)
         self.wfile.write(response)
 
 
 def setup_interactive(shared):
+    """Build and parse CLI opts."""
     parser = setup_args()
-    SHARED['opt'] = parser.parse_args(print_args=True)
+    parser.add_argument('--port', type=int, default=PORT, help='Port to listen on.')
+    SHARED['opt'] = parser.parse_args(print_args=False)
 
     SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
     # Create model and assign it to the specified task
-    SHARED['agent'] = create_agent(SHARED.get('opt'), requireModelExists=True)
+    agent = create_agent(SHARED.get('opt'), requireModelExists=True)
+    SHARED['agent'] = agent
     SHARED['world'] = create_task(SHARED.get('opt'), SHARED['agent'])
+
+    # show args after loading model
+    parser.opt = agent.opt
+    parser.print_args()
+    return agent.opt
 
 
 if __name__ == '__main__':
-    setup_interactive(SHARED)
-    server_class = HTTPServer
-    Handler = MyHandler
-    Handler.protocol_version = 'HTTP/1.0'
-    httpd = server_class((HOST_NAME, PORT), Handler)
-    print('http://{}:{}/'.format(HOST_NAME, PORT))
+    opt = setup_interactive(SHARED)
+    MyHandler.protocol_version = 'HTTP/1.0'
+    httpd = HTTPServer((HOST_NAME, opt['port']), MyHandler)
+    print('http://{}:{}/'.format(HOST_NAME, opt['port']))
 
     try:
         httpd.serve_forever()

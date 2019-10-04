@@ -13,7 +13,9 @@ import contextlib
 import tempfile
 import shutil
 import io
+from typing import Tuple
 
+# from parlai.core.logging_utils import logger # TODO: Uncomment before completion of #2044
 
 try:
     import torch
@@ -173,12 +175,9 @@ class TeeStringIO(io.StringIO):
 @contextlib.contextmanager
 def capture_output():
     """
-    Suppress all stdout and stderr into a single buffer.
+    Suppress all logging output into a single buffer.
 
     Use as a context manager.
-
-    :returns: the output
-    :rtype: io.StringIO
 
     >>> with capture_output() as output:
     ...     print('hello')
@@ -188,6 +187,29 @@ def capture_output():
     sio = TeeStringIO()
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
+
+
+# # TODO: Replace capture_output with this version before completing #2044
+# # TODO: Uncomment import statement at the top
+# # TODO: IDEA: Pass logger object as parameter to thi function
+# @contextlib.contextmanager
+# def capture_output():
+#     """
+#     Suppress all logging output into a single buffer.
+#
+#     Use as a context manager.
+#
+#     >>> with capture_output() as output:
+#     ...     logger.info('hello')
+#     >>> output.getvalue()
+#     'hello'
+#     """
+#     sio = TeeStringIO()
+#     previous_level = logger.mute()  # Stop logging to stdout
+#     logger.redirect_out(sio)  # Instead log to sio (to preserve output for later)
+#     yield sio
+#     logger.stop_redirect_out()  # Stop redirecting [Removes handler]
+#     logger.unmute(previous_level)  # From now on log to stdout
 
 
 @contextlib.contextmanager
@@ -302,6 +324,30 @@ def display_data(opt):
     return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
 
+def display_model(opt) -> Tuple[str, str]:
+    """
+    Run display_model.py.
+
+    :return: (stdout_valid, stdout_test)
+    """
+    import parlai.scripts.display_model as dm
+
+    parser = dm.setup_args()
+    parser.set_params(**opt)
+    popt = parser.parse_args(print_args=False)
+    with capture_output() as train_output:
+        # evalmode so that we don't hit train_step
+        popt['datatype'] = 'train:evalmode:stream'
+        dm.display_model(popt)
+    with capture_output() as valid_output:
+        popt['datatype'] = 'valid:stream'
+        dm.display_model(popt)
+    with capture_output() as test_output:
+        popt['datatype'] = 'test:stream'
+        dm.display_model(popt)
+    return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
+
+
 def download_unittest_models():
     """Download the unittest pretrained models."""
     from parlai.core.params import ParlaiParser
@@ -313,5 +359,5 @@ def download_unittest_models():
         'transformer_ranker.tar.gz',
         'transformer_generator2.tar.gz',
     ]
-    with capture_output() as _:
+    with capture_output():
         download_models(opt, model_filenames, 'unittest', version='v2.0')

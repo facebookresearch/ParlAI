@@ -250,7 +250,7 @@ class InteractiveEnd2endAgent(Agent):
         responder_act = self.responder.act()
         if self.debug:
             print('DEBUG: Responder is acting:\n{}'.format(responder_act))
-        responder_act['id'] = 'WizardEnd2EndInteractiveAgent'
+        responder_act.force_set('id', 'WizardEnd2EndInteractiveAgent')
         return responder_act
 
     def share(self):

@@ -65,10 +65,7 @@ def setup_args(parser=None) -> ParlaiParser:
     train.add_argument(
         '-et',
         '--evaltask',
-        help=(
-            'task to use for valid/test (defaults to the '
-            'one used for training if not set)'
-        ),
+        help='task to use for valid/test (defaults to the one used for training)',
     )
     train.add_argument(
         '--eval-batchsize',
@@ -118,7 +115,7 @@ def setup_args(parser=None) -> ParlaiParser:
         type=int,
         default=-1,
         hidden=True,
-        help='max examples to use during validation (default ' '-1 uses all)',
+        help='max examples to use during validation (default -1 uses all)',
     )
     train.add_argument(
         '--short-final-eval',
@@ -142,7 +139,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '-vmt',
         '--validation-metric',
         default='accuracy',
-        help='key into report table for selecting best ' 'validation',
+        help='key into report table for selecting best validation',
     )
     train.add_argument(
         '-vmm',
@@ -157,15 +154,7 @@ def setup_args(parser=None) -> ParlaiParser:
         type=float,
         default=1.0,
         hidden=True,
-        help='value at which training will stop if exceeded by ' 'training metric',
-    )
-    train.add_argument(
-        '-dbf',
-        '--dict-build-first',
-        hidden=True,
-        type='bool',
-        default=True,
-        help='build dictionary first before training agent',
+        help='value at which training will stop if exceeded by metric',
     )
     train.add_argument(
         '-lfc',
@@ -308,7 +297,7 @@ def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         task_report = _run_single_eval(opt, v_world, max_exs / len(valid_worlds))
         reports.append(task_report)
 
-    tasks = [world.opt['task'] for world in valid_worlds]
+    tasks = [world.getID() for world in valid_worlds]
     report = aggregate_task_reports(
         reports, tasks, micro=opt.get('aggregate_micro', True)
     )
@@ -356,14 +345,12 @@ class TrainLoop:
             opt['init_model'] = opt['model_file'] + '.checkpoint'
             trainstats_suffix = '.checkpoint.trainstats'
         # Possibly build a dictionary (not all models do this).
-        if opt['dict_build_first'] and not (
-            opt.get('dict_file') or opt.get('model_file')
-        ):
+        if not (opt.get('dict_file') or opt.get('model_file')):
             raise RuntimeError(
                 'WARNING: For train_model, please specify either a '
                 'model_file or dict_file.'
             )
-        if opt['dict_build_first'] and 'dict_file' in opt:
+        if 'dict_file' in opt:
             # If data built via pytorch data teacher, we need to load prebuilt dict
             if opt.get('pytorch_teacher_task'):
                 opt['dict_file'] = get_pyt_dict_file(opt)
@@ -441,7 +428,7 @@ class TrainLoop:
                 self.valid_reports = obj.get('valid_reports', [])
 
         if opt['tensorboard_log'] is True:
-            self.writer = TensorboardLogger(opt)
+            self.tb_logger = TensorboardLogger(opt)
 
     def save_model(self, suffix=None):
         """Save the model to disk, possibly with a suffix."""
@@ -504,8 +491,8 @@ class TrainLoop:
         v['train_time'] = self.train_time.time()
         self.valid_reports.append(v)
         # logging
-        if opt['tensorboard_log'] is True and is_primary_worker():
-            self.writer.add_metrics('valid', int(self.train_time.time()), valid_report)
+        if opt['tensorboard_log'] and is_primary_worker():
+            self.tb_logger.log_metrics('valid', self.parleys, valid_report)
         # saving
         if (
             opt.get('model_file')
@@ -594,6 +581,8 @@ class TrainLoop:
             elif isinstance(values[0], dict):
                 # do the same procedure recursively
                 finalized[k] = self._average_dicts(values)
+            elif isinstance(values[0], str):
+                finalized[k] = values[0]
             else:
                 # all other cases, take the mean across the workers
                 finalized[k] = np.mean(values)
@@ -694,8 +683,8 @@ class TrainLoop:
         print(log)
         self.log_time.reset()
 
-        if opt['tensorboard_log'] is True and is_primary_worker():
-            self.writer.add_metrics('train', self._total_exs, train_report)
+        if opt['tensorboard_log'] and is_primary_worker():
+            self.tb_logger.log_metrics('train', self.parleys, train_report)
 
     def train(self):
         """

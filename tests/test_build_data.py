@@ -28,47 +28,55 @@ class TestBuildData(unittest.TestCase):
             # Removing files if they are already there b/c otherwise it won't try to download them again
             try:
                 os.remove(os.path.join(self.datapath, d))
-            except Exception:
+            except OSError:
                 pass
 
     def test_download_multiprocess(self):
         urls = [
-            'http://parl.ai/downloads/mnist/mnist.tar.gz',
-            'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
-            'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
+            'https://parl.ai/downloads/mnist/mnist.tar.gz',
+            'https://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
+            'https://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
         ]
 
-        download_results = build_data.download_multiprocess(
-            urls, self.datapath, dest_filenames=self.dest_filenames
-        )
+        with testing_utils.capture_output() as stdout:
+            download_results = build_data.download_multiprocess(
+                urls, self.datapath, dest_filenames=self.dest_filenames
+            )
+        stdout = stdout.getvalue()
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
         self.assertEqual(
-            output_filenames, self.dest_filenames, 'output filenames not correct'
+            output_filenames,
+            self.dest_filenames,
+            f'output filenames not correct\n{stdout}',
         )
         self.assertEqual(
-            output_statuses, (200, 403, 403), 'output http statuses not correct'
+            output_statuses,
+            (200, 403, 403),
+            f'output http statuses not correct\n{stdout}',
         )
 
     def test_download_multiprocess_chunks(self):
         # Tests that the three finish downloading but may finish in any order
         urls = [
-            'http://parl.ai/downloads/mnist/mnist.tar.gz',
-            'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
-            'http://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
+            'https://parl.ai/downloads/mnist/mnist.tar.gz',
+            'https://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
+            'https://parl.ai/downloads/mnist/mnist.tar.gz.BAD',
         ]
 
-        download_results = build_data.download_multiprocess(
-            urls, self.datapath, dest_filenames=self.dest_filenames, chunk_size=1
-        )
+        with testing_utils.capture_output() as stdout:
+            download_results = build_data.download_multiprocess(
+                urls, self.datapath, dest_filenames=self.dest_filenames, chunk_size=1
+            )
+        stdout = stdout.getvalue()
 
         output_filenames, output_statuses, output_errors = zip(*download_results)
 
-        self.assertIn('mnist0.tar.gz', output_filenames)
-        self.assertIn('mnist1.tar.gz', output_filenames)
-        self.assertIn('mnist2.tar.gz', output_filenames)
-        self.assertIn(200, output_statuses)
-        self.assertIn(403, output_statuses)
+        self.assertIn('mnist0.tar.gz', output_filenames, f'missing file:\n{stdout}')
+        self.assertIn('mnist1.tar.gz', output_filenames, f'missing file:\n{stdout}')
+        self.assertIn('mnist2.tar.gz', output_filenames, f'missing file:\n{stdout}')
+        self.assertIn(200, output_statuses, f'unexpected error code:\n{stdout}')
+        self.assertIn(403, output_statuses, f'unexpected error code:\n{stdout}')
 
 
 if __name__ == '__main__':

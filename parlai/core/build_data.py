@@ -21,6 +21,7 @@ import hashlib
 import tqdm
 import math
 import traceback
+import zipfile
 from multiprocessing import Pool
 
 
@@ -187,6 +188,27 @@ def untar(path, fname, deleteTar=True):
         os.remove(fullpath)
 
 
+def unzip(path, fname, deleteZip=True):
+    """
+    Unzip the given archive file to the same directory.
+
+    :param str path:
+        The folder containing the archive. Will contain the contents.
+
+    :param str fname:
+        The filename of the archive file.
+
+    :param bool deleteZip:
+        If true, the archive will be deleted after extraction.
+    """
+    print('unzipping ' + fname)
+    fullpath = os.path.join(path, fname)
+    with zipfile.ZipFile(fullpath, "r") as zip_ref:
+        zip_ref.extractall(path)
+    if deleteZip:
+        os.remove(fullpath)
+
+
 def cat(file1, file2, outfile, deleteFiles=True):
     """Concatenate two files to an outfile, possibly deleting the originals."""
     with open(outfile, 'wb') as wfd:
@@ -292,6 +314,7 @@ def modelzoo_path(datapath, path):
     elif path.startswith('models:') or path.startswith('zoo:'):
         zoo = path.split(':')[0]
         zoo_len = len(zoo) + 1
+        model_path = path[zoo_len:]
         # Check if we need to download the model
         animal = path[zoo_len : path.rfind('/')].replace('/', '.')
         if '.' not in animal:
@@ -303,7 +326,7 @@ def modelzoo_path(datapath, path):
         except (ImportError, AttributeError):
             pass
 
-        return os.path.join(datapath, 'models', path[zoo_len:])
+        return os.path.join(datapath, 'models', model_path)
     else:
         # Internal path (starts with "izoo:") -- useful for non-public
         # projects.  Save the path to your internal model zoo in

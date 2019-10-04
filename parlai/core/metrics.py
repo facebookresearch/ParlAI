@@ -247,10 +247,12 @@ class Metrics(object):
             optional_metrics_list = set(metrics_arg.split(','))
             optional_metrics_list.add('correct')
         for each_m in optional_metrics_list:
-            if each_m.startswith('rouge') and rouge is not None:
-                self.metrics_list.add('rouge')
+            if each_m.startswith('rouge'):
+                if rouge is not None:
+                    # only compute rouge if rouge is available
+                    self.metrics_list.add('rouge')
             elif each_m == 'bleu' and nltkbleu is None:
-                # only compute bleu if we can
+                # only compute bleu if bleu is available
                 pass
             else:
                 self.metrics_list.add(each_m)
@@ -344,7 +346,7 @@ class Metrics(object):
                 if 'bleu' in self.metrics:
                     self.metrics['bleu'] += bleu
                     self.metrics['bleu_cnt'] += 1
-                if 'rouge-L' in self.metrics:
+                if 'rouge-L' in self.metrics and rouge1 is not None:
                     self.metrics['rouge-1'] += rouge1
                     self.metrics['rouge-1_cnt'] += 1
                     self.metrics['rouge-2'] += rouge2

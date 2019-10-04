@@ -28,7 +28,7 @@ def build(opt):
         fname4 = 'v2_Annotations_Val_mscoco.zip'
         fname5 = 'v2_Annotations_Train_mscoco.zip'
 
-        url = 'http://visualqa.org/data/mscoco/vqa/'
+        url = 'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/'
         build_data.download(url + fname1, dpath, fname1)
         build_data.download(url + fname2, dpath, fname2)
         build_data.download(url + fname3, dpath, fname3)
