@@ -124,12 +124,13 @@ class ParlaiLogger(logging.Logger):
 
     def mute(self):
         """Stop logging to stdout."""
+        prev_level = self.streamHandler.level
         self.streamHandler.level = float('inf')
+        return prev_level
 
-    def unmute(self):
+    def unmute(self, level):
         """Resume logging to stdout."""
-        print(self.console_level)
-        self.streamHandler.level = DEBUG
+        self.streamHandler.level = level
 
     def redirect_out(self, stream):
         """Redirect all logging output to `stream`."""

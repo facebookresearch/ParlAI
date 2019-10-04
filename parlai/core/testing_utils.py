@@ -204,11 +204,11 @@ def capture_output():
 #     'hello'
 #     """
 #     sio = TeeStringIO()
-#     logger.mute()  # Stop logging to stdout
+#     previous_level = logger.mute()  # Stop logging to stdout
 #     logger.redirect_out(sio)  # Instead log to sio (to preserve output for later)
 #     yield sio
 #     logger.stop_redirect_out()  # Stop redirecting [Removes handler]
-#     logger.unmute()  # From now on log to stdout
+#     logger.unmute(previous_level)  # From now on log to stdout
 
 
 @contextlib.contextmanager
