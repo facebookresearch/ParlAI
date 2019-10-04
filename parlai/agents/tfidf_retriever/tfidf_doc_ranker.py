@@ -17,24 +17,26 @@ from functools import partial
 
 from . import utils
 from . import tokenizers
+from parlai.core.agents import Agent
 
 logger = logging.getLogger(__name__)
 
 
-class TfidfDocRanker(object):
+class TfidfDocRankerAgent(Agent):
     """Loads a pre-weighted inverted index of token/document terms.
     Scores new queries by taking sparse dot products.
     """
 
-    def __init__(self, tfidf_path=None, strict=True):
+    def __init__(self, opt, shared=None):
         """
-        Args:
+        Args in opt:
             tfidf_path: path to saved model file
             strict: fail on empty queries or continue (and return empty result)
         """
+        super().__init__(opt, shared)
         # Load from disk
-        logger.info('Loading %s' % tfidf_path)
-        matrix, metadata = utils.load_sparse_csr(tfidf_path)
+        logger.info('Loading %s' % opt['tfidf_path'])
+        matrix, metadata = utils.load_sparse_csr(opt['tfidf_path'])
         self.doc_mat = matrix
         self.ngrams = metadata['ngram']
         self.hash_size = metadata['hash_size']
@@ -42,21 +44,10 @@ class TfidfDocRanker(object):
         self.doc_freqs = metadata['doc_freqs'].squeeze()
         self.doc_dict = metadata.get('doc_dict', None)
         self.num_docs = self.doc_mat.shape[1] - 1
-        self.strict = strict
+        self.strict = opt['strict']
 
     def share(self):
-        """
-        (From TorchAgent)
-
-        Share any parameters needed to create a shared version of this agent.
-
-        Default implementation shares the class and the opt, but most agents will
-        want to also add model weights, teacher data, etc. This especially useful
-        for avoiding providing pointers to large objects to all agents in a batch.
-        """
-        shared = {}
-        shared['class'] = type(self)
-        shared['opt'] = {}
+        shared = super().share()
         return shared
 
     def get_doc_index(self, doc_id):

@@ -16,10 +16,9 @@ except ImportError:
         ' to use the tfidf_retriever agent.'
     )
 
-from parlai.core.agents import Agent, create_agent_from_shared
+from parlai.core.agents import Agent, create_agent, create_agent_from_shared
 from parlai.core.utils import AttrDict
 from .doc_db import DocDB
-from .tfidf_doc_ranker import TfidfDocRanker
 from .build_tfidf import run as build_tfidf
 from .build_tfidf import live_count_matrix, get_tfidf_matrix
 from numpy.random import choice
@@ -164,9 +163,12 @@ class TfidfRetrieverAgent(Agent):
         self.db = DocDB(db_path=opt['retriever_dbpath'])
         if os.path.exists(self.tfidf_path + '.npz'):
             if shared is None:
-                self.ranker = TfidfDocRanker(
-                    tfidf_path=opt['retriever_tfidfpath'], strict=False
-                )
+                doc_ranker_opt = {
+                    'model': 'tfidf_retriever/tfidf_doc_ranker',
+                    'tfidf_path': opt['retriever_tfidfpath'],
+                    'strict': False,
+                }
+                self.ranker = create_agent(doc_ranker_opt)
             else:
                 self.ranker = create_agent_from_shared(shared['doc_ranker_opt'])
         self.ret_mode = opt['retriever_mode']
@@ -213,7 +215,13 @@ class TfidfRetrieverAgent(Agent):
             self.triples_to_add.clear()
             # rebuild tfidf
             build_tfidf(self.tfidf_args)
-            self.ranker = TfidfDocRanker(tfidf_path=self.tfidf_path, strict=False)
+            doc_ranker_opt = {
+                'model': 'tfidf_retriever/tfidf_doc_ranker',
+                'tfidf_path': self.tfidf_path,
+                'strict': False,
+            }
+            self.ranker = create_agent(doc_ranker_opt)
+            # TODO: test this
 
     def save(self, path=None):
         self.rebuild()
