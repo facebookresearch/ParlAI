@@ -113,6 +113,7 @@ def gelu(tensor):
 
 
 def get_n_positions_from_options(opt):
+    """Determine n_positions from options dict."""
     if opt.get('n_positions'):
         # if the number of positions is explicitly provided, use that
         n_positions = opt['n_positions']
@@ -305,6 +306,24 @@ class TransformerResponseWrapper(nn.Module):
         return self.mlp(self.transformer(*args))
 
 
+class TransformerLinearWrapper(nn.Module):
+    """Wrap a transformer in a linear layer."""
+
+    def __init__(self, transformer, output_dim):
+        super().__init__()
+        self.transformer = transformer
+        input_dim = transformer.out_dim
+        self.additional_linear_layer = nn.Linear(input_dim, output_dim)
+
+    def forward(self, *args):
+        """Forward pass.
+
+        Apply transformer, then additional linear layer.
+        """
+        context_h = self.transformer(*args)
+        return self.additional_linear_layer(context_h)
+
+
 class TransformerEncoder(nn.Module):
     """
     Transformer encoder module.
@@ -464,7 +483,8 @@ class TransformerEncoder(nn.Module):
                     x=positions.max().item(), y=self.n_positions
                 )
             )
-        tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+        position_embs = self.position_embeddings(positions).expand_as(tensor)
+        tensor = tensor + position_embs
 
         if self.n_segments >= 1:
             if segments is None:
@@ -490,9 +510,12 @@ class TransformerEncoder(nn.Module):
             divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
             output = tensor.sum(dim=1) / divisor
             return output
-        elif self.reduction_type == 'none' or self.reduction_type is None:
+        elif self.reduction_type is None or 'none' in self.reduction_type:
             output = tensor
-            return output, mask
+            ret = (output, mask)
+            if self.reduction_type == 'none_with_pos_embs':
+                ret = (output, mask, position_embs)
+            return ret
         else:
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)
@@ -840,10 +863,17 @@ class BasicAttention(nn.Module):
         self.get_weights = get_weights
         self.residual = residual
 
-    def forward(self, xs, ys, mask_ys=None):
-        """ xs: B x query_len x dim
-            ys: B x key_len x dim
-            TODO: Document this
+    def forward(self, xs, ys, mask_ys=None, values=None):
+        """Compute attention.
+
+        Attend over ys with query xs to obtain weights, then apply weights to
+        values (ys if yalues is None)
+
+        Args:
+            xs: B x query_len x dim (queries)
+            ys: B x key_len x dim (keys)
+            mask_ys: B x key_len (mask)
+            values: B x value_len x dim (values); if None, default to ys
         """
         bsz = xs.size(0)
         y_len = ys.size(1)
@@ -860,7 +890,9 @@ class BasicAttention(nn.Module):
             attn_mask = attn_mask.repeat(1, x_len, 1)
             l1.masked_fill_(attn_mask, -float('inf'))
         l2 = self.softmax(l1)
-        lhs_emb = torch.bmm(l2, ys)
+        if values is None:
+            values = ys
+        lhs_emb = torch.bmm(l2, values)
 
         # # add back the query
         if self.residual:

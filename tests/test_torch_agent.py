@@ -761,6 +761,10 @@ class TestTorchAgent(unittest.TestCase):
     def test_observe(self):
         """Make sure agent stores and returns observation."""
         agent = get_agent()
+        # text could be none
+        obs = {'text': None, 'episode_done': True}
+        out = agent.observe(obs.copy())
+        self.assertIsNotNone(out)
         obs = {'text': "I'll be back.", 'labels': ["I'm back."], 'episode_done': True}
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
@@ -976,6 +980,28 @@ class TestTorchAgent(unittest.TestCase):
                 init_model_file, is_finetune = agent._get_init_model(popt, None)
                 self.assertEqual(init_model_file, '{}.checkpoint'.format(mf))
                 self.assertFalse(is_finetune)
+
+
+class TestLegacyVersioning(unittest.TestCase):
+    def test_legacy_version(self):
+        # simply tries to load and run some models with versioning attached
+        with self.assertRaises(RuntimeError):
+            testing_utils.display_model(
+                {
+                    'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
+                    'task': 'convai2',
+                    'no_cuda': True,
+                }
+            )
+
+        testing_utils.display_model(
+            {
+                'model': 'legacy:seq2seq:0',
+                'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
+                'task': 'convai2',
+                'no_cuda': True,
+            }
+        )
 
 
 if __name__ == '__main__':

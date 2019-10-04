@@ -497,7 +497,7 @@ class TorchAgent(ABC, Agent):
             'value like 0.9 or a comma-separated tuple like 0.9,0.999',
         )
         optim_group.add_argument(
-            '-wd',
+            '-wdecay',
             '--weight-decay',
             type=float,
             default=None,
@@ -1005,7 +1005,39 @@ class TorchAgent(ABC, Agent):
         if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
             metrics['gnorm'] = round_sigfigs(self.metrics['gnorm'] / steps, 4)
             metrics['clip'] = round_sigfigs(self.metrics['clip'] / steps, 2)
+
+        if self.use_cuda:
+            metrics['gpu_mem_percent'] = round_sigfigs(self._gpu_usage(), sigfigs=3)
+
         return metrics
+
+    def _gpu_usage(self):
+        """
+        Computes GPU memory usage.
+
+        Includes both allocated and cached memory; this should be close to the
+        output of nvidia-smi, but not reflect of how much is currently demanded
+        by the program. It may be viewed as a rough approximation of
+        worst-case-until-now.
+
+        :return: Percent of allocated GPU memory as a fraction of available.
+        """
+        if not self.use_cuda:
+            return None
+        if self.opt['gpu'] == -1:
+            # use all gpus available locally
+            devices = range(torch.cuda.device_count())
+        else:
+            devices = [self.opt['gpu']]
+        memory_avail = 0
+        memory_used = 0
+        for dev in devices:
+            props = torch.cuda.get_device_properties(dev)
+            memory_avail += props.total_memory
+            memory_used += torch.cuda.memory_allocated(dev) + torch.cuda.memory_cached(
+                dev
+            )
+        return memory_used / memory_avail
 
     def _is_lr_warming_up(self):
         """Check if we're warming up the learning rate."""
@@ -1140,10 +1172,6 @@ class TorchAgent(ABC, Agent):
         :param emb_type:
             pretrained embedding type
         """
-        if not is_primary_worker():
-            # we're in distributed mode, copying embeddings in the workers
-            # slows things down considerably
-            return
         embs, name = self._get_embtype(emb_type)
         cnt = 0
         for w, i in self.dict.tok2ind.items():
@@ -1252,20 +1280,26 @@ class TorchAgent(ABC, Agent):
 
         Useful to override to change vectorization behavior
         """
+
         if 'text' not in obs:
             return obs
 
         if 'text_vec' not in obs:
             # text vec is not precomputed, so we set it using the history
-            obs['full_text'] = history.get_history_str()
-            if obs['text'] is not None:
+            history_string = history.get_history_str()
+            # when text not exist, we get text_vec from history string
+            # history could be none if it is an image task and 'text'
+            # filed is be empty. We don't want this
+            if history_string is None:
+                return obs
+            obs['full_text'] = history_string
+            if history_string:
                 obs['text_vec'] = history.get_history_vec()
 
         # check truncation
-        if 'text_vec' in obs:
+        if obs.get('text_vec') is not None:
             truncated_vec = self._check_truncate(obs['text_vec'], truncate, True)
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
-
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
@@ -1418,7 +1452,7 @@ class TorchAgent(ABC, Agent):
 
         # TEXT
         xs, x_lens = None, None
-        if any('text_vec' in ex for ex in exs):
+        if any(ex.get('text_vec') is not None for ex in exs):
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = padded_tensor(
                 _xs, self.NULL_IDX, self.use_cuda, fp16friendly=self.opt.get('fp16')
@@ -1739,7 +1773,7 @@ class TorchAgent(ABC, Agent):
 
     def set_interactive_mode(self, mode, shared):
         """Set interactive mode on or off."""
-        if shared is None:
+        if shared is None and mode:
             # Only print in the non-shared version.
             print("[" + self.id + ': full interactive mode on.' + ']')
 

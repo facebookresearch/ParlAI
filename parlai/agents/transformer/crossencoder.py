@@ -24,12 +24,14 @@ class CrossencoderAgent(TorchRankerAgent):
 
             if is_distributed():
                 raise ValueError('Cannot combine --data-parallel and distributed mode')
-            self.model = torch.nn.DataParallel(self.model)
+            if shared is None:
+                self.model = torch.nn.DataParallel(self.model)
 
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
         TransformerRankerAgent.add_cmdline_args(argparser)
+        argparser.set_defaults(encode_candidate_vecs=False)
         return argparser
 
     def build_model(self, states=None):

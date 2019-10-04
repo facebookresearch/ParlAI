@@ -287,9 +287,15 @@ class TorchGeneratorAgent(TorchAgent):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy'},
+            choices={'beam', 'greedy', 'topk', 'nucleus'},
             default='greedy',
             help='Generation algorithm',
+        )
+        agent.add_argument(
+            '--topk', type=int, default=10, help='K used in Top K sampling'
+        )
+        agent.add_argument(
+            '--topp', type=float, default=0.9, help='p used in nucleus sampling'
         )
 
         super(TorchGeneratorAgent, cls).add_cmdline_args(argparser)
@@ -321,7 +327,9 @@ class TorchGeneratorAgent(TorchAgent):
 
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
+            # ensure all distributed copies will always be in sync
             self.model = self.build_model()
+
             if self.model is None or self.criterion is None:
                 raise AttributeError(
                     'build_model() and build_criterion() need to return the model or criterion'
@@ -616,6 +624,28 @@ class TorchGeneratorAgent(TorchAgent):
             )
         elif method == 'beam':
             return BeamSearch(
+                beam_size,
+                min_length=self.beam_min_length,
+                min_n_best=self.beam_min_n_best,
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
+        elif method == 'topk':
+            return TopKSampling(
+                self.opt['topk'],
+                beam_size,
+                min_length=self.beam_min_length,
+                min_n_best=self.beam_min_n_best,
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
+        elif method == 'nucleus':
+            return NucleusSampling(
+                self.opt['topp'],
                 beam_size,
                 min_length=self.beam_min_length,
                 min_n_best=self.beam_min_n_best,
@@ -972,6 +1002,10 @@ class BeamSearch(TreeSearch):
 
     def select_paths(self, logprobs, prior_scores):
         """Select the next vocabulary item in these beams."""
+        # if numel is 1, then this is the first time step, only one hyp is expanded
+        if prior_scores.numel() == 1:
+            logprobs = logprobs[0:1]
+
         # beam search actually looks over all hypotheses together so we flatten
         beam_scores = logprobs + prior_scores.unsqueeze(1).expand_as(logprobs)
         flat_beam_scores = beam_scores.view(-1)
@@ -983,4 +1017,67 @@ class BeamSearch(TreeSearch):
         # get the actual word id from residual of the same division
         tok_ids = best_idxs % voc_size
 
+        return (hyp_ids, tok_ids, best_scores)
+
+
+class TopKSampling(TreeSearch):
+    """
+    Top-K sampling (Fan et al., 2018).
+
+    Samples from a truncated distribution where only the most probable K words
+    are considered at each time.
+
+    Typical values of k are 2, 10, 50.
+
+    See https://arxiv.org/abs/1805.04833 for details.
+    """
+
+    def __init__(self, k, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.k = k
+
+    def select_paths(self, logprobs, prior_scores):
+        values, indices = logprobs.topk(self.k, dim=-1)
+        probs = torch.softmax(values, dim=-1)
+        choices = torch.multinomial(probs, 1)[:, 0]
+        hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
+        tok_ids = indices[hyp_ids, choices]
+        scores = values[hyp_ids, choices]
+        best_scores = prior_scores.expand_as(scores) + scores
+        return (hyp_ids, tok_ids, best_scores)
+
+
+class NucleusSampling(TreeSearch):
+    """
+    Nucelus, aka top-p sampling (Holtzman et al., 2019).
+
+    Samples from a truncated distribution which covers a fixed CDF proportion
+    of the original distribution.
+
+    Typical values of p are 0.3 and 0.9.
+
+    See https://arxiv.org/abs/1904.09751 for details.
+    """
+
+    def __init__(self, p, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.p = p
+
+    def select_paths(self, logprobs, prior_scores):
+        # Unlike the other treesearch methods, we have to switch to linspace
+        # for the probabilities in order to compute the CDF.
+        probs = torch.softmax(logprobs, dim=-1)
+        sprobs, sinds = probs.sort(dim=-1, descending=True)
+        # The subtraction here is so that we always include the first word to
+        # go over p. For example, if the most probable token has a prob of 0.5, and
+        # p = 0.3, then we need still need to include that first token.
+        mask = (sprobs.cumsum(dim=-1) - sprobs[:, :1]) >= self.p
+        sprobs[mask] = 0
+        sprobs.div_(sprobs.sum(dim=-1).unsqueeze(1))
+        choices = torch.multinomial(sprobs, 1)[:, 0]
+        hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
+        tok_ids = sinds[hyp_ids, choices]
+        # Convert back to logspace.
+        scores = sprobs[hyp_ids, choices].log()
+        best_scores = prior_scores.expand_as(scores) + scores
         return (hyp_ids, tok_ids, best_scores)

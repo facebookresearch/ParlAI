@@ -52,7 +52,10 @@ try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
-from parlai.core.agents import _create_task_agents, create_agents_from_shared
+from parlai.core.agents import (
+    create_agents_from_shared,
+    create_task_agent_from_taskname,
+)
 from parlai.core.metrics import aggregate_metrics
 from parlai.core.utils import Message, Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
@@ -153,6 +156,10 @@ class World(object):
     def get_agents(self):
         """Return the list of agents."""
         return self.agents
+
+    def get_task_agent(self):
+        """Return task agent, if applicable."""
+        raise NotImplementedError('Implement in subworld')
 
     def get_acts(self):
         """Return the last act of each agent."""
@@ -263,7 +270,11 @@ class DialogPartnerWorld(World):
         self.acts = [None] * len(self.agents)
         if self.agents is not None and len(self.agents) > 0:
             # Name the world after the first agent.
-            self.id = self.agents[0].getID()
+            self.id = self.get_task_agent().getID()
+
+    def get_task_agent(self):
+        """Return task agent."""
+        return self.get_agents()[0]
 
     def parley(self):
         """Agent 0 goes first. Alternate between the two agents."""
@@ -284,7 +295,7 @@ class DialogPartnerWorld(World):
 
     def epoch_done(self):
         """Only the first agent indicates when the epoch is done."""
-        return self.agents[0].epoch_done()
+        return self.get_task_agent().epoch_done()
 
     def report(self):
         """Report all metrics of all subagents."""
@@ -306,14 +317,14 @@ class DialogPartnerWorld(World):
     @lru_cache(maxsize=1)
     def num_examples(self):
         """Return number of examples."""
-        if hasattr(self.agents[0], 'num_examples'):
-            return self.agents[0].num_examples()
+        if hasattr(self.get_task_agent(), 'num_examples'):
+            return self.get_task_agent().num_examples()
         return 0
 
     def num_episodes(self):
         """Return number of episodes."""
-        if hasattr(self.agents[0], 'num_episodes'):
-            return self.agents[0].num_episodes()
+        if hasattr(self.get_task_agent(), 'num_episodes'):
+            return self.get_task_agent().num_episodes()
         return 0
 
     def shutdown(self):
@@ -353,6 +364,10 @@ class MultiAgentDialogWorld(World):
                 if other_agent != agent:
                     other_agent.observe(validate(acts[index]))
         self.update_counters()
+
+    def get_task_agent(self):
+        """Return task agent."""
+        return self.get_agents()[0]
 
     def epoch_done(self):
         """Return if the epoch is done for any subagent."""
@@ -521,6 +536,10 @@ class MultiWorld(World):
     def get_agents(self):
         """Return the agents in the *current* subworld."""
         return self.worlds[self.world_idx].get_agents()
+
+    def get_task_agent(self):
+        """Not possible/well-defined in this setting."""
+        raise RuntimeError('get_task_agent not defined for Multiworld')
 
     def get_acts(self):
         """Return the acts in the *current* subworld."""
@@ -769,6 +788,14 @@ class BatchWorld(World):
         """Return the ID of the root world."""
         return self.world.getID()
 
+    def get_agents(self):
+        """Return the agents of the root world"""
+        return self.world.get_agents()
+
+    def get_task_agent(self):
+        """Return task agent of the root world."""
+        return self.world.get_task_agent()
+
     def episode_done(self):
         """
         Return whether the episode is done.
@@ -981,6 +1008,10 @@ class HogwildWorld(World):
         """Return the number of episodes."""
         return self.inner_world.num_episodes()
 
+    def get_task_agent(self):
+        """Return task agent of inner world."""
+        return self.inner_world.get_task_agent()
+
     def get_total_exs(self):
         """Return the number of processed examples."""
         return self.inner_world.get_total_exs()
@@ -1051,6 +1082,44 @@ class HogwildWorld(World):
 ################################################################################
 # Functions for creating tasks/worlds given options.
 ################################################################################
+def _create_task_agents(opt):
+    """
+    Create task agent(s) for the given task name.
+
+    It does this by calling the create_agent function in agents.py of the
+    given task.  If create_agents function does not exist, it just looks for
+    the teacher (agent) class defined by the task name directly.  (This saves
+    the task creator bothering to define the create_agents function when it is
+    not needed.)
+    """
+    sp = opt['task'].strip()
+    repo = 'parlai'
+    if sp.startswith('internal:'):
+        # To switch to local repo, useful for non-public projects
+        # (make a directory called 'parlai_internal' with your private agents)
+        repo = 'parlai_internal'
+        sp = sp[9:]
+    sp = sp.split(':')
+    if '.' in sp[0]:
+        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
+        # (i.e. specifying your own path directly)
+        module_name = sp[0]
+    elif sp[0] == 'pytorch_teacher':
+        module_name = 'parlai.core.pytorch_data_teacher'
+    else:
+        task = sp[0].lower()
+        module_name = "%s.tasks.%s.agents" % (repo, task)
+    my_module = importlib.import_module(module_name)
+    try:
+        # Tries to call the create_agent function in agents.py
+        task = sp[0].lower()
+        task_agents = my_module.create_agents(opt, task)
+    except AttributeError:
+        # Create_agent not found, so try to create the teacher directly.
+        return create_task_agent_from_taskname(opt)
+    if type(task_agents) != list:
+        task_agents = [task_agents]
+    return task_agents
 
 
 def _get_task_world(opt, user_agents, default_world=None):

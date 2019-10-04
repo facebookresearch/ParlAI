@@ -1,7 +1,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
+"""Transformer Agents."""
 from parlai.core.agents import Agent
 from parlai.core.utils import warn_once
 from parlai.core.utils import padded_3d
@@ -15,6 +15,7 @@ import torch
 
 
 def add_common_cmdline_args(argparser):
+    """Add common command line args."""
     argparser.add_argument(
         '-esz',
         '--embedding-size',
@@ -94,7 +95,8 @@ def add_common_cmdline_args(argparser):
 
 
 class Transformer(Agent):
-    """
+    """Placeholder Transformer Agent.
+
     Placeholder class, which just throws an error telling the user to specify
     whether they want the ranker or the generator.
     """
@@ -107,6 +109,11 @@ class Transformer(Agent):
 
 
 class TransformerRankerAgent(TorchRankerAgent):
+    """Transformer Ranker Agent.
+
+    Implementation of a TorchRankerAgent, where the model is a Transformer
+    """
+
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
@@ -188,6 +195,7 @@ class TransformerRankerAgent(TorchRankerAgent):
             )
 
     def build_model(self, states=None):
+        """Build and return model."""
         model = TransformerMemNetModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
@@ -216,6 +224,7 @@ class TransformerRankerAgent(TorchRankerAgent):
         )
 
     def vectorize(self, *args, **kwargs):
+        """Override to include vectorization of memories."""
         kwargs['add_start'] = False
         kwargs['add_end'] = False
         obs = super().vectorize(*args, **kwargs)
@@ -224,11 +233,13 @@ class TransformerRankerAgent(TorchRankerAgent):
         return obs
 
     def encode_candidates(self, padded_cands):
+        """Encode candidates."""
         _, cands = self.model(xs=None, mems=None, cands=padded_cands)
 
         return cands
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
+        """Score candidates."""
         # convoluted check that not all memories are empty
         if (
             self.opt['use_memories']
@@ -255,6 +266,11 @@ class TransformerRankerAgent(TorchRankerAgent):
 
 
 class TransformerGeneratorAgent(TorchGeneratorAgent):
+    """TransformerGeneratorAgent.
+
+    Implementation of TorchGeneratorAgent, where the model is a Transformer
+    """
+
     @classmethod
     def add_cmdline_args(cls, argparser):
         """Add command-line arguments specifically for this agent."""
@@ -266,6 +282,7 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         return agent
 
     def build_model(self, states=None):
+        """Build and return model."""
         model = TransformerGeneratorModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(
