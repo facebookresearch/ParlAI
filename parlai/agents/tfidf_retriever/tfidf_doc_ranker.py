@@ -35,19 +35,33 @@ class TfidfDocRankerAgent(Agent):
         """
         super().__init__(opt, shared)
         # Load from disk
-        logger.info('Loading %s' % opt['tfidf_path'])
-        matrix, metadata = utils.load_sparse_csr(opt['tfidf_path'])
-        self.doc_mat = matrix
-        self.ngrams = metadata['ngram']
-        self.hash_size = metadata['hash_size']
-        self.tokenizer = tokenizers.get_class(metadata['tokenizer'])()
-        self.doc_freqs = metadata['doc_freqs'].squeeze()
-        self.doc_dict = metadata.get('doc_dict', None)
+        if shared:
+            self.doc_mat = shared['doc_mat']
+            self.ngrams = shared['ngrams']
+            self.hash_size = shared['hash_size']
+            self.tokenizer = shared['tokenizer']
+            self.doc_freqs = shared['doc_freqs']
+            self.doc_dict = shared['doc_dict']
+        else:
+            logger.info('Loading %s' % opt['tfidf_path'])
+            matrix, metadata = utils.load_sparse_csr(opt['tfidf_path'])
+            self.doc_mat = matrix
+            self.ngrams = metadata['ngram']
+            self.hash_size = metadata['hash_size']
+            self.tokenizer = tokenizers.get_class(metadata['tokenizer'])()
+            self.doc_freqs = metadata['doc_freqs'].squeeze()
+            self.doc_dict = metadata.get('doc_dict', None)
         self.num_docs = self.doc_mat.shape[1] - 1
         self.strict = opt['strict']
 
     def share(self):
         shared = super().share()
+        shared['doc_mat'] = self.doc_mat
+        shared['ngrams'] = self.ngrams
+        shared['hash_size'] = self.hash_size
+        shared['tokenizer'] = self.tokenizer
+        shared['doc_freqs'] = self.doc_freqs
+        shared['doc_dict'] = self.doc_dict
         return shared
 
     def get_doc_index(self, doc_id):
