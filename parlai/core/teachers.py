@@ -37,6 +37,7 @@ from .message import Message
 from .utils import AttrDict, no_lock, str_to_msg, warn_once
 
 from functools import lru_cache
+from abc import abstractmethod
 
 import concurrent.futures
 import multiprocessing
