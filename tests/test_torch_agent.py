@@ -738,14 +738,14 @@ class TestTorchAgent(unittest.TestCase):
         obs = {'text': "I'll be back.", 'labels': ["I'm back."], 'episode_done': True}
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
-        self.assertIsNotNone(agent.last_observation)
+        self.assertIsNotNone(agent.observation)
         self.assertEqual(out['text'], "I'll be back.")
         # now try with episode not done
         agent = get_agent()
         obs['episode_done'] = False
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
-        self.assertIsNotNone(agent.last_observation)
+        self.assertIsNotNone(agent.observation)
         self.assertEqual(out['text'], "I'll be back.")
         # should remember history
         agent.act()
