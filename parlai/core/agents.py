@@ -498,27 +498,6 @@ def load_agent_module(opt):
 
         model_class = get_agent_module(new_opt['model'])
 
-        if hasattr(model_class, 'upgrade_opt'):
-            new_opt = model_class.upgrade_opt(new_opt)
-
-        # add model arguments to new_opt if they aren't in new_opt already
-        for k, v in opt.items():
-            if k not in new_opt:
-                new_opt[k] = v
-        new_opt['model_file'] = model_file
-        if not new_opt.get('dict_file'):
-            new_opt['dict_file'] = model_file + '.dict'
-        elif new_opt.get('dict_file') and not os.path.isfile(new_opt['dict_file']):
-            old_dict_file = new_opt['dict_file']
-            new_opt['dict_file'] = model_file + '.dict'
-        if not os.path.isfile(new_opt['dict_file']):
-            warn_once(
-                'WARNING: Neither the specified dict file ({}) nor the '
-                '`model_file`.dict file ({}) exists, check to make sure either '
-                'is correct. This may manifest as a shape mismatch later '
-                'on.'.format(old_dict_file, new_opt['dict_file'])
-            )
-
         # check for model version
         if hasattr(model_class, 'model_version'):
             curr_version = new_opt.get('model_version', 0)
@@ -541,6 +520,27 @@ def load_agent_module(opt):
                     raise RuntimeError(
                         m.format(m='modelname', v=curr_version, c='ModelAgent')
                     )
+
+        if hasattr(model_class, 'upgrade_opt'):
+            new_opt = model_class.upgrade_opt(new_opt)
+
+        # add model arguments to new_opt if they aren't in new_opt already
+        for k, v in opt.items():
+            if k not in new_opt:
+                new_opt[k] = v
+        new_opt['model_file'] = model_file
+        if not new_opt.get('dict_file'):
+            new_opt['dict_file'] = model_file + '.dict'
+        elif new_opt.get('dict_file') and not os.path.isfile(new_opt['dict_file']):
+            old_dict_file = new_opt['dict_file']
+            new_opt['dict_file'] = model_file + '.dict'
+        if not os.path.isfile(new_opt['dict_file']):
+            warn_once(
+                'WARNING: Neither the specified dict file ({}) nor the '
+                '`model_file`.dict file ({}) exists, check to make sure either '
+                'is correct. This may manifest as a shape mismatch later '
+                'on.'.format(old_dict_file, new_opt['dict_file'])
+            )
 
         # if we want to load weights from --init-model, compare opts with
         # loaded ones
