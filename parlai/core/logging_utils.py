@@ -18,6 +18,7 @@ CRITICAL = logging.CRITICAL
 
 DEFAULT_FILE_FORMAT = '%(asctime)s : %(levelname)s : %(message)s'
 
+
 # Some functions in this class assume that ':' will be the separator used in
 # the logging formats setup for this class
 class ParlaiLogger(logging.Logger):
