@@ -160,6 +160,8 @@ class MessageSocket:
         while not self.alive:
             try:
                 self._send_world_alive()
-            except Exception:
+            except Exception as e:
+                print('wtf going on : {}'.format(e))
                 pass
             time.sleep(0.8)
+        shared_utils.print_and_log(logging.INFO, 'Socket setup')

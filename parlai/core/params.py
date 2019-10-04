@@ -493,6 +493,12 @@ class ParlaiParser(argparse.ArgumentParser):
             help='Run the server locally on this server rather than setting up'
             ' a heroku server.',
         )
+        messenger.add_argument(
+            '--config-path',
+            default=None,
+            type=str,
+            help='/path/to/config/file for a given task.'
+        )
 
         messenger.set_defaults(is_debug=False)
         messenger.set_defaults(verbose=False)

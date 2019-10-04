@@ -7,6 +7,10 @@
 import logging
 import time
 import uuid
+import os
+import yaml
+import importlib
+from collections import namedtuple
 
 # Sleep constants
 THREAD_SHORT_SLEEP = 0.1
@@ -50,3 +54,125 @@ def print_and_log(level, message, should_print=False):
 def generate_event_id(worker_id):
     """Return a unique id to use for identifying a packet for a worker"""
     return '{}_{}'.format(worker_id, uuid.uuid4())
+
+##################
+## New Utils
+##################
+class TaskState:
+    """Wrapper for an agent running on a Worker"""
+
+    def __init__(
+        self,
+        task_name,
+        world_name,
+        agents,
+        is_overworld=False,
+        world_type=None,
+    ):
+        self.task_name = task_name
+        self.world_name = world_name
+        self.agents = agents
+        self.is_overworld = is_overworld  # (bool): overworld or task world
+        self.world_type = world_type  # name of the task world returned by the overworld
+
+        self.future = None
+        self.state_transfer = False
+        self.world = None  # world object
+
+
+WorldConfig = namedtuple(
+    "WorldConfig",
+    [
+        "world_name",
+        "onboarding_name",
+        "task_name",
+        "max_time_in_pool",
+        "agents_required",
+        "backup_task",
+    ],
+)
+
+
+def get_world_module(world_path):
+    """Import the module specified by the world_path"""
+    run_module = None
+    try:
+        run_module = importlib.import_module(world_path)
+    except Exception as e:
+        print("Could not import world file {}".format(world_path))
+        raise e
+    return run_module
+
+
+def get_world_fn_attr(world_module, world_name, fn_name):
+    """Import and return the function fn_name from the class world_name from a module
+
+    Args:
+        world_module: module. a python module encompassing the worlds
+        world_name: string. the name of the world in the module
+        fn_name: string. the name of the function in the world
+    """
+    result_fn = None
+    try:
+        DesiredWorld = getattr(world_module, world_name)
+        result_fn = getattr(DesiredWorld, fn_name)
+    except Exception as e:
+        print("Could not find {} for {}".format(fn_name, world_name))
+        raise e
+    return result_fn
+
+
+def get_eligibility_fn(world_module, world_name):
+    try:
+        DesiredWorld = getattr(world_module, world_name)
+        eligibility_fn = DesiredWorld.eligibility_function
+    except Exception:
+        print(
+            "No `eligibility_function` exists, allowing everyone to pass through..."
+        )
+        eligibility_fn = None
+    return eligibility_fn
+
+
+def parse_configuration_file(config_path):
+    """Read the config file for an experiment to get ParlAI settings"""
+    result = {}
+    result["configs"] = {}
+    with open(config_path) as f:
+        cfg = yaml.load(f.read())
+        # get world path
+        result["world_module"] = cfg.get("world_module")
+        if not result["world_module"]:
+            raise ValueError("Did not specify world module")
+        result["overworld"] = cfg.get("overworld")
+        if not result["overworld"]:
+            raise ValueError("Did not specify overworld")
+        result["page_id"] = cfg.get("page_id")
+        if not result["page_id"]:
+            raise ValueError("Did not specify page_id")
+        result["max_workers"] = cfg.get("max_workers")
+        if not result["max_workers"]:
+            raise ValueError("Did not specify max_workers")
+        result["task_name"] = cfg.get("task_name")
+        if not result["task_name"]:
+            raise ValueError("Did not specify task name")
+        task_world = cfg.get("tasks")
+        if task_world is None or len(task_world) == 0:
+            raise ValueError("task not in config file")
+        # get task file
+        for task_name, configuration in task_world.items():
+            if "task_world" not in configuration:
+                raise ValueError("{} does not specify a task".format(task_name))
+            result["configs"][task_name] = WorldConfig(
+                world_name=task_name,
+                onboarding_name=configuration.get("onboard_world"),
+                task_name=configuration.get("task_world"),
+                max_time_in_pool=configuration.get("timeout") or 300,
+                agents_required=configuration.get("agents_required") or 1,
+                backup_task=configuration.get("backup_task"),
+            )
+        # get world options
+        result["world_opt"] = cfg.get("opt")
+        # get local hosting information, if any exists
+
+    return result

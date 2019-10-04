@@ -14,12 +14,16 @@ class MessengerEchoOnboardWorld(OnboardWorld):
     onboarding worlds that only exist to send an introduction message.
     """
 
+    # @staticmethod
+    # def run(opt, agent, task_id):
+    #     world = MessengerEchoOnboardWorld(opt=opt, agent=agent)
+    #     while not world.episode_done():
+    #         world.parley()
+    #     world.shutdown()
+
     @staticmethod
-    def run(opt, agent, task_id):
-        world = MessengerEchoOnboardWorld(opt=opt, agent=agent)
-        while not world.episode_done():
-            world.parley()
-        world.shutdown()
+    def generate_world(opt, agents):
+        return MessengerEchoOnboardWorld(opt=opt, agent=agents[0])
 
     def parley(self):
         self.agent.observe(
@@ -42,13 +46,17 @@ class MessengerEchoTaskWorld(World):
         self.agent = agent
         self.episodeDone = False
 
+    # @staticmethod
+    # def run(messenger_manager, opt, agents, task_id):
+    #     agent = agents[0]
+    #     world = MessengerEchoTaskWorld(opt=opt, agent=agent)
+    #     while not world.episode_done():
+    #         world.parley()
+    #     world.shutdown()
+
     @staticmethod
-    def run(messenger_manager, opt, agents, task_id):
-        agent = agents[0]
-        world = MessengerEchoTaskWorld(opt=opt, agent=agent)
-        while not world.episode_done():
-            world.parley()
-        world.shutdown()
+    def generate_world(opt, agents):
+        return MessengerEchoTaskWorld(opt, agents[0])
 
     @staticmethod
     def assign_roles(agents):
@@ -81,15 +89,24 @@ class MessengerOnboardDataOnboardWorld(OnboardWorld):
         self.episodeDone = False
         self.turn = 0
 
+    # @staticmethod
+    # def run(opt, agent, task_id):
+    #     '''Runs an instance of the onboarding world. Data returned from
+    #     here will be made available in the agent.onboard_data field'''
+    #     world = MessengerOnboardDataOnboardWorld(opt=opt, agent=agent)
+    #     while not world.episode_done():
+    #         world.parley()
+    #     world.shutdown()
+    #     return {'name': world.user_name, 'color': world.fav_color}
+
     @staticmethod
-    def run(opt, agent, task_id):
-        '''Runs an instance of the onboarding world. Data returned from
-        here will be made available in the agent.onboard_data field'''
-        world = MessengerOnboardDataOnboardWorld(opt=opt, agent=agent)
-        while not world.episode_done():
-            world.parley()
-        world.shutdown()
-        return {'name': world.user_name, 'color': world.fav_color}
+    def generate_world(opt, agents):
+        return MessengerOnboardDataOnboardWorld(opt=opt, agent=agents[0])
+
+    @staticmethod
+    def assign_roles(agents):
+        for a in agents:
+            a.disp_id = 'Agent'
 
     def parley(self):
         if self.turn == 0:
@@ -125,13 +142,17 @@ class MessengerOnboardDataTaskWorld(World):
         self.agent = agent
         self.episodeDone = False
 
+    # @staticmethod
+    # def run(messenger_manager, opt, agents, task_id):
+    #     agent = agents[0]
+    #     world = MessengerOnboardDataTaskWorld(opt=opt, agent=agent)
+    #     while not world.episode_done():
+    #         world.parley()
+    #     world.shutdown()
+
     @staticmethod
-    def run(messenger_manager, opt, agents, task_id):
-        agent = agents[0]
-        world = MessengerOnboardDataTaskWorld(opt=opt, agent=agent)
-        while not world.episode_done():
-            world.parley()
-        world.shutdown()
+    def generate_world(opt, agents):
+        return MessengerOnboardDataTaskWorld(opt, agents[0])
 
     @staticmethod
     def assign_roles(agents):
@@ -167,13 +188,22 @@ class MessengerChatOnboardWorld(OnboardWorld):
         self.episodeDone = False
         self.turn = 0
 
+    # @staticmethod
+    # def run(opt, agent, task_id):
+    #     world = MessengerChatOnboardWorld(opt=opt, agent=agent)
+    #     while not world.episode_done():
+    #         world.parley()
+    #     world.shutdown()
+    #     return {'name': world.user_name}
+
     @staticmethod
-    def run(opt, agent, task_id):
-        world = MessengerChatOnboardWorld(opt=opt, agent=agent)
-        while not world.episode_done():
-            world.parley()
-        world.shutdown()
-        return {'name': world.user_name}
+    def generate_world(opt, agents):
+        return MessengerChatOnboardWorld(opt, agents[0])
+
+    @staticmethod
+    def assign_roles(agents):
+        for a in agents:
+            a.disp_id = 'Agent'
 
     def parley(self):
         if self.turn == 0:
@@ -209,17 +239,21 @@ class MessengerChatTaskWorld(World):
         self.agents = agents
         self.episodeDone = False
 
+    # @staticmethod
+    # def run(messenger_manager, opt, agents, task_id):
+    #     world = MessengerChatTaskWorld(opt=opt, agents=agents)
+    #     while not world.episode_done():
+    #         world.parley()
+    #     world.shutdown()
+
     @staticmethod
-    def run(messenger_manager, opt, agents, task_id):
-        world = MessengerChatTaskWorld(opt=opt, agents=agents)
-        while not world.episode_done():
-            world.parley()
-        world.shutdown()
+    def generate_world(opt, agents):
+        return MessengerOnboardDataTaskWorld(opt, agents)
 
     @staticmethod
     def assign_roles(agents):
-        for agent in agents:
-            agent.disp_id = agent.onboard_data['name']
+        for a in agents:
+            a.disp_id = 'Agent'
 
     def parley(self):
         for x in [0, 1]:
@@ -258,9 +292,22 @@ class MessengerOverworld(World):
         self.agent = agent
         self.opt = opt
         self.first_time = True
+        self.episodeDone = False
 
     def return_overworld(self):
         self.first_time = True
+
+    @staticmethod
+    def generate_world(opt, agents):
+        return MessengerOverworld(opt, agents[0])
+
+    @staticmethod
+    def assign_roles(agents):
+        for a in agents:
+            a.disp_id = 'Agent'
+
+    def episode_done(self):
+        return self.episodeDone
 
     def parley(self):
         if self.first_time:
@@ -280,6 +327,7 @@ class MessengerOverworld(World):
                 self.agent.observe(
                     {'id': 'Overworld', 'text': 'Transferring to ' + a['text']}
                 )
+                self.episodeDone = True
                 return a['text']
             else:
                 self.agent.observe(
