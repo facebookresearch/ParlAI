@@ -20,7 +20,6 @@ import shutil
 import hashlib
 import tqdm
 import math
-import traceback
 import zipfile
 from multiprocessing import Pool
 
