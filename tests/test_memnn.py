@@ -1,4 +1,4 @@
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -78,9 +78,9 @@ class TestMemnn(unittest.TestCase):
         )
 
     def test_backcomp(self):
-        '''
+        """
         Tests that the memnn model files continue to works over time
-        '''
+        """
         testing_utils.download_unittest_models()
 
         stdout, valid, test = testing_utils.eval_model(
