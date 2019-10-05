@@ -20,7 +20,6 @@ import shutil
 import hashlib
 import tqdm
 import math
-import traceback
 import zipfile
 from multiprocessing import Pool
 
@@ -350,6 +349,9 @@ def download_multiprocess(
 ):
     """
     Download items in parallel (e.g. for an image + dialogue task)
+
+    Note: "of threading, multiprocess and pytorch.multiprocessing pick two".
+    These three don't all play well together. On OS X, may hang upon successful finish.
 
     :param urls: Array of urls to download
     :param path: directory to save items in
