@@ -15,6 +15,8 @@ import tempfile
 END_OF_CONVO = "EOC"
 CHROME_PATH = r'/Applications/Google\ Chrome.app/Contents/MacOS//Google\ Chrome'
 
+ALT_EMOJI_IMG = "https://pbs.twimg.com/media/DUzY3TpWkAAOi34.png"
+HUMAN_EMOJI_IMG = "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/76/woman_1f469.png"
 
 def gen_convo_ul(conversations):
     """
@@ -26,9 +28,19 @@ def gen_convo_ul(conversations):
     ul_str = f"\t<ul>\n"
     for speaker, speech in conversations:
         if speaker == END_OF_CONVO:
-            ul_str += f"\t\t<li class=\"breaker\"><hr/></li>\n"
+            ul_str += f"\n\t  <li class=\"breaker\"><hr/></li>\n"
         else:
-            ul_str += f"\t\t<li class=\"{speaker}\">{speech}</li>\n"
+            ul_str += f"""
+    <li>
+        <div class="{speaker}_img_div">
+            <img class="{speaker}_img">
+        </div>
+        <div class="{speaker}_p_div">
+            <p class="{speaker}">{speech}</p>
+        </div>
+        <div class="clear"></div>
+    </li>
+    """
     ul_str += "\t</ul>"
 
     return ul_str
@@ -61,17 +73,40 @@ def gen_html(conversations, height, width, title, other_speaker, human_speaker):
             @page{{ margin: 0; size: {str(width)}in {str(height)}in; }}
         }}
         ul{{
-            list-style: none;
-            margin: 0;
-            padding: 0;
+          list-style: none;
         }}
-        ul li{{
-            display:inline-block;
+        .{other_speaker}_img_div{{
+          display: inline-block;
+          float: left;
+          margin: 18px 5px 0px -25px;
+        }}
+        .{human_speaker}_img_div{{
+          display: inline-block;
+          float: right;
+          margin: 18px 15px 5px 5px;
+        }}
+        .{other_speaker}_img{{
+            content:url({ALT_EMOJI_IMG});
+        }}
+        .{human_speaker}_img{{
+            content:url({HUMAN_EMOJI_IMG});
+        }}
+        .{other_speaker}_p_div{{
+          float: left;
+        }}
+        .{human_speaker}_p_div{{
+          float:right;
+        }}
+        p{{
+          display:inline-block;
+          overflow-wrap: break-word;
+          border-radius: 30px;
+          padding: 10px 10px 10px 10px;
+          font-family: Helvetica, Arial, sans-serif;
+        }}
+        .clear{{
+            float: none;
             clear: both;
-            padding: 20px;
-            border-radius: 30px;
-            margin-bottom: 2px;
-            font-family: Helvetica, Arial, sans-serif;
         }}
         .{other_speaker}{{
                 background: #eee;
@@ -89,6 +124,11 @@ def gen_html(conversations, height, width, title, other_speaker, human_speaker):
             margin: 20px 20px 20px 20px;
             text-align: center;
             text-transform: uppercase;
+        }}
+        img{{
+          border-radius: 50px;
+          width: 30;
+          height: 30;
         }}
     </style>
 </head>
