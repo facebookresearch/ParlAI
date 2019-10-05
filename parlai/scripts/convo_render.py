@@ -216,6 +216,13 @@ if __name__ == "__main__":
         type=int,
         default=10,
     )
+    parser.add_argument(
+        "--window-size",
+        "-ws",
+        help="Window Size for screenshot",
+        nargs='+',
+        default=[800, 480],
+    )
 
     args = parser.parse_args()
     input_file, output_file = args.input, args.output
@@ -250,7 +257,16 @@ if __name__ == "__main__":
                 if extension == "pdf":
                     cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp --print-to-pdf=\"{output_file}\" {fname}"
                 else:
-                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp --screenshot=\"{output_file}\" {fname}"
+                    if len(args.window_size) != 2:
+                        raise Exception("Invalid window size provided")
+                    if (
+                        not args.window_size[0].isdigit()
+                        or not args.window_size[1].isdigit()
+                    ):
+                        raise ValueError(
+                            "Please provide integer values for window size"
+                        )
+                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp --window-size={args.window_size[0]},{args.window_size[1]} --screenshot=\"{output_file}\" {fname}"
                 subprocess.run(
                     cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
                 )
