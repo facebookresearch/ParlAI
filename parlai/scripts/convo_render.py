@@ -4,12 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
 import sys
 import json
 import random
 import argparse
 import tempfile
+import subprocess
 
 # Constants
 END_OF_CONVO = "EOC"
@@ -17,6 +17,7 @@ CHROME_PATH = r'/Applications/Google\ Chrome.app/Contents/MacOS//Google\ Chrome'
 
 ALT_EMOJI_IMG = "https://pbs.twimg.com/media/DUzY3TpWkAAOi34.png"
 HUMAN_EMOJI_IMG = "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/76/woman_1f469.png"
+
 
 def gen_convo_ul(conversations):
     """
@@ -250,5 +251,7 @@ if __name__ == "__main__":
                     cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp --print-to-pdf=\"{output_file}\" {fname}"
                 else:
                     cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp --screenshot=\"{output_file}\" {fname}"
-                os.system(cmd)
+                subprocess.run(
+                    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
+                )
                 file_handle.close()
