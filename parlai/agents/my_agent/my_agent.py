@@ -23,10 +23,12 @@ class MyAgentAgent(Agent):
         # put any other special reusing stuff in shared too
         shared = super().share()
         shared['model'] = self.model
+        return shared
 
     def observe(self, observation):
         # your goal is to build up the string input to the model here
         self.dialogue_history += observation['text']
+        return observation
 
     def act(self):
         # do all the actual work of converting self.dialogue history into
