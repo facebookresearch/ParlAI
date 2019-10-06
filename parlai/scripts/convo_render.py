@@ -325,7 +325,8 @@ if __name__ == "__main__":
                     cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp \
                      --print-to-pdf=\"{output_file}\" {fname}"
                 else:
-                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp \
+                    cmd = f"{CHROME_PATH} --headless --hide-scrollbars \
+                    --crash-dumps-dir=/tmp \
                      --window-size={args.width * 100},{args.height * 100} \
                       --screenshot=\"{output_file}\" {fname}"
                 subprocess.run(
