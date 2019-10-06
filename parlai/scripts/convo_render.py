@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import os
 import sys
 import json
 import random
@@ -15,7 +16,7 @@ import subprocess
 END_OF_CONVO = "EOC"
 CHROME_PATH = r'/Applications/Google\ Chrome.app/Contents/MacOS//Google\ Chrome'
 
-ALT_EMOJI_IMG = "https://pbs.twimg.com/media/DUzY3TpWkAAOi34.png"
+ALT_EMOJI_IMG = "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/facebook/230/parrot_1f99c.png"
 HUMAN_EMOJI_IMG = "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/76/woman_1f469.png"
 
 
@@ -47,7 +48,16 @@ def gen_convo_ul(conversations):
     return ul_str
 
 
-def gen_html(conversations, height, width, title, other_speaker, human_speaker):
+def gen_html(
+    conversations,
+    height,
+    width,
+    title,
+    other_speaker,
+    human_speaker,
+    user_icon,
+    alt_icon,
+):
     """
     Generate HTML string for the given conversation.
     :param conversation:
@@ -87,10 +97,10 @@ def gen_html(conversations, height, width, title, other_speaker, human_speaker):
           margin: 18px 15px 5px 5px;
         }}
         .{other_speaker}_img{{
-            content:url({ALT_EMOJI_IMG});
+            content:url({alt_icon});
         }}
         .{human_speaker}_img{{
-            content:url({HUMAN_EMOJI_IMG});
+            content:url({user_icon});
         }}
         .{other_speaker}_p_div{{
           float: left;
@@ -128,8 +138,8 @@ def gen_html(conversations, height, width, title, other_speaker, human_speaker):
         }}
         img{{
           border-radius: 50px;
-          width: 30;
-          height: 30;
+          width: 50px;
+          height: 50px;
         }}
     </style>
 </head>
@@ -193,7 +203,8 @@ def display_cli(conversations, alt_speaker, human_speaker):
             prBlueBG("%-15s: %s" % (speaker[:15], speech))
 
 
-if __name__ == "__main__":
+def create_parser():
+    """Creates a parser object with some pre-determined arguments."""
     parser = argparse.ArgumentParser(
         description="Process Conversation Rendering arguments"
     )
@@ -207,7 +218,19 @@ if __name__ == "__main__":
         "--width", "-wd", help="Width of output file", type=int, default=8
     )
     parser.add_argument(
-        "--height", "-ht", help="Height of output file", type=int, default=9.5
+        "--height", "-ht", help="Height of output file", type=int, default=10
+    )
+    parser.add_argument(
+        "--user-icon",
+        "-uic",
+        help="Absolute Path/URL to user image icon",
+        default=HUMAN_EMOJI_IMG,
+    )
+    parser.add_argument(
+        "--alt-icon",
+        "-aic",
+        help="Absolute Path/URL to alternate image icon",
+        default=ALT_EMOJI_IMG,
     )
     parser.add_argument(
         "--num-examples",
@@ -216,32 +239,76 @@ if __name__ == "__main__":
         type=int,
         default=10,
     )
-    parser.add_argument(
-        "--window-size",
-        "-ws",
-        help="Window Size for screenshot",
-        nargs='+',
-        default=[800, 480],
-    )
 
+    return parser
+
+
+def check_icon_arg(src, default):
+    """
+    Checks if icon arguments are valid: either a URL or an absolute path
+    :param src: Source of the icon
+    :param default: default value of the icon
+
+    :return: src (possibly pre-pended with "file://")
+    """
+    if src != default:
+        # check if URl
+        if not src.startswith('https://') and not src.startswith('http://'):
+            # Either a file or incorrect input
+            if os.path.isabs(src):
+                src = "file://" + src
+            else:
+                raise Exception(
+                    f"Please provide a valid URL or valid *absolute* path to icon: {src}"
+                )
+    return src
+
+
+def validate_args(args):
+    """
+    Validate the cmdline args passed into the script
+    :param args: The arguments of te parser
+
+    :return: Returns extension of output file. None if no output file
+    """
+    if not os.path.exists(args.input):
+        raise Exception("Input File does not exist")
+    if args.output is None:
+        return None
+    extension = args.output.split(".")[-1]
+    if extension not in ["html", "pdf", "png"]:
+        raise Exception(
+            "Extension not specified/supported. Specify one of '.html', '.pdf' or '.png' output files"
+        )
+    args.user_icon = check_icon_arg(args.user_icon, HUMAN_EMOJI_IMG)
+    args.alt_icon = check_icon_arg(args.alt_icon, ALT_EMOJI_IMG)
+    return extension
+
+
+if __name__ == "__main__":
+    parser = create_parser()
     args = parser.parse_args()
+    extension = validate_args(args)
     input_file, output_file = args.input, args.output
     height, width = args.height, args.width
     alt_speaker = input_file.split('/')[-1][:-6]
 
     dialogs = pre_process(input_file, args.num_examples, alt_speaker)
 
+    # Display on CLI
     if output_file is None:
-        # CLI
         display_cli(dialogs, alt_speaker, "human")
+    # Some form of output file
     else:
-        extension = output_file.split(".")[-1]
-        if extension not in ["html", "pdf", "png"]:
-            raise Exception(
-                "Extension not specified/supported. Specify one of '.html', '.pdf' or '.png' output files"
-            )
         html_str = gen_html(
-            dialogs, height, width, "Rendered HTML", alt_speaker, "human"
+            dialogs,
+            height,
+            width,
+            "Rendered HTML",
+            alt_speaker,
+            "human",
+            args.user_icon,
+            args.alt_icon,
         )
         if extension == "html":
             # save to output
@@ -255,18 +322,12 @@ if __name__ == "__main__":
                 file_handle = open(fname, "w")
                 file_handle.write(html_str)
                 if extension == "pdf":
-                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp --print-to-pdf=\"{output_file}\" {fname}"
+                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp \
+                     --print-to-pdf=\"{output_file}\" {fname}"
                 else:
-                    if len(args.window_size) != 2:
-                        raise Exception("Invalid window size provided")
-                    if (
-                        not args.window_size[0].isdigit()
-                        or not args.window_size[1].isdigit()
-                    ):
-                        raise ValueError(
-                            "Please provide integer values for window size"
-                        )
-                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp --window-size={args.window_size[0]},{args.window_size[1]} --screenshot=\"{output_file}\" {fname}"
+                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp \
+                     --window-size={args.width * 100},{args.height * 100} \
+                      --screenshot=\"{output_file}\" {fname}"
                 subprocess.run(
                     cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
                 )
