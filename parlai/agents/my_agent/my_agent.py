@@ -32,5 +32,5 @@ class MyAgentAgent(Agent):
         # do all the actual work of converting self.dialogue history into
         # a tensor, forward it through the model, convert the output to a string
         return {
-            'text': yourresponse
+            'text': 'hisotry:' + str(self.dialogue_history)
         }
