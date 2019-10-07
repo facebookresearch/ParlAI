@@ -32,7 +32,7 @@ def main():
     mturk_agent_1_id = 'mturk_agent_1'
     mturk_agent_2_id = 'mturk_agent_2'
     human_agent_1_id = 'human_1'
-    mturk_agent_ids = [mturk_agent_1_id, mturk_agent_2_id]
+    mturk_agent_ids = [mturk_agent_1_id] #, mturk_agent_2_id]
     mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
     mturk_manager.setup_server()
 
@@ -62,14 +62,14 @@ def main():
         def run_conversation(mturk_manager, opt, workers):
             # Create mturk agents
             mturk_agent_1 = workers[0]
-            mturk_agent_2 = workers[1]
+            #mturk_agent_2 = workers[1]
 
             # Create the local human agents
             human_agent_1 = LocalHumanAgent(opt={})
             human_agent_1.id = human_agent_1_id
 
             world = MTurkMultiAgentDialogWorld(
-                opt=opt, agents=[human_agent_1, mturk_agent_1, mturk_agent_2]
+                opt=opt, agents=[human_agent_1, mturk_agent_1] # , mturk_agent_2]
             )
 
             while not world.episode_done():

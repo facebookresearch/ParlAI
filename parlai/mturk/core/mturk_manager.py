@@ -855,9 +855,12 @@ class MTurkManager:
         # Poplulate files to copy over to the server
         if not self.task_files_to_copy:
             self.task_files_to_copy = []
+        ss = self.opt['task']
+        if ss == 'convai2:self':
+            ss = 'convai2_model_eval'
         if not task_directory_path:
             task_directory_path = os.path.join(
-                self.opt['parlai_home'], 'parlai', 'mturk', 'tasks', self.opt['task']
+                self.opt['parlai_home'], 'parlai', 'mturk', 'tasks', ss
             )
         self.task_files_to_copy.append(
             os.path.join(task_directory_path, 'html', 'cover_page.html')
@@ -876,6 +879,7 @@ class MTurkManager:
                     task_directory_path, 'html', '{}_index.html'.format(mturk_agent_id)
                 )
             )
+        print('in populate_legacy_task_files', self.task_files_to_copy)
 
     def populate_task_files(self, task_directory_path):
         # Poplulate files to copy over to the server
@@ -1058,7 +1062,8 @@ class MTurkManager:
             heroku_team = self.opt['heroku_team']
         else:
             heroku_team = None
-
+        
+        print('===frontend_version===', self.opt.get('frontend_version', 0))
         if self.opt.get('frontend_version', 0) < 1:
             self.populate_legacy_task_files(task_directory_path)
             self.server_url = server_utils.setup_legacy_server(
