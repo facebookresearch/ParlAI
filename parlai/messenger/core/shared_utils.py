@@ -169,7 +169,7 @@ def parse_configuration_file(config_path):
                 backup_task=configuration.get("backup_task"),
             )
         # get world options
-        result["world_opt"] = cfg.get("opt")
+        result["world_opt"] = cfg.get("opt", {})
         # get local hosting information, if any exists
 
     return result

@@ -21,3 +21,4 @@ page_id: 102722584407775 # TODO Change
 max_workers: 30
 opt:
   debug: True
+  password: ParlAI

@@ -14,13 +14,6 @@ class MessengerEchoOnboardWorld(OnboardWorld):
     onboarding worlds that only exist to send an introduction message.
     """
 
-    # @staticmethod
-    # def run(opt, agent, task_id):
-    #     world = MessengerEchoOnboardWorld(opt=opt, agent=agent)
-    #     while not world.episode_done():
-    #         world.parley()
-    #     world.shutdown()
-
     @staticmethod
     def generate_world(opt, agents):
         return MessengerEchoOnboardWorld(opt=opt, agent=agents[0])
@@ -45,14 +38,6 @@ class MessengerEchoTaskWorld(World):
     def __init__(self, opt, agent):
         self.agent = agent
         self.episodeDone = False
-
-    # @staticmethod
-    # def run(messenger_manager, opt, agents, task_id):
-    #     agent = agents[0]
-    #     world = MessengerEchoTaskWorld(opt=opt, agent=agent)
-    #     while not world.episode_done():
-    #         world.parley()
-    #     world.shutdown()
 
     @staticmethod
     def generate_world(opt, agents):
@@ -88,16 +73,7 @@ class MessengerOnboardDataOnboardWorld(OnboardWorld):
         self.agent = agent
         self.episodeDone = False
         self.turn = 0
-
-    # @staticmethod
-    # def run(opt, agent, task_id):
-    #     '''Runs an instance of the onboarding world. Data returned from
-    #     here will be made available in the agent.onboard_data field'''
-    #     world = MessengerOnboardDataOnboardWorld(opt=opt, agent=agent)
-    #     while not world.episode_done():
-    #         world.parley()
-    #     world.shutdown()
-    #     return {'name': world.user_name, 'color': world.fav_color}
+        self.data = {}
 
     @staticmethod
     def generate_world(opt, agents):
@@ -120,7 +96,7 @@ class MessengerOnboardDataOnboardWorld(OnboardWorld):
             a = self.agent.act()
             while a is None:
                 a = self.agent.act()
-            self.user_name = a['text']
+            self.data['name'] = a['text']
             self.turn = self.turn + 1
         elif self.turn == 1:
             self.agent.observe(
@@ -129,7 +105,7 @@ class MessengerOnboardDataOnboardWorld(OnboardWorld):
             a = self.agent.act()
             while a is None:
                 a = self.agent.act()
-            self.fav_color = a['text']
+            self.data['color'] = a['text']
             self.episodeDone = True
 
 
@@ -141,14 +117,6 @@ class MessengerOnboardDataTaskWorld(World):
     def __init__(self, opt, agent):
         self.agent = agent
         self.episodeDone = False
-
-    # @staticmethod
-    # def run(messenger_manager, opt, agents, task_id):
-    #     agent = agents[0]
-    #     world = MessengerOnboardDataTaskWorld(opt=opt, agent=agent)
-    #     while not world.episode_done():
-    #         world.parley()
-    #     world.shutdown()
 
     @staticmethod
     def generate_world(opt, agents):
@@ -187,14 +155,7 @@ class MessengerChatOnboardWorld(OnboardWorld):
         self.agent = agent
         self.episodeDone = False
         self.turn = 0
-
-    # @staticmethod
-    # def run(opt, agent, task_id):
-    #     world = MessengerChatOnboardWorld(opt=opt, agent=agent)
-    #     while not world.episode_done():
-    #         world.parley()
-    #     world.shutdown()
-    #     return {'name': world.user_name}
+        self.data = {}
 
     @staticmethod
     def generate_world(opt, agents):
@@ -217,7 +178,7 @@ class MessengerChatOnboardWorld(OnboardWorld):
             a = self.agent.act()
             while a is None:
                 a = self.agent.act()
-            self.user_name = a['text']
+            self.data['user_name'] = a['text']
             self.turn = self.turn + 1
         elif self.turn == 1:
             self.agent.observe(
@@ -239,16 +200,9 @@ class MessengerChatTaskWorld(World):
         self.agents = agents
         self.episodeDone = False
 
-    # @staticmethod
-    # def run(messenger_manager, opt, agents, task_id):
-    #     world = MessengerChatTaskWorld(opt=opt, agents=agents)
-    #     while not world.episode_done():
-    #         world.parley()
-    #     world.shutdown()
-
     @staticmethod
     def generate_world(opt, agents):
-        return MessengerOnboardDataTaskWorld(opt, agents)
+        return MessengerChatTaskWorld(opt, agents)
 
     @staticmethod
     def assign_roles(agents):

@@ -3,9 +3,12 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+"""World Runner Module.
+
+The World Runner provides the manager with utility functions for running
+overworlds, onboard worlds, and task worlds.
+"""
 from parlai.core.params import ParlaiParser
-from parlai.messenger.tasks.qa_data_collection.worlds import QADataCollectionWorld
-from parlai.messenger.core.worlds import SimpleMessengerOverworld as MessengerOverworld
 import os
 import importlib
 import shared_utils as utils
@@ -17,8 +20,10 @@ import logging
 
 
 class MessengerWorldRunner:
-    """A worker class that launches overworld and taskworld
-    jobs based on an inputted module file"""
+    """World Runner.
+
+    Launches worlds, overworlds, etc. Helper for MessengerManager
+    """
 
     def __init__(
         self,
@@ -30,33 +35,10 @@ class MessengerWorldRunner:
     ):
         self._world_module = utils.get_world_module(world_path)
         self.executor = futures.ThreadPoolExecutor(max_workers=max_workers)
-        self.initialized = False
         self.debug = is_debug
         self._log("Found world module: {}".format(self._world_module))
         opt["is_debug"] = is_debug
-
-        def _is_done_initializing(fut):
-            if fut.result():
-                print(fut.result())
-            if self.debug:
-                print("DEBUG: Call to `module_initialize` has completed...")
-            self.initialized = True
-
-        if hasattr(self._world_module, "module_initialize"):
-            self._log("Initializing world module...")
-            # perform any module intialization steps
-            init_fn = self._world_module.module_initialize
-            self.init_fut = self.executor.submit(
-                init_fn,
-                opt,
-                manager,
-            )
-            self.init_fut.add_done_callback(_is_done_initializing)
-        else:
-            self._log("World module does not have `module initialize` function")
-            self.initialized = True
-
-        self.manager = manager  # need access to manager for dumping world state
+        self.manager = manager
         self.system_done = False
         self.opt = opt
         self.tasks = {}  # task ID to task
@@ -64,15 +46,10 @@ class MessengerWorldRunner:
     def _log(self, text):
         if self.debug:
             time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            print("{} DEBUG (FBMessengerWorldRunner): {}".format(time, text))
+            print("{} DEBUG: {}".format(time, text))
 
-    def shutdown(self, force=True):
-        """Shutdown the world runner.
-
-        If another worker is available, we do not force shutdown: instead,
-        we iterate through the worlds one by one and gather state to transfer
-        to a new worker.
-        """
+    def shutdown(self):
+        """Shutdown the world runner."""
         for _, task in self.tasks.items():
             if task.world is not None:
                 task.world.shutdown()
@@ -83,35 +60,32 @@ class MessengerWorldRunner:
         self._log("Shutdown complete.")
 
     def run_world(self, task, world_name, agents):
-        """Import the module specified by the world_name and run the world
-        until completion.
+        """Run a world until completion.
 
-        Args:
-            world_name: string. The name of the world in the module file
-            agents: list. A list of agents that should be in the world.
-            task_state: JSON. Previous task state if the worker died during
-                the execution of this world.
+        :param task:
+            TaskState. State of the given task.
+        :param world_name:
+            string. The name of the world in the module file
+        :param agents:
+            list. A list of agents that should be in the world.
 
-        Returns:
+        :return:
             ret_val: last output of world's parley function. Return None if ERROR
-            status: the status of the job. Return None if ok, the exception if ERROR
+            world_data: data attribute of world, if it has one
         """
         ret_val = None
-        utils.print_and_log(logging.DEBUG, f'running world {world_name}')
         world_generator = utils.get_world_fn_attr(
             self._world_module, world_name, "generate_world"
         )
         world = world_generator(self.opt, agents)
-        utils.print_and_log(logging.DEBUG, f'actual world: {world}')
         task.world = world
 
         while not world.episode_done() and not self.system_done:
             ret_val = world.parley()
             time.sleep(0.3)
         world.shutdown()
-        utils.print_and_log(logging.DEBUG, f'ret val: {ret_val}')
-        world_data = world.data if hasattr(world, "data") else ""
-        return ret_val, world_data, task.state_transfer
+        world_data = world.data if hasattr(world, "data") else {}
+        return ret_val, world_data
 
     def launch_task_world(
         self,
@@ -119,14 +93,19 @@ class MessengerWorldRunner:
         world_name,
         agents,
     ):
-        """Launch a task world. Return the job's future. Note that the return
-        value of the world is returned unused: any relevant data which should
-        be sent back should be in the agents' data dictionary.
+        """Launch a task world.
 
-        Args:
-            task_name: string. the name of the job thread
-            world_name: string. the name of the task world in the module file
-            agents: list. the list of agents to install in the world
+        Return the job's future.
+
+        :param task_name:
+            string. the name of the job thread
+        :param world_name:
+            string. the name of the task world in the module file
+        :param agents:
+            list. the list of agents to install in the world
+
+        :return:
+            the Futures object corresponding to this launched task
         """
         task = utils.TaskState(task_name, world_name, agents)
         self.tasks[task_name] = task
@@ -146,72 +125,70 @@ class MessengerWorldRunner:
         task_name,
         overworld_name,
         onboard_map,
-        agent,
+        overworld_agent,
     ):
-        """Launch an overworld and a subsequent onboarding world. Return the
-        job's future
+        """Launch an overworld and a subsequent onboarding world.
 
-        Args:
-            task_name: string. the name of the job thread
-            overworld_name: string. the name of the overworld in the module file
-            onboard_map: map. a mapping of overworld return values to the names
-                         of onboarding worlds in the module file.
-            agent: The agent to run the overworld with
-            world_type: if the worker died during execution of an onboarding
-                world, this is the return value from the overworld
+        Return the job's future
+
+        :param task_name:
+            string. the name of the job thread
+        :param overworld_name:
+            string. the name of the overworld in the module file
+        :param onboard_map:
+            map. a mapping of overworld return values to the names
+            of onboarding worlds in the module file.
+        :param overworld_agent:
+            The agent to run the overworld with
+
+        :return:
+            the Futures object corresponding to running the overworld
         """
         task = utils.TaskState(
             task_name,
             overworld_name,
-            [agent],
+            [overworld_agent],
             is_overworld=True,
             world_type=None,
         )
         self.tasks[task_name] = task
-        utils.print_and_log(logging.DEBUG,'1 launching overworld')
+        agent_state = self.manager.get_agent_state(overworld_agent.id)
 
         def _world_function():
             world_generator = utils.get_world_fn_attr(
                 self._world_module, overworld_name, "generate_world"
             )
-            overworld = world_generator(self.opt, agents)
+            overworld = world_generator(self.opt, [overworld_agent])
             while not self.system_done:
-                utils.print_and_log(logging.DEBUG,'2 Manager running')
-                if task.world_type is None:
-                    utils.print_and_log(logging.DEBUG,'3 getting world type')
-                    # world_type, _, overworld = self.run_world(
-                    #     task,
-                    #     overworld_name,
-                    #     [agent],
-                    # )
-
-                    world_type = overworld.parley()
-                    utils.print_and_log(logging.DEBUG,f' 4 world_type: {world_type}')
-                    if world_type is None:
-                        continue
-                    task.world_type = world_type
-                else:
-                    world_type = task.world_type
+                world_type = overworld.parley()
+                if world_type is None:
+                    time.sleep(0.5)
+                    continue
 
                 # perform onboarding
                 onboard_type = onboard_map.get(world_type)
-                utils.print_and_log(logging.DEBUG,f'5 going to onboard: {onboard_type}')
                 if onboard_type:
-                    self.run_world(
+                    onboard_id = 'onboard-{}-{}'.format(overworld_agent.id, time.time())
+                    agent = self.manager._create_agent(onboard_id, overworld_agent.id)
+                    agent_state.set_active_agent(agent)
+                    agent_state.assign_agent_to_task(agent, onboard_id)
+                    _, onboard_data = self.run_world(
                         task,
                         onboard_type,
                         [agent],
                     )
-
-                # silent exit: if the worker dies during the execution of the
-                # overworld or onboarding world, silent_exit is True IFF the
-                # world has an 'offload_state' function that allows the state
-                # to be transferred; otherwise it is False
-                utils.print_and_log(logging.DEBUG,f'6 done with onboard, returning {world_type}')
-
+                    agent_state.onboard_data = onboard_data
                 self.manager.add_agent_to_pool(
-                    self.manager.get_agent_state(agent.id), world_type
+                    agent_state, world_type
                 )
+                utils.print_and_log(
+                    logging.INFO, 'onboarding/overworld complete'
+                )
+                time.sleep(5)
+
+                # sleep until agent returns from task world
+                while agent_state.get_active_agent() != overworld_agent:
+                    time.sleep(2)
                 overworld.return_overworld()
             return world_type
 

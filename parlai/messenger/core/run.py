@@ -3,12 +3,15 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+"""Messenger Runner."""
 from parlai.core.params import ParlaiParser
 from parlai.messenger.core.messenger_manager import MessengerManager
 import importlib
 import shared_utils as utils
 
+
 def setup_args():
+    """Set up args."""
     parser = ParlaiParser(False, False)
     parser.add_parlai_data_path()
     parser.add_messenger_args()
@@ -16,22 +19,14 @@ def setup_args():
 
 
 def run(opt):
+    """Run MessengerManager."""
     manager = MessengerManager(opt)
-    manager.setup_server()
-    manager.init_new_state()
-    manager.setup_socket()
-    manager.start_new_run()
     try:
         manager.start_task()
     except BaseException:
-        manager.shutdown()
         raise
-    except:
-        manager.shutdown()
     finally:
-        print('finally')
         manager.shutdown()
-
 
 
 if __name__ == '__main__':
