@@ -109,8 +109,8 @@ The Twitter task is quite large, and validation is run by default after each epo
 but we want to save our model more frequently so we set validation to run once an hour with ``-vtim 3600``.
 
 This train model script evaluates the model on the valid and test sets at the end of training, but if we wanted to evaluate a saved model -
- perhaps to compare the results of our newly trained Transformer against a pretrained ``convai2`` seq2seq baseline from our `Model Zoo <http://parl.ai/docs/zoo.html>`_,
- we could do the following:
+perhaps to compare the results of our newly trained Transformer against a pretrained ``convai2`` seq2seq baseline from our `Model Zoo <http://parl.ai/docs/zoo.html>`_,
+we could do the following:
 
 .. code-block:: bash
 
