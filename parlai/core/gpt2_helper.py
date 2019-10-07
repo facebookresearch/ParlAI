@@ -16,6 +16,7 @@ import json
 from .build_data import download, make_dir
 import os
 
+DEFAULT_ENCODER_JSON = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/encoder.json'
 DEFAULT_VOCAB_BPE = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/vocab.bpe'
 
 
@@ -62,11 +63,24 @@ class Gpt2BpeHelper:
     def __init__(self, opt, errors='replace'):
         data_path = os.path.join(opt['datapath'], 'gpt2')
         vocab_path = os.path.join(data_path, 'vocab.bpe')
-        if not os.path.isfile(vocab_path):
+        json_path = os.path.join(data_path, 'encoder.json')
+        if not os.path.isfile(vocab_path) or not os.path.isfile(json_path):
             make_dir(data_path)
             download(DEFAULT_VOCAB_BPE, data_path, 'vocab.bpe')
+            download(DEFAULT_ENCODER_JSON, data_path, 'encoder.json')
         with open(vocab_path, 'r', encoding="utf-8") as f:
             bpe_data = f.read()
+        with open(json_path, 'r') as f:
+            self.encoder = json.load(f)
+        for each_token in self.encoder.keys():
+            new_token = ''.join(
+                [
+                    '\\' + hex(b).lstrip('0') if b > 127 else chr(b)
+                    for b in each_token.encode('utf-8')
+                ]
+            )
+            self.encoder[each_token] = new_token
+        self.decoder = {v: k for k, v in self.encoder.items()}
         bpe_merges = [
             tuple(merge_str.split()) for merge_str in bpe_data.split('\n')[1:-1]
         ]
@@ -132,12 +146,17 @@ class Gpt2BpeHelper:
         bpe_tokens = []
         for token in self.re.findall(self.pat, text):
             token = ''.join(self.byte_encoder[b] for b in token.encode('utf-8'))
-            bpe_tokens.extend(bpe_token for bpe_token in self.bpe(token).split(' '))
+            bpe_tokens.extend(
+                self.encoder[bpe_token] for bpe_token in self.bpe(token).split(' ')
+            )
         return bpe_tokens
 
     def decode(self, tokens):
-        text = ''.join([token for token in tokens])
+        text = ''.join([self.decoder[token] for token in tokens])
         text = bytearray([self.byte_decoder[c] for c in text]).decode(
             'utf-8', errors=self.errors
         )
         return text
+
+    def list_tokens(self):
+        return self.encoder.values()

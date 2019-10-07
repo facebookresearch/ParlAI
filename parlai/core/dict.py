@@ -318,6 +318,8 @@ class DictionaryAgent(Agent):
             self.bpehelper = _BPEHelper(opt.get('dict_file') + '.codecs')
         elif self.tokenizer == 'gpt2':
             self.gpt2_bpe = Gpt2BpeHelper(opt)
+            for each_token in self.gpt2_bpe.list_tokens():
+                self.add_token(each_token)
         if not shared:
             if self.null_token:
                 # fix count for null token to one billion and three
@@ -536,6 +538,8 @@ class DictionaryAgent(Agent):
 
     def remove_tail(self, min_freq):
         """Remove elements below the frequency cutoff from the dictionary."""
+        if self.opt.get('tokenizer') == 'gpt2':
+            raise RuntimeError("Remove_tail doesn't work with gpt2")
         to_remove = []
         for token, freq in self.freq.items():
             if freq < min_freq:
