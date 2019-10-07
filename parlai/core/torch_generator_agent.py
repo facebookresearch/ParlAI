@@ -1049,8 +1049,7 @@ class TopKSampling(TreeSearch):
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
         tok_ids = indices[hyp_ids, choices]
         scores = values[hyp_ids, choices]
-        best_scores = prior_scores.expand_as(scores) + scores
-        return (hyp_ids, tok_ids, best_scores)
+        return (hyp_ids, tok_ids, scores)
 
 
 class NucleusSampling(TreeSearch):
@@ -1085,5 +1084,4 @@ class NucleusSampling(TreeSearch):
         tok_ids = sinds[hyp_ids, choices]
         # Convert back to logspace.
         scores = sprobs[hyp_ids, choices].log()
-        best_scores = prior_scores.expand_as(scores) + scores
-        return (hyp_ids, tok_ids, best_scores)
+        return (hyp_ids, tok_ids, scores)
