@@ -114,7 +114,7 @@ we could do the following:
 
 .. code-block:: bash
 
-  # Evaluate seq2seq model trained on twitter from our model zoo
+  # Evaluate seq2seq model trained on convai2 from our model zoo
   python examples/eval_model.py -t twitter -m legacy:seq2seq:0 -mf models:convai2/seq2seq/convai2_self_seq2seq_model
 
 
