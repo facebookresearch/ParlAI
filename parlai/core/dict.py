@@ -317,9 +317,20 @@ class DictionaryAgent(Agent):
                 raise RuntimeError('--dict-file is mandatory.')
             self.bpehelper = _BPEHelper(opt.get('dict_file') + '.codecs')
         elif self.tokenizer == 'gpt2':
+            if self.lower:
+                raise ValueError(
+                    'Only use --dict-lower false with --dict-tokenizer gpt2'
+                )
+            if self.maxtokens > 0 or self.minfreq > 0:
+                raise ValueError(
+                    'You should not filter vocabulary with using --dict-tokenizer gpt2'
+                    ' (no --dict-minfreq or --dict-maxtokens).'
+                )
+
             self.gpt2_bpe = Gpt2BpeHelper(opt)
             for each_token in self.gpt2_bpe.list_tokens():
                 self.add_token(each_token)
+                self.freq[each_token] = 1
         if not shared:
             if self.null_token:
                 # fix count for null token to one billion and three
@@ -452,9 +463,7 @@ class DictionaryAgent(Agent):
         )
 
     def gpt2_tokenize(self, text):
-        """
-        Tokenize using Gpt2 BPE tokenizer.
-        """
+        """Tokenize using Gpt2 BPE tokenizer."""
         return self.gpt2_bpe.encode(text)
 
     @staticmethod
@@ -538,8 +547,6 @@ class DictionaryAgent(Agent):
 
     def remove_tail(self, min_freq):
         """Remove elements below the frequency cutoff from the dictionary."""
-        if self.opt.get('tokenizer') == 'gpt2':
-            raise RuntimeError("Remove_tail doesn't work with gpt2")
         to_remove = []
         for token, freq in self.freq.items():
             if freq < min_freq:
@@ -624,6 +631,9 @@ class DictionaryAgent(Agent):
                 self.bpehelper.copy_codecs_file(filename + '.codecs')
             if sort:
                 self.sort(trim=False)
+        elif self.tokenizer == 'gpt2':
+            # never remove or sort tokens from gpt2
+            pass
         elif sort:
             self.sort(trim=True)
 
@@ -653,6 +663,8 @@ class DictionaryAgent(Agent):
         :param bool trim:
             If True, truncate the dictionary based on minfreq and maxtokens.
         """
+        if trim and self.tokenizer == 'gpt2':
+            raise RuntimeError("You should not trim the dictionary when using gpt-2.")
         # sort first by count, then alphabetically
         if trim:
             self.remove_tail(self.minfreq)

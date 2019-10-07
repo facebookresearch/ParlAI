@@ -74,10 +74,9 @@ class Gpt2BpeHelper:
             self.encoder = json.load(f)
         for each_token in self.encoder.keys():
             new_token = ''.join(
-                [
-                    '\\' + hex(b).lstrip('0') if b > 127 else chr(b)
-                    for b in each_token.encode('utf-8')
-                ]
+                # escape nonprintable characters
+                '\\' + hex(b).lstrip('0') if (b > 127 or b < 32) else chr(b)
+                for b in each_token.encode('utf-8')
             )
             self.encoder[each_token] = new_token
         self.decoder = {v: k for k, v in self.encoder.items()}
