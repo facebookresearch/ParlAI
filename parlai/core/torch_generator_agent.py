@@ -8,8 +8,7 @@
 """
 Generic PyTorch-based Generator agent.
 
-Implements quite a bit of boilerplate, including forced-decoding loss and beam
-search.
+Implements quite a bit of boilerplate, including forced-decoding loss and a tree search.
 
 Contains the following utilities:
 
@@ -853,8 +852,15 @@ class TreeSearch(object):
         if self.scores is None:
             self.scores = torch.zeros(1).type_as(logprobs).to(logprobs.device)
 
+        # penalize hypotheses ending in EOS on the prior scores (self.scores) level
+        # this is only related to search which uses prior scores (self.scores) (e.g. beam)
+        for hyp_id, token in enumerate(self.outputs[-1]):
+            if token == self.eos:
+                self.scores[hyp_id] = neginf(self.scores.dtype)
+
         hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
-        self.all_scores.append(self.scores)
+        # use clone() here to ensure that self.all_scores will not be changed later due to any penalties to self.scores
+        self.all_scores.append(self.scores.clone())
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
@@ -870,7 +876,7 @@ class TreeSearch(object):
                 eostail = _HypothesisTail(
                     timestep=len(self.outputs) - 1,
                     hypid=hypid,
-                    score=self.scores[hypid],
+                    score=self.all_scores[-1][hypid],
                     tokenid=self.eos,
                 )
                 self.finished.append(eostail)
