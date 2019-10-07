@@ -11,6 +11,7 @@ import importlib
 import shared_utils as utils
 import time
 import datetime
+import traceback
 from concurrent import futures
 import logging
 
@@ -103,6 +104,7 @@ class MessengerWorldRunner:
         world = world_generator(self.opt, agents)
         utils.print_and_log(logging.DEBUG, f'actual world: {world}')
         task.world = world
+
         while not world.episode_done() and not self.system_done:
             ret_val = world.parley()
             time.sleep(0.3)
@@ -130,7 +132,9 @@ class MessengerWorldRunner:
         self.tasks[task_name] = task
 
         def _world_fn():
-            print("Starting task {}...".format(task_name))
+            utils.print_and_log(
+                logging.INFO, 'Starting task {}...'.format(task_name)
+            )
             return self.run_world(task, world_name, agents)
 
         fut = self.executor.submit(_world_fn)
@@ -143,7 +147,6 @@ class MessengerWorldRunner:
         overworld_name,
         onboard_map,
         agent,
-        world_type=None,
     ):
         """Launch an overworld and a subsequent onboarding world. Return the
         job's future
@@ -162,48 +165,55 @@ class MessengerWorldRunner:
             overworld_name,
             [agent],
             is_overworld=True,
-            world_type=world_type,
+            world_type=None,
         )
         self.tasks[task_name] = task
-        utils.print_and_log(logging.DEBUG,'launching overworld')
+        utils.print_and_log(logging.DEBUG,'1 launching overworld')
+
         def _world_function():
-            if task.world_type is None:
-                utils.print_and_log(logging.DEBUG,'getting world type')
-                world_type, _, overworld_exit = self.run_world(
-                    task,
-                    overworld_name,
-                    [agent],
-                )
-                utils.print_and_log(logging.DEBUG,f'world_type: {world_type}')
-                if world_type is None:
-                    return None, overworld_exit
-                task.world_type = world_type
-            else:
-                world_type = task.world_type
-                overworld_exit = False
-
-            # perform onboarding
-            onboard_type = onboard_map.get(world_type)
-            utils.print_and_log(logging.DEBUG,f'going to onboard: {onboard_type}')
-            onboard_exit = False
-            if onboard_type:
-                _, _, onboard_exit = self.run_world(
-                    task,
-                    onboard_type,
-                    [agent],
-                )
-
-            # silent exit: if the worker dies during the execution of the
-            # overworld or onboarding world, silent_exit is True IFF the
-            # world has an 'offload_state' function that allows the state
-            # to be transferred; otherwise it is False
-            utils.print_and_log(logging.DEBUG,f'done with onboard, returning {world_type}')
-
-            silent_exit = overworld_exit or onboard_exit
-            self.manager.add_agent_to_pool(
-                self.manager.get_agent_state(agent.id), world_type
+            world_generator = utils.get_world_fn_attr(
+                self._world_module, overworld_name, "generate_world"
             )
-            return world_type, silent_exit
+            overworld = world_generator(self.opt, agents)
+            while not self.system_done:
+                utils.print_and_log(logging.DEBUG,'2 Manager running')
+                if task.world_type is None:
+                    utils.print_and_log(logging.DEBUG,'3 getting world type')
+                    # world_type, _, overworld = self.run_world(
+                    #     task,
+                    #     overworld_name,
+                    #     [agent],
+                    # )
+
+                    world_type = overworld.parley()
+                    utils.print_and_log(logging.DEBUG,f' 4 world_type: {world_type}')
+                    if world_type is None:
+                        continue
+                    task.world_type = world_type
+                else:
+                    world_type = task.world_type
+
+                # perform onboarding
+                onboard_type = onboard_map.get(world_type)
+                utils.print_and_log(logging.DEBUG,f'5 going to onboard: {onboard_type}')
+                if onboard_type:
+                    self.run_world(
+                        task,
+                        onboard_type,
+                        [agent],
+                    )
+
+                # silent exit: if the worker dies during the execution of the
+                # overworld or onboarding world, silent_exit is True IFF the
+                # world has an 'offload_state' function that allows the state
+                # to be transferred; otherwise it is False
+                utils.print_and_log(logging.DEBUG,f'6 done with onboard, returning {world_type}')
+
+                self.manager.add_agent_to_pool(
+                    self.manager.get_agent_state(agent.id), world_type
+                )
+                overworld.return_overworld()
+            return world_type
 
         fut = self.executor.submit(_world_function)
         task.future = fut

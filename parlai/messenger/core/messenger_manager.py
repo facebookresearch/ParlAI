@@ -94,16 +94,18 @@ class MessengerManager:
         # New Attrs
         self.config = opt['config']
         self.overworld = self.config['overworld']
-        self.world_module = self.config['world_module']
+        self.world_path = self.config['world_path']
+        self.world_module = shared_utils.get_world_module(self.world_path)
         self.page_id = self.config['page_id']
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
         self.world_runner = MessengerWorldRunner(
-            opt, self.world_module, self.max_workers, self, opt['is_debug']
+            opt, self.world_path, self.max_workers, self, opt['is_debug']
         )
         self.set_agents_required()
         self.onboard_map = {task: cfg.onboarding_name for task, cfg in self.task_configs.items()}
+        self.taskworld_map = {task: cfg.task_name for task, cfg in self.task_configs.items()}
 
     # Helpers and internal manager methods #
 
@@ -334,7 +336,7 @@ class MessengerManager:
         self.messenger_agent_states[agent_id] = agent_state
         # Start the onboarding thread and run it
         future = self.world_runner.launch_overworld(
-            task_id, self.overworld, self.onboard_map, agent, None)
+            task_id, self.overworld, self.onboard_map, agent)
 
         def _done_callback(fut):
             e = fut.exception()
@@ -357,6 +359,9 @@ class MessengerManager:
     def _on_new_message(self, message):
         """Put an incoming message onto the correct agent's message queue.
         """
+        shared_utils.print_and_log(
+            logging.INFO, 'ON New MESSAGE 00: {}'.format(message)
+        )
         agent_id = message['sender']['id']
         shared_utils.print_and_log(
             logging.INFO, 'ON New MESSAGE 0'
@@ -368,6 +373,9 @@ class MessengerManager:
             logging.INFO, 'ON New MESSAGE 1'
         )
         agent_state = self.get_agent_state(agent_id)
+        shared_utils.print_and_log(
+            logging.INFO, 'ON New MESSAGE 1a {}'.format(agent_state)
+        )
         if agent_state.get_active_agent() is None:
             shared_utils.print_and_log(
                 logging.INFO, 'ON New MESSAGE 2'
@@ -397,9 +405,18 @@ class MessengerManager:
         else:
             # If an agent is in a solo world, we can put a typing indicator
             # and mark the message as read
+            shared_utils.print_and_log(
+                logging.INFO, 'ON New MESSAGE 3 {}'.format(agent_state)
+            )
             agent = agent_state.get_active_agent()
+            shared_utils.print_and_log(
+                logging.INFO, 'ON New MESSAGE 4 {}'.format(agent)
+            )
             if len(agent.message_partners) == 0:
                 self.handle_bot_read(agent.id)
+            shared_utils.print_and_log(
+                logging.INFO, 'ON New MESSAGE 5 {}'.format(message)
+            )
             agent.put_data(message)
 
     def _create_agent(self, task_id, agent_id):
@@ -749,6 +766,12 @@ class MessengerManager:
                     self.observe_message(
                         agent.id, "Sorry, this world closed. Returning to overworld."
                     )
+            else:
+                shared_utils.print_and_log(
+                    logging.INFO,
+                    'World {} had no error'.format(world_type),
+                    should_print=True,
+                )
             self.active_worlds[task_id] = None
             for agent in agents:
                 self.after_agent_removed(agent.id)
@@ -788,15 +811,15 @@ class MessengerManager:
                             agents.append(agent)
                             # reset wait message state
                             state.stored_data['seen_wait_message'] = False
-                        assign_role_functions = shared_utils.get_world_fn_attr(
-                            self.opt['world_module'], world_type, 'assign_roles'
+                        assign_role_function = shared_utils.get_world_fn_attr(
+                            self.world_module, self.taskworld_map[world_type], 'assign_roles'
                         )
-                        if assign_role_functions is None:
+                        if assign_role_function is None:
                             raise RuntimeError(
                                 f'Need to define static method `assign_roles`'
                                 'in {world_type}'
                             )
-                        assign_role_functions[world_type](agents)
+                        assign_role_function(agents)
                         # Allow task creator to filter out workers and run
                         # versions of the task that require fewer agents
                         agents = [a for a in agents if a.disp_id is not None]
@@ -819,7 +842,9 @@ class MessengerManager:
                         # )
                         # task_thread.daemon = True
                         # task_thread.start()
-                        future = self.world_runner.launch_task_world(task_id, world_type, agents)
+                        future = self.world_runner.launch_task_world(
+                            task_id, self.taskworld_map[world_type], agents
+                        )
                         future.add_done_callback(_done_callback)
                         self.active_worlds[task_id] = future
 

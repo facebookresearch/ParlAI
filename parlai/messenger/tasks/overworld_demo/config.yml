@@ -1,7 +1,7 @@
 tasks:
   echo:
     onboard_world: MessengerEchoOnboardWorld
-    task_world: CommentBattleSingleplayerTaskWorld
+    task_world: MessengerEchoTaskWorld
     timeout: 180
     agents_required: 1
   onboard data: # must be the name returned by the overworld

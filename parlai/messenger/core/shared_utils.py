@@ -127,9 +127,6 @@ def get_eligibility_fn(world_module, world_name):
         DesiredWorld = getattr(world_module, world_name)
         eligibility_fn = DesiredWorld.eligibility_function
     except Exception:
-        print(
-            "No `eligibility_function` exists, allowing everyone to pass through..."
-        )
         eligibility_fn = None
     return eligibility_fn
 
@@ -141,8 +138,8 @@ def parse_configuration_file(config_path):
     with open(config_path) as f:
         cfg = yaml.load(f.read())
         # get world path
-        result["world_module"] = cfg.get("world_module")
-        if not result["world_module"]:
+        result["world_path"] = cfg.get("world_module")
+        if not result["world_path"]:
             raise ValueError("Did not specify world module")
         result["overworld"] = cfg.get("overworld")
         if not result["overworld"]:
