@@ -375,9 +375,6 @@ class MessengerManager:
                     raise e
 
         future.add_done_callback(_done_callback)
-        shared_utils.print_and_log(
-            logging.INFO, 'ON FIRST MESSAGE 2'
-        )
         self.agent_id_to_overworld_future[agent_id] = future
 
     def after_agent_removed(self, agent_id):

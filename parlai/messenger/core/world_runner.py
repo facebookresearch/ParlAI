@@ -59,7 +59,7 @@ class MessengerWorldRunner:
         self.executor.shutdown()
         self._log("Shutdown complete.")
 
-    def run_world(self, task, world_name, agents):
+    def _run_world(self, task, world_name, agents):
         """Run a world until completion.
 
         :param task:
@@ -114,7 +114,7 @@ class MessengerWorldRunner:
             utils.print_and_log(
                 logging.INFO, 'Starting task {}...'.format(task_name)
             )
-            return self.run_world(task, world_name, agents)
+            return self._run_world(task, world_name, agents)
 
         fut = self.executor.submit(_world_fn)
         task.future = fut
@@ -172,7 +172,7 @@ class MessengerWorldRunner:
                     agent = self.manager._create_agent(onboard_id, overworld_agent.id)
                     agent_state.set_active_agent(agent)
                     agent_state.assign_agent_to_task(agent, onboard_id)
-                    _, onboard_data = self.run_world(
+                    _, onboard_data = self._run_world(
                         task,
                         onboard_type,
                         [agent],
