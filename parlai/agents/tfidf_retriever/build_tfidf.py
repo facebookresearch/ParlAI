@@ -14,7 +14,6 @@ import scipy.sparse as sp
 import argparse
 import os
 import math
-import logging
 
 from multiprocessing import Pool as ProcessPool
 from multiprocessing.util import Finalize
@@ -24,15 +23,12 @@ from collections import Counter
 from . import utils
 from .doc_db import DocDB
 from . import tokenizers
+from parlai.core.logging_utils import ParlaiLogger, INFO
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
-console = logging.StreamHandler()
-console.setFormatter(fmt)
-logger.addHandler(console)
-
-
+fmt = '%(asctime)s: [ %(message)s ]'
+logger = ParlaiLogger(
+    name=__name__, console_level=INFO, console_format=fmt, file_format=fmt
+)
 # ------------------------------------------------------------------------------
 # Multiprocessing functions
 # ------------------------------------------------------------------------------
@@ -302,7 +298,7 @@ def get_doc_freqs(cnts):
 
 def run(args):
     # ParlAI version of run method, modified slightly
-    logging.info('Counting words...')
+    logger.info('Counting words...')
     count_matrix = get_count_matrix(args, {'db_path': args.db_path})
 
     logger.info('Making tfidf vectors...')
@@ -362,7 +358,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    logging.info('Counting words...')
+    logger.info('Counting words...')
     count_matrix, doc_dict = get_count_matrix(args, {'db_path': args.db_path})
 
     logger.info('Making tfidf vectors...')
