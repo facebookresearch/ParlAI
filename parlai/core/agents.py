@@ -656,20 +656,19 @@ def create_agent(opt, requireModelExists=False):
     opt['model_file'] + '.opt' must exist and contain a pickled or json dict
     containing the model's options).
     """
-    if opt.get('datapath', None) is None:
-        # add datapath, it is missing
-        from parlai.core.params import ParlaiParser, get_model_name
+    from parlai.core.params import ParlaiParser, get_model_name
 
-        parser = ParlaiParser(add_parlai_args=False)
-        parser.add_parlai_data_path()
-        # add model args if they are missing
-        model = get_model_name(opt)
-        if model is not None:
-            parser.add_model_subargs(model)
-        opt_parser = parser.parse_args("", print_args=False)
-        for k, v in opt_parser.items():
-            if k not in opt:
-                opt[k] = v
+    parser = ParlaiParser(add_parlai_args=False)
+    # add datapath, if it is missing
+    parser.add_parlai_data_path()
+    # add model args if they are missing
+    model = get_model_name(opt)
+    if model is not None:
+        parser.add_model_subargs(model)
+    opt_parser = parser.parse_args("", print_args=False)
+    for k, v in opt_parser.items():
+        if k not in opt:
+            opt[k] = v
 
     if opt.get('model_file'):
         opt['model_file'] = modelzoo_path(opt.get('datapath'), opt['model_file'])
