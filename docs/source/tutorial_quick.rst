@@ -79,14 +79,7 @@ including a full list of `tasks <http://parl.ai/docs/tasks.html>`_ and
 `instructions <http://parl.ai/docs/tutorial_basic.html#training-and-evaluating-existing-agents>`_
 on specifying arguments for training and evaluation (like the ``-t <task>`` argument used here).
 
-First, we need to install some dependencies to build the twitter dataset.
-
-.. code-block:: bash
-
-  # install necessary dependencies
-  pip3 install emoji unidecode
-
-Next, we can print the first few examples.
+Let's begin again by printing the first few examples.
 
 .. code-block:: bash
 
