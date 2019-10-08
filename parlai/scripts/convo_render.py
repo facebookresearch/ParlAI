@@ -258,7 +258,7 @@ def check_icon_arg(src, default):
             if os.path.isabs(src):
                 src = "file://" + src
             else:
-                raise Exception(
+                raise IOError(
                     f"Please provide a valid URL or valid *absolute* path to icon: {src}"
                 )
     return src
@@ -272,7 +272,7 @@ def validate_args(args):
     :return: Returns extension of output file. None if no output file
     """
     if not os.path.exists(args.input):
-        raise Exception("Input File does not exist")
+        raise IOError("Input File does not exist")
     if args.output is None:
         return None
     extension = args.output.split(".")[-1]
