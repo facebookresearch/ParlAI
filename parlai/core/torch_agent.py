@@ -39,7 +39,6 @@ from parlai.core.utils import (
     warn_once,
     round_sigfigs,
 )
-from parlai.core.distributed_utils import is_primary_worker
 
 try:
     import torch
@@ -1013,7 +1012,7 @@ class TorchAgent(ABC, Agent):
 
     def _gpu_usage(self):
         """
-        Computes GPU memory usage.
+        Compute GPU memory usage.
 
         Includes both allocated and cached memory; this should be close to the
         output of nvidia-smi, but not reflect of how much is currently demanded
