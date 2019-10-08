@@ -722,7 +722,7 @@ class DictionaryAgent(Agent):
         separated by the delimiter (default ``' '``).
         """
         if self.tokenizer == 'gpt2' and not self.opt.get('bpe_debug', False):
-            return self.gpt2_bpe.decode(vector)
+            return self.gpt2_bpe.decode(self[int(idx)] for idx in vector)
         # if we want to debug into this gpt2 bpe, you will get next line
         text = delimiter.join(self[int(idx)] for idx in vector)
         # if we used a BPE tokenizer we need to rejoin the encodings

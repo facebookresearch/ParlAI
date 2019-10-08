@@ -39,7 +39,8 @@ class TestDictionary(unittest.TestCase):
         )
         self.assertEqual(
             agent.vec2txt(
-                [
+                agent.tok2ind[w]
+                for w in [
                     'Hello',
                     ',',
                     r'\xc4\xa0Par',
