@@ -11,7 +11,7 @@ from parlai.core.worlds import create_task
 from parlai.core.pytorch_data_teacher import ep_length
 
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 import os
 import torch
 from torch.utils.data.sampler import RandomSampler, SequentialSampler as Sequential

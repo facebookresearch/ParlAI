@@ -13,7 +13,7 @@ from torch.nn.parameter import Parameter
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
 
-from parlai.core.utils import NEAR_INF
+from parlai.utils.misc import NEAR_INF
 
 
 def opt_to_kwargs(opt):

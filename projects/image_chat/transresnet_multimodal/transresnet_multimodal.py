@@ -6,7 +6,7 @@
 """Transresnet Multimodal Model (https://arxiv.org/abs/1811.00945)."""
 
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import round_sigfigs
+from parlai.utils.misc import round_sigfigs
 from parlai.core.message import Message
 from .modules import TransresnetMultimodalModel
 from projects.personality_captions.transresnet.transresnet import TransresnetAgent

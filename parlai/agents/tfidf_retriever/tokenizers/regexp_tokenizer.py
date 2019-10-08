@@ -12,7 +12,7 @@ and requires minimal dependencies.
 
 import regex
 from .tokenizer import Tokens, Tokenizer
-from parlai.core.logging_utils import logger
+from parlai.utils.logging import logger
 
 
 class RegexpTokenizer(Tokenizer):

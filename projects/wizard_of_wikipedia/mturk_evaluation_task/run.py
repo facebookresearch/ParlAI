@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
-from parlai.core.utils import AttrDict
+from parlai.utils.misc import AttrDict
 from parlai.mturk.core.mturk_manager import MTurkManager
 import parlai.mturk.core.mturk_utils as mturk_utils
 
@@ -15,7 +15,7 @@ import datetime
 import json
 import os
 import sys
-from parlai.core.logging_utils import ParlaiLogger, INFO
+from parlai.utils.logging import ParlaiLogger, INFO
 
 MASTER_QUALIF = {
     'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',

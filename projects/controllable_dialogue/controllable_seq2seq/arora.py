@@ -14,7 +14,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.core.build_data import modelzoo_path
 import torchtext.vocab as vocab
-from parlai.core.utils import TimeLogger
+from parlai.utils.misc import TimeLogger
 from collections import Counter, deque
 import numpy as np
 import os

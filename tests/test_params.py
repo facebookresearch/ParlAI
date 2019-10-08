@@ -11,7 +11,7 @@ import json
 import unittest
 from parlai.core.params import ParlaiParser
 import parlai.core.agents as agents
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 
 class _ExampleUpgradeOptAgent(agents.Agent):

@@ -30,7 +30,7 @@ import os
 import signal
 import torch.distributed as dist
 import parlai.scripts.train_model as single_train
-import parlai.core.distributed_utils as distributed_utils
+import parlai.utils.distributed as distributed_utils
 
 
 def multiprocess_train(

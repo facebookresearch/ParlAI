@@ -10,7 +10,7 @@ non-whitespace tokens.
 
 import regex
 from .tokenizer import Tokens, Tokenizer
-from parlai.core.logging_utils import logger
+from parlai.utils.logging import logger
 
 
 class SimpleTokenizer(Tokenizer):

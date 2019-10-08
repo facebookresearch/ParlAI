@@ -7,9 +7,9 @@
 """Torch Classifier Agents classify text into a fixed set of labels."""
 
 
-from parlai.core.distributed_utils import is_distributed
+from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.core.utils import round_sigfigs, warn_once
+from parlai.utils.misc import round_sigfigs, warn_once
 from collections import defaultdict
 
 import torch

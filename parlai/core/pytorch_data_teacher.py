@@ -12,7 +12,7 @@ http://parl.ai/docs/tutorial_worlds.html#multiprocessed-pytorch-dataloader
 """
 
 from .teachers import FixedDialogTeacher
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from parlai.scripts.build_pytorch_data import build_data
 from .agents import get_agent_module
 import json

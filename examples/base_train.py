@@ -19,7 +19,7 @@ processing the data.
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import Agent
 from parlai.core.worlds import create_task
-from parlai.core.logging_utils import logger
+from parlai.utils.logging import logger
 import time
 
 

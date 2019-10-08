@@ -7,7 +7,7 @@
 
 import unittest
 import parlai.scripts.display_data as display_data
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 END2END_OPTIONS = {
     'task': 'wizard_of_wikipedia:generator:random_split',
