@@ -182,6 +182,9 @@ jobs:
       - run:
           name: Unit tests (GPU; pytorch 1.1)
           command: python setup.py test -s tests.suites.unittests -v
+      - run:
+          name: Quickstart unit tests (GPU; pytorch 1.1)
+          command: sh tests/test_quickstart.sh
 
   unittests_gpu12:
     <<: *gpu
@@ -196,6 +199,9 @@ jobs:
       - run:
           name: Unit tests (GPU; pytorch 1.2)
           command: python setup.py test -s tests.suites.unittests -v
+      - run:
+          name: Quickstart unit tests (GPU; pytorch 1.1)
+          command: sh tests/test_quickstart.sh
 
   black:
     <<: *standard_cpu36
