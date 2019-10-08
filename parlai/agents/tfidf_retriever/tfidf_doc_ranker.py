@@ -8,7 +8,6 @@
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
 
-import logging
 import numpy as np
 import scipy.sparse as sp
 
@@ -17,52 +16,31 @@ from functools import partial
 
 from . import utils
 from . import tokenizers
-from parlai.core.agents import Agent
-
-logger = logging.getLogger(__name__)
+from parlai.core.logging_utils import logger
 
 
-class TfidfDocRankerAgent(Agent):
+class TfidfDocRanker(object):
     """Loads a pre-weighted inverted index of token/document terms.
     Scores new queries by taking sparse dot products.
     """
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, tfidf_path=None, strict=True):
         """
-        Args in opt:
+        Args:
             tfidf_path: path to saved model file
             strict: fail on empty queries or continue (and return empty result)
         """
-        super().__init__(opt, shared)
         # Load from disk
-        if shared:
-            self.doc_mat = shared['doc_mat']
-            self.ngrams = shared['ngrams']
-            self.hash_size = shared['hash_size']
-            self.tokenizer = shared['tokenizer']
-            self.doc_freqs = shared['doc_freqs']
-            self.doc_dict = shared['doc_dict']
-        else:
-            logger.info('Loading %s' % opt['tfidf_path'])
-            matrix, metadata = utils.load_sparse_csr(opt['tfidf_path'])
-            self.doc_mat = matrix
-            self.ngrams = metadata['ngram']
-            self.hash_size = metadata['hash_size']
-            self.tokenizer = tokenizers.get_class(metadata['tokenizer'])()
-            self.doc_freqs = metadata['doc_freqs'].squeeze()
-            self.doc_dict = metadata.get('doc_dict', None)
+        logger.info('Loading %s' % tfidf_path)
+        matrix, metadata = utils.load_sparse_csr(tfidf_path)
+        self.doc_mat = matrix
+        self.ngrams = metadata['ngram']
+        self.hash_size = metadata['hash_size']
+        self.tokenizer = tokenizers.get_class(metadata['tokenizer'])()
+        self.doc_freqs = metadata['doc_freqs'].squeeze()
+        self.doc_dict = metadata.get('doc_dict', None)
         self.num_docs = self.doc_mat.shape[1] - 1
-        self.strict = opt['strict']
-
-    def share(self):
-        shared = super().share()
-        shared['doc_mat'] = self.doc_mat
-        shared['ngrams'] = self.ngrams
-        shared['hash_size'] = self.hash_size
-        shared['tokenizer'] = self.tokenizer
-        shared['doc_freqs'] = self.doc_freqs
-        shared['doc_dict'] = self.doc_dict
-        return shared
+        self.strict = strict
 
     def get_doc_index(self, doc_id):
         """Convert doc_id --> doc_index"""
