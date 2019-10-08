@@ -173,4 +173,4 @@ class OffensiveLanguageDetector(object):
         return self.contains_offensive_language(key)
 
 
-# TODO [Emily] add classifier
+# TODO: Add classifier for using safety classifier as a utility
