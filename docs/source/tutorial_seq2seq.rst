@@ -333,7 +333,7 @@ The full seq2seq implementation in ParlAI adds a lot more bells and whistles.
     from parlai.core.agents import Agent
     from parlai.core.dict import DictionaryAgent
     from parlai.utils.misc import PaddingUtils
-    from parlai.core.thread_utils import SharedTable
+    from parlai.utils.thread import SharedTable
 
     import torch
     from torch.autograd import Variable
