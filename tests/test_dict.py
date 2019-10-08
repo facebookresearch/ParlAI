@@ -22,8 +22,9 @@ class TestDictionary(unittest.TestCase):
     """Basic tests on the built-in parlai Dictionary."""
 
     def test_gpt2_bpe_tokenize(self):
-        opt = Opt({'dict_tokenizer': 'gpt2', 'datapath': './data'})
-        agent = DictionaryAgent(opt)
+        with testing_utils.capture_output():
+            opt = Opt({'dict_tokenizer': 'gpt2', 'datapath': './data'})
+            agent = DictionaryAgent(opt)
         self.assertEqual(
             agent.gpt2_tokenize(u'Hello, ParlAI! 😀'),
             [
