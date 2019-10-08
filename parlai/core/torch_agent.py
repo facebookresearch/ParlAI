@@ -999,7 +999,7 @@ class TorchAgent(ABC, Agent):
         if hasattr(self, 'scheduler') and self.scheduler is not None:
             current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
             metrics['lr'] = round_sigfigs(current_lr, 4)
-        metrics['num_updates'] = self._number_training_updates
+        metrics['total_train_updates'] = self._number_training_updates
 
         steps = self.metrics['updates']
         if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
