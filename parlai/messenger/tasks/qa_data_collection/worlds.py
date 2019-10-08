@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.messenger.core.worlds import (
     SimpleMessengerOverworld as MessengerOverworld,
-    OnboardWorld as QADataCollectionOnboardWorld
+    OnboardWorld as QADataCollectionOnboardWorld,
 )
 from parlai.core.worlds import World, validate
 import importlib

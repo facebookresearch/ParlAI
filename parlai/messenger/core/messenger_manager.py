@@ -161,8 +161,12 @@ class MessengerManager:
         self.max_agents_for = {
             task: cfg.agents_required for task, cfg in self.task_configs.items()
         }
-        self.onboard_map = {task: cfg.onboarding_name for task, cfg in self.task_configs.items()}
-        self.taskworld_map = {task: cfg.task_name for task, cfg in self.task_configs.items()}
+        self.onboard_map = {
+            task: cfg.onboarding_name for task, cfg in self.task_configs.items()
+        }
+        self.taskworld_map = {
+            task: cfg.task_name for task, cfg in self.task_configs.items()
+        }
 
         self._complete_setup()
 
@@ -170,11 +174,7 @@ class MessengerManager:
 
     def _log_debug(self, text):
         time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        shared_utils.print_and_log(
-            logging.DEBUG,
-            f'{time}: {text}',
-            should_print=True
-        )
+        shared_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
 
     def _complete_setup(self):
         """Complete necessary setup items."""
@@ -301,15 +301,13 @@ class MessengerManager:
         # By default we don't actually do anything when messages are marked as
         # being delivered, but we expose the ability for others to
         self._log_debug(
-            'Messages {} marked as received.'.format(event['delivery']['mids']),
+            'Messages {} marked as received.'.format(event['delivery']['mids'])
         )
 
     def _handle_message_read(self, event):
         # If the message was sent by another user (as in during a conversation)
         # then we need to propogate the read back to that user.
-        self._log_debug(
-            'Messages {} marked as read.'.format(event['read'])
-        )
+        self._log_debug('Messages {} marked as read.'.format(event['read']))
         reader = event['sender']['id']
         agent_state = self.get_agent_state(reader)
         if agent_state is None:
@@ -568,7 +566,9 @@ class MessengerManager:
             self.message_socket = MessageSocket(
                 socket_use_url, self.port, self._handle_webhook_event
             )
-        shared_utils.print_and_log(logging.INFO, 'done with websocket', should_print=True)
+        shared_utils.print_and_log(
+            logging.INFO, 'done with websocket', should_print=True
+        )
 
     def init_new_state(self):
         """Prepare for new run.
@@ -591,16 +591,13 @@ class MessengerManager:
         :param world_type:
             string world type
         :param agent_pool:
-            list of `AgentState`s
+            list of ``AgentState``s
         :param max_time_in_pool:
             int maximum time allowed for agent to be in pool
         """
         for agent_state in agent_pool:
             time_in_pool = agent_state.time_in_pool.get(world_type)
-            if (
-                time_in_pool
-                and time.time() - time_in_pool > max_time_in_pool
-            ):
+            if time_in_pool and time.time() - time_in_pool > max_time_in_pool:
                 # remove agent from agent_pool
                 self.remove_agent_from_pool(agent_state, world_type)
                 # put agent back in overworld
@@ -669,16 +666,16 @@ class MessengerManager:
                 for world_type, agent_pool in valid_pools.items():
                     # check if agent has exceeded max time in pool
                     world_config = self.task_configs[world_type]
-                    if (
-                        world_config.max_time_in_pool is not None
-                    ):
+                    if world_config.max_time_in_pool is not None:
                         self.check_timeout_in_pool(
                             world_type, agent_pool, world_config.max_time_in_pool
                         )
 
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
-                        shared_utils.print_and_log(logging.INFO, 'starting pool', should_print=True)
+                        shared_utils.print_and_log(
+                            logging.INFO, 'starting pool', should_print=True
+                        )
                         # enough agents in pool to start new conversation
                         self.conversation_index += 1
                         task_id = 't_{}'.format(self.conversation_index)
@@ -695,7 +692,9 @@ class MessengerManager:
                             # reset wait message state
                             state.stored_data['seen_wait_message'] = False
                         assign_role_function = shared_utils.get_world_fn_attr(
-                            self.world_module, self.taskworld_map[world_type], 'assign_roles'
+                            self.world_module,
+                            self.taskworld_map[world_type],
+                            'assign_roles',
                         )
                         if assign_role_function is None:
                             raise RuntimeError(

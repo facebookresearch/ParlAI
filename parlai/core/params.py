@@ -497,7 +497,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '--config-path',
             default=None,
             type=str,
-            help='/path/to/config/file for a given task.'
+            help='/path/to/config/file for a given task.',
         )
 
         messenger.set_defaults(is_debug=False)

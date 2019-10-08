@@ -25,14 +25,7 @@ class MessengerWorldRunner:
     Launches worlds, overworlds, etc. Helper for MessengerManager
     """
 
-    def __init__(
-        self,
-        opt,
-        world_path,
-        max_workers,
-        manager,
-        is_debug=False,
-    ):
+    def __init__(self, opt, world_path, max_workers, manager, is_debug=False):
         self._world_module = utils.get_world_module(world_path)
         self.executor = futures.ThreadPoolExecutor(max_workers=max_workers)
         self.debug = is_debug
@@ -87,12 +80,7 @@ class MessengerWorldRunner:
         world_data = world.data if hasattr(world, "data") else {}
         return ret_val, world_data
 
-    def launch_task_world(
-        self,
-        task_name,
-        world_name,
-        agents,
-    ):
+    def launch_task_world(self, task_name, world_name, agents):
         """Launch a task world.
 
         Return the job's future.
@@ -111,22 +99,14 @@ class MessengerWorldRunner:
         self.tasks[task_name] = task
 
         def _world_fn():
-            utils.print_and_log(
-                logging.INFO, 'Starting task {}...'.format(task_name)
-            )
+            utils.print_and_log(logging.INFO, 'Starting task {}...'.format(task_name))
             return self._run_world(task, world_name, agents)
 
         fut = self.executor.submit(_world_fn)
         task.future = fut
         return fut
 
-    def launch_overworld(
-        self,
-        task_name,
-        overworld_name,
-        onboard_map,
-        overworld_agent,
-    ):
+    def launch_overworld(self, task_name, overworld_name, onboard_map, overworld_agent):
         """Launch an overworld and a subsequent onboarding world.
 
         Return the job's future
@@ -172,18 +152,10 @@ class MessengerWorldRunner:
                     agent = self.manager._create_agent(onboard_id, overworld_agent.id)
                     agent_state.set_active_agent(agent)
                     agent_state.assign_agent_to_task(agent, onboard_id)
-                    _, onboard_data = self._run_world(
-                        task,
-                        onboard_type,
-                        [agent],
-                    )
+                    _, onboard_data = self._run_world(task, onboard_type, [agent])
                     agent_state.onboard_data = onboard_data
-                self.manager.add_agent_to_pool(
-                    agent_state, world_type
-                )
-                utils.print_and_log(
-                    logging.INFO, 'onboarding/overworld complete'
-                )
+                self.manager.add_agent_to_pool(agent_state, world_type)
+                utils.print_and_log(logging.INFO, 'onboarding/overworld complete')
                 time.sleep(5)
 
                 # sleep until agent returns from task world

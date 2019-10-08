@@ -55,6 +55,7 @@ def generate_event_id(worker_id):
     """Return a unique id to use for identifying a packet for a worker"""
     return '{}_{}'.format(worker_id, uuid.uuid4())
 
+
 ##################
 ## New Utils
 ##################
@@ -62,12 +63,7 @@ class TaskState:
     """Wrapper for an agent running on a Worker"""
 
     def __init__(
-        self,
-        task_name,
-        world_name,
-        agents,
-        is_overworld=False,
-        world_type=None,
+        self, task_name, world_name, agents, is_overworld=False, world_type=None
     ):
         self.task_name = task_name
         self.world_name = world_name

@@ -22,6 +22,7 @@ class MessengerBotChatOnboardWorld(OnboardWorld):
     def parley(self):
         self.episodeDone = True
 
+
 class MessengerBotChatTaskWorld(World):
     """Example one person world that talks to a provided agent (bot)."""
 
