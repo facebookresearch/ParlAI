@@ -11,7 +11,7 @@ Unit tests for general checks of code quality.
 import unittest
 import os
 import re
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js|css)$'
 WHITELIST_PHRASES = [

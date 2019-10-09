@@ -16,7 +16,7 @@ from tqdm import tqdm
 from collections import deque
 import random
 from parlai.core.agents import create_task_agent_from_taskname
-from parlai.core.logging_utils import ParlaiLogger, INFO
+from parlai.utils.logging import ParlaiLogger, INFO
 
 fmt = '%(asctime)s: [ %(message)s ]'
 logger = ParlaiLogger(

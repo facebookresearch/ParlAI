@@ -20,7 +20,7 @@ import sys
 import copy
 import random
 import pprint
-from parlai.core.logging_utils import ParlaiLogger, INFO
+from parlai.utils.logging import ParlaiLogger, INFO
 
 
 # update this with models you want to run. these names correspond to variables

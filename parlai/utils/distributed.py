@@ -16,7 +16,7 @@ import builtins
 import pickle
 import contextlib
 
-# from parlai.core.logging_utils import logger # TODO: Uncomment before completion of #2044
+# from parlai.utils.logging import logger # TODO: Uncomment before completion of #2044
 try:
     import torch.version
     import torch.distributed as dist

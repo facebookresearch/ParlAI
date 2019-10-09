@@ -15,7 +15,7 @@ import shutil
 import io
 from typing import Tuple
 
-# from parlai.core.logging_utils import logger # TODO: Uncomment before completion of #2044
+# from parlai.utils.logging import logger # TODO: Uncomment before completion of #2044
 
 try:
     import torch

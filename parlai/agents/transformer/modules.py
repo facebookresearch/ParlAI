@@ -23,8 +23,8 @@ import math
 import numpy as np
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
-from parlai.core.utils import warn_once
-from parlai.core.utils import neginf
+from parlai.utils.misc import warn_once
+from parlai.utils.misc import neginf
 
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm

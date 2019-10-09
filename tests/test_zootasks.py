@@ -12,7 +12,7 @@ Mostly just ensures the docs will output nicely.
 
 import os
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 from parlai.zoo.model_list import model_list
 from parlai.tasks.task_list import task_list
 

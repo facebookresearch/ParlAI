@@ -6,7 +6,7 @@
 from examples.display_data import display_data
 from parlai.core.params import ParlaiParser
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 
 class TestDisplayData(unittest.TestCase):

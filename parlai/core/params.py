@@ -8,8 +8,6 @@
 import argparse
 import importlib
 import os
-import pickle
-import json
 import sys as _sys
 import datetime
 import parlai
@@ -18,7 +16,7 @@ import git
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.utils import Opt, load_opt_file
+from parlai.utils.misc import Opt, load_opt_file
 
 from typing import List, Optional
 

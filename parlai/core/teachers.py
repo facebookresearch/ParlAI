@@ -31,10 +31,10 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 
-from .agents import Teacher
-from .image_featurizers import ImageLoader
-from .message import Message
-from .utils import AttrDict, no_lock, str_to_msg, warn_once
+from parlai.core.agents import Teacher
+from parlai.core.image_featurizers import ImageLoader
+from parlai.core.message import Message
+from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
 from functools import lru_cache
 from abc import abstractmethod
