@@ -8,7 +8,7 @@
 
 import os
 import unittest
-from parlai.core.agents import Agent, create_agent_from_shared
+from parlai.core.agents import create_agent_from_shared
 from parlai.utils.testing import capture_output, tempdir
 from parlai.utils.misc import Message
 import parlai.utils.testing as testing_utils
