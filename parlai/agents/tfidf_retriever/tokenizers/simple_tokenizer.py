@@ -9,10 +9,8 @@ non-whitespace tokens.
 """
 
 import regex
-import logging
 from .tokenizer import Tokens, Tokenizer
-
-logger = logging.getLogger(__name__)
+from parlai.utils.logging import logger
 
 
 class SimpleTokenizer(Tokenizer):

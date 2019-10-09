@@ -17,7 +17,7 @@ except ImportError:
     )
 
 from parlai.core.agents import Agent
-from parlai.core.utils import AttrDict
+from parlai.utils.misc import AttrDict
 from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
 from .build_tfidf import run as build_tfidf

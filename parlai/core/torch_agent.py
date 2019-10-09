@@ -27,11 +27,11 @@ import os
 from torch import optim
 
 from parlai.core.agents import Agent
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.thread import SharedTable
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
-from parlai.core.utils import (
+from parlai.utils.misc import (
     AttrDict,
     argsort,
     fp16_optimizer_wrapper,
@@ -39,7 +39,6 @@ from parlai.core.utils import (
     warn_once,
     round_sigfigs,
 )
-from parlai.core.distributed_utils import is_primary_worker
 
 try:
     import torch
@@ -1773,7 +1772,7 @@ class TorchAgent(ABC, Agent):
 
     def set_interactive_mode(self, mode, shared):
         """Set interactive mode on or off."""
-        if shared is None:
+        if shared is None and mode:
             # Only print in the non-shared version.
             print("[" + self.id + ': full interactive mode on.' + ']')
 

@@ -11,10 +11,8 @@ and requires minimal dependencies.
 """
 
 import regex
-import logging
 from .tokenizer import Tokens, Tokenizer
-
-logger = logging.getLogger(__name__)
+from parlai.utils.logging import logger
 
 
 class RegexpTokenizer(Tokenizer):

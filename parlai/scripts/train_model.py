@@ -35,10 +35,10 @@ from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.metrics import aggregate_task_reports
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser, print_announcements
-from parlai.core.utils import Timer, round_sigfigs, warn_once
+from parlai.utils.misc import Timer, round_sigfigs, warn_once
 from parlai.core.logs import TensorboardLogger
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
-from parlai.core.distributed_utils import (
+from parlai.utils.distributed import (
     sync_object,
     is_primary_worker,
     all_gather_list,

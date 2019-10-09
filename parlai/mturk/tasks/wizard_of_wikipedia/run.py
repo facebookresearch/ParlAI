@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.agents import create_task_agent_from_taskname, create_agent
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import AttrDict
+from parlai.utils.misc import AttrDict
 from parlai.mturk.core.mturk_manager import MTurkManager
 from worlds import (
     MTurkWizardOfWikipediaWorld,

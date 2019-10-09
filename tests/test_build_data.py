@@ -6,7 +6,7 @@
 import os
 from parlai.core import build_data
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 import multiprocessing
 from parlai.core.params import ParlaiParser
 

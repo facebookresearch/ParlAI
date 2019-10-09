@@ -10,10 +10,10 @@ Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics
 between processes.
 """
 
-from parlai.core.thread_utils import SharedTable
-from parlai.core.utils import round_sigfigs, no_lock
+from parlai.utils.thread import SharedTable
+from parlai.utils.misc import round_sigfigs, no_lock
 from collections import Counter
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from numbers import Number
 
 import re

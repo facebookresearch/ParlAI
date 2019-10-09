@@ -4,7 +4,7 @@
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
 from parlai.core.worlds import validate, MultiAgentDialogWorld
-from parlai.core.utils import OffensiveLanguageDetector
+from parlai.utils.safety import OffensiveLanguageDetector
 from joblib import Parallel, delayed
 from task_config import task_config as config
 from extract_and_save_personas import main as main_extract

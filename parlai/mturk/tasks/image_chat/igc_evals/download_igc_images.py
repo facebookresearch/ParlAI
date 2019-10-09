@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 import csv
 import urllib.request
-from parlai.core.utils import ProgressLogger
+from parlai.utils.misc import ProgressLogger
 
 
 igc_file = 'IGC_crowd_test.csv'
