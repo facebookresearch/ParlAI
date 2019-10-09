@@ -3,10 +3,26 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from parlai.messenger.core.worlds import (
+    SimpleMessengerOverworld as MessengerOverworld,
+    OnboardWorld as QADataCollectionOnboardWorld,
+)
 from parlai.core.worlds import World, validate
+import importlib
 
 
-class QADataCollectionWorld(World):
+def get_task(opt):
+    module_name = 'parlai.tasks.squad.agents'
+    class_name = 'DefaultTeacher'
+    my_module = importlib.import_module(module_name)
+    task_class = getattr(my_module, class_name)
+    task_opt = opt.copy()
+    task_opt['datatype'] = 'train'
+    task_opt['datapath'] = opt['datapath']
+    return task_class(task_opt)
+
+
+class QADataCollectionTaskWorld(World):
     """
     World for recording a person's question and answer given a context.
     Assumes the context is a random context from a given task, e.g.
@@ -20,6 +36,15 @@ class QADataCollectionWorld(World):
         self.agent = agent
         self.episodeDone = False
         self.turn_index = -1
+
+    @staticmethod
+    def generate_world(opt, agents):
+        task = get_task(opt)
+        return QADataCollectionTaskWorld(opt, task, agents[0])
+
+    @staticmethod
+    def assign_roles(agents):
+        agents[0].disp_id = 'Agent'
 
     def parley(self):
         # Each turn starts from the QA Collector agent

@@ -5,7 +5,7 @@
 
 Using Facebook Messenger
 ========================
-**Authors**: Jack Urbanek
+**Authors**: Jack Urbanek, Kurt Shuster
 
 In ParlAI, you can allow people on Facebook to participate in a ParlAI world as an agent.
 
@@ -24,6 +24,14 @@ Each messenger task also consists of a ``World`` where all agents live and inter
 
 Messenger tasks can be grouped together within an ``Overworld`` which can spawn the subtasks and allow people to pick between multiple conversations.
 
+The task definition resides in a config file, ``config.yml``, in which you specify all the available worlds, and any additional command line arguments.
+
+Finally, to run a task, simple run the following command from the ``parlai/messenger/core`` directory:
+
+.. code-block:: bash
+
+  python run.py --config-path /path/to/config
+
 Example Tasks
 -------------
 
@@ -39,12 +47,35 @@ Oftentimes it's important to host a created model against humans to evaluate how
 
 As it is currently implemented, the collected conversations can be observed and rated manually by the ParlAI user. It's possible to imagine requesting that the human participant rate their conversational partner at the end of the conversation as another way to evaluate the model.
 
-To run a bot with this world, you'll need to provide the `run.py` command with the same model opts you would use elsewhere in a ParlAI environment.
-For instance, after downloading the personachat models you can run:
+To run a bot with this world, you'll need to provide in the ``config.yml`` file the same model opts you would use elsewhere in a ParlAI environment.
+For instance, one can try testing a model trained on the ConvAI2 dataset with the following ``config.yml``:
+
+.. code-block:: yaml
+
+  tasks:
+    default:
+      onboard_world: MessengerBotChatOnboardWorld
+      task_world: MessengerBotChatTaskWorld
+      timeout: 1800
+      agents_required: 1
+  task_name: chatbot
+  world_module: parlai.messenger.tasks.chatbot.worlds
+  overworld: MessengerOverworld
+  page_id: 1 # Configure Your Own Page
+  max_workers: 30
+  opt:  # Additional model opts go here
+    debug: True
+    model: legacy:seq2seq:0
+    model_file: models:convai2/seq2seq/convai2_self_seq2seq_model
+    override:
+      model: legacy:seq2seq:0
+
+
+Then, you would simply run the world via the following command (while in ``parlai/messenger/core``):
 
 .. code-block:: bash
 
-    python run.py --model projects.personachat.kvmemnn.kvmemnn:Kvmemnn --model_file zoo:personachat/kvmemnn/kvmemnn/persona-self_rephraseTrn-True_rephraseTst-False_lr-0.1_esz-500_margin-0.1_tfidf-False_shareEmb-True_hops1_lins0_model
+  python run.py --config-path ../tasks/chatbot/config.yml
 
 This code will allow users to talk with a bot in conversations like the one displayed above.
 
@@ -84,7 +115,7 @@ As an example, the `Overworld Demo <https://github.com/facebookresearch/ParlAI/b
 Creating Your Own Task
 ----------------------
 
-To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example ``worlds.py`` and ``run.py`` files to create your task.
+To create your own task, start with reading the tutorials on the provided examples, and then copy and modify the example ``worlds.py`` and ``config.yml`` files to create your task.
 
 A few things to keep in mind:
 
@@ -94,6 +125,7 @@ A few things to keep in mind:
 4. Tasks with an overworld should return the name of the world that they want to queue a user into from the ``parley`` call in which the user makes that selection to enter a world.
 5. Tasks with no overworld will immediately attempt to put a user into the queue for the default task onboarding world or actual task world (if no onboarding world exists), and will do so again following the completion of a world (via ``episode_done``).
 6. To collect the conversation, data should be collected during every ``parley`` and saved during the ``world.shutdown`` call. You must inform the user of the fact that the data is being collected as well as your intended use.
+7. Finally, if you wish to use and command line arguments as you would in ParlAI, specify those in the ``opt`` section of the config file.
 
 
 Running a Task
@@ -113,7 +145,7 @@ Running a Task
 
 **Note:** When running a new task from a different directory, the webhook url will change. You will need to update this in the developer console from the webhook settings using "edit subscription." Your Page Access token should not need to be changed unless you want to use a different page.
 
-Additional flags can be used:
+Additional flags can be used (you can also specify these in the ``config.yml`` file):
 
 - ``--password <value>`` requires that a user sends the message contained in `value` to the bot in order to access the rest of the communications.
 
