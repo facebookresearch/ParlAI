@@ -26,7 +26,7 @@ Messenger tasks can be grouped together within an ``Overworld`` which can spawn 
 
 The task definition resides in a config file, ``config.yml``, in which you specify all the available worlds, and any additional command line arguments.
 
-Finally, to run a task, one simply goes to the ``parlai/messenger/core`` directory, and runs the following command:
+Finally, to run a task, simple run the following command from the ``parlai/messenger/core`` directory:
 
 .. code-block:: bash
 
@@ -63,7 +63,7 @@ For instance, one can try testing a model trained on the ConvAI2 dataset with th
   overworld: MessengerOverworld
   page_id: 1 # Configure Your Own Page
   max_workers: 30
-  opt:
+  opt:  # Additional model opts go here
     debug: True
     model: legacy:seq2seq:0
     model_file: models:convai2/seq2seq/convai2_self_seq2seq_model
@@ -73,7 +73,7 @@ For instance, one can try testing a model trained on the ConvAI2 dataset with th
 
 Then, you would simply run the world via the following command (while in ``parlai/messenger/core``):
 
-..code-block: bash
+.. code-block:: bash
 
   python run.py --config-path ../tasks/chatbot/config.yml
 
