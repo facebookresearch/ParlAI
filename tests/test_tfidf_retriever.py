@@ -7,7 +7,7 @@
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.core.logging_utils import logger, ERROR
+from parlai.utils.logging import logger, ERROR
 
 import os
 import unittest

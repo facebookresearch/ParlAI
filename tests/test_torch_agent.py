@@ -9,9 +9,9 @@
 import os
 import unittest
 from parlai.core.agents import create_agent_from_shared
-from parlai.core.testing_utils import capture_output, tempdir
-from parlai.core.utils import Message
-import parlai.core.testing_utils as testing_utils
+from parlai.utils.testing import capture_output, tempdir
+from parlai.utils.misc import Message
+import parlai.utils.testing as testing_utils
 
 from collections import deque
 

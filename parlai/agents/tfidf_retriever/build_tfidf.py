@@ -23,7 +23,7 @@ from collections import Counter
 from . import utils
 from .doc_db import DocDB
 from . import tokenizers
-from parlai.core.logging_utils import logger
+from parlai.utils.logging import logger
 
 fmt = '%(asctime)s: [ %(message)s ]'
 logger.set_format(fmt)
