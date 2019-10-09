@@ -34,6 +34,11 @@ def main():
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
     argparser.add_argument(
+        '--model-path',
+        type=str,
+        help='path of the fairseq model',
+    )
+    argparser.add_argument(
         '-mt', '--max-turns', default=10, type=int, help='maximal number of chat turns'
     )
     argparser.add_argument(

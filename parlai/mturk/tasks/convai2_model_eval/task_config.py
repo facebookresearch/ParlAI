@@ -39,7 +39,8 @@ task_config[
 <br>
 (You can keep accepting new HITs after you finish your current one, so keep working on it if you like the task!)
 <br>
-<b>In this task you will chitchat with another user playing the part of a given character.</b>
+<b>HTX
+In this task you will chitchat with another user playing the part of a given character.</b>
 For example, your given character could be: <br><br> I am a vegetarian. I like swimming. My father used to work for Ford. My favorite band is Maroon5. I got a new job last month, which is about advertising design.
 <br>
 <br>

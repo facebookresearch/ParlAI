@@ -556,8 +556,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             )
         print(self.world_tag, ': Data successfully saved at {}.'.format(filename))
         self.personas.append(self.agents[0].model_persona[1])
-        pickle.dump(
-            {
+        save_d = {
                 'personas': self.personas,
                 'dialog': self.dialog,
                 'workers': [ag.worker_id for ag in self.agents],
@@ -574,8 +573,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 'persona_picked': self.persona_picked,
                 'n_personas': self.n_personas,
             },
-            open(filename, 'wb'),
-        )
+        print('save_d:', save_d)
+        pickle.dump(save_d, open(filename, 'wb'))
 
     def is_exact_match(self, act, ag, tolerance=0):
         if act['episode_done']:
