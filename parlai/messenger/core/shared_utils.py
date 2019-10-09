@@ -56,9 +56,6 @@ def generate_event_id(worker_id):
     return '{}_{}'.format(worker_id, uuid.uuid4())
 
 
-##################
-## New Utils
-##################
 class TaskState:
     """Wrapper for an agent running on a Worker"""
 
@@ -72,7 +69,6 @@ class TaskState:
         self.world_type = world_type  # name of the task world returned by the overworld
 
         self.future = None
-        self.state_transfer = False
         self.world = None  # world object
 
 
@@ -100,35 +96,86 @@ def get_world_module(world_path):
     return run_module
 
 
-def get_world_fn_attr(world_module, world_name, fn_name):
-    """Import and return the function fn_name from the class world_name from a module
+def get_world_fn_attr(world_module, world_name, fn_name, raise_if_missing=True):
+    """Import and return the function from world.
 
-    Args:
-        world_module: module. a python module encompassing the worlds
-        world_name: string. the name of the world in the module
-        fn_name: string. the name of the function in the world
+
+    :param world_module:
+        module. a python module encompassing the worlds
+    :param world_name:
+        string. the name of the world in the module
+    :param fn_name:
+        string. the name of the function in the world
+    :param raise_if_missing:
+        bool. if true, raise error if function not found
+
+    :return:
+        the function, if defined by the world.
     """
     result_fn = None
     try:
         DesiredWorld = getattr(world_module, world_name)
         result_fn = getattr(DesiredWorld, fn_name)
     except Exception as e:
-        print("Could not find {} for {}".format(fn_name, world_name))
-        raise e
+        if raise_if_missing:
+            print("Could not find {} for {}".format(fn_name, world_name))
+            raise e
     return result_fn
 
 
 def get_eligibility_fn(world_module, world_name):
-    try:
-        DesiredWorld = getattr(world_module, world_name)
-        eligibility_fn = DesiredWorld.eligibility_function
-    except Exception:
-        eligibility_fn = None
-    return eligibility_fn
+    """Get eligibility function for a world.
+
+    :param world_module:
+        module. a python module encompassing the worlds
+    :param world_name:
+        string. the name of the world in the module
+
+    :return:
+        the eligibility function if available, else None
+    """
+    return get_world_fn_attr(
+        world_module, world_name, 'eligibility_function', raise_if_missing=False
+    )
+
+
+def get_assign_roles_fn(world_module, world_name):
+    """Get assign roles function for a world.
+
+    :param world_module:
+        module. a python module encompassing the worlds
+    :param world_name:
+        string. the name of the world in the module
+
+    :return:
+        the assign roles function if available, else None
+    """
+    return get_world_fn_attr(
+        world_module, world_name, 'assign_roles', raise_if_missing=False
+    )
+
+
+def default_assign_roles_fn(agents):
+    """Assign agent role.
+
+    Default role assignment.
+
+    :param:
+        list of agents
+    """
+    for i, a in enumerate(agents):
+        a.disp_id = f'Agent_{i}'
 
 
 def parse_configuration_file(config_path):
-    """Read the config file for an experiment to get ParlAI settings"""
+    """Read the config file for an experiment to get ParlAI settings.
+
+    :param config_path:
+        path to config
+
+    :return:
+        parsed configuration dictionary
+    """
     result = {}
     result["configs"] = {}
     with open(config_path) as f:
@@ -166,6 +213,5 @@ def parse_configuration_file(config_path):
             )
         # get world options
         result["world_opt"] = cfg.get("opt", {})
-        # get local hosting information, if any exists
 
     return result

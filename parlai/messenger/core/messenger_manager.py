@@ -147,11 +147,28 @@ class MessengerManager:
         self.handle_bot_read = self._handle_bot_read
 
         # Read in Config
+        self._parse_config(opt)
+        self._complete_setup()
+
+    # Helpers and internal manager methods #
+
+    def _log_debug(self, text):
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        shared_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
+
+    def _parse_config(self, opt):
+        """Parse config for task."""
         self.config = opt['config']
         self.overworld = self.config['overworld']
         self.world_path = self.config['world_path']
         self.world_module = shared_utils.get_world_module(self.world_path)
         self.page_id = self.config['page_id']
+        if self.page_id == 1:
+            raise RuntimeError(
+                'Please configure your own page in order to run this task. '
+                'See the docs (https://parl.ai/docs/tutorial_messenger.html) '
+                'for more information.'
+            )
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
@@ -167,14 +184,6 @@ class MessengerManager:
         self.taskworld_map = {
             task: cfg.task_name for task, cfg in self.task_configs.items()
         }
-
-        self._complete_setup()
-
-    # Helpers and internal manager methods #
-
-    def _log_debug(self, text):
-        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        shared_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
 
     def _complete_setup(self):
         """Complete necessary setup items."""
@@ -279,7 +288,6 @@ class MessengerManager:
         :return:
             a dictionary mapping world_types to agent pools
         """
-        # TODO filter by psid -> agent id mappings for multi-page setup
         valid_pools = {}
         for world_type, agent_pool in self.agent_pool.items():
             eligibility_function = shared_utils.get_eligibility_fn(
@@ -366,6 +374,7 @@ class MessengerManager:
         )
 
         def _done_callback(fut):
+            """Log and raise exception of overworld (if there is one)."""
             e = fut.exception()
             if e is not None:
                 self._log_debug('{} returned with error {}'.format(task_id, repr(e)))
@@ -633,7 +642,10 @@ class MessengerManager:
         """
 
         def _done_callback(fut):
-            """Callback for future."""
+            """Log and raise exception of task world, if there is one.
+
+            Additionally, set active agent to overworld agent.
+            """
             e = fut.exception()
             if e is not None:
                 shared_utils.print_and_log(
@@ -691,16 +703,12 @@ class MessengerManager:
                             agents.append(agent)
                             # reset wait message state
                             state.stored_data['seen_wait_message'] = False
-                        assign_role_function = shared_utils.get_world_fn_attr(
+                        assign_role_function = shared_utils.get_assign_roles_fn(
                             self.world_module,
                             self.taskworld_map[world_type],
-                            'assign_roles',
                         )
                         if assign_role_function is None:
-                            raise RuntimeError(
-                                f'Need to define static method `assign_roles`'
-                                'in {world_type}'
-                            )
+                            assign_role_function = shared_utils.default_assign_roles_fn
                         assign_role_function(agents)
                         # Allow task creator to filter out workers and run
                         # versions of the task that require fewer agents
