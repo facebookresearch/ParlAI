@@ -704,8 +704,7 @@ class MessengerManager:
                             # reset wait message state
                             state.stored_data['seen_wait_message'] = False
                         assign_role_function = shared_utils.get_assign_roles_fn(
-                            self.world_module,
-                            self.taskworld_map[world_type],
+                            self.world_module, self.taskworld_map[world_type]
                         )
                         if assign_role_function is None:
                             assign_role_function = shared_utils.default_assign_roles_fn
