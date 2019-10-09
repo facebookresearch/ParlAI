@@ -14,17 +14,10 @@ definitely_good = [
     'hey how are you',
     'what is your name?',
     'i like to play sports',
-    'i have a horse'
+    'i have a horse',
 ]
-probably_bad = [
-    'i hate you',
-    'you are pretty ugly',
-    'parlai is the worst platform'
-]
-definitely_bad = [
-    'fuck you',
-    'you are a piece of shit',
-]
+probably_bad = ['i hate you', 'you are pretty ugly', 'parlai is the worst platform']
+definitely_bad = ['fuck you', 'you are a piece of shit']
 
 
 class TestSafetyModules(unittest.TestCase):
