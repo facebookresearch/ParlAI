@@ -113,6 +113,12 @@ class ParlaiLogger(logging.Logger):
             updatedFileFormat = ':'.join(prevFileFormat)
             self.fileHandler.setFormatter(logging.Formatter(updatedFileFormat))
 
+    def set_format(self, fmt):
+        """Set format after instantiation"""
+        self.streamHandler.setFormatter(logging.Formatter(fmt))
+        if hasattr(self, 'fileHandler'):
+            self.fileHandler.setFormatter(logging.Formatter(fmt))
+
     def reset_formatters(self):
         """Resort back to initial formatting."""
         if hasattr(self, 'fileHandler'):
