@@ -231,9 +231,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
         try:
             import pandas as pd
         except ImportError:
-            raise ImportError(
-                'Please install pandas by running `pip install pandas`'
-            )
+            raise ImportError('Please install pandas by running `pip install pandas`')
 
         version = 'v1.0'
         read_path = self.data_path
