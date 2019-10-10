@@ -77,7 +77,7 @@ class AddLabelFixedCandsTRA(TorchRankerAgent):
         return output
 
 
-class BiencoderAgent(AddLabelFixedCandsTRA, TransformerRankerAgent):
+class BiencoderAgent(TransformerRankerAgent):
     """Bi-encoder Transformer Agent.
 
     Equivalent of bert_ranker/biencoder but does not rely on an external
