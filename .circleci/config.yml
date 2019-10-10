@@ -1,5 +1,5 @@
 version: 2
- 
+
 # -------------------------------------------------------------------------------------
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
@@ -124,13 +124,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
-      - restore_cache:
-          key: deps-dt-{{ checksum "requirements.txt" }}
       - <<: *installdeps
-      - save_cache:
-          key: deps-dt-{{ checksum "requirements.txt" }}
-          paths:
-            - "~/venv/bin"
       - <<: *installtorchcpu36
       - run:
           name: Data tests
@@ -147,9 +141,9 @@ jobs:
           key: deps-osx-{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-osx-{{ checksum "requirements.txt" }}
+          key: deps-osx-v1{{ checksum "requirements.txt" }}
           paths:
-            - "~/venv/bin"
+            - "~/venv/lib"
       - <<: *installtorchcpuosx
       - run:
           name: Unit tests (OSX)
@@ -163,12 +157,12 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-ut36-{{ checksum "requirements.txt" }}
+          key: deps-ut36-v1{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-ut36-{{ checksum "requirements.txt" }}
+          key: deps-ut36-v1{{ checksum "requirements.txt" }}
           paths:
-            - "~/venv/bin"
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - run:
           name: Unit tests (py36)
@@ -202,12 +196,12 @@ jobs:
       - <<: *setupcuda
       - <<: *setup
       - restore_cache:
-          key: deps-gpu11-{{ checksum "requirements.txt" }}
+          key: deps-gpu11-v1{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-gpu11-{{ checksum "requirements.txt" }}
+          key: deps-gpu11-v1{{ checksum "requirements.txt" }}
           paths:
-            - "~/venv/bin"
+            - "~/venv/lib"
       - <<: *installtorchgpu11
       - run:
           name: Unit tests (GPU; pytorch 1.1)
@@ -225,12 +219,12 @@ jobs:
       - <<: *setupcuda
       - <<: *setup
       - restore_cache:
-          key: deps-gpu12-{{ checksum "requirements.txt" }}
+          key: deps-gpu12-v1{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-gpu12-{{ checksum "requirements.txt" }}
+          key: deps-gpu12-v1{{ checksum "requirements.txt" }}
           paths:
-            - "~/venv/bin"
+            - "~/venv/lib"
       - <<: *installtorchgpu12
       - run:
           name: Unit tests (GPU; pytorch >= 1.2)
