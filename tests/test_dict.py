@@ -26,7 +26,8 @@ class TestDictionary(unittest.TestCase):
             opt = Opt({'dict_tokenizer': 'gpt2', 'datapath': './data'})
             agent = DictionaryAgent(opt)
         self.assertEqual(
-            agent.gpt2_tokenize(u'Hello, ParlAI! 😀'),
+            # grinning face emoji
+            agent.gpt2_tokenize(u'Hello, ParlAI! \U0001f600'),
             [
                 'Hello',
                 ',',
@@ -52,7 +53,8 @@ class TestDictionary(unittest.TestCase):
                     r'\xc4\xa2',
                 ]
             ),
-            u'Hello, ParlAI! 😀',
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
         )
 
     def test_space_tokenize(self):
