@@ -311,11 +311,13 @@ class TorchGeneratorAgent(TorchAgent):
         # this can happen if saved model opt has it e.g. 3, but you use greedy
         # in that case one should override it with CLI argument
         if self.beam_min_n_best > 0:
-            warn_once('beam_min_n_best *may be* set larger than the beam size\
+            warn_once(
+                'beam_min_n_best *may be* set larger than the beam size\
             (this may come from saved opt), this may lead to an assert error\
-            if you use stochastic decoding or greedy decoding!')
+            if you use stochastic decoding or greedy decoding!'
+            )
         else:
-            self.beam_min_n_best = self.beam_size 
+            self.beam_min_n_best = self.beam_size
 
         self.beam_min_length = opt.get('beam_min_length')
 
@@ -742,11 +744,13 @@ class TorchGeneratorAgent(TorchAgent):
         # and assert that each of them contains only one EOS
         n_best_beam_preds_scores = [b._get_rescored_finished() for b in beams]
         for n_best_list in n_best_beam_preds_scores:
-            assert len(n_best_list) >= self.opt.get('beam_min_n_best'), \
-            'TreeSearch returned less finalized hypotheses than it was required'
+            assert len(n_best_list) >= self.opt.get(
+                'beam_min_n_best'
+            ), 'TreeSearch returned less finalized hypotheses than it was required'
             for (pred, score) in n_best_list:
-                assert (pred == self.END_IDX).sum() == 1, \
-                f'TreeSearch returned a finalized hypo with multiple end tokens \
+                assert (
+                    pred == self.END_IDX
+                ).sum() == 1, f'TreeSearch returned a finalized hypo with multiple end tokens \
                 with score {score:.2f}'
 
         # get the top prediction for each beam (i.e. minibatch sample)
@@ -881,7 +885,7 @@ class TreeSearch(object):
                 self.scores[hyp_id] = neginf(self.scores.dtype)
 
         hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
-        # use clone() here to ensure that self.all_scores will not be changed 
+        # use clone() here to ensure that self.all_scores will not be changed
         # later due to any penalties to self.scores
         self.all_scores.append(self.scores.clone())
 
