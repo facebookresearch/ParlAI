@@ -142,8 +142,6 @@ jobs:
       - run:
           name: Unit tests (OSX)
           command: |
-            source /Users/distiller/miniconda/etc/profile.d/conda.sh
-            conda activate base
             python setup.py test -s tests.suites.unittests -v
 
   unittests_36:
