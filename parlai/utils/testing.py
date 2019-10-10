@@ -35,6 +35,13 @@ except ImportError:
     git_ = None
     GIT_AVAILABLE = False
 
+try:
+    from subword_nmt import learn_bpe, apply_bpe
+    # Don't explicitly throw the runtime error unless the user needs it
+    BPE_INSTALLED = True
+except ImportError:
+    BPE_INSTALLED = False
+
 
 DEBUG = False  # change this to true to print to stdout anyway
 
@@ -63,9 +70,16 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
+def skipUnlessBPE(testfn, reason='Test requires a GPU'):
+    """Decorate a test to skip if BPE is not installed."""
+    return unittest.skipUnless(BPE_INSTALLED, reason)(testfn)
+
+
 def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
     """Decorate a test to skip if running on CircleCI."""
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
+
+
 
 
 class retry(object):
