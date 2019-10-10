@@ -6,7 +6,7 @@
 
 from parlai.utils.safety import OffensiveLanguageClassifier as olc
 from parlai.utils.safety import OffensiveStringMatcher as osm
-from parli.utils.testing import skipUnlessBPE
+from parlai.utils.testing import skipUnlessBPE
 
 
 import unittest
