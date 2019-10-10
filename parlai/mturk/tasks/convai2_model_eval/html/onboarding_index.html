@@ -41,7 +41,7 @@
     // var agent_id = message.id;
     var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
     if ("show_persona" in message) {
-        $("span#task-persona").html('<b>The character below will be assigned to you, please read them carefully:</b><br>' + message_text);
+        $("span#task-persona").html('<b>The topic below will be assigned to you, please read them carefully:</b><br>' + message_text);
         window.setTimeout(function(){$('#id_send_msg_button').focus()}, 1000);
       }
   }

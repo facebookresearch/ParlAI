@@ -43,7 +43,7 @@ def main():
     )
     argparser.add_argument(
         '--max-resp-time',
-        default=240,
+        default=720,
         type=int,
         help='time limit for entering a dialog message',
     )
@@ -55,7 +55,7 @@ def main():
     )
     argparser.add_argument(
         '--ag-shutdown-time',
-        default=120,
+        default=720,
         type=int,
         help='time limit for entering a dialog message',
     )

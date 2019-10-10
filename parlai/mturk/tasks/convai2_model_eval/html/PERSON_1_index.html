@@ -69,7 +69,7 @@
       }
       if ("persona_text" in message) {
         var persona_text = message.persona_text.replace(/(?:\r\n|\r|\n)/g, '<br />');
-          $("span#task-persona").html('<br><br><b> Your assigned character is:</b><br><br>' + persona_text);
+          $("span#task-persona").html('<br><br><b> Your assigned topic is:</b><br><br>' + persona_text);
           log(message.persona_text, 1);
       }
       if("exceed_min_turns" in message && message.exceed_min_turns){

@@ -19,19 +19,16 @@ import random
 
 
 # Instruction messages
-ONBOARD_MSG = '\nWelcome! Below is your persona \
+ONBOARD_MSG = '\nWelcome! Below is your topic \
         (you can find it on the left side of the chat)\n \
         When you are ready to start your conversation, \
         click the "I am ready, continue" button below\n'
-START_MSG = '\nSuccessfully matched. \
-        Now let\'s get to know each other through the chat! \n\
+START_MSG = '\nLet\'s get started! \n\
         You need to finish at least <b>{} chat turns</b>, \
         after which you can click the "Done" button to end the chat. \n \
-        <b>You can track your character description on the left.</b> \n\
-        <span style="color:blue"><b>Please try to speak to the other person \
-        as if you are the character assigned.</b></span> \n \
-        <span style="color:blue"><b>Do not trivially copy \
-        the character descriptions into the message.</b></span>'
+        <b>You can track your assigned topic description on the left.</b> \n\
+        <span style="color:blue"><b>Please try to speak to the bot \
+        disscussing the assigned topic.</b></span> \n'
 CHAT_NOT_DONE_MSG = 'Sorry, we need at least <b>{} more turn(s)</b> to finish. \
        Please send a new message:'
 TIMEOUT_MSG = '<b> The other person has timed out. \
@@ -85,7 +82,7 @@ ENGAGINGNESS_REASON_MSG = 'Please give a <b>reason for the engagingness \
         score</b> you gave above. Please try to give concrete examples.'
 CONSISTENCY_MSG = 'Now please evaluate the other people\'s \
         <span style="color:blue"><b>consistency of persona</b></span> \
-        (e.g., "I have a dog" followed by "I have no pets" is not consistent)\
+        (e.g. whether the reply is related to the context,)\
         during this conversation by <b>entering a score from \
         [1, 2, 3, 4, 5]</b> below: (1 means "not consistent at all" and 5 \
         means "extremely consistent", e.g., You can enter 3 for an OK \
@@ -169,12 +166,16 @@ class PersonaProfileWorld(MTurkOnboardWorld):
             (persona_idx, data),
             (model_persona_idx, model_data),
         ]
+        
+        """
         persona_text = ''
         for s in data:
             persona_text += '<b><span style="color:blue">' '{}\n</span></b>'.format(
                 s.strip()
             )
-
+        """
+        persona_text = 'talk about daily life or some news'
+        
         self.mturk_agent.observe(
             {
                 'id': 'SYSTEM',
@@ -268,11 +269,12 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
         if self.turn_idx == 1:
             for idx, agent in enumerate(self.agents):
                 persona_text = ''
-                for s in self.personas[idx]:
-                    persona_text += (
-                        '<b><span style="color:blue">'
-                        '{}\n</span></b>'.format(s.strip())
-                    )
+                #for s in self.personas[idx]:
+                #    persona_text += (
+                #        '<b><span style="color:blue">'
+                #        '{}\n</span></b>'.format(s.strip())
+                #    )
+                persona_text = 'talk about daily life or news'
                 control_msg['persona_text'] = persona_text
                 control_msg['text'] = self.get_instruction(
                     tag='start', agent_id=agent.id
@@ -304,7 +306,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                         '<b><span style="color:blue">' + s.strip() + '</span></b><br>'
                     )
                 control_msg['text'] = 'The model persona is: \n' + _text
-                agent.observe(control_msg)
+                #agent.observe(control_msg)
                 return
             while self.is_msg_tooshortlong(acts[idx], agent) or self.is_exact_match(
                 acts[idx], agent
@@ -335,6 +337,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                         if 'text' in acts[idx] and acts[idx]['text'] in self.ratings:
                             self.fluency_score[idx] = int(acts[idx]['text'])
 
+                    """
                     # Fluency reason
                     for idx, agent in enumerate(self.agents):
                         control_msg['text'] = FLUENCY_REASON_MSG
@@ -346,6 +349,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             acts[idx] = agent.act(timeout=self.max_resp_time)
                         if 'text' in acts[idx] and acts[idx]['text'] != '':
                             self.fluency_reason[idx] = acts[idx]['text']
+                    """
+                    self.fluency_reason[idx] = 'NA'
 
                     # Engagingness Check
                     for idx, agent in enumerate(self.agents):
@@ -358,7 +363,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             acts[idx] = agent.act(timeout=self.max_resp_time)
                         if 'text' in acts[idx] and acts[idx]['text'] in self.ratings:
                             self.eng_score[idx] = int(acts[idx]['text'])
-
+                    
+                    """
                     # Engagingness reason
                     for idx, agent in enumerate(self.agents):
                         control_msg['text'] = ENGAGINGNESS_REASON_MSG
@@ -370,6 +376,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             acts[idx] = agent.act(timeout=self.max_resp_time)
                         if 'text' in acts[idx] and acts[idx]['text'] != '':
                             self.eng_reason[idx] = acts[idx]['text']
+                    """
+                    self.eng_reason[idx] = 'NA'
 
                     # Check Consistency
                     for idx, agent in enumerate(self.agents):
@@ -382,7 +390,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             acts[idx] = agent.act(timeout=self.max_resp_time)
                         if 'text' in acts[idx] and acts[idx]['text'] in self.ratings:
                             self.consistent_score[idx] = int(acts[idx]['text'])
-
+                    
+                    """
                     # Consistency reasoning
                     for idx, agent in enumerate(self.agents):
                         control_msg['text'] = CONSISTENCY_REASON_MSG
@@ -394,7 +403,10 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             acts[idx] = agent.act(timeout=self.max_resp_time)
                         if 'text' in acts[idx] and acts[idx]['text'] != '':
                             self.consistent_reason[idx] = acts[idx]['text']
-
+                    """
+                    self.consistent_reason[idx] = 'NA' 
+                    
+                    """
                     # Persona Selection
                     for idx, agent in enumerate(self.agents):
                         model_idx = agent.model_persona[0]
@@ -444,6 +456,8 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                             self.persona_picked[idx] = cand_text[
                                 int(acts[idx]['text']) - 1
                             ][0]
+                    """
+                    self.persona_picked[idx] = 1
 
                     # reached the end of the chat
                     self.chat_done = True
@@ -454,9 +468,11 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
                 return
 
             self.dialog.append((idx, acts[idx]['text']))
-            if self.turn_idx == 1:
-                acts[idx]['text'] = self.model_persona_text + '\n' + acts[idx]['text']
-
+            #if self.turn_idx == 1:
+                #acts[idx]['text'] = self.model_persona_text + '\n' + acts[idx]['text']
+            #    pass
+            #else:
+            print('idx', idx, acts[idx])
             self.model_agent.observe(acts[idx])
 
         # Model_agent turn
@@ -607,7 +623,7 @@ class Convai2EvalWorld(MultiAgentDialogWorld):
             else:
                 return False
 
-    def is_msg_tooshortlong(self, act, ag, th_min=3, th_max=20):
+    def is_msg_tooshortlong(self, act, ag, th_min=1, th_max=30):
         if act['episode_done']:
             return False
 

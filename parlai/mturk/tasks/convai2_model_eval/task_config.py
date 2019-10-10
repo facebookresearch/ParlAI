@@ -10,7 +10,7 @@ task_config = {}
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
 """
-task_config['hit_title'] = 'Play a character and chat!'
+task_config['hit_title'] = 'Talk with our Chat-bot!'
 
 
 """A description includes detailed information about the kind of task the HIT contains.
@@ -19,7 +19,7 @@ view of search results, and in the HIT and assignment screens.
 """
 task_config[
     'hit_description'
-] = 'You will chat to another user while adopting a specific persona and then evaluate that user.'
+] = 'You will chat to a chat-bot.'
 
 
 """One or more words or phrases that describe the HIT, separated by commas.
@@ -39,21 +39,17 @@ task_config[
 <br>
 (You can keep accepting new HITs after you finish your current one, so keep working on it if you like the task!)
 <br>
-<b>HTX
-In this task you will chitchat with another user playing the part of a given character.</b>
-For example, your given character could be: <br><br> I am a vegetarian. I like swimming. My father used to work for Ford. My favorite band is Maroon5. I got a new job last month, which is about advertising design.
+<b>
+In this task you will chitchat with a chat-bot with is a deep learning model.</b>
+The dialogue model is pre-trained with large-scale news data.
 <br>
+Chat with the other user naturally.
 <br>
-Chat with the other user naturally and <b><span style="color:blue">try to get to know each other, i.e.
-both ask questions and answer questions of your chat partner
-at the same time sticking to your own characters<span style="color:blue"></b>.
+Try to cut into the topic, no need to be polite (e.g. no need to begin with "hello").
 <br>
-<br>
-<b><span style="color:blue">You will get bonus for high quality dialogs.</span></b>
 <b>Send short messages, <span style="color:red">max 20 words</span>.</b>
-<b>Do not trivially copy the character descriptions into the message.</b>
 <br>
-After a given number of turns, you will be asked to <b>briefly</b> rate your partner on metrics like <b>fluency, engagingness, and consistency</b>.
+After a given number of turns, you will be asked to <b>briefly</b> rate the bot on metrics like <b>fluency, engagingness, and consistency</b>.
 <br>
 There is a <b>2 min</b> time limit for each turn.
 <br>
@@ -63,5 +59,4 @@ There is a <b>2 min</b> time limit for each turn.
 <b><span style="color:red">- No racism, sexism or otherwise offensive comments, or the submission will be rejected and we will report to Amazon.</b></span>
 <br>
 <br>
-Note: the user you are chatting with may be a human or a bot.
 """

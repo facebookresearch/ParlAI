@@ -3,8 +3,11 @@
 from parlai.core.agents import Agent
 
 from collections import namedtuple
+from subprocess import PIPE, Popen
+import random
 import fileinput
-
+import traceback
+import os, stat, sys
 import torch
 import time
 from fairseq import checkpoint_utils, options, tasks, utils
@@ -43,12 +46,79 @@ def make_batches(lines, args, task, max_positions, encode_fn):
         )
 
 class MyAgentAgent(Agent):
+    
+    loaded_model = None
+
+    def mose_tokenizer(self, text):
+        mose_dir = '/data/sls/u/tianxing/toolkits/mosesdecoder/scripts/tokenizer/'
+        print(os.path.join(mose_dir, "normalize-punctuation.perl"))
+        process = Popen(
+            ["perl", os.path.join(mose_dir, "normalize-punctuation.perl"), "-l", "en"],
+            stdout=PIPE,
+            stdin=PIPE,
+            stderr=PIPE,
+            encoding="utf8",
+        )
+        stdOut, stdErr = process.communicate(text)
+        print(stdOut)
+        process = Popen(
+            [
+                "perl",
+                os.path.join(mose_dir, "remove-non-printing-char.perl"),
+                # "-q",
+            ],
+            stdout=PIPE,
+            stdin=PIPE,
+            stderr=PIPE,
+            encoding="utf8",
+        )
+        stdOut, stdErr = process.communicate(stdOut.rstrip())
+        print(stdOut)
+        process = Popen(
+            [
+                "perl",
+                os.path.join(mose_dir, "tokenizer.perl"),
+                "-a",
+                "-l",
+                "en",
+                # "-q",
+            ],
+            stdout=PIPE,
+            stdin=PIPE,
+            stderr=PIPE,
+            encoding="utf8",
+        )
+        print(stdOut)
+        stdOut, stdErr = process.communicate(stdOut.rstrip())
+        return stdOut.strip()
+
+    def apply_bpe(self, text):
+        bpe_file = self.bpe_code_fn
+        bpe_bin = '/data/sls/u/tianxing/toolkits/fastBPE/fast_bpe'  # fastBPE/bin/fast_bpe'
+
+        st = os.stat(bpe_bin)
+        os.chmod(bpe_bin, st.st_mode | stat.S_IEXEC)
+
+        print("doing bpe", bpe_bin + " applybpe_stream " + bpe_file)
+        process = Popen(
+            [bpe_bin, "applybpe_stream", bpe_file],
+            stdout=PIPE,
+            stdin=PIPE,
+            stderr=PIPE,
+            encoding="utf8",
+        )
+        stdOut, stdErr = process.communicate(text)
+        print("result from fast_BPE", stdOut, stdErr)
+        return stdOut.strip()
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
         print('!!!!! My Agent INI!!!')
         filename_path = opt['model_path']
         dict_fn = '/data/sls/temp/tianxing/data-sets/201908_dialogue_tianxing_fbintern/data-sets/ccnews/ccnews_process/100m_dict.txt'
+        self.dict_fn = dict_fn
+        self.bpe_code_fn = '/data/sls/temp/tianxing/data-sets/201908_dialogue_tianxing_fbintern/data-sets/ccnews/ccnews_process/100m_bpe.50k.codes'
         input_args = [
             'tmp/',
             "--path",
@@ -63,7 +133,7 @@ class MyAgentAgent(Agent):
             "30",
             "--append-eos",
             "False",
-            "--remove-bpe",
+            #"--remove-bpe",
         ]  # , '-s', 'en', '-t', 'en']
         input_args_topk = [
             'tmp/',
@@ -82,7 +152,7 @@ class MyAgentAgent(Agent):
             "--sampling",
             "--sampling-topk",
             "30",
-            "--remove-bpe",
+            #"--remove-bpe",
         ]  # , '-s', 'en', '-t', 'en']
         
         parser = options.get_generation_parser(interactive=True)
@@ -123,13 +193,18 @@ class MyAgentAgent(Agent):
         
         # Setup task, e.g., translation
         task = tasks.setup_task(args)
-
-        # Load ensemble
-        print("| loading model(s) from {}".format(args.path))
-        model_paths = args.path.split(":")
-        self.models, self.model_args = utils.load_ensemble_for_inference(
-            model_paths, task
-        )
+        
+        if MyAgentAgent.loaded_model is not None:
+            print('=== model alreadyed loaded!')
+            self.models = MyAgentAgent.loaded_model 
+        else:
+            # Load ensemble
+            print("| loading model(s) from {}".format(args.path))
+            model_paths = args.path.split(":")
+            self.models, self.model_args = utils.load_ensemble_for_inference(
+                model_paths, task
+            )
+            MyAgentAgent.loaded_model = self.models
 
         # Set dictionaries
         self.src_dict = task.source_dictionary
@@ -216,13 +291,65 @@ class MyAgentAgent(Agent):
         return shared
 
     def observe(self, observation):
+        print(observation)
+        traceback.print_stack(file=sys.stdout)
         # your goal is to build up the string input to the model here
-        if len(self.dialogue_history) > 0:
-            self.dialogue_history += ' <eou> '
-        self.dialogue_history += ' ' + observation['text']
+        tt = observation['text'].strip().lower().split()
+        text = self.mose_tokenizer(" ".join(tt))
+        # text = self.encode_fn(' '.join(tt))
+        print("after tok:", text)
+        text = self.apply_bpe(text)
+        print("after bpe:", text)
+        tt = text.split()
+        if tt[-1] != "." and tt[-1] != "?" and tt[-1] != "!":
+            question = False
+            for kk in [
+                "am i",
+                "do you",
+                "do i",
+                "does he",
+                "does she",
+                "are you",
+                "what",
+                "which",
+                "how",
+                "why",
+                "who",
+                "should i",
+                "could you",
+                "can i",
+                # "have you",
+                "could i",
+                "can you",
+                "is that",
+                "are they",
+                "is it",
+            ]:
+                if kk in text:
+                    question = True
+            if tt[0] in ["do", "is", "are", "could", "should", "would"]:
+                question = True
+            if " ".join(tt) == "really":
+                question = True
+            if question == True:
+                tt.append("?")
+            else:
+                tt.append(".")
+        
+        if tt[-1] != "<eou>":
+            tt.append("<eou>")
+
+        ts = " ".join(tt)
+ 
+        self.dialogue_history += ' ' + ts
+        tt = self.dialogue_history.split()
+        if len(tt) > 128:
+            tt = tt[-128:]
+        self.dialogue_hisotry = ' '.join(tt)
         return observation
 
     def act(self):
+        print('dialogue_history:', self.dialogue_history)
         inputs = [self.dialogue_history]
         # scores = []
 
@@ -260,7 +387,7 @@ class MyAgentAgent(Agent):
             for id, src_tokens, hypos in sorted(results, key=lambda x: x[0]):
                 if self.src_dict is not None:
                     src_str = self.src_dict.string(src_tokens, args.remove_bpe)
-                    #print("S-{}\t{}".format(id, src_str))
+                    print("S-{}\t{}".format(id, src_str))
 
                 # Process top predictions
                 for hypo in hypos[: min(len(hypos), args.nbest)]:
@@ -280,7 +407,6 @@ class MyAgentAgent(Agent):
                     #     ss = 'top k sampling'
                     sentences.append(hypo_str)
                     # scores.append(hypo['score'])
-                    """
                     print("H-{}\t{}\t{}".format(id, hypo["score"], hypo_str))
                     print(
                         "P-{}\t{}".format(
@@ -302,12 +428,15 @@ class MyAgentAgent(Agent):
                                 ),
                             )
                         )
-                    """
             return sentences
 
-        s_beam = get_res("beam")
+        #s_beam = get_res("beam")
         s_topk = get_res("topk")
-        
+        random.shuffle(s_topk)
+        chosen_one = s_topk[0] 
+        self.dialogue_history += ' ' + chosen_one + ' <eou>'
+
+        out_s = self.decode_fn(chosen_one)
         return {
-            'text': s_topk[0]
+            'text': out_s
         }
