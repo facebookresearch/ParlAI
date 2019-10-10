@@ -37,6 +37,7 @@ except ImportError:
 
 try:
     from subword_nmt import learn_bpe, apply_bpe
+
     # Don't explicitly throw the runtime error unless the user needs it
     BPE_INSTALLED = True
 except ImportError:
@@ -78,8 +79,6 @@ def skipUnlessBPE(testfn, reason='Test requires a GPU'):
 def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
     """Decorate a test to skip if running on CircleCI."""
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
-
-
 
 
 class retry(object):
