@@ -1,5 +1,5 @@
 version: 2
- 
+
 # -------------------------------------------------------------------------------------
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-osx-{{ checksum "requirements.txt" }}
+          key: deps-osx-v1{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
           key: deps-osx-v1{{ checksum "requirements.txt" }}
