@@ -334,6 +334,7 @@ def download_unittest_models():
         'seq2seq.tar.gz',
         'transformer_ranker.tar.gz',
         'transformer_generator2.tar.gz',
+        'memnn.tar.gz',
     ]
     with capture_output():
-        download_models(opt, model_filenames, 'unittest', version='v2.0')
+        download_models(opt, model_filenames, 'unittest', version='v3.0')

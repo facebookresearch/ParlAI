@@ -77,6 +77,39 @@ class TestMemnn(unittest.TestCase):
             "test hits@1 = {}\nLOG:\n{}".format(test['hits@1'], stdout),
         )
 
+    def test_backcomp(self):
+        """
+        Tests that the memnn model files continue to works over time
+        """
+        testing_utils.download_unittest_models()
+
+        stdout, valid, test = testing_utils.eval_model(
+            dict(
+                task='integration_tests',
+                model='memnn',
+                model_file='zoo:unittest/memnn/model',
+                dict_file='zoo:unittest/memnn/model.dict',
+                batch_size=16,
+            )
+        )
+
+        self.assertGreaterEqual(
+            valid['accuracy'],
+            0.88,
+            'valid accuracy = {}\nLOG:\n{}'.format(valid['accuracy'], stdout),
+        )
+        self.assertGreaterEqual(
+            valid['f1'], 0.999, 'valid f1 = {}\nLOG:\n{}'.format(valid['f1'], stdout)
+        )
+        self.assertGreaterEqual(
+            test['accuracy'],
+            0.84,
+            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
+        )
+        self.assertGreaterEqual(
+            test['f1'], 0.999, 'test f1 = {}\nLOG:\n{}'.format(test['f1'], stdout)
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
