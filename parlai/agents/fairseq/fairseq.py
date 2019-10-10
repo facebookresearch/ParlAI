@@ -17,7 +17,7 @@ Fairseq models can be used for many default tasks by combining a
 
 
 from parlai.core.dict import DictionaryAgent
-from parlai.core.utils import argsort, padded_tensor
+from parlai.utils.misc import argsort, padded_tensor
 
 try:
     from fairseq import models, optim, criterions
@@ -46,7 +46,7 @@ from fairseq.meters import AverageMeter
 
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.core.build_data import modelzoo_path
-from parlai.core.utils import round_sigfigs
+from parlai.utils.misc import round_sigfigs
 
 import argparse
 import torch

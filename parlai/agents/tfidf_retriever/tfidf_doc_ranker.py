@@ -16,7 +16,7 @@ from functools import partial
 
 from . import utils
 from . import tokenizers
-from parlai.core.logging_utils import logger
+from parlai.utils.logging import logger
 
 
 class TfidfDocRanker(object):

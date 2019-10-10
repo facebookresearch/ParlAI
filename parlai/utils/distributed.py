@@ -16,7 +16,6 @@ import builtins
 import pickle
 import contextlib
 
-# from parlai.core.logging_utils import logger # TODO: Uncomment before completion of #2044
 try:
     import torch.version
     import torch.distributed as dist
@@ -105,37 +104,6 @@ def override_print(suppress=False, prefix=None):
     yield
     # bring it back at the end of the context
     builtins.print = builtin_print
-
-
-# # TODO: Replace override_print with this version before completing #2044
-# # TODO: Uncomment import statement at the top
-# # TODO: IDEA: Pass logger object as parameter to thi function
-# @contextlib.contextmanager
-# def override_print(suppress=False, prefix=None):
-#     """
-#     Context manager to override the logger to suppress or modify output.
-#
-#     Recommended usage is to call this with suppress=True for all non-primary workers,
-#     or call with a prefix of rank on all workers.
-#
-#     >>> with override_print(prefix="rank{}".format(rank)):
-#     ...     my_computation()
-#
-#     :param bool suppress:
-#         if true, all future log statements are noops.
-#     :param str prefix:
-#         if not None, this string is prefixed to all future log statements.
-#     """
-#     Alternative implementation: To be used when switched to all-logging
-#     if suppress:
-#         logger.disabled = True
-#     elif prefix:
-#         logger.add_format_prefix(prefix)
-#     else:
-#         pass  # do nothing
-#     yield
-#     logger.disabled = False
-#     logger.reset_formatters()
 
 
 def all_gather_list(data, max_size=16384):

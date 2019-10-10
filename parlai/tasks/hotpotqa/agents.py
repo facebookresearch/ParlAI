@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import ParlAIDialogTeacher
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from .build import build
 
 import copy

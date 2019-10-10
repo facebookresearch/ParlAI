@@ -16,7 +16,8 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.core.utils import OffensiveLanguageDetector, TimeLogger
+from parlai.utils.safety import OffensiveLanguageDetector
+from parlai.utils.misc import TimeLogger
 
 import random
 

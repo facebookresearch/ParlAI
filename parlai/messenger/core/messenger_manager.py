@@ -3,6 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+"""Messenger Manager Module.
+
+Contains implementation of the MessengerManager, which helps run
+ParlAI via FB Messenger.
+"""
 
 import logging
 import os
@@ -10,19 +15,25 @@ import sys
 import threading
 import time
 import traceback
+import datetime
 
+from parlai.core.agents import create_agent
 from parlai.messenger.core.agents import MessengerAgent
 from parlai.messenger.core.message_socket import MessageSocket
 from parlai.messenger.core.message_sender import MessageSender
 import parlai.messenger.core.server_utils as server_utils
 import parlai.messenger.core.shared_utils as shared_utils
+from parlai.messenger.core.world_runner import MessengerWorldRunner
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 class AgentState:
-    """Keeps track of a messenger connection through multiple potential
-    worlds"""
+    """Keep track of Agent State.
+
+    State includes which is the "active" agent - i.e., which agent in which
+    world do we message, etc.
+    """
 
     def __init__(self, messenger_id, overworld_agent):
         self.messenger_id = messenger_id
@@ -34,27 +45,75 @@ class AgentState:
         self.time_in_pool = {}
 
     def get_active_agent(self):
+        """Return active messenger agent.
+
+        :return:
+            a MessengerAgent, which corresponds to the active agent for this
+            agent state.
+        """
         return self.active_agent
 
     def set_active_agent(self, active_agent):
+        """Set active agent for this agent.
+
+        :param active_agent:
+            A MessengerAgent, the new active agent for this given agent state
+
+        """
         self.active_agent = active_agent
 
     def get_overworld_agent(self):
+        """Return overworld messenger agent.
+
+        :return:
+            a MessengerAgent, which corresponds agent object in the overworld
+        """
         return self.overworld_agent
 
     def get_id(self):
+        """Return agent's ID.
+
+        :return:
+            int agent ID
+        """
         return self.messenger_id
 
     def has_task(self, task_id):
+        """Determine if an agent is in a task.
+
+        :param task_id:
+            string task id
+
+        :return:
+            if agent is in that task.
+        """
         return task_id in self.task_id_to_agent
 
     def get_agent_for_task(self, task_id):
+        """Return MessengerAgent for given task id.
+
+        For each "player", a separate agent is created for each task. This
+        returns the appropriate MessengerAgent given the task id
+
+        :param task_id:
+            string, task id
+
+        :return:
+            messenger agent object associated with the given task
+        """
         if self.has_task(task_id):
             return self.task_id_to_agent[task_id]
         else:
             return None
 
     def assign_agent_to_task(self, agent, task_id):
+        """Mark agent in task.
+
+        :param agent:
+            MessengerAgent object to mark in task
+        :param task_id:
+            string task name
+        """
         self.task_id_to_agent[task_id] = agent
 
 
@@ -66,20 +125,18 @@ class MessengerManager:
     def __init__(self, opt):
         """Create an MessengerManager using the given setup options
         """
+        # Manager attributes
         self.opt = opt
         self.server_url = None
         self.port = 443
         self.agent_pool_change_condition = threading.Condition()
-        self.overworld_func = None
-        self.overworld_threads = {}
         self.active_worlds = {}
         self.message_socket = None
         self.message_sender = None
-        self.page_id = None
         self._init_logs()
         self.running = True
         self.conversation_index = 0
-        self.shutting_down = True
+        self.shutting_down = False
         self.bypass_server_setup = self.opt.get('bypass_server_setup')
 
         # Messaging interaction functions that determine what to do when
@@ -89,36 +146,102 @@ class MessengerManager:
         self.handle_message_read = self._handle_message_read
         self.handle_bot_read = self._handle_bot_read
 
+        # Read in Config
+        self._parse_config(opt)
+        self._complete_setup()
+
     # Helpers and internal manager methods #
 
+    def _log_debug(self, text):
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        shared_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
+
+    def _parse_config(self, opt):
+        """Parse config for task."""
+        self.config = opt['config']
+        self.overworld = self.config['overworld']
+        self.world_path = self.config['world_path']
+        self.world_module = shared_utils.get_world_module(self.world_path)
+        self.page_id = self.config['page_id']
+        if self.page_id == 1:
+            raise RuntimeError(
+                'Please configure your own page in order to run this task. '
+                'See the docs (https://parl.ai/docs/tutorial_messenger.html) '
+                'for more information.'
+            )
+        self.task_configs = self.config['configs']
+        self.max_workers = self.config['max_workers']
+        self.opt['task'] = self.config['task_name']
+        self.world_runner = MessengerWorldRunner(
+            opt, self.world_path, self.max_workers, self, opt['is_debug']
+        )
+        self.max_agents_for = {
+            task: cfg.agents_required for task, cfg in self.task_configs.items()
+        }
+        self.onboard_map = {
+            task: cfg.onboarding_name for task, cfg in self.task_configs.items()
+        }
+        self.taskworld_map = {
+            task: cfg.task_name for task, cfg in self.task_configs.items()
+        }
+
+    def _complete_setup(self):
+        """Complete necessary setup items."""
+        self.setup_server()
+        self.init_new_state()
+        self.setup_socket()
+        self.start_new_run()
+        self._load_model()
+
+    def _load_model(self):
+        """Load model if necessary."""
+        if 'model_file' in self.opt or 'model' in self.opt:
+            self.opt['shared_bot_params'] = create_agent(self.opt).share()
+
     def _init_logs(self):
-        """Initialize logging settings from the opt"""
+        """Initialize logging settings from the opt."""
         shared_utils.set_is_debug(self.opt['is_debug'])
         shared_utils.set_log_level(self.opt['log_level'])
 
     def add_agent_to_pool(self, agent, world_type='default'):
-        """Add the agent to pool"""
+        """Add the agent to pool.
+
+        :param agent:
+            MessengerAgent object
+        :param world_type:
+            Name of world whose pool should now contain agent
+        """
         with self.agent_pool_change_condition:
-            shared_utils.print_and_log(
-                logging.DEBUG, "Adding agent {} to pool...".format(agent.messenger_id)
-            )
+            self._log_debug('Adding agent {} to pool...'.format(agent.messenger_id))
             # time agent entered agent_pool
             agent.time_in_pool.setdefault(world_type, time.time())
             # add agent to pool
             self.agent_pool.setdefault(world_type, []).append(agent)
 
     def mark_removed(self, agent_id, pageid):
-        """Mark the agent as removed from the pool. Can be overriden to change
-        other metadata linked to agent removal."""
+        """Mark the agent as removed from the pool.
+
+        Can be overriden to change other metadata linked to agent removal.
+
+        :param agent_id:
+            int agent psid
+        :param pageid:
+            int page id
+        """
         pass
 
     def remove_agent_from_pool(self, agent, world_type='default', mark_removed=True):
-        """Remove agent from the pool."""
+        """Remove agent from the pool.
+
+        :param agent:
+            MessengerAgent object
+        :param world_type:
+            string, world name
+        :param mark_removed:
+            bool, whether to mark an agent as removed from the pool
+        """
         with self.agent_pool_change_condition:
-            shared_utils.print_and_log(
-                logging.DEBUG,
-                "Removing agent {} from pool...".format(agent.messenger_id),
-            )
+            self._log_debug('Removing agent {} from pool...'.format(agent.messenger_id))
             if world_type in self.agent_pool and agent in self.agent_pool[world_type]:
                 self.agent_pool[world_type].remove(agent)
                 # reset agent's time_in_pool
@@ -131,23 +254,23 @@ class MessengerManager:
                         self.mark_removed(int(agent.messenger_id), int(self.page_id))
 
     def _expire_all_conversations(self):
-        """iterate through all sub-worlds and shut them down"""
+        """Iterate through all sub-worlds and shut them down."""
         self.running = False
-        for agent_id, overworld_thread in self.agent_id_to_overworld_thread.items():
+        for agent_id, overworld_fut in self.agent_id_to_overworld_future.items():
             self.observe_message(
                 agent_id,
-                "System: The conversation bot going to go offline soon, "
-                "finish any active conversations in the next 5 minutes.",
+                'System: The conversation bot going to go offline soon, '
+                'finish any active conversations in the next 5 minutes.',
             )
-            overworld_thread.join()
+            overworld_fut.cancel()
 
         # 5 minute grace period for conversations to finish
         time_passed = 0
         while time_passed < 5 * 60:
             any_alive = False
-            for task_thread in self.active_worlds.values():
-                if task_thread is not None:
-                    any_alive = any_alive or task_thread.isAlive()
+            for task_fut in self.active_worlds.values():
+                if task_fut is not None:
+                    any_alive = any_alive or task_fut.running()
             if not any_alive:
                 break
             time.sleep(1)
@@ -156,22 +279,23 @@ class MessengerManager:
         # agents will refer to this value
         self.shutting_down = True
 
-    def _get_unique_pool(self, eligibility_functions):
-        """Return a filtered version of the agent pool where each agent is
-        only listed a maximum of one time.
-        """
-        # TODO filter by psid -> agent id mappings for multi-page setup
-        if eligibility_functions is None:
-            return self.agent_pool
+    def _get_unique_pool(self):
+        """Return unique pool.
 
+        Returns a filtered version of the agent pool where each agent is
+        only listed a maximum of one time.
+
+        :return:
+            a dictionary mapping world_types to agent pools
+        """
         valid_pools = {}
         for world_type, agent_pool in self.agent_pool.items():
-            if (
-                world_type in eligibility_functions
-                and eligibility_functions[world_type] is not None
-            ):
+            eligibility_function = shared_utils.get_eligibility_fn(
+                self.world_module, world_type
+            )
+            if eligibility_function is not None:
                 valid_pools[world_type] = [
-                    w for w in agent_pool if eligibility_functions[world_type](w)
+                    w for w in agent_pool if eligibility_function(w)
                 ]
             else:
                 valid_pools[world_type] = self.agent_pool[world_type]
@@ -184,17 +308,14 @@ class MessengerManager:
     def _confirm_message_delivery(self, event):
         # By default we don't actually do anything when messages are marked as
         # being delivered, but we expose the ability for others to
-        shared_utils.print_and_log(
-            logging.DEBUG,
-            "Messages {} marked as received.".format(event['delivery']['mids']),
+        self._log_debug(
+            'Messages {} marked as received.'.format(event['delivery']['mids'])
         )
 
     def _handle_message_read(self, event):
         # If the message was sent by another user (as in during a conversation)
         # then we need to propogate the read back to that user.
-        shared_utils.print_and_log(
-            logging.DEBUG, "Messages {} marked as read.".format(event['read'])
-        )
+        self._log_debug('Messages {} marked as read.'.format(event['read']))
         reader = event['sender']['id']
         agent_state = self.get_agent_state(reader)
         if agent_state is None:
@@ -219,65 +340,68 @@ class MessengerManager:
             self.handle_message_read(event)
 
     def _on_first_message(self, message):
-        """Handle a new incoming message from a psid that is not yet
-        registered to any assignment.
+        """Handle first message from player.
+
+        Run when a psid is given that is not paired with any assignment yet.
+        Launch an overworld, complete onboarding, etc.
+
+        :param message:
+            message sent from agent
         """
         if self.page_id is None:
             self.page_id = message['recipient']['id']
+
         agent_id = message['sender']['id']
         if self.opt['password'] is not None:
             if message['message']['text'] != self.opt['password']:
                 self.observe_message(
                     agent_id,
-                    "Sorry, this conversation bot is password-protected. If "
-                    "you have the password, please send it now.",
+                    'Sorry, this conversation bot is password-protected. If '
+                    'you have the password, please send it now.',
                 )
                 return
-
-        def _overworld_function(opt, agent_id, task_id):
-            """Wrapper function for maintaining an overworld"""
-            agent_state = self.get_agent_state(agent_id)
-            if self.opt['password'] is None:
-                agent_state.stored_data['first_message'] = message
-            agent = agent_state.get_overworld_agent()
-            overworld = self.overworld_func(opt, agent)
-
-            while self.running:
-                world_type = overworld.parley()
-                if world_type is None:
-                    continue
-                self._onboard_new_worker(agent_id, world_type)
-                time.sleep(5)  # wait for onboard_world to start
-                while agent_state.get_active_agent() != agent:
-                    time.sleep(1)
-                overworld.return_overworld()
 
         task_id = 'overworld-{}-{}'.format(agent_id, time.time())
         agent = self._create_agent(task_id, agent_id)
         agent_state = AgentState(agent_id, agent)
+        if self.opt['password'] is not None:
+            agent_state.stored_data['first_message'] = message
         self.messenger_agent_states[agent_id] = agent_state
-        # Start the onboarding thread and run it
-        overworld_thread = threading.Thread(
-            target=_overworld_function, args=(self.opt, agent_id, task_id), name=task_id
-        )
-        overworld_thread.daemon = True
-        overworld_thread.start()
 
-        self.agent_id_to_overworld_thread[agent_id] = overworld_thread
-        pass
+        # launch overworld
+        future = self.world_runner.launch_overworld(
+            task_id, self.overworld, self.onboard_map, agent
+        )
+
+        def _done_callback(fut):
+            """Log and raise exception of overworld (if there is one)."""
+            e = fut.exception()
+            if e is not None:
+                self._log_debug('{} returned with error {}'.format(task_id, repr(e)))
+                if self.debug:
+                    raise e
+
+        future.add_done_callback(_done_callback)
+        self.agent_id_to_overworld_future[agent_id] = future
 
     def after_agent_removed(self, agent_id):
-        """Perform any changes to metadata on agent removal
-        override if extra bookkeeping must be done when removing agent"""
+        """Perform any changes to metadata on agent removal.
+
+        override if extra bookkeeping must be done when removing agent
+        """
         pass
 
     def _on_new_message(self, message):
         """Put an incoming message onto the correct agent's message queue.
+
+        :param message:
+            message to put on queue
         """
         agent_id = message['sender']['id']
         if agent_id not in self.messenger_agent_states:
             self._on_first_message(message)
             return
+
         agent_state = self.get_agent_state(agent_id)
         if agent_state.get_active_agent() is None:
             # return agent to overworld
@@ -298,8 +422,8 @@ class MessengerManager:
             else:
                 self.observe_message(
                     agent_id,
-                    "Please wait while we pair you with another person. "
-                    "If you wish to exit, type *EXIT*.",
+                    'Please wait while we pair you with another person. '
+                    'If you wish to exit, type *EXIT*.',
                 )
                 self.message_sender.typing_on(agent_id)
         else:
@@ -311,66 +435,42 @@ class MessengerManager:
             agent.put_data(message)
 
     def _create_agent(self, task_id, agent_id):
-        """Initialize an agent and return it"""
+        """Initialize an agent and return it.
+
+        Called each time an agent is placed into a new task.
+
+        :param task_id:
+            string task identifier
+        :param agent_id:
+            int agent id
+        """
         return MessengerAgent(self.opt, self, task_id, agent_id, self.page_id)
 
-    def _onboard_new_worker(self, agent_id, world_type):
-        """Handle creating an onboarding thread and moving an agent through
-        the onboarding process
-        """
-
-        def _onboard_function(opt, agent_id, world_type, task_id):
-            """Onboarding wrapper to set state to onboarding properly"""
-            agent_state = self.get_agent_state(agent_id)
-            data = None
-            if (
-                world_type in self.onboard_functions
-                and self.onboard_functions[world_type] is not None
-            ):
-                # call onboarding function
-                agent = self._create_agent(task_id, agent_id)
-                agent_state.set_active_agent(agent)
-                agent_state.assign_agent_to_task(agent, task_id)
-                try:
-                    data = self.onboard_functions[world_type](opt, agent, task_id)
-                    agent_state.onboard_data = data
-                    agent_state.set_active_agent(None)
-                except Exception as e:
-                    shared_utils.print_and_log(
-                        logging.ERROR,
-                        'Onboard {} had error {}'.format(world_type, repr(e)),
-                        should_print=True,
-                    )
-                    traceback.print_exc(file=sys.stderr)
-                    self.observe_message(
-                        agent.id, "Sorry, this world closed. Returning to overworld."
-                    )
-                    agent_state.set_active_agent(agent_state.get_overworld_agent())
-                    return
-
-            # once onboarding is done, move into a waiting world
-            self.add_agent_to_pool(agent_state, world_type)
-
-        task_id = 'onboard-{}-{}'.format(agent_id, time.time())
-        # Start the onboarding thread and run it
-        onboard_thread = threading.Thread(
-            target=_onboard_function,
-            args=(self.opt, agent_id, world_type, task_id),
-            name=task_id,
-        )
-        onboard_thread.daemon = True
-        onboard_thread.start()
-
-        self.agent_id_to_onboard_thread[agent_id] = onboard_thread
-
     def get_agent_state(self, agent_id):
-        """A safe way to get a worker by agent_id"""
+        """Return agent state.
+
+        :param agent_id:
+            int agent identifier
+
+        :return:
+            AgentState object if agent_id is being tracked, else None
+        """
         if agent_id in self.messenger_agent_states:
             return self.messenger_agent_states[agent_id]
         return None
 
     def _get_agent(self, agent_id, task_id):
-        """A safe way to get an agent by agent_id and task_id"""
+        """Return agent object for given agent ID and task ID.
+
+        :param agent_id:
+            int agent identifier
+        :param task_id:
+            string task name
+
+        :return:
+            MessengerAgent object associated with given agent ID and task ID if
+            possible, else None
+        """
         agent_state = self.get_agent_state(agent_id)
         if agent_state is not None:
             if agent_state.has_task(task_id):
@@ -378,8 +478,7 @@ class MessengerManager:
         return None
 
     def _log_missing_agent(self, agent_id, assignment_id):
-        """Logs when an agent was expected to exist, yet for some reason it
-        didn't. If these happen often there is a problem"""
+        """Log the occurence of a missing agent."""
         shared_utils.print_and_log(
             logging.WARN,
             'Expected to have an agent for {}_{}, yet none was found'.format(
@@ -389,7 +488,7 @@ class MessengerManager:
 
     # Manager Lifecycle Functions #
     def setup_server(self):
-        """Prepare the Messenger server for handling messages"""
+        """Prepare the Messenger server for handling messages."""
         if self.bypass_server_setup:
             return
 
@@ -407,12 +506,12 @@ class MessengerManager:
         if self.opt['local'] is True:
             shared_utils.print_and_log(
                 logging.INFO,
-                "In order to run the server locally, you will need "
-                "to have a public HTTPS endpoint (SSL signed) running on "
-                "the server you are currently excecuting ParlAI on. Enter "
-                "that public URL hostname when prompted and ensure that the "
-                "port being used by ParlAI (usually 3000) has external "
-                "traffic routed to it.",
+                'In order to run the server locally, you will need '
+                'to have a public HTTPS endpoint (SSL signed) running on '
+                'the server you are currently excecuting ParlAI on. Enter '
+                'that public URL hostname when prompted and ensure that the '
+                'port being used by ParlAI (usually 3000) has external '
+                'traffic routed to it.',
                 should_print=True,
             )
             input('Please press Enter to continue... ')
@@ -437,7 +536,7 @@ class MessengerManager:
 
     # override if permission needed externally
     def get_app_token(self):
-        """Find and return an app access token"""
+        """Find and return an app access token."""
         if not self.opt.get('force_page_token'):
             if not os.path.exists(os.path.expanduser('~/.parlai/')):
                 os.makedirs(os.path.expanduser('~/.parlai/'))
@@ -459,7 +558,7 @@ class MessengerManager:
         return token
 
     def setup_socket(self):
-        """Set up socket to start communicating to workers"""
+        """Set up socket to start communicating to workers."""
         if not self.bypass_server_setup:
             shared_utils.print_and_log(
                 logging.INFO, 'Local: Setting up WebSocket...', should_print=True
@@ -472,41 +571,42 @@ class MessengerManager:
         if not self.bypass_server_setup:
             socket_use_url = self.server_url
             if self.opt['local']:  # skip some hops for local stuff
-                socket_use_url = "https://localhost"
+                socket_use_url = 'https://localhost'
             self.message_socket = MessageSocket(
                 socket_use_url, self.port, self._handle_webhook_event
             )
+        shared_utils.print_and_log(
+            logging.INFO, 'done with websocket', should_print=True
+        )
 
     def init_new_state(self):
-        """Initialize everything in the agent, task, and thread states
-        to prepare for a new run
+        """Prepare for new run.
+
+        Initialize everything in the agent, task, and thread states
         """
         self.agent_pool = {}
         self.messenger_agent_states = {}
         self.task_to_agent_ids = {}
-        self.agent_id_to_onboard_thread = {}
-        self.agent_id_to_overworld_thread = {}
+        self.agent_id_to_overworld_future = {}
 
     def start_new_run(self):
+        """Begin new run."""
         self.run_id = str(int(time.time()))
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
-    def set_onboard_functions(self, onboard_functions):
-        self.onboard_functions = onboard_functions
-
-    def set_overworld_func(self, overworld_func):
-        self.overworld_func = overworld_func
-
-    def set_agents_required(self, max_agents_for):
-        self.max_agents_for = max_agents_for
-
     def check_timeout_in_pool(self, world_type, agent_pool, max_time_in_pool):
+        """Check for timed-out agents in pool.
+
+        :param world_type:
+            string world type
+        :param agent_pool:
+            list of ``AgentState``s
+        :param max_time_in_pool:
+            int maximum time allowed for agent to be in pool
+        """
         for agent_state in agent_pool:
             time_in_pool = agent_state.time_in_pool.get(world_type)
-            if (
-                time_in_pool
-                and time.time() - time_in_pool > max_time_in_pool[world_type]
-            ):
+            if time_in_pool and time.time() - time_in_pool > max_time_in_pool:
                 # remove agent from agent_pool
                 self.remove_agent_from_pool(agent_state, world_type)
                 # put agent back in overworld
@@ -527,43 +627,43 @@ class MessengerManager:
                 ):
                     self.observe_message(
                         agent_state.messenger_id,
-                        "Pairing is taking longer than expected. "
-                        "If you wish to exit, type *EXIT*.",
+                        'Pairing is taking longer than expected. '
+                        'If you wish to exit, type *EXIT*.',
                     )
                     self.message_sender.typing_on(agent_state.messenger_id)
                     agent_state.stored_data['seen_wait_message'] = True
 
-    def start_task(
-        self,
-        assign_role_functions,
-        task_functions,
-        max_time_in_pool=None,
-        eligibility_functions=None,
-    ):
-        """Handle running a task by checking to see when enough agents are
-        in the pool to start an instance of the task. Continue doing this
-        until the desired number of conversations is had.
+    def start_task(self):
+        """Begin handling task.
+
+        Periodically check to see when enough agents are in the agent pool
+        to start an instance of the task. Continue doing this until the desired
+        number of conversations is had.
         """
 
-        def _task_function(opt, agents, conversation_id, world_type):
-            """Run the task function for the given agents"""
-            shared_utils.print_and_log(
-                logging.INFO, 'Starting task {}...'.format(conversation_id)
-            )
-            try:
-                task_functions[world_type](self, opt, agents, conversation_id)
-            except Exception as e:
+        def _done_callback(fut):
+            """Log and raise exception of task world, if there is one.
+
+            Additionally, set active agent to overworld agent.
+            """
+            e = fut.exception()
+            if e is not None:
                 shared_utils.print_and_log(
                     logging.ERROR,
                     'World {} had error {}'.format(world_type, repr(e)),
                     should_print=True,
                 )
-                print("Exception in user code:")
                 traceback.print_exc(file=sys.stdout)
                 for agent in agents:
                     self.observe_message(
-                        agent.id, "Sorry, this world closed. Returning to overworld."
+                        agent.id, 'Sorry, this world closed. Returning to overworld.'
                     )
+            else:
+                shared_utils.print_and_log(
+                    logging.INFO,
+                    'World {} had no error'.format(world_type),
+                    should_print=True,
+                )
             self.active_worlds[task_id] = None
             for agent in agents:
                 self.after_agent_removed(agent.id)
@@ -574,19 +674,20 @@ class MessengerManager:
         while self.running:
             # Loop forever until the server is shut down
             with self.agent_pool_change_condition:
-                valid_pools = self._get_unique_pool(eligibility_functions)
+                valid_pools = self._get_unique_pool()
                 for world_type, agent_pool in valid_pools.items():
                     # check if agent has exceeded max time in pool
-                    if (
-                        max_time_in_pool is not None
-                        and max_time_in_pool[world_type] is not None
-                    ):
+                    world_config = self.task_configs[world_type]
+                    if world_config.max_time_in_pool is not None:
                         self.check_timeout_in_pool(
-                            world_type, agent_pool, max_time_in_pool
+                            world_type, agent_pool, world_config.max_time_in_pool
                         )
 
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
+                        shared_utils.print_and_log(
+                            logging.INFO, 'starting pool', should_print=True
+                        )
                         # enough agents in pool to start new conversation
                         self.conversation_index += 1
                         task_id = 't_{}'.format(self.conversation_index)
@@ -602,7 +703,12 @@ class MessengerManager:
                             agents.append(agent)
                             # reset wait message state
                             state.stored_data['seen_wait_message'] = False
-                        assign_role_functions[world_type](agents)
+                        assign_role_function = shared_utils.get_assign_roles_fn(
+                            self.world_module, self.taskworld_map[world_type]
+                        )
+                        if assign_role_function is None:
+                            assign_role_function = shared_utils.default_assign_roles_fn
+                        assign_role_function(agents)
                         # Allow task creator to filter out workers and run
                         # versions of the task that require fewer agents
                         agents = [a for a in agents if a.disp_id is not None]
@@ -617,15 +723,12 @@ class MessengerManager:
                             partner_list = agents.copy()
                             partner_list.remove(a)
                             a.message_partners = partner_list
-                        # Start a new thread for this task world
-                        task_thread = threading.Thread(
-                            target=_task_function,
-                            args=(self.opt, agents, task_id, world_type),
-                            name='task-{}'.format(task_id),
+                        # launch task world.
+                        future = self.world_runner.launch_task_world(
+                            task_id, self.taskworld_map[world_type], agents
                         )
-                        task_thread.daemon = True
-                        task_thread.start()
-                        self.active_worlds[task_id] = task_thread
+                        future.add_done_callback(_done_callback)
+                        self.active_worlds[task_id] = future
 
             time.sleep(shared_utils.THREAD_MEDIUM_SLEEP)
 
@@ -634,11 +737,13 @@ class MessengerManager:
         # Ensure all threads are cleaned and conversations are handled
         try:
             self.is_running = False
+            self.world_runner.shutdown()
             if not self.bypass_server_setup:
                 self.message_socket.keep_running = False
             self._expire_all_conversations()
-        except BaseException:
-            pass
+        except BaseException as e:
+            shared_utils.print_and_log(logging.ERROR, f'world ended in error: {e}')
+
         finally:
             if not self.bypass_server_setup:
                 server_utils.delete_server(self.server_task_name, self.opt['local'])
@@ -646,23 +751,45 @@ class MessengerManager:
     # Agent Interaction Functions #
 
     def observe_message(self, receiver_id, text, quick_replies=None, persona_id=None):
-        """Send a message through the message manager"""
+        """Send a message through the message manager.
+
+        :param receiver_id:
+            int identifier for agent to send message to
+        :param text:
+            string text to send
+        :param quick_replies:
+            list of quick replies
+        :param persona_id:
+            identifier of persona
+        """
         return self.message_sender.send_fb_message(
             receiver_id, text, True, quick_replies=quick_replies, persona_id=persona_id
         )
 
     def observe_payload(self, receiver_id, data, quick_replies=None, persona_id=None):
-        """Send a payload through the message manager"""
+        """Send a payload through the message manager.
+
+        :param receiver_id:
+            int identifier for agent to send message to
+        :param data:
+            object data to send
+        :param quick_replies:
+            list of quick replies
+        :param persona_id:
+            identifier of persona
+        """
         return self.message_sender.send_fb_payload(
             receiver_id, data, quick_replies=quick_replies, persona_id=persona_id
         )
 
     def upload_attachment(self, payload):
-        """Uploads an attachment and returns an attachment ID
-        `payload` should be a dict of the format
-        {'type': <TYPE>, 'url': <URL>} or
-        {'type': <TYPE>, 'filename': <FILENAME>, 'format': <FILEFORMAT>}.
-        For example,
-        {'type': 'image', 'filename': 'test.png', 'format': 'png'}
+        """Upload an attachment and return an attachment ID.
+
+        :param payload:
+            dict with the following format:
+                {'type': <TYPE>, 'url': <URL>} or
+                {'type': <TYPE>, 'filename': <FILENAME>, 'format': <FILEFORMAT>}.
+                For example,
+                {'type': 'image', 'filename': 'test.png', 'format': 'png'}
         """
         return self.message_sender.upload_fb_attachment(payload)

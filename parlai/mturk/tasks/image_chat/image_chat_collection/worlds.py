@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.core.utils import OffensiveLanguageDetector
+from parlai.utils.safety import OffensiveLanguageDetector
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.tasks.image_chat.build import build as build_ic
 from parlai.tasks.personality_captions.build import build as build_pc

@@ -8,7 +8,7 @@
 
 import os
 import unittest
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 
 class TestTransformerRanker(unittest.TestCase):
@@ -80,8 +80,8 @@ class TestTransformerRanker(unittest.TestCase):
             )
             # make sure the number of updates is being tracked correctly
             self.assertGreater(
-                valid2['num_updates'],
-                valid1['num_updates'],
+                valid2['total_train_updates'],
+                valid1['total_train_updates'],
                 'Number of updates is not increasing',
             )
             # make sure the learning rate is decreasing
@@ -476,8 +476,8 @@ def test_learning_rate_resuming(self, args):
         )
         # make sure the number of updates is being tracked correctly
         self.assertGreater(
-            valid2['num_updates'],
-            valid1['num_updates'],
+            valid2['total_train_updates'],
+            valid1['total_train_updates'],
             '({}) Number of updates is not increasing'.format(mdl),
         )
         # make sure the learning rate is decreasing
@@ -497,9 +497,10 @@ def test_learning_rate_resuming(self, args):
             )
         )
         self.assertEqual(
-            valid3['num_updates'],
-            valid1['num_updates'],
-            '({}) Finetuning LR scheduler reset failed ' '(num_updates).'.format(mdl),
+            valid3['total_train_updates'],
+            valid1['total_train_updates'],
+            '({}) Finetuning LR scheduler reset failed '
+            '(total_train_updates).'.format(mdl),
         )
         self.assertEqual(
             valid3['lr'],
@@ -516,9 +517,9 @@ def test_learning_rate_resuming(self, args):
             )
         )
         self.assertEqual(
-            valid4['num_updates'],
-            valid1['num_updates'],
-            '({}) LR scheduler change reset failed (num_updates).'
+            valid4['total_train_updates'],
+            valid1['total_train_updates'],
+            '({}) LR scheduler change reset failed (total_train_updates).'
             '\n{}'.format(mdl, stdout4),
         )
         self.assertEqual(

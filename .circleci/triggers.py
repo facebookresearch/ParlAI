@@ -16,7 +16,7 @@ words into your commit messages.
 [long] or [all]: run all above
 """
 
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 
 def detect_all():

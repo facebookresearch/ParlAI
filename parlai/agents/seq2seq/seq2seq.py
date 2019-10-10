@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
-from parlai.core.utils import warn_once
+from parlai.utils.misc import warn_once
 from .modules import Seq2seq, opt_to_kwargs
 
 import torch

@@ -6,7 +6,7 @@
 
 import unittest
 
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 
 NUM_EXS = 100
 # ideally we want one choice which is a nice modulo with NUM_EXS, and one that isn't

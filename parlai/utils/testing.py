@@ -15,7 +15,6 @@ import shutil
 import io
 from typing import Tuple
 
-# from parlai.core.logging_utils import logger # TODO: Uncomment before completion of #2044
 
 try:
     import torch
@@ -187,29 +186,6 @@ def capture_output():
     sio = TeeStringIO()
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
-
-
-# # TODO: Replace capture_output with this version before completing #2044
-# # TODO: Uncomment import statement at the top
-# # TODO: IDEA: Pass logger object as parameter to thi function
-# @contextlib.contextmanager
-# def capture_output():
-#     """
-#     Suppress all logging output into a single buffer.
-#
-#     Use as a context manager.
-#
-#     >>> with capture_output() as output:
-#     ...     logger.info('hello')
-#     >>> output.getvalue()
-#     'hello'
-#     """
-#     sio = TeeStringIO()
-#     previous_level = logger.mute()  # Stop logging to stdout
-#     logger.redirect_out(sio)  # Instead log to sio (to preserve output for later)
-#     yield sio
-#     logger.stop_redirect_out()  # Stop redirecting [Removes handler]
-#     logger.unmute(previous_level)  # From now on log to stdout
 
 
 @contextlib.contextmanager

@@ -20,8 +20,8 @@ Examples
 from parlai.core.dict import DictionaryAgent
 from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger
-from parlai.core.distributed_utils import is_distributed
+from parlai.utils.misc import TimeLogger
+from parlai.utils.distributed import is_distributed
 import copy
 import os
 import tqdm

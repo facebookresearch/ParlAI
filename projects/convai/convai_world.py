@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.worlds import World
-from parlai.core.utils import display_messages
+from parlai.utils.misc import display_messages
 from parlai.core.agents import create_agent_from_shared
 
 import requests

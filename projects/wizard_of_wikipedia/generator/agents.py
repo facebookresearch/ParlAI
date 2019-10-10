@@ -13,7 +13,7 @@ from functools import lru_cache
 import torch as th
 import numpy as np
 
-from parlai.core.utils import padded_tensor, round_sigfigs
+from parlai.utils.misc import padded_tensor, round_sigfigs
 
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 

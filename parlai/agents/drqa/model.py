@@ -11,7 +11,7 @@ import numpy as np
 from torch.autograd import Variable
 from .utils import load_embeddings, AverageMeter
 from .rnn_reader import RnnDocReader
-from parlai.core.logging_utils import logger
+from parlai.utils.logging import logger
 
 
 class DocReaderModel(object):
