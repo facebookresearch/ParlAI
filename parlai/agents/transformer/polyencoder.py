@@ -13,7 +13,7 @@ from .modules import BasicAttention, MultiHeadAttention
 import torch
 
 
-class PolyencoderAgent(AddLabelFixedCandsTRA, TorchRankerAgent):
+class PolyencoderAgent(TorchRankerAgent):
     """Poly-encoder Agent.
 
     Equivalent of bert_ranker/polyencoder and biencoder_multiple_output
@@ -455,3 +455,9 @@ class PolyBasicAttention(BasicAttention):
         if self.poly_type == 'codes' and self.n_codes == 1 and len(lhs_emb.shape) == 2:
             lhs_emb = lhs_emb.unsqueeze(self.dim - 1)
         return lhs_emb
+
+
+class IRFriendlyPolyencoderAgent(AddLabelFixedCandsTRA):
+    """Poly-encoder agent that allows for adding label to fixed cands."""
+
+    pass

@@ -107,3 +107,9 @@ class BiencoderAgent(AddLabelFixedCandsTRA, TransformerRankerAgent):
             )
             obs['added_start_end_tokens'] = True
         return obs
+
+
+class IRFriendlyBiencoderAgent(AddLabelFixedCandsTRA):
+    """Bi-encoder agent that allows for adding label to fixed cands."""
+
+    pass
