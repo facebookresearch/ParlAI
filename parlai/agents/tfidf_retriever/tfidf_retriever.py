@@ -163,9 +163,12 @@ class TfidfRetrieverAgent(Agent):
 
         self.db = DocDB(db_path=opt['retriever_dbpath'])
         if os.path.exists(self.tfidf_path + '.npz'):
-            self.ranker = TfidfDocRanker(
-                tfidf_path=opt['retriever_tfidfpath'], strict=False
-            )
+            if shared is None:
+                self.ranker = TfidfDocRanker(
+                    tfidf_path=opt['retriever_tfidfpath'], strict=False
+                )
+            else:
+                self.ranker = shared['doc_ranker']
         self.ret_mode = opt['retriever_mode']
         self.cands_hash = {}  # cache for candidates
         self.triples_to_add = []  # in case we want to add more entries
@@ -174,6 +177,11 @@ class TfidfRetrieverAgent(Agent):
         self.context_length = clen if clen >= 0 else None
         self.include_labels = opt.get('tfidf_include_labels', True)
         self.reset()
+
+    def share(self):
+        shared = super().share()
+        shared['doc_ranker'] = self.ranker
+        return shared
 
     def reset(self):
         super().reset()
