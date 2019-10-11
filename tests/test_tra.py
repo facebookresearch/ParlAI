@@ -227,7 +227,9 @@ class TestPolyRanker(_AbstractTRATest):
     def test_eval_fixed_label_not_in_cands(self):
         # test where cands during eval do not contain test label
         args = self._get_args()
-        args['model'] = 'parlai.agents.transformer.polyencoder:IRFriendlyPolyencoderAgent'
+        args[
+            'model'
+        ] = 'parlai.agents.transformer.polyencoder:IRFriendlyPolyencoderAgent'
         args['eval_candidates'] = 'fixed'
 
         teacher = CandidateTeacher({'datatype': 'train'})
