@@ -124,7 +124,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-dt-v1{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-dt-v1{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - run:
           name: Data tests
@@ -284,7 +290,13 @@ jobs:
       - <<: *fixgit
       - <<: *setupcuda
       - <<: *setup
+      - restore_cache:
+          key: deps-nightly-v1{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-nightly-v1{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu12
       - run:
           name: Nightly GPU tests
@@ -298,7 +310,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-mturk-v1{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-mturk-v1{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - run:
           name: All mturk tests
           command: python setup.py test -s tests.suites.mturk -v
@@ -310,7 +328,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-bw-v1{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-bw-v1{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - <<: *buildwebsite
 
@@ -321,7 +345,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-dw-v1{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-dw-v1{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - <<: *buildwebsite
       - run:
