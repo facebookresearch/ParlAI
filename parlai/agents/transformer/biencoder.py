@@ -15,7 +15,7 @@ class AddLabelFixedCandsTRA(TorchRankerAgent):
     example labels.
     """
 
-    def __init__(self, opt, shared):
+    def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.add_label_to_fixed_cands = opt.get('add_label_to_fixed_cands')
         if self.add_label_to_fixed_cands:
@@ -109,7 +109,11 @@ class BiencoderAgent(TransformerRankerAgent):
         return obs
 
 
-class IRFriendlyBiencoderAgent(AddLabelFixedCandsTRA):
+class IRFriendlyBiencoderAgent(AddLabelFixedCandsTRA, BiencoderAgent):
     """Bi-encoder agent that allows for adding label to fixed cands."""
 
-    pass
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        """Add cmd line args."""
+        super(AddLabelFixedCandsTRA, cls).add_cmdline_args(argparser)
+        super(BiencoderAgent, cls).add_cmdline_args(argparser)
