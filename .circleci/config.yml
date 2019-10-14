@@ -1,5 +1,5 @@
 version: 2
- 
+
 # -------------------------------------------------------------------------------------
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ setup: &setup
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
       python --version
-      pip3 install --upgrade --progress-bar off pip
+      pip3 install --upgrade pip==19.2.3
 
 installdeps: &installdeps
   run:
