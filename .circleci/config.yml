@@ -46,7 +46,7 @@ setup: &setup
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
       python --version
-      pip3 install --upgrade pip==19.2.3
+      pip3 install --progress-bar off --upgrade pip==19.2.3
 
 installdeps: &installdeps
   run:
@@ -69,7 +69,7 @@ installtorchgpu12: &installtorchgpu12
   run:
     name: Install torch GPU and dependencies
     command: |
-      pip3 install --progress-bar off 'torch>=1.2.0'
+      pip3 install --progress-bar off https://download.pytorch.org/whl/cu100/torch-1.3.0%2Bcu100-cp36-cp36m-linux_x86_64.whl
       pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off torchtext
