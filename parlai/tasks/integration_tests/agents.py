@@ -393,7 +393,7 @@ class ImageTeacher(AbstractImageTeacher):
                     'image_id': img,
                     'text': ''.join(
                         random.choice(string.ascii_uppercase) for _ in range(10)
-                    )
+                    ),
                 }
                 for img in imgs
             ]

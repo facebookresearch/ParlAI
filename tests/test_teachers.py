@@ -13,10 +13,6 @@ import unittest
 from parlai.utils import testing as testing_utils
 import regex as re
 
-from parlai.core.agents import create_agent
-from parlai.core.params import ParlaiParser
-from parlai.tasks.integration_tests.agents import CandidateTeacher
-
 
 class TestAbstractImageTeacher(unittest.TestCase):
     """Test AbstractImageTeacher."""
@@ -38,14 +34,10 @@ class TestAbstractImageTeacher(unittest.TestCase):
             data_path = tmpdir
             os.makedirs(os.path.join(data_path, 'ImageTeacher'))
 
-            opt = {
-                'task': 'integration_tests:ImageTeacher',
-                'datapath': data_path,
-            }
+            opt = {'task': 'integration_tests:ImageTeacher', 'datapath': data_path}
             for image_mode in ['resnet152', 'none']:
                 opt['image_mode'] = image_mode
                 _test_display_output(opt)
-
 
 
 if __name__ == '__main__':
