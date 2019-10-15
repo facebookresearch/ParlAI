@@ -264,13 +264,6 @@ class TorchGeneratorAgent(TorchAgent):
             help='Beam size, if 1 then greedy search',
         )
         agent.add_argument(
-            '--beam-min-n-best',
-            type=int,
-            default=0,
-            help='Minimum number of nbest candidates to achieve '
-            'during the beam search, set to beam size in the code by default',
-        )
-        agent.add_argument(
             '--beam-min-length',
             type=int,
             default=3,
@@ -305,20 +298,6 @@ class TorchGeneratorAgent(TorchAgent):
         super().__init__(opt, shared)
 
         self.beam_size = opt.get('beam_size')
-        self.beam_min_n_best = opt.get('beam_min_n_best')
-
-        # make sure that beam_min_n_best is not bigger than beam_size by default
-        # this can happen if saved model opt has it e.g. 3, but you use greedy
-        # in that case one should override it with CLI argument
-        if self.beam_min_n_best > 0:
-            warn_once(
-                'beam_min_n_best *may be* set larger than the beam size\
-            (this may come from saved opt), this may lead to an assert error\
-            if you use stochastic decoding or greedy decoding!'
-            )
-        else:
-            self.beam_min_n_best = self.beam_size
-
         self.beam_min_length = opt.get('beam_min_length')
 
         if opt.get('beam_block_ngram'):
@@ -628,7 +607,6 @@ class TorchGeneratorAgent(TorchAgent):
             return GreedySearch(
                 1,
                 min_length=0,
-                min_n_best=1,
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -638,7 +616,6 @@ class TorchGeneratorAgent(TorchAgent):
             return BeamSearch(
                 beam_size,
                 min_length=self.beam_min_length,
-                min_n_best=self.beam_min_n_best,
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -649,7 +626,6 @@ class TorchGeneratorAgent(TorchAgent):
                 self.opt['topk'],
                 beam_size,
                 min_length=self.beam_min_length,
-                min_n_best=self.beam_min_n_best,
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -660,7 +636,6 @@ class TorchGeneratorAgent(TorchAgent):
                 self.opt['topp'],
                 beam_size,
                 min_length=self.beam_min_length,
-                min_n_best=self.beam_min_n_best,
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -744,9 +719,10 @@ class TorchGeneratorAgent(TorchAgent):
         # and assert that each of them contains only one EOS
         n_best_beam_preds_scores = [b._get_rescored_finished() for b in beams]
         for n_best_list in n_best_beam_preds_scores:
-            assert len(n_best_list) >= self.opt.get(
-                'beam_min_n_best'
-            ), 'TreeSearch returned less finalized hypotheses than it was required'
+            assert (
+                len(n_best_list) >= self.beam_size
+            ), f'TreeSearch returned less finalized hypotheses ({len(n_best_list)}) \
+                than beam_size {self.beam_size}'
             for (pred, score) in n_best_list:
                 assert (
                     pred == self.END_IDX
@@ -789,7 +765,6 @@ class TreeSearch(object):
         bos_token=1,
         eos_token=2,
         min_length=3,
-        min_n_best=3,
         device='cpu',
     ):
         """
@@ -805,9 +780,6 @@ class TreeSearch(object):
             end of sentence token ID
         :param min_length:
             minimum length of the predicted sequence
-        :param min_n_best:
-            Search will not be finished until a minimum number of utterances are
-            completed.
         :param device:
             What device to use for computations
         """
@@ -832,7 +804,6 @@ class TreeSearch(object):
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
-        self.min_n_best = min_n_best
         self.partial_hyps = [[self.bos] for i in range(beam_size)]
 
     def get_output_from_current_step(self):
@@ -918,7 +889,7 @@ class TreeSearch(object):
 
     def is_done(self):
         """Return whether beam search is complete."""
-        return self.eos_top and self.n_best_counter >= self.min_n_best
+        return self.eos_top and self.n_best_counter >= self.beam_size
 
     def get_top_hyp(self):
         """
