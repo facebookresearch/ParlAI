@@ -182,10 +182,10 @@ jobs:
       - <<: *fixgit
       - <<: *setup
       - restore_cache:
-          key: deps-ut37-{{ checksum "requirements.txt" }}
+          key: deps-ut37-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
       - save_cache:
-          key: deps-ut37-{{ checksum "requirements.txt" }}
+          key: deps-ut37-v3{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/lib"
       - <<: *installtorchcpu37
