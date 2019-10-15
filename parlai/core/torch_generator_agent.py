@@ -715,19 +715,18 @@ class TorchGeneratorAgent(TorchAgent):
             ).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)
 
-        # check that there are at least min-n-best finished hypos
+        # check that there is at least one finished candidate
         # and assert that each of them contains only one EOS
         n_best_beam_preds_scores = [b._get_rescored_finished() for b in beams]
         for n_best_list in n_best_beam_preds_scores:
             assert (
-                len(n_best_list) >= self.beam_size
-            ), f'TreeSearch returned less finalized hypotheses ({len(n_best_list)}) \
-                than beam_size {self.beam_size}'
+                len(n_best_list) >= 1
+            ), f'TreeSearch returned {len(n_best_list)} candidates, must be >= 1'
             for (pred, score) in n_best_list:
                 assert (
                     pred == self.END_IDX
                 ).sum() == 1, f'TreeSearch returned a finalized hypo with multiple end tokens \
-                with score {score:.2f}'
+                with score {score.item():.2f}'
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
@@ -948,12 +947,13 @@ class TreeSearch(object):
         """
         # if we never actually finished, force one
         if not self.finished:
+            self.outputs[-1][0] = self.eos
             self.finished.append(
                 _HypothesisTail(
                     timestep=len(self.outputs) - 1,
                     hypid=0,
                     score=self.all_scores[-1][0],
-                    tokenid=self.eos,
+                    tokenid=self.outputs[-1][0],
                 )
             )
 
@@ -998,7 +998,7 @@ class GreedySearch(TreeSearch):
 
     def select_paths(self, logprobs, prior_scores):
         tok_scores, tok_ids = logprobs.max(1)
-        best_scores = tok_scores + prior_scores.unsqueeze(1)
+        best_scores = tok_scores + prior_scores
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
         return (hyp_ids, tok_ids, best_scores)
 
