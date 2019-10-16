@@ -46,7 +46,7 @@ setup: &setup
       echo ". ~/venv/bin/activate" >> $BASH_ENV
       . ~/venv/bin/activate
       python --version
-      pip3 install --upgrade --progress-bar off pip
+      pip3 install --progress-bar off --upgrade pip
 
 installdeps: &installdeps
   run:
@@ -124,7 +124,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-dt-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-dt-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - run:
           name: Data tests
@@ -137,7 +143,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-osx-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-osx-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpuosx
       - run:
           name: Unit tests (OSX)
@@ -150,7 +162,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-ut36-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-ut36-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - run:
           name: Unit tests (py36)
@@ -163,7 +181,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-ut37-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-ut37-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu37
       - run:
           name: Unit tests (py37)
@@ -177,7 +201,13 @@ jobs:
       - <<: *fixgit
       - <<: *setupcuda
       - <<: *setup
+      - restore_cache:
+          key: deps-gpu11-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-gpu11-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu11
       - run:
           name: Unit tests (GPU; pytorch 1.1)
@@ -194,7 +224,13 @@ jobs:
       - <<: *fixgit
       - <<: *setupcuda
       - <<: *setup
+      - restore_cache:
+          key: deps-gpu12-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-gpu12-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu12
       - run:
           name: Unit tests (GPU; pytorch >= 1.2)
@@ -254,7 +290,13 @@ jobs:
       - <<: *fixgit
       - <<: *setupcuda
       - <<: *setup
+      - restore_cache:
+          key: deps-nightly-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-nightly-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchgpu12
       - run:
           name: Nightly GPU tests
@@ -268,7 +310,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-mturk-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-mturk-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - run:
           name: All mturk tests
           command: python setup.py test -s tests.suites.mturk -v
@@ -280,7 +328,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-bw-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-bw-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - <<: *buildwebsite
 
@@ -291,7 +345,13 @@ jobs:
       - checkout
       - <<: *fixgit
       - <<: *setup
+      - restore_cache:
+          key: deps-dw-v3{{ checksum "requirements.txt" }}
       - <<: *installdeps
+      - save_cache:
+          key: deps-dw-v3{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/lib"
       - <<: *installtorchcpu36
       - <<: *buildwebsite
       - run:
