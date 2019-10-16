@@ -180,7 +180,7 @@ class TorchClassifierAgent(TorchAgent):
 
     def build_criterion(self):
         weight_tensor = torch.FloatTensor(self.class_weights)
-        return torch.nn.CrossEntropyLoss(weight_tensor)
+        return torch.nn.CrossEntropyLoss()
 
     def share(self):
         """
@@ -249,9 +249,9 @@ class TorchClassifierAgent(TorchAgent):
 
         # calculate loss
         labels = self._get_labels(batch)
-        scores = self.score(batch).float()
-        # import ipdb; ipdb.set_trace()
+        scores = self.score(batch)
         loss = self.criterion(scores, labels)
+        loss = loss * scores.size(1)
         loss.backward()
         self.update_params()
 
