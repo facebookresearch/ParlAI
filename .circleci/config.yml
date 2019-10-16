@@ -99,9 +99,9 @@ setupcuda: &setupcuda
     working_directory: ~/
     command: |
       # download and install nvidia drivers, cuda, etc
-      wget -q 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.50.run'
-      sudo /bin/bash ./NVIDIA-Linux-x86_64-430.50.run -s --no-drm
-      wget -q https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
+      wget -q 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
+      sudo /bin/bash ./NVIDIA-Linux-x86_64-430.40.run -s --no-drm
+      wget -q https://developer.download.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
       sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.243-418.87.00_1.0-1_amd64.deb
       sudo apt-key add /var/cuda-repo-10-1-local-10.1.243-418.87.00/7fa2af80.pub
       nvidia-smi
@@ -197,7 +197,7 @@ jobs:
       - <<: *installdeps
       - <<: *installtorchgpu12
       - run:
-          name: Unit tests (GPU; pytorch 1.2)
+          name: Unit tests (GPU; pytorch >= 1.2)
           command: python setup.py test -s tests.suites.unittests -v
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.1)
