@@ -715,18 +715,8 @@ class TorchGeneratorAgent(TorchAgent):
             ).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)
 
-        # check that there is at least one finished candidate
-        # and assert that each of them contains only one EOS
+        # get all finilized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
-        for n_best_list in n_best_beam_preds_scores:
-            assert (
-                len(n_best_list) >= 1
-            ), f'TreeSearch returned {len(n_best_list)} candidates, must be >= 1'
-            for (pred, score) in n_best_list:
-                assert (
-                    pred == self.END_IDX
-                ).sum() == 1, f'TreeSearch returned a finalized hypo with multiple end tokens \
-                with score {score.item():.2f}'
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
@@ -969,10 +959,23 @@ class TreeSearch(object):
         if n_best is not None:
             srted = srted[:n_best]
 
-        return [
+        n_best_list = [
             (self._get_pretty_hypothesis(self._get_hyp_from_finished(hyp)), hyp.score)
             for hyp in srted
-        ]
+        ] 
+        
+        # check that there is at least one finished candidate
+        # and assert that each of them contains only one EOS
+        assert (
+            len(n_best_list) >= 1
+        ), f'TreeSearch returned {len(n_best_list)} candidates, must be >= 1'
+        for (pred, score) in n_best_list:
+            assert (
+                pred == self.eos
+            ).sum() == 1, f'TreeSearch returned a finalized hypo with multiple end tokens \
+            with score {score.item():.2f}'
+
+        return n_best_list
 
 
 class GreedySearch(TreeSearch):
