@@ -962,8 +962,8 @@ class TreeSearch(object):
         n_best_list = [
             (self._get_pretty_hypothesis(self._get_hyp_from_finished(hyp)), hyp.score)
             for hyp in srted
-        ] 
-        
+        ]
+
         # check that there is at least one finished candidate
         # and assert that each of them contains only one EOS
         assert (
