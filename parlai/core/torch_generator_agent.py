@@ -8,8 +8,7 @@
 """
 Generic PyTorch-based Generator agent.
 
-Implements quite a bit of boilerplate, including forced-decoding loss and beam
-search.
+Implements quite a bit of boilerplate, including forced-decoding loss and a tree search.
 
 Contains the following utilities:
 
@@ -265,13 +264,6 @@ class TorchGeneratorAgent(TorchAgent):
             help='Beam size, if 1 then greedy search',
         )
         agent.add_argument(
-            '--beam-min-n-best',
-            type=int,
-            default=3,
-            help='Minimum number of nbest candidates to achieve '
-            'during the beam search',
-        )
-        agent.add_argument(
             '--beam-min-length',
             type=int,
             default=1,
@@ -306,8 +298,7 @@ class TorchGeneratorAgent(TorchAgent):
         super().__init__(opt, shared)
 
         self.beam_size = opt.get('beam_size', 1)
-        self.beam_min_n_best = opt.get('beam_min_n_best', 3)
-        self.beam_min_length = opt.get('beam_min_length', 3)
+        self.beam_min_length = opt.get('beam_min_length', 1)
 
         if opt.get('beam_block_ngram'):
             # check for old opts where we might have used beam blocking.
@@ -616,7 +607,6 @@ class TorchGeneratorAgent(TorchAgent):
             return GreedySearch(
                 1,
                 min_length=0,
-                min_n_best=1,
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -626,7 +616,6 @@ class TorchGeneratorAgent(TorchAgent):
             return BeamSearch(
                 beam_size,
                 min_length=self.beam_min_length,
-                min_n_best=self.beam_min_n_best,
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -637,7 +626,6 @@ class TorchGeneratorAgent(TorchAgent):
                 self.opt['topk'],
                 beam_size,
                 min_length=self.beam_min_length,
-                min_n_best=self.beam_min_n_best,
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -648,7 +636,6 @@ class TorchGeneratorAgent(TorchAgent):
                 self.opt['topp'],
                 beam_size,
                 min_length=self.beam_min_length,
-                min_n_best=self.beam_min_n_best,
                 padding_token=self.NULL_IDX,
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
@@ -728,8 +715,11 @@ class TorchGeneratorAgent(TorchAgent):
             ).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)
 
-        # get the top prediction for each
-        beam_preds_scores = [b.get_top_hyp() for b in beams]
+        # get all finilized candidates for each sample (and validate them)
+        n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
+
+        # get the top prediction for each beam (i.e. minibatch sample)
+        beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
 
         return beam_preds_scores, beams
 
@@ -764,7 +754,6 @@ class TreeSearch(object):
         bos_token=1,
         eos_token=2,
         min_length=3,
-        min_n_best=3,
         device='cpu',
     ):
         """
@@ -780,9 +769,6 @@ class TreeSearch(object):
             end of sentence token ID
         :param min_length:
             minimum length of the predicted sequence
-        :param min_n_best:
-            Search will not be finished until a minimum number of utterances are
-            completed.
         :param device:
             What device to use for computations
         """
@@ -807,7 +793,6 @@ class TreeSearch(object):
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
-        self.min_n_best = min_n_best
         self.partial_hyps = [[self.bos] for i in range(beam_size)]
 
     def get_output_from_current_step(self):
@@ -853,8 +838,16 @@ class TreeSearch(object):
         if self.scores is None:
             self.scores = torch.zeros(1).type_as(logprobs).to(logprobs.device)
 
+        # penalize hypotheses ending in EOS on the prior scores (self.scores) level
+        # this is related to search which uses prior scores (self.scores) (e.g. beam)
+        for hyp_id, token in enumerate(self.outputs[-1]):
+            if token == self.eos:
+                self.scores[hyp_id] = neginf(self.scores.dtype)
+
         hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
-        self.all_scores.append(self.scores)
+        # use clone() here to ensure that self.all_scores will not be changed
+        # later due to any penalties to self.scores
+        self.all_scores.append(self.scores.clone())
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
@@ -866,11 +859,13 @@ class TreeSearch(object):
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
+                if self.scores[hypid] == neginf(self.scores.dtype):
+                    continue
                 #  this is finished hypo, adding to finished
                 eostail = _HypothesisTail(
                     timestep=len(self.outputs) - 1,
                     hypid=hypid,
-                    score=self.scores[hypid],
+                    score=self.all_scores[-1][hypid],
                     tokenid=self.eos,
                 )
                 self.finished.append(eostail)
@@ -883,15 +878,7 @@ class TreeSearch(object):
 
     def is_done(self):
         """Return whether beam search is complete."""
-        return self.eos_top and self.n_best_counter >= self.min_n_best
-
-    def get_top_hyp(self):
-        """
-        Get single best hypothesis.
-
-        :return: hypothesis sequence and the final score
-        """
-        return self._get_rescored_finished(n_best=1)[0]
+        return self.eos_top and self.n_best_counter >= self.beam_size
 
     def _get_hyp_from_finished(self, hypothesis_tail):
         """
@@ -925,7 +912,7 @@ class TreeSearch(object):
         """Return hypothesis as a tensor of token ids."""
         return torch.stack([ht.tokenid for ht in reversed(list_of_hypotails)])
 
-    def _get_rescored_finished(self, n_best=None):
+    def get_rescored_finished(self, n_best=None):
         """
         Return finished hypotheses according to adjusted scores.
 
@@ -942,12 +929,13 @@ class TreeSearch(object):
         """
         # if we never actually finished, force one
         if not self.finished:
+            self.outputs[-1][0] = self.eos
             self.finished.append(
                 _HypothesisTail(
                     timestep=len(self.outputs) - 1,
                     hypid=0,
                     score=self.all_scores[-1][0],
-                    tokenid=self.eos,
+                    tokenid=self.outputs[-1][0],
                 )
             )
 
@@ -971,10 +959,23 @@ class TreeSearch(object):
         if n_best is not None:
             srted = srted[:n_best]
 
-        return [
+        n_best_list = [
             (self._get_pretty_hypothesis(self._get_hyp_from_finished(hyp)), hyp.score)
             for hyp in srted
         ]
+
+        # check that there is at least one finished candidate
+        # and assert that each of them contains only one EOS
+        assert (
+            len(n_best_list) >= 1
+        ), f'TreeSearch returned {len(n_best_list)} candidates, must be >= 1'
+        for (pred, score) in n_best_list:
+            assert (
+                pred == self.eos
+            ).sum() == 1, f'TreeSearch returned a finalized hypo with multiple end tokens \
+            with score {score.item():.2f}'
+
+        return n_best_list
 
 
 class GreedySearch(TreeSearch):
@@ -992,7 +993,7 @@ class GreedySearch(TreeSearch):
 
     def select_paths(self, logprobs, prior_scores):
         tok_scores, tok_ids = logprobs.max(1)
-        best_scores = tok_scores + prior_scores.unsqueeze(1)
+        best_scores = tok_scores + prior_scores
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
         return (hyp_ids, tok_ids, best_scores)
 
