@@ -199,13 +199,7 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
-      - restore_cache:
-          key: gpu11-nvidia430.40
       - <<: *setupcuda
-      - save_cache:
-          key: gpu11-nvidia430.40
-          paths:
-            - "~/"
       - <<: *setup
       - restore_cache:
           key: deps-gpu11-v3{{ checksum "requirements.txt" }}
@@ -228,13 +222,7 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
-      - restore_cache:
-          key: gpu12-nvidia430.40
       - <<: *setupcuda
-      - save_cache:
-          key: gpu12-nvidia430.40
-          paths:
-            - "~/"
       - <<: *setup
       - restore_cache:
           key: deps-gpu12-v3{{ checksum "requirements.txt" }}
@@ -300,13 +288,7 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
-      - restore_cache:
-          key: gpu-nightly-nvidia430.40
       - <<: *setupcuda
-      - save_cache:
-          key: gpu-nightly-nvidia430.40
-          paths:
-            - "~/"
       - <<: *setup
       - restore_cache:
           key: deps-nightly-v3{{ checksum "requirements.txt" }}
