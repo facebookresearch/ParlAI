@@ -36,7 +36,7 @@ except ImportError:
     GIT_AVAILABLE = False
 
 try:
-    from subword_nmt import learn_bpe, apply_bpe  # noqa: F401
+    import subword_nmt  # noqa: F401
 
     BPE_INSTALLED = True
 except ImportError:

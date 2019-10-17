@@ -17,7 +17,8 @@ import os
 class OffensiveLanguageClassifier:
     """
     Load model trained to detect offensive language in the context of single-
-    turn dialogue utterances. See <http://parl.ai/projects/dialogue_safety/>
+    turn dialogue utterances. This model was trained to be robust to adversarial
+    examples created by humans. See <http://parl.ai/projects/dialogue_safety/>
     for more information.
     """
 
@@ -33,7 +34,7 @@ class OffensiveLanguageClassifier:
         parser.set_params(
             model_file='zoo:dialogue_safety/single_turn/model', print_scores=True
         )
-        safety_opt = parser.parse_args(print_args=False)
+        safety_opt = parser.parse_args([], print_args=False)
         return create_agent(safety_opt)
 
     def contains_offensive_language(self, text):
@@ -50,6 +51,10 @@ class OffensiveLanguageClassifier:
         return pred_not_ok, prob
 
     def __contains__(self, key):
+        """
+        A simple way of checking whether the model classifies an utterance as
+        offensive. Returns True if the input phrase is offensive.
+        """
         pred_not_ok, prob = self.contains_offensive_language(key)
         return pred_not_ok
 
