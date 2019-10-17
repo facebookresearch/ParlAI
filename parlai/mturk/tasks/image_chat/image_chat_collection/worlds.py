@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.utils.safety import OffensiveLanguageDetector
+from parlai.utils.safety import OffensiveStringMatcher
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.tasks.image_chat.build import build as build_ic
 from parlai.tasks.personality_captions.build import build as build_pc
@@ -108,7 +108,7 @@ class ExampleGenerator(object):
                 '_sandbox' if opt['is_sandbox'] else '',
             ),
         )
-        self.OLD = OffensiveLanguageDetector()
+        self.OLD = OffensiveStringMatcher()
         self.opt = opt
         build_pc(opt)
         build_ic(opt)
@@ -196,7 +196,7 @@ class MTurkImageChatWorld(MultiAgentDialogWorld):
         super().__init__(opt, agents, shared)
         self.agents = agents
         self.agent = agents[0]
-        self.offensive_lang_detector = OffensiveLanguageDetector()
+        self.offensive_lang_detector = OffensiveStringMatcher()
         self.data = []
         self.exact_match = False
         self.num_images = opt['num_images']

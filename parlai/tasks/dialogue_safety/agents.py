@@ -18,11 +18,6 @@ import os
 import random
 import sys as _sys
 
-try:
-    import pandas as pd
-except ImportError:
-    raise ImportError('Please install pandas by running `pip install pandas`')
-
 
 # Constants
 OK_CLASS = '__ok__'
@@ -232,6 +227,12 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
     def build(self, opt):
         self._get_data()
+
+        try:
+            import pandas as pd
+        except ImportError:
+            raise ImportError('Please install pandas by running `pip install pandas`')
+
         version = 'v1.0'
         read_path = self.data_path
         if not build_data.built(self.data_path, version):

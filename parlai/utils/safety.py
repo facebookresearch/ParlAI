@@ -5,11 +5,61 @@
 # LICENSE file in the root directory of this source tree.
 """Utility functions and classes for detecting offensive language."""
 
+from parlai.agents.transformer_classifier.transformer_classifier import (
+    TransformerClassifierAgent,
+)
+from parlai.core.agents import create_agent
+from parlai.tasks.dialogue_safety.agents import OK_CLASS, NOT_OK_CLASS
 
 import os
 
 
-class OffensiveLanguageDetector(object):
+class OffensiveLanguageClassifier:
+    """
+    Load model trained to detect offensive language in the context of single-
+    turn dialogue utterances. This model was trained to be robust to adversarial
+    examples created by humans. See <http://parl.ai/projects/dialogue_safety/>
+    for more information.
+    """
+
+    def __init__(self):
+        self.model = self._create_safety_model()
+        self.classes = {OK_CLASS: False, NOT_OK_CLASS: True}
+
+    def _create_safety_model(self):
+        from parlai.core.params import ParlaiParser
+
+        parser = ParlaiParser(False, False)
+        TransformerClassifierAgent.add_cmdline_args(parser)
+        parser.set_params(
+            model_file='zoo:dialogue_safety/single_turn/model', print_scores=True
+        )
+        safety_opt = parser.parse_args([], print_args=False)
+        return create_agent(safety_opt)
+
+    def contains_offensive_language(self, text):
+        """Returns the probability that a message is safe according to the
+        classifier.
+        """
+        act = {'text': text, 'episode_done': True}
+        self.model.observe(act)
+        response = self.model.act()['text']
+        pred_class, prob = [x.split(': ')[-1] for x in response.split('\n')]
+        pred_not_ok = self.classes[pred_class]  # check whether classified as NOT OK
+        prob = float(prob)  # cast string to float
+
+        return pred_not_ok, prob
+
+    def __contains__(self, key):
+        """
+        A simple way of checking whether the model classifies an utterance as
+        offensive. Returns True if the input phrase is offensive.
+        """
+        pred_not_ok, prob = self.contains_offensive_language(key)
+        return pred_not_ok
+
+
+class OffensiveStringMatcher:
     """
     Detects offensive language using a list of offensive language and phrases
     from https://github.com/LDNOOBW.
@@ -171,6 +221,3 @@ class OffensiveLanguageDetector(object):
     def __contains__(self, key):
         """Determine if text contains any offensive words in the filter."""
         return self.contains_offensive_language(key)
-
-
-# TODO: Add classifier for using safety classifier as a utility

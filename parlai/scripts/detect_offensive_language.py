@@ -16,7 +16,7 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.utils.safety import OffensiveLanguageDetector
+from parlai.utils.safety import OffensiveStringMatcher
 from parlai.utils.misc import TimeLogger
 
 import random
@@ -47,7 +47,7 @@ def detect(opt, printargs=None, print_parser=None):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
-    bad = OffensiveLanguageDetector()
+    bad = OffensiveStringMatcher()
 
     if print_parser:
         # Show arguments after loading model

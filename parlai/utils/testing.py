@@ -34,6 +34,13 @@ except ImportError:
     git_ = None
     GIT_AVAILABLE = False
 
+try:
+    import subword_nmt  # noqa: F401
+
+    BPE_INSTALLED = True
+except ImportError:
+    BPE_INSTALLED = False
+
 
 DEBUG = False  # change this to true to print to stdout anyway
 
@@ -60,6 +67,11 @@ def skipIfGPU(testfn, reason='Test is CPU-only'):
 def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     """Decorate a test to skip if no GPU is available."""
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessBPE(testfn, reason='Test requires a GPU'):
+    """Decorate a test to skip if BPE is not installed."""
+    return unittest.skipUnless(BPE_INSTALLED, reason)(testfn)
 
 
 def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):

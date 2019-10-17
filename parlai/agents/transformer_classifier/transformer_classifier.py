@@ -8,10 +8,7 @@ from parlai.agents.transformer.transformer import (
     TransformerMemNetModel,
 )
 from parlai.agents.transformer.modules import TransformerLinearWrapper
-from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
-
-import torch
 
 
 class TransformerClassifierAgent(TorchClassifierAgent):

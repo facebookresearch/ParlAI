@@ -3,7 +3,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
-from parlai.utils.safety import OffensiveLanguageDetector
+from parlai.utils.safety import OffensiveStringMatcher
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from joblib import Parallel, delayed
 from task_configs.task_config_personality import task_config as config_personality
@@ -254,7 +254,7 @@ class MTurkPersonalityCaptionsWorld(MultiAgentDialogWorld):
         self.max_resp_time = opt['max_resp_time']  # in secs
         super().__init__(opt, agents, shared)
         self.agents = agents
-        self.offensive_lang_detector = OffensiveLanguageDetector()
+        self.offensive_lang_detector = OffensiveStringMatcher()
         self.agent = agents[0]
         self.data = []
         self.exact_match = False
