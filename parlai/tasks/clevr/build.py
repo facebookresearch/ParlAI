@@ -12,6 +12,7 @@ URLS = ['https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip']
 FILE_NAMES = ['CLEVR_v1.0.zip']
 SHA256 = ['5cd61cf1096ed20944df93c9adb31e74d189b8459a94f54ba00090e5c59936d1']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CLEVR')
     version = 'v1.0'

@@ -13,15 +13,16 @@ import re
 
 URLS = [
     'https://worksheets.codalab.org/rest/bundles/0x4a763f8cde224c2da592b75f29e2f5c2/contents/blob/',
-    'https://worksheets.codalab.org/rest/bundles/0xe7bac352fce7448c9ef238fb0a297ec2/contents/blob/'
+    'https://worksheets.codalab.org/rest/bundles/0xe7bac352fce7448c9ef238fb0a297ec2/contents/blob/',
 ]
 FILE_NAMES = ['train.json', 'test.json']
 SHA256 = [
     'fb1797e4554a1b1be642388367de1379f8c0d5afc609ac171492c67f7b70cb1e',
-    'e3d4550e90660aaabe18458ba34b59f2624857273f375af7353273ce8b84ce6e'
+    'e3d4550e90660aaabe18458ba34b59f2624857273f375af7353273ce8b84ce6e',
 ]
 
 STRIP_CHARS = ' ()"()'
+
 
 def parse_ans(a):
     a = a.lstrip('(list')

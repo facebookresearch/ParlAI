@@ -12,6 +12,7 @@ URLS = ['http://lnsigo.mipt.ru/export/datasets/convai/convai2_wild_evaluation_0.
 FILE_NAMES = ['convai2_wild_evaluation_0.2.tgz']
 SHA256 = ['d40ff70275c8d1939a8081707edcf4e71072097d18b9998100a1099d23e29801']
 
+
 def make_parlai_format(data: list, dpath: str):
     train_p = 0.6
     valid_p = 0.2

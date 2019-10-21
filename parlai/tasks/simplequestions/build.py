@@ -12,6 +12,7 @@ URLS = ['http://parl.ai/downloads/simplequestions/' + 'simplequestions.tar.gz']
 FILE_NAMES = ['simplequestions.tar.gz']
 SHA256 = ['f1155f195e5c0c0392e69ef0a31e90f925b03210c13abe467ee07de0637d2c6f']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'SimpleQuestions')
     version = None

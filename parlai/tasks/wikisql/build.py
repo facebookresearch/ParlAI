@@ -11,16 +11,14 @@ import os
 
 URLS = [
     'https://github.com/salesforce/WikiSQL/raw/master/' + 'data.tar.bz2',
-    'https://github.com/salesforce/WikiSQL/raw/master/lib/' + 'query.py'
+    'https://github.com/salesforce/WikiSQL/raw/master/lib/' + 'query.py',
 ]
-FILE_NAMES = [
-    'data.tar.bz2',
-    'query.py'
-]
+FILE_NAMES = ['data.tar.bz2', 'query.py']
 SHA256 = [
     '755c728ab188e364575705c8641f3fafd86fb089cb8b08e8c03f01832aae0881',
-    'f539150bea6cd07a5dca226abcced6f9d356d216f5c3d70107693613f1fbeb25'
+    'f539150bea6cd07a5dca226abcced6f9d356d216f5c3d70107693613f1fbeb25',
 ]
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'WikiSQL')

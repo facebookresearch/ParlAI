@@ -13,6 +13,7 @@ URLS = ['http://nlp.cs.washington.edu/triviaqa/data/' + 'triviaqa-rc.tar.gz']
 FILE_NAMES = ['triviaqa-rc.tar.gz']
 SHA256 = ['ef94fac6db0541e5bb5b27020d067a8b13b1c1ffc52717e836832e02aaed87b9']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'TriviaQA')
     version = None

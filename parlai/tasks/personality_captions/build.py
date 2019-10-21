@@ -10,6 +10,7 @@ URLS = ['http://parl.ai/downloads/personality_captions/' + 'personality_captions
 FILE_NAMES = ['personality_captions.tgz']
 SHA256 = ['e0979d3ac0854395ee74f2c61a6bc467838cc292c3a9a62e891d8230d3a01365']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'personality_captions')
     image_path = os.path.join(opt['datapath'], 'yfcc_images')

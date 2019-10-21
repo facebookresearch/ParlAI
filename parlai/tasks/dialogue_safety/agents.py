@@ -29,6 +29,7 @@ OK_CLASS = '__ok__'
 NOT_OK_CLASS = '__notok__'
 MULTI_TURN_DATA = 'multi_turn_safety.json'
 
+
 class StandardTeacher(_BaseSafetyTeacher):
     """
     Data from the standard collection described in the paper

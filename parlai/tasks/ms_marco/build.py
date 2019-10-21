@@ -71,26 +71,19 @@ def create_fb_format(outpath, dtype, inpath):
                 continue
             fout2.write('1 {}\t{}\t\t{}\n'.format(lq, '|'.join(ans), '|'.join(cands)))
 
+
 URL = 'https://msmarco.blob.core.windows.net/msmarco/'
 
-URL_NAMES = [
-    "train_v2.1.json.gz",
-    "dev_v2.1.json.gz",
-    "eval_v2.1_public.json.gz"
-]
+URL_NAMES = ["train_v2.1.json.gz", "dev_v2.1.json.gz", "eval_v2.1_public.json.gz"]
 
 URLS = list(map(lambda x: URL + x, URL_NAMES))
 
-FILE_NAMES = [
-    'train.gz',
-    'valid.gz',
-    'test.gz'
-]
+FILE_NAMES = ['train.gz', 'valid.gz', 'test.gz']
 
 SHA256 = [
     'e91745411ca81e441a3bb75deb71ce000dc2fc31334085b7d499982f14218fe2',
     '5b3c9c20d1808ee199a930941b0d96f79e397e9234f77a1496890b138df7cb3c',
-    '05ac0e448450d507e7ff8e37f48a41cc2d015f5bd2c7974d2445f00a53625db6'
+    '05ac0e448450d507e7ff8e37f48a41cc2d015f5bd2c7974d2445f00a53625db6',
 ]
 
 # Download and build the data if it does not exist.

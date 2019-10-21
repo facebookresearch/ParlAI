@@ -208,9 +208,11 @@ class ParseInsuranceQAV2(ParseInsuranceQA):
                 fout.write(s + '\n')
         fout.close()
 
+
 URLS = ['https://github.com/shuzi/insuranceQA/archive/master.zip']
 FILE_NAMES = ['insuranceqa.zip']
 SHA256 = ['53e1c4a68734c6a0955dcba50d5a2a9926004d4cd4cda2e988cc7b990a250fbf']
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'InsuranceQA')

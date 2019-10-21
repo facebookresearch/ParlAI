@@ -10,6 +10,7 @@ URLS = ['https://storage.googleapis.com/dialog-data-corpus/CCPE-M-2019/data.json
 FILE_NAMES = ['ccpe.json']
 SHA256 = ['14abc40f5ab93eb68607454968f0e3af21aeb75d8c37b8b19bf9eeb957907a42']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CCPE')
     version = '1.0'

@@ -15,6 +15,7 @@ URLS = ['http://parl.ai/downloads/dbll/dbll.tgz']
 FILE_NAMES = ['dbll.tgz']
 SHA256 = ['d8c727dac498b652c7f5de6f72155dce711ff46c88401a303399d3fad4db1e68']
 
+
 def build(opt):
     # Depends upon another dataset, wikimovies, build that first.
     wikimovies_build.build(opt)

@@ -12,6 +12,7 @@ URLS = ['http://parl.ai/downloads/cbt/cbt.tar.gz']
 FILE_NAMES = ['cbt.tar.gz']
 SHA256 = ['932df0cadc1337b2a12b4c696b1041c1d1c6d4b6bd319874c6288f02e4a61e92']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CBT')
     version = None

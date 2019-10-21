@@ -12,6 +12,7 @@ URLS = ['http://parl.ai/downloads/convai2/convai2_fix_723.tgz']
 FILE_NAMES = ['convai2_fix_723.tgz']
 SHA256 = ['d0ae89defe2fd0b0a4221eaa642a457d7d40cef475f54798119c7f3b8dd9361d']
 
+
 def build_fb_format():
     pass
 

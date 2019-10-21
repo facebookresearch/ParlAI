@@ -15,7 +15,7 @@ FILE_NAMES = [
     'v2_Questions_Val_mscoco.zip',
     'v2_Questions_Test_mscoco.zip',
     'v2_Annotations_Val_mscoco.zip',
-    'v2_Annotations_Train_mscoco.zip'
+    'v2_Annotations_Train_mscoco.zip',
 ]
 
 URLS = list(map(lambda x: URL + x, FILE_NAMES))
@@ -25,8 +25,9 @@ SHA256 = [
     'e71f6c5c3e97a51d050f28243e262b28cd0c48d11a6b4632d769d30d3f93222a',
     '982e2e687a86514b78ea83af356d151976c5e3fb4168a29ca543610574082ad7',
     '0caae7c8d1dafd852727f5ac046bc1efca9b72026bd6ffa34fc489f3a7b3291e',
-    'fb101bcefe91422c543c2bb6d70af11eb3119d0ff745ae283d09acdf66250853'
+    'fb101bcefe91422c543c2bb6d70af11eb3119d0ff745ae283d09acdf66250853',
 ]
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'VQA-v2')

@@ -12,6 +12,7 @@ URLS = ['https://nlp.stanford.edu/projects/snli/' + 'snli_' + '1.0' + '.zip']
 FILE_NAMES = ['snli_' + '1.0' + '.zip']
 SHA256 = ['afb3d70a5af5d8de0d9d81e2637e0fb8c22d1235c2749d83125ca43dab0dbd3e']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'SNLI')
     version = '1.0'

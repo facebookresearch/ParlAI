@@ -11,6 +11,7 @@ URLS = ['https://github.com/clic-lab/nlvr/archive/master.zip']
 FILE_NAMES = ['nlvr.zip']
 SHA256 = ['32694f83835bd28b86b0f2734efa9544401ed18bd954649b50d1375d43e56b8b']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'nlvr')
     version = None

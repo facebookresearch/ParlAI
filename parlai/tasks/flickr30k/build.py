@@ -12,6 +12,7 @@ URLS = ['http://parl.ai/downloads/flickr30k/flickr30k.tgz']
 FILE_NAMES = ['flickr30k.tgz']
 SHA256 = ['932a43ea1ba0dafa5a533bee825dfc6b7cbcd94038b5addd6cdb6f7f2a8a229a']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'Flickr30k')
     version = '1.0'

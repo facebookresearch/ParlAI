@@ -8,9 +8,12 @@
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['https://dl.fbaipublicfiles.com/parlai/projects/talkthewalk/' + 'talkthewalk.tgz']
+URLS = [
+    'https://dl.fbaipublicfiles.com/parlai/projects/talkthewalk/' + 'talkthewalk.tgz'
+]
 FILE_NAMES = ['talkthewalk.tgz']
 SHA256 = ['314c379fa9d03eb879585b543661c27ddbd836c70d3e440cdd7c5f9b9bf32ed0']
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'TalkTheWalk')

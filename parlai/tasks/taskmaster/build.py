@@ -9,17 +9,17 @@ import parlai.core.build_data as build_data
 import os
 
 URLS = [
-    'https://storage.googleapis.com/dialog-data-corpus/TASKMASTER-1-2019/' + 'self-dialogs.json',
-    'https://storage.googleapis.com/dialog-data-corpus/TASKMASTER-1-2019/' + 'woz-dialogs.json'
+    'https://storage.googleapis.com/dialog-data-corpus/TASKMASTER-1-2019/'
+    + 'self-dialogs.json',
+    'https://storage.googleapis.com/dialog-data-corpus/TASKMASTER-1-2019/'
+    + 'woz-dialogs.json',
 ]
-FILE_NAMES = [
-    'self-dialogs.json',
-    'woz-dialogs.json'
-]
+FILE_NAMES = ['self-dialogs.json', 'woz-dialogs.json']
 SHA256 = [
     '1e590ed0ccee279e40c2fb9e083d3b9417477c6bfe35ce5b2277167698dd858d',
-    'cd3bc4e968487315d412c044d30af2bf0a4b33c3ef8b74c589f1e1fa832bf72f'
+    'cd3bc4e968487315d412c044d30af2bf0a4b33c3ef8b74c589f1e1fa832bf72f',
 ]
+
 
 def build(opt):
     # get path to data directory

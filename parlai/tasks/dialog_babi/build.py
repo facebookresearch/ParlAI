@@ -12,6 +12,7 @@ URLS = ['http://parl.ai/downloads/dialog_babi/dialog_babi.tar.gz']
 FILE_NAMES = ['dialog_babi.tar.gz']
 SHA256 = ['bb36155ccd41eac91f806446c5728ee90374e5596156a9f7c1b86f8342cfc383']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'dialog-bAbI')
     version = None

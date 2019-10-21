@@ -11,18 +11,16 @@ import json
 
 URLS = [
     'https://computing.ece.vt.edu/~abhshkdz/data/visdial/' + 'visdial_0.9_train.zip',
-    'https://computing.ece.vt.edu/~abhshkdz/data/visdial/' + 'visdial_0.9_val.zip'
+    'https://computing.ece.vt.edu/~abhshkdz/data/visdial/' + 'visdial_0.9_val.zip',
 ]
 
-FILE_NAMES = [
-    'visdial_0.9_train.zip',
-    'visdial_0.9_val.zip'
-]
+FILE_NAMES = ['visdial_0.9_train.zip', 'visdial_0.9_val.zip']
 
 SHA256 = [
     'a778d5d39d855b6194272f5800871a4a4b3673b00c9dc28d611443e7ca071290',
-    '08f5ee1d0cb12620b311cb7efbce4bb43a586871f002adba541614877d6f3960'
+    '08f5ee1d0cb12620b311cb7efbce4bb43a586871f002adba541614877d6f3960',
 ]
+
 
 def build(opt):
     version = 'v0.9'

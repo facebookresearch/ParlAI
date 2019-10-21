@@ -8,12 +8,15 @@
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['http://parl.ai/downloads/COCO-IMG/train2014.zip', 
-        'http://parl.ai/downloads/COCO-IMG/val2014.zip', 
-        'http://parl.ai/downloads/COCO-IMG/test2014.zip',
-        'http://parl.ai/downloads/coco_caption/dataset_coco.tgz']
+URLS = [
+    'http://parl.ai/downloads/COCO-IMG/train2014.zip',
+    'http://parl.ai/downloads/COCO-IMG/val2014.zip',
+    'http://parl.ai/downloads/COCO-IMG/test2014.zip',
+    'http://parl.ai/downloads/coco_caption/dataset_coco.tgz',
+]
 FILE_NAMES = ['train2014.zip', 'val2014.zip', 'test2014.zip', 'dataset_coco.tgz']
 SHA256 = []
+
 
 def buildImage(opt):
     dpath = os.path.join(opt['datapath'], 'COCO-IMG-2014')

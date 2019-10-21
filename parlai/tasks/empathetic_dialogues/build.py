@@ -13,6 +13,7 @@ URLS = ['http://parl.ai/downloads/empatheticdialogues/empatheticdialogues.tar.gz
 FILE_NAMES = ['empatheticdialogues.tar.gz']
 SHA256 = ['240c492cb6199a315722f716bfcc14f13ea6605f1cec67349153b606be92f6f2']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'empatheticdialogues')
     version = 'None'

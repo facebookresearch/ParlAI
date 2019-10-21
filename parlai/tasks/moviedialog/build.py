@@ -10,11 +10,14 @@ import os
 
 URLS = [
     'http://parl.ai/downloads/moviedialog/' + 'moviedialog.tar.gz',
-    'http://tinyurl.com/' + 'p6tyohj'
+    'http://tinyurl.com/' + 'p6tyohj',
 ]
 FILE_NAMES = ['moviedialog.tar.gz', 'p6tyohj.tgz']
-SHA256 = ['9b168d30111f13b9cc50e6a15885adae8f86bc0bb7a124d435c43fd0f7e2a9c7',
-'6316a6a5c563bc3c133a4a1e611d8ca638c61582f331c500697d9090efd215bb']
+SHA256 = [
+    '9b168d30111f13b9cc50e6a15885adae8f86bc0bb7a124d435c43fd0f7e2a9c7',
+    '6316a6a5c563bc3c133a4a1e611d8ca638c61582f331c500697d9090efd215bb',
+]
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MovieDialog')

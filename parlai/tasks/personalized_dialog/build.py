@@ -8,9 +8,14 @@
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['https://www.dropbox.com/s/4i9u4y24pt3paba/' + 'personalized-dialog-dataset.tar.gz' + '?dl=1']
+URLS = [
+    'https://www.dropbox.com/s/4i9u4y24pt3paba/'
+    + 'personalized-dialog-dataset.tar.gz'
+    + '?dl=1'
+]
 FILE_NAMES = ['personalized-dialog-dataset.tar.gz']
 SHA256 = ['0da3d5ba631d672e9e2d108dfd6721c8201cc41b837425540faba6815c375c52']
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'personalized-dialog')

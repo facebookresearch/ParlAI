@@ -14,6 +14,7 @@ URLS = ['http://parl.ai/downloads/ubuntu/' + 'ubuntu.tar.gz']
 FILE_NAMES = ['ubuntu.tar.gz']
 SHA256 = ['87caf297381287247cbff3aa7cc2f4609f3b12c40e8535688168d7413740e0d0']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'Ubuntu')
     version = None

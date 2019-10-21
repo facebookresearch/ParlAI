@@ -12,6 +12,7 @@ URLS = ['1WtbXCv3vPB5ql6w0FVDmAEMmWadbrCuG']
 FILE_NAMES = ['dialogue_nli.zip']
 SHA256 = []
 
+
 def build(opt):
     # get path to data directory
     dpath = os.path.join(opt['datapath'], 'dialogue_nli')

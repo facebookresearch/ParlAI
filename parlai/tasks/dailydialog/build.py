@@ -13,6 +13,7 @@ URLS = ['http://parl.ai/downloads/dailydialog/dailydialog.tar.gz']
 FILE_NAMES = ['dailydialog.tar.gz']
 SHA256 = ['c3adb09bd715b9fa5cd1ac41613b7de61eb5afbe477826a6146abefef573e6bb']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'dailydialog')
     version = 'None'

@@ -9,6 +9,7 @@ URLS = ['http://parl.ai/downloads/image_chat/image_chat.tgz']
 FILE_NAMES = ['image_chat.tgz']
 SHA256 = ['ad733e181de33f1085166bb7af17fcf228504bd48228ed8cc20c5e7a9fa5d259']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'image_chat')
     image_path = os.path.join(opt['datapath'], 'yfcc_images')

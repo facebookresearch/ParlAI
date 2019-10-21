@@ -11,6 +11,7 @@ URLS = ['https://github.com/facebookresearch/end-to-end-negotiator/archive/maste
 FILE_NAMES = ['negotiation.zip']
 SHA256 = ['0f62af6ced9d0c41183118ccce4ef012886fce7ccbe23565280c5f0da358a2e5']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'negotiation')
     version = None

@@ -11,12 +11,13 @@ import os
 
 url = 'https://dada.cs.washington.edu/qasrl/data/'
 FILE_NAMES = ['wiki1.train.qa', 'wiki1.dev.qa', 'wiki1.test.qa']
-URLS = list(map(lambda x: url+x, FILE_NAMES))
+URLS = list(map(lambda x: url + x, FILE_NAMES))
 SHA256 = [
     'f927417e94e67b7ae17e33dd882989a5556d7ff37376f8bf5c78ece7d17a6c64',
     'caa94beaaf22304422cdc1a2fd8732b1a47401c9555a81e1f4da81e0a7557a8b',
-    'b43a998344fbd520955fb8f0f7b3691ace363daa8628552cf5cf5c8d84df6cca'
-    ]
+    'b43a998344fbd520955fb8f0f7b3691ace363daa8628552cf5cf5c8d84df6cca',
+]
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'QA-SRL')

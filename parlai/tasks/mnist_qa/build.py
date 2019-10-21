@@ -13,6 +13,7 @@ URLS = ['http://parl.ai/downloads/mnist/' + 'mnist.tar.gz']
 FILE_NAMES = ['mnist.tar.gz']
 SHA256 = ['c4e2f85cdae81ebf3a76d7ac0f0af8c4d91f4d1fb9bc2fd942b669a72b80585d']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'mnist')
     version = None

@@ -13,6 +13,7 @@ URLS = ['https://github.com/deepmind/AQuA/archive/master.zip']
 FILE_NAMES = ['aqua.zip']
 SHA256 = ['08ea725477f6a8577a7cc1a2ae08c7a56917aa3ec45193f173b298b6b526c603']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'AQuA')
     version = '1.0'

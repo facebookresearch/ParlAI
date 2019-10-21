@@ -27,9 +27,11 @@ def create_fb_format(outpath, dtype, inpath):
                     s = '1 ' + x + '\t' + y
                     fout.write(s + '\n\n')
 
+
 URLS = ['http://parl.ai/downloads/scan/' + 'scan.tgz']
 FILE_NAMES = ['scan.tgz']
 SHA256 = ['7d6695159fab47ef13a8fadd1f5020d5ab500196e71d5114fd52bc9b7fc8d17f']
+
 
 def build(opt):
     version = 'v1.0'

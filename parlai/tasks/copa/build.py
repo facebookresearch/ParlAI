@@ -11,6 +11,7 @@ URLS = ['http://people.ict.usc.edu/~gordon/downloads/COPA-resources.tgz']
 FILE_NAMES = ['COPA-resources.tgz']
 SHA256 = ['5145348834d2081ad90da0397d1db3d70fa044e506bd8ce224194d24b04cdbbe']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'COPA')
     version = None

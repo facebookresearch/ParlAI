@@ -11,6 +11,7 @@ URLS = ['https://dl.dropboxusercontent.com/s/iyz6l7jhbt6jb7q/new_dataset_release
 FILE_NAMES = ['FVQA.zip']
 SHA256 = ['66d1831a61d1282fb0c95c01435eda9b465961d507c1e166e4c32b89687c3c26']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'FVQA')
     version = None

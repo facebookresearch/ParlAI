@@ -11,18 +11,15 @@ import json
 
 VERSION = '0.2'
 
-FILE_NAMES = [
-    'train_v' + VERSION + '.json',
-    'val_v' + VERSION + '.json'
-]
+FILE_NAMES = ['train_v' + VERSION + '.json', 'val_v' + VERSION + '.json']
 
 URL = 'https://s3.amazonaws.com/my89public/quac/'
 
-URLS = list(map(lambda x: URL+x, FILE_NAMES))
+URLS = list(map(lambda x: URL + x, FILE_NAMES))
 
 SHA256 = [
     'ff5cca5a2e4b4d1cb5b5ced68b9fce88394ef6d93117426d6d4baafbcc05c56a',
-    '09e622916280ba04c9352acb1bc5bbe80f11a2598f6f34e934c51d9e6570f378'   
+    '09e622916280ba04c9352acb1bc5bbe80f11a2598f6f34e934c51d9e6570f378',
 ]
 
 SHOULD = '__SHOULD__'

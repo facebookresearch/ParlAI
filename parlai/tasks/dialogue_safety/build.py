@@ -8,12 +8,16 @@ import os
 
 import parlai.core.build_data as build_data
 
-URLS = ['http://parl.ai/downloads/dialogue_safety/single_turn_safety.json',
-        'http://parl.ai/downloads/dialogue_safety/multi_turn_safety.json']
-FILE_NAMES = ['single_turn_safety.json',
-                'multi_turn_safety.json']
-SHA256 = ['f3a46265aa639cfa4b55d2be4dca4be1c596acb5e8f94d7e0041e1a54cedd4cd',
-        'e3e577f456d63d51eb7b5f98ffd251ad695476f186d422fa8de1a177742fa7b6']
+URLS = [
+    'http://parl.ai/downloads/dialogue_safety/single_turn_safety.json',
+    'http://parl.ai/downloads/dialogue_safety/multi_turn_safety.json',
+]
+FILE_NAMES = ['single_turn_safety.json', 'multi_turn_safety.json']
+SHA256 = [
+    'f3a46265aa639cfa4b55d2be4dca4be1c596acb5e8f94d7e0041e1a54cedd4cd',
+    'e3e577f456d63d51eb7b5f98ffd251ad695476f186d422fa8de1a177742fa7b6',
+]
+
 
 def build(datapath):
     version = 'v1.0'

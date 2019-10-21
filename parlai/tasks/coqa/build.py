@@ -10,10 +10,13 @@ import os
 import json
 
 VERSION = '1.0'
-URLS = ['https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json',
-        'https://nlp.stanford.edu/data/coqa/coqa-dev-v1.0.json']
+URLS = [
+    'https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json',
+    'https://nlp.stanford.edu/data/coqa/coqa-dev-v1.0.json',
+]
 FILE_NAMES = ['coqa-train-v1.0.json', 'coqa-dev-v1.0.json']
 SHA256 = []
+
 
 def make_parlai_format(outpath, dtype, data):
     print('building parlai:' + dtype)

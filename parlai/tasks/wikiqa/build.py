@@ -36,9 +36,11 @@ def create_fb_format(outpath, dtype, inpath):
         cands = cands + '|' + lcand
     fout.close()
 
+
 URLS = ['http://parl.ai/downloads/wikiqa/' + 'wikiqa.tar.gz']
 FILE_NAMES = ['wikiqa.tar.gz']
 SHA256 = ['9bb8851dfa8db89a209480e65a3d8967d8bbdf94d5d17a364c0381b0b7609412']
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'WikiQA')

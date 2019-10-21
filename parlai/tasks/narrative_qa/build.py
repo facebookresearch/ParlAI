@@ -16,6 +16,7 @@ URLS = ['https://github.com/deepmind/narrativeqa/archive/master.zip']
 FILE_NAMES = ['narrative_qa.zip']
 SHA256 = ['9f6c484664394e0275944a4630a3de6294ba839162765d2839cc3d31a0b47a0e']
 
+
 def get_rows_for_set(reader, req_set):
     selected_rows = [row for row in reader if row['set'].strip() == req_set]
     return selected_rows

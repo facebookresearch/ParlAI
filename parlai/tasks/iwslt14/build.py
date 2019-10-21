@@ -13,6 +13,7 @@ URLS = ['http://parl.ai/downloads/iwslt14/iwslt14.tgz']
 FILE_NAMES = ['iwslt14.tgz']
 SHA256 = ['af4a96dbc7f792a9ba96cb1a56b314a15ea940fc7ea155aef72c19dc52d0ef84']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'iwslt14')
     version = 'None'

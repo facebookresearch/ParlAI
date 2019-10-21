@@ -12,6 +12,7 @@ URLS = ['http://parl.ai/downloads/mctest/' + 'mctest.tar.gz']
 FILE_NAMES = ['mctest.tar.gz']
 SHA256 = ['c8160bf790c97cec8e272677600170d5e181649492bde7e2c0ea5fb23ab25af7']
 
+
 def create_fb_format(outpath, dtype, inpath, inpath2):
     print('building fbformat:' + dtype)
     fout = open(os.path.join(outpath, dtype + '.txt'), 'w')

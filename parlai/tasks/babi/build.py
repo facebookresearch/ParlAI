@@ -13,6 +13,7 @@ URLS = ['http://parl.ai/downloads/babi/babi.tar.gz']
 FILE_NAMES = ['babi.tar.gz']
 SHA256 = []
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'bAbI')
     version = 'None'

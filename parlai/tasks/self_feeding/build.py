@@ -10,6 +10,7 @@ URLS = ['http://parl.ai/downloads/self_feeding/' + 'self_feeding_v031.tar.gz']
 FILE_NAMES = ['self_feeding_v031.tar.gz']
 SHA256 = ['223d867c72f8b8c173fce86d49d099a56ca002f1a39886c407caee661417a5b4']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'self_feeding')
     fname = 'self_feeding_v031.tar.gz'

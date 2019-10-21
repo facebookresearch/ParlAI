@@ -10,9 +10,12 @@ import os
 
 
 version = '1.0'
-URLS = ['https://www.nyu.edu/projects/bowman/multinli/' + 'multinli_' + version + '.zip']
+URLS = [
+    'https://www.nyu.edu/projects/bowman/multinli/' + 'multinli_' + version + '.zip'
+]
 FILE_NAMES = ['multinli_' + version + '.zip']
 SHA256 = ['049f507b9e36b1fcb756cfd5aeb3b7a0cfcb84bf023793652987f7e7e0957822']
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MultiNLI')

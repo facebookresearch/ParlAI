@@ -7,9 +7,12 @@
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['https://raw.githubusercontent.com/deepmipt/turing-data/master/data_1501534800.tar.gz']
+URLS = [
+    'https://raw.githubusercontent.com/deepmipt/turing-data/master/data_1501534800.tar.gz'
+]
 FILE_NAMES = ['data_1501534800.tar.gz']
 SHA256 = ['f1a4e7ee7264220cef6bf067b77d6f501023877643e77516c7acd66fbcdf0aaf']
+
 
 def build(opt):
     data_path = os.path.join(opt['datapath'], 'DialogueQE')

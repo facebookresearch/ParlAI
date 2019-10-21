@@ -33,9 +33,11 @@ def create_fb_format(outpath, dtype, inpath):
                 fname = os.path.join(inpath, f)
                 _process(fname, fout)
 
+
 URLS = ['0BwmD_VLjROrfN0xhTDVteGQ3eG8']
 FILE_NAMES = ['qadailymail.tar.gz']
 SHA256 = ['77bfe0d91dbc9774991bbce59895743adfc984eafffc328a7b1d34a89e2b5646']
+
 
 def build(opt):
     version = 'v1.0'

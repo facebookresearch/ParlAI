@@ -12,11 +12,13 @@ import json
 import re
 
 URLS = [
-    'https://raw.githubusercontent.com/salesforce/decanlp/' +
-    'd594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/' + 
-    'schema.txt']
+    'https://raw.githubusercontent.com/salesforce/decanlp/'
+    + 'd594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/'
+    + 'schema.txt'
+]
 FILE_NAMES = ['schema.txt']
 SHA256 = ['31da9bee05796bbe0f6c957f54d1eb82eb5c644a8ee59f2ff1fa890eff3885dd']
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MWSC')

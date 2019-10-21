@@ -12,6 +12,7 @@ URLS = ['http://parl.ai/downloads/booktest/booktest.tar.bz2']
 FILE_NAMES = ['booktest.tar.bz2']
 SHA256 = ['4079481d19c7681e3256c06ffd2781a230aca4a8d9390f3a5932c33e4b857c9d']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'BookTest')
     version = None

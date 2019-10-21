@@ -13,6 +13,7 @@ URLS = ["1ytVZ4AhubFDOEL7o7XrIRIyhU8g9wvKA"]
 FILE_NAMES = ['qangaroo.zip']
 SHA256 = ['2f512869760cdad76a022a1465f025b486ae79dc5b8f0bf3ad901a4caf2d3050']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'qangaroo')
     version = 'v1.1'

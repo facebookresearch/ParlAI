@@ -13,6 +13,7 @@ URLS = ['http://parl.ai/downloads/cornell_movie/cornell_movie_dialogs_corpus.tgz
 FILE_NAMES = ['cornell_movie_dialogs_corpus.tgz']
 SHA256 = ['ae77ab2e4743ce929087a4f529934059b920c4bdaa3143741b65b1e648ab45fd']
 
+
 def create_fb_format(lines_file, convo_file, outpath):
     print('[building fbformat]')
     with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, open(

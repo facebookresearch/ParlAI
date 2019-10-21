@@ -12,6 +12,7 @@ URLS = ['http://parl.ai/downloads/personachat/' + 'personachat.tgz']
 FILE_NAMES = ['personachat.tgz']
 SHA256 = ['507cf8641d333240654798870ea584d854ab5261071c5e3521c20d8fa41d5622']
 
+
 def build(opt):
     version = 'v1.0'
     dpath = os.path.join(opt['datapath'], 'Persona-Chat')

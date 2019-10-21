@@ -11,18 +11,15 @@ import os
 URLS = [
     'https://rajpurkar.github.io/SQuAD-explorer/dataset/' + 'train-v1.1.json',
     'https://rajpurkar.github.io/SQuAD-explorer/dataset/' + 'dev-v1.1.json',
-    'http://parl.ai/downloads/squad-fulldocs/' + 'squad_fulldocs.tgz'
+    'http://parl.ai/downloads/squad-fulldocs/' + 'squad_fulldocs.tgz',
 ]
-FILE_NAMES = [
-    'train-v1.1.json',
-    'dev-v1.1.json',
-    'squad_fulldocs.tgz'
-]
+FILE_NAMES = ['train-v1.1.json', 'dev-v1.1.json', 'squad_fulldocs.tgz']
 SHA256 = [
     '3527663986b8295af4f7fcdff1ba1ff3f72d07d61a20f487cb238a6ef92fd955',
     '95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9',
-    '199fbe66524270bc8423e5d788267ef6ac5029e12443428430e080f3c057b534'
-    ]
+    '199fbe66524270bc8423e5d788267ef6ac5029e12443428430e080f3c057b534',
+]
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'SQuAD')

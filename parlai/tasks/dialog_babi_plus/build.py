@@ -12,6 +12,7 @@ URLS = ['https://drive.google.com/uc?export=download&id=0B2MvoQfXtqZmMTJqclpBdGN
 FILE_NAMES = ['dialog-bAbI-plus.zip']
 SHA256 = ['e67dfecbde5e6250833143a6148150a313204237b765d39e7b8ebc111cb3204e']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'dialog-bAbI-plus')
     version = None

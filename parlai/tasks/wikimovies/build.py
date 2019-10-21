@@ -12,6 +12,7 @@ URLS = ['http://parl.ai/downloads/wikimovies/' + 'wikimovies.tar.gz']
 FILE_NAMES = ['wikimovies.tar.gz']
 SHA256 = ['ed062b49922b602ebee6073f58951bf38c4772a8b53d46682f3ff80ed57de948']
 
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'WikiMovies')
     version = None
