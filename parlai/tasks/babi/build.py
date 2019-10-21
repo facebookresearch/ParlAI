@@ -11,7 +11,7 @@ import os
 
 URLS = ['http://parl.ai/downloads/babi/babi.tar.gz']
 FILE_NAMES = ['babi.tar.gz']
-SHA256 = []
+SHA256 = ['f7f0bee187efca0d81c3daac1b162cda4eb7f9505dee5ad6846eabbed3dbf92e']
 
 
 def build(opt):
