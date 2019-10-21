@@ -33,6 +33,9 @@ def create_fb_format(outpath, dtype, inpath):
                 fname = os.path.join(inpath, f)
                 _process(fname, fout)
 
+URLS = ['0BwmD_VLjROrfTTljRDVZMFJnVWM']
+FILE_NAMES = ['cnn.tgz']
+SHA256 = ['9405beb90c9267e7769c86fa42720b7e479bcf38c64217c0d3f456ce8cd122ce']
 
 def build(opt):
     version = 'v1.0'
@@ -46,10 +49,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'cnn.tgz'
-        gd_id = '0BwmD_VLjROrfTTljRDVZMFJnVWM'
-        build_data.download_from_google_drive(gd_id, os.path.join(dpath, fname))
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256, from_google=True)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         create_fb_format(
             dpath, 'train', os.path.join(dpath, 'cnn', 'questions', 'training')

@@ -12,9 +12,9 @@ import shutil
 import csv
 import time
 
-
-NARRATIVE_QA_DOWNLOAD_URL = 'https://github.com/deepmind/narrativeqa/archive/master.zip'
-
+URLS = ['https://github.com/deepmind/narrativeqa/archive/master.zip']
+FILE_NAMES = ['narrative_qa.zip']
+SHA256 = ['9f6c484664394e0275944a4630a3de6294ba839162765d2839cc3d31a0b47a0e']
 
 def get_rows_for_set(reader, req_set):
     selected_rows = [row for row in reader if row['set'].strip() == req_set]
@@ -131,13 +131,11 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # download the data.
-        fname = 'narrative_qa.zip'
-        # dataset URL
-        url = NARRATIVE_QA_DOWNLOAD_URL
-        build_data.download(url, dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
         # uncompress it
-        build_data.untar(dpath, fname)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         print('downloading stories now')
         base_path = os.path.join(dpath, 'narrativeqa-master')

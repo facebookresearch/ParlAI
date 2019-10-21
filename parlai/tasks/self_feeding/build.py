@@ -6,6 +6,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/self_feeding/' + 'self_feeding_v031.tar.gz']
+FILE_NAMES = ['self_feeding_v031.tar.gz']
+SHA256 = ['223d867c72f8b8c173fce86d49d099a56ca002f1a39886c407caee661417a5b4']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'self_feeding')
@@ -17,7 +20,8 @@ def build(opt):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
-        url = 'http://parl.ai/downloads/self_feeding/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        # Download the data.
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
         build_data.mark_done(dpath, version)

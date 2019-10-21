@@ -8,6 +8,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['https://worksheets.codalab.org/rest/bundles/0x5a4cefea7fd443cea15aa532bb8fcd67/contents/blob/']
+FILE_NAMES = ['data.json']
+SHA256 = ['0b6e118b18d29d76193ce2735b1b6958b90b1d7d826f5963f5a47d12184cccd8']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MutualFriends')
@@ -21,11 +24,7 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        url = (
-            'https://worksheets.codalab.org/rest/bundles/'
-            '0x5a4cefea7fd443cea15aa532bb8fcd67/contents/blob/'
-        )
-        build_data.download(url, dpath, 'data.json')
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

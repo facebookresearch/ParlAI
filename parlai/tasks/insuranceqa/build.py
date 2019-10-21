@@ -208,6 +208,9 @@ class ParseInsuranceQAV2(ParseInsuranceQA):
                 fout.write(s + '\n')
         fout.close()
 
+URLS = ['https://github.com/shuzi/insuranceQA/archive/master.zip']
+FILE_NAMES = ['insuranceqa.zip']
+SHA256 = ['53e1c4a68734c6a0955dcba50d5a2a9926004d4cd4cda2e988cc7b990a250fbf']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'InsuranceQA')
@@ -220,12 +223,11 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the data from github.
-        fname = 'insuranceqa.zip'
-        url = 'https://github.com/shuzi/insuranceQA/archive/master.zip'
-        print('[downloading data from: ' + url + ']')
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        # Download the data.
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         ParseInsuranceQAV1.build(dpath)
         ParseInsuranceQAV2.build(dpath)

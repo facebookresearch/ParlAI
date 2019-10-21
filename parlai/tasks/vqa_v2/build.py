@@ -8,6 +8,25 @@
 import parlai.core.build_data as build_data
 import os
 
+URL = 'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/'
+
+FILE_NAMES = [
+    'v2_Questions_Train_mscoco.zip',
+    'v2_Questions_Val_mscoco.zip',
+    'v2_Questions_Test_mscoco.zip',
+    'v2_Annotations_Val_mscoco.zip',
+    'v2_Annotations_Train_mscoco.zip'
+]
+
+URLS = list(map(lambda x: URL + x, FILE_NAMES))
+
+SHA256 = [
+    '05a64b6e2582d06d7585f5429674a9a33851878be1bff9f8668cdcf792df611e',
+    'e71f6c5c3e97a51d050f28243e262b28cd0c48d11a6b4632d769d30d3f93222a',
+    '982e2e687a86514b78ea83af356d151976c5e3fb4168a29ca543610574082ad7',
+    '0caae7c8d1dafd852727f5ac046bc1efca9b72026bd6ffa34fc489f3a7b3291e',
+    'fb101bcefe91422c543c2bb6d70af11eb3119d0ff745ae283d09acdf66250853'
+]
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'VQA-v2')
@@ -21,26 +40,9 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname1 = 'v2_Questions_Train_mscoco.zip'
-        fname2 = 'v2_Questions_Val_mscoco.zip'
-        fname3 = 'v2_Questions_Test_mscoco.zip'
-
-        fname4 = 'v2_Annotations_Val_mscoco.zip'
-        fname5 = 'v2_Annotations_Train_mscoco.zip'
-
-        url = 'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/'
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
-        build_data.download(url + fname3, dpath, fname3)
-
-        build_data.download(url + fname4, dpath, fname4)
-        build_data.download(url + fname5, dpath, fname5)
-
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
-        build_data.untar(dpath, fname3)
-        build_data.untar(dpath, fname4)
-        build_data.untar(dpath, fname5)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

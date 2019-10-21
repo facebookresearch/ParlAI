@@ -8,6 +8,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip']
+FILE_NAMES = ['CLEVR_v1.0.zip']
+SHA256 = ['5cd61cf1096ed20944df93c9adb31e74d189b8459a94f54ba00090e5c59936d1']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CLEVR')
@@ -21,11 +24,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'CLEVR_v1.0.zip'
-        url = 'https://dl.fbaipublicfiles.com/clevr/'
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
-        build_data.download(url + fname, dpath, fname)
-        build_data.untar(dpath, fname)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

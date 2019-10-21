@@ -9,6 +9,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/dailydialog/dailydialog.tar.gz']
+FILE_NAMES = ['dailydialog.tar.gz']
+SHA256 = ['c3adb09bd715b9fa5cd1ac41613b7de61eb5afbe477826a6146abefef573e6bb']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'dailydialog')
@@ -22,10 +25,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'dailydialog.tar.gz'
-        url = 'http://parl.ai/downloads/dailydialog/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

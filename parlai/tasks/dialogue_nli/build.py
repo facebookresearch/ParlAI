@@ -8,6 +8,9 @@ import os
 
 import parlai.core.build_data as build_data
 
+URLS = ['1WtbXCv3vPB5ql6w0FVDmAEMmWadbrCuG']
+FILE_NAMES = ['dialogue_nli.zip']
+SHA256 = []
 
 def build(opt):
     # get path to data directory
@@ -25,13 +28,10 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the data.
-        fname = 'dialogue_nli.zip'
-        gd_id = '1WtbXCv3vPB5ql6w0FVDmAEMmWadbrCuG'
-        build_data.download_from_google_drive(gd_id, os.path.join(dpath, fname))
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256, from_google=True)
 
-        # uncompress it
-        build_data.unzip(dpath, fname)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

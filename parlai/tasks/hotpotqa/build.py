@@ -15,6 +15,14 @@ DEV_DISTRACTOR_FILENAME = 'hotpot_dev_distractor_v{}.json'.format(VERSION)
 DEV_FULLWIKI_FILENAME = 'hotpot_dev_fullwiki_v{}.json'.format(VERSION)
 
 URL = 'http://curtis.ml.cmu.edu/datasets/hotpot/'
+FILE_NAMES = ['hotpot_train_v{}.1.json'.format(VERSION),
+            'hotpot_dev_distractor_v{}.json'.format(VERSION),
+            'hotpot_dev_fullwiki_v{}.json'.format(VERSION)]
+
+URLS = list(map(lambda x: URL+x, FILE_NAMES))
+SHA256 = ['26650cf50234ef5fb2e664ed70bbecdfd87815e6bffc257e068efea5cf7cd316',
+'4e9ecb5c8d3b719f624d66b60f8d56bf227f03914f5f0753d6fa1b359d7104ea',
+'2f1f3e594a3066a3084cc57950ca2713c24712adaad03af6ccce18d1846d5618']
 
 OUTPUT_FORMAT = 'text:{context_question}\t' 'labels:{answer}'
 
@@ -53,12 +61,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download(URL + TRAIN_FILENAME, dpath, TRAIN_FILENAME)
-        build_data.download(
-            URL + DEV_DISTRACTOR_FILENAME, dpath, DEV_DISTRACTOR_FILENAME
-        )
-        build_data.download(URL + DEV_FULLWIKI_FILENAME, dpath, DEV_FULLWIKI_FILENAME)
-
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        
         with open(os.path.join(dpath, TRAIN_FILENAME)) as f:
             data = json.load(f)
             make_parlai_format(dpath, 'train', data)

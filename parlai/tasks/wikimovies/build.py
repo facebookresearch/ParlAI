@@ -8,6 +8,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/wikimovies/' + 'wikimovies.tar.gz']
+FILE_NAMES = ['wikimovies.tar.gz']
+SHA256 = ['ed062b49922b602ebee6073f58951bf38c4772a8b53d46682f3ff80ed57de948']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'WikiMovies')
@@ -21,10 +24,9 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'wikimovies.tar.gz'
-        url = 'http://parl.ai/downloads/wikimovies/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

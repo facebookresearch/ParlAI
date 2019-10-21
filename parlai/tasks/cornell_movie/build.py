@@ -9,6 +9,9 @@ import parlai.core.build_data as build_data
 import codecs
 import os
 
+URLS = ['http://parl.ai/downloads/cornell_movie/cornell_movie_dialogs_corpus.tgz']
+FILE_NAMES = ['cornell_movie_dialogs_corpus.tgz']
+SHA256 = ['ae77ab2e4743ce929087a4f529934059b920c4bdaa3143741b65b1e648ab45fd']
 
 def create_fb_format(lines_file, convo_file, outpath):
     print('[building fbformat]')
@@ -61,10 +64,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'cornell_movie_dialogs_corpus.tgz'
-        url = 'http://parl.ai/downloads/cornell_movie/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         dpext = os.path.join(dpath, 'cornell movie-dialogs corpus')
         create_fb_format(

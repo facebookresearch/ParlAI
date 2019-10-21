@@ -71,6 +71,9 @@ def create_fb_format(inpath, outpath):
                     dialog.append('\n')
                     handle.write(''.join(dialog))
 
+URLS = ['http://opus.lingfil.uu.se/download.php?f=OpenSubtitles/en.tar.gz']
+FILE_NAMES = ['OpenSubtitles.tar.gz']
+SHA256 = ['aef6d57db36c221b8cff1cf2356309874c27ef6a36bb8ca714509b37d0db29bc']
 
 def build(datapath):
     dpath = os.path.join(datapath, 'OpenSubtitles')
@@ -84,9 +87,10 @@ def build(datapath):
         build_data.make_dir(dpath)
 
         # Download the data.
-        url = 'http://opus.lingfil.uu.se/download.php?f=OpenSubtitles/en.tar.gz'
-        build_data.download(url, dpath, 'OpenSubtitles.tar.gz')
-        build_data.untar(dpath, 'OpenSubtitles.tar.gz')
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         create_fb_format(os.path.join(dpath, 'OpenSubtitles', 'en'), dpath)
 

@@ -8,10 +8,12 @@ import os
 
 from parlai.core import build_data
 
+URLS = ['https://drive.google.com/uc?export=download&id=0B2MvoQfXtqZmMTJqclpBdGN2bmc']
+FILE_NAMES = ['dialog-bAbI-plus.zip']
+SHA256 = ['e67dfecbde5e6250833143a6148150a313204237b765d39e7b8ebc111cb3204e']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'dialog-bAbI-plus')
-    fname = "dialog-bAbI-plus.zip"
     version = None
 
     if not build_data.built(dpath, version_string=version):
@@ -21,11 +23,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        url = (
-            "https://drive.google.com/uc?"
-            "export=download&id=0B2MvoQfXtqZmMTJqclpBdGN2bmc"
-        )
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         build_data.mark_done(dpath, version)

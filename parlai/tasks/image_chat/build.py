@@ -5,6 +5,9 @@ import parlai.core.build_data as build_data
 import os
 from parlai.tasks.personality_captions.download_images import download_images
 
+URLS = ['http://parl.ai/downloads/image_chat/image_chat.tgz']
+FILE_NAMES = ['image_chat.tgz']
+SHA256 = ['ad733e181de33f1085166bb7af17fcf228504bd48228ed8cc20c5e7a9fa5d259']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'image_chat')
@@ -17,9 +20,9 @@ def build(opt):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
-        url = 'http://parl.ai/downloads/image_chat/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
         build_data.mark_done(dpath, version)
 
     if not build_data.built(image_path, version) and not opt.get('yfcc_path'):

@@ -9,9 +9,9 @@ import parlai.core.build_data as build_data
 import os
 import shutil
 
-
-AQUA_BASE_URL = 'https://github.com/deepmind/AQuA/archive/master.zip'
-
+URLS = ['https://github.com/deepmind/AQuA/archive/master.zip']
+FILE_NAMES = ['aqua.zip']
+SHA256 = ['08ea725477f6a8577a7cc1a2ae08c7a56917aa3ec45193f173b298b6b526c603']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'AQuA')
@@ -26,12 +26,11 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # download the data.
-        fname = 'aqua.zip'
-
-        build_data.download(AQUA_BASE_URL, dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
         # uncompress it
-        build_data.untar(dpath, fname)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         base_path = os.path.join(dpath, 'AQuA-master')
         new_path = os.path.join(dpath, 'AQuA')

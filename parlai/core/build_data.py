@@ -21,8 +21,27 @@ import hashlib
 import tqdm
 import math
 import zipfile
+import hashlib
 from multiprocessing import Pool
 
+def download_check(dpath, urls, file_names, sha256=[], from_google=False):
+    # Download the data.
+    for i, url in enumerate(urls):
+        fname = file_names[i]
+        if from_google:
+            download_from_google_drive(url, os.path.join(dpath, fname))
+        else:
+            download(url, dpath, fname)
+        if sha256:
+            sha256_hash = hashlib.sha256()
+            with open(os.path.join(dpath, fname),"rb") as f:
+                for byte_block in iter(lambda: f.read(65536),b""):
+                    sha256_hash.update(byte_block)
+                if (sha256_hash.hexdigest() != sha256[i]):
+                    # remove_dir(dpath)
+                    raise ValueError("Checksum Failed")
+                else:
+                    print("Checksum Success")
 
 def built(path, version_string=None):
     """

@@ -10,10 +10,21 @@ import os
 import json
 
 VERSION = '0.2'
-TRAIN_FILENAME = 'train_v' + VERSION + '.json'
-VALID_FILENAME = 'val_v' + VERSION + '.json'
+
+FILE_NAMES = [
+    'train_v' + VERSION + '.json',
+    'val_v' + VERSION + '.json'
+]
 
 URL = 'https://s3.amazonaws.com/my89public/quac/'
+
+URLS = list(map(lambda x: URL+x, FILE_NAMES))
+
+SHA256 = [
+    'ff5cca5a2e4b4d1cb5b5ced68b9fce88394ef6d93117426d6d4baafbcc05c56a',
+    '09e622916280ba04c9352acb1bc5bbe80f11a2598f6f34e934c51d9e6570f378'   
+]
+
 SHOULD = '__SHOULD__'
 MAYBE = '__MAYBE__'
 SHOULD_NOT = '__SHOULDNOT__'
@@ -85,14 +96,13 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download(URL + TRAIN_FILENAME, dpath, TRAIN_FILENAME)
-        build_data.download(URL + VALID_FILENAME, dpath, VALID_FILENAME)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
-        with open(os.path.join(dpath, TRAIN_FILENAME)) as f:
+        with open(os.path.join(dpath, FILE_NAMES[0])) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'train', data)
 
-        with open(os.path.join(dpath, VALID_FILENAME)) as f:
+        with open(os.path.join(dpath, FILE_NAMES[1])) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'valid', data)
 

@@ -7,6 +7,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://people.ict.usc.edu/~gordon/downloads/COPA-resources.tgz']
+FILE_NAMES = ['COPA-resources.tgz']
+SHA256 = ['5145348834d2081ad90da0397d1db3d70fa044e506bd8ce224194d24b04cdbbe']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'COPA')
@@ -20,14 +23,11 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the data.
-        fname = 'COPA-resources.tgz'
-        # dataset URL
-        url = 'http://people.ict.usc.edu/~gordon/downloads/' + fname
-        build_data.download(url, dpath, fname)
+        # Download the data.
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
-        # uncompress it
-        build_data.untar(dpath, fname)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

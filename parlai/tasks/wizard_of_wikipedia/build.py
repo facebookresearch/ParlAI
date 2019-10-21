@@ -6,6 +6,15 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = [
+    'http://parl.ai/downloads/wizard_of_wikipedia/' + 'wizard_of_wikipedia.tgz'
+]
+FILE_NAMES = [
+    'wizard_of_wikipedia.tgz'
+]
+SHA256 = [
+    '2a549627a83fea745efa2076a41d1c0078ad002ab2b54eae6a4e3d3d66ae24b7'
+]
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'wizard_of_wikipedia')
@@ -17,7 +26,7 @@ def build(opt):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
-        url = 'http://parl.ai/downloads/wizard_of_wikipedia/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in [FILE_NAMES[0]]:
+            build_data.untar(dpath, zipfile)
         build_data.mark_done(dpath, version)

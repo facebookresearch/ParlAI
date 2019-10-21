@@ -8,6 +8,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/flickr30k/flickr30k.tgz']
+FILE_NAMES = ['flickr30k.tgz']
+SHA256 = ['932a43ea1ba0dafa5a533bee825dfc6b7cbcd94038b5addd6cdb6f7f2a8a229a']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'Flickr30k')
@@ -21,13 +24,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the image data.
-        fname = 'flickr30k.tgz'
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
-        url = 'http://parl.ai/downloads/flickr30k/'
-
-        build_data.download(url + fname, dpath, fname)
-
-        build_data.untar(dpath, fname)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

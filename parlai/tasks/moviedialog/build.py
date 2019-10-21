@@ -8,6 +8,13 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = [
+    'http://parl.ai/downloads/moviedialog/' + 'moviedialog.tar.gz',
+    'http://tinyurl.com/' + 'p6tyohj'
+]
+FILE_NAMES = ['moviedialog.tar.gz', 'p6tyohj.tgz']
+SHA256 = ['9b168d30111f13b9cc50e6a15885adae8f86bc0bb7a124d435c43fd0f7e2a9c7',
+'6316a6a5c563bc3c133a4a1e611d8ca638c61582f331c500697d9090efd215bb']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MovieDialog')
@@ -21,17 +28,15 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'moviedialog.tar.gz'
-        url = 'http://parl.ai/downloads/moviedialog/' + fname
-        build_data.download(url, dpath, fname)
+        build_data.download_check(dpath, [URLS[0]], [FILE_NAMES[0]], [SHA256[0]])
 
         dpath2 = os.path.join(dpath, 'movie_dialog_dataset', 'task4_reddit')
         build_data.make_dir(dpath2)
-        url2 = 'http://tinyurl.com/' + 'p6tyohj'
-        build_data.download(url2, dpath2, 'p6tyohj.tgz')
 
-        build_data.untar(dpath, fname)
-        build_data.untar(dpath2, 'p6tyohj.tgz')
+        build_data.download_check(dpath2, [URLS[1]], [FILE_NAMES[1]], [SHA256[1]])
+
+        build_data.untar(dpath, FILE_NAMES[0])
+        build_data.untar(dpath2, FILE_NAMES[1])
 
         # remove pipes from task 4 labels, only one label per example
         for root, _subfolder, files in os.walk(os.path.join(dpath2, 'task4_reddit')):

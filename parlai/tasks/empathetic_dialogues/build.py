@@ -9,6 +9,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/empatheticdialogues/empatheticdialogues.tar.gz']
+FILE_NAMES = ['empatheticdialogues.tar.gz']
+SHA256 = ['240c492cb6199a315722f716bfcc14f13ea6605f1cec67349153b606be92f6f2']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'empatheticdialogues')
@@ -22,10 +25,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'empatheticdialogues.tar.gz'
-        url = 'http://parl.ai/downloads/empatheticdialogues/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

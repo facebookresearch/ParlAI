@@ -10,6 +10,19 @@ import parlai.core.build_data as build_data
 import os
 import numpy
 
+URL = 'https://nlp.stanford.edu/projects/nmt/data/wmt14.en-de/'
+FILE_NAMES = [
+    'train.en',
+    'train.de',
+    'newstest2014.en', 
+    'newstest2014.de'
+]
+
+URLS = list(map(lambda x: URL + x, FILE_NAMES))
+
+SHA256 = [
+    
+]
 
 def readFiles(dpath, rfnames):
     en_fname, de_fname = rfnames

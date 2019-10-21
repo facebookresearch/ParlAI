@@ -10,8 +10,18 @@ import json
 import os
 import re
 
-STRIP_CHARS = ' ()"()'
 
+URLS = [
+    'https://worksheets.codalab.org/rest/bundles/0x4a763f8cde224c2da592b75f29e2f5c2/contents/blob/',
+    'https://worksheets.codalab.org/rest/bundles/0xe7bac352fce7448c9ef238fb0a297ec2/contents/blob/'
+]
+FILE_NAMES = ['train.json', 'test.json']
+SHA256 = [
+    'fb1797e4554a1b1be642388367de1379f8c0d5afc609ac171492c67f7b70cb1e',
+    'e3d4550e90660aaabe18458ba34b59f2624857273f375af7353273ce8b84ce6e'
+]
+
+STRIP_CHARS = ' ()"()'
 
 def parse_ans(a):
     a = a.lstrip('(list')
@@ -47,17 +57,7 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        url = (
-            'https://worksheets.codalab.org/rest/bundles/'
-            + '0x4a763f8cde224c2da592b75f29e2f5c2/contents/blob/'
-        )
-        build_data.download(url, dpath, 'train.json')
-
-        url = (
-            'https://worksheets.codalab.org/rest/bundles/'
-            + '0xe7bac352fce7448c9ef238fb0a297ec2/contents/blob/'
-        )
-        build_data.download(url, dpath, 'test.json')
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
         create_fb_format(dpath, 'train', os.path.join(dpath, 'train.json'))
         create_fb_format(dpath, 'valid', os.path.join(dpath, 'train.json'))

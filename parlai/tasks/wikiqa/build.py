@@ -36,6 +36,9 @@ def create_fb_format(outpath, dtype, inpath):
         cands = cands + '|' + lcand
     fout.close()
 
+URLS = ['http://parl.ai/downloads/wikiqa/' + 'wikiqa.tar.gz']
+FILE_NAMES = ['wikiqa.tar.gz']
+SHA256 = ['9bb8851dfa8db89a209480e65a3d8967d8bbdf94d5d17a364c0381b0b7609412']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'WikiQA')
@@ -49,10 +52,9 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'wikiqa.tar.gz'
-        url = 'http://parl.ai/downloads/wikiqa/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         dpext = os.path.join(dpath, 'WikiQACorpus')
         create_fb_format(dpath, 'train', os.path.join(dpext, 'WikiQA-train.tsv'))

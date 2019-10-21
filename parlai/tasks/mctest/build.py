@@ -8,6 +8,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/mctest/' + 'mctest.tar.gz']
+FILE_NAMES = ['mctest.tar.gz']
+SHA256 = ['c8160bf790c97cec8e272677600170d5e181649492bde7e2c0ea5fb23ab25af7']
 
 def create_fb_format(outpath, dtype, inpath, inpath2):
     print('building fbformat:' + dtype)
@@ -67,10 +70,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'mctest.tar.gz'
-        url = 'http://parl.ai/downloads/mctest/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         dpext = os.path.join(dpath, 'mctest')
         create_fb_format(

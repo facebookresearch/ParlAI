@@ -8,6 +8,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['https://dl.fbaipublicfiles.com/parlai/projects/talkthewalk/' + 'talkthewalk.tgz']
+FILE_NAMES = ['talkthewalk.tgz']
+SHA256 = ['314c379fa9d03eb879585b543661c27ddbd836c70d3e440cdd7c5f9b9bf32ed0']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'TalkTheWalk')
@@ -21,10 +24,9 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'talkthewalk.tgz'
-        url = 'https://dl.fbaipublicfiles.com/parlai/projects/talkthewalk/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

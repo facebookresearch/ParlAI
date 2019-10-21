@@ -7,6 +7,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['https://github.com/clic-lab/nlvr/archive/master.zip']
+FILE_NAMES = ['nlvr.zip']
+SHA256 = ['32694f83835bd28b86b0f2734efa9544401ed18bd954649b50d1375d43e56b8b']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'nlvr')
@@ -22,11 +25,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data from github
-        fname = 'nlvr.zip'
-        url = 'https://github.com/clic-lab/nlvr/' 'archive/master.zip'
-        print('[downloading data from: ' + url + ']')
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark as done
         build_data.mark_done(dpath, version_string=version)

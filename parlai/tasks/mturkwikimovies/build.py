@@ -9,6 +9,9 @@ import parlai.core.build_data as build_data
 import parlai.tasks.wikimovies.build as wikimovies_build
 import os
 
+URLS = ['http://parl.ai/downloads/mturkwikimovies/' + 'mturkwikimovies.tar.gz']
+FILE_NAMES = ['mturkwikimovies.tar.gz']
+SHA256 = ['41a85a17e813bfecd975d448f9a08178f65aba32fc10eaa1a48c0bed65431361']
 
 def build(opt):
     # Depends upon another dataset, wikimovies, build that first.
@@ -25,10 +28,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'mturkwikimovies.tar.gz'
-        url = 'http://parl.ai/downloads/mturkwikimovies/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

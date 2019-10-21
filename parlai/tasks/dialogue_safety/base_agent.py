@@ -12,7 +12,9 @@ import random
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 
-from .build import build, SINGLE_TURN_DATA
+from .build import build
+
+SINGLE_TURN_DATA = 'single_turn_safety.json'
 
 
 OK_CLASS = '__ok__'

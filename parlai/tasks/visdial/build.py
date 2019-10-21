@@ -9,6 +9,20 @@ import parlai.core.build_data as build_data
 import os
 import json
 
+URLS = [
+    'https://computing.ece.vt.edu/~abhshkdz/data/visdial/' + 'visdial_0.9_train.zip',
+    'https://computing.ece.vt.edu/~abhshkdz/data/visdial/' + 'visdial_0.9_val.zip'
+]
+
+FILE_NAMES = [
+    'visdial_0.9_train.zip',
+    'visdial_0.9_val.zip'
+]
+
+SHA256 = [
+    'a778d5d39d855b6194272f5800871a4a4b3673b00c9dc28d611443e7ca071290',
+    '08f5ee1d0cb12620b311cb7efbce4bb43a586871f002adba541614877d6f3960'
+]
 
 def build(opt):
     version = 'v0.9'
@@ -23,15 +37,9 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname1 = 'visdial_0.9_train.zip'
-        fname2 = 'visdial_0.9_val.zip'
-
-        url = 'https://computing.ece.vt.edu/~abhshkdz/data/visdial/'
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
-
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         print('processing unpacked files')
         # Use 1000 examples from training set as validation.

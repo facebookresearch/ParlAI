@@ -9,11 +9,11 @@ import parlai.core.build_data as build_data
 import os
 import json
 
-TRAIN_FILENAME = 'coqa-train-v1.0.json'
-VALID_FILENAME = 'coqa-dev-v1.0.json'
 VERSION = '1.0'
-URL = 'https://nlp.stanford.edu/data/coqa/'
-
+URLS = ['https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json',
+        'https://nlp.stanford.edu/data/coqa/coqa-dev-v1.0.json']
+FILE_NAMES = ['coqa-train-v1.0.json', 'coqa-dev-v1.0.json']
+SHA256 = []
 
 def make_parlai_format(outpath, dtype, data):
     print('building parlai:' + dtype)
@@ -52,14 +52,13 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download(URL + TRAIN_FILENAME, dpath, TRAIN_FILENAME)
-        build_data.download(URL + VALID_FILENAME, dpath, VALID_FILENAME)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
-        with open(os.path.join(dpath, TRAIN_FILENAME)) as f:
+        with open(os.path.join(dpath, 'coqa-train-v1.0.json')) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'train', data)
 
-        with open(os.path.join(dpath, VALID_FILENAME)) as f:
+        with open(os.path.join(dpath, 'coqa-dev-v1.0.json')) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'valid', data)
 

@@ -8,6 +8,13 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/COCO-IMG/train2017.zip', 
+        'http://parl.ai/downloads/COCO-IMG/val2017.zip', 
+        'http://parl.ai/downloads/COCO-IMG/test2017.zip',
+        'http://images.cocodataset.org/annotations/annotations_trainval2017.zip',
+        'http://images.cocodataset.org/annotations/image_info_test2017.zip']
+FILE_NAMES = ['train2017.zip', 'val2017.zip', 'test2017.zip', 'annotations_trainval2017.zip', 'image_info_test2017.zip']
+SHA256 = []
 
 def buildImage(opt):
     dpath = os.path.join(opt['datapath'], 'COCO-IMG-2017')
@@ -21,19 +28,10 @@ def buildImage(opt):
         build_data.make_dir(dpath)
 
         # Download the image data.
-        fname1 = 'train2017.zip'
-        fname2 = 'val2017.zip'
-        fname3 = 'test2017.zip'
+        build_data.download_check(dpath, URLS[:3], FILE_NAMES[:3], SHA256)
 
-        url = 'http://parl.ai/downloads/COCO-IMG/'
-
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
-        build_data.download(url + fname3, dpath, fname3)
-
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
-        build_data.untar(dpath, fname3)
+        for zipfile in FILE_NAMES[:3]:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
@@ -55,17 +53,10 @@ def build(opt):
 
         # download the data.
 
-        fname1 = 'annotations_trainval2017.zip'
-        fname2 = 'image_info_test2017.zip'
-        # dataset URL
-        url = 'http://images.cocodataset.org/annotations/'
+        build_data.download_check(dpath, URLS[:3], FILE_NAMES[:3], SHA256)
 
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
-
-        # uncompress it
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
+        for zipfile in FILE_NAMES[3:]:
+            build_data.untar(dpath, zipfile)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

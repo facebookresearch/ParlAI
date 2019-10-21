@@ -9,8 +9,10 @@ import parlai.core.build_data as build_data
 import os
 
 
-MULTINLI_BASE_URL = 'https://www.nyu.edu/projects/bowman/multinli/'
-
+version = '1.0'
+URLS = ['https://www.nyu.edu/projects/bowman/multinli/' + 'multinli_' + version + '.zip']
+FILE_NAMES = ['multinli_' + version + '.zip']
+SHA256 = ['049f507b9e36b1fcb756cfd5aeb3b7a0cfcb84bf023793652987f7e7e0957822']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MultiNLI')
@@ -25,13 +27,11 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # download the data.
-        fname = 'multinli_' + version + '.zip'
-        # dataset URL
-        url = MULTINLI_BASE_URL + fname
-        build_data.download(url, dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
         # uncompress it
-        build_data.untar(dpath, fname)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

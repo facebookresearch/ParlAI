@@ -9,6 +9,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/iwslt14/iwslt14.tgz']
+FILE_NAMES = ['iwslt14.tgz']
+SHA256 = ['af4a96dbc7f792a9ba96cb1a56b314a15ea940fc7ea155aef72c19dc52d0ef84']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'iwslt14')
@@ -22,10 +25,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'iwslt14.tgz'
-        url = 'http://parl.ai/downloads/iwslt14/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

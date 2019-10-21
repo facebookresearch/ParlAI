@@ -6,6 +6,10 @@ import os
 from .download_images import download_images
 
 
+URLS = ['http://parl.ai/downloads/personality_captions/' + 'personality_captions.tgz']
+FILE_NAMES = ['personality_captions.tgz']
+SHA256 = ['e0979d3ac0854395ee74f2c61a6bc467838cc292c3a9a62e891d8230d3a01365']
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'personality_captions')
     image_path = os.path.join(opt['datapath'], 'yfcc_images')
@@ -17,9 +21,11 @@ def build(opt):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
-        url = 'http://parl.ai/downloads/personality_captions/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
+
         build_data.mark_done(dpath, version)
 
     if not build_data.built(image_path, version) and not opt.get('yfcc_path'):

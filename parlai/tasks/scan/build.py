@@ -27,6 +27,9 @@ def create_fb_format(outpath, dtype, inpath):
                     s = '1 ' + x + '\t' + y
                     fout.write(s + '\n\n')
 
+URLS = ['http://parl.ai/downloads/scan/' + 'scan.tgz']
+FILE_NAMES = ['scan.tgz']
+SHA256 = ['7d6695159fab47ef13a8fadd1f5020d5ab500196e71d5114fd52bc9b7fc8d17f']
 
 def build(opt):
     version = 'v1.0'
@@ -40,10 +43,9 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'scan.tgz'
-        url = 'http://parl.ai/downloads/scan/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         create_fb_format(dpath, 'train', os.path.join(dpath, 'tasks_train_simple.txt'))
         create_fb_format(dpath, 'valid', os.path.join(dpath, 'tasks_train_simple.txt'))

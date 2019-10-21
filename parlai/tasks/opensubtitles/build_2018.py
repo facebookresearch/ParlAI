@@ -310,6 +310,9 @@ def create_fb_format(inpath, outpath, use_history):
         % (time.time() - start_time,)
     )
 
+URLS = ['https://object.pouta.csc.fi/OPUS-OpenSubtitles/v2018/xml/en.zip']
+FILE_NAMES = ['OpenSubtitles2018.zip']
+SHA256 = ['917af90fcaa8b0ebb3d59d9f8d205f304f31bf92cbf15aa6e9ee030f6691755e']
 
 def build(datapath, use_history):
     dpath = os.path.join(datapath, 'OpenSubtitles2018')
@@ -328,9 +331,10 @@ def build(datapath, use_history):
 
         if len(glob.glob(untar_path + '/*/*/*.xml')) != NUM_SUBTITLES_FILES:
             # Download the data.
-            url = 'https://object.pouta.csc.fi/OPUS-OpenSubtitles/v2018/xml/en.zip'
-            build_data.download(url, dpath, 'OpenSubtitles2018.zip')
-            build_data.untar(dpath, 'OpenSubtitles2018.zip')
+            build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+            for zipfile in FILE_NAMES:
+                build_data.untar(dpath, zipfile)
 
         create_fb_format(untar_path, dpath, use_history)
 

@@ -8,6 +8,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/booktest/booktest.tar.bz2']
+FILE_NAMES = ['booktest.tar.bz2']
+SHA256 = ['4079481d19c7681e3256c06ffd2781a230aca4a8d9390f3a5932c33e4b857c9d']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'BookTest')
@@ -21,10 +24,9 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'booktest.tar.bz2'
-        url = 'http://parl.ai/downloads/booktest/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

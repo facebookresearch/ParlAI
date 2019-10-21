@@ -8,6 +8,9 @@
 import parlai.core.build_data as build_data
 import os
 
+URLS = ['http://parl.ai/downloads/personachat/' + 'personachat.tgz']
+FILE_NAMES = ['personachat.tgz']
+SHA256 = ['507cf8641d333240654798870ea584d854ab5261071c5e3521c20d8fa41d5622']
 
 def build(opt):
     version = 'v1.0'
@@ -21,10 +24,10 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'personachat.tgz'
-        url = 'http://parl.ai/downloads/personachat/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+
+        for zipfile in FILE_NAMES:
+            build_data.untar(dpath, zipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version)
