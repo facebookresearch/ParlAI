@@ -36,7 +36,8 @@ class TestUtils(unittest.TestCase):
                 for url in mod.URLS:
                     with self.subTest(f"{task}: {url}"):
                         session = requests.Session()
-                        if task in GOOGLE:
+                        if '.' not in url:
+                        # Google Drive URL testing
                             URL = 'https://docs.google.com/uc?export=download'
                             response = session.head(
                                 URL, params={'id': url}, stream=True

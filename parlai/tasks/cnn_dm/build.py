@@ -24,6 +24,26 @@ DM_FNAMES = {
     'test': 'dailymail_wayback_test_urls.txt',
 }
 
+URLS = [
+    '0BwmD_VLjROrfTHk4NFg2SndKcjQ',
+    '0BwmD_VLjROrfM1BxdkxVaTY2bWs'
+]
+
+URLS += list(map(lambda x: CNN_ROOT + x, CNN_FNAMES.values()))
+URLS += list(map(lambda x: DM_ROOT + x, DM_FNAMES.values()))
+
+
+FILE_NAMES = [
+    'cnn_stories.tgz',
+    'dm_stories.tgz'
+]
+
+FILE_NAMES += list(CNN_FNAMES.values())
+FILE_NAMES += list(DM_FNAMES.values())
+
+SHA256 = [
+
+]
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CNN_DM')
@@ -41,12 +61,12 @@ def build(opt):
         cnn_fname = 'cnn_stories.tgz'
         cnn_gd_id = '0BwmD_VLjROrfTHk4NFg2SndKcjQ'
         build_data.download_from_google_drive(cnn_gd_id, os.path.join(dpath, cnn_fname))
-        build_data.untar(dpath, cnn_fname)
+        # build_data.untar(dpath, cnn_fname)
 
         dm_fname = 'dm_stories.tgz'
         dm_gd_id = '0BwmD_VLjROrfM1BxdkxVaTY2bWs'
         build_data.download_from_google_drive(dm_gd_id, os.path.join(dpath, dm_fname))
-        build_data.untar(dpath, dm_fname)
+        # build_data.untar(dpath, dm_fname)
 
         for dt in CNN_FNAMES:
             fname = CNN_FNAMES[dt]
