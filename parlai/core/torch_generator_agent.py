@@ -558,6 +558,7 @@ class TorchGeneratorAgent(TorchAgent):
                 raise e
 
     def eval_step(self, batch):
+        #import pdb; pdb.set_trace()
         """Evaluate a single batch of examples."""
         if batch.text_vec is None:
             return
