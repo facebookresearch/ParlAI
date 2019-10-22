@@ -797,7 +797,7 @@ def _add_task_flags_to_agent_opt(agent, opt, flags):
     for f in fl:
         if '=' in f:
             one_flag = f.split('=')
-            opt[one_flag[0].replace('-','_')] = one_flag[1].replace(';', ':')
+            opt[one_flag[0].replace('-', '_')] = one_flag[1].replace(';', ':')
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
