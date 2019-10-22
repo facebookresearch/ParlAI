@@ -212,9 +212,6 @@ jobs:
       - run:
           name: Unit tests (GPU; pytorch 1.1)
           command: python setup.py test -s tests.suites.unittests -v
-      - run:
-          name: Quickstart unit tests (GPU; pytorch 1.1)
-          command: sh tests/test_quickstart.sh
 
   unittests_gpu12:
     <<: *gpu
@@ -235,9 +232,6 @@ jobs:
       - run:
           name: Unit tests (GPU; pytorch >= 1.2)
           command: python setup.py test -s tests.suites.unittests -v
-      - run:
-          name: Quickstart unit tests (GPU; pytorch 1.1)
-          command: sh tests/test_quickstart.sh
 
   black:
     <<: *standard_cpu36
@@ -302,6 +296,9 @@ jobs:
           name: Nightly GPU tests
           no_output_timeout: 60m
           command: python setup.py test -s tests.suites.nightly_gpu -v
+      - run:
+          name: Quickstart unit tests (GPU; pytorch 1.1)
+          command: sh tests/test_quickstart.sh
 
   mturk_tests:
     <<: *standard_cpu36

@@ -13,8 +13,8 @@ python examples/display_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -ecands v
 # train a transformer on twitter
 pip3 install emoji unidecode
 python examples/display_data.py -t twitter
-python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True --num-epochs 0.01
-python examples/eval_model.py -t twitter -bs 50 -m legacy:seq2seq:0 -mf models:convai2/seq2seq/convai2_self_seq2seq_model
+python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True --max-train-time 20 -nl 1 --dict-tokenizer split -emb random --ffn-size 128
+python examples/eval_model.py -t twitter -bs 50 -m legacy:seq2seq:0 -mf models:convai2/seq2seq/convai2_self_seq2seq_model --num-examples 1
 python examples/display_model.py -t twitter -mf /tmp/tr_twitter -ecands batch
 
 # add a simple model
