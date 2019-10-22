@@ -1248,7 +1248,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.episodes = []
         self.num_exs = 0
         eps = []
-        with open(path) as read:
+        with open(path, newline='\n') as read:
             for line in read:
                 msg = str_to_msg(line.rstrip('\n'))
                 if msg:

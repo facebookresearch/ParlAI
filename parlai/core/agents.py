@@ -786,7 +786,6 @@ def get_task_module(taskname):
     return teacher_class
 
 
-# TODO: remove this. It was added but doesn't have a clear use case now.
 def _add_task_flags_to_agent_opt(agent, opt, flags):
     """
     Handle task flags provided by the task name itself.
@@ -798,7 +797,7 @@ def _add_task_flags_to_agent_opt(agent, opt, flags):
     for f in fl:
         if '=' in f:
             one_flag = f.split('=')
-            opt[one_flag[0]] = one_flag[1]
+            opt[one_flag[0].replace('-', '_')] = one_flag[1].replace(';', ':')
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
