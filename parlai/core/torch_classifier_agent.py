@@ -251,7 +251,7 @@ class TorchClassifierAgent(TorchAgent):
         labels = self._get_labels(batch)
         scores = self.score(batch)
         loss = self.criterion(scores, labels)
-        loss = loss * scores.size(1)
+        # loss = loss * scores.size(1)
         loss.backward()
         self.update_params()
 
