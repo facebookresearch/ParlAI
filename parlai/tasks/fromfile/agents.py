@@ -57,9 +57,13 @@ class ParlaiformatTeacher(ParlAIDialogTeacher):
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('FromFile Task Arguments')
         agent.add_argument('-ffdp', '--fromfile-datapath', type=str, help="Data file")
-        agent.add_argument('-ffdt', '--fromfile-datatype-extension', type='bool',
-                           default=False,
-                           help="If true, jse train, valid, test extensions")
+        agent.add_argument(
+            '-ffdt',
+            '--fromfile-datatype-extension',
+            type='bool',
+            default=False,
+            help="If true, use _train.txt, _valid.txt, _test.txt file extensions",
+        )
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
