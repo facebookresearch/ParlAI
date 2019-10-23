@@ -1,0 +1,11 @@
+<map id="parlai.core.torch_classifier_agent.TorchClassifierAgent._get_labels" name="parlai.core.torch_classifier_agent.TorchClassifierAgent._get_labels">
+<area shape="rect" id="node1" title=" " alt="" coords="959,65,1149,121"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#a5d456df843180fb32ca574dc2a33cc80" title=" " alt="" coords="663,39,910,80"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#a3baacdb005c5f5a6367c45c93d21d398" title=" " alt="" coords="663,104,911,145"/>
+<area shape="rect" id="node3" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#a057eb1109f5c2ea467539083e2f7e7f6" title=" " alt="" coords="292,104,615,145"/>
+<area shape="rect" id="node8" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a5eadf6ccc4b1d15a520a70d111bff493" title=" " alt="" coords="360,39,547,80"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title=" " alt="" coords="45,5,205,47"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title=" " alt="" coords="5,71,244,112"/>
+<area shape="rect" id="node6" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title=" " alt="" coords="21,136,229,177"/>
+<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title=" " alt="" coords="25,202,224,229"/>
+</map>

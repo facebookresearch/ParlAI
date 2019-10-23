@@ -1,0 +1,8 @@
+<map id="parlai.tasks.qangaroo.agents.MedHopTeacher" name="parlai.tasks.qangaroo.agents.MedHopTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="5,408,199,449"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1qangaroo_1_1agents_1_1DefaultTeacher.html" title=" " alt="" coords="5,319,199,360"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="16,229,188,271"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="14,155,190,181"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="21,80,183,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="73,5,131,32"/>
+</map>

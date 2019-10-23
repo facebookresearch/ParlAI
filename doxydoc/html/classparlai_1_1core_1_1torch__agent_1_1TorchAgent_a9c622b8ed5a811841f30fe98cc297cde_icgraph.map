@@ -1,0 +1,9 @@
+<map id="parlai.core.torch_agent.TorchAgent.optim_opts" name="parlai.core.torch_agent.TorchAgent.optim_opts">
+<area shape="rect" id="node1" title=" " alt="" coords="585,98,744,139"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a4a72bdd07d2cb5ce402d0058140cad0d" title=" " alt="" coords="339,65,537,106"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a3784f1ddaa6ffad009716910f3f36dd4" title=" " alt="" coords="359,130,517,171"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="53,5,243,61"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="59,85,237,141"/>
+<area shape="rect" id="node6" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="5,166,291,207"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="51,232,245,288"/>
+</map>

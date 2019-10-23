@@ -1,0 +1,7 @@
+<map id="taskntalk.coopgame_agent.CooperativeGameAgent" name="taskntalk.coopgame_agent.CooperativeGameAgent">
+<area shape="rect" id="node1" title=" " alt="" coords="71,155,275,196"/>
+<area shape="rect" id="node4" href="$classtaskntalk_1_1coopgame__agent_1_1AnswererAgent.html" title=" " alt="" coords="5,244,160,285"/>
+<area shape="rect" id="node5" href="$classtaskntalk_1_1coopgame__agent_1_1QuestionerAgent.html" title=" " alt="" coords="184,244,347,285"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="92,80,255,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="145,5,202,32"/>
+</map>

@@ -1,0 +1,17 @@
+<map id="server.BaseHandler" name="server.BaseHandler">
+<area shape="rect" id="node1" title=" " alt="" coords="169,309,307,336"/>
+<area shape="rect" id="node3" href="$classserver_1_1ApprovalHandler.html" title=" " alt="" coords="363,5,522,32"/>
+<area shape="rect" id="node4" href="$classserver_1_1AssignmentHandler.html" title=" " alt="" coords="355,56,531,83"/>
+<area shape="rect" id="node5" href="$classserver_1_1BlockHandler.html" title=" " alt="" coords="373,107,513,133"/>
+<area shape="rect" id="node6" href="$classserver_1_1BonusHandler.html" title=" " alt="" coords="371,157,515,184"/>
+<area shape="rect" id="node7" href="$classserver_1_1ErrorHandler.html" title=" " alt="" coords="375,208,510,235"/>
+<area shape="rect" id="node8" href="$classserver_1_1RejectionHandler.html" title=" " alt="" coords="361,259,524,285"/>
+<area shape="rect" id="node9" href="$classserver_1_1ReverseHandler.html" title=" " alt="" coords="365,309,521,336"/>
+<area shape="rect" id="node10" href="$classserver_1_1RunHandler.html" title=" " alt="" coords="377,360,508,387"/>
+<area shape="rect" id="node11" href="$classserver_1_1RunListHandler.html" title=" " alt="" coords="367,411,519,437"/>
+<area shape="rect" id="node12" href="$classserver_1_1TaskListHandler.html" title=" " alt="" coords="364,461,521,488"/>
+<area shape="rect" id="node13" href="$classserver_1_1TaskRunHandler.html" title=" " alt="" coords="363,512,523,539"/>
+<area shape="rect" id="node14" href="$classserver_1_1WorkerHandler.html" title=" " alt="" coords="368,563,517,589"/>
+<area shape="rect" id="node15" href="$classserver_1_1WorkerListHandler.html" title=" " alt="" coords="357,613,528,640"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,309,121,336"/>
+</map>

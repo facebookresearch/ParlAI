@@ -1,0 +1,11 @@
+<map id="parlai.tasks.qangaroo.agents.DefaultTeacher" name="parlai.tasks.qangaroo.agents.DefaultTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="765,104,959,145"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1qangaroo_1_1agents_1_1MaskedMedHopTeacher.html" title=" " alt="" coords="1007,5,1200,47"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1qangaroo_1_1agents_1_1MaskedWikiHopTeacher.html" title=" " alt="" coords="1007,71,1200,112"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1qangaroo_1_1agents_1_1MedHopTeacher.html" title=" " alt="" coords="1007,136,1200,177"/>
+<area shape="rect" id="node9" href="$classparlai_1_1tasks_1_1qangaroo_1_1agents_1_1WikiHopTeacher.html" title=" " alt="" coords="1007,201,1200,243"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="545,104,717,145"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="321,111,497,138"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,111,273,138"/>
+<area shape="rect" id="node5" title=" " alt="" coords="5,111,63,138"/>
+</map>

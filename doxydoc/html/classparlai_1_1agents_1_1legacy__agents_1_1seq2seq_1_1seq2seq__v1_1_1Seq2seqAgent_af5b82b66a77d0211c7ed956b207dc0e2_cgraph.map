@@ -1,0 +1,6 @@
+<map id="parlai.agents.legacy_agents.seq2seq.seq2seq_v1.Seq2seqAgent._init_model" name="parlai.agents.legacy_agents.seq2seq.seq2seq_v1.Seq2seqAgent._init_model">
+<area shape="rect" id="node1" title=" " alt="" coords="5,61,208,117"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a26c3912e7fb445f3e4d9d61fa4b28cd9" title=" " alt="" coords="256,53,413,124"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#aacd33f0ba4e08159e567229b16999548" title=" " alt="" coords="461,5,619,76"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#af0fce532d1e9e2a17e8303290d47e8d5" title=" " alt="" coords="461,100,619,171"/>
+</map>

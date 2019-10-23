@@ -1,0 +1,8 @@
+<map id="parlai.tasks.woz.agents.WoZTeacher" name="parlai.tasks.woz.agents.WoZTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="12,408,176,449"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title=" " alt="" coords="5,319,183,360"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="8,229,180,271"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="6,155,182,181"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="13,80,175,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="65,5,123,32"/>
+</map>

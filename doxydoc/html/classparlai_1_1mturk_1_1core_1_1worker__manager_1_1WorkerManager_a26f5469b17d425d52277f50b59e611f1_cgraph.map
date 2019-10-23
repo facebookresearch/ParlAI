@@ -1,0 +1,14 @@
+<map id="parlai.mturk.core.worker_manager.WorkerManager.handle_agent_disconnect" name="parlai.mturk.core.worker_manager.WorkerManager.handle_agent_disconnect">
+<area shape="rect" id="node1" title=" " alt="" coords="5,231,223,287"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#aa8dc23d5235286d2a3f66ad9f21d1968" title=" " alt="" coords="297,5,539,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager.html#ae02096a96ee64b176e3b2b2e0f1818e8" title=" " alt="" coords="329,151,507,207"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerManager.html#a1774acbd5dd49762a12b4c4311237a34" title=" " alt="" coords="289,71,547,127"/>
+<area shape="rect" id="node8" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#ac1a666de4fb865f51ef3e90b14880cdb" title=" " alt="" coords="309,231,527,287"/>
+<area shape="rect" id="node10" href="$classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager.html#ac75275d1b201b5bcbd8f23740b4e1080" title=" " alt="" coords="309,311,527,367"/>
+<area shape="rect" id="node11" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerManager.html#adf464b2fc2ae8ab451ad74c71dc6eab9" title=" " alt="" coords="271,391,565,447"/>
+<area shape="rect" id="node12" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#ae527be446b326d4252304cf89850aff8" title=" " alt="" coords="309,471,527,527"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worker__manager_1_1WorkerManager.html#a1ebe6b52833ea022bd16737fab8085fa" title=" " alt="" coords="617,5,867,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1worker__manager_1_1WorkerManager.html#a4c7eae77814b3e3bf836637c627a6fe9" title=" " alt="" coords="653,151,831,207"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worker__manager_1_1WorkerManager.html#a1b649c518b5248abf0e0f133b8adaeeb" title=" " alt="" coords="613,71,871,127"/>
+<area shape="rect" id="node9" href="$classparlai_1_1messenger_1_1core_1_1messenger__manager_1_1MessengerManager.html#aad51f1633f4d56d2a8812562f0608e03" title=" " alt="" coords="633,231,851,287"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.get_top_hyp" name="parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.get_top_hyp">
+<area shape="rect" id="node1" title=" " alt="" coords="5,155,161,211"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a2df9b1e26c3f35c7149e4d7ae75c2f03" title=" " alt="" coords="227,5,391,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a5ae82a3d567dd8f282678d0ee40aa41e" title=" " alt="" coords="223,100,394,171"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1utils__v0_1_1Beam.html#a3c573eb1104002cb7da1483a6afb3cfe" title=" " alt="" coords="229,195,389,265"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1Beam.html#a3dbc095780f560a02bfafc0e0f646ebc" title=" " alt="" coords="209,289,408,360"/>
+</map>

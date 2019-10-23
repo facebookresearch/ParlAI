@@ -1,0 +1,9 @@
+<map id="parlai.mturk.core.legacy_2018.agents.MTurkAgent.get_status" name="parlai.mturk.core.legacy_2018.agents.MTurkAgent.get_status">
+<area shape="rect" id="node1" title=" " alt="" coords="5,154,245,196"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1AssignState.html#a14f5a0cbaf099fb25cfa284a502a8275" title=" " alt="" coords="820,172,987,213"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1agents_1_1AssignState.html#aa06c7d109d7b208a9dcdef0d3fa6c90f" title=" " alt="" coords="293,54,533,96"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1AssignState.html#a148aa78f43e6d050c29368b8c2aaf0a6" title=" " alt="" coords="581,113,772,154"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1agents_1_1MTurkAgent.html#a2423bb27d86be375313b61a60a12be0d" title=" " alt="" coords="318,196,509,237"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1agents_1_1MTurkAgent.html#a0522b17872a4a9a22e2c0e5237f8ac82" title=" " alt="" coords="593,254,760,296"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#afc9c7c9efb6fe26e981902f6c02557ee" title=" " alt="" coords="294,313,533,354"/>
+</map>

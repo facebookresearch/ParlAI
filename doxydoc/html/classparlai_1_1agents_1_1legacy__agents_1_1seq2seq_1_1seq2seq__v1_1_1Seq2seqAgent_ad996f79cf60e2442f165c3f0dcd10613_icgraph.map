@@ -1,0 +1,9 @@
+<map id="parlai.agents.legacy_agents.seq2seq.seq2seq_v1.Seq2seqAgent.vectorize" name="parlai.agents.legacy_agents.seq2seq.seq2seq_v1.Seq2seqAgent.vectorize">
+<area shape="rect" id="node1" title=" " alt="" coords="796,97,985,153"/>
+<area shape="rect" id="node2" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a7e76b6e8f11577a56a9c000cb360a44e" title=" " alt="" coords="259,86,477,127"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a0eb23a78aea413ae4f90ce0628179920" title=" " alt="" coords="267,5,469,61"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a87b18f0d6ab11be3c49375af072d0d33" title=" " alt="" coords="289,151,447,193"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a87253cca09c8b22848ff0bea7195e32d" title=" " alt="" coords="525,146,748,187"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html#a6bd5a8a8e194dd4aa76aeecdf429bc7f" title=" " alt="" coords="5,31,211,73"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title=" " alt="" coords="11,115,205,157"/>
+</map>

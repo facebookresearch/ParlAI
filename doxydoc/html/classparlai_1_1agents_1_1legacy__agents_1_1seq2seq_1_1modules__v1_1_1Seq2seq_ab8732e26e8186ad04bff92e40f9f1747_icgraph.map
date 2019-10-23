@@ -1,0 +1,9 @@
+<map id="parlai.agents.legacy_agents.seq2seq.modules_v1.Seq2seq._encode" name="parlai.agents.legacy_agents.seq2seq.modules_v1.Seq2seq._encode">
+<area shape="rect" id="node1" title=" " alt="" coords="537,97,712,153"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1Seq2seq.html#a59af567499dfa8e60ccc185391143d41" title=" " alt="" coords="301,59,476,115"/>
+<area shape="rect" id="node7" href="$classcontrollable__seq2seq_1_1modules_1_1Seq2seq.html#a024903e38d40e82ab471528d94afcd5c" title=" " alt="" coords="288,140,489,181"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title=" " alt="" coords="16,136,229,177"/>
+<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title=" " alt="" coords="5,202,240,258"/>
+<area shape="rect" id="node5" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title=" " alt="" coords="16,5,229,47"/>
+<area shape="rect" id="node6" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title=" " alt="" coords="16,71,229,112"/>
+</map>

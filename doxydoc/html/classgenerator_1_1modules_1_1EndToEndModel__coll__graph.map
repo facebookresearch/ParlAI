@@ -1,0 +1,7 @@
+<map id="generator.modules.EndToEndModel" name="generator.modules.EndToEndModel">
+<area shape="rect" id="node1" title=" " alt="" coords="19,259,214,300"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel.html" title=" " alt="" coords="5,169,228,211"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorModel.html" title=" " alt="" coords="21,80,212,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="45,5,109,32"/>
+<area shape="rect" id="node5" title=" " alt="" coords="133,5,183,32"/>
+</map>

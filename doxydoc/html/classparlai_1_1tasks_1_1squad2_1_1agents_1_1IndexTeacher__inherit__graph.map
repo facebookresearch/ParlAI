@@ -1,0 +1,10 @@
+<map id="parlai.tasks.squad2.agents.IndexTeacher" name="parlai.tasks.squad2.agents.IndexTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="765,39,948,80"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1squad2_1_1agents_1_1SentenceIndexTeacher.html" title=" " alt="" coords="996,5,1179,47"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1squad2_1_1agents_1_1SentenceLabelsTeacher.html" title=" " alt="" coords="996,71,1179,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="545,39,717,80"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="321,46,497,73"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,46,273,73"/>
+<area shape="rect" id="node5" title=" " alt="" coords="5,46,63,73"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1squad2_1_1agents_1_1SentenceIndexEditTeacher.html" title=" " alt="" coords="1227,5,1409,47"/>
+</map>

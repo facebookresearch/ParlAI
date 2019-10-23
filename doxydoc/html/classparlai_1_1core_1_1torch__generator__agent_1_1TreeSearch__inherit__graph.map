@@ -1,0 +1,8 @@
+<map id="parlai.core.torch_generator_agent.TreeSearch" name="parlai.core.torch_generator_agent.TreeSearch">
+<area shape="rect" id="node1" title=" " alt="" coords="111,104,287,145"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__generator__agent_1_1BeamSearch.html" title=" " alt="" coords="335,5,511,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch.html" title=" " alt="" coords="335,71,511,112"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling.html" title=" " alt="" coords="335,136,511,177"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling.html" title=" " alt="" coords="335,201,511,243"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,111,63,138"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="parlai.core.worlds.ExecutableWorld" name="parlai.core.worlds.ExecutableWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="525,39,719,80"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1worlds_1_1GraphWorld2.html" title=" " alt="" coords="767,5,999,47"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html" title=" " alt="" coords="780,71,985,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html" title=" " alt="" coords="321,39,477,80"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="111,46,273,73"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,46,63,73"/>
+</map>

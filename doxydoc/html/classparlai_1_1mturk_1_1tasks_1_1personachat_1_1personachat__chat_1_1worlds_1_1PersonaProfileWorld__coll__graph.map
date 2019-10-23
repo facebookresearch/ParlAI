@@ -1,0 +1,7 @@
+<map id="parlai.mturk.tasks.personachat.personachat_chat.worlds.PersonaProfileWorld" name="parlai.mturk.tasks.personachat.personachat_chat.worlds.PersonaProfileWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="5,333,281,375"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="61,244,226,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="61,155,226,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="62,80,225,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="115,5,172,32"/>
+</map>

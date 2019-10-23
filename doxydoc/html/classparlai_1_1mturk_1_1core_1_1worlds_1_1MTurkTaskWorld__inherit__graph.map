@@ -1,0 +1,15 @@
+<map id="parlai.mturk.core.worlds.MTurkTaskWorld" name="parlai.mturk.core.worlds.MTurkTaskWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="535,275,700,316"/>
+<area shape="rect" id="node5" href="$classlight__chat__eval_1_1worlds_1_1LightEvalTaskWorld.html" title=" " alt="" coords="785,5,968,47"/>
+<area shape="rect" id="node6" href="$classlight__chats_1_1worlds_1_1LightChatTaskWorld.html" title=" " alt="" coords="797,71,956,112"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1tasks_1_1dealnodeal_1_1worlds_1_1MTurkDealNoDealDialogWorld.html" title=" " alt="" coords="757,136,996,177"/>
+<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1tasks_1_1model__evaluator_1_1worlds_1_1ModelEvaluatorWorld.html" title=" " alt="" coords="751,201,1003,243"/>
+<area shape="rect" id="node9" href="$classparlai_1_1mturk_1_1tasks_1_1multi__agent__dialog_1_1worlds_1_1MTurkMultiAgentDialogWorld.html" title=" " alt="" coords="770,267,983,323"/>
+<area shape="rect" id="node10" href="$classparlai_1_1mturk_1_1tasks_1_1qa__data__collection_1_1worlds_1_1QADataCollectionWorld.html" title=" " alt="" coords="772,347,981,403"/>
+<area shape="rect" id="node11" href="$classparlai_1_1mturk_1_1tasks_1_1qualification__flow__example_1_1worlds_1_1QualificationFlowSoloWorld.html" title=" " alt="" coords="749,427,1004,483"/>
+<area shape="rect" id="node12" href="$classparlai_1_1mturk_1_1tasks_1_1react__task__demo_1_1react__custom__no__extra__deps_1_1worlds_1_1MultiRoleAgentWorld.html" title=" " alt="" coords="769,508,984,579"/>
+<area shape="rect" id="node13" href="$classparlai_1_1mturk_1_1tasks_1_1react__task__demo_1_1react__custom__with__deps_1_1worlds_1_1MultiRoleAgentWorld.html" title=" " alt="" coords="748,603,1005,659"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="321,275,487,316"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="111,282,273,309"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,282,63,309"/>
+</map>

@@ -1,0 +1,30 @@
+<map id="light_chats.graph.GraphFunction.get_name" name="light_chats.graph.GraphFunction.get_name">
+<area shape="rect" id="node1" title=" " alt="" coords="548,769,819,795"/>
+<area shape="rect" id="node2" href="$classlight__chats_1_1graph_1_1MoveAgentFunction.html#adc15ccac3181a680d240e768a37b569e" title=" " alt="" coords="289,29,479,71"/>
+<area shape="rect" id="node3" href="$classlight__chats_1_1graph_1_1MoveAgentFunction.html#a7ca8113d7746de96f740eaa61bda0c32" title=" " alt="" coords="17,59,208,100"/>
+<area shape="rect" id="node4" href="$classlight__chats_1_1graph_1_1SayFunction.html#af14fb1e5a036d9c537ea2915f2c76275" title=" " alt="" coords="271,146,497,173"/>
+<area shape="rect" id="node5" href="$classlight__chats_1_1graph_1_1TellFunction.html#a91e865e9bbba1f3ed3f01445896be21d" title=" " alt="" coords="271,197,497,223"/>
+<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1UseFunction.html#a75a1cb4d8d51f0336a3d5cd9f005e266" title=" " alt="" coords="270,247,498,274"/>
+<area shape="rect" id="node7" href="$classlight__chats_1_1graph_1_1FollowFunction.html#a6d1937938725b143930c10260adae130" title=" " alt="" coords="303,299,465,340"/>
+<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1HitFunction.html#a5154430a7ff1b987446b904c8238eef2" title=" " alt="" coords="273,365,495,391"/>
+<area shape="rect" id="node9" href="$classlight__chats_1_1graph_1_1HugFunction.html#a581fcc58cb0a76a19a02d8c87d911fb9" title=" " alt="" coords="270,415,498,442"/>
+<area shape="rect" id="node10" href="$classlight__chats_1_1graph_1_1GetObjectFunction.html#a36f3c298e8ac89d67ae856306d42a22d" title=" " alt="" coords="292,467,476,508"/>
+<area shape="rect" id="node11" href="$classlight__chats_1_1graph_1_1PutObjectInFunction.html#a9f97c240b7308feca19fe4adb63a64f3" title=" " alt="" coords="293,532,475,573"/>
+<area shape="rect" id="node12" href="$classlight__chats_1_1graph_1_1DropObjectFunction.html#a2df3dbdd3032d47143978e645d12e928" title=" " alt="" coords="289,597,479,639"/>
+<area shape="rect" id="node13" href="$classlight__chats_1_1graph_1_1GiveObjectFunction.html#a8debb985c3252b31e92837bb6cb0d227" title=" " alt="" coords="289,663,479,704"/>
+<area shape="rect" id="node14" href="$classlight__chats_1_1graph_1_1StealObjectFunction.html#a229fafa57d40e38da54a4b04947e2fe0" title=" " alt="" coords="287,728,481,769"/>
+<area shape="rect" id="node15" href="$classlight__chats_1_1graph_1_1EquipObjectFunction.html#a4eaec48030f12c92dcddf9f976b31604" title=" " alt="" coords="286,793,482,835"/>
+<area shape="rect" id="node16" href="$classlight__chats_1_1graph_1_1RemoveObjectFunction.html#ae7b012e25908e96e2aaffcd567c0e133" title=" " alt="" coords="297,859,471,900"/>
+<area shape="rect" id="node17" href="$classlight__chats_1_1graph_1_1IngestFunction.html#acf3afc20e4e55a9bd2783d2bad592a88" title=" " alt="" coords="303,924,465,965"/>
+<area shape="rect" id="node18" href="$classlight__chats_1_1graph_1_1LockFunction.html#afdb92aaa380487d44d27381bd168240a" title=" " alt="" coords="268,990,500,1017"/>
+<area shape="rect" id="node19" href="$classlight__chats_1_1graph_1_1UnlockFunction.html#a60b9bd71f3b3d8255c9f79a3a408914f" title=" " alt="" coords="301,1041,467,1083"/>
+<area shape="rect" id="node20" href="$classlight__chats_1_1graph_1_1ExamineFunction.html#a5a9150659aa698ebf73e302056c5ba46" title=" " alt="" coords="296,1107,472,1148"/>
+<area shape="rect" id="node21" href="$classlight__chats_1_1graph_1_1WaitFunction.html#a3349dc4d65c4b33440624bdbbeeb420c" title=" " alt="" coords="269,1173,499,1199"/>
+<area shape="rect" id="node22" href="$classlight__chats_1_1graph_1_1InventoryFunction.html#ae1d63ccf80bca5e20060ca5ffb8a684a" title=" " alt="" coords="295,1224,473,1265"/>
+<area shape="rect" id="node23" href="$classlight__chats_1_1graph_1_1HealthFunction.html#aa79079c84c63fb936ef8ed5afa5bafca" title=" " alt="" coords="303,1289,465,1331"/>
+<area shape="rect" id="node24" href="$classlight__chats_1_1graph_1_1LookFunction.html#aeaedd1fa680a930dc86a1120d9daf63d" title=" " alt="" coords="268,1355,500,1382"/>
+<area shape="rect" id="node25" href="$classlight__chats_1_1graph_1_1UnfollowFunction.html#a09b37c0a471f8dd65216e434a98983af" title=" " alt="" coords="296,1407,472,1448"/>
+<area shape="rect" id="node26" href="$classlight__chats_1_1graph_1_1GraphFunction.html#a0994341bec72be122101ce59da936882" title=" " alt="" coords="268,1472,500,1513"/>
+<area shape="rect" id="node27" href="$classlight__chats_1_1graph_1_1GraphFunction.html#ab20674b5c6c05a6c5188e51bc991717f" title=" " alt="" coords="268,1537,500,1579"/>
+<area shape="rect" id="node28" href="$classlight__chats_1_1graph_1_1GraphFunction.html#afcb6dd9e771c4db34f5af22588e6190e" title=" " alt="" coords="5,1537,220,1579"/>
+</map>

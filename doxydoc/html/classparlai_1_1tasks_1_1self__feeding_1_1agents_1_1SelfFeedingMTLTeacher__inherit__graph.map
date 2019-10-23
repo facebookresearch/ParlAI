@@ -1,0 +1,7 @@
+<map id="parlai.tasks.self_feeding.agents.SelfFeedingMTLTeacher" name="parlai.tasks.self_feeding.agents.SelfFeedingMTLTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="180,71,391,112"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1self__feeding_1_1agents_1_1AllTeacher.html" title=" " alt="" coords="439,5,649,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1self__feeding_1_1agents_1_1DiafeeTeacher.html" title=" " alt="" coords="439,71,649,112"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1self__feeding_1_1agents_1_1DiasatTeacher.html" title=" " alt="" coords="439,136,649,177"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,78,132,105"/>
+</map>

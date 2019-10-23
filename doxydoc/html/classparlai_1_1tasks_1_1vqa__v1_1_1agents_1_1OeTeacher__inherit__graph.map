@@ -1,0 +1,10 @@
+<map id="parlai.tasks.vqa_v1.agents.OeTeacher" name="parlai.tasks.vqa_v1.agents.OeTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="108,319,291,360"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1AllTeacher.html" title=" " alt="" coords="5,408,188,449"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1McTeacher.html" title=" " alt="" coords="212,408,395,449"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="113,229,285,271"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="111,155,287,181"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="118,80,281,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="171,5,228,32"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1DefaultTeacher.html" title=" " alt="" coords="212,497,395,539"/>
+</map>

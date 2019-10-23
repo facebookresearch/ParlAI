@@ -1,0 +1,8 @@
+<map id="parlai.agents.transformer_classifier.transformer_classifier.TransformerClassifierAgent" name="parlai.agents.transformer_classifier.transformer_classifier.TransformerClassifierAgent">
+<area shape="rect" id="node1" title=" " alt="" coords="5,333,249,389"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html" title=" " alt="" coords="34,244,221,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="48,155,207,196"/>
+<area shape="rect" id="node4" title=" " alt="" coords="37,80,87,107"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,80,274,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="164,5,221,32"/>
+</map>

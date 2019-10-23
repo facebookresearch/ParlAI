@@ -1,0 +1,7 @@
+<map id="light_chat_eval.worlds.LightEvalTestWorld" name="light_chat_eval.worlds.LightEvalTestWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="5,333,188,375"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="14,244,179,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="14,155,179,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="15,80,178,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="68,5,125,32"/>
+</map>

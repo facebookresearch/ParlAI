@@ -1,0 +1,12 @@
+<map id="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent.__init__" name="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent.__init__">
+<area shape="rect" id="node1" title=" " alt="" coords="5,305,163,375"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#a80bdd18c28f4a2ab19c463dd123165e7" title=" " alt="" coords="263,5,485,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderRankerAgent.html#a7920edd41a6bdbd18e9a0c50a1953f9d" title=" " alt="" coords="246,85,502,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1bert__ranker_1_1both__encoder__ranker_1_1BothEncoderRankerAgent.html#a4fd71b73fc926491aedc3da5921f62ca" title=" " alt="" coords="215,165,533,221"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1DrqaAgent.html#a1d925f46a6b35d1f10cb033a1184841d" title=" " alt="" coords="283,246,465,287"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent.html#af568b5ebe0ada0e2823e9e2be2d70e9f" title=" " alt="" coords="257,312,491,368"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a05552a2714cd8d15d754a62258727c98" title=" " alt="" coords="259,392,489,448"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1bert__ranker_1_1cross__encoder__ranker_1_1CrossEncoderRankerAgent.html#a0518d01be6a05fc2bc117f2c55cb6328" title=" " alt="" coords="211,472,537,528"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#abc77ad96264e7597c46bc001a9a6af90" title=" " alt="" coords="249,552,499,608"/>
+<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a3dc59646a2e97d015dfdddb65021429b" title=" " alt="" coords="275,633,473,674"/>
+</map>

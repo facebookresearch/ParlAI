@@ -1,0 +1,9 @@
+<map id="parlai.agents.bert_ranker.cross_encoder_ranker.CrossEncoderRankerAgent" name="parlai.agents.bert_ranker.cross_encoder_ranker.CrossEncoderRankerAgent">
+<area shape="rect" id="node1" title=" " alt="" coords="47,367,275,423"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html" title=" " alt="" coords="74,276,249,317"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="82,185,241,227"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,81,56,108"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="80,81,243,108"/>
+<area shape="rect" id="node6" title=" " alt="" coords="133,5,190,32"/>
+<area shape="rect" id="node7" title=" " alt="" coords="267,81,322,108"/>
+</map>

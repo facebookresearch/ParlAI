@@ -1,0 +1,10 @@
+<map id="parlai.mturk.core.dev.worlds.MTurkDataWorld" name="parlai.mturk.core.dev.worlds.MTurkDataWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="321,71,512,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="560,5,751,47"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkTaskWorld.html" title=" " alt="" coords="560,71,751,112"/>
+<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1StaticMTurkTaskWorld.html" title=" " alt="" coords="560,136,751,177"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="111,78,273,105"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,78,63,105"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__full__system_1_1TestMTurkOnboardWorld.html" title=" " alt="" coords="799,5,1045,47"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__full__system_1_1TestMTurkWorld.html" title=" " alt="" coords="823,71,1021,112"/>
+</map>

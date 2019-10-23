@@ -1,0 +1,7 @@
+<map id="parlai.tasks.talkthewalk.worlds.SimulateWorld" name="parlai.tasks.talkthewalk.worlds.SimulateWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="5,333,211,375"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html" title=" " alt="" coords="11,244,205,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html" title=" " alt="" coords="30,155,186,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="27,80,189,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="79,5,137,32"/>
+</map>

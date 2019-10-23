@@ -1,0 +1,7 @@
+<map id="parlai.tasks.talkthewalk.base.TTWBase._setup_episode" name="parlai.tasks.talkthewalk.base.TTWBase._setup_episode">
+<area shape="rect" id="node1" title=" " alt="" coords="5,71,200,112"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1TouristTeacher.html#ab3b6314fb11a8a1ee5a4f2eeae6d4cbb" title=" " alt="" coords="268,5,475,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1GuideTeacher.html#a6b499a6ee77e8ebea11a52901244284e" title=" " alt="" coords="268,71,475,112"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1talkthewalk_1_1agents_1_1GuideLocalizeTeacher.html#a2eb8ea93aec596cf3f80f22208ad367d" title=" " alt="" coords="248,136,495,177"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1talkthewalk_1_1base_1_1TTWBase.html#adda57628371cdbb1afef6f297dab7c54" title=" " alt="" coords="543,39,737,80"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="transresnet_multimodal.modules.TransresnetMultimodalModel.forward" name="transresnet_multimodal.modules.TransresnetMultimodalModel.forward">
+<area shape="rect" id="node1" title=" " alt="" coords="5,159,241,200"/>
+<area shape="rect" id="node2" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#aec98b66974021d37e0e256be86aa16f2" title=" " alt="" coords="289,5,568,47"/>
+<area shape="rect" id="node3" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a50a29d40246542bad1cf6fc380d66327" title=" " alt="" coords="311,71,547,127"/>
+<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a0891aec01eb1a1bafb5b291296581e25" title=" " alt="" coords="311,151,547,207"/>
+<area shape="rect" id="node6" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#affb7977abac6a4671c8d31456345fb58" title=" " alt="" coords="307,232,550,273"/>
+<area shape="rect" id="node7" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#a9c07e36d8eb4e3321a61783e7b0931bd" title=" " alt="" coords="311,297,547,339"/>
+<area shape="rect" id="node5" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a6d8ed65c210d4ab0a665ba305257c3d6" title=" " alt="" coords="617,159,830,200"/>
+<area shape="rect" id="node8" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ae3bbb2a16a997364f8a097459a8e8562" title=" " alt="" coords="616,257,831,313"/>
+<area shape="rect" id="node9" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad510db9128829888d74b02e520cad7b9" title=" " alt="" coords="617,337,830,379"/>
+</map>

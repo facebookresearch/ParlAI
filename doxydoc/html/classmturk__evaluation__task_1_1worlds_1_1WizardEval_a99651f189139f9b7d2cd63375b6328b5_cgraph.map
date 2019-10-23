@@ -1,0 +1,11 @@
+<map id="mturk_evaluation_task.worlds.WizardEval.episode_done" name="mturk_evaluation_task.worlds.WizardEval.episode_done">
+<area shape="rect" id="node1" title=" " alt="" coords="5,266,204,307"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html#accac4ee2dc51850f0af8fa43055023e7" title=" " alt="" coords="252,5,528,61"/>
+<area shape="rect" id="node3" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#ab3caeb29dc340a476579b1cc8d101608" title=" " alt="" coords="267,86,513,127"/>
+<area shape="rect" id="node4" href="$classpersonality__captions_1_1worlds_1_1MTurkPersonalityCaptionsWorld.html#a4e9a57d65cc93af5741f56597a970618" title=" " alt="" coords="274,152,506,208"/>
+<area shape="rect" id="node5" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html#aca4ed4e6a2e6aefb9f7cf9964b325212" title=" " alt="" coords="291,233,489,274"/>
+<area shape="rect" id="node6" href="$classworlds_1_1PersonaChatEvalWorld.html#ab3dd599a36597f672da5d54654a0266e" title=" " alt="" coords="279,298,501,339"/>
+<area shape="rect" id="node7" href="$classworlds_1_1MTurkWizardOfWikipediaWorld.html#a99b976d4f864256d99873f88933632c0" title=" " alt="" coords="283,363,497,405"/>
+<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a297aba27c40c516873f178758c503079" title=" " alt="" coords="255,429,525,485"/>
+<area shape="rect" id="node9" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html#a8792ad92033ef69bb203d7a3574f4343" title=" " alt="" coords="303,510,477,551"/>
+</map>

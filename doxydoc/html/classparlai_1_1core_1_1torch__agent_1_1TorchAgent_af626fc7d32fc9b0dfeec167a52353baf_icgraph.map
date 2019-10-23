@@ -1,0 +1,10 @@
+<map id="parlai.core.torch_agent.TorchAgent.load" name="parlai.core.torch_agent.TorchAgent.load">
+<area shape="rect" id="node1" title=" " alt="" coords="340,231,499,273"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="53,5,244,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="59,85,238,141"/>
+<area shape="rect" id="node4" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="6,166,291,207"/>
+<area shape="rect" id="node5" href="$classkvmemnn_1_1KvmemnnAgent.html#a7a510bb5ac2444d5a30715c77bf55684" title=" " alt="" coords="59,231,239,273"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="52,297,245,353"/>
+<area shape="rect" id="node7" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#ae30fd68376b12a3264e95c8e607df102" title="Initialization and argument parsers." alt="" coords="5,377,292,433"/>
+<area shape="rect" id="node8" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a1a1e5d359d0c7dadfb6eb67a5db686b5" title=" " alt="" coords="68,458,229,499"/>
+</map>

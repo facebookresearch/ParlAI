@@ -1,0 +1,8 @@
+<map id="parlai.agents.test_agents.dummy_torch_agent.MockTorchAgent.build_model" name="parlai.agents.test_agents.dummy_torch_agent.MockTorchAgent.build_model">
+<area shape="rect" id="node1" title=" " alt="" coords="339,181,576,237"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1test__agents_1_1dummy__torch__agent_1_1MockTorchAgent.html#af14024f59e4ea3dea5c7ff38caff89ad" title=" " alt="" coords="64,5,232,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="53,101,243,157"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="59,181,237,237"/>
+<area shape="rect" id="node5" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="5,261,291,303"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="51,327,245,383"/>
+</map>

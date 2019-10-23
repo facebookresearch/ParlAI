@@ -1,0 +1,8 @@
+<map id="parlai.tasks.empathetic_dialogues.agents.EmotionClassificationTeacher" name="parlai.tasks.empathetic_dialogues.agents.EmotionClassificationTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="5,423,264,479"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1empathetic__dialogues_1_1agents_1_1EmpatheticDialogueTeacher.html" title=" " alt="" coords="36,319,233,375"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="49,229,221,271"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="47,155,223,181"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="53,80,216,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="106,5,163,32"/>
+</map>

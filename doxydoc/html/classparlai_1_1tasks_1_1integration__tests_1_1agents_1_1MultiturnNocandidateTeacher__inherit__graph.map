@@ -1,0 +1,10 @@
+<map id="parlai.tasks.integration_tests.agents.MultiturnNocandidateTeacher" name="parlai.tasks.integration_tests.agents.MultiturnNocandidateTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="5,601,233,657"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1MultiturnCandidateTeacher.html" title=" " alt="" coords="12,497,227,553"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1CandidateTeacher.html" title=" " alt="" coords="14,408,225,449"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title=" " alt="" coords="31,319,208,360"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="33,229,205,271"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="31,155,207,181"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="38,80,201,107"/>
+<area shape="rect" id="node8" title=" " alt="" coords="91,5,148,32"/>
+</map>

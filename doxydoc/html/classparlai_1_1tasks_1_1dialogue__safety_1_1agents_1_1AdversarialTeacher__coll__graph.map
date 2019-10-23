@@ -1,0 +1,9 @@
+<map id="parlai.tasks.dialogue_safety.agents.AdversarialTeacher" name="parlai.tasks.dialogue_safety.agents.AdversarialTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="49,423,273,464"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1base__agent_1_1__BaseSafetyTeacher.html" title=" " alt="" coords="54,319,269,375"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="7,229,179,271"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="5,155,181,181"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="12,80,175,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="65,5,122,32"/>
+<area shape="rect" id="node7" title=" " alt="" coords="204,237,255,263"/>
+</map>

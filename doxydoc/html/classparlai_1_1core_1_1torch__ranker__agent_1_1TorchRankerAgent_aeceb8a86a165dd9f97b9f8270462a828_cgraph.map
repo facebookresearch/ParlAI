@@ -1,0 +1,12 @@
+<map id="parlai.core.torch_ranker_agent.TorchRankerAgent._make_candidate_vecs" name="parlai.core.torch_ranker_agent.TorchRankerAgent._make_candidate_vecs">
+<area shape="rect" id="node1" title=" " alt="" coords="5,85,184,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyencoderAgent.html#abad70d30cc642022a7cc33390e0816f5" title=" " alt="" coords="232,5,476,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderRankerAgent.html#a3062adbae2449553b4a6e12c5973116d" title=" " alt="" coords="247,166,461,237"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#af2e2d618f056bb68089c7252fa07d07b" title=" " alt="" coords="239,85,469,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1transformer_1_1biencoder_1_1BiencoderAgent.html#ac9fa75abc94cb2b53c429a4a3b5a133c" title=" " alt="" coords="524,57,755,98"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#ac698ff0226e4d22f8498a9d9e667a34c" title=" " alt="" coords="561,122,718,193"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a024c4a0801e7dddf54bf3222dc77eaf6" title=" " alt="" coords="548,217,731,258"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a1689490829a70677359cf4f49ccd46bb" title=" " alt="" coords="818,121,977,177"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a07964fbca57736f639fe4e9dd9d1459a" title=" " alt="" coords="819,202,976,273"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#afb729d5d51ad91d4188fd1486a4a087f" title=" " alt="" coords="803,297,992,338"/>
+</map>

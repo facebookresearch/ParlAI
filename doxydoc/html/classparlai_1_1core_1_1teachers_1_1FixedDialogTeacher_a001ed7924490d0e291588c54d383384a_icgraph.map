@@ -1,0 +1,13 @@
+<map id="parlai.core.teachers.FixedDialogTeacher.receive_data" name="parlai.core.teachers.FixedDialogTeacher.receive_data">
+<area shape="rect" id="node1" title=" " alt="" coords="587,201,771,243"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#ae519608a207d86bd7801f3043ff0ebf5" title=" " alt="" coords="322,5,513,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1vqa__v2_1_1agents_1_1OeTeacher.html#a98b9f8bc131ddb23d185811a479dc742" title=" " alt="" coords="326,71,509,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#a0711151a8588c499abdda943b27793a8" title=" " alt="" coords="318,201,517,243"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultTeacher.html#a688ac5a25bb6bb79b57550ecdec0eab1" title=" " alt="" coords="309,136,526,177"/>
+<area shape="rect" id="node9" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher.html#aa932b35d88d65d7f5d61b271bbee71ac" title=" " alt="" coords="326,267,509,308"/>
+<area shape="rect" id="node10" href="$classparlai_1_1tasks_1_1image__chat_1_1agents_1_1ImageChatTeacher.html#a79f6d03e7d21be3a61bad00252f8ea66" title=" " alt="" coords="297,333,538,389"/>
+<area shape="rect" id="node11" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTeacher.html#a8b15a0281c0e15c0f4af16da820f7a52" title=" " alt="" coords="296,413,539,469"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VQADataset.html#a37e408e3dd862d0312dde8fdbfad0a06" title=" " alt="" coords="20,96,233,137"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1DefaultDataset.html#ae81ce7e05c42b214d42a5a4a5c471c8e" title=" " alt="" coords="7,162,246,218"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1DefaultDataset.html#a043423c38c701ceadd6fec7cf5168816" title=" " alt="" coords="5,242,248,298"/>
+</map>

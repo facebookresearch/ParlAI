@@ -1,0 +1,11 @@
+<map id="parlai.tasks.self_feeding.agents.SelfFeedingTeacher" name="parlai.tasks.self_feeding.agents.SelfFeedingTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="976,71,1187,112"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1self__feeding_1_1agents_1_1DialogTeacher.html" title=" " alt="" coords="1235,5,1445,47"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1self__feeding_1_1agents_1_1FeedbackTeacher.html" title=" " alt="" coords="1235,71,1445,112"/>
+<area shape="rect" id="node9" href="$classparlai_1_1tasks_1_1self__feeding_1_1agents_1_1SatisfactionTeacher.html" title=" " alt="" coords="1235,136,1445,177"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1ParlAIDialogTeacher.html" title=" " alt="" coords="765,71,928,112"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="545,71,717,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="321,78,497,105"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,78,273,105"/>
+<area shape="rect" id="node6" title=" " alt="" coords="5,78,63,105"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="parlai.mturk.tasks.multi_agent_dialog.worlds.MTurkMultiAgentDialogWorld" name="parlai.mturk.tasks.multi_agent_dialog.worlds.MTurkMultiAgentDialogWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="5,333,219,389"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkTaskWorld.html" title=" " alt="" coords="29,244,195,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="29,155,195,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="31,80,193,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="83,5,141,32"/>
+</map>

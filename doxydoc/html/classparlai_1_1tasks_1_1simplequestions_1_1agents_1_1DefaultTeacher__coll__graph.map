@@ -1,0 +1,9 @@
+<map id="parlai.tasks.simplequestions.agents.DefaultTeacher" name="parlai.tasks.simplequestions.agents.DefaultTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="5,497,240,539"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FbDialogTeacher.html" title=" " alt="" coords="27,408,219,449"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title=" " alt="" coords="34,319,211,360"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="37,229,209,271"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="35,155,211,181"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="41,80,204,107"/>
+<area shape="rect" id="node7" title=" " alt="" coords="94,5,151,32"/>
+</map>

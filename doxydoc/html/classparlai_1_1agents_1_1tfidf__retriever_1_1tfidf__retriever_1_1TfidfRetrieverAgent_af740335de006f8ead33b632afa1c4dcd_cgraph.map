@@ -1,0 +1,6 @@
+<map id="parlai.agents.tfidf_retriever.tfidf_retriever.TfidfRetrieverAgent.save" name="parlai.agents.tfidf_retriever.tfidf_retriever.TfidfRetrieverAgent.save">
+<area shape="rect" id="node1" title=" " alt="" coords="5,71,172,127"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#a8bddd5b89230c9a2810e7ca15914997e" title=" " alt="" coords="232,5,407,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html#a29e1cdd729ac4236f8bae90b2e66fa04" title=" " alt="" coords="220,85,419,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a434a29fe242e98aef091ec1e277d420f" title=" " alt="" coords="231,136,408,192"/>
+</map>

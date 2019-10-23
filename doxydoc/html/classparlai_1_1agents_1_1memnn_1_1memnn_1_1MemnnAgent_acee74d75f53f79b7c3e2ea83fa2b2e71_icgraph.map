@@ -1,0 +1,12 @@
+<map id="parlai.agents.memnn.memnn.MemnnAgent._build_mems" name="parlai.agents.memnn.memnn.MemnnAgent._build_mems">
+<area shape="rect" id="node1" title=" " alt="" coords="1199,72,1393,113"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1memnn_1_1memnn_1_1MemnnAgent.html#a10b5418eda4da7bc85913e24e5b5a029" title=" " alt="" coords="945,72,1151,113"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#a65bca7841123e4c3df1e09f8c4eb397f" title=" " alt="" coords="663,39,897,80"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#a05ddf921f386f21116ec0ef50796987a" title=" " alt="" coords="663,104,897,145"/>
+<area shape="rect" id="node4" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#a057eb1109f5c2ea467539083e2f7e7f6" title=" " alt="" coords="292,104,615,145"/>
+<area shape="rect" id="node9" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a5eadf6ccc4b1d15a520a70d111bff493" title=" " alt="" coords="360,39,547,80"/>
+<area shape="rect" id="node5" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title=" " alt="" coords="45,5,205,47"/>
+<area shape="rect" id="node6" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title=" " alt="" coords="5,71,244,112"/>
+<area shape="rect" id="node7" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title=" " alt="" coords="21,136,229,177"/>
+<area shape="rect" id="node8" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title=" " alt="" coords="25,202,224,229"/>
+</map>

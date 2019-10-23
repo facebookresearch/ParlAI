@@ -1,0 +1,9 @@
+<map id="parlai.messenger.core.worlds.OnboardWorld" name="parlai.messenger.core.worlds.OnboardWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="321,104,517,145"/>
+<area shape="rect" id="node4" href="$classparlai_1_1messenger_1_1tasks_1_1chatbot_1_1worlds_1_1MessengerBotChatOnboardWorld.html" title=" " alt="" coords="605,5,856,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerChatOnboardWorld.html" title=" " alt="" coords="589,71,872,112"/>
+<area shape="rect" id="node6" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerEchoOnboardWorld.html" title=" " alt="" coords="589,136,873,177"/>
+<area shape="rect" id="node7" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerOnboardDataOnboardWorld.html" title=" " alt="" coords="565,201,896,243"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="111,111,273,138"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,111,63,138"/>
+</map>

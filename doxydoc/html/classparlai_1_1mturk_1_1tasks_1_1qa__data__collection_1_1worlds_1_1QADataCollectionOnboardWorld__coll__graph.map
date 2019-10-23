@@ -1,0 +1,7 @@
+<map id="parlai.mturk.tasks.qa_data_collection.worlds.QADataCollectionOnboardWorld" name="parlai.mturk.tasks.qa_data_collection.worlds.QADataCollectionOnboardWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="5,333,215,389"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="27,244,193,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="27,155,193,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="29,80,191,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="81,5,139,32"/>
+</map>

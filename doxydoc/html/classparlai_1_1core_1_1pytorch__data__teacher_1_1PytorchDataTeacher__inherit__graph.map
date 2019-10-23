@@ -1,0 +1,8 @@
+<map id="parlai.core.pytorch_data_teacher.PytorchDataTeacher" name="parlai.core.pytorch_data_teacher.PytorchDataTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="5,319,233,360"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1DefaultTeacher.html" title=" " alt="" coords="21,408,218,449"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="33,229,205,271"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="31,155,207,181"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="38,80,201,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="91,5,148,32"/>
+</map>

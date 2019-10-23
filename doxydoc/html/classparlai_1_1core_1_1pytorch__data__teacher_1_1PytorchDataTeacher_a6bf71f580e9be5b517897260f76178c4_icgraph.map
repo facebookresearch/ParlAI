@@ -1,0 +1,11 @@
+<map id="parlai.core.pytorch_data_teacher.PytorchDataTeacher.get_next_batch" name="parlai.core.pytorch_data_teacher.PytorchDataTeacher.get_next_batch">
+<area shape="rect" id="node1" title=" " alt="" coords="856,158,1107,214"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1PytorchDataTeacher.html#aa4e63cd7dd1a904a8424a096f7ca1f63" title=" " alt="" coords="512,165,808,207"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#afa75426a7578e8aad5b74964219345be" title=" " alt="" coords="292,165,464,207"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title=" " alt="" coords="45,5,205,47"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title=" " alt="" coords="5,71,244,112"/>
+<area shape="rect" id="node6" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title=" " alt="" coords="21,136,229,177"/>
+<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title=" " alt="" coords="25,202,224,229"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a51174dfa508970e3392246b02d0d94b5" title=" " alt="" coords="45,253,204,295"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title=" " alt="" coords="43,319,206,360"/>
+</map>

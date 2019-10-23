@@ -1,0 +1,15 @@
+<map id="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.sort" name="parlai.agents.legacy_agents.seq2seq.dict_v0.DictionaryAgent.sort">
+<area shape="rect" id="node1" title=" " alt="" coords="781,232,948,288"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#ab2838da6f97c13b8eae241ac6db59417" title=" " alt="" coords="561,152,733,208"/>
+<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#aacac3c53a7aef02a731d427fcb8bdf87" title=" " alt="" coords="561,232,733,288"/>
+<area shape="rect" id="node13" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a0c6a8d8b67fe978549b328e7b7b07450" title=" " alt="" coords="562,313,733,354"/>
+<area shape="rect" id="node3" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="228,378,513,419"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VqaDictionaryAgent.html#afcebdb70582204709f5e4365dde00bcb" title=" " alt="" coords="271,86,470,127"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#acc5f2818eae15ab8ebe81924600bb6fe" title=" " alt="" coords="271,5,471,61"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a7758fcd79e9a391b4f4bd45e030fc59b" title=" " alt="" coords="271,232,471,288"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aea9aca40dd1bb1976f4042565b172d88" title=" " alt="" coords="285,313,456,354"/>
+<area shape="rect" id="node11" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a86c41e705170f0b2e56a5bbc378aead9" title=" " alt="" coords="275,152,467,208"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1World.html#ae2b8ea006564cbefbe8520f45fb71040" title=" " alt="" coords="9,134,176,175"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a1b7aed0a7b56712f22ee8b04c65d7c00" title=" " alt="" coords="5,199,180,241"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html#a0425099fbc33cb97d6fbe67dbd2e8a1f" title=" " alt="" coords="5,265,180,306"/>
+</map>

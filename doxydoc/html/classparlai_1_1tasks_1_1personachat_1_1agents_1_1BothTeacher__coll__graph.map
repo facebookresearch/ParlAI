@@ -1,0 +1,10 @@
+<map id="parlai.tasks.personachat.agents.BothTeacher" name="parlai.tasks.personachat.agents.BothTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="5,587,216,628"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1personachat_1_1agents_1_1BothOriginalTeacher.html" title=" " alt="" coords="5,497,216,539"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FbDialogTeacher.html" title=" " alt="" coords="15,408,207,449"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1DialogTeacher.html" title=" " alt="" coords="22,319,199,360"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="25,229,197,271"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="23,155,199,181"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="29,80,192,107"/>
+<area shape="rect" id="node8" title=" " alt="" coords="82,5,139,32"/>
+</map>

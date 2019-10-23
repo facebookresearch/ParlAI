@@ -1,0 +1,5 @@
+<map id="parlai.messenger.tasks.chatbot.worlds.MessengerOverworld" name="parlai.messenger.tasks.chatbot.worlds.MessengerOverworld">
+<area shape="rect" id="node1" title=" " alt="" coords="5,155,256,196"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="49,80,212,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="102,5,159,32"/>
+</map>

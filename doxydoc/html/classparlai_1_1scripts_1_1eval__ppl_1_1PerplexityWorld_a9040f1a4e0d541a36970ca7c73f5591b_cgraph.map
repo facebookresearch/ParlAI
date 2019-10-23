@@ -1,0 +1,7 @@
+<map id="parlai.scripts.eval_ppl.PerplexityWorld.parley" name="parlai.scripts.eval_ppl.PerplexityWorld.parley">
+<area shape="rect" id="node1" title=" " alt="" coords="5,100,187,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld.html#a14441a6ac10802e2ca328dc1d1debe75" title=" " alt="" coords="251,5,429,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title=" " alt="" coords="254,71,426,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title=" " alt="" coords="235,137,445,163"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1teachers_1_1StreamDialogData.html#abe3521ed1cb416df863eb41d726ece67" title=" " alt="" coords="249,188,431,229"/>
+</map>

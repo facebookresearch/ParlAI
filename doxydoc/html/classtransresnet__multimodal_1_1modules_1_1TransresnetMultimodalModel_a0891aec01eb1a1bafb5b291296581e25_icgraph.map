@@ -1,0 +1,8 @@
+<map id="transresnet_multimodal.modules.TransresnetMultimodalModel.forward_text_encoder" name="transresnet_multimodal.modules.TransresnetMultimodalModel.forward_text_encoder">
+<area shape="rect" id="node1" title=" " alt="" coords="572,49,808,105"/>
+<area shape="rect" id="node2" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#ad1ba23a860f8af75c97510ae52622748" title=" " alt="" coords="5,5,240,61"/>
+<area shape="rect" id="node3" href="$classtransresnet__multimodal_1_1modules_1_1TransresnetMultimodalModel.html#af21e163c4c9d044d575d3bdb02410d9e" title=" " alt="" coords="288,86,524,127"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#a9db8fd3e6b80ef4f17a9975673e46d01" title=" " alt="" coords="16,86,229,127"/>
+<area shape="rect" id="node5" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#ad41dbceaf0c86aac1b29e68fea3c4f14" title=" " alt="" coords="16,151,229,193"/>
+<area shape="rect" id="node6" href="$classtransresnet_1_1modules_1_1TransresnetModel.html#aedf5402061ce43a2b594eb9c8a374738" title=" " alt="" coords="16,217,229,258"/>
+</map>

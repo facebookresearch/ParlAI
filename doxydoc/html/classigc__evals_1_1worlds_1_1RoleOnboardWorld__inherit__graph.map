@@ -1,0 +1,7 @@
+<map id="igc_evals.worlds.RoleOnboardWorld" name="igc_evals.worlds.RoleOnboardWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="5,333,204,375"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="22,244,187,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="22,155,187,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="23,80,186,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="76,5,133,32"/>
+</map>

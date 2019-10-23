@@ -1,0 +1,9 @@
+<map id="self_feeding.self_feeding_agent.SelfFeedingAgent.build_model" name="self_feeding.self_feeding_agent.SelfFeedingAgent.build_model">
+<area shape="rect" id="node1" title=" " alt="" coords="5,115,247,156"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a26c3912e7fb445f3e4d9d61fa4b28cd9" title=" " alt="" coords="319,60,476,131"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a3bfcd11debf76eff078d90c4b0f37a47" title=" " alt="" coords="295,155,500,196"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#aacd33f0ba4e08159e567229b16999548" title=" " alt="" coords="557,5,714,76"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#af0fce532d1e9e2a17e8303290d47e8d5" title=" " alt="" coords="557,100,714,171"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#ab0d7297eabf5d8d99548e95267ec1d1a" title=" " alt="" coords="548,195,723,236"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a9e74bd0ca90d3fcbd1bee483d10170b1" title=" " alt="" coords="552,260,719,301"/>
+</map>

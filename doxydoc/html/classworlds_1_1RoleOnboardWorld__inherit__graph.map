@@ -1,0 +1,7 @@
+<map id="worlds.RoleOnboardWorld" name="worlds.RoleOnboardWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="5,333,180,360"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="10,244,175,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="10,155,175,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="11,80,174,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="64,5,121,32"/>
+</map>

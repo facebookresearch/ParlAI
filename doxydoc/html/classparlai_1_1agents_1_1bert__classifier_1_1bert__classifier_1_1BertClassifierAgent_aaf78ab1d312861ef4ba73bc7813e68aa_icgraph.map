@@ -1,0 +1,8 @@
+<map id="parlai.agents.bert_classifier.bert_classifier.BertClassifierAgent.init_optim" name="parlai.agents.bert_classifier.bert_classifier.BertClassifierAgent.init_optim">
+<area shape="rect" id="node1" title=" " alt="" coords="339,165,533,221"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="53,5,243,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="59,85,237,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#aea5753e8b1090fc88e657ada44492556" title=" " alt="" coords="57,165,239,221"/>
+<area shape="rect" id="node5" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="5,246,291,287"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="51,312,245,368"/>
+</map>

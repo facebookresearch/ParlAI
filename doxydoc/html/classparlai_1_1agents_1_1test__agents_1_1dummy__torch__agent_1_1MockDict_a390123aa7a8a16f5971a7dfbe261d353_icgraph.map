@@ -1,0 +1,14 @@
+<map id="parlai.agents.test_agents.dummy_torch_agent.MockDict.txt2vec" name="parlai.agents.test_agents.dummy_torch_agent.MockDict.txt2vec">
+<area shape="rect" id="node1" title=" " alt="" coords="783,234,951,290"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#ad34c4135329f6768d22d519c3c483d68" title=" " alt="" coords="564,241,735,283"/>
+<area shape="rect" id="node3" href="$classkvmemnn_1_1KvmemnnAgent.html#a7a510bb5ac2444d5a30715c77bf55684" title=" " alt="" coords="311,5,491,47"/>
+<area shape="rect" id="node4" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a901865f6607e3b5509831785bc1e29d0" title=" " alt="" coords="297,95,505,136"/>
+<area shape="rect" id="node5" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title=" " alt="" coords="8,161,235,187"/>
+<area shape="rect" id="node6" href="$classlight__chats_1_1graph_1_1Graph.html#a7b3fe43bf1e2b53fe7a2e22a24d77ef2" title=" " alt="" coords="309,212,492,253"/>
+<area shape="rect" id="node7" href="$classmastering__the__dungeon_1_1tasks_1_1graph__world2_1_1graph_1_1Graph.html#a3e15de765a5c825f15f66737b2e9118e" title=" " alt="" coords="5,313,237,355"/>
+<area shape="rect" id="node8" href="$classlight__chats_1_1graph_1_1Graph.html#a9aede2dd27f6a9ab66f38eaa5f649195" title=" " alt="" coords="285,379,516,406"/>
+<area shape="rect" id="node10" href="$classkvmemnn_1_1KvmemnnAgent.html#ac2b07b1455920e6a343271997b9c6207" title=" " alt="" coords="291,278,510,305"/>
+<area shape="rect" id="node11" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a82e02d0b34707b2e00b95bc659411bae" title=" " alt="" coords="321,433,480,475"/>
+<area shape="rect" id="node9" href="$classlight__chats_1_1graph_1_1Graph.html#ab4e757d18538326e65b8ed2dce71d9fa" title=" " alt="" coords="20,379,223,420"/>
+<area shape="rect" id="node12" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#ac7bdfbe78c9f6aed1118161bd24a7c8e" title=" " alt="" coords="42,444,201,485"/>
+</map>

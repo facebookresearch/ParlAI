@@ -1,0 +1,8 @@
+<map id="parlai.agents.seq2seq.seq2seq.Seq2seqAgent" name="parlai.agents.seq2seq.seq2seq.Seq2seqAgent">
+<area shape="rect" id="node1" title=" " alt="" coords="5,333,212,375"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html" title=" " alt="" coords="14,244,203,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="29,155,188,196"/>
+<area shape="rect" id="node4" title=" " alt="" coords="18,80,69,107"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="93,80,255,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="145,5,203,32"/>
+</map>

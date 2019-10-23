@@ -1,0 +1,8 @@
+<map id="parlai.core.torch_ranker_agent.TorchRankerAgent._make_candidate_encs" name="parlai.core.torch_ranker_agent.TorchRankerAgent._make_candidate_encs">
+<area shape="rect" id="node1" title=" " alt="" coords="5,143,184,199"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1memnn_1_1memnn_1_1MemnnAgent.html#ab0c47ca129aeec437446202c941e0a56" title=" " alt="" coords="247,5,461,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyencoderAgent.html#ae73fe8d98b46a7ef18ef7115f29c999d" title=" " alt="" coords="232,71,476,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1bert__ranker_1_1bi__encoder__ranker_1_1BiEncoderRankerAgent.html#a98361c5172041c64dc2da76ab9b654a7" title=" " alt="" coords="252,136,456,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html#a6067345dff7fefda2809ea3bd63cd8fd" title=" " alt="" coords="234,231,474,287"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#a1c8e4925f558783a51a28ccb577c42c7" title=" " alt="" coords="244,311,464,367"/>
+</map>

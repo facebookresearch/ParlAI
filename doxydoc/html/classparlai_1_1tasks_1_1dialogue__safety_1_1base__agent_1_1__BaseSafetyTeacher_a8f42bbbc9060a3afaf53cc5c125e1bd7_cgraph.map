@@ -1,0 +1,6 @@
+<map id="parlai.tasks.dialogue_safety.base_agent._BaseSafetyTeacher.num_examples" name="parlai.tasks.dialogue_safety.base_agent._BaseSafetyTeacher.num_examples">
+<area shape="rect" id="node1" title=" " alt="" coords="5,85,220,141"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1StandardTeacher.html#a0d4a6e6afafd6a0f8fd3f757819dc4ae" title=" " alt="" coords="275,5,489,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1AdversarialTeacher.html#a5e6bf0e07c8151faa0a4c5c198f6ffd4" title=" " alt="" coords="268,85,496,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1base__agent_1_1__BaseSafetyTeacher.html#aaa9d0661b8da3e8339e8f7508c981e3b" title=" " alt="" coords="275,165,489,221"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="transresnet.transresnet.TransresnetAgent.reset" name="transresnet.transresnet.TransresnetAgent.reset">
+<area shape="rect" id="node1" title=" " alt="" coords="5,203,165,245"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#acbe0accc588c66ea679806cd6450b293" title=" " alt="" coords="237,5,412,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html#aaefcbd7c61d319b368b3ee13997c8c99" title=" " alt="" coords="227,86,423,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#a62896fd9aa38b55c6ea1b8a8770e3261" title=" " alt="" coords="213,152,436,208"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#a521db011d2188e8e513976af5737c322" title=" " alt="" coords="237,233,412,303"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#ae76435bf7acee9501188de47c0ba6991" title=" " alt="" coords="237,327,412,398"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a029d7193a532d4cf75433e82817ab414" title=" " alt="" coords="231,422,418,463"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#acc5aa3887a6bf3ece28d60a9572fe50e" title=" " alt="" coords="484,422,671,463"/>
+</map>

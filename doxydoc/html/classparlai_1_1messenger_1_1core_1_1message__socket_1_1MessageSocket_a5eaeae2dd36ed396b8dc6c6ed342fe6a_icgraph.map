@@ -1,0 +1,11 @@
+<map id="parlai.messenger.core.message_socket.MessageSocket._send_world_alive" name="parlai.messenger.core.message_socket.MessageSocket._send_world_alive">
+<area shape="rect" id="node1" title=" " alt="" coords="620,170,827,226"/>
+<area shape="rect" id="node2" href="$classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket.html#a1d190a97a2e2675901acfd3ee3b2a31e" title=" " alt="" coords="313,75,568,116"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#abf2babd7a737708e09af718d2a6541d0" title=" " alt="" coords="309,140,572,181"/>
+<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1SocketManager.html#a94890ea7684460f07286cbd33eb2425e" title=" " alt="" coords="313,206,569,262"/>
+<area shape="rect" id="node9" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#a65f1f7bf590ce6849bba6e743b73804c" title=" " alt="" coords="351,286,530,342"/>
+<area shape="rect" id="node3" href="$classparlai_1_1messenger_1_1core_1_1message__socket_1_1MessageSocket.html#ac0c78e003a2acf5c231bbc4aa42dfe98" title=" " alt="" coords="26,5,241,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1SocketManager.html#a972e94d9fa6b2a7fdc09184e06d343dd" title=" " alt="" coords="22,71,245,112"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1SocketManager.html#ac4a8060782edd077f684e1f90a04f75d" title=" " alt="" coords="5,137,261,193"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1socket__manager_1_1SocketManager.html#ad366f39cbef4d0d8307cf350cd088ff9" title=" " alt="" coords="44,217,223,273"/>
+</map>

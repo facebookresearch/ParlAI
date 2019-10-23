@@ -1,0 +1,9 @@
+<map id="self_feeding.self_feeding_agent.SelfFeedingAgent" name="self_feeding.self_feeding_agent.SelfFeedingAgent">
+<area shape="rect" id="node1" title=" " alt="" coords="41,423,209,464"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html" title=" " alt="" coords="5,333,245,375"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html" title=" " alt="" coords="38,244,213,285"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="46,155,205,196"/>
+<area shape="rect" id="node5" title=" " alt="" coords="35,80,85,107"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="109,80,272,107"/>
+<area shape="rect" id="node7" title=" " alt="" coords="162,5,219,32"/>
+</map>

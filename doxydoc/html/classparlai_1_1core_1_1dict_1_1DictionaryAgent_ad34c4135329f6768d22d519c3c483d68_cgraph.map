@@ -1,0 +1,22 @@
+<map id="parlai.core.dict.DictionaryAgent.parse" name="parlai.core.dict.DictionaryAgent.parse">
+<area shape="rect" id="node1" title=" " alt="" coords="5,319,176,361"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent.html#a407dcd1aa927f8065334a825b2d099d9" title=" " alt="" coords="226,5,409,61"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1test__agents_1_1dummy__torch__agent_1_1MockDict.html#a390123aa7a8a16f5971a7dfbe261d353" title=" " alt="" coords="233,312,401,368"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#a5d89ed4dcebcd41853bd0614d30337e7" title=" " alt="" coords="224,85,411,141"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a8419b546a12830d98e1eb14615744294" title=" " alt="" coords="224,165,411,221"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#abc3baf742422fc7cdaece698224709d4" title=" " alt="" coords="232,246,403,287"/>
+<area shape="rect" id="node17" href="$classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent.html#a6269b15dc01bfaac5dd1b5da995f2f0f" title=" " alt="" coords="226,392,409,448"/>
+<area shape="rect" id="node18" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#a87de974ecf69da7412e777220c29ba39" title=" " alt="" coords="224,472,411,528"/>
+<area shape="rect" id="node19" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#a8dd6e4af55a5f5d05d692198e044c5fe" title=" " alt="" coords="224,552,411,608"/>
+<area shape="rect" id="node20" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#af2eeb50b2cd6cf3a8ca817b729ec7486" title=" " alt="" coords="232,633,403,674"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#aca7e5edfd6502701277cb83b75ff4e96" title=" " alt="" coords="499,13,669,54"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1DictionaryAgent.html#aa551af633278b71b0a8da65180b79202" title=" " alt="" coords="487,79,681,135"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1DictionaryAgent.html#af8cf51195d4443615727cf0bdcdace0f" title=" " alt="" coords="487,159,681,215"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v0_1_1__BPEHelper.html#a33d5217e263257279fe081b02da95d8d" title=" " alt="" coords="498,239,670,295"/>
+<area shape="rect" id="node11" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tokenizers_1_1spacy__tokenizer_1_1SpacyTokenizer.html#a479b83909bafee8db3f60c9d8fe69635" title=" " alt="" coords="467,319,701,375"/>
+<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tokenizers_1_1simple__tokenizer_1_1SimpleTokenizer.html#a690bc237be6349de5c3f105e0be37ea7" title=" " alt="" coords="466,399,702,455"/>
+<area shape="rect" id="node13" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tokenizers_1_1regexp__tokenizer_1_1RegexpTokenizer.html#aed53e2811a6c13818061b300311fde1a" title=" " alt="" coords="463,479,705,535"/>
+<area shape="rect" id="node14" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tokenizers_1_1corenlp__tokenizer_1_1CoreNLPTokenizer.html#af7fb8c70ddbd8c11e3e32365af30e567" title=" " alt="" coords="459,559,709,615"/>
+<area shape="rect" id="node15" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tokenizers_1_1tokenizer_1_1Tokenizer.html#a548699f403463496523213f3cf80c6c6" title=" " alt="" coords="483,639,685,695"/>
+<area shape="rect" id="node16" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1dict__v1_1_1__BPEHelper.html#a4123dd721a13dc6607498ae29d7dd8a3" title=" " alt="" coords="498,719,670,775"/>
+</map>

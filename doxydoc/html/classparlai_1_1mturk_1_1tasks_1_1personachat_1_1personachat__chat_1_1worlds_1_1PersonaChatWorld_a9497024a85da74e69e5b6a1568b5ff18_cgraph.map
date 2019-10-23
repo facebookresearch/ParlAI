@@ -1,0 +1,6 @@
+<map id="parlai.mturk.tasks.personachat.personachat_chat.worlds.PersonaChatWorld.episode_done" name="parlai.mturk.tasks.personachat.personachat_chat.worlds.PersonaChatWorld.episode_done">
+<area shape="rect" id="node1" title=" " alt="" coords="5,86,300,127"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html#accac4ee2dc51850f0af8fa43055023e7" title=" " alt="" coords="348,5,624,61"/>
+<area shape="rect" id="node3" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#ab3caeb29dc340a476579b1cc8d101608" title=" " alt="" coords="363,86,609,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a297aba27c40c516873f178758c503079" title=" " alt="" coords="351,152,621,208"/>
+</map>

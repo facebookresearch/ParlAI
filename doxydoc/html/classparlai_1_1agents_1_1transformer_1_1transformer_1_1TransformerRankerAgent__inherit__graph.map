@@ -1,0 +1,11 @@
+<map id="parlai.agents.transformer.transformer.TransformerRankerAgent" name="parlai.agents.transformer.transformer.TransformerRankerAgent">
+<area shape="rect" id="node1" title=" " alt="" coords="751,71,991,112"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1transformer_1_1biencoder_1_1BiencoderAgent.html" title=" " alt="" coords="1051,5,1282,47"/>
+<area shape="rect" id="node8" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html" title=" " alt="" coords="1083,71,1251,112"/>
+<area shape="rect" id="node9" href="$classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent.html" title=" " alt="" coords="1039,137,1295,193"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html" title=" " alt="" coords="528,71,703,112"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="321,71,480,112"/>
+<area shape="rect" id="node4" title=" " alt="" coords="167,53,217,79"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,103,273,130"/>
+<area shape="rect" id="node6" title=" " alt="" coords="5,103,63,130"/>
+</map>

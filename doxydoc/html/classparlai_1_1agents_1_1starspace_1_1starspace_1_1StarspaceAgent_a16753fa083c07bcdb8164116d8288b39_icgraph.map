@@ -1,0 +1,10 @@
+<map id="parlai.agents.starspace.starspace.StarspaceAgent.predict" name="parlai.agents.starspace.starspace.StarspaceAgent.predict">
+<area shape="rect" id="node1" title=" " alt="" coords="804,88,1027,129"/>
+<area shape="rect" id="node2" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a901865f6607e3b5509831785bc1e29d0" title=" " alt="" coords="541,29,749,71"/>
+<area shape="rect" id="node3" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title=" " alt="" coords="259,55,485,82"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a87253cca09c8b22848ff0bea7195e32d" title=" " alt="" coords="533,171,756,212"/>
+<area shape="rect" id="node5" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a7e76b6e8f11577a56a9c000cb360a44e" title=" " alt="" coords="263,125,481,167"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a87b18f0d6ab11be3c49375af072d0d33" title=" " alt="" coords="293,191,451,232"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html#a6bd5a8a8e194dd4aa76aeecdf429bc7f" title=" " alt="" coords="5,157,211,199"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title=" " alt="" coords="11,223,205,264"/>
+</map>

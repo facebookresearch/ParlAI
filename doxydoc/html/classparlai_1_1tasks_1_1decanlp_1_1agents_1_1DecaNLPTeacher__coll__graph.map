@@ -1,0 +1,7 @@
+<map id="parlai.tasks.decanlp.agents.DecaNLPTeacher" name="parlai.tasks.decanlp.agents.DecaNLPTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="5,319,191,360"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1MultiTaskTeacher.html" title=" " alt="" coords="19,229,177,271"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="10,155,186,181"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="17,80,179,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="69,5,127,32"/>
+</map>

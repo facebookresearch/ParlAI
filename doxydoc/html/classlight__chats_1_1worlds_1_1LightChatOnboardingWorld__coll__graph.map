@@ -1,0 +1,7 @@
+<map id="light_chats.worlds.LightChatOnboardingWorld" name="light_chats.worlds.LightChatOnboardingWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="9,333,167,375"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="5,244,171,285"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="5,155,171,196"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="7,80,169,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="59,5,117,32"/>
+</map>

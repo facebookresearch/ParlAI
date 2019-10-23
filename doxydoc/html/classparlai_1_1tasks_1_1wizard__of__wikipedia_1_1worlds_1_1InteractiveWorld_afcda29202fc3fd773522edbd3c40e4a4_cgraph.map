@@ -1,0 +1,8 @@
+<map id="parlai.tasks.wizard_of_wikipedia.worlds.InteractiveWorld.parley" name="parlai.tasks.wizard_of_wikipedia.worlds.InteractiveWorld.parley">
+<area shape="rect" id="node1" title=" " alt="" coords="5,136,213,192"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1local__human_1_1local__human_1_1LocalHumanAgent.html#a5c598c26dfd30db3120dac0cf02daf67" title=" " alt="" coords="273,5,496,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html#aaaef76f5bae4cdbe8f78241f8cd7c3a3" title=" " alt="" coords="261,85,508,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld.html#a01cde3e1317b31cf52024283f061fdf6" title=" " alt="" coords="281,136,489,192"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1worlds_1_1World.html#a363cc32add41645e1ba405808fafb5b4" title=" " alt="" coords="287,216,482,243"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1World.html#a77730e92a331274ab7b6ea3e7b99d1a4" title=" " alt="" coords="282,267,487,309"/>
+</map>

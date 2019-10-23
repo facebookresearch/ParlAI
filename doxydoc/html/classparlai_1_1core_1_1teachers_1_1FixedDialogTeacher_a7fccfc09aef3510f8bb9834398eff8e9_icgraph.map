@@ -1,0 +1,11 @@
+<map id="parlai.core.teachers.FixedDialogTeacher.next_episode_idx" name="parlai.core.teachers.FixedDialogTeacher.next_episode_idx">
+<area shape="rect" id="node1" title=" " alt="" coords="535,209,745,251"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#aa6782a610b00aa0675522aa58b03f20c" title=" " alt="" coords="296,209,487,251"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a759b2dcb341b657fda29c71a7a5354b4" title=" " alt="" coords="41,5,213,47"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1vqa__v2_1_1agents_1_1OeTeacher.html#aa1bd8754bec6bafbc67231d5fecb14b6" title=" " alt="" coords="35,71,218,112"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#ada88912036e5d75c2f2a5bff298b1d88" title=" " alt="" coords="29,136,225,177"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1image__chat_1_1agents_1_1ImageChatTeacher.html#a2b795770610618bf94e76705cb90611a" title=" " alt="" coords="6,202,247,258"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTeacher.html#ace67289d386996e9dab37cc9fcca55b4" title=" " alt="" coords="5,282,248,338"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultTeacher.html#a836bf6068d0155b03bcc796c77480f1f" title=" " alt="" coords="18,363,235,404"/>
+<area shape="rect" id="node9" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher.html#a42df8da64edbf22fcc976b1cd02ef252" title=" " alt="" coords="35,428,218,469"/>
+</map>

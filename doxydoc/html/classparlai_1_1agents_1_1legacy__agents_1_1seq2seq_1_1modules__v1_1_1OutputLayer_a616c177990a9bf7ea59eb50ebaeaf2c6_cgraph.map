@@ -1,0 +1,7 @@
+<map id="parlai.agents.legacy_agents.seq2seq.modules_v1.OutputLayer.__init__" name="parlai.agents.legacy_agents.seq2seq.modules_v1.OutputLayer.__init__">
+<area shape="rect" id="node1" title=" " alt="" coords="5,111,180,167"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1drqa_1_1model_1_1DocReaderModel.html#ac509d418866e6d8bd2ad29eaf1152f52" title=" " alt="" coords="228,5,456,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v1_1_1OutputLayer.html#a0e8baf4ecbc8a3ff9e6a04aa313e7021" title=" " alt="" coords="231,71,453,127"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1Linear.html#a1ec65604d05f105801a61de18d16caa1" title=" " alt="" coords="249,151,435,207"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1modules__v0_1_1RandomProjection.html#a8658f06bff792a0c09d106950a6267fe" title=" " alt="" coords="249,232,435,303"/>
+</map>

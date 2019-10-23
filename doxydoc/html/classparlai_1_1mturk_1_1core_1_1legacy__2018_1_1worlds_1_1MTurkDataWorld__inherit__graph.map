@@ -1,0 +1,8 @@
+<map id="parlai.mturk.core.legacy_2018.worlds.MTurkDataWorld" name="parlai.mturk.core.legacy_2018.worlds.MTurkDataWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="321,71,524,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="579,5,802,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1MTurkTaskWorld.html" title=" " alt="" coords="589,71,792,112"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld.html" title=" " alt="" coords="572,136,809,177"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="111,78,273,105"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,78,63,105"/>
+</map>

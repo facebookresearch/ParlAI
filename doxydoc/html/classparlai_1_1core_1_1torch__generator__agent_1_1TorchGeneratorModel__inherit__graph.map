@@ -1,0 +1,8 @@
+<map id="parlai.core.torch_generator_agent.TorchGeneratorModel" name="parlai.core.torch_generator_agent.TorchGeneratorModel">
+<area shape="rect" id="node1" title=" " alt="" coords="117,39,308,80"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1seq2seq_1_1modules_1_1Seq2seq.html" title=" " alt="" coords="364,5,571,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1transformer_1_1modules_1_1TransformerGeneratorModel.html" title=" " alt="" coords="356,71,579,112"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,21,69,47"/>
+<area shape="rect" id="node3" title=" " alt="" coords="12,71,63,98"/>
+<area shape="rect" id="node6" href="$classgenerator_1_1modules_1_1EndToEndModel.html" title=" " alt="" coords="627,71,821,112"/>
+</map>

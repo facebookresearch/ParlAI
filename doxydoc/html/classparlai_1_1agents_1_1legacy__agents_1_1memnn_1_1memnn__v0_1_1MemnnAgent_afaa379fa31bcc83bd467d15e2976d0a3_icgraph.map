@@ -1,0 +1,16 @@
+<map id="parlai.agents.legacy_agents.memnn.memnn_v0.MemnnAgent.batchify" name="parlai.agents.legacy_agents.memnn.memnn_v0.MemnnAgent.batchify">
+<area shape="rect" id="node1" title=" " alt="" coords="800,317,1031,373"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#af3929c1bedc50a48dcf8d1184321f4f5" title=" " alt="" coords="537,249,752,305"/>
+<area shape="rect" id="node12" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a7754a74d6c87590f46e71ec486c285a8" title=" " alt="" coords="565,183,724,225"/>
+<area shape="rect" id="node13" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#a901865f6607e3b5509831785bc1e29d0" title=" " alt="" coords="541,507,749,549"/>
+<area shape="rect" id="node14" href="$classkvmemnn_1_1KvmemnnAgent.html#ac7dba84c37dab7ef33f52d263fbdbdc7" title=" " alt="" coords="257,553,483,580"/>
+<area shape="rect" id="node3" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title=" " alt="" coords="290,187,450,229"/>
+<area shape="rect" id="node4" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title=" " alt="" coords="251,253,489,294"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#aff87fb1b28e798a9ca28a0dc3fbb2f22" title=" " alt="" coords="259,383,481,425"/>
+<area shape="rect" id="node7" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title=" " alt="" coords="266,318,474,359"/>
+<area shape="rect" id="node8" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title=" " alt="" coords="271,5,469,32"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a3ab251071823f34358a569c1c2a11bf9" title=" " alt="" coords="283,449,457,505"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a51174dfa508970e3392246b02d0d94b5" title=" " alt="" coords="291,57,449,98"/>
+<area shape="rect" id="node11" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title=" " alt="" coords="289,122,451,163"/>
+<area shape="rect" id="node6" href="$classparlai_1_1messenger_1_1core_1_1agents_1_1MessengerAgent.html#a50d76f90d1926c160d96e621403b7598" title=" " alt="" coords="5,421,203,462"/>
+</map>

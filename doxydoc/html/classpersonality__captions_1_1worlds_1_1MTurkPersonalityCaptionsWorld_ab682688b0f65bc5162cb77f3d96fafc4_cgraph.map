@@ -1,0 +1,12 @@
+<map id="personality_captions.worlds.MTurkPersonalityCaptionsWorld.parley" name="personality_captions.worlds.MTurkPersonalityCaptionsWorld.parley">
+<area shape="rect" id="node1" title=" " alt="" coords="5,313,255,354"/>
+<area shape="rect" id="node2" href="$classstack__rank__evals_1_1worlds_1_1MTurkImageChatStackRankWorld.html#a9c6f889227e1aec6ad1dbaa4150b1625" title=" " alt="" coords="321,5,583,61"/>
+<area shape="rect" id="node3" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html#a75c18798b76fb6e3a7b5b74b31de3d55" title=" " alt="" coords="347,86,557,127"/>
+<area shape="rect" id="node4" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#a333c8d7353ed7fba417461177035c209" title=" " alt="" coords="353,152,551,208"/>
+<area shape="rect" id="node5" href="$classpersonality__captions_1_1worlds_1_1MTurkPersonalityCaptionsWorld.html#a594560fccee92084ad833d131c77d860" title=" " alt="" coords="327,232,577,288"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html#a2d3f943d1fd0d1bff5af9fdcae160439" title=" " alt="" coords="303,313,601,354"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html#accac4ee2dc51850f0af8fa43055023e7" title=" " alt="" coords="314,379,590,435"/>
+<area shape="rect" id="node8" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html#ab3caeb29dc340a476579b1cc8d101608" title=" " alt="" coords="329,459,575,501"/>
+<area shape="rect" id="node9" href="$classpersonality__captions_1_1worlds_1_1MTurkPersonalityCaptionsWorld.html#a4e9a57d65cc93af5741f56597a970618" title=" " alt="" coords="336,525,568,581"/>
+<area shape="rect" id="node10" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a297aba27c40c516873f178758c503079" title=" " alt="" coords="317,605,587,661"/>
+</map>

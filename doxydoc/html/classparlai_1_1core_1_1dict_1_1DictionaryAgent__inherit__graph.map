@@ -1,0 +1,9 @@
+<map id="parlai.core.dict.DictionaryAgent" name="parlai.core.dict.DictionaryAgent">
+<area shape="rect" id="node1" title=" " alt="" coords="321,119,492,161"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1bert__ranker_1_1bert__dictionary_1_1BertDictionaryAgent.html" title=" " alt="" coords="542,5,725,61"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1drqa_1_1drqa_1_1SimpleDictionaryAgent.html" title=" " alt="" coords="554,86,713,127"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1__FairseqDictionary.html" title=" " alt="" coords="540,151,727,193"/>
+<area shape="rect" id="node7" href="$classwizard__transformer__ranker_1_1wizard__dict_1_1WizardDictAgent.html" title=" " alt="" coords="543,217,723,273"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="111,127,273,153"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,127,63,153"/>
+</map>

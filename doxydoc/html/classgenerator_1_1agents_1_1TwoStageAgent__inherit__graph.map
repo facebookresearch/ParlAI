@@ -1,0 +1,10 @@
+<map id="generator.agents.TwoStageAgent" name="generator.agents.TwoStageAgent">
+<area shape="rect" id="node1" title=" " alt="" coords="34,512,217,553"/>
+<area shape="rect" id="node2" href="$classgenerator_1_1agents_1_1__GenericWizardAgent.html" title=" " alt="" coords="38,423,213,464"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerGeneratorAgent.html" title=" " alt="" coords="5,333,245,375"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html" title=" " alt="" coords="31,244,220,285"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html" title=" " alt="" coords="46,155,205,196"/>
+<area shape="rect" id="node6" title=" " alt="" coords="35,80,85,107"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="109,80,272,107"/>
+<area shape="rect" id="node8" title=" " alt="" coords="162,5,219,32"/>
+</map>

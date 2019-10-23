@@ -1,0 +1,17 @@
+<map id="parlai.tasks.vqa_v1.agents.OeTeacher.next_example" name="parlai.tasks.vqa_v1.agents.OeTeacher.next_example">
+<area shape="rect" id="node1" title=" " alt="" coords="5,288,188,329"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher.html#a932ca5499779ef050d1fdb605c9e7f67" title=" " alt="" coords="273,167,456,208"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#aa6782a610b00aa0675522aa58b03f20c" title=" " alt="" coords="269,232,460,273"/>
+<area shape="rect" id="node11" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1PytorchDataTeacher.html#a62003fefcf480fb16038acb7e40b4f15" title=" " alt="" coords="236,367,493,423"/>
+<area shape="rect" id="node15" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a8923ee1255939443c7a6ea1532a2fe40" title=" " alt="" coords="275,447,455,503"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a7c4cbfbe5cf6e9dbdf8c00d140ef4e7e" title=" " alt="" coords="602,5,774,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1mydefaultdict.html#aa078ac7ad7ce0d11a8aba0834acb4831" title=" " alt="" coords="601,71,775,127"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1mydefaultdict.html#a189be974031427bf68e4691307e2f2c2" title=" " alt="" coords="601,151,775,207"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a7fccfc09aef3510f8bb9834398eff8e9" title=" " alt="" coords="583,232,793,273"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1agents_1_1Teacher.html#aa35e171610f8dd8e6a2fd5a87ad91e10" title=" " alt="" coords="885,291,1091,332"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title=" " alt="" coords="902,173,1074,215"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title=" " alt="" coords="883,239,1093,266"/>
+<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#a8bddd5b89230c9a2810e7ca15914997e" title=" " alt="" coords="601,399,775,455"/>
+<area shape="rect" id="node13" href="$classparlai_1_1core_1_1agents_1_1Agent.html#a29e1cdd729ac4236f8bae90b2e66fa04" title=" " alt="" coords="589,479,787,506"/>
+<area shape="rect" id="node14" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1PytorchDataTeacher.html#aaf9f8b1b0b358832d16f917c598151fa" title=" " alt="" coords="541,531,835,572"/>
+</map>

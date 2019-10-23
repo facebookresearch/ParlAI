@@ -1,0 +1,37 @@
+<map id="parlai.mturk.core.mturk_data_handler.MTurkDataHandler._get_connection" name="parlai.mturk.core.mturk_data_handler.MTurkDataHandler._get_connection">
+<area shape="rect" id="node1" title=" " alt="" coords="311,1325,532,1381"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a8427973bbee0e94309a60848f155206f" title=" " alt="" coords="5,5,263,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a13d0c1ca0cf41f7f7aca992c995da261" title=" " alt="" coords="15,85,253,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#af115126a912672f030143d16b281c1d3" title=" " alt="" coords="15,165,253,221"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a260b4003fe27797a7e49547db992d06e" title=" " alt="" coords="15,245,253,301"/>
+<area shape="rect" id="node6" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a6ad4b37c9393559d29d7e0e7a1b93027" title=" " alt="" coords="15,325,253,381"/>
+<area shape="rect" id="node7" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a6077d39b847f52f65dc7cedc709ea25c" title=" " alt="" coords="15,405,253,461"/>
+<area shape="rect" id="node8" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a188c46e50f06129a289a065809290bf3" title=" " alt="" coords="15,485,253,541"/>
+<area shape="rect" id="node9" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#ab41299fc55cf09e4d0921aac63889a86" title=" " alt="" coords="15,565,253,621"/>
+<area shape="rect" id="node10" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#ad08412db3d132299e287f182fef8b6dc" title=" " alt="" coords="15,645,253,701"/>
+<area shape="rect" id="node11" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a753c4a107539e6085fb2fd8402ed35e2" title=" " alt="" coords="15,725,253,781"/>
+<area shape="rect" id="node12" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a9f4e9c9bec7d5d47efd4492dfb751b5c" title=" " alt="" coords="15,805,253,861"/>
+<area shape="rect" id="node13" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a092a03e29a20f0b40b9d33e1e002395a" title=" " alt="" coords="15,885,253,941"/>
+<area shape="rect" id="node14" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a7456a75caea9fb681067dee584567f27" title=" " alt="" coords="15,965,253,1021"/>
+<area shape="rect" id="node15" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a546d30ff4b76188f71e5309f7a881ab2" title=" " alt="" coords="15,1045,253,1101"/>
+<area shape="rect" id="node16" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a3ded92bcc9f19027c452489e2b06d837" title=" " alt="" coords="15,1125,253,1181"/>
+<area shape="rect" id="node17" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a91ba12c1bce3f3af8b760eaf1384a8b9" title=" " alt="" coords="15,1205,253,1261"/>
+<area shape="rect" id="node18" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a45c012ee9fa36a52f9286ccc3ab1be3a" title=" " alt="" coords="15,1285,253,1341"/>
+<area shape="rect" id="node19" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#ab4a4d10fa1923efc5dfdcf2e451c816f" title=" " alt="" coords="15,1365,253,1421"/>
+<area shape="rect" id="node20" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#adfbc9d075e9c0ffe22fc203676ad0a77" title=" " alt="" coords="15,1445,253,1501"/>
+<area shape="rect" id="node21" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a399c5d70b0e2509b061f0d0f627a3f01" title=" " alt="" coords="15,1525,253,1581"/>
+<area shape="rect" id="node22" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#af62327d533f06297786cd37c8833289a" title=" " alt="" coords="15,1605,253,1661"/>
+<area shape="rect" id="node23" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a78a1aacc3cce8b8afd0153ad68c09baf" title=" " alt="" coords="15,1685,253,1741"/>
+<area shape="rect" id="node24" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#ac4dc07d7412b426c29678b517daf6094" title=" " alt="" coords="15,1765,253,1821"/>
+<area shape="rect" id="node25" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a9395320d0c2a2f00416acd381b5ae0ba" title=" " alt="" coords="15,1845,253,1901"/>
+<area shape="rect" id="node26" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a2e2a4005391d49b70050c73315424f5a" title=" " alt="" coords="15,1925,253,1981"/>
+<area shape="rect" id="node27" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#acfa910fb6805c19a8693b7688f1fb133" title=" " alt="" coords="15,2005,253,2061"/>
+<area shape="rect" id="node28" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a33facd12d38fa532a28a113b909073a6" title=" " alt="" coords="15,2085,253,2141"/>
+<area shape="rect" id="node29" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a8924cb67f6d2e884091eadc0235dd209" title=" " alt="" coords="15,2165,253,2221"/>
+<area shape="rect" id="node30" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a9bf202898899acbf690a2633a32b89da" title=" " alt="" coords="15,2245,253,2301"/>
+<area shape="rect" id="node31" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a532f8c2794a6eccf008e7ed9c945e2cb" title=" " alt="" coords="15,2325,253,2381"/>
+<area shape="rect" id="node32" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a373fe84924d3235c1b461f679c9a0926" title=" " alt="" coords="15,2405,253,2461"/>
+<area shape="rect" id="node33" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a2cebff3c6da14d643bd2bfedce73ba4a" title=" " alt="" coords="15,2485,253,2541"/>
+<area shape="rect" id="node34" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a080c2ffbf861cfe6175491a7a0bdd0ce" title=" " alt="" coords="15,2565,253,2621"/>
+<area shape="rect" id="node35" href="$classparlai_1_1mturk_1_1core_1_1mturk__data__handler_1_1MTurkDataHandler.html#a1cd561165b5924033cc44eaf69c3425c" title=" " alt="" coords="15,2645,253,2701"/>
+</map>

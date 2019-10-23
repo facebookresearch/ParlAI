@@ -1,0 +1,9 @@
+<map id="parlai.tasks.wizard_of_wikipedia.agents.DefaultTeacher" name="parlai.tasks.wizard_of_wikipedia.agents.DefaultTeacher">
+<area shape="rect" id="node1" title=" " alt="" coords="5,527,196,583"/>
+<area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1agents_1_1WizardDialogKnowledgeTeacher.html" title=" " alt="" coords="6,423,195,479"/>
+<area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1agents_1_1WizardOfWikipediaTeacher.html" title=" " alt="" coords="6,319,195,375"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html" title=" " alt="" coords="15,229,187,271"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Teacher.html" title=" " alt="" coords="13,155,189,181"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1agents_1_1Agent.html" title=" " alt="" coords="19,80,182,107"/>
+<area shape="rect" id="node7" title=" " alt="" coords="72,5,129,32"/>
+</map>

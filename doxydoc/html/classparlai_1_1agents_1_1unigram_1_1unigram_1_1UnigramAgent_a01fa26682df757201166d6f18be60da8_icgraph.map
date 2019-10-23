@@ -1,0 +1,12 @@
+<map id="parlai.agents.unigram.unigram.UnigramAgent.load" name="parlai.agents.unigram.unigram.UnigramAgent.load">
+<area shape="rect" id="node1" title=" " alt="" coords="340,311,540,353"/>
+<area shape="rect" id="node2" href="$classwizard__transformer__ranker_1_1wizard__dict_1_1WizardDictAgent.html#adb8a1ecd2f5090bee76d334513dd7665" title=" " alt="" coords="59,5,239,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="53,85,244,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="59,165,238,221"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a324531500b43e0039f2c0087081a8b3d" title=" " alt="" coords="63,246,234,287"/>
+<area shape="rect" id="node6" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="6,311,291,353"/>
+<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#a7a510bb5ac2444d5a30715c77bf55684" title=" " alt="" coords="59,377,239,418"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="52,443,245,499"/>
+<area shape="rect" id="node9" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#ae30fd68376b12a3264e95c8e607df102" title="Initialization and argument parsers." alt="" coords="5,523,292,579"/>
+<area shape="rect" id="node10" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a1a1e5d359d0c7dadfb6eb67a5db686b5" title=" " alt="" coords="68,603,229,645"/>
+</map>

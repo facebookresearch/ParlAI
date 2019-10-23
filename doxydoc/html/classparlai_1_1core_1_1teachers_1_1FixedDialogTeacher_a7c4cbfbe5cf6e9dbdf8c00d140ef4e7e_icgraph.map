@@ -1,0 +1,19 @@
+<map id="parlai.core.teachers.FixedDialogTeacher.get" name="parlai.core.teachers.FixedDialogTeacher.get">
+<area shape="rect" id="node1" title=" " alt="" coords="535,449,707,491"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a759b2dcb341b657fda29c71a7a5354b4" title=" " alt="" coords="41,384,213,425"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#afa75426a7578e8aad5b74964219345be" title=" " alt="" coords="305,195,477,236"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#aa6782a610b00aa0675522aa58b03f20c" title=" " alt="" coords="296,515,487,556"/>
+<area shape="rect" id="node17" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#af1501d26676b7cf0ed8f41d51c31e686" title=" " alt="" coords="305,580,477,621"/>
+<area shape="rect" id="node4" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#ad59fea461b2ea1f9731742901203bdd7" title=" " alt="" coords="47,5,207,47"/>
+<area shape="rect" id="node5" href="$classmastering__the__dungeon_1_1agents_1_1graph__world2_1_1agents_1_1ModelAgentBase.html#a768f25fa424b2cd4d1de8e62bfed970a" title=" " alt="" coords="7,71,246,112"/>
+<area shape="rect" id="node6" href="$classagent_1_1memnn__feedback_1_1MemnnFeedbackAgent.html#ab221141e0a956be465e718bb349e7554" title=" " alt="" coords="23,136,231,177"/>
+<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#a6f57723b871277392a3f3fd627c717d8" title=" " alt="" coords="27,202,226,229"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a51174dfa508970e3392246b02d0d94b5" title=" " alt="" coords="47,253,206,295"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html#a297ab42faba47581774cd9333c874905" title=" " alt="" coords="45,319,208,360"/>
+<area shape="rect" id="node11" href="$classparlai_1_1tasks_1_1vqa__v2_1_1agents_1_1OeTeacher.html#aa1bd8754bec6bafbc67231d5fecb14b6" title=" " alt="" coords="35,515,218,556"/>
+<area shape="rect" id="node12" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#ada88912036e5d75c2f2a5bff298b1d88" title=" " alt="" coords="29,580,225,621"/>
+<area shape="rect" id="node13" href="$classparlai_1_1tasks_1_1image__chat_1_1agents_1_1ImageChatTeacher.html#a2b795770610618bf94e76705cb90611a" title=" " alt="" coords="6,646,247,702"/>
+<area shape="rect" id="node14" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1PersonalityCaptionsTeacher.html#ace67289d386996e9dab37cc9fcca55b4" title=" " alt="" coords="5,726,248,782"/>
+<area shape="rect" id="node15" href="$classparlai_1_1tasks_1_1coco__caption_1_1agents_1_1DefaultTeacher.html#a836bf6068d0155b03bcc796c77480f1f" title=" " alt="" coords="18,807,235,848"/>
+<area shape="rect" id="node16" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1OeTeacher.html#a42df8da64edbf22fcc976b1cd02ef252" title=" " alt="" coords="35,449,218,491"/>
+</map>

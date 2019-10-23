@@ -1,0 +1,5 @@
+<map id="parlai.tasks.flickr30k.agents.DefaultTeacher.num_episodes" name="parlai.tasks.flickr30k.agents.DefaultTeacher.num_episodes">
+<area shape="rect" id="node1" title=" " alt="" coords="5,39,204,80"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1agents_1_1Teacher.html#a93370e4e99236e8ad267b40cd4437920" title=" " alt="" coords="252,5,457,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a001ed7924490d0e291588c54d383384a" title=" " alt="" coords="263,71,447,112"/>
+</map>

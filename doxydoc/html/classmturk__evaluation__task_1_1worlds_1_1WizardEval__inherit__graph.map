@@ -1,0 +1,6 @@
+<map id="mturk_evaluation_task.worlds.WizardEval" name="mturk_evaluation_task.worlds.WizardEval">
+<area shape="rect" id="node1" title=" " alt="" coords="5,244,204,285"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html" title=" " alt="" coords="27,155,183,196"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1World.html" title=" " alt="" coords="23,80,186,107"/>
+<area shape="rect" id="node4" title=" " alt="" coords="76,5,133,32"/>
+</map>

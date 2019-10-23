@@ -1,0 +1,19 @@
+<map id="parlai.core.torch_agent.TorchAgent.load_state_dict" name="parlai.core.torch_agent.TorchAgent.load_state_dict">
+<area shape="rect" id="node1" title=" " alt="" coords="611,279,792,321"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#aa51ac42dc34e3d2281a01cba78a96151" title=" " alt="" coords="353,101,550,142"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a3784f1ddaa6ffad009716910f3f36dd4" title=" " alt="" coords="372,173,531,214"/>
+<area shape="rect" id="node8" href="$classwizard__transformer__ranker_1_1wizard__transformer__ranker_1_1WizardTransformerRankerAgent.html#a0dc84b46e7df927db8235f2f2a48f5b0" title=" " alt="" coords="340,425,563,495"/>
+<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1seq2seq_1_1seq2seq_1_1Seq2seqAgent.html#a6f94b2896a2a76476f8646ec7d9360ed" title=" " alt="" coords="348,311,555,353"/>
+<area shape="rect" id="node16" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a50e6f81560e522b6178f913bb3f1258a" title=" " alt="" coords="353,614,549,655"/>
+<area shape="rect" id="node17" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#af626fc7d32fc9b0dfeec167a52353baf" title=" " alt="" coords="372,246,531,287"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="53,5,244,61"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="59,85,238,141"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="52,165,245,221"/>
+<area shape="rect" id="node7" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="6,246,291,287"/>
+<area shape="rect" id="node9" href="$classtransresnet__multimodal_1_1transresnet__multimodal_1_1TransresnetMultimodalAgent.html#ae30fd68376b12a3264e95c8e607df102" title="Initialization and argument parsers." alt="" coords="5,655,292,711"/>
+<area shape="rect" id="node11" href="$classwizard__transformer__ranker_1_1wizard__dict_1_1WizardDictAgent.html#adb8a1ecd2f5090bee76d334513dd7665" title=" " alt="" coords="59,443,239,499"/>
+<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a6bdc1142c021946ee6cb409d4f9dc3c9" title=" " alt="" coords="37,523,260,565"/>
+<area shape="rect" id="node13" href="$classparlai_1_1core_1_1dict_1_1DictionaryAgent.html#a324531500b43e0039f2c0087081a8b3d" title=" " alt="" coords="63,589,234,630"/>
+<area shape="rect" id="node14" href="$classkvmemnn_1_1KvmemnnAgent.html#a7a510bb5ac2444d5a30715c77bf55684" title=" " alt="" coords="59,311,239,353"/>
+<area shape="rect" id="node15" href="$classtransresnet_1_1transresnet_1_1TransresnetAgent.html#a1a1e5d359d0c7dadfb6eb67a5db686b5" title=" " alt="" coords="68,377,229,418"/>
+</map>

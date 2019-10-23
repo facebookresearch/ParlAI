@@ -1,0 +1,11 @@
+<map id="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent._set_label_vec" name="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent._set_label_vec">
+<area shape="rect" id="node1" title=" " alt="" coords="1055,100,1212,171"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a866838e1c81063a3ec18c5609e029f90" title=" " alt="" coords="796,139,1007,195"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a48bb9b153353a0565ab7253dc1daef99" title=" " alt="" coords="557,5,716,47"/>
+<area shape="rect" id="node3" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#a7e76b6e8f11577a56a9c000cb360a44e" title=" " alt="" coords="259,165,477,207"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a0eb23a78aea413ae4f90ce0628179920" title=" " alt="" coords="267,231,469,287"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a87b18f0d6ab11be3c49375af072d0d33" title=" " alt="" coords="289,100,447,141"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a87253cca09c8b22848ff0bea7195e32d" title=" " alt="" coords="525,147,748,188"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1talkthewalk_1_1worlds_1_1SimulateWorld.html#a6bd5a8a8e194dd4aa76aeecdf429bc7f" title=" " alt="" coords="5,119,211,160"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html#a6555592d2b7c316e72febc1fccf43bdb" title=" " alt="" coords="11,203,205,244"/>
+</map>

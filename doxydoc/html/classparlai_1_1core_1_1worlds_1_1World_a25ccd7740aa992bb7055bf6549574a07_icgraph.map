@@ -1,0 +1,9 @@
+<map id="parlai.core.worlds.World.get_task_agent" name="parlai.core.worlds.World.get_task_agent">
+<area shape="rect" id="node1" title=" " alt="" coords="535,79,719,120"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld.html#a4cb1a886df2adc8e469d45652264da36" title=" " alt="" coords="305,13,477,55"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld.html#ab34285faaee3830fbf1d9d53869ec47c" title=" " alt="" coords="298,79,485,120"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld.html#aa925a37ec5968d137faf044279943e6a" title=" " alt="" coords="296,144,487,185"/>
+<area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1vqa__v1_1_1agents_1_1VQADataset.html#a37e408e3dd862d0312dde8fdbfad0a06" title=" " alt="" coords="20,5,233,47"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1DefaultDataset.html#ae81ce7e05c42b214d42a5a4a5c471c8e" title=" " alt="" coords="7,71,246,127"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1DefaultDataset.html#a043423c38c701ceadd6fec7cf5168816" title=" " alt="" coords="5,151,248,207"/>
+</map>

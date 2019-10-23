@@ -1,0 +1,7 @@
+<map id="parlai.mturk.tasks.personachat.personachat_rephrase.worlds.RephrasePersonaWorld.parley" name="parlai.mturk.tasks.personachat.personachat_rephrase.worlds.RephrasePersonaWorld.parley">
+<area shape="rect" id="node1" title=" " alt="" coords="5,133,308,174"/>
+<area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__rephrase_1_1worlds_1_1RephrasePersonaWorld.html#a10d5c2ab0c066ccbea89be4a01729415" title=" " alt="" coords="356,5,633,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__rephrase_1_1worlds_1_1RephrasePersonaWorld.html#a0f7d1da525b71529c408a4f944fa036a" title=" " alt="" coords="356,85,633,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html#a7f6c59f2e1f897e1e480b43fc67680df" title=" " alt="" coords="357,165,633,221"/>
+<area shape="rect" id="node5" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html#a71bd41e61be058353520917731662a3d" title=" " alt="" coords="363,245,626,301"/>
+</map>

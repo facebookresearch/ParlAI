@@ -1,0 +1,51 @@
+<map id="parlai.core.worlds.World" name="parlai.core.worlds.World">
+<area shape="rect" id="node1" title=" " alt="" coords="111,1061,273,1087"/>
+<area shape="rect" id="node3" href="$classconvai_1_1convai__world_1_1ConvAIWorld.html" title=" " alt="" coords="389,213,564,255"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1worlds_1_1BatchWorld.html" title=" " alt="" coords="395,279,558,320"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1worlds_1_1DialogPartnerWorld.html" title=" " alt="" coords="394,344,559,385"/>
+<area shape="rect" id="node9" href="$classparlai_1_1core_1_1worlds_1_1HogwildWorld.html" title=" " alt="" coords="389,609,564,651"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1worlds_1_1MultiAgentDialogWorld.html" title=" " alt="" coords="399,675,555,716"/>
+<area shape="rect" id="node24" href="$classparlai_1_1core_1_1worlds_1_1MultiWorld.html" title=" " alt="" coords="399,792,555,833"/>
+<area shape="rect" id="node25" href="$classparlai_1_1messenger_1_1core_1_1worlds_1_1OnboardWorld.html" title=" " alt="" coords="379,857,575,899"/>
+<area shape="rect" id="node30" href="$classparlai_1_1messenger_1_1core_1_1worlds_1_1SimpleMessengerOverworld.html" title=" " alt="" coords="379,923,575,964"/>
+<area shape="rect" id="node31" href="$classparlai_1_1messenger_1_1tasks_1_1chatbot_1_1worlds_1_1MessengerBotChatTaskWorld.html" title=" " alt="" coords="351,988,602,1029"/>
+<area shape="rect" id="node32" href="$classparlai_1_1messenger_1_1tasks_1_1chatbot_1_1worlds_1_1MessengerOverworld.html" title=" " alt="" coords="351,1053,602,1095"/>
+<area shape="rect" id="node33" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerChatTaskWorld.html" title=" " alt="" coords="345,1119,608,1160"/>
+<area shape="rect" id="node34" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerEchoTaskWorld.html" title=" " alt="" coords="345,1184,609,1225"/>
+<area shape="rect" id="node35" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerOnboardDataTaskWorld.html" title=" " alt="" coords="321,1249,632,1291"/>
+<area shape="rect" id="node36" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerOverworld.html" title=" " alt="" coords="361,1315,592,1356"/>
+<area shape="rect" id="node37" href="$classparlai_1_1messenger_1_1tasks_1_1qa__data__collection_1_1worlds_1_1QADataCollectionTaskWorld.html" title=" " alt="" coords="372,1381,581,1437"/>
+<area shape="rect" id="node38" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="381,1461,572,1503"/>
+<area shape="rect" id="node42" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="375,1560,578,1601"/>
+<area shape="rect" id="node46" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkDataWorld.html" title=" " alt="" coords="394,1691,559,1732"/>
+<area shape="rect" id="node49" href="$classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld.html" title=" " alt="" coords="405,1756,548,1797"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,1061,63,1087"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1convai2_1_1worlds_1_1InteractiveWorld.html" title=" " alt="" coords="753,5,937,47"/>
+<area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1interactive_1_1worlds_1_1InteractiveWorld.html" title=" " alt="" coords="746,71,945,112"/>
+<area shape="rect" id="node8" href="$classparlai_1_1tasks_1_1wizard__of__wikipedia_1_1worlds_1_1InteractiveWorld.html" title=" " alt="" coords="741,137,949,193"/>
+<area shape="rect" id="node11" href="$classigc__evals_1_1worlds_1_1MTurkIGCEvalWorld.html" title=" " alt="" coords="740,217,951,259"/>
+<area shape="rect" id="node12" href="$classimage__chat__collection_1_1worlds_1_1MTurkImageChatWorld.html" title=" " alt="" coords="747,283,944,324"/>
+<area shape="rect" id="node13" href="$classmturk_1_1worlds_1_1ControllableDialogEval.html" title=" " alt="" coords="760,348,931,389"/>
+<area shape="rect" id="node14" href="$classmturk__evaluation__task_1_1worlds_1_1WizardEval.html" title=" " alt="" coords="746,413,945,455"/>
+<area shape="rect" id="node15" href="$classparlai_1_1core_1_1worlds_1_1ExecutableWorld.html" title=" " alt="" coords="749,479,942,520"/>
+<area shape="rect" id="node16" href="$classparlai_1_1mturk_1_1tasks_1_1convai2__model__eval_1_1worlds_1_1Convai2EvalWorld.html" title=" " alt="" coords="721,544,970,585"/>
+<area shape="rect" id="node17" href="$classparlai_1_1mturk_1_1tasks_1_1personachat_1_1personachat__chat_1_1worlds_1_1PersonaChatWorld.html" title=" " alt="" coords="707,609,983,651"/>
+<area shape="rect" id="node18" href="$classparlai_1_1mturk_1_1tasks_1_1talkthewalk_1_1worlds_1_1TalkTheWalkWorld.html" title=" " alt="" coords="724,675,967,716"/>
+<area shape="rect" id="node19" href="$classpersonality__captions_1_1worlds_1_1MTurkPersonalityCaptionsWorld.html" title=" " alt="" coords="740,740,951,781"/>
+<area shape="rect" id="node20" href="$classstack__rank__evals_1_1worlds_1_1MTurkImageChatStackRankWorld.html" title=" " alt="" coords="734,805,957,847"/>
+<area shape="rect" id="node21" href="$classstack__rank__evals_1_1worlds_1_1MTurkPersonalityCaptionsStackRankWorld.html" title=" " alt="" coords="740,871,951,927"/>
+<area shape="rect" id="node22" href="$classworlds_1_1MTurkWizardOfWikipediaWorld.html" title=" " alt="" coords="739,952,952,993"/>
+<area shape="rect" id="node23" href="$classworlds_1_1PersonaChatEvalWorld.html" title=" " alt="" coords="745,1018,945,1045"/>
+<area shape="rect" id="node26" href="$classparlai_1_1messenger_1_1tasks_1_1chatbot_1_1worlds_1_1MessengerBotChatOnboardWorld.html" title=" " alt="" coords="720,1069,971,1111"/>
+<area shape="rect" id="node27" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerChatOnboardWorld.html" title=" " alt="" coords="704,1135,987,1176"/>
+<area shape="rect" id="node28" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerEchoOnboardWorld.html" title=" " alt="" coords="703,1200,987,1241"/>
+<area shape="rect" id="node29" href="$classparlai_1_1messenger_1_1tasks_1_1overworld__demo_1_1worlds_1_1MessengerOnboardDataOnboardWorld.html" title=" " alt="" coords="680,1265,1011,1307"/>
+<area shape="rect" id="node39" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="750,1331,941,1372"/>
+<area shape="rect" id="node40" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1MTurkTaskWorld.html" title=" " alt="" coords="750,1396,941,1437"/>
+<area shape="rect" id="node41" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1worlds_1_1StaticMTurkTaskWorld.html" title=" " alt="" coords="750,1461,941,1503"/>
+<area shape="rect" id="node43" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="734,1527,957,1568"/>
+<area shape="rect" id="node44" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1MTurkTaskWorld.html" title=" " alt="" coords="744,1592,947,1633"/>
+<area shape="rect" id="node45" href="$classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1worlds_1_1StaticMTurkTaskWorld.html" title=" " alt="" coords="727,1657,964,1699"/>
+<area shape="rect" id="node47" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkOnboardWorld.html" title=" " alt="" coords="763,1723,928,1764"/>
+<area shape="rect" id="node48" href="$classparlai_1_1mturk_1_1core_1_1worlds_1_1MTurkTaskWorld.html" title=" " alt="" coords="763,1788,928,1829"/>
+</map>

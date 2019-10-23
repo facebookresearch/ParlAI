@@ -1,0 +1,7 @@
+<map id="parlai.agents.seq2seq.seq2seq.Seq2seqAgent.build_criterion" name="parlai.agents.seq2seq.seq2seq.Seq2seqAgent.build_criterion">
+<area shape="rect" id="node1" title=" " alt="" coords="247,148,453,189"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1test__agents_1_1dummy__torch__agent_1_1MockTorchAgent.html#af14024f59e4ea3dea5c7ff38caff89ad" title=" " alt="" coords="18,5,186,76"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="7,101,197,157"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="13,181,191,237"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="5,261,199,317"/>
+</map>

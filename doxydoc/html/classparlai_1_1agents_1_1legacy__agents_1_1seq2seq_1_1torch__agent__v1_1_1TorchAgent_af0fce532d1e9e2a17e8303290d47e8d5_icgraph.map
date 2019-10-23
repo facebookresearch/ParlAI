@@ -1,0 +1,20 @@
+<map id="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent._project_vec" name="parlai.agents.legacy_agents.seq2seq.torch_agent_v1.TorchAgent._project_vec">
+<area shape="rect" id="node1" title=" " alt="" coords="949,265,1107,335"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a26c3912e7fb445f3e4d9d61fa4b28cd9" title=" " alt="" coords="720,225,877,295"/>
+<area shape="rect" id="node18" href="$classparlai_1_1core_1_1torch__agent_1_1TorchAgent.html#a3bfcd11debf76eff078d90c4b0f37a47" title=" " alt="" coords="696,319,901,361"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#af5b82b66a77d0211c7ed956b207dc0e2" title=" " alt="" coords="392,13,595,69"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1seq2seq_1_1seq2seq_1_1Seq2seqAgent.html#a43422bdf284bfc06a9bd2db434a7167c" title=" " alt="" coords="390,305,597,346"/>
+<area shape="rect" id="node11" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerRankerAgent.html#a3336fdab2d667e6e631135ec70e8558f" title=" " alt="" coords="373,370,614,411"/>
+<area shape="rect" id="node12" href="$classparlai_1_1agents_1_1transformer_1_1transformer_1_1TransformerGeneratorAgent.html#a473f2a19d6bce412c4c9163c7beb9b09" title=" " alt="" coords="365,435,621,477"/>
+<area shape="rect" id="node13" href="$classself__feeding_1_1self__feeding__agent_1_1SelfFeedingAgent.html#ae8934c79f3d7079b09dadb1fc78d59b5" title=" " alt="" coords="373,501,614,542"/>
+<area shape="rect" id="node14" href="$classgenerator_1_1agents_1_1EndToEndAgent.html#a4350bfc0d04bf47814db2d14b95ac3bb" title=" " alt="" coords="401,109,585,150"/>
+<area shape="rect" id="node15" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a7341b7dedc7150c4dfa27254188360c1" title=" " alt="" coords="339,174,648,215"/>
+<area shape="rect" id="node16" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#a275a60cb93929725725d103fc76905ba" title=" " alt="" coords="400,239,587,281"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v1_1_1Seq2seqAgent.html#aea5753e8b1090fc88e657ada44492556" title=" " alt="" coords="57,5,239,61"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1test__agents_1_1dummy__torch__agent_1_1MockTorchAgent.html#af14024f59e4ea3dea5c7ff38caff89ad" title=" " alt="" coords="64,151,232,222"/>
+<area shape="rect" id="node7" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#af9f194b4566a43f0840286a39ee0032a" title=" " alt="" coords="53,392,243,448"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__ranker__agent_1_1TorchRankerAgent.html#acde404a79bf3678bb52d3e6c3ee5244a" title=" " alt="" coords="59,472,237,528"/>
+<area shape="rect" id="node9" href="$classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html#a2cbe8ed3b2b6b82be90db6b45331800b" title=" " alt="" coords="5,246,291,287"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a60f9613d8d2761569c8862b690b24bce" title=" " alt="" coords="51,312,245,368"/>
+<area shape="rect" id="node17" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#ac203ba228e9e3dd20568b986ef600a62" title=" " alt="" coords="55,86,241,127"/>
+</map>

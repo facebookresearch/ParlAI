@@ -1,0 +1,12 @@
+<map id="parlai.core.torch_classifier_agent.TorchClassifierAgent.eval_step" name="parlai.core.torch_classifier_agent.TorchClassifierAgent.eval_step">
+<area shape="rect" id="node1" title=" " alt="" coords="5,305,252,346"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#a65ac2503eabe44013dc40281efb6ae69" title=" " alt="" coords="327,5,517,61"/>
+<area shape="rect" id="node3" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#aadaf48bf85f0af8ebc175f9ac6753b7d" title=" " alt="" coords="327,85,517,141"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#ae5dd8ff7807a4b50188f0944b90fd201" title=" " alt="" coords="327,165,517,221"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1transformer__classifier_1_1transformer__classifier_1_1TransformerClassifierAgent.html#a8d3cb4862ab598c8f93239255dd65eeb" title=" " alt="" coords="317,246,527,317"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1bert__classifier_1_1bert__classifier_1_1BertClassifierAgent.html#a2fa163d78b44698fa35a491e9a7a6207" title=" " alt="" coords="337,341,507,397"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1memnn__v0_1_1MemnnAgent.html#a29485cab795b6c8abe0a61d9c6bb87fd" title=" " alt="" coords="307,421,537,477"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html#a04e97e79ef7e497c0927c10b31e42337" title=" " alt="" coords="311,502,533,543"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html#a52218a8c0594ff4d5bf8e666dc38f508" title=" " alt="" coords="300,567,544,609"/>
+<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1transformer_1_1polyencoder_1_1PolyEncoderModule.html#a21343cb181ee148326166a8e32e9e3d6" title=" " alt="" coords="592,567,836,609"/>
+</map>
