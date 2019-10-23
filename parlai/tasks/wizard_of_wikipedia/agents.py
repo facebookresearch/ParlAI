@@ -436,7 +436,7 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             '--prepend-gold-knowledge',
             type='bool',
             default=False,
-            help='If true, prepend text with checked sentence'
+            help='If true, prepend text with checked sentence',
         )
 
     def getID(self):
@@ -477,10 +477,7 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             )
         elif self.prepend_gold_knowledge:
             a['text'] = '{} {} {}\n{}'.format(
-                TOKEN_KNOWLEDGE,
-                a['checked_sentence'],
-                TOKEN_END_KNOWLEDGE,
-                a['text']
+                TOKEN_KNOWLEDGE, a['checked_sentence'], TOKEN_END_KNOWLEDGE, a['text']
             )
         return a
 
