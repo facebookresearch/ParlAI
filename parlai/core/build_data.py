@@ -21,7 +21,6 @@ import hashlib
 import tqdm
 import math
 import zipfile
-import hashlib
 from multiprocessing import Pool
 
 
