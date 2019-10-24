@@ -41,7 +41,7 @@ def build(opt):
 
         print('processing unpacked files')
         # Use 1000 examples from training set as validation.
-        json1 = os.path.join(dpath, fname1.rsplit('.', 1)[0] + '.json')
+        json1 = os.path.join(dpath, FILE_NAMES[0].rsplit('.', 1)[0] + '.json')
         with open(json1) as t_json:
             train_data = json.load(t_json)
 
@@ -65,7 +65,7 @@ def build(opt):
         os.remove(json1)
 
         # Use validation data as test.
-        json2 = os.path.join(dpath, fname2.rsplit('.', 1)[0] + '.json')
+        json2 = os.path.join(dpath, FILE_NAMES[1].rsplit('.', 1)[0] + '.json')
         test_json = json2.rsplit('.', 1)[0] + '_test.json'
         build_data.move(json2, test_json)
 

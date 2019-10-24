@@ -14,7 +14,6 @@ SHA256 = ['e0979d3ac0854395ee74f2c61a6bc467838cc292c3a9a62e891d8230d3a01365']
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'personality_captions')
     image_path = os.path.join(opt['datapath'], 'yfcc_images')
-    fname = 'personality_captions.tgz'
     version = '2.0'
     if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')

@@ -15,7 +15,12 @@ URLS = [
     'http://parl.ai/downloads/coco_caption/dataset_coco.tgz',
 ]
 FILE_NAMES = ['train2014.zip', 'val2014.zip', 'test2014.zip', 'dataset_coco.tgz']
-SHA256 = []
+SHA256 = [
+    'f9f102e5336ede4060bb06e1aca438b85f9be18c21960837079c1a88530d498c',
+    'e3cb2caf99e37157c48a99883cc8c57eed8ea3942a501c1abf6f7d9c040ddea8',
+    'ead40c62230cb2cf70ff4c8b4c70abdc260a7556e77b3282621d06d8e2e35bdf',
+    '85fac3c266af928bfec5bbd35f24e2371417f8977350e1de86276455643b09d0'
+]
 
 
 def buildImage(opt):

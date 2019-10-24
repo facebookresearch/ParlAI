@@ -10,7 +10,7 @@ import parlai.core.build_data as build_data
 
 URLS = ['1WtbXCv3vPB5ql6w0FVDmAEMmWadbrCuG']
 FILE_NAMES = ['dialogue_nli.zip']
-SHA256 = []
+SHA256 = ['1164b0d9a0a1a6006891a6d4435a6a813464bc9b1e2f1ec5ce28c47267ad5e42']
 
 
 def build(opt):

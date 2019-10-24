@@ -9,14 +9,30 @@
 import parlai.core.build_data as build_data
 import os
 import numpy
+import hashlib
 
 URL = 'https://nlp.stanford.edu/projects/nmt/data/wmt14.en-de/'
-FILE_NAMES = ['train.en', 'train.de', 'newstest2014.en', 'newstest2014.de']
 
-URLS = list(map(lambda x: URL + x, FILE_NAMES))
+SHA256 = {
+    'train.en': '845ee390042259f7512eabc6458b0fdb30db28d254c83232d97d4161c1fdae51',
+    'train.de': 'a2e292ad1b1f3fec6224dc043460ba6c453932f470109579b8c1ce6d4df65262',
+    'newstest2014.en': '2db4575449877142aef9187e5e8f58ec10af73a2589ad7a4690208f5234901bb',
+    'newstest2014.de': '39712f5709343ab17e8daf341cb99d58bf8c0e626e29bbae6d7dffd481114f8b'
+}
 
-SHA256 = []
+URLS = list(map(lambda x: URL + x, list(SHA256.keys())))
 
+
+def checkSHA(dpath, fname):
+    sha256_hash = hashlib.sha256()
+    with open(os.path.join(dpath, fname), "rb") as f:
+        for byte_block in iter(lambda: f.read(65536), b""):
+            sha256_hash.update(byte_block)
+        if sha256_hash.hexdigest() != SHA256[fname]:
+            # remove_dir(dpath)
+            raise ValueError("Checksum Failed")
+        else:
+            print("[ Checksum Successful ]")
 
 def readFiles(dpath, rfnames):
     en_fname, de_fname = rfnames

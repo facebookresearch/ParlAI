@@ -8,12 +8,9 @@
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 
-import copy
 import json
 import os
-import zipfile
 import random
-from collections import defaultdict
 
 
 class DSTC7Teacher(FixedDialogTeacher):

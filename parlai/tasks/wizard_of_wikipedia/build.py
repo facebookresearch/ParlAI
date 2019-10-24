@@ -13,7 +13,6 @@ SHA256 = ['2a549627a83fea745efa2076a41d1c0078ad002ab2b54eae6a4e3d3d66ae24b7']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'wizard_of_wikipedia')
-    fname = 'wizard_of_wikipedia.tgz'
     version = '1.0'
     if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')

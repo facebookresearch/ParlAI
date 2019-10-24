@@ -86,6 +86,7 @@ SHA256 = [
     '05ac0e448450d507e7ff8e37f48a41cc2d015f5bd2c7974d2445f00a53625db6',
 ]
 
+
 # Download and build the data if it does not exist.
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MS_MARCO')
