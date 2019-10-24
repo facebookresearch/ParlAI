@@ -13,7 +13,6 @@ SHA256 = ['223d867c72f8b8c173fce86d49d099a56ca002f1a39886c407caee661417a5b4']
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'self_feeding')
-    fname = 'self_feeding_v031.tar.gz'
     version = '3.1'
     if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')

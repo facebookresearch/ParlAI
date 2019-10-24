@@ -21,11 +21,10 @@ import hashlib
 import tqdm
 import math
 import zipfile
-import hashlib
 from multiprocessing import Pool
 
 
-def download_check(dpath, urls, file_names, sha256=[], from_google=False):
+def download_check(dpath, urls, file_names, sha256, from_google=False):
     # Download the data.
     for i, url in enumerate(urls):
         fname = file_names[i]
@@ -42,7 +41,7 @@ def download_check(dpath, urls, file_names, sha256=[], from_google=False):
                     # remove_dir(dpath)
                     raise ValueError("Checksum Failed")
                 else:
-                    print("Checksum Success")
+                    print("[ Checksum Successful ]")
 
 
 def built(path, version_string=None):

@@ -51,7 +51,7 @@ def build(opt):
             return results
 
         schemas = []
-        with open(os.path.join(dpath, fname)) as schema_file:
+        with open(os.path.join(dpath, FILE_NAMES[0])) as schema_file:
             schema = []
             for line in schema_file:
                 if len(line.split()) == 0:
