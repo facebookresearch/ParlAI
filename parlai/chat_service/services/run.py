@@ -6,7 +6,6 @@
 """Messenger Runner."""
 from parlai.core.params import ParlaiParser
 from parlai.chat_service.services.messenger_manager import MessengerManager
-import importlib
 import shared_utils as utils
 
 
