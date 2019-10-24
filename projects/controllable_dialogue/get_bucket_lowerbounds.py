@@ -12,7 +12,7 @@ the lower bounds for those buckets.
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger
+from parlai.utils.misc import TimeLogger
 from controllable_seq2seq.controls import sort_into_bucket
 from collections import Counter
 import random

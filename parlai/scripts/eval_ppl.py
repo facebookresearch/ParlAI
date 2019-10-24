@@ -35,8 +35,8 @@ def next_word_probability(self, partial_out):
 
 from parlai.core.agents import create_agent, create_agents_from_shared
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import Timer, round_sigfigs, no_lock
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.misc import Timer, round_sigfigs, no_lock
+from parlai.utils.thread import SharedTable
 from parlai.core.worlds import create_task, World
 
 import copy

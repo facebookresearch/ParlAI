@@ -21,7 +21,7 @@ from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
 from parlai.core.metrics import aggregate_task_reports
 from parlai.core.worlds import create_task
-from parlai.core.utils import TimeLogger
+from parlai.utils.misc import TimeLogger
 
 import random
 

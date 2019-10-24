@@ -7,6 +7,20 @@
 # py parlai/messenger/tasks/overworld_demo/run.py --debug --verbose
 
 from parlai.core.worlds import World
+from parlai.messenger.core.worlds import OnboardWorld
+from parlai.core.agents import create_agent_from_shared
+
+
+# ---------- Chatbot demo ---------- #
+class MessengerBotChatOnboardWorld(OnboardWorld):
+    """Example messenger onboarding world for Chatbot Model."""
+
+    @staticmethod
+    def generate_world(opt, agents):
+        return MessengerBotChatOnboardWorld(opt=opt, agent=agents[0])
+
+    def parley(self):
+        self.episodeDone = True
 
 
 class MessengerBotChatTaskWorld(World):
@@ -18,20 +32,31 @@ class MessengerBotChatTaskWorld(World):
         self.agent = agent
         self.episodeDone = False
         self.model = bot
+        self.first_time = True
 
     @staticmethod
-    def run(messenger_manager, opt, agents, task_id):
-        agent = agents[0]
-        world = MessengerBotChatTaskWorld(opt=opt, agent=agent)
-        while not world.episode_done():
-            world.parley()
-        world.shutdown()
+    def generate_world(opt, agents):
+        if opt['model'] is None and opt['model_file'] is None:
+            raise RuntimeError("Model must be specified")
+        return MessengerBotChatTaskWorld(
+            opt, agents[0], create_agent_from_shared(opt['shared_bot_params'])
+        )
 
     @staticmethod
     def assign_roles(agents):
         agents[0].disp_id = 'ChatbotAgent'
 
     def parley(self):
+        if self.first_time:
+            self.agent.observe(
+                {
+                    'id': 'World',
+                    'text': 'Welcome to the ParlAI Chatbot demo. '
+                    'You are now paired with a bot - feel free to send a message.'
+                    'Type [DONE] to finish the chat.',
+                }
+            )
+            self.first_time = False
         a = self.agent.act()
         if a is not None:
             if '[DONE]' in a['text']:
@@ -53,3 +78,53 @@ class MessengerBotChatTaskWorld(World):
 
     def shutdown(self):
         self.agent.shutdown()
+
+
+# ---------- Overworld -------- #
+class MessengerOverworld(World):
+    """World to handle moving agents to their proper places"""
+
+    def __init__(self, opt, agent):
+        self.agent = agent
+        self.opt = opt
+        self.first_time = True
+        self.episodeDone = False
+
+    def return_overworld(self):
+        self.first_time = True
+
+    @staticmethod
+    def generate_world(opt, agents):
+        return MessengerOverworld(opt, agents[0])
+
+    @staticmethod
+    def assign_roles(agents):
+        for a in agents:
+            a.disp_id = 'Agent'
+
+    def episode_done(self):
+        return self.episodeDone
+
+    def parley(self):
+        if self.first_time:
+            self.agent.observe(
+                {
+                    'id': 'Overworld',
+                    'text': 'Welcome to the overworld for the ParlAI messenger '
+                    'chatbot demo. Please type "begin" to start.',
+                    'quick_replies': ['begin'],
+                }
+            )
+            self.first_time = False
+        a = self.agent.act()
+        if a is not None and a['text'].lower() == 'begin':
+            self.episodeDone = True
+            return 'default'
+        elif a is not None:
+            self.agent.observe(
+                {
+                    'id': 'Overworld',
+                    'text': 'Invalid option. Please type "begin".',
+                    'quick_replies': ['begin'],
+                }
+            )

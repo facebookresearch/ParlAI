@@ -21,6 +21,10 @@ class SimpleMessengerOverworld(World):
     def return_overworld(self):
         pass
 
+    @staticmethod
+    def generate_world(opt, agents):
+        return SimpleMessengerOverworld(opt, agents[0])
+
     def parley(self):
         return 'default'
 
@@ -31,8 +35,8 @@ class OnboardWorld(World):
         self.episodeDone = False
 
     @staticmethod
-    def run(opt, agent, task_id):
-        pass
+    def generate_world(opt, agents):
+        return OnboardWorld(opt, agents[0])
 
     def parley(self):
         self.episodeDone = True

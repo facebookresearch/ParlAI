@@ -4,11 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
 import sys
 import logging
-from pathlib import Path
-from datetime import date
 
 INFO = logging.INFO
 DEBUG = logging.DEBUG
@@ -115,6 +112,12 @@ class ParlaiLogger(logging.Logger):
             prevFileFormat += [' ' + new_str]
             updatedFileFormat = ':'.join(prevFileFormat)
             self.fileHandler.setFormatter(logging.Formatter(updatedFileFormat))
+
+    def set_format(self, fmt):
+        """Set format after instantiation"""
+        self.streamHandler.setFormatter(logging.Formatter(fmt))
+        if hasattr(self, 'fileHandler'):
+            self.fileHandler.setFormatter(logging.Formatter(fmt))
 
     def reset_formatters(self):
         """Resort back to initial formatting."""

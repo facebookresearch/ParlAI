@@ -10,8 +10,9 @@ from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import find_ngrams
 from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
+from parlai.utils.misc import Opt
 
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 import os
 import shutil
 import unittest
@@ -19,6 +20,42 @@ import unittest
 
 class TestDictionary(unittest.TestCase):
     """Basic tests on the built-in parlai Dictionary."""
+
+    def test_gpt2_bpe_tokenize(self):
+        with testing_utils.capture_output():
+            opt = Opt({'dict_tokenizer': 'gpt2', 'datapath': './data'})
+            agent = DictionaryAgent(opt)
+        self.assertEqual(
+            # grinning face emoji
+            agent.gpt2_tokenize(u'Hello, ParlAI! \U0001f600'),
+            [
+                'Hello',
+                ',',
+                r'\xc4\xa0Par',
+                'l',
+                'AI',
+                '!',
+                r'\xc4\xa0\xc3\xb0\xc5\x81\xc4\xba',
+                r'\xc4\xa2',
+            ],
+        )
+        self.assertEqual(
+            agent.vec2txt(
+                agent.tok2ind[w]
+                for w in [
+                    'Hello',
+                    ',',
+                    r'\xc4\xa0Par',
+                    'l',
+                    'AI',
+                    '!',
+                    r'\xc4\xa0\xc3\xb0\xc5\x81\xc4\xba',
+                    r'\xc4\xa2',
+                ]
+            ),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
 
     def test_space_tokenize(self):
         """Space tokenize assumes raw tokenization as input."""

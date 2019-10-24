@@ -16,12 +16,10 @@ from tqdm import tqdm
 from collections import deque
 import random
 from parlai.core.agents import create_task_agent_from_taskname
-from parlai.core.logging_utils import ParlaiLogger, INFO
+from parlai.utils.logging import logger
 
 fmt = '%(asctime)s: [ %(message)s ]'
-logger = ParlaiLogger(
-    name=__name__, console_level=INFO, console_format=fmt, file_format=fmt
-)
+logger.set_format(fmt)
 
 # ------------------------------------------------------------------------------
 # Store corpus.

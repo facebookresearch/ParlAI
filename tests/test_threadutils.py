@@ -3,9 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.thread import SharedTable
 from multiprocessing import Process
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 import unittest
 import random
 import time

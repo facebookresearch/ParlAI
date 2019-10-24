@@ -23,12 +23,10 @@ from collections import Counter
 from . import utils
 from .doc_db import DocDB
 from . import tokenizers
-from parlai.core.logging_utils import ParlaiLogger, INFO
+from parlai.utils.logging import logger
 
 fmt = '%(asctime)s: [ %(message)s ]'
-logger = ParlaiLogger(
-    name=__name__, console_level=INFO, console_format=fmt, file_format=fmt
-)
+logger.set_format(fmt)
 # ------------------------------------------------------------------------------
 # Multiprocessing functions
 # ------------------------------------------------------------------------------

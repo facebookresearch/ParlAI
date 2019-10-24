@@ -15,7 +15,6 @@ import shutil
 import io
 from typing import Tuple
 
-# from parlai.core.logging_utils import logger # TODO: Uncomment before completion of #2044
 
 try:
     import torch
@@ -34,6 +33,13 @@ try:
 except ImportError:
     git_ = None
     GIT_AVAILABLE = False
+
+try:
+    import subword_nmt  # noqa: F401
+
+    BPE_INSTALLED = True
+except ImportError:
+    BPE_INSTALLED = False
 
 
 DEBUG = False  # change this to true to print to stdout anyway
@@ -61,6 +67,11 @@ def skipIfGPU(testfn, reason='Test is CPU-only'):
 def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     """Decorate a test to skip if no GPU is available."""
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessBPE(testfn, reason='Test requires a GPU'):
+    """Decorate a test to skip if BPE is not installed."""
+    return unittest.skipUnless(BPE_INSTALLED, reason)(testfn)
 
 
 def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
@@ -187,29 +198,6 @@ def capture_output():
     sio = TeeStringIO()
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
-
-
-# # TODO: Replace capture_output with this version before completing #2044
-# # TODO: Uncomment import statement at the top
-# # TODO: IDEA: Pass logger object as parameter to thi function
-# @contextlib.contextmanager
-# def capture_output():
-#     """
-#     Suppress all logging output into a single buffer.
-#
-#     Use as a context manager.
-#
-#     >>> with capture_output() as output:
-#     ...     logger.info('hello')
-#     >>> output.getvalue()
-#     'hello'
-#     """
-#     sio = TeeStringIO()
-#     previous_level = logger.mute()  # Stop logging to stdout
-#     logger.redirect_out(sio)  # Instead log to sio (to preserve output for later)
-#     yield sio
-#     logger.stop_redirect_out()  # Stop redirecting [Removes handler]
-#     logger.unmute(previous_level)  # From now on log to stdout
 
 
 @contextlib.contextmanager
@@ -358,6 +346,7 @@ def download_unittest_models():
         'seq2seq.tar.gz',
         'transformer_ranker.tar.gz',
         'transformer_generator2.tar.gz',
+        'memnn.tar.gz',
     ]
     with capture_output():
-        download_models(opt, model_filenames, 'unittest', version='v2.0')
+        download_models(opt, model_filenames, 'unittest', version='v3.0')

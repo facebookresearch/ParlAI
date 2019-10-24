@@ -8,8 +8,6 @@
 import argparse
 import importlib
 import os
-import pickle
-import json
 import sys as _sys
 import datetime
 import parlai
@@ -18,7 +16,7 @@ import git
 from parlai.core.agents import get_agent_module, get_task_module
 from parlai.core.build_data import modelzoo_path
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.utils import Opt, load_opt_file
+from parlai.utils.misc import Opt, load_opt_file
 
 from typing import List, Optional
 
@@ -492,6 +490,12 @@ class ParlaiParser(argparse.ArgumentParser):
             default=False,
             help='Run the server locally on this server rather than setting up'
             ' a heroku server.',
+        )
+        messenger.add_argument(
+            '--config-path',
+            default=None,
+            type=str,
+            help='/path/to/config/file for a given task.',
         )
 
         messenger.set_defaults(is_debug=False)

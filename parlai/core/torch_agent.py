@@ -27,11 +27,11 @@ import os
 from torch import optim
 
 from parlai.core.agents import Agent
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.thread import SharedTable
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
-from parlai.core.utils import (
+from parlai.utils.misc import (
     AttrDict,
     argsort,
     fp16_optimizer_wrapper,
@@ -39,7 +39,6 @@ from parlai.core.utils import (
     warn_once,
     round_sigfigs,
 )
-from parlai.core.distributed_utils import is_primary_worker
 
 try:
     import torch
@@ -999,7 +998,7 @@ class TorchAgent(ABC, Agent):
         if hasattr(self, 'scheduler') and self.scheduler is not None:
             current_lr = round_sigfigs(self.optimizer.param_groups[0]['lr'], 4)
             metrics['lr'] = round_sigfigs(current_lr, 4)
-        metrics['num_updates'] = self._number_training_updates
+        metrics['total_train_updates'] = self._number_training_updates
 
         steps = self.metrics['updates']
         if steps > 0 and self.opt.get('gradient_clip', -1) > 0:
@@ -1013,7 +1012,7 @@ class TorchAgent(ABC, Agent):
 
     def _gpu_usage(self):
         """
-        Computes GPU memory usage.
+        Compute GPU memory usage.
 
         Includes both allocated and cached memory; this should be close to the
         output of nvidia-smi, but not reflect of how much is currently demanded

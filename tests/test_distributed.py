@@ -7,7 +7,7 @@
 import os
 import unittest
 import torch.distributed as dist
-import parlai.core.testing_utils as testing_utils
+import parlai.utils.testing as testing_utils
 import parlai.scripts.build_dict as build_dict
 
 

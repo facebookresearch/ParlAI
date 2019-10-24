@@ -16,11 +16,10 @@ import os
 from tqdm import tqdm
 
 import torch
-from torch import nn
 
-from parlai.core.distributed_utils import is_distributed
+from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.core.utils import round_sigfigs, padded_3d, warn_once, padded_tensor
+from parlai.utils.misc import round_sigfigs, padded_3d, warn_once, padded_tensor
 
 
 class TorchRankerAgent(TorchAgent):

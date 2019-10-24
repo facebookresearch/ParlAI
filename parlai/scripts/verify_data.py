@@ -16,7 +16,7 @@ Examples
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
-from parlai.core.utils import TimeLogger, warn_once
+from parlai.utils.misc import TimeLogger, warn_once
 from parlai.core.worlds import create_task
 
 

@@ -7,8 +7,8 @@
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
-from parlai.core.utils import PaddingUtils, round_sigfigs
-from parlai.core.thread_utils import SharedTable
+from parlai.utils.misc import PaddingUtils, round_sigfigs
+from parlai.utils.thread import SharedTable
 from .modules import RNNModel
 
 import torch
