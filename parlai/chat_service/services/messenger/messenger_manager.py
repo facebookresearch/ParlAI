@@ -18,12 +18,12 @@ import traceback
 import datetime
 
 from parlai.core.agents import create_agent
-from parlai.chat_service.services.agents import MessengerAgent
-from parlai.chat_service.services.message_socket import MessageSocket
-from parlai.chat_service.services.message_sender import MessageSender
-import parlai.chat_service.services.server_utils as server_utils
-import parlai.chat_service.services.shared_utils as shared_utils
-from parlai.chat_service.services.world_runner import MessengerWorldRunner
+from parlai.chat_service.services.messenger.agents import MessengerAgent
+from parlai.chat_service.services.messenger.message_socket import MessageSocket
+from parlai.chat_service.services.messenger.message_sender import MessageSender
+import parlai.chat_service.services.messenger.server_utils as server_utils
+import parlai.chat_service.services.messenger.shared_utils as shared_utils
+from parlai.chat_service.services.messenger.world_runner import MessengerWorldRunner
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 
