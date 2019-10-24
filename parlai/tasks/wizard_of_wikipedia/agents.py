@@ -28,6 +28,7 @@ import random
 
 TOKEN_NOCHOSEN = 'no_passages_used'
 TOKEN_KNOWLEDGE = '__knowledge__'
+TOKEN_END_KNOWLEDGE = '__endknowledge__'
 
 
 def _first_val(dictionary):
@@ -410,6 +411,7 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
         super().__init__(opt, shared)
         self.knowledge_separator = opt.get('include_knowledge_separator', True)
         self.only_checked_knowledge = opt.get('only_checked_knowledge', False)
+        self.prepend_gold_knowledge = opt.get('prepend_gold_knowledge')
         self.dropout = opt.get('ignorant_dropout', 0.0)
 
     @staticmethod
@@ -429,6 +431,12 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             default=0.0,
             help='Eliminate all knowledge with this probability.'
             'Specify 1 for completely ignorant teacher',
+        )
+        agent.add_argument(
+            '--prepend-gold-knowledge',
+            type='bool',
+            default=False,
+            help='If true, prepend text with checked sentence',
         )
 
     def getID(self):
@@ -466,6 +474,10 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             a['checked_sentence'] = TOKEN_NOCHOSEN
             a['knowledge'] = (
                 TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN
+            )
+        elif self.prepend_gold_knowledge:
+            a['text'] = '{} {} {}\n{}'.format(
+                TOKEN_KNOWLEDGE, a['checked_sentence'], TOKEN_END_KNOWLEDGE, a['text']
             )
         return a
 
