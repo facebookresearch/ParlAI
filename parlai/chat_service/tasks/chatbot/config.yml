@@ -5,7 +5,7 @@ tasks:
     timeout: 1800
     agents_required: 1
 task_name: chatbot
-world_module: parlai.messenger.tasks.chatbot.worlds
+world_module: parlai.chat_service.tasks.chatbot.worlds
 overworld: MessengerOverworld
 page_id: 1 # Configure Your Own Page
 max_workers: 30

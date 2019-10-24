@@ -7,7 +7,7 @@
 # py parlai/messenger/tasks/overworld_demo/run.py --debug --verbose
 
 from parlai.core.worlds import World
-from parlai.messenger.core.worlds import OnboardWorld
+from parlai.chat_service.services.worlds import OnboardWorld
 from parlai.core.agents import create_agent_from_shared
 
 
