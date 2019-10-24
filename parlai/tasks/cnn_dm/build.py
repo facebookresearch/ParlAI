@@ -23,7 +23,7 @@ FILE_NAMES = [
     'cnn_wayback_test_urls.txt',
     'dailymail_wayback_training_urls.txt',
     'dailymail_wayback_validation_urls.txt',
-    'dailymail_wayback_test_urls.txt'
+    'dailymail_wayback_test_urls.txt',
 ]
 
 URLS += list(map(lambda x: CNN_ROOT + x, FILE_NAMES[2:5]))
@@ -37,10 +37,11 @@ SHA256 = [
     'a0796c3c7812e3c9fcb1a65faa9aee7bb6f8a3869e953c7f61b401790c0a6f33',
     '3913d6a90c29a81196128346d81c28d6c7f7e91777d886e8417163ce83b2a04a',
     '2377b8f809bd07b143bbbd9e60594d10e7b8a211c8a5672181ea6000bbf548a2',
-    '554d18fc79a06a16902662d926cb7cc981ea36a3f82d5ae1426e25bf62f65b87'
+    '554d18fc79a06a16902662d926cb7cc981ea36a3f82d5ae1426e25bf62f65b87',
 ]
 
 data_type = ['train', 'valid', 'test']
+
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CNN_DM')
@@ -54,7 +55,9 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS[:2], FILE_NAMES[:2], SHA256[:2], from_google=True)
+        build_data.download_check(
+            dpath, URLS[:2], FILE_NAMES[:2], SHA256[:2], from_google=True
+        )
         build_data.download_check(dpath, URLS[2:], FILE_NAMES[2:], SHA256[2:])
 
         for zipfile in FILE_NAMES[:2]:
@@ -84,6 +87,7 @@ def build(opt):
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
+
 
 # def build(opt):
 #     dpath = os.path.join(opt['datapath'], 'CNN_DM')
