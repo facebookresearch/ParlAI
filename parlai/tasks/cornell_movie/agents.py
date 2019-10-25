@@ -31,6 +31,23 @@ class DoubleTeacher(DefaultTeacher):
     speakers.
     """
 
+    def _rebuild(self, entries):
+        new_list = []
+        if len(entries) > 0:
+            # add all ( y_t => x_(t+1) ) pairs
+            new_list.extend(
+                [
+                    (entries[i][1][0], [entries[i + 1][0]])
+                    for i in range(len(entries) - 1)
+                ]
+            )
+        return new_list
+
+    def _is_valid(self, entry):
+        if entry[0] == '' or entry[1] is None:
+            return False
+        return True
+
     def setup_data(self, path):
         """Adds additional perspectives.
         For example, in the conversation:
@@ -45,38 +62,18 @@ class DoubleTeacher(DefaultTeacher):
         y2 x3
 
         """
-
-        def rebuild(entries):
-
-            new_list = []
-            if len(entries) > 0:
-
-                # add all ( y_t => x_(t+1) ) pairs
-                new_list.extend(
-                    [
-                        (entries[i][1][0], [entries[i + 1][0]])
-                        for i in range(len(entries) - 1)
-                    ]
-                )
-            return new_list
-
-        def is_valid(entry):
-            if entry[0] == '' or entry[1] is None:
-                return False
-            return True
-
         # this shows conversations in both directions
         alternate = []
         for entry, new in super().setup_data(path):
             if new:
-                for i, e in enumerate(rebuild(alternate)):
-                    if is_valid(e):
+                for i, e in enumerate(self._rebuild(alternate)):
+                    if self._is_valid(e):
                         yield e, i == 0
                 alternate.clear()
             alternate.append(entry)
-            if is_valid(entry):
+            if self._is_valid(entry):
                 yield entry, new
         if alternate:
-            for i, e in enumerate(rebuild(alternate)):
-                if is_valid(e):
+            for i, e in enumerate(self._rebuild(alternate)):
+                if self._is_valid(e):
                     yield e, i == 0
