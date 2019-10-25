@@ -1,6 +1,0 @@
-<map id="parlai.agents.example_seq2seq.example_seq2seq.ExampleSeq2seqAgent.train_step" name="parlai.agents.example_seq2seq.example_seq2seq.ExampleSeq2seqAgent.train_step">
-<area shape="rect" id="node1" title=" " alt="" coords="5,109,248,165"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a982862ee1a5b6ee2a7da61d6018fb4a9" title=" " alt="" coords="296,5,539,61"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a8174f6d6e6610a63884ef8208af1e298" title=" " alt="" coords="296,109,539,165"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a334f6bd6a11dba7b87f7ea0f8db23a42" title=" " alt="" coords="296,189,539,245"/>
-</map>

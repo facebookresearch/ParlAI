@@ -42,13 +42,13 @@ $(function() {
 <div class="title">Controllable Dialogue </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md101"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md99"></a>
 Paper information</h1>
 <p>Abigail See, Stephen Roller, Douwe Kiela, Jason Weston. <em><a href="https://arxiv.org/abs/1902.08654">What makes a good conversation? How controllable attributes affect human judgments</a></em>. To appear in NAACL 2019.</p>
-<h1><a class="anchor" id="autotoc_md102"></a>
+<h1><a class="anchor" id="autotoc_md100"></a>
 Abstract</h1>
 <p>A good conversation requires balance &ndash; between simplicity and detail; staying on topic and changing it; asking questions and answering them. Although dialogue agents are commonly evaluated via human judgments of overall quality, the relationship between quality and these individual factors is less well-studied. In this work, we examine two controllable neural text generation methods, conditional training and weighted decoding, in order to control four important attributes for chitchat dialogue: repetition, specificity, response-relatedness and question-asking. We conduct a large-scale human evaluation to measure the effect of these control parameters on multi-turn interactive conversations on the PersonaChat task. We provide a detailed analysis of their relationship to high-level aspects of conversation, and show that by controlling combinations of these variables our models obtain clear improvements in human quality judgments.</p>
-<h1><a class="anchor" id="autotoc_md103"></a>
+<h1><a class="anchor" id="autotoc_md101"></a>
 Citation</h1>
 <p>If you use the dataset or models in your own work, please cite with the following BibTex entry: </p><pre class="fragment">@inproceedings{see2019what,
   author={Abigail See and Stephen Roller and Douwe Kiela and Jason Weston},
@@ -57,10 +57,10 @@ Citation</h1>
   url={https://arxiv.org/abs/1902.08654},
   year={2019},
 }
-</pre><h1><a class="anchor" id="autotoc_md104"></a>
+</pre><h1><a class="anchor" id="autotoc_md102"></a>
 Code Instructions</h1>
 <p>Once you have <a href="https://github.com/facebookresearch/ParlAI/#installing-parlai">installed ParlAI</a>, follow the instructions below.</p>
-<h2><a class="anchor" id="autotoc_md105"></a>
+<h2><a class="anchor" id="autotoc_md103"></a>
 Download the data</h2>
 <p>Running the commands to train or chat with the models will automatically download the data for you. Alternatively, you can manually download the data by running <code>python <a class="el" href="projects_2controllable__dialogue_2tasks_2build_8py_source.html">projects/controllable_dialogue/tasks/build.py</a></code>. This will download the following files to <code>data/controllable_dialogue</code>:</p>
 <ul>
@@ -77,7 +77,7 @@ Download the data</h2>
 <li><code>wordstat_files/</code>: This directory contains json files with generated output and automatic metrics computed for the various pretrained models.</li>
 <li><code>evaluation_logs/</code>: This directory contains logs and evaluations from the human evaluations.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md106"></a>
+<h3><a class="anchor" id="autotoc_md104"></a>
 (Alternatively) Making the data yourself</h3>
 <p>For reproducibility, in this section we provide the commands to create the data yourself.</p>
 <p><em>Note: Due to changes in ParlAI, there might be some small differences between the generated files obtained in this section, and the downloaded files in the previous section.</em></p>
@@ -106,7 +106,7 @@ python projects/controllable_dialogue/make_control_dataset.py \
 --outfile data/controllable_dialogue/valid.txt \
 --controls question,lastuttsim,avg_nidf
 </pre><p>This will create files called <code>train.txt</code> and <code>valid.txt</code> in your <code>data/controllable_dialogue</code> directory.</p>
-<h2><a class="anchor" id="autotoc_md107"></a>
+<h2><a class="anchor" id="autotoc_md105"></a>
 The pretrained models</h2>
 <p>Running the commands in the next section to chat with the pretrained models will automatically download them for you. In <code>data/models/controllable_dialogue</code> you will find the following models, along with their <code>.opt</code> files:</p>
 <ul>
@@ -119,7 +119,7 @@ The pretrained models</h2>
 <ul>
 <li><code>dict_twit30k_train_split</code>: This is the dictionary used for all models.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md108"></a>
+<h2><a class="anchor" id="autotoc_md106"></a>
 Chat with the pretrained models</h2>
 <p>This section provides the commands to talk to the model configurations described in the paper. You can refer to Table 5 in the paper to see how these commands correspond to the configurations described there.</p>
 <p>Running any of these commands will also download the pretrained models, if necessary.</p>
@@ -158,7 +158,7 @@ Chat with the pretrained models</h2>
 <p>Note that this this feature can take a while to load, especially the first time you run it. This is because we have to load the GloVe vectors from file.</p>
 <p><b>Giving the bot a persona</b>: If you want the bot to have a persona when you talk to it, select one of the lines in <code>data/controllable_dialogue/personas_validation.txt</code> and prepend it to your first utterance. Alternatively you can write the persona yourself - but make sure to use the same format.</p>
 <p><b>Viewing top 10 beam search candidates:</b> If you want to see the top 10 candidates produced by beam search (rather than just the top 1), add the flag <code>--verbose True</code>.</p>
-<h2><a class="anchor" id="autotoc_md109"></a>
+<h2><a class="anchor" id="autotoc_md107"></a>
 Train a CT model</h2>
 <p><b>To train a CT model from scratch:</b> </p><pre class="fragment">python projects/controllable_dialogue/train_controllable_seq2seq.py \
 -mf /path/to/your/modelfile \
@@ -183,13 +183,13 @@ Train a CT model</h2>
 --add-control False \
 --control-vars avg_nidf
 </pre><p>You should see your new CT model training. Note: this is how the models in the paper were trained.</p>
-<h2><a class="anchor" id="autotoc_md110"></a>
+<h2><a class="anchor" id="autotoc_md108"></a>
 Look at generated output and automatic metrics</h2>
 <p>Once you have downloaded the data, you will find a directory <code>wordstat_files</code> in <code>data/controllable_dialogue</code>. The json files in this directory contain the generated output computed on the ConvAI2 validation set, plus the corresponding automatic metrics. Each json file corresponds to a different model configuration.</p>
 <p>Run the following: </p><pre class="fragment">cd projects/controllable_dialogue
 jupyter notebook
 </pre><p>and then open up <code>inspect_wordstats.ipynb</code>. Where it says <code>models_dir</code>, enter the path to your <code>wordstat_files</code> directory. You will be able to recreate the table of automatic metrics from the paper (Table 6), and explore the models' generated output.</p>
-<h2><a class="anchor" id="autotoc_md111"></a>
+<h2><a class="anchor" id="autotoc_md109"></a>
 Save generated output and automatic metrics to file</h2>
 <p>If you want to generate json files like those in the previous section, run a command like this: </p><pre class="fragment">python projects/controllable_dialogue/eval_wordstat.py \
 -mf models:controllable_dialogue/control_questionb11e10 \
@@ -197,7 +197,7 @@ Save generated output and automatic metrics to file</h2>
 --set-controls question:7
 </pre><p>This will create a json file containing the output and automatic metrics for the provided model configuration (here, question-controlled CT model with z=7 and WD repetition control). The script <code>eval_wordstat.py</code> always places the json file in the same place as the model file. The script can take a while to complete - so you can set e.g. <code>--num-examples 512</code> to generate output on a smaller number of examples.</p>
 <p><em>Note: Due to changes in ParlAI, there might be some small differences between the json file created via this method, and the json files downloadable in the previous section.</em></p>
-<h2><a class="anchor" id="autotoc_md112"></a>
+<h2><a class="anchor" id="autotoc_md110"></a>
 Human Evaluation code, logs, and analysis</h2>
 <p>Human evaluation logs should be downloaded automatically after following the download instructions above. You'll find them in the <code>evaluation_logs/</code> folder.</p>
 <p>A Jupyter notebook which generates the graphs and tables for the human experiments is available in the <a href="https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue">project folder</a>. The notebook should be launched from the ParlAI root directory.</p>

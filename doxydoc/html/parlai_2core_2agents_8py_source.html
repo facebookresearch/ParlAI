@@ -834,58 +834,57 @@ $(function() {
 <div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;    <span class="keywordflow">return</span> teacher_class</div>
 <div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160; </div>
 <div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160; </div>
-<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;<span class="comment"># TODO: remove this. It was added but doesn&#39;t have a clear use case now.</span></div>
-<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;<span class="keyword">def </span>_add_task_flags_to_agent_opt(agent, opt, flags):</div>
-<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;    <span class="stringliteral">&quot;&quot;&quot;</span></div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;<span class="stringliteral">    Handle task flags provided by the task name itself.</span></div>
-<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;<span class="stringliteral"></span> </div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;<span class="stringliteral">    With this you can set specific opts with `-t task:flag=foo`.</span></div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;<span class="stringliteral">    &quot;&quot;&quot;</span></div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;    fl = flags.split(<span class="stringliteral">&#39;:&#39;</span>)</div>
-<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;    task = []</div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;    <span class="keywordflow">for</span> f <span class="keywordflow">in</span> fl:</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;        <span class="keywordflow">if</span> <span class="stringliteral">&#39;=&#39;</span> <span class="keywordflow">in</span> f:</div>
-<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;            one_flag = f.split(<span class="stringliteral">&#39;=&#39;</span>)</div>
-<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;            opt[one_flag[0]] = one_flag[1]</div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;        <span class="keywordflow">else</span>:</div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;            task.append(f)</div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;    opt[<span class="stringliteral">&#39;task&#39;</span>] = <span class="stringliteral">&#39;:&#39;</span>.join(task)</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;<span class="keyword">def </span>_add_task_flags_to_agent_opt(agent, opt, flags):</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;    <span class="stringliteral">&quot;&quot;&quot;</span></div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;<span class="stringliteral">    Handle task flags provided by the task name itself.</span></div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;<span class="stringliteral">    With this you can set specific opts with `-t task:flag=foo`.</span></div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;<span class="stringliteral">    &quot;&quot;&quot;</span></div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;    fl = flags.split(<span class="stringliteral">&#39;:&#39;</span>)</div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;    task = []</div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;    <span class="keywordflow">for</span> f <span class="keywordflow">in</span> fl:</div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;        <span class="keywordflow">if</span> <span class="stringliteral">&#39;=&#39;</span> <span class="keywordflow">in</span> f:</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;            one_flag = f.split(<span class="stringliteral">&#39;=&#39;</span>)</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;            opt[one_flag[0].replace(<span class="stringliteral">&#39;-&#39;</span>, <span class="stringliteral">&#39;_&#39;</span>)] = one_flag[1].replace(<span class="stringliteral">&#39;;&#39;</span>, <span class="stringliteral">&#39;:&#39;</span>)</div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;        <span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;            task.append(f)</div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;    opt[<span class="stringliteral">&#39;task&#39;</span>] = <span class="stringliteral">&#39;:&#39;</span>.join(task)</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160; </div>
 <div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160; </div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160; </div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;<span class="keyword">def </span>create_task_agent_from_taskname(opt):</div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;    <span class="stringliteral">&quot;&quot;&quot;</span></div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;<span class="stringliteral">    Create task agent(s) assuming the input ``task_dir:teacher_class``.</span></div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;<span class="stringliteral"></span> </div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;<span class="stringliteral">    e.g. def_string is a shorthand path like ``babi:Task1k:1`` or ``#babi``</span></div>
-<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;<span class="stringliteral">    or a complete path like ``parlai.tasks.babi.agents:Task1kTeacher:1``,</span></div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;<span class="stringliteral">    which essentially performs ``from parlai.tasks.babi import Task1kTeacher``</span></div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;<span class="stringliteral">    with the parameter ``1`` in ``opt[&#39;task&#39;]`` to be used by the class</span></div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;<span class="stringliteral">    ``Task1kTeacher``.</span></div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;<span class="stringliteral">    &quot;&quot;&quot;</span></div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;    <span class="keywordflow">if</span> <span class="keywordflow">not</span> (</div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;        opt.get(<span class="stringliteral">&#39;task&#39;</span>)</div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;        <span class="keywordflow">or</span> opt.get(<span class="stringliteral">&#39;pytorch_teacher_task&#39;</span>)</div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;        <span class="keywordflow">or</span> opt.get(<span class="stringliteral">&#39;pytorch_teacher_dataset&#39;</span>)</div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;    ):</div>
-<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;        <span class="keywordflow">raise</span> RuntimeError(</div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;            <span class="stringliteral">&#39;No task specified. Please select a task with &#39;</span> + <span class="stringliteral">&#39;--task {task_name}.&#39;</span></div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;        )</div>
-<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;    <span class="keywordflow">if</span> <span class="keywordflow">not</span> opt.get(<span class="stringliteral">&#39;task&#39;</span>):</div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;        opt[<span class="stringliteral">&#39;task&#39;</span>] = <span class="stringliteral">&#39;pytorch_teacher&#39;</span></div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;    <span class="keywordflow">if</span> <span class="stringliteral">&#39;,&#39;</span> <span class="keywordflow">not</span> <span class="keywordflow">in</span> opt[<span class="stringliteral">&#39;task&#39;</span>]:</div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;        <span class="comment"># Single task</span></div>
-<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;        teacher_class = get_task_module(opt[<span class="stringliteral">&#39;task&#39;</span>])</div>
-<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;        _add_task_flags_to_agent_opt(teacher_class, opt, opt[<span class="stringliteral">&#39;task&#39;</span>])</div>
-<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;        task_agents = teacher_class(opt)</div>
-<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;        <span class="keywordflow">if</span> type(task_agents) != list:</div>
-<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;            task_agents = [task_agents]</div>
-<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;        <span class="keywordflow">return</span> task_agents</div>
-<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;    <span class="keywordflow">else</span>:</div>
-<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;        <span class="comment"># Multitask teacher/agent</span></div>
-<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;        task_agents = <a class="code" href="classparlai_1_1core_1_1agents_1_1MultiTaskTeacher.html">MultiTaskTeacher</a>(opt)</div>
-<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;        <span class="keywordflow">if</span> type(task_agents) != list:</div>
-<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;            task_agents = [task_agents]</div>
-<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;        <span class="keywordflow">return</span> task_agents</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;<span class="keyword">def </span>create_task_agent_from_taskname(opt):</div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;    <span class="stringliteral">&quot;&quot;&quot;</span></div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;<span class="stringliteral">    Create task agent(s) assuming the input ``task_dir:teacher_class``.</span></div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;<span class="stringliteral">    e.g. def_string is a shorthand path like ``babi:Task1k:1`` or ``#babi``</span></div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;<span class="stringliteral">    or a complete path like ``parlai.tasks.babi.agents:Task1kTeacher:1``,</span></div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;<span class="stringliteral">    which essentially performs ``from parlai.tasks.babi import Task1kTeacher``</span></div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;<span class="stringliteral">    with the parameter ``1`` in ``opt[&#39;task&#39;]`` to be used by the class</span></div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;<span class="stringliteral">    ``Task1kTeacher``.</span></div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;<span class="stringliteral">    &quot;&quot;&quot;</span></div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;    <span class="keywordflow">if</span> <span class="keywordflow">not</span> (</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;        opt.get(<span class="stringliteral">&#39;task&#39;</span>)</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;        <span class="keywordflow">or</span> opt.get(<span class="stringliteral">&#39;pytorch_teacher_task&#39;</span>)</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;        <span class="keywordflow">or</span> opt.get(<span class="stringliteral">&#39;pytorch_teacher_dataset&#39;</span>)</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;    ):</div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;        <span class="keywordflow">raise</span> RuntimeError(</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;            <span class="stringliteral">&#39;No task specified. Please select a task with &#39;</span> + <span class="stringliteral">&#39;--task {task_name}.&#39;</span></div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;        )</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;    <span class="keywordflow">if</span> <span class="keywordflow">not</span> opt.get(<span class="stringliteral">&#39;task&#39;</span>):</div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;        opt[<span class="stringliteral">&#39;task&#39;</span>] = <span class="stringliteral">&#39;pytorch_teacher&#39;</span></div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;    <span class="keywordflow">if</span> <span class="stringliteral">&#39;,&#39;</span> <span class="keywordflow">not</span> <span class="keywordflow">in</span> opt[<span class="stringliteral">&#39;task&#39;</span>]:</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;        <span class="comment"># Single task</span></div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;        teacher_class = get_task_module(opt[<span class="stringliteral">&#39;task&#39;</span>])</div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;        _add_task_flags_to_agent_opt(teacher_class, opt, opt[<span class="stringliteral">&#39;task&#39;</span>])</div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;        task_agents = teacher_class(opt)</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;        <span class="keywordflow">if</span> type(task_agents) != list:</div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;            task_agents = [task_agents]</div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;        <span class="keywordflow">return</span> task_agents</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;    <span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;        <span class="comment"># Multitask teacher/agent</span></div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;        task_agents = <a class="code" href="classparlai_1_1core_1_1agents_1_1MultiTaskTeacher.html">MultiTaskTeacher</a>(opt)</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;        <span class="keywordflow">if</span> type(task_agents) != list:</div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;            task_agents = [task_agents]</div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;        <span class="keywordflow">return</span> task_agents</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclassparlai_1_1core_1_1agents_1_1MultiTaskTeacher_html_a1060c15dbbbe7fedfb89ba94969c5b99"><div class="ttname"><a href="classparlai_1_1core_1_1agents_1_1MultiTaskTeacher.html#a1060c15dbbbe7fedfb89ba94969c5b99">parlai.core.agents.MultiTaskTeacher.cum_task_weights</a></div><div class="ttdeci">cum_task_weights</div><div class="ttdef"><b>Definition:</b> <a href="parlai_2core_2agents_8py_source.html#l00278">agents.py:278</a></div></div>
 <div class="ttc" id="anamespaceparlai_1_1utils_1_1misc_html"><div class="ttname"><a href="namespaceparlai_1_1utils_1_1misc.html">parlai.utils.misc</a></div><div class="ttdef"><b>Definition:</b> <a href="misc_8py_source.html#l00001">misc.py:1</a></div></div>

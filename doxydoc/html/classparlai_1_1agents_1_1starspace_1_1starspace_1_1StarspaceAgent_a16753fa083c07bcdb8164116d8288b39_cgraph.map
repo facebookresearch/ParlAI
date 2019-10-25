@@ -1,11 +1,10 @@
 <map id="parlai.agents.starspace.starspace.StarspaceAgent.predict" name="parlai.agents.starspace.starspace.StarspaceAgent.predict">
-<area shape="rect" id="node1" title=" " alt="" coords="5,239,228,280"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a69d9fa941c82271637287a44fde88cb3" title=" " alt="" coords="286,5,509,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a9591d5f485debcf4611e24be38900b5e" title=" " alt="" coords="286,71,509,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#a8bddd5b89230c9a2810e7ca15914997e" title=" " alt="" coords="310,137,485,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html#a29e1cdd729ac4236f8bae90b2e66fa04" title=" " alt="" coords="298,217,497,243"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a6511fc8a4d2687cd99a981b4e3b6a589" title=" " alt="" coords="286,268,509,309"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a8174f6d6e6610a63884ef8208af1e298" title=" " alt="" coords="276,358,519,414"/>
-<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a070074c4396b7ea6edc56e190e0c011f" title=" " alt="" coords="286,439,509,480"/>
-<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a8f6de929b475d3915c159c48165b4575" title=" " alt="" coords="310,505,485,561"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,209,228,251"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a69d9fa941c82271637287a44fde88cb3" title=" " alt="" coords="276,5,499,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a9591d5f485debcf4611e24be38900b5e" title=" " alt="" coords="276,71,499,112"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#a8bddd5b89230c9a2810e7ca15914997e" title=" " alt="" coords="300,137,475,193"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1agents_1_1Agent.html#a29e1cdd729ac4236f8bae90b2e66fa04" title=" " alt="" coords="288,217,487,243"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a6511fc8a4d2687cd99a981b4e3b6a589" title=" " alt="" coords="276,268,499,309"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a070074c4396b7ea6edc56e190e0c011f" title=" " alt="" coords="276,333,499,375"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a8f6de929b475d3915c159c48165b4575" title=" " alt="" coords="300,399,475,455"/>
 </map>

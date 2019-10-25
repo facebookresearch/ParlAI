@@ -1,5 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,3503,84,3530"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,3573,84,3599"/>
 <area shape="rect" id="node2" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__db__interactions_1_1TestDataHandler.html" title=" " alt="" coords="171,5,391,47"/>
 <area shape="rect" id="node3" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__full__system_1_1TestMTurkManagerWorkflows.html" title=" " alt="" coords="144,71,419,112"/>
 <area shape="rect" id="node4" href="$classparlai_1_1mturk_1_1core_1_1dev_1_1test_1_1test__mturk__agent_1_1TestAssignState.html" title=" " alt="" coords="180,136,383,177"/>
@@ -76,23 +76,25 @@
 <area shape="rect" id="node75" href="$classtests_1_1test__messages_1_1TestUtils.html" title=" " alt="" coords="194,5084,369,5125"/>
 <area shape="rect" id="node76" href="$classtests_1_1test__params_1_1TestParlaiParser.html" title=" " alt="" coords="186,5149,377,5191"/>
 <area shape="rect" id="node77" href="$classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html" title=" " alt="" coords="178,5215,385,5271"/>
-<area shape="rect" id="node78" href="$classtests_1_1test__seq2seq_1_1TestBackwardsCompatibility.html" title=" " alt="" coords="167,5296,395,5337"/>
-<area shape="rect" id="node79" href="$classtests_1_1test__seq2seq_1_1TestHogwildSeq2seq.html" title=" " alt="" coords="176,5361,387,5403"/>
-<area shape="rect" id="node80" href="$classtests_1_1test__seq2seq_1_1TestSeq2Seq.html" title=" " alt="" coords="173,5427,389,5454"/>
-<area shape="rect" id="node81" href="$classtests_1_1test__ta__inheritence_1_1TestInheritence.html" title=" " alt="" coords="197,5479,366,5520"/>
-<area shape="rect" id="node82" href="$classtests_1_1test__tfidf__retriever_1_1TestTfidfRetriever.html" title=" " alt="" coords="199,5544,363,5585"/>
-<area shape="rect" id="node83" href="$classtests_1_1test__tga_1_1TestUpgradeOpt.html" title=" " alt="" coords="180,5610,383,5637"/>
-<area shape="rect" id="node84" href="$classtests_1_1test__threadutils_1_1TestSharedTable.html" title=" " alt="" coords="194,5661,369,5703"/>
-<area shape="rect" id="node85" href="$classtests_1_1test__torch__agent_1_1TestLegacyVersioning.html" title=" " alt="" coords="190,5727,373,5768"/>
-<area shape="rect" id="node86" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html" title=" " alt="" coords="190,5792,373,5833"/>
-<area shape="rect" id="node87" href="$classtests_1_1test__tra_1_1__AbstractTRATest.html" title=" " alt="" coords="202,5857,361,5899"/>
-<area shape="rect" id="node91" href="$classtests_1_1test__train__model_1_1TestTrainModel.html" title=" " alt="" coords="191,5923,372,5964"/>
-<area shape="rect" id="node92" href="$classtests_1_1test__transformers_1_1TestLearningRateScheduler.html" title=" " alt="" coords="190,5988,373,6029"/>
-<area shape="rect" id="node93" href="$classtests_1_1test__transformers_1_1TestTransformerGenerator.html" title=" " alt="" coords="194,6053,369,6095"/>
-<area shape="rect" id="node94" href="$classtests_1_1test__transformers_1_1TestTransformerRanker.html" title=" " alt="" coords="201,6119,362,6160"/>
-<area shape="rect" id="node95" href="$classtests_1_1test__utils_1_1TestUtils.html" title=" " alt="" coords="199,6185,364,6211"/>
-<area shape="rect" id="node96" href="$classtests_1_1test__zootasks_1_1TestZooAndTasks.html" title=" " alt="" coords="198,6236,365,6277"/>
-<area shape="rect" id="node88" href="$classtests_1_1test__tra_1_1TestMemNN.html" title=" " alt="" coords="489,5814,667,5841"/>
-<area shape="rect" id="node89" href="$classtests_1_1test__tra_1_1TestPolyRanker.html" title=" " alt="" coords="479,5865,677,5891"/>
-<area shape="rect" id="node90" href="$classtests_1_1test__tra_1_1TestTransformerRanker.html" title=" " alt="" coords="479,5916,677,5957"/>
+<area shape="rect" id="node78" href="$classtests_1_1test__safety__modules_1_1TestSafetyModules.html" title=" " alt="" coords="191,5296,371,5337"/>
+<area shape="rect" id="node79" href="$classtests_1_1test__seq2seq_1_1TestBackwardsCompatibility.html" title=" " alt="" coords="167,5361,395,5403"/>
+<area shape="rect" id="node80" href="$classtests_1_1test__seq2seq_1_1TestHogwildSeq2seq.html" title=" " alt="" coords="176,5427,387,5468"/>
+<area shape="rect" id="node81" href="$classtests_1_1test__seq2seq_1_1TestSeq2Seq.html" title=" " alt="" coords="173,5493,389,5519"/>
+<area shape="rect" id="node82" href="$classtests_1_1test__ta__inheritence_1_1TestInheritence.html" title=" " alt="" coords="197,5544,366,5585"/>
+<area shape="rect" id="node83" href="$classtests_1_1test__teachers_1_1TestAbstractImageTeacher.html" title=" " alt="" coords="199,5609,363,5651"/>
+<area shape="rect" id="node84" href="$classtests_1_1test__tfidf__retriever_1_1TestTfidfRetriever.html" title=" " alt="" coords="199,5675,363,5716"/>
+<area shape="rect" id="node85" href="$classtests_1_1test__tga_1_1TestUpgradeOpt.html" title=" " alt="" coords="180,5741,383,5767"/>
+<area shape="rect" id="node86" href="$classtests_1_1test__threadutils_1_1TestSharedTable.html" title=" " alt="" coords="194,5792,369,5833"/>
+<area shape="rect" id="node87" href="$classtests_1_1test__torch__agent_1_1TestLegacyVersioning.html" title=" " alt="" coords="190,5857,373,5899"/>
+<area shape="rect" id="node88" href="$classtests_1_1test__torch__agent_1_1TestTorchAgent.html" title=" " alt="" coords="190,5923,373,5964"/>
+<area shape="rect" id="node89" href="$classtests_1_1test__tra_1_1__AbstractTRATest.html" title=" " alt="" coords="202,5988,361,6029"/>
+<area shape="rect" id="node93" href="$classtests_1_1test__train__model_1_1TestTrainModel.html" title=" " alt="" coords="191,6053,372,6095"/>
+<area shape="rect" id="node94" href="$classtests_1_1test__transformers_1_1TestLearningRateScheduler.html" title=" " alt="" coords="190,6119,373,6160"/>
+<area shape="rect" id="node95" href="$classtests_1_1test__transformers_1_1TestTransformerGenerator.html" title=" " alt="" coords="194,6184,369,6225"/>
+<area shape="rect" id="node96" href="$classtests_1_1test__transformers_1_1TestTransformerRanker.html" title=" " alt="" coords="201,6249,362,6291"/>
+<area shape="rect" id="node97" href="$classtests_1_1test__utils_1_1TestUtils.html" title=" " alt="" coords="199,6315,364,6342"/>
+<area shape="rect" id="node98" href="$classtests_1_1test__zootasks_1_1TestZooAndTasks.html" title=" " alt="" coords="198,6367,365,6408"/>
+<area shape="rect" id="node90" href="$classtests_1_1test__tra_1_1TestMemNN.html" title=" " alt="" coords="489,5945,667,5971"/>
+<area shape="rect" id="node91" href="$classtests_1_1test__tra_1_1TestPolyRanker.html" title=" " alt="" coords="479,5995,677,6022"/>
+<area shape="rect" id="node92" href="$classtests_1_1test__tra_1_1TestTransformerRanker.html" title=" " alt="" coords="479,6047,677,6088"/>
 </map>

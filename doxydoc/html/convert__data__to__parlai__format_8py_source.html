@@ -93,58 +93,59 @@ $(function() {
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordflow">for</span> _ <span class="keywordflow">in</span> range(num_examples):</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        world.parley()</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        acts = world.get_acts()</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        acts[0][<span class="stringliteral">&#39;labels&#39;</span>] = acts[0].get(<span class="stringliteral">&#39;labels&#39;</span>, acts[0].pop(<span class="stringliteral">&#39;eval_labels&#39;</span>, <span class="keywordtype">None</span>))</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        txt = msg_to_str(acts[0], ignore_fields=ignorefields)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        fw.write(txt + <span class="stringliteral">&#39;\n&#39;</span>)</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordflow">if</span> acts[0].get(<span class="stringliteral">&#39;episode_done&#39;</span>, <span class="keyword">False</span>):</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            fw.write(<span class="stringliteral">&#39;\n&#39;</span>)</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordflow">if</span> log_timer.time() &gt; opt[<span class="stringliteral">&#39;log_every_n_secs&#39;</span>]:</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            text, _log = log_timer.log(world.total_parleys, world.num_examples())</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            print(text)</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordflow">if</span> world.epoch_done():</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            print(<span class="stringliteral">&#39;EPOCH DONE&#39;</span>)</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="keywordflow">break</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    fw.close()</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        value = acts[0].get(<span class="stringliteral">&#39;labels&#39;</span>, acts[0].pop(<span class="stringliteral">&#39;eval_labels&#39;</span>, <span class="keywordtype">None</span>))</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        acts[0].force_set(<span class="stringliteral">&#39;labels&#39;</span>, value)</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        txt = msg_to_str(acts[0], ignore_fields=ignorefields)</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        fw.write(txt + <span class="stringliteral">&#39;\n&#39;</span>)</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">if</span> acts[0].get(<span class="stringliteral">&#39;episode_done&#39;</span>, <span class="keyword">False</span>):</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            fw.write(<span class="stringliteral">&#39;\n&#39;</span>)</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keywordflow">if</span> log_timer.time() &gt; opt[<span class="stringliteral">&#39;log_every_n_secs&#39;</span>]:</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            text, _log = log_timer.log(world.total_parleys, world.num_examples())</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            print(text)</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordflow">if</span> world.epoch_done():</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            print(<span class="stringliteral">&#39;EPOCH DONE&#39;</span>)</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            <span class="keywordflow">break</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    fw.close()</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keyword">def </span>main():</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    random.seed(42)</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment"># Get command line arguments</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    parser = ParlaiParser()</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    parser.add_argument(</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="stringliteral">&#39;-n&#39;</span>,</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="stringliteral">&#39;--num-examples&#39;</span>,</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        default=-1,</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        type=int,</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        help=<span class="stringliteral">&#39;Total number of exs to convert, -1 to convert \</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="stringliteral">                                all examples&#39;</span>,</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    )</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    parser.add_argument(</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="stringliteral">&#39;-of&#39;</span>,</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="stringliteral">&#39;--outfile&#39;</span>,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        default=<span class="keywordtype">None</span>,</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        type=str,</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        help=<span class="stringliteral">&#39;Output file where to save, by default will be \</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="stringliteral">                                created in /tmp&#39;</span>,</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    )</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    parser.add_argument(</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="stringliteral">&#39;-if&#39;</span>,</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="stringliteral">&#39;--ignore-fields&#39;</span>,</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        default=<span class="stringliteral">&#39;id&#39;</span>,</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        type=str,</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        help=<span class="stringliteral">&#39;Ignore these fields from the message (returned\</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="stringliteral">                                with .act() )&#39;</span>,</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    )</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    parser.add_argument(<span class="stringliteral">&#39;-ltim&#39;</span>, <span class="stringliteral">&#39;--log-every-n-secs&#39;</span>, type=float, default=2)</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    parser.set_defaults(datatype=<span class="stringliteral">&#39;train:stream&#39;</span>)</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    opt = parser.parse_args()</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    dump_data(opt)</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">def </span>main():</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    random.seed(42)</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment"># Get command line arguments</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    parser = ParlaiParser()</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    parser.add_argument(</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="stringliteral">&#39;-n&#39;</span>,</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="stringliteral">&#39;--num-examples&#39;</span>,</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        default=-1,</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        type=int,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        help=<span class="stringliteral">&#39;Total number of exs to convert, -1 to convert \</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="stringliteral">                                all examples&#39;</span>,</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    )</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    parser.add_argument(</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="stringliteral">&#39;-of&#39;</span>,</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="stringliteral">&#39;--outfile&#39;</span>,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        default=<span class="keywordtype">None</span>,</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        type=str,</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        help=<span class="stringliteral">&#39;Output file where to save, by default will be \</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="stringliteral">                                created in /tmp&#39;</span>,</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    )</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    parser.add_argument(</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="stringliteral">&#39;-if&#39;</span>,</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="stringliteral">&#39;--ignore-fields&#39;</span>,</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        default=<span class="stringliteral">&#39;id&#39;</span>,</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        type=str,</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        help=<span class="stringliteral">&#39;Ignore these fields from the message (returned\</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="stringliteral">                                with .act() )&#39;</span>,</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    )</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    parser.add_argument(<span class="stringliteral">&#39;-ltim&#39;</span>, <span class="stringliteral">&#39;--log-every-n-secs&#39;</span>, type=float, default=2)</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    parser.set_defaults(datatype=<span class="stringliteral">&#39;train:stream&#39;</span>)</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    opt = parser.parse_args()</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    dump_data(opt)</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="keywordflow">if</span> __name__ == <span class="stringliteral">&#39;__main__&#39;</span>:</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    main()</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="keywordflow">if</span> __name__ == <span class="stringliteral">&#39;__main__&#39;</span>:</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    main()</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="anamespaceparlai_1_1utils_1_1misc_html"><div class="ttname"><a href="namespaceparlai_1_1utils_1_1misc.html">parlai.utils.misc</a></div><div class="ttdef"><b>Definition:</b> <a href="misc_8py_source.html#l00001">misc.py:1</a></div></div>
 <div class="ttc" id="anamespaceparlai_1_1core_1_1params_html"><div class="ttname"><a href="namespaceparlai_1_1core_1_1params.html">parlai.core.params</a></div><div class="ttdef"><b>Definition:</b> <a href="params_8py_source.html#l00001">params.py:1</a></div></div>

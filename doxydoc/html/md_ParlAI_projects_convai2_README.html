@@ -45,22 +45,22 @@ $(function() {
 <div class="textblock"><p>This directory contains code and examples for the ConvAI2 competition. See the <a href="http://convai.io/">website</a> for more details.</p>
 <p>The ConvAI2 dataset is in ParlAI in parlai/agents/tasks/convai2 and is accessible by using the command line parameter <code>--task convai2</code>.</p>
 <p>For example, to see the training data, try: </p><div class="fragment"><div class="line">python ~/ParlAI/examples/display_data.py -t convai2 -dt train</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md115"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md113"></a>
 Examples</h1>
 <p>You can run examples of training on this task in the <code>baselines</code> folder in this directory.</p>
 <p>For example, you can download and interact with a pre-trained seq2seq model (based on ParlAI's implementation in parlai/agents/seq2seq) using <code>baselines/seq2seq/interact.py</code>, or train your own with the same parameters using the <code>train.py</code> file in that directory.</p>
-<h1><a class="anchor" id="autotoc_md116"></a>
+<h1><a class="anchor" id="autotoc_md114"></a>
 Submitting models for evaluation</h1>
 <p>To submit an entry, create a private repo with your model that works with our evaluation code, and share it with the following github accounts: <a href="#" onclick="location.href='mai'+'lto:'+'edi'+'na'+'n@f'+'b.'+'com'; return false;">edina<span style="display: none;">.nosp@m.</span>n@fb<span style="display: none;">.nosp@m.</span>.com</a>, <a href="#" onclick="location.href='mai'+'lto:'+'jas'+'ew'+'est'+'on'+'@gm'+'ai'+'l.c'+'om'; return false;">jasew<span style="display: none;">.nosp@m.</span>esto<span style="display: none;">.nosp@m.</span>n@gma<span style="display: none;">.nosp@m.</span>il.c<span style="display: none;">.nosp@m.</span>om</a>, <a href="#" onclick="location.href='mai'+'lto:'+'jju'+'@f'+'b.c'+'om'; return false;">jju@f<span style="display: none;">.nosp@m.</span>b.co<span style="display: none;">.nosp@m.</span>m</a>, <a href="#" onclick="location.href='mai'+'lto:'+'ksh'+'us'+'ter'+'@f'+'b.c'+'om'; return false;">kshus<span style="display: none;">.nosp@m.</span>ter@<span style="display: none;">.nosp@m.</span>fb.co<span style="display: none;">.nosp@m.</span>m</a>.</p>
 <p>More specifically, create a repo with a directory similar to the baseline models directory, with a <code>eval_XXX.py</code> file with each metric you would like to be evaluated against. These files should import the appropriate eval function from this directory. For example, the <code>eval_f1.py</code> file in <code>baselines/seq2seq/</code> sets up the right parameters for the model and then imports the evaluation function from the base <code>eval_f1.py</code> file in this directory and runs it.</p>
 <p>We will then run the automatic evaluations against the hidden test set (which is in the same format as the validation set you can access) and update the leaderboard. You can submit a maximum of once per month. We will use the same submitted code for the top performing models for computing human evaluations when the submission system is locked on September 30th.</p>
-<h1><a class="anchor" id="autotoc_md117"></a>
+<h1><a class="anchor" id="autotoc_md115"></a>
 Talking to a model interactively on the commandline:</h1>
 <p>This is possible with this script:</p>
 <div class="fragment"><div class="line">python projects/convai2/interactive.py -mf models:convai2/kvmemnn/model</div>
 </div><!-- fragment --><p>You can change the model you talk to with the '&ndash;model-file' (-mf) argument, e.g. you can use seq2seq too:</p>
 <div class="fragment"><div class="line">python projects/convai2/interactive.py -mf models:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md118"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md116"></a>
 Remarks on dataset versions</h1>
 <p>The several versions of the dataset can be accessed with <code>convai2:self</code>, <code>convai2:self_revised</code> and <code>convai2:none</code>.</p>
 <p>These correspond to "original self persona", "revised self persona" and "no persona" in the original <a href="https://arxiv.org/pdf/1801.07243.pdf">PersonaChat</a> paper. However, in contrast to that dataset, we have modified the preprocessing and are generating a new hidden test set. We have also added training examples from the perspective of both speakers and additional candidates to support training / evaluating using a ranking loss.</p>

@@ -80,8 +80,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a57848d43db50e16cff7a2b3606089017"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a57848d43db50e16cff7a2b3606089017">__init__</a> (self, beam_size, padding_token=0, bos_token=1, eos_token=2, min_length=3, min_n_best=3, device='cpu')</td></tr>
-<tr class="separator:a57848d43db50e16cff7a2b3606089017"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb69e8fa4faed027eaacd69bc3148dce"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#aeb69e8fa4faed027eaacd69bc3148dce">__init__</a> (self, beam_size, padding_token=0, bos_token=1, eos_token=2, min_length=3, device='cpu')</td></tr>
+<tr class="separator:aeb69e8fa4faed027eaacd69bc3148dce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a929ecbf60f149968caae5a0a6908d67a"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a929ecbf60f149968caae5a0a6908d67a">get_output_from_current_step</a> (self)</td></tr>
 <tr class="separator:a929ecbf60f149968caae5a0a6908d67a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aced42f37b580f876286b5075ba188b2a"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#aced42f37b580f876286b5075ba188b2a">get_backtrack_from_current_step</a> (self)</td></tr>
@@ -92,8 +92,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9f371e57095af5b22ff5eae4c57326c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35a3cbfe2df2d02bb46f7e492657afa5"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a35a3cbfe2df2d02bb46f7e492657afa5">is_done</a> (self)</td></tr>
 <tr class="separator:a35a3cbfe2df2d02bb46f7e492657afa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada09b55635c6751a699b095a0377421d"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ada09b55635c6751a699b095a0377421d">get_top_hyp</a> (self)</td></tr>
-<tr class="separator:ada09b55635c6751a699b095a0377421d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b70f85eec7d81b3a0e1afaea5b09332"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a4b70f85eec7d81b3a0e1afaea5b09332">get_rescored_finished</a> (self, n_best=None)</td></tr>
+<tr class="separator:a4b70f85eec7d81b3a0e1afaea5b09332"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -139,9 +139,6 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a2b64a54420c470d50e389cdaacde4933"><td class="memItemLeft" align="right" valign="top"><a id="a2b64a54420c470d50e389cdaacde4933"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>n_best_counter</b></td></tr>
 <tr class="separator:a2b64a54420c470d50e389cdaacde4933"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:addaa7971b72bdd458d4d3bc27763ad69"><td class="memItemLeft" align="right" valign="top"><a id="addaa7971b72bdd458d4d3bc27763ad69"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>min_n_best</b></td></tr>
-<tr class="separator:addaa7971b72bdd458d4d3bc27763ad69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a159f5589fdfea9a040c4c1ca5c14ea2c"><td class="memItemLeft" align="right" valign="top"><a id="a159f5589fdfea9a040c4c1ca5c14ea2c"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>partial_hyps</b></td></tr>
 <tr class="separator:a159f5589fdfea9a040c4c1ca5c14ea2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,8 +149,6 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:a63d43f07383119f3bfdbec0bfe5b3ac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3bf87e567b8a00029e1105bcffcffb6"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab3bf87e567b8a00029e1105bcffcffb6">_get_pretty_hypothesis</a> (self, list_of_hypotails)</td></tr>
 <tr class="separator:ab3bf87e567b8a00029e1105bcffcffb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1423539183aabf2d563f773bb28fa13"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ac1423539183aabf2d563f773bb28fa13">_get_rescored_finished</a> (self, n_best=None)</td></tr>
-<tr class="separator:ac1423539183aabf2d563f773bb28fa13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><pre class="fragment">Abstract Tree Search class.
@@ -163,10 +158,10 @@ Concrete implementations make choices about which token to explore next at
 each point in the tree. Different choices result in different generation
 algorithms.
 </pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00750">750</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00740">740</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a57848d43db50e16cff7a2b3606089017"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a57848d43db50e16cff7a2b3606089017">&#9670;&nbsp;</a></span>__init__()</h2>
+<a id="aeb69e8fa4faed027eaacd69bc3148dce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb69e8fa4faed027eaacd69bc3148dce">&#9670;&nbsp;</a></span>__init__()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -211,12 +206,6 @@ algorithms.
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>min_n_best</em> = <code>3</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
           <td class="paramname"><em>device</em> = <code>'cpu'</code>&#160;</td>
         </tr>
         <tr>
@@ -238,15 +227,12 @@ algorithms.
     end of sentence token ID
 :param min_length:
     minimum length of the predicted sequence
-:param min_n_best:
-    Search will not be finished until a minimum number of utterances are
-    completed.
 :param device:
     What device to use for computations
 </pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00760">760</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00750">750</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 
-<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00045">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.all_scores</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00789">parlai.core.torch_generator_agent.TreeSearch.all_scores</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01056">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.all_scores</a>, <a class="el" href="utils__v0_8py_source.html#l00036">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.beam_size</a>, <a class="el" href="seq2seq__v1_8py_source.html#l00223">parlai.agents.legacy_agents.seq2seq.seq2seq_v1.Seq2seqAgent.beam_size</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00308">parlai.core.torch_generator_agent.TorchGeneratorAgent.beam_size</a>, <a class="el" href="seq2seq__v0_8py_source.html#l00362">parlai.agents.legacy_agents.seq2seq.seq2seq_v0.Seq2seqAgent.beam_size</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00780">parlai.core.torch_generator_agent.TreeSearch.beam_size</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01047">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.beam_size</a>, <a class="el" href="utils__v0_8py_source.html#l00047">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.bookkeep</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00791">parlai.core.torch_generator_agent.TreeSearch.bookkeep</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01058">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.bookkeep</a>, <a class="el" href="utils__v0_8py_source.html#l00039">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.bos</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00783">parlai.core.torch_generator_agent.TreeSearch.bos</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01050">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.bos</a>, <a class="el" href="utils__v0_8py_source.html#l00041">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.device</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00785">parlai.core.torch_generator_agent.TreeSearch.device</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01052">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.device</a>, <a class="el" href="utils__v0_8py_source.html#l00038">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00782">parlai.core.torch_generator_agent.TreeSearch.eos</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01049">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos</a>, <a class="el" href="utils__v0_8py_source.html#l00057">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos_top</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00798">parlai.core.torch_generator_agent.TreeSearch.eos_top</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01068">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos_top</a>, <a class="el" href="utils__v0_8py_source.html#l00058">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos_top_ts</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00799">parlai.core.torch_generator_agent.TreeSearch.eos_top_ts</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01069">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos_top_ts</a>, <a class="el" href="utils__v0_8py_source.html#l00053">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.finished</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00797">parlai.core.torch_generator_agent.TreeSearch.finished</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01064">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.finished</a>, <a class="el" href="utils__v0_8py_source.html#l00037">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.min_length</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00781">parlai.core.torch_generator_agent.TreeSearch.min_length</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01048">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.min_length</a>, <a class="el" href="utils__v0_8py_source.html#l00060">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.min_n_best</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00801">parlai.core.torch_generator_agent.TreeSearch.min_n_best</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01071">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.min_n_best</a>, <a class="el" href="utils__v0_8py_source.html#l00059">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.n_best_counter</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00800">parlai.core.torch_generator_agent.TreeSearch.n_best_counter</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01070">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.n_best_counter</a>, <a class="el" href="utils__v0_8py_source.html#l00049">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.outputs</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00793">parlai.core.torch_generator_agent.TreeSearch.outputs</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01060">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.outputs</a>, <a class="el" href="utils__v0_8py_source.html#l00040">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.pad</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00784">parlai.core.torch_generator_agent.TreeSearch.pad</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01051">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.pad</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00802">parlai.core.torch_generator_agent.TreeSearch.partial_hyps</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01073">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.partial_hyps</a>, <a class="el" href="utils__v0_8py_source.html#l00043">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.scores</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00787">parlai.core.torch_generator_agent.TreeSearch.scores</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01054">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.scores</a>.</p>
+<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00045">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.all_scores</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00776">parlai.core.torch_generator_agent.TreeSearch.all_scores</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01056">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.all_scores</a>, <a class="el" href="utils__v0_8py_source.html#l00036">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.beam_size</a>, <a class="el" href="seq2seq__v1_8py_source.html#l00223">parlai.agents.legacy_agents.seq2seq.seq2seq_v1.Seq2seqAgent.beam_size</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00300">parlai.core.torch_generator_agent.TorchGeneratorAgent.beam_size</a>, <a class="el" href="seq2seq__v0_8py_source.html#l00362">parlai.agents.legacy_agents.seq2seq.seq2seq_v0.Seq2seqAgent.beam_size</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00767">parlai.core.torch_generator_agent.TreeSearch.beam_size</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01047">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.beam_size</a>, <a class="el" href="utils__v0_8py_source.html#l00047">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.bookkeep</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00778">parlai.core.torch_generator_agent.TreeSearch.bookkeep</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01058">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.bookkeep</a>, <a class="el" href="utils__v0_8py_source.html#l00039">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.bos</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00770">parlai.core.torch_generator_agent.TreeSearch.bos</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01050">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.bos</a>, <a class="el" href="utils__v0_8py_source.html#l00041">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.device</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00772">parlai.core.torch_generator_agent.TreeSearch.device</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01052">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.device</a>, <a class="el" href="utils__v0_8py_source.html#l00038">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00769">parlai.core.torch_generator_agent.TreeSearch.eos</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01049">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos</a>, <a class="el" href="utils__v0_8py_source.html#l00057">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos_top</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00785">parlai.core.torch_generator_agent.TreeSearch.eos_top</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01068">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos_top</a>, <a class="el" href="utils__v0_8py_source.html#l00058">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos_top_ts</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00786">parlai.core.torch_generator_agent.TreeSearch.eos_top_ts</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01069">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos_top_ts</a>, <a class="el" href="utils__v0_8py_source.html#l00053">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.finished</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00784">parlai.core.torch_generator_agent.TreeSearch.finished</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01064">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.finished</a>, <a class="el" href="utils__v0_8py_source.html#l00037">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.min_length</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00768">parlai.core.torch_generator_agent.TreeSearch.min_length</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01048">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.min_length</a>, <a class="el" href="utils__v0_8py_source.html#l00059">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.n_best_counter</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00787">parlai.core.torch_generator_agent.TreeSearch.n_best_counter</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01070">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.n_best_counter</a>, <a class="el" href="utils__v0_8py_source.html#l00049">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.outputs</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00780">parlai.core.torch_generator_agent.TreeSearch.outputs</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01060">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.outputs</a>, <a class="el" href="utils__v0_8py_source.html#l00040">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.pad</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00771">parlai.core.torch_generator_agent.TreeSearch.pad</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01051">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.pad</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00788">parlai.core.torch_generator_agent.TreeSearch.partial_hyps</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01073">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.partial_hyps</a>, <a class="el" href="utils__v0_8py_source.html#l00043">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.scores</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00774">parlai.core.torch_generator_agent.TreeSearch.scores</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01054">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.scores</a>.</p>
 
 </div>
 </div>
@@ -295,11 +281,11 @@ algorithms.
 :return:
     hypothesis sequence
 </pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00896">896</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00883">883</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 
-<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00045">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.all_scores</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00789">parlai.core.torch_generator_agent.TreeSearch.all_scores</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01056">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.all_scores</a>, <a class="el" href="utils__v0_8py_source.html#l00047">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.bookkeep</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00791">parlai.core.torch_generator_agent.TreeSearch.bookkeep</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01058">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.bookkeep</a>, <a class="el" href="utils__v0_8py_source.html#l00049">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.outputs</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00793">parlai.core.torch_generator_agent.TreeSearch.outputs</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01060">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.outputs</a>.</p>
+<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00045">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.all_scores</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00776">parlai.core.torch_generator_agent.TreeSearch.all_scores</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01056">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.all_scores</a>, <a class="el" href="utils__v0_8py_source.html#l00047">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.bookkeep</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00778">parlai.core.torch_generator_agent.TreeSearch.bookkeep</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01058">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.bookkeep</a>, <a class="el" href="utils__v0_8py_source.html#l00049">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.outputs</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00780">parlai.core.torch_generator_agent.TreeSearch.outputs</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01060">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.outputs</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="torch__generator__agent_8py_source.html#l00928">parlai.core.torch_generator_agent.TreeSearch._get_rescored_finished()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="torch__generator__agent_8py_source.html#l00915">parlai.core.torch_generator_agent.TreeSearch.get_rescored_finished()</a>.</p>
 <div id="dynsection-2" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-2-trigger" src="closed.png" alt="+"/> Here is the caller graph for this function:</div>
 <div id="dynsection-2-summary" class="dynsummary" style="display:block;">
@@ -307,9 +293,10 @@ algorithms.
 <div id="dynsection-2-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a63d43f07383119f3bfdbec0bfe5b3ac7_icgraph.png" border="0" usemap="#classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a63d43f07383119f3bfdbec0bfe5b3ac7_icgraph" alt=""/></div>
 <map name="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a63d43f07383119f3bfdbec0bfe5b3ac7_icgraph" id="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a63d43f07383119f3bfdbec0bfe5b3ac7_icgraph">
-<area shape="rect" title=" " alt="" coords="527,5,716,61"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ac1423539183aabf2d563f773bb28fa13" title=" " alt="" coords="260,5,479,61"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ada09b55635c6751a699b095a0377421d" title=" " alt="" coords="5,13,212,54"/>
+<area shape="rect" title=" " alt="" coords="527,31,716,87"/>
+<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a4b70f85eec7d81b3a0e1afaea5b09332" title=" " alt="" coords="268,31,479,87"/>
+<area shape="rect" href="classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a4d1acfa68e54ee73cc7fbcb7f334bf99" title=" " alt="" coords="5,5,220,47"/>
+<area shape="rect" href="classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a5224a8abe07503fe549bc6e2140eb244" title=" " alt="" coords="5,71,220,112"/>
 </map>
 </div>
 
@@ -349,9 +336,9 @@ algorithms.
 </table>
 </div><div class="memdoc">
 <pre class="fragment">Return hypothesis as a tensor of token ids.</pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00924">924</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00911">911</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="torch__generator__agent_8py_source.html#l00928">parlai.core.torch_generator_agent.TreeSearch._get_rescored_finished()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="torch__generator__agent_8py_source.html#l00915">parlai.core.torch_generator_agent.TreeSearch.get_rescored_finished()</a>.</p>
 <div id="dynsection-3" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-3-trigger" src="closed.png" alt="+"/> Here is the caller graph for this function:</div>
 <div id="dynsection-3-summary" class="dynsummary" style="display:block;">
@@ -359,86 +346,10 @@ algorithms.
 <div id="dynsection-3-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ab3bf87e567b8a00029e1105bcffcffb6_icgraph.png" border="0" usemap="#classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ab3bf87e567b8a00029e1105bcffcffb6_icgraph" alt=""/></div>
 <map name="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ab3bf87e567b8a00029e1105bcffcffb6_icgraph" id="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ab3bf87e567b8a00029e1105bcffcffb6_icgraph">
-<area shape="rect" title=" " alt="" coords="527,5,728,61"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ac1423539183aabf2d563f773bb28fa13" title=" " alt="" coords="260,5,479,61"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ada09b55635c6751a699b095a0377421d" title=" " alt="" coords="5,13,212,54"/>
-</map>
-</div>
-
-</div>
-</div>
-<a id="ac1423539183aabf2d563f773bb28fa13"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac1423539183aabf2d563f773bb28fa13">&#9670;&nbsp;</a></span>_get_rescored_finished()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">def parlai.core.torch_generator_agent.TreeSearch._get_rescored_finished </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>self</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>n_best</em> = <code>None</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<pre class="fragment">Return finished hypotheses according to adjusted scores.
-
-Score adjustment is done according to the Google NMT paper, which
-penalizes long utterances.
-
-:param n_best:
-    number of finalized hypotheses to return
-
-:return:
-    list of (tokens, score) pairs, in sorted order, where:
-      - tokens is a tensor of token ids
-      - score is the adjusted log probability of the entire utterance
-</pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00928">928</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
-
-<p class="reference">References <a class="el" href="torch__generator__agent_8py_source.html#l00896">parlai.core.torch_generator_agent.TreeSearch._get_hyp_from_finished()</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00924">parlai.core.torch_generator_agent.TreeSearch._get_pretty_hypothesis()</a>, <a class="el" href="utils__v0_8py_source.html#l00045">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.all_scores</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00789">parlai.core.torch_generator_agent.TreeSearch.all_scores</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01056">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.all_scores</a>, <a class="el" href="utils__v0_8py_source.html#l00038">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00782">parlai.core.torch_generator_agent.TreeSearch.eos</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01049">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos</a>, <a class="el" href="utils__v0_8py_source.html#l00053">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.finished</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00797">parlai.core.torch_generator_agent.TreeSearch.finished</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01064">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.finished</a>, <a class="el" href="utils__v0_8py_source.html#l00049">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.outputs</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00793">parlai.core.torch_generator_agent.TreeSearch.outputs</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01060">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.outputs</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="torch__generator__agent_8py_source.html#l00888">parlai.core.torch_generator_agent.TreeSearch.get_top_hyp()</a>.</p>
-<div id="dynsection-4" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-4-trigger" src="closed.png" alt="+"/> Here is the call graph for this function:</div>
-<div id="dynsection-4-summary" class="dynsummary" style="display:block;">
-</div>
-<div id="dynsection-4-content" class="dyncontent" style="display:none;">
-<div class="center"><img src="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ac1423539183aabf2d563f773bb28fa13_cgraph.png" border="0" usemap="#classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ac1423539183aabf2d563f773bb28fa13_cgraph" alt=""/></div>
-<map name="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ac1423539183aabf2d563f773bb28fa13_cgraph" id="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ac1423539183aabf2d563f773bb28fa13_cgraph">
-<area shape="rect" title=" " alt="" coords="5,45,224,101"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a63d43f07383119f3bfdbec0bfe5b3ac7" title=" " alt="" coords="278,5,467,61"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab3bf87e567b8a00029e1105bcffcffb6" title=" " alt="" coords="272,85,473,141"/>
-</map>
-</div>
-<div id="dynsection-5" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-5-trigger" src="closed.png" alt="+"/> Here is the caller graph for this function:</div>
-<div id="dynsection-5-summary" class="dynsummary" style="display:block;">
-</div>
-<div id="dynsection-5-content" class="dyncontent" style="display:none;">
-<div class="center"><img src="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ac1423539183aabf2d563f773bb28fa13_icgraph.png" border="0" usemap="#classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ac1423539183aabf2d563f773bb28fa13_icgraph" alt=""/></div>
-<map name="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ac1423539183aabf2d563f773bb28fa13_icgraph" id="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ac1423539183aabf2d563f773bb28fa13_icgraph">
-<area shape="rect" title=" " alt="" coords="260,5,479,61"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ada09b55635c6751a699b095a0377421d" title=" " alt="" coords="5,13,212,54"/>
+<area shape="rect" title=" " alt="" coords="527,31,728,87"/>
+<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a4b70f85eec7d81b3a0e1afaea5b09332" title=" " alt="" coords="268,31,479,87"/>
+<area shape="rect" href="classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a4d1acfa68e54ee73cc7fbcb7f334bf99" title=" " alt="" coords="5,5,220,47"/>
+<area shape="rect" href="classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a5224a8abe07503fe549bc6e2140eb244" title=" " alt="" coords="5,71,220,112"/>
 </map>
 </div>
 
@@ -470,7 +381,7 @@ penalizes long utterances.
       </table>
 </div><div class="memdoc">
 <pre class="fragment">Advance the beam one step.</pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00845">845</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00830">830</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 
 </div>
 </div>
@@ -490,9 +401,9 @@ penalizes long utterances.
       </table>
 </div><div class="memdoc">
 <pre class="fragment">Get the backtrack at the current step.</pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00817">817</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00802">802</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 
-<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00047">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.bookkeep</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00791">parlai.core.torch_generator_agent.TreeSearch.bookkeep</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01058">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.bookkeep</a>.</p>
+<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00047">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.bookkeep</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00778">parlai.core.torch_generator_agent.TreeSearch.bookkeep</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01058">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.bookkeep</a>.</p>
 
 </div>
 </div>
@@ -512,45 +423,77 @@ penalizes long utterances.
       </table>
 </div><div class="memdoc">
 <pre class="fragment">Get the outputput at the current step.</pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00813">813</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00798">798</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 
-<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00049">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.outputs</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00793">parlai.core.torch_generator_agent.TreeSearch.outputs</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01060">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.outputs</a>.</p>
+<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00049">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.outputs</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00780">parlai.core.torch_generator_agent.TreeSearch.outputs</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01060">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.outputs</a>.</p>
 
 </div>
 </div>
-<a id="ada09b55635c6751a699b095a0377421d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ada09b55635c6751a699b095a0377421d">&#9670;&nbsp;</a></span>get_top_hyp()</h2>
+<a id="a4b70f85eec7d81b3a0e1afaea5b09332"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b70f85eec7d81b3a0e1afaea5b09332">&#9670;&nbsp;</a></span>get_rescored_finished()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">def parlai.core.torch_generator_agent.TreeSearch.get_top_hyp </td>
+          <td class="memname">def parlai.core.torch_generator_agent.TreeSearch.get_rescored_finished </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>self</em></td><td>)</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>n_best</em> = <code>None</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<pre class="fragment">Get single best hypothesis.
+<pre class="fragment">Return finished hypotheses according to adjusted scores.
 
-:return: hypothesis sequence and the final score
+Score adjustment is done according to the Google NMT paper, which
+penalizes long utterances.
+
+:param n_best:
+    number of finalized hypotheses to return
+
+:return:
+    list of (tokens, score) pairs, in sorted order, where:
+      - tokens is a tensor of token ids
+      - score is the adjusted log probability of the entire utterance
 </pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00888">888</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00915">915</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 
-<p class="reference">References <a class="el" href="torch__generator__agent_8py_source.html#l00928">parlai.core.torch_generator_agent.TreeSearch._get_rescored_finished()</a>.</p>
-<div id="dynsection-6" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-6-trigger" src="closed.png" alt="+"/> Here is the call graph for this function:</div>
-<div id="dynsection-6-summary" class="dynsummary" style="display:block;">
+<p class="reference">References <a class="el" href="torch__generator__agent_8py_source.html#l00883">parlai.core.torch_generator_agent.TreeSearch._get_hyp_from_finished()</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00911">parlai.core.torch_generator_agent.TreeSearch._get_pretty_hypothesis()</a>, <a class="el" href="utils__v0_8py_source.html#l00045">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.all_scores</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00776">parlai.core.torch_generator_agent.TreeSearch.all_scores</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01056">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.all_scores</a>, <a class="el" href="utils__v0_8py_source.html#l00038">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00769">parlai.core.torch_generator_agent.TreeSearch.eos</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01049">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos</a>, <a class="el" href="utils__v0_8py_source.html#l00053">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.finished</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00784">parlai.core.torch_generator_agent.TreeSearch.finished</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01064">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.finished</a>, <a class="el" href="utils__v0_8py_source.html#l00049">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.outputs</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00780">parlai.core.torch_generator_agent.TreeSearch.outputs</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01060">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.outputs</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="controllable__seq2seq_8py_source.html#l01434">controllable_seq2seq.controllable_seq2seq.Beam.get_beam_dot()</a>, and <a class="el" href="controllable__seq2seq_8py_source.html#l01337">controllable_seq2seq.controllable_seq2seq.Beam.get_top_hyp()</a>.</p>
+<div id="dynsection-4" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-4-trigger" src="closed.png" alt="+"/> Here is the call graph for this function:</div>
+<div id="dynsection-4-summary" class="dynsummary" style="display:block;">
 </div>
-<div id="dynsection-6-content" class="dyncontent" style="display:none;">
-<div class="center"><img src="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ada09b55635c6751a699b095a0377421d_cgraph.png" border="0" usemap="#classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ada09b55635c6751a699b095a0377421d_cgraph" alt=""/></div>
-<map name="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ada09b55635c6751a699b095a0377421d_cgraph" id="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_ada09b55635c6751a699b095a0377421d_cgraph">
-<area shape="rect" title=" " alt="" coords="5,53,212,94"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ac1423539183aabf2d563f773bb28fa13" title=" " alt="" coords="260,45,479,101"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a63d43f07383119f3bfdbec0bfe5b3ac7" title=" " alt="" coords="533,5,722,61"/>
-<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab3bf87e567b8a00029e1105bcffcffb6" title=" " alt="" coords="527,85,728,141"/>
+<div id="dynsection-4-content" class="dyncontent" style="display:none;">
+<div class="center"><img src="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a4b70f85eec7d81b3a0e1afaea5b09332_cgraph.png" border="0" usemap="#classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a4b70f85eec7d81b3a0e1afaea5b09332_cgraph" alt=""/></div>
+<map name="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a4b70f85eec7d81b3a0e1afaea5b09332_cgraph" id="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a4b70f85eec7d81b3a0e1afaea5b09332_cgraph">
+<area shape="rect" title=" " alt="" coords="5,45,216,101"/>
+<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a63d43f07383119f3bfdbec0bfe5b3ac7" title=" " alt="" coords="270,5,459,61"/>
+<area shape="rect" href="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab3bf87e567b8a00029e1105bcffcffb6" title=" " alt="" coords="264,85,465,141"/>
+</map>
+</div>
+<div id="dynsection-5" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-5-trigger" src="closed.png" alt="+"/> Here is the caller graph for this function:</div>
+<div id="dynsection-5-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-5-content" class="dyncontent" style="display:none;">
+<div class="center"><img src="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a4b70f85eec7d81b3a0e1afaea5b09332_icgraph.png" border="0" usemap="#classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a4b70f85eec7d81b3a0e1afaea5b09332_icgraph" alt=""/></div>
+<map name="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a4b70f85eec7d81b3a0e1afaea5b09332_icgraph" id="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch_a4b70f85eec7d81b3a0e1afaea5b09332_icgraph">
+<area shape="rect" title=" " alt="" coords="268,31,479,87"/>
+<area shape="rect" href="classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a4d1acfa68e54ee73cc7fbcb7f334bf99" title=" " alt="" coords="5,5,220,47"/>
+<area shape="rect" href="classcontrollable__seq2seq_1_1controllable__seq2seq_1_1Beam.html#a5224a8abe07503fe549bc6e2140eb244" title=" " alt="" coords="5,71,220,112"/>
 </map>
 </div>
 
@@ -572,9 +515,9 @@ penalizes long utterances.
       </table>
 </div><div class="memdoc">
 <pre class="fragment">Return whether beam search is complete.</pre> 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00884">884</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00879">879</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 
-<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00057">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos_top</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00798">parlai.core.torch_generator_agent.TreeSearch.eos_top</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01068">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos_top</a>, <a class="el" href="utils__v0_8py_source.html#l00060">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.min_n_best</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00801">parlai.core.torch_generator_agent.TreeSearch.min_n_best</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01071">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.min_n_best</a>, <a class="el" href="utils__v0_8py_source.html#l00059">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.n_best_counter</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00800">parlai.core.torch_generator_agent.TreeSearch.n_best_counter</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01070">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.n_best_counter</a>.</p>
+<p class="reference">References <a class="el" href="utils__v0_8py_source.html#l00036">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.beam_size</a>, <a class="el" href="seq2seq__v1_8py_source.html#l00223">parlai.agents.legacy_agents.seq2seq.seq2seq_v1.Seq2seqAgent.beam_size</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00300">parlai.core.torch_generator_agent.TorchGeneratorAgent.beam_size</a>, <a class="el" href="seq2seq__v0_8py_source.html#l00362">parlai.agents.legacy_agents.seq2seq.seq2seq_v0.Seq2seqAgent.beam_size</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00767">parlai.core.torch_generator_agent.TreeSearch.beam_size</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01047">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.beam_size</a>, <a class="el" href="utils__v0_8py_source.html#l00057">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.eos_top</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00785">parlai.core.torch_generator_agent.TreeSearch.eos_top</a>, <a class="el" href="torch__agent__v1_8py_source.html#l01068">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.eos_top</a>, <a class="el" href="utils__v0_8py_source.html#l00059">parlai.agents.legacy_agents.seq2seq.utils_v0.Beam.n_best_counter</a>, <a class="el" href="torch__generator__agent_8py_source.html#l00787">parlai.core.torch_generator_agent.TreeSearch.n_best_counter</a>, and <a class="el" href="torch__agent__v1_8py_source.html#l01070">parlai.agents.legacy_agents.seq2seq.torch_agent_v1.Beam.n_best_counter</a>.</p>
 
 </div>
 </div>
@@ -630,7 +573,7 @@ penalizes long utterances.
 </pre> 
 <p>Reimplemented in <a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1NucleusSampling.html#a91abde2fb2dccf5cd0564825ddc5ea4d">parlai.core.torch_generator_agent.NucleusSampling</a>, <a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1TopKSampling.html#a3ca83b8ee8aff13c05afbb973f948b6f">parlai.core.torch_generator_agent.TopKSampling</a>, <a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1BeamSearch.html#a3d67c12c987514ad263418ca2d98bbba">parlai.core.torch_generator_agent.BeamSearch</a>, and <a class="el" href="classparlai_1_1core_1_1torch__generator__agent_1_1GreedySearch.html#aa201e7824f50e2830cede9adc4bffcd6">parlai.core.torch_generator_agent.GreedySearch</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00822">822</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="torch__generator__agent_8py_source.html#l00807">807</a> of file <a class="el" href="torch__generator__agent_8py_source.html">torch_generator_agent.py</a>.</p>
 
 </div>
 </div>

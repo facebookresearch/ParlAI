@@ -42,13 +42,13 @@ $(function() {
 <div class="title">Self-feeding Chatbot </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md183"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md181"></a>
 Paper information</h1>
 <p>Braden Hancock, Antoine Bordes, Pierre-Emmanuel Mazaré, Jason Weston. <em><a href="https://arxiv.org/abs/1901.05415">Learning from Dialogue after Deployment: Feed Yourself, Chatbot!</a></em>. To appear in ACL 2019.</p>
-<h1><a class="anchor" id="autotoc_md184"></a>
+<h1><a class="anchor" id="autotoc_md182"></a>
 Abstract</h1>
 <p>The majority of conversations a dialogue agent sees over its lifetime occur after it has already been trained and deployed, leaving a vast store of potential training signal untapped. In this work, we propose the self-feeding chatbot, a dialogue agent with the ability to extract new training examples from the conversations it participates in. As our agent engages in conversation, it also estimates user satisfaction in its responses. When the conversation appears to be going well, the user’s responses become new training examples to imitate. When the agent believes it has made a mistake, it asks for feedback; learning to predict the feedback that will be given improves the chatbot’s dialogue abilities further. On the PersonaChat chit-chat dataset with over 131k training examples, we find that learning from dialogue with a self- feeding chatbot significantly improves performance, regardless of the amount of traditional supervision.</p>
-<h1><a class="anchor" id="autotoc_md185"></a>
+<h1><a class="anchor" id="autotoc_md183"></a>
 Citation</h1>
 <p>If you use the dataset or models in your own work, please cite with the following BibTex entry: </p><pre class="fragment">@inproceedings{hancock2019feed,
   author={Braden Hancock and Antoine Bordes and Pierre-Emmanuel Mazar\'{e} and Jason Weston},
@@ -57,10 +57,10 @@ Citation</h1>
   url={https://arxiv.org/abs/1901.05415},
   year={2019},
 }
-</pre><h1><a class="anchor" id="autotoc_md186"></a>
+</pre><h1><a class="anchor" id="autotoc_md184"></a>
 Code Instructions</h1>
 <p>Once you have <a href="https://github.com/facebookresearch/ParlAI/#installing-parlai">installed ParlAI</a>, follow the instructions below.</p>
-<h2><a class="anchor" id="autotoc_md187"></a>
+<h2><a class="anchor" id="autotoc_md185"></a>
 Download the data</h2>
 <p>Running the commands to train or chat with the models will automatically download the data for you. Alternatively, you can manually download the data by running <code>python <a class="el" href="download__data_8py_source.html">projects/self_feeding/download_data.py</a></code>. This will download the following files to <code>data/self_feeding/</code>:</p>
 <ul>
@@ -77,23 +77,23 @@ Download the data</h2>
 <li><code>train_hh131k_hb60k.txt</code>: The result of <code>cat train_hh.txt train_hb60k.txt &gt; train_hh131k_hb60k.txt</code></li>
 </ul>
 <p>For more context on the scenarios in which these data were collected (including screenshots of crowdworker interfaces), refer to the paper. In this distribution, we include all data collected of each type. To recreate the exact datasets used in the paper, keep only the first X lines of each file such that the resulting sets match the sizes reported in Table 1.</p>
-<h2><a class="anchor" id="autotoc_md188"></a>
+<h2><a class="anchor" id="autotoc_md186"></a>
 Train a model</h2>
 <p>To train a model, use the standard <code>ParlAI</code> protocol with <code>train_model.py</code>. The following commands assume that you have set the following environment variables:</p>
 <div class="fragment"><div class="line">export PARLAIHOME=/path/to/ParlAI</div>
 <div class="line">export MODEL=/path/to/model</div>
 </div><!-- fragment --><p>You may require a GPU to train a model to convergence in a reasonable amount of time. On a P100 GPU, these training commands take approximately 10 minutes to converge.</p>
-<h3><a class="anchor" id="autotoc_md189"></a>
+<h3><a class="anchor" id="autotoc_md187"></a>
 Train on the DIALOGUE (HH) examples</h3>
 <p>Here is a minimal command for training on the DIALOGUE task using Human-Human (HH) examples:</p>
 <div class="fragment"><div class="line">python examples/train_model.py -t self_feeding:dialog --model projects.self_feeding.self_feeding_agent:SelfFeedingAgent --model-file /tmp/mymodel1 -bs 128</div>
 </div><!-- fragment --><p>Or to recreate the results in the paper for training on 131k HH examples with the same hyperparameters that we used, run the following:</p>
 <div class="fragment"><div class="line">python examples/train_model.py -t self_feeding:dialog --model-file /tmp/mymodel2 -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md190"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md188"></a>
 Train on DIALOGUE (HH) + DIALOGUE (HB) examples</h3>
 <p>To train on both HH and HB DIALOGUE examples, point the model to a train file that includes examples from both sets. For example, if you combined 131k HH DIALOGUE examples and 60k HB dialogue examples into a file called <code>train_hh131k_hb60k.txt</code>, you could add the following flag to train on that combined file for the DIALOGUE task:</p>
 <div class="fragment"><div class="line">--dia-train train_hh131k_hb60k.txt</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md191"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md189"></a>
 Train on DIALOGUE (HH) + FEEDBACK examples</h3>
 <p>To train on more than one task (such as DIALOGUE and FEEDBACK), modify the command for training on DIALOGUE (HH) alone as follows:</p>
 <ul>
@@ -101,20 +101,20 @@ Train on DIALOGUE (HH) + FEEDBACK examples</h3>
 </ul>
 <p>Putting this all together, the command to recreate the 131k HH + 60k FB result from the paper is as follows (as reported in Table 9 in the paper, this setting had the same optimal hyperparameter settings as 131k HH):</p>
 <div class="fragment"><div class="line">python examples/train_model.py -t self_feeding:diafee --model-file /tmp/mymodel3 -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md192"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md190"></a>
 Train on DIALOGUE (HH) + DIALOGUE (HB) + FEEDBACK (FB) + SATISFACTION (ST) examples</h3>
 <p>You can train on all three tasks at once with the command below. </p><div class="fragment"><div class="line">python examples/train_model.py -t self_feeding:all --model-file /tmp/mymodel4 -ltim 5 -vtim 10 -vp 50 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 500 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 --dia-train train_hh131k_hb60k.txt -vmt dia_acc -vmm max</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md193"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md191"></a>
 Evaluate a trained model</h3>
 <p>To evaluate a model, use the following command, which specifies which teacher to use (the one with all three tasks), which splits to test on (<code>test</code> or <code>valid</code>), and what batch size to use (larger will evaluate faster): </p><div class="fragment"><div class="line">python examples/eval_model.py -mf /tmp/mymodel1 -t self_feeding:all --datatype test -bs 20</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md194"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md192"></a>
 Using a pretrained Model</h2>
 <p>Running any of the following commands will automatically download a pretrained model and place it in <code>data/models/self_feeding</code>. You can then evaluate this model on the corpus, or even chat with it live!</p>
-<h3><a class="anchor" id="autotoc_md195"></a>
+<h3><a class="anchor" id="autotoc_md193"></a>
 Evaluating the pretrained model</h3>
 <p>You can</p>
 <div class="fragment"><div class="line">python examples/eval_model.py -mf zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model -t self_feeding:all --datatype test -bs 20</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md196"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md194"></a>
 Chat with a pretrained model</h3>
 <p>To chat with a model that's already been trained, use the <code>interactive.py</code> script. You can add the flag <code>--request-feedback true</code> to have the model ask for feedback based on its estimate of your satisfaction with the conversation. </p><div class="fragment"><div class="line">python projects/self_feeding/interactive.py --model-file zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model --no-cuda</div>
 </div><!-- fragment --><p>You can change the filename to any of your own models to interactive with a model you have trained. </p>

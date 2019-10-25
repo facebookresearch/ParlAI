@@ -43,7 +43,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>The <b>language model</b> is an agent which trains an RNN on a language modeling task. It is adapted from the language model featured in Pytorch's examples repo <a href="https://github.com/pytorch/examples/tree/master/word_language_model">here</a>.</p>
-<h1><a class="anchor" id="autotoc_md27"></a>
+<h1><a class="anchor" id="autotoc_md25"></a>
 Basic Examples</h1>
 <p>Train a language model with embedding size 128 and sequence length 30 on the Persona-Chat task. </p><div class="fragment"><div class="line">python examples/train_model.py -m language_model -t personachat -esz 128 -sl 30 -mf /tmp/LM_personachat_test.mdl</div>
 </div><!-- fragment --><p>After training, load and evaluate that model on the Persona-Chat test set. </p><div class="fragment"><div class="line">python examples/eval_model.py -m language_model -t personachat -mf /tmp/LM_personachat_test.mdl -dt test</div>

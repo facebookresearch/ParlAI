@@ -1,15 +1,15 @@
 <map id="parlai.core.torch_agent.History.update_history" name="parlai.core.torch_agent.History.update_history">
 <area shape="rect" id="node1" title=" " alt="" coords="5,835,164,877"/>
-<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a0ff2589aa6e8439ed38ebf9ee379753e" title=" " alt="" coords="249,30,437,71"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a69a72e46d8385ce508bf2df1290db6b8" title=" " alt="" coords="264,95,421,166"/>
-<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a518f4ee2c18240f53a811000695bdc6b" title=" " alt="" coords="249,190,437,231"/>
-<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#af48ed0732859ee4aaad402ae07b8827f" title=" " alt="" coords="263,255,423,297"/>
-<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a579428bc225f4f6e47ce52b7f94ef592" title=" " alt="" coords="263,321,422,362"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#a7151ba0c843bd32a0d9c5376fbf9c803" title=" " alt="" coords="255,387,430,443"/>
-<area shape="rect" id="node8" href="$classparlai_1_1core_1_1agents_1_1Agent.html#a27cb8206372681605b00dc28b81a7c39" title=" " alt="" coords="245,467,441,493"/>
-<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a4d9e8962cb44451758ea13b09b8dbd86" title=" " alt="" coords="259,517,427,573"/>
-<area shape="rect" id="node10" href="$classparlai_1_1agents_1_1drqa_1_1utils_1_1AverageMeter.html#adf03b2f21b820b30c0bf68334bda0b6e" title=" " alt="" coords="264,598,421,639"/>
-<area shape="rect" id="node11" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#af0e1160f17d43ace896f71c190e4e5ec" title=" " alt="" coords="257,663,429,705"/>
+<area shape="rect" id="node2" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a0ff2589aa6e8439ed38ebf9ee379753e" title=" " alt="" coords="249,29,437,70"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a69a72e46d8385ce508bf2df1290db6b8" title=" " alt="" coords="264,94,421,165"/>
+<area shape="rect" id="node4" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a518f4ee2c18240f53a811000695bdc6b" title=" " alt="" coords="249,189,437,230"/>
+<area shape="rect" id="node5" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#af48ed0732859ee4aaad402ae07b8827f" title=" " alt="" coords="263,254,423,295"/>
+<area shape="rect" id="node6" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a579428bc225f4f6e47ce52b7f94ef592" title=" " alt="" coords="263,319,422,361"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#a7151ba0c843bd32a0d9c5376fbf9c803" title=" " alt="" coords="255,385,430,441"/>
+<area shape="rect" id="node8" href="$classparlai_1_1core_1_1agents_1_1Agent.html#a27cb8206372681605b00dc28b81a7c39" title=" " alt="" coords="245,465,441,492"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1drqa_1_1utils_1_1AverageMeter.html#adf03b2f21b820b30c0bf68334bda0b6e" title=" " alt="" coords="264,517,421,558"/>
+<area shape="rect" id="node10" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#af0e1160f17d43ace896f71c190e4e5ec" title=" " alt="" coords="257,582,429,623"/>
+<area shape="rect" id="node13" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a4d9e8962cb44451758ea13b09b8dbd86" title=" " alt="" coords="259,648,427,704"/>
 <area shape="rect" id="node14" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a82e02d0b34707b2e00b95bc659411bae" title=" " alt="" coords="263,729,422,770"/>
 <area shape="rect" id="node30" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1memnn__v0_1_1MemnnAgent.html#ad365b2e33983158fbf7581d361a74246" title=" " alt="" coords="227,795,458,851"/>
 <area shape="rect" id="node31" href="$classparlai_1_1core_1_1agents_1_1Teacher.html#a3b1fe4cf4ea53c9b2ce28435391ad081" title=" " alt="" coords="238,1085,447,1112"/>
@@ -24,8 +24,8 @@
 <area shape="rect" id="node47" href="$classparlai_1_1core_1_1teachers_1_1StreamDialogData.html#a6375bd13d685da4b3449caaafcc5ec13" title=" " alt="" coords="251,1543,434,1585"/>
 <area shape="rect" id="node49" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1torch__agent__v1_1_1TorchAgent.html#a93e935c0d2d589d8990ff14d6e528c4d" title=" " alt="" coords="249,1136,436,1192"/>
 <area shape="rect" id="node50" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#a13b4576dd3a045944ff1b44cb88a2764" title=" " alt="" coords="248,1609,437,1650"/>
-<area shape="rect" id="node12" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title=" " alt="" coords="582,57,754,98"/>
-<area shape="rect" id="node13" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title=" " alt="" coords="563,5,773,32"/>
+<area shape="rect" id="node11" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a23f1b4d0d81a1e63ecd8dded6de37578" title=" " alt="" coords="582,57,754,98"/>
+<area shape="rect" id="node12" href="$classparlai_1_1core_1_1metrics_1_1Metrics.html#ab2f0f769ef4b027ec11347dd07ab7643" title=" " alt="" coords="563,5,773,32"/>
 <area shape="rect" id="node15" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__doc__ranker_1_1TfidfDocRanker.html#a44274f0f828a51c50c641317663e56eb" title=" " alt="" coords="569,363,767,419"/>
 <area shape="rect" id="node16" href="$classparlai_1_1agents_1_1remote__agent_1_1remote__agent_1_1ParsedRemoteAgent.html#af4dd0281fd7d6ceb4936f27eaab13f06" title=" " alt="" coords="551,443,785,499"/>
 <area shape="rect" id="node17" href="$classparlai_1_1core_1_1torch__agent_1_1History.html#a7758c7e9d42442ac228b820be4298d84" title=" " alt="" coords="589,523,747,565"/>

@@ -46,7 +46,7 @@ $(function() {
 <li>pretrained transformers on Reddit and Wikipedia + Toronto Books that can be used as a base for pretraining</li>
 <li>pretrained models fine tuned on ConvAI2 for the bi-encoder and poly-encoder The polyencoder scores 89+ on convai2 valid set and is fast enough to interact in real time with 100k candidates (which are provided.)</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md92"></a>
+<h2><a class="anchor" id="autotoc_md90"></a>
 Interacting with a pretrained model on Convai2</h2>
 <p>Run this command: (assumes your model zoo is in the default ./data/models) </p><div class="fragment"><div class="line">python examples/interactive.py -m transformer/polyencoder \</div>
 <div class="line">    -mf zoo:pretrained_transformers/model_poly/model \</div>
@@ -61,9 +61,9 @@ Interacting with a pretrained model on Convai2</h2>
 <div class="line">[Polyencoder]: i am more of a tea guy . i get my tea from china .</div>
 </div><!-- fragment --><p>Note the polyencoder gives 89+ hits@1/20 on convai2, however, it expects data that is close to the dataset. If you do not include the multiple 'your persona: ...<br  />
 ' at the beginning it will answer nonsense.</p>
-<h2><a class="anchor" id="autotoc_md93"></a>
+<h2><a class="anchor" id="autotoc_md91"></a>
 Fine tuning on your own tasks</h2>
-<h3><a class="anchor" id="autotoc_md94"></a>
+<h3><a class="anchor" id="autotoc_md92"></a>
 bi-encoder</h3>
 <p>Execute this to train a biencoder scoring 86+ on Convai2 valid set (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )</p>
 <div class="fragment"><div class="line">python -u examples/train_model.py \</div>
@@ -85,7 +85,7 @@ bi-encoder</h3>
 <div class="line">     --embeddings-scale False --n-segments 2 --learn-embeddings True \</div>
 <div class="line">     --share-word-embeddings False --dict-endtoken __start__ --fp16 True \</div>
 <div class="line">     --model-file &lt;YOUR MODEL FILE&gt;</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md95"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md93"></a>
 poly-encoder</h3>
 <p>Execute this to train a poly-encoder scoring 89+ on Convai2 valid set (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )</p>
 <div class="fragment"><div class="line">python -u examples/train_model.py \</div>
@@ -105,7 +105,7 @@ poly-encoder</h3>
 <div class="line">  --learn-embeddings True --polyencoder-type n_first --poly-n-codes 64 \</div>
 <div class="line">  --poly-attention-type basic --dict-endtoken __start__ \</div>
 <div class="line">  --model-file &lt;YOUR MODEL FILE&gt;</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md96"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md94"></a>
 cross-encoder</h3>
 <p>Execute this to train a cross-encoder scoring 90+ on Convai2 valid set (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )</p>
 <div class="fragment"><div class="line">python -u examples/train_model.py \</div>

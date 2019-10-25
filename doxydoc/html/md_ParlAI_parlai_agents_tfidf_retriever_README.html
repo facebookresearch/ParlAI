@@ -43,7 +43,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>The <em>TFIDF Retriever</em> is an agent that constructs a <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf">TF-IDF</a> matrix for all entries in a given task. It generates responses via returning the highest-scoring documents for a query. It uses a SQLite database for storing the sparse tfidf matrix, adapted from <a href="http://github.com/facebookresearch/DrQA/">here</a>.</p>
-<h1><a class="anchor" id="autotoc_md49"></a>
+<h1><a class="anchor" id="autotoc_md47"></a>
 Basic Examples</h1>
 <p>Construct a TFIDF matrix for use in retrieval for the personachat task </p><div class="fragment"><div class="line">python examples/train_model.py -m tfidf_retriever -t personachat -mf /tmp/personachat_tfidf -dt train:ordered -eps 1</div>
 </div><!-- fragment --><p> After construction, load and evaluate that model on the Persona-Chat test set. </p><div class="fragment"><div class="line">python examples/eval_model.py -t personachat -mf /tmp/personachat_tfidf -dt test</div>

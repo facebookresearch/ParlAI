@@ -43,7 +43,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><code>parlai/mturk/core</code> contains several files and folders that are needed for proper MTurk integration:</p>
-<h2><a class="anchor" id="autotoc_md65"></a>
+<h2><a class="anchor" id="autotoc_md63"></a>
 Folders</h2>
 <ul>
 <li><b>react_server/</b>: contains the build files for running a task that uses a react frontend. This folder gets cloned, built, and then pushed to the hosting server (usually heroku).</li>
@@ -51,7 +51,7 @@ Folders</h2>
 <li><b>server_legacy/</b>: contains the build files for running a task that uses the old templated HTML frontend, and is no longer maintained. This folder gets cloned, built, and then pushed to the hosting server (usually heroku).</li>
 <li><b>tests/</b>: contains all of the tests for the MTurk functionality, split up by the various stages that they touch.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md66"></a>
+<h2><a class="anchor" id="autotoc_md64"></a>
 Files</h2>
 <ul>
 <li><b>agents.py</b>: contains the <code>MTurkAgent</code> class, which is responsible for both acting as a proper agent in a regular ParlAI world while also keeping the relevant MTurk HIT assignment state.</li>
@@ -65,16 +65,16 @@ Files</h2>
 <li><b>worker_manager.py</b>: class that is responsible for maintaining and acting directly on the state of workers as they complete tasks, disconnect, change worlds, and more.</li>
 <li><b>worlds.py</b>: contains the basic onboarding and task worlds that should be used for MTurk tasks, as well as a description of how the underlying <code>MTurkDataWorld</code> handles saving data for a task.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md67"></a>
+<h1><a class="anchor" id="autotoc_md65"></a>
 Created</h1>
 <p>parlai/mturk/core on your local machine may also create a few folders and files depending on your usage:</p>
-<h2><a class="anchor" id="autotoc_md68"></a>
+<h2><a class="anchor" id="autotoc_md66"></a>
 Folders</h2>
 <ul>
 <li><b>heroku_server_.../</b>: contains the build files for a server that was started using ParlAI. If this remains after no servers are running, it exists because a server failed to cleanup the local files, and the folder can be deleted freely.</li>
 <li><b>heroku-cli-v.../</b>: contains the bin files required to run heroku. These are stored here where we know where they are so that the server setup scripts don't need to search for existing heroku installations elsewhere.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md69"></a>
+<h2><a class="anchor" id="autotoc_md67"></a>
 Files</h2>
 <ul>
 <li><b>disconnects.pickle</b>: a pickle file containing current outstanding disconnects. Used to track bad behavior from agents who have disconnected on multiple tasks. In the process of being deprecated in favor of storage in the state database (<code>pmt_data.db</code>) using the <code>use_db</code> flag.</li>

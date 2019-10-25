@@ -59,7 +59,7 @@ $(function() {
 </ul>
 <p>ParlAI is described in the following paper: <a href="https://arxiv.org/abs/1705.06476">“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476</a>.</p>
 <p>See the <a href="https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md">news page</a> for the latest additions &amp; updates, and the website <a href="http://parl.ai">http://parl.ai</a> for further docs.</p>
-<h2><a class="anchor" id="autotoc_md213"></a>
+<h2><a class="anchor" id="autotoc_md211"></a>
 Installing ParlAI</h2>
 <p>ParlAI currently requires Python3 and <a href="https://pytorch.org">Pytorch</a> 1.1 or newer. Dependencies of the core modules are listed in <code>requirement.txt</code>. Some models included (in <code>parlai/agents</code>) have additional requirements.</p>
 <p>Run the following commands to clone the repository and install ParlAI:</p>
@@ -68,7 +68,7 @@ Installing ParlAI</h2>
 </div><!-- fragment --><p>This will link the cloned directory to your site-packages.</p>
 <p>This is the recommended installation procedure, as it provides ready access to the examples and allows you to modify anything you might need. This is especially useful if you if you want to submit another task to the repository.</p>
 <p>All needed data will be downloaded to <code>~/ParlAI/data</code>, and any non-data files if requested will be downloaded to <code>~/ParlAI/downloads</code>. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.</p>
-<h2><a class="anchor" id="autotoc_md214"></a>
+<h2><a class="anchor" id="autotoc_md212"></a>
 Documentation</h2>
 <ul>
 <li><a href="https://parl.ai/docs/tutorial_quick.html">Quick Start</a></li>
@@ -81,13 +81,13 @@ Documentation</h2>
 <li><a href="http://parl.ai/docs/tutorial_mturk.html">Plug into MTurk</a></li>
 <li><a href="http://parl.ai/docs/tutorial_messenger.html">Plug into Facebook Messenger</a></li>
 </ul>
-<h2><a class="anchor" id="autotoc_md215"></a>
+<h2><a class="anchor" id="autotoc_md213"></a>
 Examples</h2>
 <p>A large set of examples can be found in <a href="./examples">this directory</a>. Here are a few of them. Note: If any of these examples fail, check the <a href="#requirements">requirements section</a> to see if you have missed something.</p>
 <p>Display 10 random examples from the SQuAD task </p><div class="fragment"><div class="line">python examples/display_data.py -t squad</div>
 </div><!-- fragment --><p>Evaluate an IR baseline model on the validation set of the Personachat task: </p><div class="fragment"><div class="line">python examples/eval_model.py -m ir_baseline -t personachat -dt valid</div>
 </div><!-- fragment --><p>Train a single layer transformer on personachat (requires pytorch and torchtext). Detail: embedding size 300, 4 attention heads, 2 epochs using batchsize 64, word vectors are initialized with fasttext and the other elements of the batch are used as negative during training. </p><div class="fragment"><div class="line">python examples/train_model.py -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md216"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md214"></a>
 Code Organization</h2>
 <p>The code is set up into several main directories:</p>
 <ul>
@@ -99,13 +99,13 @@ Code Organization</h2>
 <li><a href="./parlai/messenger"><b>messenger</b></a>: contains code for interfacing with Facebook Messenger</li>
 <li><a href="./parlai/zoo"><b>zoo</b></a>: contains code to directly download and use pretrained models from our model zoo</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md217"></a>
+<h2><a class="anchor" id="autotoc_md215"></a>
 Support</h2>
 <p>If you have any questions, bug reports or feature requests, please don't hesitate to post on our <a href="https://github.com/facebookresearch/ParlAI/issues">Github Issues page</a>.</p>
-<h2><a class="anchor" id="autotoc_md218"></a>
+<h2><a class="anchor" id="autotoc_md216"></a>
 The Team</h2>
 <p>ParlAI is currently maintained by Emily Dinan, Alexander H. Miller, Stephen Roller, Kurt Shuster, Jack Urbanek and Jason Weston. A non-exhaustive list of other major contributors includes: Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra, Filipe de Avila Belbute Peres and Chao Pan.</p>
-<h2><a class="anchor" id="autotoc_md219"></a>
+<h2><a class="anchor" id="autotoc_md217"></a>
 Citation</h2>
 <p>Please cite the <a href="https://arxiv.org/abs/1705.06476">arXiv paper</a> if you use ParlAI in your work:</p>
 <div class="fragment"><div class="line">@article{miller2017parlai,</div>
@@ -114,7 +114,7 @@ Citation</h2>
 <div class="line">  journal={arXiv preprint arXiv:{1705.06476}},</div>
 <div class="line">  year={2017}</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md220"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md218"></a>
 License</h2>
 <p>ParlAI is MIT licensed. See the LICENSE file for details. </p>
 </div></div><!-- contents -->

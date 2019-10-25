@@ -64,7 +64,7 @@ $(function() {
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">from</span> <a class="code" href="namespaceparlai_1_1core_1_1params.html">parlai.core.params</a> <span class="keyword">import</span> ParlaiParser</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">from</span> <a class="code" href="namespaceparlai_1_1core_1_1agents.html">parlai.core.agents</a> <span class="keyword">import</span> create_agent</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">from</span> <a class="code" href="namespaceparlai_1_1core_1_1worlds.html">parlai.core.worlds</a> <span class="keyword">import</span> create_task</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">from</span> <a class="code" href="namespaceparlai_1_1utils_1_1safety.html">parlai.utils.safety</a> <span class="keyword">import</span> OffensiveLanguageDetector</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">from</span> <a class="code" href="namespaceparlai_1_1utils_1_1safety.html">parlai.utils.safety</a> <span class="keyword">import</span> OffensiveStringMatcher</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">from</span> <a class="code" href="namespaceparlai_1_1utils_1_1misc.html">parlai.utils.misc</a> <span class="keyword">import</span> TimeLogger</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">import</span> random</div>
@@ -95,7 +95,7 @@ $(function() {
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="comment"># Create model and assign it to the specified task</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    agent = create_agent(opt, requireModelExists=<span class="keyword">True</span>)</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    world = create_task(opt, agent)</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    bad = OffensiveLanguageDetector()</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    bad = OffensiveStringMatcher()</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">if</span> print_parser:</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="comment"># Show arguments after loading model</span></div>

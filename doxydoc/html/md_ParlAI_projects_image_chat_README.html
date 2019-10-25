@@ -44,14 +44,14 @@ $(function() {
 <div class="contents">
 <div class="textblock"><p>Kurt Shuster, Samuel Humeau, Antoine Bordes, Jason Weston</p>
 <p>Please see <a href="https://arxiv.org/abs/1811.00945">Shuster et al. (2018)</a> for more details.</p>
-<h1><a class="anchor" id="autotoc_md127"></a>
+<h1><a class="anchor" id="autotoc_md125"></a>
 Abstract</h1>
 <p>To achieve the long-term goal of machines being able to engage humans in conversation, our models should be engaging. We focus on communication grounded in images, whereby a dialogue is conducted based on a given photo, a setup that is naturally engaging to humans (Hu et al., 2014). We collect a large dataset of grounded human-human conversations, where humans are asked to play the role of a given personality, as the use of personality in conversation has also been shown to be engaging (Shuster et al., 2018). Our dataset, ImageChat, consists of 202k dialogues and 401k utterances over 202k images using 215 possible personality traits. We then design a set of natural architectures using state-of-the-art image and text representations, considering various ways to fuse the components. Automatic metrics and human evaluations show the efficacy of approach, in particular where our best performing model is preferred over human conversationalists 47.7% of the time.</p>
-<h1><a class="anchor" id="autotoc_md128"></a>
+<h1><a class="anchor" id="autotoc_md126"></a>
 Dataset</h1>
 <p>The Image-Chat dataset can be accessed via ParlAI, with <code>-t image_chat</code>.</p>
 <p>Additionally, the ParlAI MTurk tasks for data collection and human evaluation are <a href="https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/image_chat">made available</a> in ParlAI.</p>
-<h1><a class="anchor" id="autotoc_md129"></a>
+<h1><a class="anchor" id="autotoc_md127"></a>
 Leaderboards for Image-Chat Task</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -63,7 +63,7 @@ Leaderboards for Image-Chat Task</h1>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">TransResNet MM-Sum, No Images  </td><td class="markdownTableBodyNone"><a href="https://arxiv.org/abs/1811.00945">Shuster et al. (2018)</a>  </td><td class="markdownTableBodyNone">35.4   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md130"></a>
+<h1><a class="anchor" id="autotoc_md128"></a>
 Pretrained Models</h1>
 <p>We provide our best model trained with ResNet152 image features. To evaluate the model, specify the following command: </p><pre class="fragment">  python examples/eval_model.py \
       -bs 128 -t image_chat
@@ -75,10 +75,10 @@ Pretrained Models</h1>
   'third_round+': {'hits@1/100': 0.4147, 'loss': -0.002001, 'med_rank': 2.0}}
 </pre><p>Additionally, we provide an interactive script that you can use to view outputs of our pretrained model. Simply run the following command: </p><pre class="fragment">  python projects/image_chat/interactive.py \
   -mf models:image_chat/transresnet_multimodal/model
-</pre><h1><a class="anchor" id="autotoc_md131"></a>
+</pre><h1><a class="anchor" id="autotoc_md129"></a>
 Model Examples</h1>
 <p><img src="Examples.png" alt="" width="85%" class="inline"/></p>
-<h1><a class="anchor" id="autotoc_md132"></a>
+<h1><a class="anchor" id="autotoc_md130"></a>
 Citation</h1>
 <p>If you use the dataset or models in your own work, please cite with the following BibText entry: </p><pre class="fragment">@article{DBLP:journals/corr/abs-1811-00945,
 author    = {Kurt Shuster and

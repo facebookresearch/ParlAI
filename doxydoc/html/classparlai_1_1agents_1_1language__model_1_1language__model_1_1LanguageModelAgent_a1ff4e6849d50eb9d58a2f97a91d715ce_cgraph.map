@@ -1,10 +1,8 @@
 <map id="parlai.agents.language_model.language_model.LanguageModelAgent.predict" name="parlai.agents.language_model.language_model.LanguageModelAgent.predict">
-<area shape="rect" id="node1" title=" " alt="" coords="5,205,228,261"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#aa3de87163cd61e4195afc0ccf801699b" title=" " alt="" coords="286,5,509,61"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#aeb1136a4ae2a2a1e8c0d5a7b75d9898f" title=" " alt="" coords="286,85,509,141"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a982862ee1a5b6ee2a7da61d6018fb4a9" title=" " alt="" coords="276,165,519,221"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#af474c46339e2e0c881f8b8b81f5f9b7f" title=" " alt="" coords="286,245,509,301"/>
-<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a334f6bd6a11dba7b87f7ea0f8db23a42" title=" " alt="" coords="276,325,519,381"/>
-<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#ad7b6363acdfb3d009cd9a3bcc6206faf" title=" " alt="" coords="286,405,509,461"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#aa54ff09a8edc6ae51ac8be33aeb4acc8" title=" " alt="" coords="567,45,789,101"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,125,228,181"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#aa3de87163cd61e4195afc0ccf801699b" title=" " alt="" coords="276,5,499,61"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#aeb1136a4ae2a2a1e8c0d5a7b75d9898f" title=" " alt="" coords="276,85,499,141"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#af474c46339e2e0c881f8b8b81f5f9b7f" title=" " alt="" coords="276,165,499,221"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#ad7b6363acdfb3d009cd9a3bcc6206faf" title=" " alt="" coords="276,245,499,301"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#aa54ff09a8edc6ae51ac8be33aeb4acc8" title=" " alt="" coords="547,45,769,101"/>
 </map>

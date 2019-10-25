@@ -44,16 +44,16 @@ $(function() {
 <div class="contents">
 <div class="textblock"><p>Kurt Shuster, Samuel Humeau, Hexiang Hu, Antoine Bordes, Jason Weston</p>
 <p>Please see <a href="https://arxiv.org/abs/1810.10665">Shuster et al. (CVPR 2019)</a> for more details.</p>
-<h1><a class="anchor" id="autotoc_md157"></a>
+<h1><a class="anchor" id="autotoc_md155"></a>
 Abstract</h1>
 <p>Standard image captioning tasks such as COCO and Flickr30k are factual, neutral in tone and (to a human) state the obvious (e.g., "a man playing a guitar"). While such tasks are useful to verify that a machine understands the content of an image, they are not engaging to humans as captions. With this in mind we define a new task, Personality-Captions, where the goal is to be as engaging to humans as possible by incorporating controllable style and personality traits. We collect and release a large dataset of 201,858 of such captions conditioned over 215 possible traits. We build models that combine existing work from (i) sentence representations (Mazare et al., 2018) with Transformers trained on 1.7 billion dialogue examples; and (ii) image representations (Mahajan et al., 2018) with ResNets trained on 3.5 billion social media images. We obtain state-of-the-art performance on Flickr30k and COCO, and strong performance on our new task. Finally, online evaluations validate that our task and models are engaging to humans, with our best model close to human performance.</p>
-<h1><a class="anchor" id="autotoc_md158"></a>
+<h1><a class="anchor" id="autotoc_md156"></a>
 Dataset</h1>
 <p>The Personality-Captions dataset can be accessed via ParlAI, with <code>-t personality_captions</code>. See the <a href="http://www.parl.ai/static/docs/tutorial_quick.html">ParlAI quickstart for help</a>.</p>
 <p>Additionally, the ParlAI MTurk tasks for data collection and human evaluation are <a href="https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/personality_captions">made available</a> in ParlAI.</p>
-<h1><a class="anchor" id="autotoc_md159"></a>
+<h1><a class="anchor" id="autotoc_md157"></a>
 Leaderboards for Personality-Captions Task</h1>
-<h2><a class="anchor" id="autotoc_md160"></a>
+<h2><a class="anchor" id="autotoc_md158"></a>
 Retrieval Models</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -65,7 +65,7 @@ Retrieval Models</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">TransResNet, No Images  </td><td class="markdownTableBodyNone"><a href="https://arxiv.org/abs/1810.10665">Shuster et al. (2019)</a>  </td><td class="markdownTableBodyNone">25.8   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md161"></a>
+<h2><a class="anchor" id="autotoc_md159"></a>
 Generative Models</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -77,7 +77,7 @@ Generative Models</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">ShotTell, ResNeXt-IG-3.5B  </td><td class="markdownTableBodyNone"><a href="https://arxiv.org/abs/1810.10665">Shuster et al. (2019)</a>  </td><td class="markdownTableBodyNone">38.4  </td><td class="markdownTableBodyNone">7.3  </td><td class="markdownTableBodyNone">24.3  </td><td class="markdownTableBodyNone">9.6  </td><td class="markdownTableBodyNone">1.6   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md162"></a>
+<h1><a class="anchor" id="autotoc_md160"></a>
 Pretrained Models</h1>
 <p>We provide our best model trained with ResNet152 image features. To evaluate the model, specify the following command: </p><pre class="fragment">  python examples/eval_model.py \
       -bs 128 -t personality_captions
@@ -89,10 +89,10 @@ Pretrained Models</h1>
 </pre><p>Additionally, we provide an interactive script that you can use to view outputs of our pretrained model. Simply run the following command: </p><pre class="fragment">  python projects/personality_captions/interactive.py \
   -mf models:personality_captions/transresnet/model
 </pre><p>Which will allow you to upload an image and choose a personality for the model to use.</p>
-<h1><a class="anchor" id="autotoc_md163"></a>
+<h1><a class="anchor" id="autotoc_md161"></a>
 Model Examples</h1>
 <p><img src="Examples.png" alt="" width="85%" class="inline"/></p>
-<h1><a class="anchor" id="autotoc_md164"></a>
+<h1><a class="anchor" id="autotoc_md162"></a>
 Citation</h1>
 <p>If you use the dataset or models in your own work, please cite with the following BibText entry: </p><pre class="fragment">    @InProceedings{Shuster_2019_CVPR,
     author = {Shuster, Kurt and Humeau, Samuel and Hu, Hexiang and Bordes, Antoine and Weston, Jason},

@@ -1,0 +1,5 @@
+<map id="parlai.utils.safety.OffensiveLanguageClassifier.contains_offensive_language" name="parlai.utils.safety.OffensiveLanguageClassifier.contains_offensive_language">
+<area shape="rect" id="node1" title=" " alt="" coords="268,31,455,87"/>
+<area shape="rect" id="node2" href="$classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html#a86de8f64f68732b91d4cdfdf65dd841c" title=" " alt="" coords="5,5,220,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a89e75aea403630f53f41502fead9708e" title=" " alt="" coords="21,71,205,112"/>
+</map>

@@ -39,124 +39,120 @@
   <UL>
   <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_drqa_README.html#autotoc_md19"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
-<LI><OBJECT type="text/sitemap"><param name="Name" value="Example Seq2Seq"><param name="Local" value="md_ParlAI_parlai_agents_example_seq2seq_README.html"><param name="ImageNumber" value="1"></OBJECT>
-  <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_example_seq2seq_README.html#autotoc_md21"><param name="ImageNumber" value="11"></OBJECT>
-  </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Fairseq"><param name="Local" value="md_ParlAI_parlai_agents_fairseq_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_fairseq_README.html#autotoc_md23"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_fairseq_README.html#autotoc_md21"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="IR Baseline"><param name="Local" value="md_ParlAI_parlai_agents_ir_baseline_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_ir_baseline_README.html#autotoc_md25"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_ir_baseline_README.html#autotoc_md23"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Language Model"><param name="Local" value="md_ParlAI_parlai_agents_language_model_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_language_model_README.html#autotoc_md27"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_language_model_README.html#autotoc_md25"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Local Human"><param name="Local" value="md_ParlAI_parlai_agents_local_human_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_local_human_README.html#autotoc_md29"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_local_human_README.html#autotoc_md27"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="MemNN"><param name="Local" value="md_ParlAI_parlai_agents_memnn_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_memnn_README.html#autotoc_md31"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_memnn_README.html#autotoc_md29"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Random Candidate"><param name="Local" value="md_ParlAI_parlai_agents_random_candidate_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_random_candidate_README.html#autotoc_md33"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_random_candidate_README.html#autotoc_md31"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Agents"><param name="Local" value="md_ParlAI_parlai_agents_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Utility"><param name="Local" value="md_ParlAI_parlai_agents_README.html#autotoc_md35"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Non-neural agents"><param name="Local" value="md_ParlAI_parlai_agents_README.html#autotoc_md36"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Text-based neural networks"><param name="Local" value="md_ParlAI_parlai_agents_README.html#autotoc_md37"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Utility"><param name="Local" value="md_ParlAI_parlai_agents_README.html#autotoc_md33"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Non-neural agents"><param name="Local" value="md_ParlAI_parlai_agents_README.html#autotoc_md34"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Text-based neural networks"><param name="Local" value="md_ParlAI_parlai_agents_README.html#autotoc_md35"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Remote Agent"><param name="Local" value="md_ParlAI_parlai_agents_remote_agent_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_remote_agent_README.html#autotoc_md39"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_remote_agent_README.html#autotoc_md37"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Repeat Label"><param name="Local" value="md_ParlAI_parlai_agents_repeat_label_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_repeat_label_README.html#autotoc_md41"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_repeat_label_README.html#autotoc_md39"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Repeat Query"><param name="Local" value="md_ParlAI_parlai_agents_repeat_query_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_repeat_query_README.html#autotoc_md43"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_repeat_query_README.html#autotoc_md41"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Retriever Reader"><param name="Local" value="md_ParlAI_parlai_agents_retriever_reader_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_retriever_reader_README.html#autotoc_md45"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_retriever_reader_README.html#autotoc_md43"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Starspace"><param name="Local" value="md_ParlAI_parlai_agents_starspace_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_starspace_README.html#autotoc_md47"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_starspace_README.html#autotoc_md45"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="TFIDF Retriever"><param name="Local" value="md_ParlAI_parlai_agents_tfidf_retriever_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_tfidf_retriever_README.html#autotoc_md49"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_tfidf_retriever_README.html#autotoc_md47"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Unigram Agent"><param name="Local" value="md_ParlAI_parlai_agents_unigram_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_unigram_README.html#autotoc_md51"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Basic Examples"><param name="Local" value="md_ParlAI_parlai_agents_unigram_README.html#autotoc_md49"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="README"><param name="Local" value="md_ParlAI_parlai_core_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Description"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_react_server_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_react_server_README.html#autotoc_md53"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_react_server_README.html#autotoc_md54"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_react_server_README.html#autotoc_md51"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_react_server_README.html#autotoc_md52"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Included"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md56"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md57"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md54"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md55"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Created"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md58"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Created"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md56"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md59"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md60"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md57"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_dev_README.html#autotoc_md58"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Description"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_react_server_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_react_server_README.html#autotoc_md62"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_react_server_README.html#autotoc_md63"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_react_server_README.html#autotoc_md60"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_react_server_README.html#autotoc_md61"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Included"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md65"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md66"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md63"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md64"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Created"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md67"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Created"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md65"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md68"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md69"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md66"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_legacy_2018_README.html#autotoc_md67"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Description"><param name="Local" value="md_ParlAI_parlai_mturk_core_react_server_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_react_server_README.html#autotoc_md71"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_react_server_README.html#autotoc_md72"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_react_server_README.html#autotoc_md69"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_react_server_README.html#autotoc_md70"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Included"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md74"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md75"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md72"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md73"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Created"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md76"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Created"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md74"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md77"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md78"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Folders"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md75"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Files"><param name="Local" value="md_ParlAI_parlai_mturk_core_README.html#autotoc_md76"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="README"><param name="Local" value="md_ParlAI_parlai_mturk_README.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -164,9 +160,9 @@
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Included"><param name="Local" value="md_ParlAI_parlai_mturk_tasks_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Tasks"><param name="Local" value="md_ParlAI_parlai_mturk_tasks_README.html#autotoc_md80"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Demo Tasks"><param name="Local" value="md_ParlAI_parlai_mturk_tasks_README.html#autotoc_md81"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Legacy Tasks"><param name="Local" value="md_ParlAI_parlai_mturk_tasks_README.html#autotoc_md82"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Tasks"><param name="Local" value="md_ParlAI_parlai_mturk_tasks_README.html#autotoc_md78"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Demo Tasks"><param name="Local" value="md_ParlAI_parlai_mturk_tasks_README.html#autotoc_md79"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Legacy Tasks"><param name="Local" value="md_ParlAI_parlai_mturk_tasks_README.html#autotoc_md80"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Wizard of Wikipedia Data Collection Task"><param name="Local" value="md_ParlAI_parlai_mturk_tasks_wizard_of_wikipedia_README.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -175,7 +171,7 @@
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: AQuA"><param name="Local" value="md_ParlAI_parlai_tasks_aqua_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: bAbI 1k"><param name="Local" value="md_ParlAI_parlai_tasks_babi_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: bAbI 10k"><param name="Local" value="md_ParlAI_parlai_tasks_babi_README.html#autotoc_md85"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: bAbI 10k"><param name="Local" value="md_ParlAI_parlai_tasks_babi_README.html#autotoc_md83"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: BookTest"><param name="Local" value="md_ParlAI_parlai_tasks_booktest_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Children&#39;s Book Test (CBT)"><param name="Local" value="md_ParlAI_parlai_tasks_cbt_README.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -198,7 +194,7 @@
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Dialogue_QE"><param name="Local" value="md_ParlAI_parlai_tasks_dialogue_qe_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Empathetic Dialogues"><param name="Local" value="md_ParlAI_parlai_tasks_empathetic_dialogues_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Description: A dataset of 25k conversations grounded in emotional situations to facilitate training and evaluating dialogue systems. See https://arxiv.org/abs/1811.00207 for more information."><param name="Local" value="md_ParlAI_parlai_tasks_empathetic_dialogues_README.html#autotoc_md86"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Description: A dataset of 25k conversations grounded in emotional situations to facilitate training and evaluating dialogue systems. See https://arxiv.org/abs/1811.00207 for more information."><param name="Local" value="md_ParlAI_parlai_tasks_empathetic_dialogues_README.html#autotoc_md84"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Flickr30k"><param name="Local" value="md_ParlAI_parlai_tasks_flickr30k_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="FromFile Task Agent"><param name="Local" value="md_ParlAI_parlai_tasks_fromfile_README.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -214,9 +210,9 @@
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: MNIST_QA"><param name="Local" value="md_ParlAI_parlai_tasks_mnist_qa_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Movie Dialog QA"><param name="Local" value="md_ParlAI_parlai_tasks_moviedialog_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Movie Dialog QA Recommendations"><param name="Local" value="md_ParlAI_parlai_tasks_moviedialog_README.html#autotoc_md88"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Movie Dialog Recommendations"><param name="Local" value="md_ParlAI_parlai_tasks_moviedialog_README.html#autotoc_md89"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Movie Dialog Reddit"><param name="Local" value="md_ParlAI_parlai_tasks_moviedialog_README.html#autotoc_md90"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Movie Dialog QA Recommendations"><param name="Local" value="md_ParlAI_parlai_tasks_moviedialog_README.html#autotoc_md86"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Movie Dialog Recommendations"><param name="Local" value="md_ParlAI_parlai_tasks_moviedialog_README.html#autotoc_md87"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Movie Dialog Reddit"><param name="Local" value="md_ParlAI_parlai_tasks_moviedialog_README.html#autotoc_md88"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: MS_MARCO"><param name="Local" value="md_ParlAI_parlai_tasks_ms_marco_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: MTurk WikiMovies"><param name="Local" value="md_ParlAI_parlai_tasks_mturkwikimovies_README.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -230,7 +226,7 @@
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Personality_Captions"><param name="Local" value="md_ParlAI_parlai_tasks_personality_captions_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Personalized Dialog Full Set"><param name="Local" value="md_ParlAI_parlai_tasks_personalized_dialog_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Personalized Dialog Small Set"><param name="Local" value="md_ParlAI_parlai_tasks_personalized_dialog_README.html#autotoc_md91"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: Personalized Dialog Small Set"><param name="Local" value="md_ParlAI_parlai_tasks_personalized_dialog_README.html#autotoc_md89"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: QA CNN"><param name="Local" value="md_ParlAI_parlai_tasks_qacnn_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Task: QA Daily Mail"><param name="Local" value="md_ParlAI_parlai_tasks_qadailymail_README.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -265,12 +261,12 @@
 <LI><OBJECT type="text/sitemap"><param name="Name" value="README"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Interacting with a pretrained model on Convai2"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md92"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Fine tuning on your own tasks"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md93"><param name="ImageNumber" value="1"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Interacting with a pretrained model on Convai2"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md90"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Fine tuning on your own tasks"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md91"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="bi-encoder"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md94"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="poly-encoder"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md95"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="cross-encoder"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md96"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="bi-encoder"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md92"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="poly-encoder"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md93"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="cross-encoder"><param name="Local" value="md_ParlAI_parlai_zoo_pretrained_transformers_README.html#autotoc_md94"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
     </UL>
   </UL>
@@ -278,187 +274,187 @@
 <LI><OBJECT type="text/sitemap"><param name="Name" value="&lt;img width=&quot;8%&quot; src=&quot;bot.png&quot;/&gt; Beat The Bot"><param name="Local" value="md_ParlAI_projects_beat_the_bot_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="A Game for Agents that learn interactively"><param name="Local" value="md_ParlAI_projects_beat_the_bot_README.html#autotoc_md98"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="A Game for Agents that learn interactively"><param name="Local" value="md_ParlAI_projects_beat_the_bot_README.html#autotoc_md96"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Messenger Link"><param name="Local" value="md_ParlAI_projects_beat_the_bot_README.html#autotoc_md99"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Messenger Link"><param name="Local" value="md_ParlAI_projects_beat_the_bot_README.html#autotoc_md97"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Controllable Dialogue"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Paper information"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md101"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md102"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md103"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Code Instructions"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md104"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Paper information"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md99"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md100"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md101"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Code Instructions"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md102"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Download the data"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md105"><param name="ImageNumber" value="1"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Download the data"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md103"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="(Alternatively) Making the data yourself"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md106"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="(Alternatively) Making the data yourself"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md104"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="The pretrained models"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md107"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Chat with the pretrained models"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md108"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Train a CT model"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md109"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Look at generated output and automatic metrics"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md110"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Save generated output and automatic metrics to file"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md111"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Human Evaluation code, logs, and analysis"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md112"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="The pretrained models"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md105"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Chat with the pretrained models"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md106"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Train a CT model"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md107"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Look at generated output and automatic metrics"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md108"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Save generated output and automatic metrics to file"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md109"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Human Evaluation code, logs, and analysis"><param name="Local" value="md_ParlAI_projects_controllable_dialogue_README.html#autotoc_md110"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="ConvAI &#39;wild&#39; evaluation integration"><param name="Local" value="md_ParlAI_projects_convai_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="ConvAI2 Competition for NIPS 2018"><param name="Local" value="md_ParlAI_projects_convai2_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Examples"><param name="Local" value="md_ParlAI_projects_convai2_README.html#autotoc_md115"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Submitting models for evaluation"><param name="Local" value="md_ParlAI_projects_convai2_README.html#autotoc_md116"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Talking to a model interactively on the commandline:"><param name="Local" value="md_ParlAI_projects_convai2_README.html#autotoc_md117"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Remarks on dataset versions"><param name="Local" value="md_ParlAI_projects_convai2_README.html#autotoc_md118"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Examples"><param name="Local" value="md_ParlAI_projects_convai2_README.html#autotoc_md113"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Submitting models for evaluation"><param name="Local" value="md_ParlAI_projects_convai2_README.html#autotoc_md114"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Talking to a model interactively on the commandline:"><param name="Local" value="md_ParlAI_projects_convai2_README.html#autotoc_md115"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Remarks on dataset versions"><param name="Local" value="md_ParlAI_projects_convai2_README.html#autotoc_md116"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Build it Break it Fix it for Dialogue Safety: Robustness from Adversarial Human Attack"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Paper information"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md120"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md121"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Data examples"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md122"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pre-trained models"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md123"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Training examples"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md124"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Acknowledgments"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md125"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Paper information"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md118"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md119"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Data examples"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md120"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pre-trained models"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md121"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Training examples"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md122"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Acknowledgments"><param name="Local" value="md_ParlAI_projects_dialogue_safety_README.html#autotoc_md123"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Engaging Image Chat: Modeling Personality in Grounded Dialogue"><param name="Local" value="md_ParlAI_projects_image_chat_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md127"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Dataset"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md128"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Leaderboards for Image-Chat Task"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md129"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pretrained Models"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md130"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Model Examples"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md131"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md132"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md125"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Dataset"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md126"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Leaderboards for Image-Chat Task"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md127"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pretrained Models"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md128"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Model Examples"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md129"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_image_chat_README.html#autotoc_md130"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="&lt;img width=&quot;5%&quot; src=&quot;scribe.png&quot;/&gt; LIGHT"><param name="Local" value="md_ParlAI_projects_light_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Learning in Interactive Games with Humans and Text"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md134"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Learning in Interactive Games with Humans and Text"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md132"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md135"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Paper"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md136"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Datasets"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md137"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pretrained Models"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md138"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md139"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md133"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Paper"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md134"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Datasets"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md135"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pretrained Models"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md136"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_light_README.html#autotoc_md137"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Mastering the Dungeon"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Requirements"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md141"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Get the Data"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md142"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Requirements"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md139"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Get the Data"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md140"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Data Organization"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md143"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Splitting the Data"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md144"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Data Organization"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md141"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Splitting the Data"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md142"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Training and Evaluation"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md145"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Training and Evaluation"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md143"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Start GPU Placeholder"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md146"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Run Training Jobs"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md147"><param name="ImageNumber" value="1"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Start GPU Placeholder"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md144"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Run Training Jobs"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md145"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Training"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md148"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Evaluation"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md149"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Breakdown by Round"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md150"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Breakdown by Dataset"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md151"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Ablation Study"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md152"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Training"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md146"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Evaluation"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md147"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Breakdown by Round"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md148"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Breakdown by Dataset"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md149"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Ablation Study"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md150"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Terminate GPU Placeholder"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md153"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Running on GPU Cluster"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md154"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Terminate GPU Placeholder"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md151"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Running on GPU Cluster"><param name="Local" value="md_ParlAI_projects_mastering_the_dungeon_README.html#autotoc_md152"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="README"><param name="Local" value="md_ParlAI_projects_personachat_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Examples"><param name="Local" value="md_ParlAI_projects_personachat_README.html#autotoc_md155"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Examples"><param name="Local" value="md_ParlAI_projects_personachat_README.html#autotoc_md153"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Engaging Image Captioning via Personality"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md157"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Dataset"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md158"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Leaderboards for Personality-Captions Task"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md159"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md155"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Dataset"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md156"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Leaderboards for Personality-Captions Task"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md157"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Retrieval Models"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md160"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Generative Models"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md161"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Retrieval Models"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md158"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Generative Models"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md159"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pretrained Models"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md162"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Model Examples"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md163"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md164"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pretrained Models"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md160"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Model Examples"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md161"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_personality_captions_README.html#autotoc_md162"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Poly-encoders: Transformer Architectures and Pre-training Strategies for Fast and Accurate Multi-sentence Scoring"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md166"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Code and models"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md167"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Interacting with a pretrained model on Convai2"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md168"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Fine tuning on your own tasks"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md169"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md164"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Code and models"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md165"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Interacting with a pretrained model on Convai2"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md166"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Fine tuning on your own tasks"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md167"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="bi-encoder"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md170"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="poly-encoder"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md171"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="cross-encoder"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md172"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="bi-encoder"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md168"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="poly-encoder"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md169"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="cross-encoder"><param name="Local" value="md_ParlAI_projects_polyencoder_README.html#autotoc_md170"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="ParlAI Projects"><param name="Local" value="md_ParlAI_projects_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Generative Models"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md174"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Retrieval Models"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md175"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Interactive Learning"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md176"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Chit-chat"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md177"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Knowledge Grounded"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md178"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Visually Grounded"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md179"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Environment Grounded"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md180"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="QA"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md181"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Generative Models"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md172"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Retrieval Models"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md173"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Interactive Learning"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md174"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Chit-chat"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md175"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Knowledge Grounded"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md176"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Visually Grounded"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md177"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Environment Grounded"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md178"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="QA"><param name="Local" value="md_ParlAI_projects_README.html#autotoc_md179"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Self-feeding Chatbot"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Paper information"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md183"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md184"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md185"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Code Instructions"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md186"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Paper information"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md181"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md182"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md183"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Code Instructions"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md184"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Download the data"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md187"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Train a model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md188"><param name="ImageNumber" value="1"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Download the data"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md185"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Train a model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md186"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Train on the DIALOGUE (HH) examples"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md189"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Train on DIALOGUE (HH) + DIALOGUE (HB) examples"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md190"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Train on DIALOGUE (HH) + FEEDBACK examples"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md191"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Train on DIALOGUE (HH) + DIALOGUE (HB) + FEEDBACK (FB) + SATISFACTION (ST) examples"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md192"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Evaluate a trained model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md193"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Train on the DIALOGUE (HH) examples"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md187"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Train on DIALOGUE (HH) + DIALOGUE (HB) examples"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md188"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Train on DIALOGUE (HH) + FEEDBACK examples"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md189"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Train on DIALOGUE (HH) + DIALOGUE (HB) + FEEDBACK (FB) + SATISFACTION (ST) examples"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md190"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Evaluate a trained model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md191"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Using a pretrained Model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md194"><param name="ImageNumber" value="1"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Using a pretrained Model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md192"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Evaluating the pretrained model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md195"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="Chat with a pretrained model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md196"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Evaluating the pretrained model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md193"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="Chat with a pretrained model"><param name="Local" value="md_ParlAI_projects_self_feeding_README.html#autotoc_md194"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="Pretrained Model"><param name="Local" value="md_ParlAI_projects_twitter_seq2seq_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Train your own"><param name="Local" value="md_ParlAI_projects_twitter_seq2seq_README.html#autotoc_md198"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Sweep results"><param name="Local" value="md_ParlAI_projects_twitter_seq2seq_README.html#autotoc_md199"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Train your own"><param name="Local" value="md_ParlAI_projects_twitter_seq2seq_README.html#autotoc_md196"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Sweep results"><param name="Local" value="md_ParlAI_projects_twitter_seq2seq_README.html#autotoc_md197"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="README"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_mturk_evaluation_task_README.html"><param name="ImageNumber" value="11"></OBJECT>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="&lt;img src=&quot;mage.png&quot; alt=&quot;mage&quot;/&gt; Wizard of Wikipedia: Knowledge-Powered Conversational Agents"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md201"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Datasets"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md202"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Leaderboard"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md203"><param name="ImageNumber" value="1"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Abstract"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md199"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Datasets"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md200"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Leaderboard"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md201"><param name="ImageNumber" value="1"></OBJECT>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Human Evaluations"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md204"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Retrieval Models"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md205"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Generative Models"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md206"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Human Evaluations"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md202"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Retrieval Models"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md203"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Generative Models"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md204"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Viewing data"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md207"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pretrained models"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md208"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="End-to-End generative"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md209"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Retrieval Model"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md210"><param name="ImageNumber" value="11"></OBJECT>
-  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md211"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Viewing data"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md205"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Pretrained models"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md206"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="End-to-End generative"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md207"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Retrieval Model"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md208"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_projects_wizard_of_wikipedia_README.html#autotoc_md209"><param name="ImageNumber" value="11"></OBJECT>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="README"><param name="Local" value="md_ParlAI_README.html"><param name="ImageNumber" value="1"></OBJECT>
   <UL>
     <UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Installing ParlAI"><param name="Local" value="md_ParlAI_README.html#autotoc_md213"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Documentation"><param name="Local" value="md_ParlAI_README.html#autotoc_md214"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Examples"><param name="Local" value="md_ParlAI_README.html#autotoc_md215"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Code Organization"><param name="Local" value="md_ParlAI_README.html#autotoc_md216"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Support"><param name="Local" value="md_ParlAI_README.html#autotoc_md217"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="The Team"><param name="Local" value="md_ParlAI_README.html#autotoc_md218"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_README.html#autotoc_md219"><param name="ImageNumber" value="11"></OBJECT>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="License"><param name="Local" value="md_ParlAI_README.html#autotoc_md220"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Installing ParlAI"><param name="Local" value="md_ParlAI_README.html#autotoc_md211"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Documentation"><param name="Local" value="md_ParlAI_README.html#autotoc_md212"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Examples"><param name="Local" value="md_ParlAI_README.html#autotoc_md213"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Code Organization"><param name="Local" value="md_ParlAI_README.html#autotoc_md214"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Support"><param name="Local" value="md_ParlAI_README.html#autotoc_md215"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="The Team"><param name="Local" value="md_ParlAI_README.html#autotoc_md216"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="Citation"><param name="Local" value="md_ParlAI_README.html#autotoc_md217"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="License"><param name="Local" value="md_ParlAI_README.html#autotoc_md218"><param name="ImageNumber" value="11"></OBJECT>
     </UL>
   </UL>
 <LI><OBJECT type="text/sitemap"><param name="Name" value="README"><param name="Local" value="md_ParlAI_website_README.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -2539,51 +2535,6 @@
               </UL>
             </UL>
           </UL>
-        <LI><OBJECT type="text/sitemap"><param name="Name" value="example_seq2seq"><param name="ImageNumber" value="1"></OBJECT>
-          <UL>
-          <LI><OBJECT type="text/sitemap"><param name="Name" value="example_seq2seq"><param name="ImageNumber" value="1"></OBJECT>
-            <UL>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="DecoderRNN"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html"><param name="ImageNumber" value="1"></OBJECT>
-              <UL>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html#a6cc49af711b261dbbcb32e1848463885"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="forward"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html#af32d70afae2ddf0aeeb95a1d1788cd8d"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="embedding"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html#a202f3556ef8413c5b293d4de0097484e"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="gru"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html#af741fbc67d90be14478c6e6b97d8fe64"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="hidden_size"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html#ad1157d595a8cb058a74aadd7817bdf42"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="out"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html#ace40811bddfcde9aad8a7d2389d51cf0"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="softmax"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html#a3f46a5b292058c2ab6c0300222ab918a"><param name="ImageNumber" value="11"></OBJECT>
-              </UL>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="EncoderRNN"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html"><param name="ImageNumber" value="1"></OBJECT>
-              <UL>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html#a4c370cba5c926bfd249193cb8334ff31"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="forward"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html#a5ec372e301149bbf4b5798fa977d3cda"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="embedding"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html#a097474da8dc2c6072e1db48ef30fc9d7"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="gru"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html#a311652f7ef77428b4b0456d684da2f23"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="hidden_size"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html#a08a1e13c09e9667ff9422ec870ca4dd4"><param name="ImageNumber" value="11"></OBJECT>
-              </UL>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="ExampleSeq2seqAgent"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html"><param name="ImageNumber" value="1"></OBJECT>
-              <UL>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#ac0488546a9611b19e6f1fbbbb4aa6939"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="add_cmdline_args"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#acd364500c1fa3d9b9407b625cb70de2b"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="eval_step"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a99c0209e5ac63d450c0f18e620d51d70"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="share"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#af9553036a43d3bb9163af31333c77886"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="train_step"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#adc742409451a1a8c41bd118a8cf7efbb"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="update_params"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a982862ee1a5b6ee2a7da61d6018fb4a9"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="v2t"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a8174f6d6e6610a63884ef8208af1e298"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="vectorize"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a6a418dbdcf6654546608de1d3c4dd94b"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="zero_grad"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a334f6bd6a11dba7b87f7ea0f8db23a42"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="criterion"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a44c0cd6d6a03d3f98a8d1c37aca3fe37"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="decoder"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#ad4b7e84ad6f721f2790279a061896757"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="encoder"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a18abd8c669795b5366246fc4fb9ff58d"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="hiddensize"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a04f2f616dcf437b630367f3bdefb3550"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="id"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#ab34d1fc954bc34280d49aafa62cae37e"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="longest_label"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a46298384aedf604a06fb0f5fc14bc0cd"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="numlayers"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#ad28665e4f6b5397c586641296c56724c"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="optims"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a5acb1ffe7958a250065cb2bff6345923"><param name="ImageNumber" value="11"></OBJECT>
-              <LI><OBJECT type="text/sitemap"><param name="Name" value="START"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a6ab903b627510b65a577f8ec306619bd"><param name="ImageNumber" value="11"></OBJECT>
-              </UL>
-            </UL>
-          </UL>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="fairseq"><param name="ImageNumber" value="1"></OBJECT>
           <UL>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="fairseq"><param name="ImageNumber" value="1"></OBJECT>
@@ -3924,6 +3875,7 @@
               <LI><OBJECT type="text/sitemap"><param name="Name" value="rebuild"><param name="Local" value="classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a434a29fe242e98aef091ec1e277d420f"><param name="ImageNumber" value="11"></OBJECT>
               <LI><OBJECT type="text/sitemap"><param name="Name" value="reset"><param name="Local" value="classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a4d9e8962cb44451758ea13b09b8dbd86"><param name="ImageNumber" value="11"></OBJECT>
               <LI><OBJECT type="text/sitemap"><param name="Name" value="save"><param name="Local" value="classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#af740335de006f8ead33b632afa1c4dcd"><param name="ImageNumber" value="11"></OBJECT>
+              <LI><OBJECT type="text/sitemap"><param name="Name" value="share"><param name="Local" value="classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#afb395d155be90f557a1e8fc0cb38e94e"><param name="ImageNumber" value="11"></OBJECT>
               <LI><OBJECT type="text/sitemap"><param name="Name" value="train"><param name="Local" value="classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#abc3ce26084466682f25980e176d3ce38"><param name="ImageNumber" value="11"></OBJECT>
               <LI><OBJECT type="text/sitemap"><param name="Name" value="train_act"><param name="Local" value="classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a424c899b5755606c32c7d6a85989ce92"><param name="ImageNumber" value="11"></OBJECT>
               <LI><OBJECT type="text/sitemap"><param name="Name" value="cands_hash"><param name="Local" value="classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a452d71ce3d6e2a52d37d8f305c6ffc2a"><param name="ImageNumber" value="11"></OBJECT>
@@ -5121,7 +5073,6 @@
             <LI><OBJECT type="text/sitemap"><param name="Name" value="upgrade_opt"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a8bb3183c7de0e8831157536c6ce1751b"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="vectorize"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#ab4dc366c470de3867c8cd4e1a9a692d0"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="beam_min_length"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a63f7f11d4917e843498e95dc87e30eb1"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="beam_min_n_best"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#afda4eddc66b2e5f7065a74fef9838ddc"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="beam_size"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#acf02a68b75948cf5bafb24be48813127"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="buffer_initialized"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#a427057bbe1b2182e5bbd476b7739de31"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="criterion"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html#aa6f478c963651331f919fc0ebd44bac3"><param name="ImageNumber" value="11"></OBJECT>
@@ -5141,14 +5092,13 @@
             </UL>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="TreeSearch"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html"><param name="ImageNumber" value="1"></OBJECT>
             <UL>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a57848d43db50e16cff7a2b3606089017"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#aeb69e8fa4faed027eaacd69bc3148dce"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="_get_hyp_from_finished"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a63d43f07383119f3bfdbec0bfe5b3ac7"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="_get_pretty_hypothesis"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab3bf87e567b8a00029e1105bcffcffb6"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="_get_rescored_finished"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ac1423539183aabf2d563f773bb28fa13"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="advance"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a9f371e57095af5b22ff5eae4c57326c8"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="get_backtrack_from_current_step"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#aced42f37b580f876286b5075ba188b2a"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="get_output_from_current_step"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a929ecbf60f149968caae5a0a6908d67a"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="get_top_hyp"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ada09b55635c6751a699b095a0377421d"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="get_rescored_finished"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a4b70f85eec7d81b3a0e1afaea5b09332"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="is_done"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a35a3cbfe2df2d02bb46f7e492657afa5"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="select_paths"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a004609539d0428a9351a991168eb370b"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="all_scores"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ac9e79a3effa48d2e35ac879620cd639e"><param name="ImageNumber" value="11"></OBJECT>
@@ -5161,7 +5111,6 @@
             <LI><OBJECT type="text/sitemap"><param name="Name" value="eos_top_ts"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a0a1eb3fae74a9b2edbb54cc4162878af"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="finished"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#ab2d79d6023881123b8960356243692d9"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="min_length"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a71d6802f40cf025cd5c0242070d78b62"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="min_n_best"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#addaa7971b72bdd458d4d3bc27763ad69"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="n_best_counter"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#a2b64a54420c470d50e389cdaacde4933"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="outputs"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#aae65afe3c0c8855e9a54ba44bf7209ce"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="pad"><param name="Local" value="classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html#aa00f03954e2bf737b13d1b43a609fb00"><param name="ImageNumber" value="11"></OBJECT>
@@ -9469,6 +9418,13 @@
               </UL>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultDataset"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1DefaultDataset.html"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1DefaultTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="ImageTeacher"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html"><param name="ImageNumber" value="1"></OBJECT>
+              <UL>
+              <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html#a3341d0d235586140b1c0c231a21182ff"><param name="ImageNumber" value="11"></OBJECT>
+              <LI><OBJECT type="text/sitemap"><param name="Name" value="_setup_test_data"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html#a43845c6e249739be517962b7e05b1a5b"><param name="ImageNumber" value="11"></OBJECT>
+              <LI><OBJECT type="text/sitemap"><param name="Name" value="get_image_features_path"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html#a73c89a1d9f05891ad2a749c81814b93e"><param name="ImageNumber" value="11"></OBJECT>
+              <LI><OBJECT type="text/sitemap"><param name="Name" value="image_features_path"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html#a252433e0d09c09207362b031aa295696"><param name="ImageNumber" value="11"></OBJECT>
+              </UL>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="MultipassTeacher"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1MultipassTeacher.html"><param name="ImageNumber" value="1"></OBJECT>
               <UL>
               <LI><OBJECT type="text/sitemap"><param name="Name" value="num_examples"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1MultipassTeacher.html#ae940c091daf534981c1cb5f42e38e8b2"><param name="ImageNumber" value="11"></OBJECT>
@@ -10926,23 +10882,32 @@
           </UL>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="safety"><param name="ImageNumber" value="1"></OBJECT>
           <UL>
-          <LI><OBJECT type="text/sitemap"><param name="Name" value="OffensiveLanguageDetector"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html"><param name="ImageNumber" value="1"></OBJECT>
+          <LI><OBJECT type="text/sitemap"><param name="Name" value="OffensiveLanguageClassifier"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html"><param name="ImageNumber" value="1"></OBJECT>
             <UL>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a5308b7990808ce4e5c53b988c81cc4f1"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="__contains__"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a21a5d0804e7859b853671001bc11b114"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="_check_sequence"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#ac0be05b033a79e291782f70c331f2649"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="add_phrase"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a34633a76c24871cedd56e666b67fb3b9"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="add_words"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a95f424d4b38799dfbdd2a123969e174c"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="contains_offensive_language"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#ac4dc8a3f8e36cfc3d28f3c9e0161896b"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="datafile"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a25cf88933d928b39f9ad453e7d7e1fc5"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="datapath"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#ac53b87ad459561b00574d1b8ed562b58"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="END"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#acdb380ec144a4a1ebf4d8b745cfc2a51"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="max_len"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a83f240069c952ccd62890aeef933e029"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="offensive_trie"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a12c907e27e035c7b51edeb5e6d13abc2"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="tokenize"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#acb78932172755c2e1322d4f1ca679518"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="white_list"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a742d2e914c19b48c04ce85cbe4935b33"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="word_prefixes"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a957cb28b63550fbd098e3ec1b7003f56"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="word_suffixes"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html#a770fe66699741e5e3294621ca6638cba"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html#a93630f9592ceded8584a09a0b9553ab5"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="__contains__"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html#a86de8f64f68732b91d4cdfdf65dd841c"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="_create_safety_model"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html#a229f0449a6914755e9152a77096adf2e"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="contains_offensive_language"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html#a7f4e833bea93ab9f920f2dd2a4b6e586"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="classes"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html#a4230d2f45693c00e565fa90d7bae2d2a"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="model"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html#a917240edc6718f3b7f3560214780ac9d"><param name="ImageNumber" value="11"></OBJECT>
+            </UL>
+          <LI><OBJECT type="text/sitemap"><param name="Name" value="OffensiveStringMatcher"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html"><param name="ImageNumber" value="1"></OBJECT>
+            <UL>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a9e850e121799468d26c5720be21bf72c"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="__contains__"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a89e75aea403630f53f41502fead9708e"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="_check_sequence"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#ad1c60d2eff6233050c8f87cf6757834e"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="add_phrase"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a9272830360cad4f382c2350dd39b3e6e"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="add_words"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#ab5ca96a02141190f747b03b761f18f98"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="contains_offensive_language"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a926609d00716d64848b3b98079bd1d30"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="datafile"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a47317e09499753db2a16fc36fd39de90"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="datapath"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a8c7a5276c0d2ed281a19bbcbcee3b8af"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="END"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a50a8ff283ddb837060366bba52d8136c"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="max_len"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a3be92b9eb75dc4e4939010af668e724f"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="offensive_trie"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a4fe018f2abe2a73114d783645c006c1b"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="tokenize"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a6c9ecda500832f159ede21f3a73ee56b"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="white_list"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#a65169673f0ff35c5e1f0258585540389"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="word_prefixes"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#aa880cf00a0354c45f576c3d933a1435e"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="word_suffixes"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html#af474171a03d288a3d8adaa2287eedc8c"><param name="ImageNumber" value="11"></OBJECT>
             </UL>
           </UL>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="testing"><param name="ImageNumber" value="1"></OBJECT>
@@ -11782,6 +11747,14 @@
           <LI><OBJECT type="text/sitemap"><param name="Name" value="test_valid_pyt_batchsort"><param name="Local" value="classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html#a2c83da3833b551a1e15e6cec4a8589eb"><param name="ImageNumber" value="11"></OBJECT>
           </UL>
         </UL>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="test_safety_modules"><param name="ImageNumber" value="1"></OBJECT>
+        <UL>
+        <LI><OBJECT type="text/sitemap"><param name="Name" value="TestSafetyModules"><param name="Local" value="classtests_1_1test__safety__modules_1_1TestSafetyModules.html"><param name="ImageNumber" value="1"></OBJECT>
+          <UL>
+          <LI><OBJECT type="text/sitemap"><param name="Name" value="test_classifier"><param name="Local" value="classtests_1_1test__safety__modules_1_1TestSafetyModules.html#ad45ef11e72f311a61895e97b60299b12"><param name="ImageNumber" value="11"></OBJECT>
+          <LI><OBJECT type="text/sitemap"><param name="Name" value="test_string_matcher"><param name="Local" value="classtests_1_1test__safety__modules_1_1TestSafetyModules.html#aed1e2df090eb0fd87202030400adf2a3"><param name="ImageNumber" value="11"></OBJECT>
+          </UL>
+        </UL>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="test_seq2seq"><param name="ImageNumber" value="1"></OBJECT>
         <UL>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="TestBackwardsCompatibility"><param name="Local" value="classtests_1_1test__seq2seq_1_1TestBackwardsCompatibility.html"><param name="ImageNumber" value="1"></OBJECT>
@@ -11820,6 +11793,13 @@
           <UL>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="test_subclassA"><param name="Local" value="classtests_1_1test__ta__inheritence_1_1TestInheritence.html#acf9dc743befc9912294b89b31f393846"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="test_subclassB"><param name="Local" value="classtests_1_1test__ta__inheritence_1_1TestInheritence.html#a3bed049c4393b8c6c8a9afbe550f7893"><param name="ImageNumber" value="11"></OBJECT>
+          </UL>
+        </UL>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="test_teachers"><param name="ImageNumber" value="1"></OBJECT>
+        <UL>
+        <LI><OBJECT type="text/sitemap"><param name="Name" value="TestAbstractImageTeacher"><param name="Local" value="classtests_1_1test__teachers_1_1TestAbstractImageTeacher.html"><param name="ImageNumber" value="1"></OBJECT>
+          <UL>
+          <LI><OBJECT type="text/sitemap"><param name="Name" value="test_display_data"><param name="Local" value="classtests_1_1test__teachers_1_1TestAbstractImageTeacher.html#a7858e68d96209268ee2cfcf23030b7b7"><param name="ImageNumber" value="11"></OBJECT>
           </UL>
         </UL>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="test_tfidf_retriever"><param name="ImageNumber" value="1"></OBJECT>
@@ -12327,15 +12307,7 @@
     <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.interactive.agents.DefaultTeacher"><param name="Local" value="classparlai_1_1tasks_1_1interactive_1_1agents_1_1DefaultTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.decanlp.agents.MultinliTeacher"><param name="Local" value="classparlai_1_1tasks_1_1decanlp_1_1agents_1_1MultinliTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
-      </UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
-      <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.decanlp.agents.WikisqlTeacher"><param name="Local" value="classparlai_1_1tasks_1_1decanlp_1_1agents_1_1WikisqlTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
-      </UL>
-    <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
-      <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.decanlp.agents.MwscTeacher"><param name="Local" value="classparlai_1_1tasks_1_1decanlp_1_1agents_1_1MwscTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.decanlp.agents.SstTeacher"><param name="Local" value="classparlai_1_1tasks_1_1decanlp_1_1agents_1_1SstTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
@@ -12351,7 +12323,7 @@
       </UL>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.decanlp.agents.SstTeacher"><param name="Local" value="classparlai_1_1tasks_1_1decanlp_1_1agents_1_1SstTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.decanlp.agents.WikisqlTeacher"><param name="Local" value="classparlai_1_1tasks_1_1decanlp_1_1agents_1_1WikisqlTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
@@ -12359,7 +12331,15 @@
       </UL>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.decanlp.agents.MultinliTeacher"><param name="Local" value="classparlai_1_1tasks_1_1decanlp_1_1agents_1_1MultinliTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
+      </UL>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
+      <UL>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.decanlp.agents.QasrlTeacher"><param name="Local" value="classparlai_1_1tasks_1_1decanlp_1_1agents_1_1QasrlTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
+      </UL>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
+      <UL>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.decanlp.agents.MwscTeacher"><param name="Local" value="classparlai_1_1tasks_1_1decanlp_1_1agents_1_1MwscTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="DefaultTeacher"><param name="ImageNumber" value="1"></OBJECT>
       <UL>
@@ -12443,8 +12423,6 @@
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.drqa.layers.SeqAttnMatch"><param name="Local" value="classparlai_1_1agents_1_1drqa_1_1layers_1_1SeqAttnMatch.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.drqa.layers.StackedBRNN"><param name="Local" value="classparlai_1_1agents_1_1drqa_1_1layers_1_1StackedBRNN.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.drqa.rnn_reader.RnnDocReader"><param name="Local" value="classparlai_1_1agents_1_1drqa_1_1rnn__reader_1_1RnnDocReader.html"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.example_seq2seq.example_seq2seq.DecoderRNN"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.example_seq2seq.example_seq2seq.EncoderRNN"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.language_model.modules.RNNModel"><param name="Local" value="classparlai_1_1agents_1_1language__model_1_1modules_1_1RNNModel.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.legacy_agents.memnn.modules_v0.Decoder"><param name="Local" value="classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1modules__v0_1_1Decoder.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.legacy_agents.memnn.modules_v0.DotScore"><param name="Local" value="classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1modules__v0_1_1DotScore.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -12683,7 +12661,10 @@
               <UL>
               <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.core.pytorch_data_teacher.DefaultTeacher"><param name="Local" value="classparlai_1_1core_1_1pytorch__data__teacher_1_1DefaultTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
               </UL>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.core.teachers.AbstractImageTeacher"><param name="Local" value="classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
+            <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.core.teachers.AbstractImageTeacher"><param name="Local" value="classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html"><param name="ImageNumber" value="1"></OBJECT>
+              <UL>
+              <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.tasks.integration_tests.agents.ImageTeacher"><param name="Local" value="classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
+              </UL>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.core.teachers.DialogTeacher"><param name="Local" value="classparlai_1_1core_1_1teachers_1_1DialogTeacher.html"><param name="ImageNumber" value="1"></OBJECT>
               <UL>
               <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.core.teachers.FbDialogTeacher"><param name="Local" value="classparlai_1_1core_1_1teachers_1_1FbDialogTeacher.html"><param name="ImageNumber" value="1"></OBJECT>
@@ -13063,7 +13044,6 @@
           <LI><OBJECT type="text/sitemap"><param name="Name" value="controllable_seq2seq.controllable_seq2seq.ControllableSeq2seqAgent"><param name="Local" value="classcontrollable__seq2seq_1_1controllable__seq2seq_1_1ControllableSeq2seqAgent.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.bert_ranker.bert_ranker.BertRankerAgent"><param name="Local" value="classparlai_1_1agents_1_1bert__ranker_1_1bert__ranker_1_1BertRankerAgent.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.bert_ranker.both_encoder_ranker.BothEncoderRankerAgent"><param name="Local" value="classparlai_1_1agents_1_1bert__ranker_1_1both__encoder__ranker_1_1BothEncoderRankerAgent.html"><param name="ImageNumber" value="11"></OBJECT>
-          <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.example_seq2seq.example_seq2seq.ExampleSeq2seqAgent"><param name="Local" value="classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.fairseq.fairseq.FairseqAgent"><param name="Local" value="classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.agents.test_agents.dummy_torch_agent.MockTorchAgent"><param name="Local" value="classparlai_1_1agents_1_1test__agents_1_1dummy__torch__agent_1_1MockTorchAgent.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.core.torch_classifier_agent.TorchClassifierAgent"><param name="Local" value="classparlai_1_1core_1_1torch__classifier__agent_1_1TorchClassifierAgent.html"><param name="ImageNumber" value="1"></OBJECT>
@@ -13269,7 +13249,6 @@
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.utils.misc.PaddingUtils"><param name="Local" value="classparlai_1_1utils_1_1misc_1_1PaddingUtils.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.utils.misc.Predictor"><param name="Local" value="classparlai_1_1utils_1_1misc_1_1Predictor.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.utils.misc.Timer"><param name="Local" value="classparlai_1_1utils_1_1misc_1_1Timer.html"><param name="ImageNumber" value="11"></OBJECT>
-      <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.utils.safety.OffensiveLanguageDetector"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.utils.testing.retry"><param name="Local" value="classparlai_1_1utils_1_1testing_1_1retry.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="personality_captions.worlds.ImageGenerator"><param name="Local" value="classpersonality__captions_1_1worlds_1_1ImageGenerator.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="personality_captions.worlds.PersonalityAndImageGenerator"><param name="Local" value="classpersonality__captions_1_1worlds_1_1PersonalityAndImageGenerator.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -13283,6 +13262,8 @@
       <LI><OBJECT type="text/sitemap"><param name="Name" value="worlds.PersonasGenerator"><param name="Local" value="classworlds_1_1PersonasGenerator.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="worlds.PersonasGenerator"><param name="Local" value="classworlds_1_1PersonasGenerator.html"><param name="ImageNumber" value="11"></OBJECT>
       </UL>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.utils.safety.OffensiveLanguageClassifier"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html"><param name="ImageNumber" value="11"></OBJECT>
+    <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.utils.safety.OffensiveStringMatcher"><param name="Local" value="classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.mturk.core.socket_manager.Packet"><param name="Local" value="classparlai_1_1mturk_1_1core_1_1socket__manager_1_1Packet.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.mturk.core.dev.socket_manager.Packet"><param name="Local" value="classparlai_1_1mturk_1_1core_1_1dev_1_1socket__manager_1_1Packet.html"><param name="ImageNumber" value="11"></OBJECT>
     <LI><OBJECT type="text/sitemap"><param name="Name" value="parlai.mturk.core.legacy_2018.socket_manager.Packet"><param name="Local" value="classparlai_1_1mturk_1_1core_1_1legacy__2018_1_1socket__manager_1_1Packet.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -13400,10 +13381,12 @@
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_messages.TestUtils"><param name="Local" value="classtests_1_1test__messages_1_1TestUtils.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_params.TestParlaiParser"><param name="Local" value="classtests_1_1test__params_1_1TestParlaiParser.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_pytorch_data_teacher.TestPytorchDataTeacher"><param name="Local" value="classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_safety_modules.TestSafetyModules"><param name="Local" value="classtests_1_1test__safety__modules_1_1TestSafetyModules.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_seq2seq.TestBackwardsCompatibility"><param name="Local" value="classtests_1_1test__seq2seq_1_1TestBackwardsCompatibility.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_seq2seq.TestHogwildSeq2seq"><param name="Local" value="classtests_1_1test__seq2seq_1_1TestHogwildSeq2seq.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_seq2seq.TestSeq2Seq"><param name="Local" value="classtests_1_1test__seq2seq_1_1TestSeq2Seq.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_ta_inheritence.TestInheritence"><param name="Local" value="classtests_1_1test__ta__inheritence_1_1TestInheritence.html"><param name="ImageNumber" value="11"></OBJECT>
+      <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_teachers.TestAbstractImageTeacher"><param name="Local" value="classtests_1_1test__teachers_1_1TestAbstractImageTeacher.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_tfidf_retriever.TestTfidfRetriever"><param name="Local" value="classtests_1_1test__tfidf__retriever_1_1TestTfidfRetriever.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_tga.TestUpgradeOpt"><param name="Local" value="classtests_1_1test__tga_1_1TestUpgradeOpt.html"><param name="ImageNumber" value="11"></OBJECT>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="tests.test_threadutils.TestSharedTable"><param name="Local" value="classtests_1_1test__threadutils_1_1TestSharedTable.html"><param name="ImageNumber" value="11"></OBJECT>
@@ -13584,14 +13567,11 @@
         <UL>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="source"><param name="Local" value="dir_0a7af2eeed3da5c6eeb4d7ff9d95f6bc.html"><param name="ImageNumber" value="1"></OBJECT>
           <UL>
-          <LI><OBJECT type="text/sitemap"><param name="Name" value="cli_usage.inc"><param name="Local" value="cli__usage_8inc_source.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="conf.py"><param name="Local" value="conf_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="generate_cli.py"><param name="Local" value="generate__cli_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="generate_task_list.py"><param name="Local" value="generate__task__list_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="generate_task_READMEs.py"><param name="Local" value="generate__task__READMEs_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="generate_zoo_list.py"><param name="Local" value="generate__zoo__list_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
-          <LI><OBJECT type="text/sitemap"><param name="Name" value="task_list.inc"><param name="Local" value="task__list_8inc_source.html"><param name="ImageNumber" value="11"></OBJECT>
-          <LI><OBJECT type="text/sitemap"><param name="Name" value="zoo_list.inc"><param name="Local" value="zoo__list_8inc_source.html"><param name="ImageNumber" value="11"></OBJECT>
           </UL>
         </UL>
       <LI><OBJECT type="text/sitemap"><param name="Name" value="example_parlai_internal"><param name="Local" value="dir_5bf266d6c1d7810937e6fa7bdaab4d32.html"><param name="ImageNumber" value="1"></OBJECT>
@@ -13648,11 +13628,6 @@
             <LI><OBJECT type="text/sitemap"><param name="Name" value="model.py"><param name="Local" value="model_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="rnn_reader.py"><param name="Local" value="rnn__reader_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
             <LI><OBJECT type="text/sitemap"><param name="Name" value="utils.py"><param name="Local" value="parlai_2agents_2drqa_2utils_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
-            </UL>
-          <LI><OBJECT type="text/sitemap"><param name="Name" value="example_seq2seq"><param name="Local" value="dir_716c0da6e69d8b24d331789fbf079bbe.html"><param name="ImageNumber" value="1"></OBJECT>
-            <UL>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="__init__.py"><param name="Local" value="parlai_2agents_2example__seq2seq_2____init_____8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
-            <LI><OBJECT type="text/sitemap"><param name="Name" value="example_seq2seq.py"><param name="Local" value="example__seq2seq_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
             </UL>
           <LI><OBJECT type="text/sitemap"><param name="Name" value="fairseq"><param name="Local" value="dir_d53ff6e0460e7034e3622a161f74611a.html"><param name="ImageNumber" value="1"></OBJECT>
             <UL>
@@ -15101,8 +15076,10 @@
         <LI><OBJECT type="text/sitemap"><param name="Name" value="test_messages.py"><param name="Local" value="test__messages_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="test_params.py"><param name="Local" value="test__params_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="test_pytorch_data_teacher.py"><param name="Local" value="test__pytorch__data__teacher_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
+        <LI><OBJECT type="text/sitemap"><param name="Name" value="test_safety_modules.py"><param name="Local" value="test__safety__modules_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="test_seq2seq.py"><param name="Local" value="test__seq2seq_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="test_ta_inheritence.py"><param name="Local" value="test__ta__inheritence_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
+        <LI><OBJECT type="text/sitemap"><param name="Name" value="test_teachers.py"><param name="Local" value="test__teachers_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="test_tfidf_retriever.py"><param name="Local" value="test__tfidf__retriever_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="test_tga.py"><param name="Local" value="test__tga_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>
         <LI><OBJECT type="text/sitemap"><param name="Name" value="test_threadutils.py"><param name="Local" value="test__threadutils_8py_source.html"><param name="ImageNumber" value="11"></OBJECT>

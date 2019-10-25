@@ -45,65 +45,65 @@ $(function() {
 <div class="textblock"><p>This project contains the code we used in our paper:</p>
 <p><a href="https://arxiv.org/abs/1711.07950">Mastering the Dungeon: Grounded Language Learning by Mechanical Turker Descent</a></p>
 <p>Zhilin Yang, Saizheng Zhang, Jack Urbanek, Will Feng, Alexander H. Miller, Arthur Szlam, Douwe Kiela, Jason Weston</p>
-<h1><a class="anchor" id="autotoc_md141"></a>
+<h1><a class="anchor" id="autotoc_md139"></a>
 Requirements</h1>
 <p>Python 3.6, PyTorch 0.2, spacy</p>
 <p>To install <code>spacy</code> and download related packages: </p><div class="fragment"><div class="line">python -m pip install spacy</div>
 <div class="line">python -m spacy.en.download all</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md142"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md140"></a>
 Get the Data</h1>
 <p>Go to the ParlAI root directory. Create a data directory if it does not exist. </p><div class="fragment"><div class="line">mkdir data</div>
 </div><!-- fragment --><p>Then we can download the data </p><div class="fragment"><div class="line">cd data</div>
 <div class="line">wget http://parl.ai/downloads/mastering_the_dungeon/mastering_the_dungeon.tgz</div>
 <div class="line">tar -xvzf mastering_the_dungeon.tgz</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md143"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md141"></a>
 Data Organization</h2>
 <p>The dataset is organized as follows. <code>data/graph_world2</code> contains the pilot study data, where each file ending with <code>.pkl</code> is a pickle file of an example. <code>data/graph_world2_v*_r*</code> contains a pickle file <code>filtered_data_list.pkl</code> storing the data collected in a specific round of a specific setting. The number after <code>r</code> indicates the round index. The number after <code>v</code> indicates the setting, where <code>v13</code> means <code>MTD limit</code>, <code>v14</code> means <code>MTD</code>, <code>v15</code> means <code>MTD limit w/o model</code>, and <code>BASELINE_2</code> means the baseline. For example, <code>data/graph_world2_v15_r2/filtered_data_list.pkl</code> contains the data collected in the second round of the setting <code>MTD limit w/o model</code>.</p>
-<h2><a class="anchor" id="autotoc_md144"></a>
+<h2><a class="anchor" id="autotoc_md142"></a>
 Splitting the Data</h2>
 <p>We split the dataset before doing training and evaluation. Assuming you are under the ParlAI root directory, </p><div class="fragment"><div class="line">cd projects/mastering_the_dungeon/mturk/tasks/MTD</div>
 <div class="line">python run.py --split</div>
 </div><!-- fragment --><p>This will split the data from different rounds under different settings into training and test sets, while ensuring the number of training examples to be the same.</p>
-<h1><a class="anchor" id="autotoc_md145"></a>
+<h1><a class="anchor" id="autotoc_md143"></a>
 Training and Evaluation</h1>
 <p>There are three steps: 1) start a GPU placeholder; 2) run the training and evaluation jobs; 3) terminate the GPU placeholder. We will illustrate the usage first on one single GPU, and later on a cluster with Slurm installed.</p>
-<h2><a class="anchor" id="autotoc_md146"></a>
+<h2><a class="anchor" id="autotoc_md144"></a>
 Start GPU Placeholder</h2>
 <p>Open a new window (e.g. a screen session), and go to the ParlAI root directory. </p><div class="fragment"><div class="line">cd projects/mastering_the_dungeon/projects/graph_world2</div>
 <div class="line">python train.py --job_num 0</div>
 </div><!-- fragment --><p>This will start a GPU placeholder that accepts new training jobs on the fly.</p>
-<h2><a class="anchor" id="autotoc_md147"></a>
+<h2><a class="anchor" id="autotoc_md145"></a>
 Run Training Jobs</h2>
 <p>Open another window (e.g. another screen session), and go to the ParlAI root directory.</p>
-<h3><a class="anchor" id="autotoc_md148"></a>
+<h3><a class="anchor" id="autotoc_md146"></a>
 Training</h3>
 <div class="fragment"><div class="line">cd projects/mastering_the_dungeon/mturk/tasks/MTD</div>
 <div class="line">python run.py --train [--seq2seq]</div>
 </div><!-- fragment --><p>This will train the models using AC-Seq2Seq (by default) or Seq2Seq (when seq2seq is specified).</p>
-<h3><a class="anchor" id="autotoc_md149"></a>
+<h3><a class="anchor" id="autotoc_md147"></a>
 Evaluation</h3>
 <div class="fragment"><div class="line">cd projects/mastering_the_dungeon/mturk/tasks/MTD</div>
 <div class="line">python run.py --eval [--seq2seq] [--constrain]</div>
 </div><!-- fragment --><p>This will evaluate the models just trained. The option <code>constrain</code> indicates using constrained decoding or not; turning it on is recommended.</p>
-<h3><a class="anchor" id="autotoc_md150"></a>
+<h3><a class="anchor" id="autotoc_md148"></a>
 Breakdown by Round</h3>
 <div class="fragment"><div class="line">cd projects/mastering_the_dungeon/mturk/tasks/MTD</div>
 <div class="line">python run.py --rounds_breakdown [--seq2seq]</div>
 </div><!-- fragment --><p>In this experiment, we will see the performance of agents in different rounds.</p>
-<h3><a class="anchor" id="autotoc_md151"></a>
+<h3><a class="anchor" id="autotoc_md149"></a>
 Breakdown by Dataset</h3>
 <div class="fragment"><div class="line">cd projects/mastering_the_dungeon/mturk/tasks/MTD</div>
 <div class="line">python run.py --data_breakdown [--seq2seq]</div>
 </div><!-- fragment --><p>In this experiment, we will see the performance of agents trained on one dataset and evaluated on another dataset.</p>
-<h3><a class="anchor" id="autotoc_md152"></a>
+<h3><a class="anchor" id="autotoc_md150"></a>
 Ablation Study</h3>
 <div class="fragment"><div class="line">cd projects/mastering_the_dungeon/mturk/tasks/MTD</div>
 <div class="line">python run.py --ablation</div>
 </div><!-- fragment --><p>This will do the ablation study by considering removing the counter feature and the room embeddings.</p>
-<h2><a class="anchor" id="autotoc_md153"></a>
+<h2><a class="anchor" id="autotoc_md151"></a>
 Terminate GPU Placeholder</h2>
 <p>After all training and evaluation jobs are finished, we can now terminate the placeholders. Go back to the placeholder window, and press <code>Ctrl+C</code> to terminate the process.</p>
-<h2><a class="anchor" id="autotoc_md154"></a>
+<h2><a class="anchor" id="autotoc_md152"></a>
 Running on GPU Cluster</h2>
 <p>There are a few changes to be made when running on a GPU cluster. In this section we assume <a href="https://slurm.schedmd.com/">Slurm</a> is installed on the cluster.</p>
 <p>When creating the GPU placeholder, we use the following commands: </p><div class="fragment"><div class="line">cd projects/mastering_the_dungeon/projects/graph_world2</div>

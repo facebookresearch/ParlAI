@@ -3,11 +3,11 @@
 <area shape="rect" id="node2" href="$classtaskntalk_1_1coopgame__agent_1_1CooperativeGameAgent.html#a648878b4ec58602fb0b8d13cd119ded3" title=" " alt="" coords="571,46,828,87"/>
 <area shape="rect" id="node3" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#a7151ba0c843bd32a0d9c5376fbf9c803" title=" " alt="" coords="315,136,490,192"/>
 <area shape="rect" id="node4" href="$classparlai_1_1core_1_1agents_1_1Agent.html#a27cb8206372681605b00dc28b81a7c39" title=" " alt="" coords="305,216,501,243"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a4d9e8962cb44451758ea13b09b8dbd86" title=" " alt="" coords="319,267,487,323"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1drqa_1_1utils_1_1AverageMeter.html#adf03b2f21b820b30c0bf68334bda0b6e" title=" " alt="" coords="324,347,481,389"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1drqa_1_1utils_1_1AverageMeter.html#adf03b2f21b820b30c0bf68334bda0b6e" title=" " alt="" coords="324,267,481,309"/>
+<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a4d9e8962cb44451758ea13b09b8dbd86" title=" " alt="" coords="319,333,487,389"/>
 <area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1memnn__v0_1_1MemnnAgent.html#ad365b2e33983158fbf7581d361a74246" title=" " alt="" coords="287,413,518,469"/>
-<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a4d5057250faeae3f3812603469daa282" title=" " alt="" coords="291,494,514,535"/>
-<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent.html#adc3f036e92741d87db95e47dfc5fc0ef" title=" " alt="" coords="299,559,506,601"/>
+<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent.html#adc3f036e92741d87db95e47dfc5fc0ef" title=" " alt="" coords="299,494,506,535"/>
+<area shape="rect" id="node9" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a4d5057250faeae3f3812603469daa282" title=" " alt="" coords="291,559,514,601"/>
 <area shape="rect" id="node10" href="$classparlai_1_1agents_1_1language__model_1_1language__model_1_1LanguageModelAgent.html#ae4ccc140cc9d528c4135ec65f2bb4325" title=" " alt="" coords="291,676,514,732"/>
 <area shape="rect" id="node13" href="$classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html#acc5aa3887a6bf3ece28d60a9572fe50e" title=" " alt="" coords="876,757,1063,798"/>
 <area shape="rect" id="node14" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a56d246fd8b6bcf41726181c17cdc2762" title=" " alt="" coords="315,756,490,812"/>

@@ -1,10 +1,9 @@
 <map id="kvmemnn.KvmemnnAgent.same" name="kvmemnn.KvmemnnAgent.same">
-<area shape="rect" id="node1" title=" " alt="" coords="5,226,217,253"/>
-<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a763de34b8d6464cbaa1ba17bf83f7df0" title=" " alt="" coords="275,5,498,47"/>
-<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#ad38444615578df64d2e341b2ce37a012" title=" " alt="" coords="275,71,498,112"/>
-<area shape="rect" id="node4" href="$classkvmemnn_1_1KvmemnnAgent.html#adf2131a64c05d6d6538b431be1ea8531" title=" " alt="" coords="287,137,486,163"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html#a8174f6d6e6610a63884ef8208af1e298" title=" " alt="" coords="265,211,508,267"/>
-<area shape="rect" id="node6" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a070074c4396b7ea6edc56e190e0c011f" title=" " alt="" coords="275,292,498,333"/>
-<area shape="rect" id="node7" href="$classkvmemnn_1_1KvmemnnAgent.html#a781d63f517c888a8e64fedebed676d2b" title=" " alt="" coords="287,358,486,385"/>
-<area shape="rect" id="node8" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a8f6de929b475d3915c159c48165b4575" title=" " alt="" coords="299,409,474,465"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,166,217,193"/>
+<area shape="rect" id="node2" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a763de34b8d6464cbaa1ba17bf83f7df0" title=" " alt="" coords="265,5,488,47"/>
+<area shape="rect" id="node3" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#ad38444615578df64d2e341b2ce37a012" title=" " alt="" coords="265,71,488,112"/>
+<area shape="rect" id="node4" href="$classkvmemnn_1_1KvmemnnAgent.html#adf2131a64c05d6d6538b431be1ea8531" title=" " alt="" coords="277,137,476,163"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a070074c4396b7ea6edc56e190e0c011f" title=" " alt="" coords="265,188,488,229"/>
+<area shape="rect" id="node6" href="$classkvmemnn_1_1KvmemnnAgent.html#a781d63f517c888a8e64fedebed676d2b" title=" " alt="" coords="277,254,476,281"/>
+<area shape="rect" id="node7" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Seq2seqAgent.html#a8f6de929b475d3915c159c48165b4575" title=" " alt="" coords="289,305,464,361"/>
 </map>

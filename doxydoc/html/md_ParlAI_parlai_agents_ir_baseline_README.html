@@ -43,7 +43,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>This agent is a simple information retrieval baseline. If <code>label_candidates</code> are provided in the task, it simply ranks them according to their similarity to the input message. To use TF-IDF similarity, you must build a dictionary and "train" on the train set first. See the examples below for clarification.</p>
-<h1><a class="anchor" id="autotoc_md25"></a>
+<h1><a class="anchor" id="autotoc_md23"></a>
 Basic Examples</h1>
 <p>Evaluate the IR baseline model (without using TF-IDF) on the Persona-Chat task. </p><div class="fragment"><div class="line">python examples/eval_model.py -m ir_baseline -t personachat</div>
 </div><!-- fragment --><p>Build a dictionary on the Persona-Chat task, and then evaluate the model using TF-IDF. </p><div class="fragment"><div class="line">python examples/train_model.py -m ir_baseline -t personachat --dict-file /tmp/personachat.dict -ttim 5</div>

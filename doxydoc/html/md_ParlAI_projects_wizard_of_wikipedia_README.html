@@ -45,16 +45,16 @@ $(function() {
 <div class="textblock"><p align="center"></p>
 <p><img src="parrot.png" alt="" width="15%" class="inline"/></p>
 <p>The Wizard of Wikipedia is an open-domain dialogue task for training agents that can converse knowledgably about open-domain topics! A detailed description may be found in <a href="https://arxiv.org/abs/1811.01241">Dinan et al. (ICLR 2019)</a>.</p>
-<h1><a class="anchor" id="autotoc_md201"></a>
+<h1><a class="anchor" id="autotoc_md199"></a>
 Abstract</h1>
 <p>In open-domain dialogue intelligent agents should exhibit the use of knowledge, however there are few convincing demonstrations of this to date. The most popular sequence to sequence models typically "generate and hope" generic utterances that can be memorized in the weights of the model when mapping from input utterance(s) to output, rather than employing recalled knowledge as context. Use of knowledge has so far proved difficult, in part because of the lack of a supervised learning benchmark task which exhibits knowledgeable open dialogue with clear grounding. To that end we collect and release a large dataset with conversations directly grounded with knowledge retrieved from Wikipedia. We then design architectures capable of retrieving knowledge, reading and conditioning on it, and finally generating natural responses. Our best performing dialogue models are able to conduct knowledgeable discussions on open-domain topics as evaluated by automatic metrics and human evaluations, while our new benchmark allows for measuring further improvements in this important research direction.</p>
-<h1><a class="anchor" id="autotoc_md202"></a>
+<h1><a class="anchor" id="autotoc_md200"></a>
 Datasets</h1>
 <p>You can train your own ParlAI agent on the Wizard of Wikipedia task with <code>-t wizard_of_wikipedia</code>. See the <a href="http://www.parl.ai/static/docs/tutorial_quick.html">ParlAI quickstart for help</a>.</p>
 <p>The ParlAI MTurk collection scripts are also <a href="https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/wizard_of_wikipedia">made available</a>, for those interested in replication, analysis, or additional data collection. The MTurk task for evaluating pre-trained models is made available in this directory.</p>
-<h1><a class="anchor" id="autotoc_md203"></a>
+<h1><a class="anchor" id="autotoc_md201"></a>
 Leaderboard</h1>
-<h2><a class="anchor" id="autotoc_md204"></a>
+<h2><a class="anchor" id="autotoc_md202"></a>
 Human Evaluations</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -66,7 +66,7 @@ Human Evaluations</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Human performance  </td><td class="markdownTableBodyNone"><a href="https://arxiv.org/abs/1811.01241">Dinan et al. (2019)</a>  </td><td class="markdownTableBodyNone">4.13  </td><td class="markdownTableBodyNone">4.34   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md205"></a>
+<h2><a class="anchor" id="autotoc_md203"></a>
 Retrieval Models</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -80,7 +80,7 @@ Retrieval Models</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Random  </td><td class="markdownTableBodyNone"><a href="https://arxiv.org/abs/1811.01241">Dinan et al. (2019)</a>  </td><td class="markdownTableBodyNone">1.0  </td><td class="markdownTableBodyNone">1.0   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md206"></a>
+<h2><a class="anchor" id="autotoc_md204"></a>
 Generative Models</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -92,13 +92,13 @@ Generative Models</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Vanilla Transformer (no knowledge)  </td><td class="markdownTableBodyNone"><a href="https://arxiv.org/abs/1811.01241">Dinan et al. (2019)</a>  </td><td class="markdownTableBodyNone">41.8  </td><td class="markdownTableBodyNone">87.0   </td></tr>
 </table>
-<h1><a class="anchor" id="autotoc_md207"></a>
+<h1><a class="anchor" id="autotoc_md205"></a>
 Viewing data</h1>
 <p>You can view the standard training set with: </p><pre class="fragment">python examples/display_data.py -t wizard_of_wikipedia -dt train
 </pre><p>The knowledge returned from a standard IR system appears in the knowledge field (but you can also use your own knowledge system, accessing Wikipedia yourself, we use the dump in "-t wikipedia". The field 'checked_sentence' indicates the gold knowledge the annotator labeled.</p>
-<h1><a class="anchor" id="autotoc_md208"></a>
+<h1><a class="anchor" id="autotoc_md206"></a>
 Pretrained models</h1>
-<h1><a class="anchor" id="autotoc_md209"></a>
+<h1><a class="anchor" id="autotoc_md207"></a>
 End-to-End generative</h1>
 <p>You can evaluate the pretrained End-to-end generative models via: </p><pre class="fragment">python examples/eval_model.py \
     -bs 64 -t wizard_of_wikipedia:generator:random_split \
@@ -110,12 +110,12 @@ End-to-End generative</h1>
     -mf models:wizard_of_wikipedia/end2end_generator/model
 </pre><p>This will produce: </p><pre class="fragment">{'f1': 0.1498, 'ppl': 103.1, 'know_acc': 0.1123, 'know_chance': 0.02496}
 </pre><p>You can also interact with the model with: </p><pre class="fragment">python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_end2end -t wizard_of_wikipedia
-</pre><h1><a class="anchor" id="autotoc_md210"></a>
+</pre><h1><a class="anchor" id="autotoc_md208"></a>
 Retrieval Model</h1>
 <p>You can evaluate a retrieval model on the full dialogue task by running the following script: </p><pre class="fragment">python projects/wizard_of_wikipedia/scripts/eval_retrieval_model.py
 </pre><p>You can run an interactive session with the model with: </p><pre class="fragment">python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
 </pre><p>Check back later for more pretrained models soon!</p>
-<h1><a class="anchor" id="autotoc_md211"></a>
+<h1><a class="anchor" id="autotoc_md209"></a>
 Citation</h1>
 <p>If you use the dataset or models in your own work, please cite with the following BibTex entry: </p><pre class="fragment">@inproceedings{dinan2019wizard,
   author={Emily Dinan and Stephen Roller and Kurt Shuster and Angela Fan and Michael Auli and Jason Weston},

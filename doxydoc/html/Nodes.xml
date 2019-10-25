@@ -116,24 +116,13 @@
         </Subnodes>
        </Node>
        <Node>
-        <Name>Example Seq2Seq</Name>
-        <Path>md_ParlAI_parlai_agents_example_seq2seq_README.html</Path>
-        <Subnodes>
-         <Node>
-          <Name>Basic Examples</Name>
-          <Path>md_ParlAI_parlai_agents_example_seq2seq_README.html</Path>
-          <Anchor>autotoc_md21</Anchor>
-         </Node>
-        </Subnodes>
-       </Node>
-       <Node>
         <Name>Fairseq</Name>
         <Path>md_ParlAI_parlai_agents_fairseq_README.html</Path>
         <Subnodes>
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_fairseq_README.html</Path>
-          <Anchor>autotoc_md23</Anchor>
+          <Anchor>autotoc_md21</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -144,7 +133,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_ir_baseline_README.html</Path>
-          <Anchor>autotoc_md25</Anchor>
+          <Anchor>autotoc_md23</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -155,7 +144,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_language_model_README.html</Path>
-          <Anchor>autotoc_md27</Anchor>
+          <Anchor>autotoc_md25</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -166,7 +155,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_local_human_README.html</Path>
-          <Anchor>autotoc_md29</Anchor>
+          <Anchor>autotoc_md27</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -177,7 +166,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_memnn_README.html</Path>
-          <Anchor>autotoc_md31</Anchor>
+          <Anchor>autotoc_md29</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -188,7 +177,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_random_candidate_README.html</Path>
-          <Anchor>autotoc_md33</Anchor>
+          <Anchor>autotoc_md31</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -199,17 +188,17 @@
          <Node>
           <Name>Utility</Name>
           <Path>md_ParlAI_parlai_agents_README.html</Path>
-          <Anchor>autotoc_md35</Anchor>
+          <Anchor>autotoc_md33</Anchor>
          </Node>
          <Node>
           <Name>Non-neural agents</Name>
           <Path>md_ParlAI_parlai_agents_README.html</Path>
-          <Anchor>autotoc_md36</Anchor>
+          <Anchor>autotoc_md34</Anchor>
          </Node>
          <Node>
           <Name>Text-based neural networks</Name>
           <Path>md_ParlAI_parlai_agents_README.html</Path>
-          <Anchor>autotoc_md37</Anchor>
+          <Anchor>autotoc_md35</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -220,7 +209,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_remote_agent_README.html</Path>
-          <Anchor>autotoc_md39</Anchor>
+          <Anchor>autotoc_md37</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -231,7 +220,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_repeat_label_README.html</Path>
-          <Anchor>autotoc_md41</Anchor>
+          <Anchor>autotoc_md39</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -242,7 +231,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_repeat_query_README.html</Path>
-          <Anchor>autotoc_md43</Anchor>
+          <Anchor>autotoc_md41</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -253,7 +242,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_retriever_reader_README.html</Path>
-          <Anchor>autotoc_md45</Anchor>
+          <Anchor>autotoc_md43</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -264,7 +253,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_starspace_README.html</Path>
-          <Anchor>autotoc_md47</Anchor>
+          <Anchor>autotoc_md45</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -275,7 +264,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_tfidf_retriever_README.html</Path>
-          <Anchor>autotoc_md49</Anchor>
+          <Anchor>autotoc_md47</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -286,7 +275,7 @@
          <Node>
           <Name>Basic Examples</Name>
           <Path>md_ParlAI_parlai_agents_unigram_README.html</Path>
-          <Anchor>autotoc_md51</Anchor>
+          <Anchor>autotoc_md49</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -302,12 +291,12 @@
            <Node>
             <Name>Folders</Name>
             <Path>md_ParlAI_parlai_mturk_core_dev_react_server_README.html</Path>
-            <Anchor>autotoc_md53</Anchor>
+            <Anchor>autotoc_md51</Anchor>
            </Node>
            <Node>
             <Name>Files</Name>
             <Path>md_ParlAI_parlai_mturk_core_dev_react_server_README.html</Path>
-            <Anchor>autotoc_md54</Anchor>
+            <Anchor>autotoc_md52</Anchor>
            </Node>
           </Subnodes>
         </Subnodes>
@@ -320,28 +309,28 @@
            <Node>
             <Name>Folders</Name>
             <Path>md_ParlAI_parlai_mturk_core_dev_README.html</Path>
-            <Anchor>autotoc_md56</Anchor>
+            <Anchor>autotoc_md54</Anchor>
            </Node>
            <Node>
             <Name>Files</Name>
             <Path>md_ParlAI_parlai_mturk_core_dev_README.html</Path>
-            <Anchor>autotoc_md57</Anchor>
+            <Anchor>autotoc_md55</Anchor>
            </Node>
           </Subnodes>
          <Node>
           <Name>Created</Name>
           <Path>md_ParlAI_parlai_mturk_core_dev_README.html</Path>
-          <Anchor>autotoc_md58</Anchor>
+          <Anchor>autotoc_md56</Anchor>
           <Subnodes>
            <Node>
             <Name>Folders</Name>
             <Path>md_ParlAI_parlai_mturk_core_dev_README.html</Path>
-            <Anchor>autotoc_md59</Anchor>
+            <Anchor>autotoc_md57</Anchor>
            </Node>
            <Node>
             <Name>Files</Name>
             <Path>md_ParlAI_parlai_mturk_core_dev_README.html</Path>
-            <Anchor>autotoc_md60</Anchor>
+            <Anchor>autotoc_md58</Anchor>
            </Node>
           </Subnodes>
          </Node>
@@ -355,12 +344,12 @@
            <Node>
             <Name>Folders</Name>
             <Path>md_ParlAI_parlai_mturk_core_legacy_2018_react_server_README.html</Path>
-            <Anchor>autotoc_md62</Anchor>
+            <Anchor>autotoc_md60</Anchor>
            </Node>
            <Node>
             <Name>Files</Name>
             <Path>md_ParlAI_parlai_mturk_core_legacy_2018_react_server_README.html</Path>
-            <Anchor>autotoc_md63</Anchor>
+            <Anchor>autotoc_md61</Anchor>
            </Node>
           </Subnodes>
         </Subnodes>
@@ -373,28 +362,28 @@
            <Node>
             <Name>Folders</Name>
             <Path>md_ParlAI_parlai_mturk_core_legacy_2018_README.html</Path>
-            <Anchor>autotoc_md65</Anchor>
+            <Anchor>autotoc_md63</Anchor>
            </Node>
            <Node>
             <Name>Files</Name>
             <Path>md_ParlAI_parlai_mturk_core_legacy_2018_README.html</Path>
-            <Anchor>autotoc_md66</Anchor>
+            <Anchor>autotoc_md64</Anchor>
            </Node>
           </Subnodes>
          <Node>
           <Name>Created</Name>
           <Path>md_ParlAI_parlai_mturk_core_legacy_2018_README.html</Path>
-          <Anchor>autotoc_md67</Anchor>
+          <Anchor>autotoc_md65</Anchor>
           <Subnodes>
            <Node>
             <Name>Folders</Name>
             <Path>md_ParlAI_parlai_mturk_core_legacy_2018_README.html</Path>
-            <Anchor>autotoc_md68</Anchor>
+            <Anchor>autotoc_md66</Anchor>
            </Node>
            <Node>
             <Name>Files</Name>
             <Path>md_ParlAI_parlai_mturk_core_legacy_2018_README.html</Path>
-            <Anchor>autotoc_md69</Anchor>
+            <Anchor>autotoc_md67</Anchor>
            </Node>
           </Subnodes>
          </Node>
@@ -408,12 +397,12 @@
            <Node>
             <Name>Folders</Name>
             <Path>md_ParlAI_parlai_mturk_core_react_server_README.html</Path>
-            <Anchor>autotoc_md71</Anchor>
+            <Anchor>autotoc_md69</Anchor>
            </Node>
            <Node>
             <Name>Files</Name>
             <Path>md_ParlAI_parlai_mturk_core_react_server_README.html</Path>
-            <Anchor>autotoc_md72</Anchor>
+            <Anchor>autotoc_md70</Anchor>
            </Node>
           </Subnodes>
         </Subnodes>
@@ -426,28 +415,28 @@
            <Node>
             <Name>Folders</Name>
             <Path>md_ParlAI_parlai_mturk_core_README.html</Path>
-            <Anchor>autotoc_md74</Anchor>
+            <Anchor>autotoc_md72</Anchor>
            </Node>
            <Node>
             <Name>Files</Name>
             <Path>md_ParlAI_parlai_mturk_core_README.html</Path>
-            <Anchor>autotoc_md75</Anchor>
+            <Anchor>autotoc_md73</Anchor>
            </Node>
           </Subnodes>
          <Node>
           <Name>Created</Name>
           <Path>md_ParlAI_parlai_mturk_core_README.html</Path>
-          <Anchor>autotoc_md76</Anchor>
+          <Anchor>autotoc_md74</Anchor>
           <Subnodes>
            <Node>
             <Name>Folders</Name>
             <Path>md_ParlAI_parlai_mturk_core_README.html</Path>
-            <Anchor>autotoc_md77</Anchor>
+            <Anchor>autotoc_md75</Anchor>
            </Node>
            <Node>
             <Name>Files</Name>
             <Path>md_ParlAI_parlai_mturk_core_README.html</Path>
-            <Anchor>autotoc_md78</Anchor>
+            <Anchor>autotoc_md76</Anchor>
            </Node>
           </Subnodes>
          </Node>
@@ -469,17 +458,17 @@
            <Node>
             <Name>Tasks</Name>
             <Path>md_ParlAI_parlai_mturk_tasks_README.html</Path>
-            <Anchor>autotoc_md80</Anchor>
+            <Anchor>autotoc_md78</Anchor>
            </Node>
            <Node>
             <Name>Demo Tasks</Name>
             <Path>md_ParlAI_parlai_mturk_tasks_README.html</Path>
-            <Anchor>autotoc_md81</Anchor>
+            <Anchor>autotoc_md79</Anchor>
            </Node>
            <Node>
             <Name>Legacy Tasks</Name>
             <Path>md_ParlAI_parlai_mturk_tasks_README.html</Path>
-            <Anchor>autotoc_md82</Anchor>
+            <Anchor>autotoc_md80</Anchor>
            </Node>
           </Subnodes>
         </Subnodes>
@@ -507,7 +496,7 @@
          <Node>
           <Name>Task: bAbI 10k</Name>
           <Path>md_ParlAI_parlai_tasks_babi_README.html</Path>
-          <Anchor>autotoc_md85</Anchor>
+          <Anchor>autotoc_md83</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -594,7 +583,7 @@
          <Node>
           <Name>Description: A dataset of 25k conversations grounded in emotional situations to facilitate training and evaluating dialogue systems. See https://arxiv.org/abs/1811.00207 for more information.</Name>
           <Path>md_ParlAI_parlai_tasks_empathetic_dialogues_README.html</Path>
-          <Anchor>autotoc_md86</Anchor>
+          <Anchor>autotoc_md84</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -653,17 +642,17 @@
          <Node>
           <Name>Task: Movie Dialog QA Recommendations</Name>
           <Path>md_ParlAI_parlai_tasks_moviedialog_README.html</Path>
-          <Anchor>autotoc_md88</Anchor>
+          <Anchor>autotoc_md86</Anchor>
          </Node>
          <Node>
           <Name>Task: Movie Dialog Recommendations</Name>
           <Path>md_ParlAI_parlai_tasks_moviedialog_README.html</Path>
-          <Anchor>autotoc_md89</Anchor>
+          <Anchor>autotoc_md87</Anchor>
          </Node>
          <Node>
           <Name>Task: Movie Dialog Reddit</Name>
           <Path>md_ParlAI_parlai_tasks_moviedialog_README.html</Path>
-          <Anchor>autotoc_md90</Anchor>
+          <Anchor>autotoc_md88</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -714,7 +703,7 @@
          <Node>
           <Name>Task: Personalized Dialog Small Set</Name>
           <Path>md_ParlAI_parlai_tasks_personalized_dialog_README.html</Path>
-          <Anchor>autotoc_md91</Anchor>
+          <Anchor>autotoc_md89</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -846,27 +835,27 @@
            <Node>
             <Name>Interacting with a pretrained model on Convai2</Name>
             <Path>md_ParlAI_parlai_zoo_pretrained_transformers_README.html</Path>
-            <Anchor>autotoc_md92</Anchor>
+            <Anchor>autotoc_md90</Anchor>
            </Node>
            <Node>
             <Name>Fine tuning on your own tasks</Name>
             <Path>md_ParlAI_parlai_zoo_pretrained_transformers_README.html</Path>
-            <Anchor>autotoc_md93</Anchor>
+            <Anchor>autotoc_md91</Anchor>
             <Subnodes>
              <Node>
               <Name>bi-encoder</Name>
               <Path>md_ParlAI_parlai_zoo_pretrained_transformers_README.html</Path>
-              <Anchor>autotoc_md94</Anchor>
+              <Anchor>autotoc_md92</Anchor>
              </Node>
              <Node>
               <Name>poly-encoder</Name>
               <Path>md_ParlAI_parlai_zoo_pretrained_transformers_README.html</Path>
-              <Anchor>autotoc_md95</Anchor>
+              <Anchor>autotoc_md93</Anchor>
              </Node>
              <Node>
               <Name>cross-encoder</Name>
               <Path>md_ParlAI_parlai_zoo_pretrained_transformers_README.html</Path>
-              <Anchor>autotoc_md96</Anchor>
+              <Anchor>autotoc_md94</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -885,13 +874,13 @@
            <Node>
             <Name>A Game for Agents that learn interactively</Name>
             <Path>md_ParlAI_projects_beat_the_bot_README.html</Path>
-            <Anchor>autotoc_md98</Anchor>
+            <Anchor>autotoc_md96</Anchor>
            </Node>
           </Subnodes>
          <Node>
           <Name>Messenger Link</Name>
           <Path>md_ParlAI_projects_beat_the_bot_README.html</Path>
-          <Anchor>autotoc_md99</Anchor>
+          <Anchor>autotoc_md97</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -902,64 +891,64 @@
          <Node>
           <Name>Paper information</Name>
           <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-          <Anchor>autotoc_md101</Anchor>
+          <Anchor>autotoc_md99</Anchor>
          </Node>
          <Node>
           <Name>Abstract</Name>
           <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-          <Anchor>autotoc_md102</Anchor>
+          <Anchor>autotoc_md100</Anchor>
          </Node>
          <Node>
           <Name>Citation</Name>
           <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-          <Anchor>autotoc_md103</Anchor>
+          <Anchor>autotoc_md101</Anchor>
          </Node>
          <Node>
           <Name>Code Instructions</Name>
           <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-          <Anchor>autotoc_md104</Anchor>
+          <Anchor>autotoc_md102</Anchor>
           <Subnodes>
            <Node>
             <Name>Download the data</Name>
             <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-            <Anchor>autotoc_md105</Anchor>
+            <Anchor>autotoc_md103</Anchor>
             <Subnodes>
              <Node>
               <Name>(Alternatively) Making the data yourself</Name>
               <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-              <Anchor>autotoc_md106</Anchor>
+              <Anchor>autotoc_md104</Anchor>
              </Node>
             </Subnodes>
            </Node>
            <Node>
             <Name>The pretrained models</Name>
             <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-            <Anchor>autotoc_md107</Anchor>
+            <Anchor>autotoc_md105</Anchor>
            </Node>
            <Node>
             <Name>Chat with the pretrained models</Name>
             <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-            <Anchor>autotoc_md108</Anchor>
+            <Anchor>autotoc_md106</Anchor>
            </Node>
            <Node>
             <Name>Train a CT model</Name>
             <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-            <Anchor>autotoc_md109</Anchor>
+            <Anchor>autotoc_md107</Anchor>
            </Node>
            <Node>
             <Name>Look at generated output and automatic metrics</Name>
             <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-            <Anchor>autotoc_md110</Anchor>
+            <Anchor>autotoc_md108</Anchor>
            </Node>
            <Node>
             <Name>Save generated output and automatic metrics to file</Name>
             <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-            <Anchor>autotoc_md111</Anchor>
+            <Anchor>autotoc_md109</Anchor>
            </Node>
            <Node>
             <Name>Human Evaluation code, logs, and analysis</Name>
             <Path>md_ParlAI_projects_controllable_dialogue_README.html</Path>
-            <Anchor>autotoc_md112</Anchor>
+            <Anchor>autotoc_md110</Anchor>
            </Node>
           </Subnodes>
          </Node>
@@ -976,22 +965,22 @@
          <Node>
           <Name>Examples</Name>
           <Path>md_ParlAI_projects_convai2_README.html</Path>
-          <Anchor>autotoc_md115</Anchor>
+          <Anchor>autotoc_md113</Anchor>
          </Node>
          <Node>
           <Name>Submitting models for evaluation</Name>
           <Path>md_ParlAI_projects_convai2_README.html</Path>
-          <Anchor>autotoc_md116</Anchor>
+          <Anchor>autotoc_md114</Anchor>
          </Node>
          <Node>
           <Name>Talking to a model interactively on the commandline:</Name>
           <Path>md_ParlAI_projects_convai2_README.html</Path>
-          <Anchor>autotoc_md117</Anchor>
+          <Anchor>autotoc_md115</Anchor>
          </Node>
          <Node>
           <Name>Remarks on dataset versions</Name>
           <Path>md_ParlAI_projects_convai2_README.html</Path>
-          <Anchor>autotoc_md118</Anchor>
+          <Anchor>autotoc_md116</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -1002,32 +991,32 @@
          <Node>
           <Name>Paper information</Name>
           <Path>md_ParlAI_projects_dialogue_safety_README.html</Path>
-          <Anchor>autotoc_md120</Anchor>
+          <Anchor>autotoc_md118</Anchor>
          </Node>
          <Node>
           <Name>Abstract</Name>
           <Path>md_ParlAI_projects_dialogue_safety_README.html</Path>
-          <Anchor>autotoc_md121</Anchor>
+          <Anchor>autotoc_md119</Anchor>
          </Node>
          <Node>
           <Name>Data examples</Name>
           <Path>md_ParlAI_projects_dialogue_safety_README.html</Path>
-          <Anchor>autotoc_md122</Anchor>
+          <Anchor>autotoc_md120</Anchor>
          </Node>
          <Node>
           <Name>Pre-trained models</Name>
           <Path>md_ParlAI_projects_dialogue_safety_README.html</Path>
-          <Anchor>autotoc_md123</Anchor>
+          <Anchor>autotoc_md121</Anchor>
          </Node>
          <Node>
           <Name>Training examples</Name>
           <Path>md_ParlAI_projects_dialogue_safety_README.html</Path>
-          <Anchor>autotoc_md124</Anchor>
+          <Anchor>autotoc_md122</Anchor>
          </Node>
          <Node>
           <Name>Acknowledgments</Name>
           <Path>md_ParlAI_projects_dialogue_safety_README.html</Path>
-          <Anchor>autotoc_md125</Anchor>
+          <Anchor>autotoc_md123</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -1038,32 +1027,32 @@
          <Node>
           <Name>Abstract</Name>
           <Path>md_ParlAI_projects_image_chat_README.html</Path>
-          <Anchor>autotoc_md127</Anchor>
+          <Anchor>autotoc_md125</Anchor>
          </Node>
          <Node>
           <Name>Dataset</Name>
           <Path>md_ParlAI_projects_image_chat_README.html</Path>
-          <Anchor>autotoc_md128</Anchor>
+          <Anchor>autotoc_md126</Anchor>
          </Node>
          <Node>
           <Name>Leaderboards for Image-Chat Task</Name>
           <Path>md_ParlAI_projects_image_chat_README.html</Path>
-          <Anchor>autotoc_md129</Anchor>
+          <Anchor>autotoc_md127</Anchor>
          </Node>
          <Node>
           <Name>Pretrained Models</Name>
           <Path>md_ParlAI_projects_image_chat_README.html</Path>
-          <Anchor>autotoc_md130</Anchor>
+          <Anchor>autotoc_md128</Anchor>
          </Node>
          <Node>
           <Name>Model Examples</Name>
           <Path>md_ParlAI_projects_image_chat_README.html</Path>
-          <Anchor>autotoc_md131</Anchor>
+          <Anchor>autotoc_md129</Anchor>
          </Node>
          <Node>
           <Name>Citation</Name>
           <Path>md_ParlAI_projects_image_chat_README.html</Path>
-          <Anchor>autotoc_md132</Anchor>
+          <Anchor>autotoc_md130</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -1075,33 +1064,33 @@
            <Node>
             <Name>Learning in Interactive Games with Humans and Text</Name>
             <Path>md_ParlAI_projects_light_README.html</Path>
-            <Anchor>autotoc_md134</Anchor>
+            <Anchor>autotoc_md132</Anchor>
            </Node>
           </Subnodes>
          <Node>
           <Name>Abstract</Name>
           <Path>md_ParlAI_projects_light_README.html</Path>
-          <Anchor>autotoc_md135</Anchor>
+          <Anchor>autotoc_md133</Anchor>
          </Node>
          <Node>
           <Name>Paper</Name>
           <Path>md_ParlAI_projects_light_README.html</Path>
-          <Anchor>autotoc_md136</Anchor>
+          <Anchor>autotoc_md134</Anchor>
          </Node>
          <Node>
           <Name>Datasets</Name>
           <Path>md_ParlAI_projects_light_README.html</Path>
-          <Anchor>autotoc_md137</Anchor>
+          <Anchor>autotoc_md135</Anchor>
          </Node>
          <Node>
           <Name>Pretrained Models</Name>
           <Path>md_ParlAI_projects_light_README.html</Path>
-          <Anchor>autotoc_md138</Anchor>
+          <Anchor>autotoc_md136</Anchor>
          </Node>
          <Node>
           <Name>Citation</Name>
           <Path>md_ParlAI_projects_light_README.html</Path>
-          <Anchor>autotoc_md139</Anchor>
+          <Anchor>autotoc_md137</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -1112,76 +1101,76 @@
          <Node>
           <Name>Requirements</Name>
           <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-          <Anchor>autotoc_md141</Anchor>
+          <Anchor>autotoc_md139</Anchor>
          </Node>
          <Node>
           <Name>Get the Data</Name>
           <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-          <Anchor>autotoc_md142</Anchor>
+          <Anchor>autotoc_md140</Anchor>
           <Subnodes>
            <Node>
             <Name>Data Organization</Name>
             <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-            <Anchor>autotoc_md143</Anchor>
+            <Anchor>autotoc_md141</Anchor>
            </Node>
            <Node>
             <Name>Splitting the Data</Name>
             <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-            <Anchor>autotoc_md144</Anchor>
+            <Anchor>autotoc_md142</Anchor>
            </Node>
           </Subnodes>
          </Node>
          <Node>
           <Name>Training and Evaluation</Name>
           <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-          <Anchor>autotoc_md145</Anchor>
+          <Anchor>autotoc_md143</Anchor>
           <Subnodes>
            <Node>
             <Name>Start GPU Placeholder</Name>
             <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-            <Anchor>autotoc_md146</Anchor>
+            <Anchor>autotoc_md144</Anchor>
            </Node>
            <Node>
             <Name>Run Training Jobs</Name>
             <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-            <Anchor>autotoc_md147</Anchor>
+            <Anchor>autotoc_md145</Anchor>
             <Subnodes>
              <Node>
               <Name>Training</Name>
               <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-              <Anchor>autotoc_md148</Anchor>
+              <Anchor>autotoc_md146</Anchor>
              </Node>
              <Node>
               <Name>Evaluation</Name>
               <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-              <Anchor>autotoc_md149</Anchor>
+              <Anchor>autotoc_md147</Anchor>
              </Node>
              <Node>
               <Name>Breakdown by Round</Name>
               <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-              <Anchor>autotoc_md150</Anchor>
+              <Anchor>autotoc_md148</Anchor>
              </Node>
              <Node>
               <Name>Breakdown by Dataset</Name>
               <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-              <Anchor>autotoc_md151</Anchor>
+              <Anchor>autotoc_md149</Anchor>
              </Node>
              <Node>
               <Name>Ablation Study</Name>
               <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-              <Anchor>autotoc_md152</Anchor>
+              <Anchor>autotoc_md150</Anchor>
              </Node>
             </Subnodes>
            </Node>
            <Node>
             <Name>Terminate GPU Placeholder</Name>
             <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-            <Anchor>autotoc_md153</Anchor>
+            <Anchor>autotoc_md151</Anchor>
            </Node>
            <Node>
             <Name>Running on GPU Cluster</Name>
             <Path>md_ParlAI_projects_mastering_the_dungeon_README.html</Path>
-            <Anchor>autotoc_md154</Anchor>
+            <Anchor>autotoc_md152</Anchor>
            </Node>
           </Subnodes>
          </Node>
@@ -1195,7 +1184,7 @@
            <Node>
             <Name>Examples</Name>
             <Path>md_ParlAI_projects_personachat_README.html</Path>
-            <Anchor>autotoc_md155</Anchor>
+            <Anchor>autotoc_md153</Anchor>
            </Node>
           </Subnodes>
         </Subnodes>
@@ -1207,44 +1196,44 @@
          <Node>
           <Name>Abstract</Name>
           <Path>md_ParlAI_projects_personality_captions_README.html</Path>
-          <Anchor>autotoc_md157</Anchor>
+          <Anchor>autotoc_md155</Anchor>
          </Node>
          <Node>
           <Name>Dataset</Name>
           <Path>md_ParlAI_projects_personality_captions_README.html</Path>
-          <Anchor>autotoc_md158</Anchor>
+          <Anchor>autotoc_md156</Anchor>
          </Node>
          <Node>
           <Name>Leaderboards for Personality-Captions Task</Name>
           <Path>md_ParlAI_projects_personality_captions_README.html</Path>
-          <Anchor>autotoc_md159</Anchor>
+          <Anchor>autotoc_md157</Anchor>
           <Subnodes>
            <Node>
             <Name>Retrieval Models</Name>
             <Path>md_ParlAI_projects_personality_captions_README.html</Path>
-            <Anchor>autotoc_md160</Anchor>
+            <Anchor>autotoc_md158</Anchor>
            </Node>
            <Node>
             <Name>Generative Models</Name>
             <Path>md_ParlAI_projects_personality_captions_README.html</Path>
-            <Anchor>autotoc_md161</Anchor>
+            <Anchor>autotoc_md159</Anchor>
            </Node>
           </Subnodes>
          </Node>
          <Node>
           <Name>Pretrained Models</Name>
           <Path>md_ParlAI_projects_personality_captions_README.html</Path>
-          <Anchor>autotoc_md162</Anchor>
+          <Anchor>autotoc_md160</Anchor>
          </Node>
          <Node>
           <Name>Model Examples</Name>
           <Path>md_ParlAI_projects_personality_captions_README.html</Path>
-          <Anchor>autotoc_md163</Anchor>
+          <Anchor>autotoc_md161</Anchor>
          </Node>
          <Node>
           <Name>Citation</Name>
           <Path>md_ParlAI_projects_personality_captions_README.html</Path>
-          <Anchor>autotoc_md164</Anchor>
+          <Anchor>autotoc_md162</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -1255,37 +1244,37 @@
          <Node>
           <Name>Abstract</Name>
           <Path>md_ParlAI_projects_polyencoder_README.html</Path>
-          <Anchor>autotoc_md166</Anchor>
+          <Anchor>autotoc_md164</Anchor>
          </Node>
          <Node>
           <Name>Code and models</Name>
           <Path>md_ParlAI_projects_polyencoder_README.html</Path>
-          <Anchor>autotoc_md167</Anchor>
+          <Anchor>autotoc_md165</Anchor>
          </Node>
          <Node>
           <Name>Interacting with a pretrained model on Convai2</Name>
           <Path>md_ParlAI_projects_polyencoder_README.html</Path>
-          <Anchor>autotoc_md168</Anchor>
+          <Anchor>autotoc_md166</Anchor>
          </Node>
          <Node>
           <Name>Fine tuning on your own tasks</Name>
           <Path>md_ParlAI_projects_polyencoder_README.html</Path>
-          <Anchor>autotoc_md169</Anchor>
+          <Anchor>autotoc_md167</Anchor>
           <Subnodes>
            <Node>
             <Name>bi-encoder</Name>
             <Path>md_ParlAI_projects_polyencoder_README.html</Path>
-            <Anchor>autotoc_md170</Anchor>
+            <Anchor>autotoc_md168</Anchor>
            </Node>
            <Node>
             <Name>poly-encoder</Name>
             <Path>md_ParlAI_projects_polyencoder_README.html</Path>
-            <Anchor>autotoc_md171</Anchor>
+            <Anchor>autotoc_md169</Anchor>
            </Node>
            <Node>
             <Name>cross-encoder</Name>
             <Path>md_ParlAI_projects_polyencoder_README.html</Path>
-            <Anchor>autotoc_md172</Anchor>
+            <Anchor>autotoc_md170</Anchor>
            </Node>
           </Subnodes>
          </Node>
@@ -1298,42 +1287,42 @@
          <Node>
           <Name>Generative Models</Name>
           <Path>md_ParlAI_projects_README.html</Path>
-          <Anchor>autotoc_md174</Anchor>
+          <Anchor>autotoc_md172</Anchor>
          </Node>
          <Node>
           <Name>Retrieval Models</Name>
           <Path>md_ParlAI_projects_README.html</Path>
-          <Anchor>autotoc_md175</Anchor>
+          <Anchor>autotoc_md173</Anchor>
          </Node>
          <Node>
           <Name>Interactive Learning</Name>
           <Path>md_ParlAI_projects_README.html</Path>
-          <Anchor>autotoc_md176</Anchor>
+          <Anchor>autotoc_md174</Anchor>
          </Node>
          <Node>
           <Name>Chit-chat</Name>
           <Path>md_ParlAI_projects_README.html</Path>
-          <Anchor>autotoc_md177</Anchor>
+          <Anchor>autotoc_md175</Anchor>
          </Node>
          <Node>
           <Name>Knowledge Grounded</Name>
           <Path>md_ParlAI_projects_README.html</Path>
-          <Anchor>autotoc_md178</Anchor>
+          <Anchor>autotoc_md176</Anchor>
          </Node>
          <Node>
           <Name>Visually Grounded</Name>
           <Path>md_ParlAI_projects_README.html</Path>
-          <Anchor>autotoc_md179</Anchor>
+          <Anchor>autotoc_md177</Anchor>
          </Node>
          <Node>
           <Name>Environment Grounded</Name>
           <Path>md_ParlAI_projects_README.html</Path>
-          <Anchor>autotoc_md180</Anchor>
+          <Anchor>autotoc_md178</Anchor>
          </Node>
          <Node>
           <Name>QA</Name>
           <Path>md_ParlAI_projects_README.html</Path>
-          <Anchor>autotoc_md181</Anchor>
+          <Anchor>autotoc_md179</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -1344,74 +1333,74 @@
          <Node>
           <Name>Paper information</Name>
           <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-          <Anchor>autotoc_md183</Anchor>
+          <Anchor>autotoc_md181</Anchor>
          </Node>
          <Node>
           <Name>Abstract</Name>
           <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-          <Anchor>autotoc_md184</Anchor>
+          <Anchor>autotoc_md182</Anchor>
          </Node>
          <Node>
           <Name>Citation</Name>
           <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-          <Anchor>autotoc_md185</Anchor>
+          <Anchor>autotoc_md183</Anchor>
          </Node>
          <Node>
           <Name>Code Instructions</Name>
           <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-          <Anchor>autotoc_md186</Anchor>
+          <Anchor>autotoc_md184</Anchor>
           <Subnodes>
            <Node>
             <Name>Download the data</Name>
             <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-            <Anchor>autotoc_md187</Anchor>
+            <Anchor>autotoc_md185</Anchor>
            </Node>
            <Node>
             <Name>Train a model</Name>
             <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-            <Anchor>autotoc_md188</Anchor>
+            <Anchor>autotoc_md186</Anchor>
             <Subnodes>
              <Node>
               <Name>Train on the DIALOGUE (HH) examples</Name>
               <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-              <Anchor>autotoc_md189</Anchor>
+              <Anchor>autotoc_md187</Anchor>
              </Node>
              <Node>
               <Name>Train on DIALOGUE (HH) + DIALOGUE (HB) examples</Name>
               <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-              <Anchor>autotoc_md190</Anchor>
+              <Anchor>autotoc_md188</Anchor>
              </Node>
              <Node>
               <Name>Train on DIALOGUE (HH) + FEEDBACK examples</Name>
               <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-              <Anchor>autotoc_md191</Anchor>
+              <Anchor>autotoc_md189</Anchor>
              </Node>
              <Node>
               <Name>Train on DIALOGUE (HH) + DIALOGUE (HB) + FEEDBACK (FB) + SATISFACTION (ST) examples</Name>
               <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-              <Anchor>autotoc_md192</Anchor>
+              <Anchor>autotoc_md190</Anchor>
              </Node>
              <Node>
               <Name>Evaluate a trained model</Name>
               <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-              <Anchor>autotoc_md193</Anchor>
+              <Anchor>autotoc_md191</Anchor>
              </Node>
             </Subnodes>
            </Node>
            <Node>
             <Name>Using a pretrained Model</Name>
             <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-            <Anchor>autotoc_md194</Anchor>
+            <Anchor>autotoc_md192</Anchor>
             <Subnodes>
              <Node>
               <Name>Evaluating the pretrained model</Name>
               <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-              <Anchor>autotoc_md195</Anchor>
+              <Anchor>autotoc_md193</Anchor>
              </Node>
              <Node>
               <Name>Chat with a pretrained model</Name>
               <Path>md_ParlAI_projects_self_feeding_README.html</Path>
-              <Anchor>autotoc_md196</Anchor>
+              <Anchor>autotoc_md194</Anchor>
              </Node>
             </Subnodes>
            </Node>
@@ -1426,12 +1415,12 @@
          <Node>
           <Name>Train your own</Name>
           <Path>md_ParlAI_projects_twitter_seq2seq_README.html</Path>
-          <Anchor>autotoc_md198</Anchor>
+          <Anchor>autotoc_md196</Anchor>
          </Node>
          <Node>
           <Name>Sweep results</Name>
           <Path>md_ParlAI_projects_twitter_seq2seq_README.html</Path>
-          <Anchor>autotoc_md199</Anchor>
+          <Anchor>autotoc_md197</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -1446,59 +1435,59 @@
          <Node>
           <Name>Abstract</Name>
           <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-          <Anchor>autotoc_md201</Anchor>
+          <Anchor>autotoc_md199</Anchor>
          </Node>
          <Node>
           <Name>Datasets</Name>
           <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-          <Anchor>autotoc_md202</Anchor>
+          <Anchor>autotoc_md200</Anchor>
          </Node>
          <Node>
           <Name>Leaderboard</Name>
           <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-          <Anchor>autotoc_md203</Anchor>
+          <Anchor>autotoc_md201</Anchor>
           <Subnodes>
            <Node>
             <Name>Human Evaluations</Name>
             <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-            <Anchor>autotoc_md204</Anchor>
+            <Anchor>autotoc_md202</Anchor>
            </Node>
            <Node>
             <Name>Retrieval Models</Name>
             <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-            <Anchor>autotoc_md205</Anchor>
+            <Anchor>autotoc_md203</Anchor>
            </Node>
            <Node>
             <Name>Generative Models</Name>
             <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-            <Anchor>autotoc_md206</Anchor>
+            <Anchor>autotoc_md204</Anchor>
            </Node>
           </Subnodes>
          </Node>
          <Node>
           <Name>Viewing data</Name>
           <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-          <Anchor>autotoc_md207</Anchor>
+          <Anchor>autotoc_md205</Anchor>
          </Node>
          <Node>
           <Name>Pretrained models</Name>
           <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-          <Anchor>autotoc_md208</Anchor>
+          <Anchor>autotoc_md206</Anchor>
          </Node>
          <Node>
           <Name>End-to-End generative</Name>
           <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-          <Anchor>autotoc_md209</Anchor>
+          <Anchor>autotoc_md207</Anchor>
          </Node>
          <Node>
           <Name>Retrieval Model</Name>
           <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-          <Anchor>autotoc_md210</Anchor>
+          <Anchor>autotoc_md208</Anchor>
          </Node>
          <Node>
           <Name>Citation</Name>
           <Path>md_ParlAI_projects_wizard_of_wikipedia_README.html</Path>
-          <Anchor>autotoc_md211</Anchor>
+          <Anchor>autotoc_md209</Anchor>
          </Node>
         </Subnodes>
        </Node>
@@ -1510,42 +1499,42 @@
            <Node>
             <Name>Installing ParlAI</Name>
             <Path>md_ParlAI_README.html</Path>
-            <Anchor>autotoc_md213</Anchor>
+            <Anchor>autotoc_md211</Anchor>
            </Node>
            <Node>
             <Name>Documentation</Name>
             <Path>md_ParlAI_README.html</Path>
-            <Anchor>autotoc_md214</Anchor>
+            <Anchor>autotoc_md212</Anchor>
            </Node>
            <Node>
             <Name>Examples</Name>
             <Path>md_ParlAI_README.html</Path>
-            <Anchor>autotoc_md215</Anchor>
+            <Anchor>autotoc_md213</Anchor>
            </Node>
            <Node>
             <Name>Code Organization</Name>
             <Path>md_ParlAI_README.html</Path>
-            <Anchor>autotoc_md216</Anchor>
+            <Anchor>autotoc_md214</Anchor>
            </Node>
            <Node>
             <Name>Support</Name>
             <Path>md_ParlAI_README.html</Path>
-            <Anchor>autotoc_md217</Anchor>
+            <Anchor>autotoc_md215</Anchor>
            </Node>
            <Node>
             <Name>The Team</Name>
             <Path>md_ParlAI_README.html</Path>
-            <Anchor>autotoc_md218</Anchor>
+            <Anchor>autotoc_md216</Anchor>
            </Node>
            <Node>
             <Name>Citation</Name>
             <Path>md_ParlAI_README.html</Path>
-            <Anchor>autotoc_md219</Anchor>
+            <Anchor>autotoc_md217</Anchor>
            </Node>
            <Node>
             <Name>License</Name>
             <Path>md_ParlAI_README.html</Path>
-            <Anchor>autotoc_md220</Anchor>
+            <Anchor>autotoc_md218</Anchor>
            </Node>
           </Subnodes>
         </Subnodes>
@@ -10143,186 +10132,6 @@
                 </Subnodes>
                </Node>
                <Node>
-                <Name>example_seq2seq</Name>
-                <Path></Path>
-                <Subnodes>
-                 <Node>
-                  <Name>example_seq2seq</Name>
-                  <Path></Path>
-                  <Subnodes>
-                   <Node>
-                    <Name>DecoderRNN</Name>
-                    <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html</Path>
-                    <Subnodes>
-                     <Node>
-                      <Name>__init__</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html</Path>
-                      <Anchor>a6cc49af711b261dbbcb32e1848463885</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>forward</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html</Path>
-                      <Anchor>af32d70afae2ddf0aeeb95a1d1788cd8d</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>embedding</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html</Path>
-                      <Anchor>a202f3556ef8413c5b293d4de0097484e</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>gru</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html</Path>
-                      <Anchor>af741fbc67d90be14478c6e6b97d8fe64</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>hidden_size</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html</Path>
-                      <Anchor>ad1157d595a8cb058a74aadd7817bdf42</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>out</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html</Path>
-                      <Anchor>ace40811bddfcde9aad8a7d2389d51cf0</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>softmax</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html</Path>
-                      <Anchor>a3f46a5b292058c2ab6c0300222ab918a</Anchor>
-                     </Node>
-                    </Subnodes>
-                   </Node>
-                   <Node>
-                    <Name>EncoderRNN</Name>
-                    <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html</Path>
-                    <Subnodes>
-                     <Node>
-                      <Name>__init__</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html</Path>
-                      <Anchor>a4c370cba5c926bfd249193cb8334ff31</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>forward</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html</Path>
-                      <Anchor>a5ec372e301149bbf4b5798fa977d3cda</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>embedding</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html</Path>
-                      <Anchor>a097474da8dc2c6072e1db48ef30fc9d7</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>gru</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html</Path>
-                      <Anchor>a311652f7ef77428b4b0456d684da2f23</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>hidden_size</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html</Path>
-                      <Anchor>a08a1e13c09e9667ff9422ec870ca4dd4</Anchor>
-                     </Node>
-                    </Subnodes>
-                   </Node>
-                   <Node>
-                    <Name>ExampleSeq2seqAgent</Name>
-                    <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                    <Subnodes>
-                     <Node>
-                      <Name>__init__</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>ac0488546a9611b19e6f1fbbbb4aa6939</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>add_cmdline_args</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>acd364500c1fa3d9b9407b625cb70de2b</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>eval_step</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a99c0209e5ac63d450c0f18e620d51d70</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>share</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>af9553036a43d3bb9163af31333c77886</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>train_step</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>adc742409451a1a8c41bd118a8cf7efbb</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>update_params</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a982862ee1a5b6ee2a7da61d6018fb4a9</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>v2t</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a8174f6d6e6610a63884ef8208af1e298</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>vectorize</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a6a418dbdcf6654546608de1d3c4dd94b</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>zero_grad</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a334f6bd6a11dba7b87f7ea0f8db23a42</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>criterion</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a44c0cd6d6a03d3f98a8d1c37aca3fe37</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>decoder</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>ad4b7e84ad6f721f2790279a061896757</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>encoder</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a18abd8c669795b5366246fc4fb9ff58d</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>hiddensize</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a04f2f616dcf437b630367f3bdefb3550</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>id</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>ab34d1fc954bc34280d49aafa62cae37e</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>longest_label</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a46298384aedf604a06fb0f5fc14bc0cd</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>numlayers</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>ad28665e4f6b5397c586641296c56724c</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>optims</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a5acb1ffe7958a250065cb2bff6345923</Anchor>
-                     </Node>
-                     <Node>
-                      <Name>START</Name>
-                      <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                      <Anchor>a6ab903b627510b65a577f8ec306619bd</Anchor>
-                     </Node>
-                    </Subnodes>
-                   </Node>
-                  </Subnodes>
-                 </Node>
-                </Subnodes>
-               </Node>
-               <Node>
                 <Name>fairseq</Name>
                 <Path></Path>
                 <Subnodes>
@@ -15988,6 +15797,11 @@
                       <Anchor>af740335de006f8ead33b632afa1c4dcd</Anchor>
                      </Node>
                      <Node>
+                      <Name>share</Name>
+                      <Path>classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html</Path>
+                      <Anchor>afb395d155be90f557a1e8fc0cb38e94e</Anchor>
+                     </Node>
+                     <Node>
                       <Name>train</Name>
                       <Path>classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html</Path>
                       <Anchor>abc3ce26084466682f25980e176d3ce38</Anchor>
@@ -21114,11 +20928,6 @@
                     <Anchor>a63f7f11d4917e843498e95dc87e30eb1</Anchor>
                    </Node>
                    <Node>
-                    <Name>beam_min_n_best</Name>
-                    <Path>classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html</Path>
-                    <Anchor>afda4eddc66b2e5f7065a74fef9838ddc</Anchor>
-                   </Node>
-                   <Node>
                     <Name>beam_size</Name>
                     <Path>classparlai_1_1core_1_1torch__generator__agent_1_1TorchGeneratorAgent.html</Path>
                     <Anchor>acf02a68b75948cf5bafb24be48813127</Anchor>
@@ -21198,7 +21007,7 @@
                    <Node>
                     <Name>__init__</Name>
                     <Path>classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html</Path>
-                    <Anchor>a57848d43db50e16cff7a2b3606089017</Anchor>
+                    <Anchor>aeb69e8fa4faed027eaacd69bc3148dce</Anchor>
                    </Node>
                    <Node>
                     <Name>_get_hyp_from_finished</Name>
@@ -21209,11 +21018,6 @@
                     <Name>_get_pretty_hypothesis</Name>
                     <Path>classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html</Path>
                     <Anchor>ab3bf87e567b8a00029e1105bcffcffb6</Anchor>
-                   </Node>
-                   <Node>
-                    <Name>_get_rescored_finished</Name>
-                    <Path>classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html</Path>
-                    <Anchor>ac1423539183aabf2d563f773bb28fa13</Anchor>
                    </Node>
                    <Node>
                     <Name>advance</Name>
@@ -21231,9 +21035,9 @@
                     <Anchor>a929ecbf60f149968caae5a0a6908d67a</Anchor>
                    </Node>
                    <Node>
-                    <Name>get_top_hyp</Name>
+                    <Name>get_rescored_finished</Name>
                     <Path>classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html</Path>
-                    <Anchor>ada09b55635c6751a699b095a0377421d</Anchor>
+                    <Anchor>a4b70f85eec7d81b3a0e1afaea5b09332</Anchor>
                    </Node>
                    <Node>
                     <Name>is_done</Name>
@@ -21294,11 +21098,6 @@
                     <Name>min_length</Name>
                     <Path>classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html</Path>
                     <Anchor>a71d6802f40cf025cd5c0242070d78b62</Anchor>
-                   </Node>
-                   <Node>
-                    <Name>min_n_best</Name>
-                    <Path>classparlai_1_1core_1_1torch__generator__agent_1_1TreeSearch.html</Path>
-                    <Anchor>addaa7971b72bdd458d4d3bc27763ad69</Anchor>
                    </Node>
                    <Node>
                     <Name>n_best_counter</Name>
@@ -39180,6 +38979,32 @@
                     <Path>classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1DefaultTeacher.html</Path>
                    </Node>
                    <Node>
+                    <Name>ImageTeacher</Name>
+                    <Path>classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html</Path>
+                    <Subnodes>
+                     <Node>
+                      <Name>__init__</Name>
+                      <Path>classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html</Path>
+                      <Anchor>a3341d0d235586140b1c0c231a21182ff</Anchor>
+                     </Node>
+                     <Node>
+                      <Name>_setup_test_data</Name>
+                      <Path>classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html</Path>
+                      <Anchor>a43845c6e249739be517962b7e05b1a5b</Anchor>
+                     </Node>
+                     <Node>
+                      <Name>get_image_features_path</Name>
+                      <Path>classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html</Path>
+                      <Anchor>a73c89a1d9f05891ad2a749c81814b93e</Anchor>
+                     </Node>
+                     <Node>
+                      <Name>image_features_path</Name>
+                      <Path>classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html</Path>
+                      <Anchor>a252433e0d09c09207362b031aa295696</Anchor>
+                     </Node>
+                    </Subnodes>
+                   </Node>
+                   <Node>
                     <Name>MultipassTeacher</Name>
                     <Path>classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1MultipassTeacher.html</Path>
                     <Subnodes>
@@ -44172,83 +43997,119 @@
                 <Path></Path>
                 <Subnodes>
                  <Node>
-                  <Name>OffensiveLanguageDetector</Name>
-                  <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
+                  <Name>OffensiveLanguageClassifier</Name>
+                  <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html</Path>
                   <Subnodes>
                    <Node>
                     <Name>__init__</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a5308b7990808ce4e5c53b988c81cc4f1</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html</Path>
+                    <Anchor>a93630f9592ceded8584a09a0b9553ab5</Anchor>
                    </Node>
                    <Node>
                     <Name>__contains__</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a21a5d0804e7859b853671001bc11b114</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html</Path>
+                    <Anchor>a86de8f64f68732b91d4cdfdf65dd841c</Anchor>
                    </Node>
                    <Node>
-                    <Name>_check_sequence</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>ac0be05b033a79e291782f70c331f2649</Anchor>
-                   </Node>
-                   <Node>
-                    <Name>add_phrase</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a34633a76c24871cedd56e666b67fb3b9</Anchor>
-                   </Node>
-                   <Node>
-                    <Name>add_words</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a95f424d4b38799dfbdd2a123969e174c</Anchor>
+                    <Name>_create_safety_model</Name>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html</Path>
+                    <Anchor>a229f0449a6914755e9152a77096adf2e</Anchor>
                    </Node>
                    <Node>
                     <Name>contains_offensive_language</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>ac4dc8a3f8e36cfc3d28f3c9e0161896b</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html</Path>
+                    <Anchor>a7f4e833bea93ab9f920f2dd2a4b6e586</Anchor>
+                   </Node>
+                   <Node>
+                    <Name>classes</Name>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html</Path>
+                    <Anchor>a4230d2f45693c00e565fa90d7bae2d2a</Anchor>
+                   </Node>
+                   <Node>
+                    <Name>model</Name>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html</Path>
+                    <Anchor>a917240edc6718f3b7f3560214780ac9d</Anchor>
+                   </Node>
+                  </Subnodes>
+                 </Node>
+                 <Node>
+                  <Name>OffensiveStringMatcher</Name>
+                  <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                  <Subnodes>
+                   <Node>
+                    <Name>__init__</Name>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a9e850e121799468d26c5720be21bf72c</Anchor>
+                   </Node>
+                   <Node>
+                    <Name>__contains__</Name>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a89e75aea403630f53f41502fead9708e</Anchor>
+                   </Node>
+                   <Node>
+                    <Name>_check_sequence</Name>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>ad1c60d2eff6233050c8f87cf6757834e</Anchor>
+                   </Node>
+                   <Node>
+                    <Name>add_phrase</Name>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a9272830360cad4f382c2350dd39b3e6e</Anchor>
+                   </Node>
+                   <Node>
+                    <Name>add_words</Name>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>ab5ca96a02141190f747b03b761f18f98</Anchor>
+                   </Node>
+                   <Node>
+                    <Name>contains_offensive_language</Name>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a926609d00716d64848b3b98079bd1d30</Anchor>
                    </Node>
                    <Node>
                     <Name>datafile</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a25cf88933d928b39f9ad453e7d7e1fc5</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a47317e09499753db2a16fc36fd39de90</Anchor>
                    </Node>
                    <Node>
                     <Name>datapath</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>ac53b87ad459561b00574d1b8ed562b58</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a8c7a5276c0d2ed281a19bbcbcee3b8af</Anchor>
                    </Node>
                    <Node>
                     <Name>END</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>acdb380ec144a4a1ebf4d8b745cfc2a51</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a50a8ff283ddb837060366bba52d8136c</Anchor>
                    </Node>
                    <Node>
                     <Name>max_len</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a83f240069c952ccd62890aeef933e029</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a3be92b9eb75dc4e4939010af668e724f</Anchor>
                    </Node>
                    <Node>
                     <Name>offensive_trie</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a12c907e27e035c7b51edeb5e6d13abc2</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a4fe018f2abe2a73114d783645c006c1b</Anchor>
                    </Node>
                    <Node>
                     <Name>tokenize</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>acb78932172755c2e1322d4f1ca679518</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a6c9ecda500832f159ede21f3a73ee56b</Anchor>
                    </Node>
                    <Node>
                     <Name>white_list</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a742d2e914c19b48c04ce85cbe4935b33</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>a65169673f0ff35c5e1f0258585540389</Anchor>
                    </Node>
                    <Node>
                     <Name>word_prefixes</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a957cb28b63550fbd098e3ec1b7003f56</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>aa880cf00a0354c45f576c3d933a1435e</Anchor>
                    </Node>
                    <Node>
                     <Name>word_suffixes</Name>
-                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-                    <Anchor>a770fe66699741e5e3294621ca6638cba</Anchor>
+                    <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
+                    <Anchor>af474171a03d288a3d8adaa2287eedc8c</Anchor>
                    </Node>
                   </Subnodes>
                  </Node>
@@ -47366,6 +47227,28 @@
               </Subnodes>
              </Node>
              <Node>
+              <Name>test_safety_modules</Name>
+              <Path></Path>
+              <Subnodes>
+               <Node>
+                <Name>TestSafetyModules</Name>
+                <Path>classtests_1_1test__safety__modules_1_1TestSafetyModules.html</Path>
+                <Subnodes>
+                 <Node>
+                  <Name>test_classifier</Name>
+                  <Path>classtests_1_1test__safety__modules_1_1TestSafetyModules.html</Path>
+                  <Anchor>ad45ef11e72f311a61895e97b60299b12</Anchor>
+                 </Node>
+                 <Node>
+                  <Name>test_string_matcher</Name>
+                  <Path>classtests_1_1test__safety__modules_1_1TestSafetyModules.html</Path>
+                  <Anchor>aed1e2df090eb0fd87202030400adf2a3</Anchor>
+                 </Node>
+                </Subnodes>
+               </Node>
+              </Subnodes>
+             </Node>
+             <Node>
               <Name>test_seq2seq</Name>
               <Path></Path>
               <Subnodes>
@@ -47479,6 +47362,23 @@
                   <Name>test_subclassB</Name>
                   <Path>classtests_1_1test__ta__inheritence_1_1TestInheritence.html</Path>
                   <Anchor>a3bed049c4393b8c6c8a9afbe550f7893</Anchor>
+                 </Node>
+                </Subnodes>
+               </Node>
+              </Subnodes>
+             </Node>
+             <Node>
+              <Name>test_teachers</Name>
+              <Path></Path>
+              <Subnodes>
+               <Node>
+                <Name>TestAbstractImageTeacher</Name>
+                <Path>classtests_1_1test__teachers_1_1TestAbstractImageTeacher.html</Path>
+                <Subnodes>
+                 <Node>
+                  <Name>test_display_data</Name>
+                  <Path>classtests_1_1test__teachers_1_1TestAbstractImageTeacher.html</Path>
+                  <Anchor>a7858e68d96209268ee2cfcf23030b7b7</Anchor>
                  </Node>
                 </Subnodes>
                </Node>
@@ -49523,28 +49423,8 @@
             <Path></Path>
             <Subnodes>
              <Node>
-              <Name>parlai.tasks.decanlp.agents.MultinliTeacher</Name>
-              <Path>classparlai_1_1tasks_1_1decanlp_1_1agents_1_1MultinliTeacher.html</Path>
-             </Node>
-            </Subnodes>
-           </Node>
-           <Node>
-            <Name>DefaultTeacher</Name>
-            <Path></Path>
-            <Subnodes>
-             <Node>
-              <Name>parlai.tasks.decanlp.agents.WikisqlTeacher</Name>
-              <Path>classparlai_1_1tasks_1_1decanlp_1_1agents_1_1WikisqlTeacher.html</Path>
-             </Node>
-            </Subnodes>
-           </Node>
-           <Node>
-            <Name>DefaultTeacher</Name>
-            <Path></Path>
-            <Subnodes>
-             <Node>
-              <Name>parlai.tasks.decanlp.agents.MwscTeacher</Name>
-              <Path>classparlai_1_1tasks_1_1decanlp_1_1agents_1_1MwscTeacher.html</Path>
+              <Name>parlai.tasks.decanlp.agents.SstTeacher</Name>
+              <Path>classparlai_1_1tasks_1_1decanlp_1_1agents_1_1SstTeacher.html</Path>
              </Node>
             </Subnodes>
            </Node>
@@ -49583,8 +49463,8 @@
             <Path></Path>
             <Subnodes>
              <Node>
-              <Name>parlai.tasks.decanlp.agents.SstTeacher</Name>
-              <Path>classparlai_1_1tasks_1_1decanlp_1_1agents_1_1SstTeacher.html</Path>
+              <Name>parlai.tasks.decanlp.agents.WikisqlTeacher</Name>
+              <Path>classparlai_1_1tasks_1_1decanlp_1_1agents_1_1WikisqlTeacher.html</Path>
              </Node>
             </Subnodes>
            </Node>
@@ -49603,8 +49483,28 @@
             <Path></Path>
             <Subnodes>
              <Node>
+              <Name>parlai.tasks.decanlp.agents.MultinliTeacher</Name>
+              <Path>classparlai_1_1tasks_1_1decanlp_1_1agents_1_1MultinliTeacher.html</Path>
+             </Node>
+            </Subnodes>
+           </Node>
+           <Node>
+            <Name>DefaultTeacher</Name>
+            <Path></Path>
+            <Subnodes>
+             <Node>
               <Name>parlai.tasks.decanlp.agents.QasrlTeacher</Name>
               <Path>classparlai_1_1tasks_1_1decanlp_1_1agents_1_1QasrlTeacher.html</Path>
+             </Node>
+            </Subnodes>
+           </Node>
+           <Node>
+            <Name>DefaultTeacher</Name>
+            <Path></Path>
+            <Subnodes>
+             <Node>
+              <Name>parlai.tasks.decanlp.agents.MwscTeacher</Name>
+              <Path>classparlai_1_1tasks_1_1decanlp_1_1agents_1_1MwscTeacher.html</Path>
              </Node>
             </Subnodes>
            </Node>
@@ -49883,14 +49783,6 @@
              <Node>
               <Name>parlai.agents.drqa.rnn_reader.RnnDocReader</Name>
               <Path>classparlai_1_1agents_1_1drqa_1_1rnn__reader_1_1RnnDocReader.html</Path>
-             </Node>
-             <Node>
-              <Name>parlai.agents.example_seq2seq.example_seq2seq.DecoderRNN</Name>
-              <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1DecoderRNN.html</Path>
-             </Node>
-             <Node>
-              <Name>parlai.agents.example_seq2seq.example_seq2seq.EncoderRNN</Name>
-              <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1EncoderRNN.html</Path>
              </Node>
              <Node>
               <Name>parlai.agents.language_model.modules.RNNModel</Name>
@@ -50685,6 +50577,12 @@
                    <Node>
                     <Name>parlai.core.teachers.AbstractImageTeacher</Name>
                     <Path>classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html</Path>
+                    <Subnodes>
+                     <Node>
+                      <Name>parlai.tasks.integration_tests.agents.ImageTeacher</Name>
+                      <Path>classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1ImageTeacher.html</Path>
+                     </Node>
+                    </Subnodes>
                    </Node>
                    <Node>
                     <Name>parlai.core.teachers.DialogTeacher</Name>
@@ -51799,10 +51697,6 @@
                   <Path>classparlai_1_1agents_1_1bert__ranker_1_1both__encoder__ranker_1_1BothEncoderRankerAgent.html</Path>
                  </Node>
                  <Node>
-                  <Name>parlai.agents.example_seq2seq.example_seq2seq.ExampleSeq2seqAgent</Name>
-                  <Path>classparlai_1_1agents_1_1example__seq2seq_1_1example__seq2seq_1_1ExampleSeq2seqAgent.html</Path>
-                 </Node>
-                 <Node>
                   <Name>parlai.agents.fairseq.fairseq.FairseqAgent</Name>
                   <Path>classparlai_1_1agents_1_1fairseq_1_1fairseq_1_1FairseqAgent.html</Path>
                  </Node>
@@ -52469,10 +52363,6 @@
               <Path>classparlai_1_1utils_1_1misc_1_1Timer.html</Path>
              </Node>
              <Node>
-              <Name>parlai.utils.safety.OffensiveLanguageDetector</Name>
-              <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageDetector.html</Path>
-             </Node>
-             <Node>
               <Name>parlai.utils.testing.retry</Name>
               <Path>classparlai_1_1utils_1_1testing_1_1retry.html</Path>
              </Node>
@@ -52521,6 +52411,14 @@
               <Path>classworlds_1_1PersonasGenerator.html</Path>
              </Node>
             </Subnodes>
+           </Node>
+           <Node>
+            <Name>parlai.utils.safety.OffensiveLanguageClassifier</Name>
+            <Path>classparlai_1_1utils_1_1safety_1_1OffensiveLanguageClassifier.html</Path>
+           </Node>
+           <Node>
+            <Name>parlai.utils.safety.OffensiveStringMatcher</Name>
+            <Path>classparlai_1_1utils_1_1safety_1_1OffensiveStringMatcher.html</Path>
            </Node>
            <Node>
             <Name>parlai.mturk.core.socket_manager.Packet</Name>
@@ -52957,6 +52855,10 @@
               <Path>classtests_1_1test__pytorch__data__teacher_1_1TestPytorchDataTeacher.html</Path>
              </Node>
              <Node>
+              <Name>tests.test_safety_modules.TestSafetyModules</Name>
+              <Path>classtests_1_1test__safety__modules_1_1TestSafetyModules.html</Path>
+             </Node>
+             <Node>
               <Name>tests.test_seq2seq.TestBackwardsCompatibility</Name>
               <Path>classtests_1_1test__seq2seq_1_1TestBackwardsCompatibility.html</Path>
              </Node>
@@ -52971,6 +52873,10 @@
              <Node>
               <Name>tests.test_ta_inheritence.TestInheritence</Name>
               <Path>classtests_1_1test__ta__inheritence_1_1TestInheritence.html</Path>
+             </Node>
+             <Node>
+              <Name>tests.test_teachers.TestAbstractImageTeacher</Name>
+              <Path>classtests_1_1test__teachers_1_1TestAbstractImageTeacher.html</Path>
              </Node>
              <Node>
               <Name>tests.test_tfidf_retriever.TestTfidfRetriever</Name>
@@ -53535,10 +53441,6 @@
                 <Path>dir_0a7af2eeed3da5c6eeb4d7ff9d95f6bc.html</Path>
                 <Subnodes>
                  <Node>
-                  <Name>cli_usage.inc</Name>
-                  <Path>cli__usage_8inc_source.html</Path>
-                 </Node>
-                 <Node>
                   <Name>conf.py</Name>
                   <Path>conf_8py_source.html</Path>
                  </Node>
@@ -53557,14 +53459,6 @@
                  <Node>
                   <Name>generate_zoo_list.py</Name>
                   <Path>generate__zoo__list_8py_source.html</Path>
-                 </Node>
-                 <Node>
-                  <Name>task_list.inc</Name>
-                  <Path>task__list_8inc_source.html</Path>
-                 </Node>
-                 <Node>
-                  <Name>zoo_list.inc</Name>
-                  <Path>zoo__list_8inc_source.html</Path>
                  </Node>
                 </Subnodes>
                </Node>
@@ -53737,20 +53631,6 @@
                    <Node>
                     <Name>utils.py</Name>
                     <Path>parlai_2agents_2drqa_2utils_8py_source.html</Path>
-                   </Node>
-                  </Subnodes>
-                 </Node>
-                 <Node>
-                  <Name>example_seq2seq</Name>
-                  <Path>dir_716c0da6e69d8b24d331789fbf079bbe.html</Path>
-                  <Subnodes>
-                   <Node>
-                    <Name>__init__.py</Name>
-                    <Path>parlai_2agents_2example__seq2seq_2____init_____8py_source.html</Path>
-                   </Node>
-                   <Node>
-                    <Name>example_seq2seq.py</Name>
-                    <Path>example__seq2seq_8py_source.html</Path>
                    </Node>
                   </Subnodes>
                  </Node>
@@ -58161,12 +58041,20 @@
                 <Path>test__pytorch__data__teacher_8py_source.html</Path>
                </Node>
                <Node>
+                <Name>test_safety_modules.py</Name>
+                <Path>test__safety__modules_8py_source.html</Path>
+               </Node>
+               <Node>
                 <Name>test_seq2seq.py</Name>
                 <Path>test__seq2seq_8py_source.html</Path>
                </Node>
                <Node>
                 <Name>test_ta_inheritence.py</Name>
                 <Path>test__ta__inheritence_8py_source.html</Path>
+               </Node>
+               <Node>
+                <Name>test_teachers.py</Name>
+                <Path>test__teachers_8py_source.html</Path>
                </Node>
                <Node>
                 <Name>test_tfidf_retriever.py</Name>

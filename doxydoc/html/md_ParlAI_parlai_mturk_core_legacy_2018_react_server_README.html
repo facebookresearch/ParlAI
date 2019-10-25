@@ -43,13 +43,13 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><code>parlai/mturk/core/react_server</code> contains several files and folders that comprise the server that is built to serve the task into the MTurk UI:</p>
-<h2><a class="anchor" id="autotoc_md62"></a>
+<h2><a class="anchor" id="autotoc_md60"></a>
 Folders</h2>
 <ul>
 <li><b>dev/</b>: contains the react frontend components that comprise the frontend, as well as the css and main javascript file that ties it all together. Of these, the <code>dev/components/core_components.jsx</code> file is likely the most interesting, as it contains the frontend components that are rendered in a normal task. To replace them, you'll need to create a <code>custom.jsx</code> file following the formatting in the dummy version in the same folder. See an example of this in the <code>react_task_demo</code> task in the <code>parlai/mturk/tasks</code> folder.</li>
 <li><b>server/</b>: contains the package that is actually served by the heroku server for the task. <code>server.js</code> is what ends up running on the heroku server, which is a simple one-page server with a router for socket messages. The <code><a class="el" href="mturk_2core_2server__utils_8py_source.html">parlai/mturk/core/server_utils.py</a></code> file handles building the components from dev into a new copy of this folder when launching a new task.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md63"></a>
+<h2><a class="anchor" id="autotoc_md61"></a>
 Files</h2>
 <p>The rest of the files are associated with the process of building the finalized javascript main via node and outputting it into the server directory.</p>
 <ul>

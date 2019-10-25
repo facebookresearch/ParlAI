@@ -2,8 +2,8 @@
 <area shape="rect" id="node1" title=" " alt="" coords="5,389,177,445"/>
 <area shape="rect" id="node2" href="$classparlai_1_1agents_1_1legacy__agents_1_1seq2seq_1_1seq2seq__v0_1_1Agent.html#a7151ba0c843bd32a0d9c5376fbf9c803" title=" " alt="" coords="253,5,428,61"/>
 <area shape="rect" id="node3" href="$classparlai_1_1core_1_1agents_1_1Agent.html#a27cb8206372681605b00dc28b81a7c39" title=" " alt="" coords="243,85,439,112"/>
-<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a4d9e8962cb44451758ea13b09b8dbd86" title=" " alt="" coords="257,136,425,192"/>
-<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1drqa_1_1utils_1_1AverageMeter.html#adf03b2f21b820b30c0bf68334bda0b6e" title=" " alt="" coords="262,217,419,258"/>
+<area shape="rect" id="node4" href="$classparlai_1_1agents_1_1drqa_1_1utils_1_1AverageMeter.html#adf03b2f21b820b30c0bf68334bda0b6e" title=" " alt="" coords="262,137,419,178"/>
+<area shape="rect" id="node5" href="$classparlai_1_1agents_1_1tfidf__retriever_1_1tfidf__retriever_1_1TfidfRetrieverAgent.html#a4d9e8962cb44451758ea13b09b8dbd86" title=" " alt="" coords="257,203,425,259"/>
 <area shape="rect" id="node6" href="$classparlai_1_1agents_1_1legacy__agents_1_1memnn_1_1memnn__v0_1_1MemnnAgent.html#ad365b2e33983158fbf7581d361a74246" title=" " alt="" coords="225,283,456,339"/>
 <area shape="rect" id="node7" href="$classparlai_1_1agents_1_1starspace_1_1starspace_1_1StarspaceAgent.html#a4d5057250faeae3f3812603469daa282" title=" " alt="" coords="229,363,452,405"/>
 <area shape="rect" id="node8" href="$classparlai_1_1agents_1_1ir__baseline_1_1ir__baseline_1_1IrBaselineAgent.html#adc3f036e92741d87db95e47dfc5fc0ef" title=" " alt="" coords="237,429,444,470"/>

@@ -3,8 +3,8 @@
 <area shape="rect" id="node2" href="$classparlai_1_1tasks_1_1ccpe_1_1agents_1_1CCPEAllTeacher.html#a0f9ed996020d75cb7e204f72465f46d6" title=" " alt="" coords="320,5,531,47"/>
 <area shape="rect" id="node3" href="$classparlai_1_1tasks_1_1empathetic__dialogues_1_1agents_1_1EmpatheticDialogueTeacher.html#a6859c7bc8c2c58f1c2ac23d7eb804eb7" title=" " alt="" coords="321,71,529,127"/>
 <area shape="rect" id="node4" href="$classparlai_1_1tasks_1_1dailydialog_1_1agents_1_1Convai2Teacher.html#a2e260f4477f6fd9ec11a1a1663e32bef" title=" " alt="" coords="323,152,528,193"/>
-<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1CandidateTeacher.html#a4bc06e52e0a67e05924717ac04075d88" title=" " alt="" coords="305,218,545,274"/>
-<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1base__agent_1_1__BaseSafetyTeacher.html#ab42e92e403d07dcd0f211a2c2732c2d9" title=" " alt="" coords="318,298,533,354"/>
+<area shape="rect" id="node5" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1base__agent_1_1__BaseSafetyTeacher.html#ab42e92e403d07dcd0f211a2c2732c2d9" title=" " alt="" coords="318,218,533,274"/>
+<area shape="rect" id="node6" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1CandidateTeacher.html#a4bc06e52e0a67e05924717ac04075d88" title=" " alt="" coords="305,298,545,354"/>
 <area shape="rect" id="node7" href="$classparlai_1_1tasks_1_1dialogue__nli_1_1agents_1_1DialogueNliTeacher.html#a1277b756af5d3ca234c77526a7bfb5e2" title=" " alt="" coords="309,445,541,501"/>
 <area shape="rect" id="node9" href="$classparlai_1_1tasks_1_1fvqa_1_1agents_1_1SplitTeacher.html#afb8c188440f9aa2721a308969380f2bc" title=" " alt="" coords="334,656,517,697"/>
 <area shape="rect" id="node10" href="$classparlai_1_1tasks_1_1multiwoz_1_1agents_1_1MultiWozTeacher.html#a0b28fec07160f7a36bc820fb74baf5b2" title=" " alt="" coords="319,721,531,763"/>
@@ -14,8 +14,8 @@
 <area shape="rect" id="node14" href="$classparlai_1_1tasks_1_1dialogue__safety_1_1agents_1_1MultiturnTeacher.html#a575c593a682c770a7c13f98fc7a3ce79" title=" " alt="" coords="306,998,545,1054"/>
 <area shape="rect" id="node15" href="$classparlai_1_1tasks_1_1personality__captions_1_1agents_1_1DefaultDataset.html#a09fb1bf7bf9dc5ab00ef9f32388336ea" title=" " alt="" coords="304,1078,547,1134"/>
 <area shape="rect" id="node16" href="$classparlai_1_1scripts_1_1eval__ppl_1_1PerplexityWorld.html#aed2ab6313608418defd2b167c1893e96" title=" " alt="" coords="340,1158,511,1214"/>
-<area shape="rect" id="node17" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1CandidateTeacherDataset.html#a8a3d8af8f189066f56bf5ae1848389c3" title=" " alt="" coords="320,1238,531,1294"/>
-<area shape="rect" id="node18" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#a0711151a8588c499abdda943b27793a8" title=" " alt="" coords="326,591,525,632"/>
+<area shape="rect" id="node17" href="$classparlai_1_1tasks_1_1flickr30k_1_1agents_1_1DefaultTeacher.html#a0711151a8588c499abdda943b27793a8" title=" " alt="" coords="326,591,525,632"/>
+<area shape="rect" id="node19" href="$classparlai_1_1tasks_1_1integration__tests_1_1agents_1_1CandidateTeacherDataset.html#a8a3d8af8f189066f56bf5ae1848389c3" title=" " alt="" coords="320,1238,531,1294"/>
 <area shape="rect" id="node20" href="$classparlai_1_1tasks_1_1empathetic__dialogues_1_1agents_1_1EmotionClassificationTeacher.html#acad8b18280f22798f1b0b6586e55765c" title=" " alt="" coords="296,1318,555,1374"/>
 <area shape="rect" id="node21" href="$classparlai_1_1tasks_1_1image__chat_1_1agents_1_1ImageChatTeacher.html#ae37398f75ec883f5bbf276bf7b2cf715" title=" " alt="" coords="305,1398,546,1454"/>
 <area shape="rect" id="node22" href="$classparlai_1_1core_1_1worlds_1_1World.html#a7c7258c4ad6a6bdfc76287832876a25d" title=" " alt="" coords="330,1479,521,1520"/>
@@ -40,7 +40,7 @@
 <area shape="rect" id="node45" href="$classparlai_1_1core_1_1teachers_1_1ParlAIDialogTeacher.html#aee1494d5dd0610530b4b93e56010e6f8" title=" " alt="" coords="322,2748,529,2789"/>
 <area shape="rect" id="node46" href="$classparlai_1_1core_1_1teachers_1_1AbstractImageTeacher.html#a702999efa941a59854ee511fc99cd117" title=" " alt="" coords="329,379,522,420"/>
 <area shape="rect" id="node8" href="$classparlai_1_1core_1_1agents_1_1Teacher.html#a93370e4e99236e8ad267b40cd4437920" title=" " alt="" coords="603,489,808,531"/>
-<area shape="rect" id="node19" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a001ed7924490d0e291588c54d383384a" title=" " alt="" coords="613,591,797,632"/>
+<area shape="rect" id="node18" href="$classparlai_1_1core_1_1teachers_1_1FixedDialogTeacher.html#a001ed7924490d0e291588c54d383384a" title=" " alt="" coords="613,591,797,632"/>
 <area shape="rect" id="node30" href="$classparlai_1_1core_1_1worlds_1_1World.html#a25ccd7740aa992bb7055bf6549574a07" title=" " alt="" coords="613,1968,797,2009"/>
 <area shape="rect" id="node41" href="$classparlai_1_1core_1_1teachers_1_1StreamDialogData.html#a5f3e6484038cefcc177a635148f0b492" title=" " alt="" coords="614,2617,797,2659"/>
 <area shape="rect" id="node42" href="$classparlai_1_1core_1_1pytorch__data__teacher_1_1StreamDataset.html#ab01d577b3aadf82fcf5cd15c3a69b6f2" title=" " alt="" coords="856,2573,1056,2629"/>
