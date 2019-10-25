@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 #
-# py parlai/messenger/tasks/overworld_demo/run.py --debug --verbose
+# py parlai/chat_service/tasks/overworld_demo/run.py --debug --verbose
 
 from parlai.core.worlds import World
 from parlai.chat_service.services.messenger.worlds import OnboardWorld
