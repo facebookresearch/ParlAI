@@ -1,0 +1,59 @@
+dict:
+  class: parlai_hydra.core.dict.DictionaryAgent
+  params:
+    data_path: ${parlai.data_path}
+
+    # path to dictionary file
+    dict_file: "${model.file}.dict"
+
+    # path to a saved dictionary to load tokens / counts from to seed
+    # the dictionary with initial tokens and/or frequencies
+    init_path: null
+
+    # looks for ngrams of up to this size.
+    # this is ignored when building the dictionary.
+    # note: this takes approximate runtime of len
+    maxngram: -1
+
+    # minimum frequency of words to include them in sorted dict or minimum frequency of bpe codecs
+    minfreq: 0
+
+    # max number of tokens to include in dictionary or bpe codecs
+    maxtokens: -1
+
+    tokens:
+      # token for starting sentence generation, if needed
+      start: __start__
+      # token for end of sentence markers, if needed
+      end: __end__
+      # empty token, can be used for padding or just empty values
+      null: __null__
+      # token to return for unavailable words
+      unknown: __unk__
+
+    # Whether or not to lowercase all text seen
+    lowercase: false
+
+    # Observation fields which dictionary learns vocabulary from.
+    # Tasks with additional fields may add to this list to handle any extra vocabulary.
+    textfields:
+      - text
+      - labels
+
+    # Leave BPE tokens untouched in output. Useful for debugging
+    bpe_debug: false
+
+
+    # TODO: refactor to move tokenizers to a config group, additional config option can be a static function to use for each tokenizer.
+    # Which tokenizer to use.
+    # Options include split, re, nltk, spacy and gpt2 and more
+    tokenizer: re
+
+    tokenizers:
+      nltk:
+        # sets language for the punkt (nltk) sentence tokenizer
+        language: english
+        file: "tokenizers/punkt/${dict.params.tokenizers.nltk.language}.pickle"
+
+      bpe:
+        file: "${dict.params.dict_file}.codecs"

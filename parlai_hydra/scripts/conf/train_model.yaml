@@ -1,0 +1,81 @@
+defaults:
+  - parlai
+  - datateacher
+  - model
+  - dict: dict_agent
+
+training:
+  # task to use for valid/test (defaults to the one used for training)
+  eval:
+    task: ???
+    # Eval time batch size (defaults to parlai.bs)
+    batch_size: ${parlai.bs}
+
+  display_examples: false
+  num_epochs: -1
+  max_train_time: -1
+  log_every_n_sec: 2
+
+  # Validate every n seconds. Saves model to model_file
+  # (if set) whenever best val metric is found
+  validation_every_n_secs: -1
+
+  # Saves the model to model_file.checkpoint after every validation
+  save_after_valid: false
+
+  # Validate every n epochs. Saves model to model_file
+  # (if set) whenever best val metric is found
+
+  # Max examples to use during validation (-1 uses all)
+  validation_max_exs: -1
+
+  # If true, obeys --validation-max-exs in the final validation and test evaluations
+  short_final_eval: false
+
+  # number of iterations of validation where result does not improve before we stop training
+  validation_patience: 10
+
+  # key into report table for selecting best validation
+  validation_metric: accuracy
+
+  # how to optimize validation metric (max or min)
+  validation_metric_mode: null
+
+  # Value at which training will stop if exceeded by metric
+  validation_cutoff: 1.0
+
+  # load model from checkpoint if available
+  load_from_checkpoint: false
+
+  # use a shared copy of the agent for validation.
+  # this will eventually default to True, but currently defaults to False.
+  validation_share_agent: false
+
+  # If multitasking, average metrics over the number of examples.
+  # If false, averages over the number of tasks.
+  aggregate_micro: false
+
+  # TODO: comma separated lists will conflict with multirun. can use a string or a yaml list in the file to represent this.
+  # list of metrics to show/compute, e.g.
+  # - all
+  # - default,
+  #  Or give a list split by , like ppl,f1,accuracy,hits@1,rouge,bleu the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l
+  metrics: default
+
+tensorboard:
+  # Tensorboard logging of metrics
+  enable: false
+  # log file path
+  file_path: "${model.file}.tensorboard"
+
+dict:
+  # max number of examples to build dict on
+  maxexs: -1
+  # Include validation set in dictionary building for task.
+  include_valid: false
+
+  # Include test set in dictionary building for task.
+  include_test: false
+
+  # Interval in seconds between logging
+  log_interval_sec: 2

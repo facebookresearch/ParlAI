@@ -1,0 +1,42 @@
+teacher:
+  # Use the PytorchDataTeacher for multiprocessed data loading
+  # with a standard ParlAI task, e.g. "babi:Task1k"
+  task: ???
+
+  # Use the PytorchDataTeacher for multiprocessed data
+  # loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"
+  dataset: ???
+
+  # datapath for pytorch data loader
+  # note: only specify if the data does not reside in the normal ParlAI datapath
+  path: null
+
+  # how many workers the Pytorch dataloader should use
+  num_workers: 4
+
+  # Whether the agent should preprocess the data while building the pytorch data
+  preprocess: false
+
+  # Whether to construct batches of similarly sized episodes when using the PytorchDataTeacher
+  batch_sort: false
+
+  # TODO: validate at runtime
+  # how to build up the batch cache [pop, index, none]
+  batch_sort_cache_type: pop
+
+  # degree of variation of size allowed in batch
+  batch_length_range: 5
+
+  # Whether to shuffle the data
+  shuffle: false
+
+  # What field to use when determining the length of an episode
+  batch_sort_field: text
+
+  # Number of past utterances to remember when building flattened batches
+  # of data in multi-example episodes (For use with PytorchDataTeacher)
+  context_length: -1
+
+  # Specifies whether or not to include labels as past utterances when building
+  # flattened batches of data in multi-example episodes. (For use with PytorchDataTeacher)
+  include_labels: true

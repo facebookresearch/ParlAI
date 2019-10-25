@@ -1,0 +1,16 @@
+model:
+  # TODO: switch to Hydra class style (parlai.agents.seq2seq.seq2seq.Seq2SeqAgent)
+  # The model class name.
+  # can match parlai/agents/<model> for agents in that directory, or can provide a
+  # fully specified module for `from X import Y` via `-m X:Y`
+  # (e.g. `-m parlai.agents.seq2seq.seq2seq:Seq2SeqAgent`)
+  class: null
+
+  # model file name for loading and saving models
+  file: null
+
+  # Load model weights and dict from this file
+  init_model: null
+
+  # dictionary
+#  dict: ${dict}

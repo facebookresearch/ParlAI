@@ -133,3 +133,7 @@ heroku-cli-*
 
 # VSCode
 *.vscode
+
+# Hydra default outupt directories
+/output
+/multirun

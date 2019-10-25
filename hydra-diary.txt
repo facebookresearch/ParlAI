@@ -1,0 +1,17 @@
+Setup:
+Possible to simplify by installing more into the conda environment.
+Unfortunately nvcc is not provided by conda so there is still dependency on module cuda/10.0, but other than this most everything can be used from the conda env.
+
+You can generate an environment.yaml with:
+conda env export --no-builds | grep -v prefix > environment.yml
+
+Be sure to be on anaconda3/2019.07 (or newer), newer versions also exports pip packages.
+--
+Looking at example mentioned in README:
+python examples/train_model.py -t convai2 -m transformer/generator -bs 64 -tr 128 -eps 1 --model-file /tmp/mytestmodel
+
+* Hydra does not yet support rich validation of cli args -> value validation and help are not yet available.
+
+
+* ParlAI is composing the arguments, but the composition is pretty rigid. it's also done in a central class that everyone is using,
+which probably makes it painful to adjust to new use cases approaches.

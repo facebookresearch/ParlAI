@@ -1,0 +1,49 @@
+parlai:
+  parlai_home : ${env:PARLAI_HOME}
+  download_path: ${env:PARLAI_DOWNPATH}
+  data_path: ${env:PARLAI_DATAPATH}
+
+  # TODO: validate at runtime.
+  # one of:
+  #train
+  #train:stream
+  #train:ordered
+  #train:ordered:stream
+  #train:stream:ordered
+  #train:evalmode
+  #train:evalmode:stream
+  #train:evalmode:ordered
+  #train:evalmode:ordered:stream
+  #train:evalmode:stream:ordered
+  #valid
+  #valid:stream
+  #test
+  #test:stream
+
+  # choose from: train, train:ordered, valid, test. to stream data add ":stream"
+  # to any option (e.g., train:stream).
+  # by default: train is random with replacement, valid is ordered, test is ordered.
+  data_type: train
+
+  # image preprocessor to use. default is "raw". set to null to skip image loading.
+  image_mode: raw
+
+  # TODO: this should be two different fields.
+  # number of threads. Used for hogwild if batchsize is 1,
+  # else for number of threads in threadpool loading
+  numthreads: 1
+
+  # By default (false), moves labels in valid and test sets to the
+  # eval_labels field. If True, they are hidden completely.
+  hide_labels: false
+
+  # TODO
+  tasks: ???
+
+  # list of floats, one for each task, specifying the probability
+  # of drawing the task in multitask case
+  multitask_weights:
+    - 1
+
+  # batch size for minibatch training schemes
+  bs: 1

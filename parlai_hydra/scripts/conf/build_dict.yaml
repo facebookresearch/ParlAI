@@ -1,0 +1,16 @@
+build_dict:
+  # dict file to save/load
+  file: ???
+  # max number of examples to build dict on
+  maxexs: -1
+
+  # Include validation set in dictionary building for task.
+  include_valid: false
+
+  # Include test set in dictionary building for task.
+  include_test: false
+
+  # Interval in seconds between logging
+  log_interval_sec: 2
+
+  skip_if_build: false
