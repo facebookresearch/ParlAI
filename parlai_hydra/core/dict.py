@@ -13,10 +13,10 @@ from collections import defaultdict
 import logging
 import numpy as np
 
-from parlai.core.agents import Agent
+from .agents import Agent
 from parlai.core.build_data import make_dir
 from parlai.core.build_data import modelzoo_path
-from parlai.core.gpt2_helper import Gpt2BpeHelper
+from .gpt2_helper import Gpt2BpeHelper
 
 try:
     from subword_nmt import learn_bpe, apply_bpe
@@ -123,10 +123,10 @@ class DictionaryAgent(Agent):
 
         """Initialize DictionaryAgent."""
         self.minfreq = minfreq
-        self.null_token = tokens.null_token
-        self.end_token = tokens.end_token
-        self.unk_token = tokens.unknown_token
-        self.start_token = tokens.start_token
+        self.null_token = tokens.null
+        self.end_token = tokens.end
+        self.unk_token = tokens.unknown
+        self.start_token = tokens.start
         self.max_ngram_size = maxngram
         self.tokenizer = tokenizer
         self.lower = lowercase
@@ -189,8 +189,8 @@ class DictionaryAgent(Agent):
 
         # TODO: this can be done by breaking each tokenizer config into it's own file and composing one in.
         # initialize tokenizers
-        tokenizer_cfg = tokenizers[tokenizer]
         if self.tokenizer == 'nltk':
+            tokenizer_cfg = tokenizers[tokenizer]
             try:
                 import nltk
             except ImportError:
@@ -226,9 +226,7 @@ class DictionaryAgent(Agent):
                     'You should not filter vocabulary with using --dict-tokenizer gpt2'
                     ' (no --dict-minfreq or --dict-maxtokens).'
                 )
-            # TODO : port Gpt2BpeHelper
-            raise RuntimeError("TODO")
-            self.gpt2_bpe = Gpt2BpeHelper(opt)
+            self.gpt2_bpe = Gpt2BpeHelper(cfg.parlai.data_path)
             for each_token in self.gpt2_bpe.list_tokens():
                 self.add_token(each_token)
                 self.freq[each_token] = 1
@@ -250,8 +248,8 @@ class DictionaryAgent(Agent):
                 # fix count for unknown token to one billion
                 self.freq[self.unk_token] = 1000000000
 
-            if opt.get('dict_file'):
-                self.save_path = opt['dict_file']
+            if dict_file:
+                self.save_path = dict_file
 
     def add_token(self, word):
         """Add a single token to the dictionary."""

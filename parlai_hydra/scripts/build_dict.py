@@ -12,63 +12,30 @@ Examples
 .. code-block:: shell
 
   # learn the vocabulary from one task, then train on another task.
-  python -m parlai.scripts.build_dict -t convai2 --dict-file premade.dict
-  python -m parlai.scripts.train_model -t squad --dict-file premade.dict -m seq2seq
+  # TODO: missing task specification
+  python parlai_hydra/scripts/build_dict.py  dict.file=premade.dict
+
+  # Old command:
+  # python -m parlai.scripts.build_dict -t convai2 --dict-file premade.dict
+  # python -m parlai.scripts.train_model -t squad --dict-file premade.dict -m seq2seq
 
 """
 
-from parlai.core.dict import DictionaryAgent
-from parlai.core.params import ParlaiParser, str2class
-from parlai.core.worlds import create_task
-from parlai.utils.misc import TimeLogger
-from parlai.utils.distributed import is_distributed
-import copy
-import os
-import tqdm
-import hydra
 import logging
+import os
+
+import hydra
+import tqdm
+
+from parlai_hydra.core.worlds import create_task
+from parlai.utils.distributed import is_distributed
+from parlai.utils.misc import TimeLogger
 
 log = logging.getLogger(__name__)
 
-# def setup_args(parser=None, hidden=True):
-#     if parser is None:
-#         parser = ParlaiParser(True, True, 'Build a dictionary.')
-#     parser.add_pytorch_datateacher_args()
-#     dict_loop = parser.add_argument_group('Dictionary Loop Arguments')
-#     dict_loop.add_argument(
-#         '--dict-maxexs',
-#         default=-1,
-#         type=int,
-#         help='max number of examples to build dict on',
-#         hidden=hidden,
-#     )
-#     dict_loop.add_argument(
-#         '--dict-include-valid',
-#         default=False,
-#         type='bool',
-#         help='Include validation set in dictionary building ' 'for task.',
-#         hidden=hidden,
-#     )
-#     dict_loop.add_argument(
-#         '--dict-include-test',
-#         default=False,
-#         type='bool',
-#         help='Include test set in dictionary building for task.',
-#         hidden=hidden,
-#     )
-#     dict_loop.add_argument(
-#         '-ltim', '--log-every-n-secs', type=float, default=2, hidden=hidden
-#     )
-#     partial, _ = parser.parse_known_args(nohelp=True)
-#     if vars(partial).get('dict_class'):
-#         str2class(vars(partial).get('dict_class')).add_cmdline_args(parser)
-#     else:
-#         DictionaryAgent.add_cmdline_args(parser)
-#     return parser
-
 
 def build_dict(cfg):
-    if cfg.dict.skip_if_build and os.path.isfile(cfg.dict.file):
+    if cfg.build_dict.skip_if_build and os.path.isfile(cfg.dict.file):
         # Dictionary already built, skip all loading or setup
         log.info("dictionary already built")
         return None
@@ -83,33 +50,33 @@ def build_dict(cfg):
         log.info("dictionary already built")
         return dictionary
 
-    ordered_opt = copy.deepcopy(opt)
-    cnt = 0
-    # we use train set to build dictionary
+    # TODO: override
+    # ordered_opt['numthreads'] = 1
+    # ordered_opt['batchsize'] = 1
 
-    ordered_opt['numthreads'] = 1
-    ordered_opt['batchsize'] = 1
     # Set this to none so that image features are not calculated when Teacher is
     # instantiated while building the dict
     # TODO: change 'none' to 'no_image_model'
-    ordered_opt['image_mode'] = 'none'
-    ordered_opt['pytorch_teacher_batch_sort'] = False
-    if ordered_opt['task'] == 'pytorch_teacher' or not ordered_opt['task']:
-        pytorch_teacher_task = ordered_opt.get('pytorch_teacher_task', '')
-        if pytorch_teacher_task != '':
-            ordered_opt['task'] = pytorch_teacher_task
+    # ordered_opt['image_mode'] = 'none'
+
+    # ordered_opt['pytorch_teacher_batch_sort'] = False
+    # TODO: how to check if task if ??? (not set)
+    # if cfg.teacher.task['task'] == 'pytorch_teacher' or cfg.teacher.task is None:
+    #     pytorch_teacher_task = ordered_opt.get('pytorch_teacher_task', '')
+    #     if pytorch_teacher_task != '':
+    #         ordered_opt['task'] = pytorch_teacher_task
 
     datatypes = ['train:ordered:stream']
-    if opt.get('dict_include_valid'):
+    if cfg.build_dict.include_valid:
         datatypes.append('valid:stream')
-    if opt.get('dict_include_test'):
+    if cfg.build_dict.include_test:
         datatypes.append('test:stream')
+
     cnt = 0
     for dt in datatypes:
-        ordered_opt['datatype'] = dt
-        world_dict = create_task(ordered_opt, dictionary)
+        world_dict = create_task(cfg, dictionary)
         # pass examples to dictionary
-        print('[ running dictionary over data.. ]')
+        log.info('running dictionary over data..')
         log_time = TimeLogger()
         total = world_dict.num_examples()
         if opt['dict_maxexs'] >= 0:
@@ -124,8 +91,8 @@ def build_dict(cfg):
             pbar = None
         while not world_dict.epoch_done():
             cnt += 1
-            if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] >= 0:
-                print('Processed {} exs, moving on.'.format(opt['dict_maxexs']))
+            if cnt > cfg.build_dict.maxexs and cfg.build_dict.maxexs >= 0:
+                log.info('Processed {} exs, moving on.'.format(cfg.build_dict.maxexs))
                 # don't wait too long...
                 break
             world_dict.parley()
@@ -134,19 +101,19 @@ def build_dict(cfg):
         if pbar:
             pbar.close()
 
-    dictionary.save(opt['dict_file'], sort=True)
-    print(
-        '[ dictionary built with {} tokens in {}s ]'.format(
+    dictionary.save(cfg.dict.file, sort=True)
+    log.info(
+        'dictionary built with {} tokens in {}s'.format(
             len(dictionary), round(log_time.total_time(), 2)
         )
     )
     return dictionary
 
 
-@hydra.main(config_path='conf/build_dict.xml')
+@hydra.main(config_path='conf/build_dict.yaml')
 def build_dict_main(cfg):
     build_dict(cfg)
 
 
 if __name__ == '__main__':
-    build_dict()
+    build_dict_main()

@@ -1,3 +1,7 @@
+defaults:
+  - parlai
+  - agent: dict_agent
+
 build_dict:
   # dict file to save/load
   file: ???

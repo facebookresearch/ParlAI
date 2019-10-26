@@ -65,6 +65,7 @@ def setup_args(parser=None, hidden=True):
 
 
 def build_dict(opt, skip_if_built=False):
+    print("||||||||||||||||||||| -==================")
     if isinstance(opt, ParlaiParser):
         print('[ Deprecated Warning: should be passed opt not Parser ]')
         opt = opt.parse_args()
@@ -84,11 +85,12 @@ def build_dict(opt, skip_if_built=False):
 
     if opt.get('dict_class'):
         # Custom dictionary class
+        print("\tdict_class: " + opt['dict_class'])
         dictionary = str2class(opt['dict_class'])(opt)
     else:
         # Default dictionary class
         dictionary = DictionaryAgent(opt)
-
+    print("\tdict_class: " + type(dictionary).__name__)
     if os.path.isfile(opt['dict_file']):
         # Dictionary already built, return loaded dictionary agent
         print("[ dictionary already built .]")
@@ -116,6 +118,7 @@ def build_dict(opt, skip_if_built=False):
     if opt.get('dict_include_test'):
         datatypes.append('test:stream')
     cnt = 0
+    print("|||||||||||||||||| datatypes : " + str(datatypes))
     for dt in datatypes:
         ordered_opt['datatype'] = dt
         world_dict = create_task(ordered_opt, dictionary)
@@ -151,6 +154,7 @@ def build_dict(opt, skip_if_built=False):
             len(dictionary), round(log_time.total_time(), 2)
         )
     )
+
     return dictionary
 
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -28,9 +26,7 @@ Worlds are the basic environments which define how agents interact with one anot
 
 All worlds are initialized with the following parameters:
 
-    ``opt`` -- contains any options needed to set up the agent. This generally contains
-        all command-line arguments recognized from core.params, as well as other
-        options that might be set through the framework to enable certain modes.
+    ``cfg`` -- world configuration object
     ``agents`` -- the set of agents that should be attached to the world,
         e.g. for DialogPartnerWorld this could be the teacher (that defines the
         task/dataset) and the learner agent. This is ignored in the case of
@@ -1158,7 +1154,6 @@ def _get_task_world(opt, user_agents, default_world=None):
                 world_class = DialogPartnerWorld
             else:
                 world_class = MultiAgentDialogWorld
-    print("\t\t world={}, task_agensts={}".format(world_class, str(task_agents)))
     return world_class, task_agents
 
 
@@ -1174,7 +1169,7 @@ def create_task_world(opt, user_agents, default_world=None):
     return world_class(opt, task_agents + user_agents)
 
 
-def create_task(opt, user_agents, default_world=None):
+def create_task(cfg, user_agents, default_world=None):
     """
     Create a world + task_agents (aka a task).
 
@@ -1184,39 +1179,39 @@ def create_task(opt, user_agents, default_world=None):
     for list of tasks.
     """
     task = opt.get('task')
-    pyt_task = opt.get('pytorch_teacher_task')
-    pyt_dataset = opt.get('pytorch_teacher_dataset')
-    if not (task or pyt_task or pyt_dataset):
-        raise RuntimeError(
-            'No task specified. Please select a task with ' + '--task {task_name}.'
-        )
+    # pyt_task = opt.get('pytorch_teacher_task')
+    # pyt_dataset = opt.get('pytorch_teacher_dataset')
+    # if not (task or pyt_task or pyt_dataset):
+    #     raise RuntimeError(
+    #         'No task specified. Please select a task with ' + '--task {task_name}.'
+    #     )
+
     # When building pytorch data, there is a point where task and pyt_task
     # are the same; make sure we discount that case.
-    pyt_multitask = task is not None and (
-        (pyt_task is not None and pyt_task != task)
-        or (pyt_dataset is not None and pyt_dataset != task)
-    )
-    if not task:
-        opt['task'] = 'pytorch_teacher'
+    # pyt_multitask = task is not None and (
+    #     (pyt_task is not None and pyt_task != task)
+    #     or (pyt_dataset is not None and pyt_dataset != task)
+    # )
+
+    # if not task:
+    #     opt['task'] = 'pytorch_teacher'
+
     if type(user_agents) != list:
         user_agents = [user_agents]
 
     # Convert any hashtag task labels to task directory path names.
     # (e.g. "#QA" to the list of tasks that are QA tasks).
-    opt = copy.deepcopy(opt)
-    print("\t\t opt['task'] :: ", opt['task'])
+    # opt = copy.deepcopy(opt)
     opt['task'] = ids_to_tasks(opt['task'])
     if pyt_multitask and 'pytorch_teacher' not in opt['task']:
         opt['task'] += ',pytorch_teacher'
-    print('\t\t[creating task(s): ' + opt['task'] + ']')
+    print('[creating task(s): ' + opt['task'] + ']')
 
     # check if single or multithreaded, and single-example or batched examples
     if ',' not in opt['task']:
         # Single task
-        print("\t\tcreate_task_world")
         world = create_task_world(opt, user_agents, default_world=default_world)
     else:
-        print("\t\tMultiWorld")
         # Multitask teacher/agent
         # TODO: remove and replace with multiteachers only?
         world = MultiWorld(opt, user_agents, default_world=default_world)

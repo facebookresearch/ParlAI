@@ -29,3 +29,4 @@ tqdm==4.36.1
 Unidecode==1.1.1
 websocket-client==0.56.0
 websocket-server==0.4
+hydra==0.10.0

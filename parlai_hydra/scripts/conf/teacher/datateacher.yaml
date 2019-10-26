@@ -1,7 +1,7 @@
 teacher:
   # Use the PytorchDataTeacher for multiprocessed data loading
   # with a standard ParlAI task, e.g. "babi:Task1k"
-  task: ???
+  task: null
 
   # Use the PytorchDataTeacher for multiprocessed data
   # loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"

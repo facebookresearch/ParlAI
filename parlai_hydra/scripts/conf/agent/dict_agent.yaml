@@ -1,10 +1,11 @@
 dict:
+  file: "${model.file}.dict"
   class: parlai_hydra.core.dict.DictionaryAgent
   params:
     data_path: ${parlai.data_path}
 
     # path to dictionary file
-    dict_file: "${model.file}.dict"
+    dict_file: "${dict.file}"
 
     # path to a saved dictionary to load tokens / counts from to seed
     # the dictionary with initial tokens and/or frequencies
@@ -23,13 +24,13 @@ dict:
 
     tokens:
       # token for starting sentence generation, if needed
-      start: __start__
+      start: "__start__"
       # token for end of sentence markers, if needed
-      end: __end__
+      end: "__end__"
       # empty token, can be used for padding or just empty values
-      null: __null__
+      "null": "__null__"
       # token to return for unavailable words
-      unknown: __unk__
+      unknown: "__unk__"
 
     # Whether or not to lowercase all text seen
     lowercase: false
