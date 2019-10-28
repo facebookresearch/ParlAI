@@ -1823,8 +1823,6 @@ class TorchAgent(ABC, Agent):
             if self._is_lr_warming_up():
                 self.warmup_scheduler.step(epoch=self._number_training_updates)
 
-       
-
         if self.fp16:
             # we've been accumulating grads in fp16 and delaying the fp32 copy update.
             # finally time to perform the update.
@@ -1841,7 +1839,7 @@ class TorchAgent(ABC, Agent):
             self.metrics['clip'] += float(grad_norm > self.opt['gradient_clip'])
 
         self.metrics['updates'] += 1
-        
+
         if self.opt.get('lr_scheduler') == 'invsqrt' and not self._is_lr_warming_up():
             # training step scheduler
             self.scheduler.step(self._number_training_updates)
