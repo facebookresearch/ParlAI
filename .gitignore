@@ -133,3 +133,6 @@ heroku-cli-*
 
 # VSCode
 *.vscode
+
+# mypy cache
+.mypy_cache
