@@ -1310,7 +1310,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         # Not using default image_mode paramater b/c there is a normalization
         # (or bug) somewhere in build_dict that is setting it to none
-        self.include_image = opt.get('image_mode') != 'none'
+        self.include_image = opt.get('image_mode') != 'no_image_model'
 
         self.image_path = self.get_image_path(opt)
         self.image_loader = None
@@ -1534,7 +1534,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
                 # TODO: will refactor this at some point soon most likely
                 image_loader_opt = self.opt.copy()
                 image_loader_opt['image_mode'] = (
-                    self.image_mode if self.include_image else 'none'
+                    self.image_mode if self.include_image else 'no_image_model'
                 )
 
                 image_loader_opt['image_size'] = 256
