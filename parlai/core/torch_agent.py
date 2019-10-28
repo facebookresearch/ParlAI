@@ -1811,6 +1811,8 @@ class TorchAgent(ABC, Agent):
             if self._number_grad_accum != 0:
                 return
 
+        self.optimizer.step()
+
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
 
@@ -1839,7 +1841,6 @@ class TorchAgent(ABC, Agent):
             self.metrics['clip'] += float(grad_norm > self.opt['gradient_clip'])
 
         self.metrics['updates'] += 1
-        self.optimizer.step()
         
         if self.opt.get('lr_scheduler') == 'invsqrt' and not self._is_lr_warming_up():
             # training step scheduler
