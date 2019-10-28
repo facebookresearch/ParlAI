@@ -10,8 +10,7 @@ from parlai.core.agents import Agent
 
 
 class ChatServiceAgent(Agent):
-    """Base class for a person on a chat serivce that can act in a 
-    ParlAI world"""
+    """Base class for a person on a chat serivce that can act in a ParlAI world"""
 
     def __init__(self, opt, manager, id):
         super().__init__(opt)
