@@ -64,7 +64,7 @@ class OeTeacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
 
         if shared and 'ques' in shared:
             # another instance was set up already, just reference its data

@@ -467,7 +467,7 @@ class OeTeacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         data_path, annotation_path, self.image_path = _path(opt)
         self.datafile = data_path
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
 
         if shared and 'ques' in shared:
             self.ques = shared['ques']
