@@ -432,7 +432,7 @@ class DefaultTeacher(FixedDialogTeacher):
             ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
         self.example, self.imageEpochDone = super().next_example()
-        if self.image_mode != 'none' and 'image_id' in self.example:
+        if self.image_mode != 'no_image_model' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
             split = self.example.get('split', None)
