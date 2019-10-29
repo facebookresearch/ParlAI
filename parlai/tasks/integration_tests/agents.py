@@ -78,12 +78,14 @@ class CandidateTeacher(DialogTeacher):
     def num_examples(self):
         return self.num_episodes()
 
+    def build_corpus(self):
+        """Build corpus; override for customization."""
+        return [list(x) for x in itertools.permutations(self.words, self.example_size)]
+
     def setup_data(self, fold):
         # N words appearing in a random order
         self.rng = random.Random(42)
-        full_corpus = [
-            list(x) for x in itertools.permutations(self.words, self.example_size)
-        ]
+        full_corpus = self.build_corpus()
         self.rng.shuffle(full_corpus)
 
         it = iter(full_corpus)
@@ -281,6 +283,28 @@ class NocandidateTeacher(CandidateTeacher):
         raw = super().setup_data(fold)
         for (t, a, _r, _c), e in raw:
             yield (t, a), e
+
+
+class RepeatWordsTeacher(NocandidateTeacher):
+    """
+    Each input/output pair is a word repeated n times.
+
+    Useful for testing beam-blocking.
+    """
+
+    def __init__(self, *args, **kwargs):
+        # Set sizes so that we have appropriate number of examples (700)
+        kwargs['vocab_size'] = 70
+        kwargs['example_size'] = 11
+        super().__init__(*args, **kwargs)
+
+    def build_corpus(self):
+        """Override to repeat words."""
+        return [
+            [x for _ in range(l)]
+            for l in range(1, self.example_size)
+            for x in self.words
+        ]
 
 
 class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):
