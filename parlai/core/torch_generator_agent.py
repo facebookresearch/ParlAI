@@ -382,8 +382,7 @@ class TorchGeneratorAgent(TorchAgent):
         If overridden, this model should produce a sum that can be used for a per-token loss.
         """
         return torch.nn.CrossEntropyLoss(
-            ignore_index=self.NULL_IDX,
-            reduction='sum' if reduce else 'none',
+            ignore_index=self.NULL_IDX, reduction='sum' if reduce else 'none'
         )
 
     def _v2t(self, vec):
@@ -572,10 +571,14 @@ class TorchGeneratorAgent(TorchAgent):
         # Zip decoded tokens with losses
         token_losses = []
         for i, label in enumerate(labels):
-            token_losses.append(list(zip(
-                [self.dict[token] for token in label.tolist()],
-                losses[i].tolist(),
-            )))
+            token_losses.append(
+                list(
+                    zip(
+                        [self.dict[token] for token in label.tolist()],
+                        losses[i].tolist(),
+                    )
+                )
+            )
         return token_losses
 
     def eval_step(self, batch):
@@ -589,12 +592,13 @@ class TorchGeneratorAgent(TorchAgent):
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
-            loss, model_output = self.compute_loss(batch, return_output=True)  # noqa: F841  we need the side effects
+            loss, model_output = self.compute_loss(
+                batch, return_output=True
+            )  # noqa: F841  we need the side effects
             self.metrics['loss'] += loss.item()
             if self.output_token_losses:
                 token_losses = self._construct_token_losses(
-                    batch.label_vec,
-                    model_output,
+                    batch.label_vec, model_output
                 )
 
         preds = None
