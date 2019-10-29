@@ -58,8 +58,8 @@ class CandidateTeacher(DialogTeacher):
         opt['datafile'] = opt['datatype'].split(':')[0]
         self.datafile = opt['datafile']
 
-        self.vocab_size = opt.get('integration_vocab_size', vocab_size)
-        self.example_size = opt.get('integration_example_size', example_size)
+        self.vocab_size = vocab_size
+        self.example_size = example_size
         self.num_candidates = num_candidates
         self.num_train = num_train
         self.num_test = num_test
