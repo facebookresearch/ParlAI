@@ -196,7 +196,7 @@ class ImageLoader:
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
         is_zip = False
-        if mode is None or mode == 'none':
+        if mode is None or mode == 'no_image_model':
             # don't need to load images
             return None
         elif '.zip' in path:
