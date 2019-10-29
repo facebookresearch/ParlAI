@@ -20,7 +20,8 @@ import re
 
 DEFAULT_METRICS = {'correct', 'bleu', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
-ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS
+EXTRA_BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3', 'bleu-4'}
+ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | EXTRA_BLEU_METRICS
 
 
 try:
@@ -145,7 +146,7 @@ def _f1_score(guess, answers):
     return max(f1 for p, r, f1 in scores)
 
 
-def _bleu(guess, answers):
+def _bleu(guess, answers, weights=None):
     """Compute approximate BLEU score between guess and a set of answers."""
     if nltkbleu is None:
         # bleu library not installed, just return a default value
@@ -156,10 +157,14 @@ def _bleu(guess, answers):
     # going to be slower than fairseq's (which is written in C), but fairseq's
     # requires that everything be in arrays of ints (i.e. as tensors). NLTK's
     # works with strings, which is better suited for this module.
+    if weights is None:
+        # default bleu-4
+        weights = [1 / 4 for _ in range(4)]
     return nltkbleu.sentence_bleu(
         [normalize_answer(a).split(" ") for a in answers],
         normalize_answer(guess).split(" "),
         smoothing_function=nltkbleu.SmoothingFunction(epsilon=1e-12).method1,
+        weights=weights,
     )
 
 
@@ -251,6 +256,7 @@ class Metrics(object):
                 if rouge is not None:
                     # only compute rouge if rouge is available
                     self.metrics_list.add('rouge')
+                    self.metrics_list.add(each_m)
             elif each_m == 'bleu' and nltkbleu is None:
                 # only compute bleu if bleu is available
                 pass
@@ -334,18 +340,26 @@ class Metrics(object):
             # F1 and BLEU metrics.
             if 'f1' in self.metrics_list:
                 f1 = _f1_score(prediction, labels)
+            bleu_scores = {}
             if 'bleu' in self.metrics_list:
-                bleu = _bleu(prediction, labels)
+                bleu_scores['bleu'] = _bleu(prediction, labels)
+            if 'bleu-1' in self.metrics_list:
+                for i in range(4):
+                    weights = [1 / (i + 1) for _ in range(i + 1)]
+                    bleu_scores[f'bleu-{i + 1}'] = _bleu(prediction, labels, weights)
             if 'rouge' in self.metrics_list:
                 rouge1, rouge2, rougeL = _rouge(prediction, labels)
-
             with self._lock():
                 if 'f1' in self.metrics:
                     self.metrics['f1'] += f1
                     self.metrics['f1_cnt'] += 1
                 if 'bleu' in self.metrics:
-                    self.metrics['bleu'] += bleu
+                    self.metrics['bleu'] += bleu_scores.pop('bleu')
                     self.metrics['bleu_cnt'] += 1
+                if 'bleu-1' in self.metrics:
+                    for b, b_score in bleu_scores.items():
+                        self.metrics[b] += b_score
+                        self.metrics[f'{b}_cnt'] += 1
                 if 'rouge-L' in self.metrics and rouge1 is not None:
                     self.metrics['rouge-1'] += rouge1
                     self.metrics['rouge-1_cnt'] += 1
