@@ -37,22 +37,6 @@ class CandidateTeacher(DialogTeacher):
     of the input. A good ranker should easily identify the correct response.
     """
 
-    @classmethod
-    def add_cmdline_args(cls, argparser):
-        cand_teacher = argparser.add_argument_group('Integration Tests Args')
-        cand_teacher.add_argument(
-            '--integration-vocab-size',
-            default=VOCAB_SIZE,
-            type=int,
-            help='number of words',
-        )
-        cand_teacher.add_argument(
-            '--integration-example-size',
-            default=EXAMPLE_SIZE,
-            type=int,
-            help='length of examples',
-        )
-
     def __init__(
         self,
         opt,
@@ -308,22 +292,11 @@ class RepeatWordsTeacher(NocandidateTeacher):
     Useful for testing beam-blocking.
     """
 
-    def __init__(
-        self,
-        opt,
-        shared=None,
-        vocab_size=VOCAB_SIZE,
-        example_size=EXAMPLE_SIZE,
-        num_candidates=NUM_CANDIDATES,
-        num_train=NUM_TRAIN,
-        num_test=NUM_TEST,
-    ):
+    def __init__(self, *args, **kwargs):
         # Set sizes so that we have appropriate number of examples (700)
-        opt['integration_vocab_size'] = 70
-        opt['integration_example_size'] = 11
-        super().__init__(
-            opt, shared, vocab_size, example_size, num_candidates, num_train, num_test
-        )
+        kwargs['vocab_size'] = 70
+        kwargs['example_size'] = 11
+        super().__init__(*args, **kwargs)
 
     def build_corpus(self):
         """Override to repeat words."""
