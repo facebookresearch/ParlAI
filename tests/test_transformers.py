@@ -10,7 +10,6 @@ import os
 import unittest
 import parlai.utils.testing as testing_utils
 
-
 class TestTransformerRanker(unittest.TestCase):
     """Checks that transformer_ranker can learn some very basic tasks."""
 
@@ -246,7 +245,6 @@ class TestTransformerGenerator(unittest.TestCase):
     """Checks that the generative transformer can learn basic tasks."""
 
     @testing_utils.retry(ntries=3)
-    @unittest.skipIf(True, 'because')
     def test_greedysearch(self):
         """Test greedy search."""
         stdout, valid, test = testing_utils.train_model(
@@ -352,6 +350,18 @@ class TestTransformerGenerator(unittest.TestCase):
                     skip_generation=False,
                 )
             )
+            _, valid_beam_block2, test_beam_block2 = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:repeat_words',
+                    model_file=mf,
+                    dict_file=df,
+                    batch_size=1,
+                    inference='beam',
+                    beam_size=5,
+                    beam_block_ngram=2,
+                    skip_generation=False,
+                )
+            )
         self.assertLessEqual(
             valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
@@ -373,7 +383,7 @@ class TestTransformerGenerator(unittest.TestCase):
             test['bleu'], 1e-6, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
         )
 
-        # Beam Block
+        # Beam Block 1
         self.assertLessEqual(
             valid_beam_block['f1'],
             0.4,
@@ -392,6 +402,28 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(
             test_beam_block['bleu'],
             1e-10,
+            "test beam block bleu = {}\nLOG:\n{}".format(test['bleu'], stdout),
+        )
+
+        # Beam Block 2
+        self.assertLessEqual(
+            valid_beam_block2['f1'],
+            0.6,
+            "valid beam block f1 = {}\nLOG:\n{}".format(valid['f1'], stdout),
+        )
+        self.assertLessEqual(
+            valid_beam_block2['bleu'],
+            1e-8,
+            "valid beam block bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+        )
+        self.assertLessEqual(
+            test_beam_block2['f1'],
+            0.6,
+            "test beam block f1 = {}\nLOG:\n{}".format(test['f1'], stdout),
+        )
+        self.assertLessEqual(
+            test_beam_block2['bleu'],
+            1e-8,
             "test beam block bleu = {}\nLOG:\n{}".format(test['bleu'], stdout),
         )
 
