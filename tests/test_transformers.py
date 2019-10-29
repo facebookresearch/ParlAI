@@ -10,6 +10,7 @@ import os
 import unittest
 import parlai.utils.testing as testing_utils
 
+
 class TestTransformerRanker(unittest.TestCase):
     """Checks that transformer_ranker can learn some very basic tasks."""
 
@@ -348,17 +349,19 @@ class TestTransformerGenerator(unittest.TestCase):
                     inference='beam',
                     beam_size=5,
                     beam_block_ngram=1,
-                    skip_generation=False
+                    skip_generation=False,
                 )
             )
         self.assertLessEqual(
             valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            valid['f1'], 0.80, "valid f1 = {}\nLOG:\n{}".format(valid['f1'], stdout),
+            valid['f1'], 0.80, "valid f1 = {}\nLOG:\n{}".format(valid['f1'], stdout)
         )
         self.assertGreaterEqual(
-            valid['bleu'], 1e-6, "valid bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            valid['bleu'],
+            1e-6,
+            "valid bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout),
         )
         self.assertLessEqual(
             test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
@@ -367,29 +370,29 @@ class TestTransformerGenerator(unittest.TestCase):
             test['f1'], 0.80, "test f1 = {}\nLOG:\n{}".format(test['bleu'], stdout)
         )
         self.assertGreaterEqual(
-            test['bleu'], 1e-6, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout),
+            test['bleu'], 1e-6, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
         )
 
         # Beam Block
         self.assertLessEqual(
             valid_beam_block['f1'],
             0.4,
-            "valid beam block f1 = {}\nLOG:\n{}".format(valid['f1'], stdout)
+            "valid beam block f1 = {}\nLOG:\n{}".format(valid['f1'], stdout),
         )
         self.assertLessEqual(
             valid_beam_block['bleu'],
             1e-10,
-            "valid beam block bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout)
+            "valid beam block bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout),
         )
         self.assertLessEqual(
             test_beam_block['f1'],
             0.4,
-            "test beam block f1 = {}\nLOG:\n{}".format(test['f1'], stdout)
+            "test beam block f1 = {}\nLOG:\n{}".format(test['f1'], stdout),
         )
         self.assertLessEqual(
             test_beam_block['bleu'],
             1e-10,
-            "test beam block bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            "test beam block bleu = {}\nLOG:\n{}".format(test['bleu'], stdout),
         )
 
     def test_nucleus(self):
@@ -604,6 +607,7 @@ def test_learning_rate_resuming(self, args):
             1e-3,
             '({}) LR is not correct in final resume.\n{}'.format(mdl, stdout4),
         )
+
 
 class TestLearningRateScheduler(unittest.TestCase):
     """Test learning rate scheduler for both generative and ranking transformers."""

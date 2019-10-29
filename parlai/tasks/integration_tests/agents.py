@@ -44,13 +44,13 @@ class CandidateTeacher(DialogTeacher):
             '--integration-vocab-size',
             default=VOCAB_SIZE,
             type=int,
-            help='number of words'
+            help='number of words',
         )
         cand_teacher.add_argument(
             '--integration-example-size',
             default=EXAMPLE_SIZE,
             type=int,
-            help='length of examples'
+            help='length of examples',
         )
 
     def __init__(
@@ -96,9 +96,7 @@ class CandidateTeacher(DialogTeacher):
 
     def build_corpus(self):
         """Build corpus; override for customization."""
-        return [
-            list(x) for x in itertools.permutations(self.words, self.example_size)
-        ]
+        return [list(x) for x in itertools.permutations(self.words, self.example_size)]
 
     def setup_data(self, fold):
         # N words appearing in a random order
@@ -309,6 +307,7 @@ class RepeatWordsTeacher(NocandidateTeacher):
 
     Useful for testing beam-blocking.
     """
+
     def __init__(
         self,
         opt,
@@ -319,6 +318,7 @@ class RepeatWordsTeacher(NocandidateTeacher):
         num_train=NUM_TRAIN,
         num_test=NUM_TEST,
     ):
+        # Set sizes so that we have appropriate number of examples (700)
         opt['integration_vocab_size'] = 70
         opt['integration_example_size'] = 11
         super().__init__(
@@ -328,9 +328,10 @@ class RepeatWordsTeacher(NocandidateTeacher):
     def build_corpus(self):
         """Override to repeat words."""
         return [
-            [x for _ in range(l)] for l in range(1, self.example_size) for x in self.words
+            [x for _ in range(l)]
+            for l in range(1, self.example_size)
+            for x in self.words
         ]
-
 
 
 class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):

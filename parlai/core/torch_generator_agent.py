@@ -854,19 +854,13 @@ class TreeSearch(object):
             if token == self.eos:
                 self.scores[hyp_id] = neginf(self.scores.dtype)
 
-        # TODO: Beam-n-gram-blocking
-        # TEST - use test_generator_backcomp from test_transformers
-        # Train with backcomp parameters, on integration_tests
-        # should solve the tasks
-        # set beam-blocking to
-        # new integration test teacher with input 1111111 - agent should fail
-
+        # beam blocking
         if self.block_ngram > 0:
             for beam_id, hyp in enumerate(self.partial_hyps):
                 if len(hyp) < self.block_ngram - 1:
                     continue
                 ngrams = self._find_ngrams(hyp, self.block_ngram)
-                prefix = hyp[-(self.block_ngram - 1):]
+                prefix = hyp[-(self.block_ngram - 1) :]
                 for ngram in ngrams:
                     if prefix == list(ngram[:-1]) or self.block_ngram == 1:
                         logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
