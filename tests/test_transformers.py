@@ -10,7 +10,6 @@ import os
 import unittest
 import parlai.utils.testing as testing_utils
 
-
 class TestTransformerRanker(unittest.TestCase):
     """Checks that transformer_ranker can learn some very basic tasks."""
 
@@ -246,6 +245,7 @@ class TestTransformerGenerator(unittest.TestCase):
     """Checks that the generative transformer can learn basic tasks."""
 
     @testing_utils.retry(ntries=3)
+    @unittest.skipIf(True, 'because')
     def test_greedysearch(self):
         """Test greedy search."""
         stdout, valid, test = testing_utils.train_model(
@@ -313,6 +313,83 @@ class TestTransformerGenerator(unittest.TestCase):
         )
         self.assertGreaterEqual(
             test['bleu'], 0.95, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+        )
+
+    @testing_utils.retry(ntries=3)
+    def test_beamsearch_blocking(self):
+        """Test beamsearch blocking."""
+        with testing_utils.tempdir() as tmpdir:
+            mf = os.path.join(tmpdir, 'model')
+            df = os.path.join(tmpdir, 'model.dict')
+            stdout, valid, test = testing_utils.train_model(
+                dict(
+                    task='integration_tests:repeat_words',
+                    model='transformer/generator',
+                    model_file=mf,
+                    dict_file=df,
+                    optimizer='adamax',
+                    learningrate=7e-3,
+                    batchsize=32,
+                    num_epochs=20,
+                    n_layers=1,
+                    n_heads=1,
+                    ffn_size=32,
+                    embedding_size=32,
+                    inference='beam',
+                    beam_size=2,
+                )
+            )
+            _, valid_beam_block, test_beam_block = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:repeat_words',
+                    model_file=mf,
+                    dict_file=df,
+                    batch_size=1,
+                    inference='beam',
+                    beam_size=5,
+                    beam_block_ngram=1,
+                    skip_generation=False
+                )
+            )
+        self.assertLessEqual(
+            valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
+        )
+        self.assertGreaterEqual(
+            valid['f1'], 0.80, "valid f1 = {}\nLOG:\n{}".format(valid['f1'], stdout),
+        )
+        self.assertGreaterEqual(
+            valid['bleu'], 1e-6, "valid bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+        )
+        self.assertLessEqual(
+            test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
+        )
+        self.assertGreaterEqual(
+            test['f1'], 0.80, "test f1 = {}\nLOG:\n{}".format(test['bleu'], stdout)
+        )
+        self.assertGreaterEqual(
+            test['bleu'], 1e-6, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout),
+        )
+
+        # Beam Block
+        self.assertLessEqual(
+            valid_beam_block['f1'],
+            0.4,
+            "valid beam block f1 = {}\nLOG:\n{}".format(valid['f1'], stdout)
+        )
+        self.assertLessEqual(
+            valid_beam_block['bleu'],
+            1e-10,
+            "valid beam block bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout)
+        )
+        self.assertLessEqual(
+            test_beam_block['f1'],
+            0.4,
+            "test beam block f1 = {}\nLOG:\n{}".format(test['f1'], stdout)
+        )
+        self.assertLessEqual(
+            test_beam_block['bleu'],
+            1e-10,
+            "test beam block bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
         )
 
     def test_nucleus(self):
@@ -527,7 +604,6 @@ def test_learning_rate_resuming(self, args):
             1e-3,
             '({}) LR is not correct in final resume.\n{}'.format(mdl, stdout4),
         )
-
 
 class TestLearningRateScheduler(unittest.TestCase):
     """Test learning rate scheduler for both generative and ranking transformers."""

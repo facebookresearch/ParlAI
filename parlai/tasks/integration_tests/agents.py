@@ -37,6 +37,22 @@ class CandidateTeacher(DialogTeacher):
     of the input. A good ranker should easily identify the correct response.
     """
 
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        cand_teacher = argparser.add_argument_group('Integration Tests Args')
+        cand_teacher.add_argument(
+            '--integration-vocab-size',
+            default=VOCAB_SIZE,
+            type=int,
+            help='number of words'
+        )
+        cand_teacher.add_argument(
+            '--integration-example-size',
+            default=EXAMPLE_SIZE,
+            type=int,
+            help='length of examples'
+        )
+
     def __init__(
         self,
         opt,
@@ -58,8 +74,8 @@ class CandidateTeacher(DialogTeacher):
         opt['datafile'] = opt['datatype'].split(':')[0]
         self.datafile = opt['datafile']
 
-        self.vocab_size = vocab_size
-        self.example_size = example_size
+        self.vocab_size = opt.get('integration_vocab_size', vocab_size)
+        self.example_size = opt.get('integration_example_size', example_size)
         self.num_candidates = num_candidates
         self.num_train = num_train
         self.num_test = num_test
@@ -78,12 +94,16 @@ class CandidateTeacher(DialogTeacher):
     def num_examples(self):
         return self.num_episodes()
 
+    def build_corpus(self):
+        """Build corpus; override for customization."""
+        return [
+            list(x) for x in itertools.permutations(self.words, self.example_size)
+        ]
+
     def setup_data(self, fold):
         # N words appearing in a random order
         self.rng = random.Random(42)
-        full_corpus = [
-            list(x) for x in itertools.permutations(self.words, self.example_size)
-        ]
+        full_corpus = self.build_corpus()
         self.rng.shuffle(full_corpus)
 
         it = iter(full_corpus)
@@ -281,6 +301,36 @@ class NocandidateTeacher(CandidateTeacher):
         raw = super().setup_data(fold)
         for (t, a, _r, _c), e in raw:
             yield (t, a), e
+
+
+class RepeatWordsTeacher(NocandidateTeacher):
+    """
+    Each input/output pair is a word repeated n times.
+
+    Useful for testing beam-blocking.
+    """
+    def __init__(
+        self,
+        opt,
+        shared=None,
+        vocab_size=VOCAB_SIZE,
+        example_size=EXAMPLE_SIZE,
+        num_candidates=NUM_CANDIDATES,
+        num_train=NUM_TRAIN,
+        num_test=NUM_TEST,
+    ):
+        opt['integration_vocab_size'] = 70
+        opt['integration_example_size'] = 11
+        super().__init__(
+            opt, shared, vocab_size, example_size, num_candidates, num_train, num_test
+        )
+
+    def build_corpus(self):
+        """Override to repeat words."""
+        return [
+            [x for _ in range(l)] for l in range(1, self.example_size) for x in self.words
+        ]
+
 
 
 class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):
