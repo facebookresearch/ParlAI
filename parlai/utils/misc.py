@@ -48,6 +48,7 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'eval_labels_vec',
     'text_vec',
     'label_candidates_vecs',
+    'token_losses',
 }
 
 
@@ -705,11 +706,26 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
         for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
             if msg.get(field) and field not in ignore_fields:
                 lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
+        token_loss_line = _token_losses_line(msg, ignore_fields, space)
+        if token_loss_line:
+            lines.append(token_loss_line)
 
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
 
     return '\n'.join(lines)
+
+
+def _token_losses_line(msg, ignore_fields, space) -> str:
+    key = 'token_losses'
+    token_losses = msg.get(key, None)
+    if key in ignore_fields or not token_losses:
+        return None
+    # Reduce losses to 4 significant figures
+    formatted_tl = ' | '.join(
+        [f"{tl[0]} {float('{:.4g}'.format(tl[1]))}" for tl in token_losses]
+    )
+    return f'{space}[{key}]: {formatted_tl}'
 
 
 def str_to_msg(txt, ignore_fields=''):
