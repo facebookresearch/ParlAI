@@ -344,7 +344,8 @@ class Metrics(object):
             if 'bleu' in self.metrics_list:
                 bleu_scores['bleu'] = _bleu(prediction, labels)
             if 'bleu-1' in self.metrics_list:
-                for i in range(4):
+                bleu_scores['bleu-4'] = bleu_scores['bleu']
+                for i in range(3):
                     weights = [1 / (i + 1) for _ in range(i + 1)]
                     bleu_scores[f'bleu-{i + 1}'] = _bleu(prediction, labels, weights)
             if 'rouge' in self.metrics_list:
