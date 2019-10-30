@@ -5,11 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 
 import time
+from abc import ABC, abstractmethod
 from queue import Queue
 from parlai.core.agents import Agent
 
 
-class ChatServiceAgent(Agent):
+class ChatServiceAgent(ABC, Agent):
     """Base class for a person on a chat serivce that can act in a ParlAI world"""
 
     def __init__(self, opt, manager, id):
@@ -19,7 +20,6 @@ class ChatServiceAgent(Agent):
 
         self.acted_packets = {}
         self.data = {}
-        self.disp_id = 'NewUser'
         self.msg_queue = Queue()
         self.observed_packets = {}
 
@@ -27,22 +27,57 @@ class ChatServiceAgent(Agent):
         # initialize stored data
         self.set_stored_data()
 
+    @abstractmethod
     def observe(self, act):
-        """Send an agent a message through the manager"""
+        """Send an agent a message through the manager."""
         pass
 
+    def _send_payload(self, receiver_id, data, quick_replies=None, persona_id=None):
+        """Send a payload through the message manager.
+
+        :param receiver_id:
+            int identifier for agent to send message to
+        :param data:
+            object data to send
+        :param quick_replies:
+            list of quick replies
+        :param persona_id:
+            identifier of persona
+        """
+        return self.manager.observe_payload(
+            receiver_id, data, quick_replies, persona_id
+        )
+
+    @abstractmethod
     def put_data(self, message):
-        """Put data into the message queue if it hasn't already been seen"""
+        """Put data into the message queue if it hasn't already been seen."""
         pass
+
+    def _queue_action(self, action, act_id, act_data=None):
+        """ Add an action to the queue with given id and info if it hasn't
+        already been seen.
+
+        :param action:
+            action to be added to message queue
+        :param act_id:
+            an identifier to check if the action has been seen or to
+            mark the action as seen
+        :param act_data:
+            any data about the given action you may want to record when
+            marking it as seen
+        """
+        if act_id not in self.acted_packets:
+            self.acted_packets[act_id] = act_data
+            self.msg_queue.put(action)
 
     def set_stored_data(self):
-        """Gets agent state data from manager"""
+        """Gets agent state data from manager."""
         agent_state = self.manager.get_agent_state(self.id)
         if agent_state is not None and hasattr(agent_state, 'stored_data'):
             self.stored_data = agent_state.stored_data
 
     def get_new_act_message(self):
-        """Get a new act message if one exists, return None otherwise"""
+        """Get a new act message if one exists, return None otherwise."""
         if not self.msg_queue.empty():
             return self.msg_queue.get()
         return None
@@ -62,5 +97,5 @@ class ChatServiceAgent(Agent):
 
     def episode_done(self):
         """Return whether or not this agent believes the conversation to
-        be done"""
-        pass
+        be done."""
+        return self.manager.shutting_down
