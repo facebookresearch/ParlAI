@@ -76,15 +76,17 @@ class TestDistributed(unittest.TestCase):
             valid['ppl'], 1.20, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            valid['bleu'],
+            valid['bleu-4'],
             0.95,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertLessEqual(
             test['ppl'], 1.20, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            test['bleu'], 0.95, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['bleu-4'],
+            0.95,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
         )
 
 

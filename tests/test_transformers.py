@@ -269,15 +269,17 @@ class TestTransformerGenerator(unittest.TestCase):
             valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            valid['bleu'],
+            valid['bleu-4'],
             0.90,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertLessEqual(
             test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            test['bleu'], 0.90, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['bleu-4'],
+            0.90,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
         )
 
     @testing_utils.retry(ntries=3)
@@ -304,15 +306,17 @@ class TestTransformerGenerator(unittest.TestCase):
             valid['ppl'], 1.20, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            valid['bleu'],
+            valid['bleu-4'],
             0.95,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertLessEqual(
             test['ppl'], 1.20, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            test['bleu'], 0.95, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['bleu-4'],
+            0.95,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
         )
 
     @testing_utils.retry(ntries=3)
@@ -370,18 +374,20 @@ class TestTransformerGenerator(unittest.TestCase):
             valid['f1'], 0.80, "valid f1 = {}\nLOG:\n{}".format(valid['f1'], stdout)
         )
         self.assertGreaterEqual(
-            valid['bleu'],
+            valid['bleu-4'],
             0.5,
-            "valid bleu = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            "valid bleu = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertLessEqual(
             test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            test['f1'], 0.80, "test f1 = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['f1'], 0.80, "test f1 = {}\nLOG:\n{}".format(test['bleu-4'], stdout)
         )
         self.assertGreaterEqual(
-            test['bleu'], 0.5, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['bleu-4'],
+            0.5,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
         )
 
         # Beam Block 1
@@ -393,10 +399,10 @@ class TestTransformerGenerator(unittest.TestCase):
             ),
         )
         self.assertLessEqual(
-            valid_beam_block['bleu'],
+            valid_beam_block['bleu-4'],
             1e-9,
             "valid beam block bleu = {}\nLOG:\n{}".format(
-                valid_beam_block['bleu'], stdout_bb
+                valid_beam_block['bleu-4'], stdout_bb
             ),
         )
         self.assertLessEqual(
@@ -407,10 +413,10 @@ class TestTransformerGenerator(unittest.TestCase):
             ),
         )
         self.assertLessEqual(
-            test_beam_block['bleu'],
+            test_beam_block['bleu-4'],
             1e-9,
             "test beam block bleu = {}\nLOG:\n{}".format(
-                test_beam_block['bleu'], stdout_bb
+                test_beam_block['bleu-4'], stdout_bb
             ),
         )
 
@@ -423,10 +429,10 @@ class TestTransformerGenerator(unittest.TestCase):
             ),
         )
         self.assertLessEqual(
-            valid_beam_block2['bleu'],
+            valid_beam_block2['bleu-4'],
             1e-6,
             "valid beam block bleu = {}\nLOG:\n{}".format(
-                valid_beam_block2['bleu'], stdout_bb2
+                valid_beam_block2['bleu-4'], stdout_bb2
             ),
         )
         self.assertLessEqual(
@@ -437,10 +443,10 @@ class TestTransformerGenerator(unittest.TestCase):
             ),
         )
         self.assertLessEqual(
-            test_beam_block2['bleu'],
+            test_beam_block2['bleu-4'],
             1e-6,
             "test beam block bleu = {}\nLOG:\n{}".format(
-                test_beam_block2['bleu'], stdout_bb2
+                test_beam_block2['bleu-4'], stdout_bb2
             ),
         )
 
@@ -580,15 +586,17 @@ class TestTransformerGenerator(unittest.TestCase):
             valid['ppl'], 1.30, "valid ppl = {}\nLOG:\n{}".format(valid['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            valid['bleu'],
+            valid['bleu-4'],
             0.90,
-            "valid blue = {}\nLOG:\n{}".format(valid['bleu'], stdout),
+            "valid blue = {}\nLOG:\n{}".format(valid['bleu-4'], stdout),
         )
         self.assertLessEqual(
             test['ppl'], 1.30, "test ppl = {}\nLOG:\n{}".format(test['ppl'], stdout)
         )
         self.assertGreaterEqual(
-            test['bleu'], 0.90, "test bleu = {}\nLOG:\n{}".format(test['bleu'], stdout)
+            test['bleu-4'],
+            0.90,
+            "test bleu = {}\nLOG:\n{}".format(test['bleu-4'], stdout),
         )
 
 
