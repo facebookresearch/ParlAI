@@ -260,7 +260,9 @@ class EvalResponse extends React.Component {
   }
 
   render() {
-    if (this.props.current_subtask_index != null && this.props.current_subtask_index !== this.state.subtaskIndexSeen) {
+    if (this.props.current_subtask_index != null &&
+        this.props.current_subtask_index !== this.state.subtaskIndexSeen
+    ) {
       this.setState(
         {
           subtaskIndexSeen: this.props.current_subtask_index,
