@@ -340,6 +340,7 @@ class Metrics(object):
             if 'f1' in self.metrics_list:
                 f1 = _f1_score(prediction, labels)
             bleu_scores = {}
+            rouge1 = rouge2 = rougeL = None
             if 'bleu-4' in self.metrics_list:
                 bleu_scores['bleu-4'] = _bleu(prediction, labels)
             if 'bleu-1' in self.metrics_list:
