@@ -18,10 +18,10 @@ from numbers import Number
 
 import re
 
-DEFAULT_METRICS = {'correct', 'bleu', 'accuracy', 'f1'}
+DEFAULT_METRICS = {'correct', 'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
-EXTRA_BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3', 'bleu-4'}
-ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | EXTRA_BLEU_METRICS
+BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3'}
+ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS
 
 
 try:
@@ -255,7 +255,6 @@ class Metrics(object):
             if each_m.startswith('rouge'):
                 if rouge is not None:
                     # only compute rouge if rouge is available
-                    self.metrics_list.add('rouge')
                     self.metrics_list.add(each_m)
             elif each_m == 'bleu' and nltkbleu is None:
                 # only compute bleu if bleu is available
@@ -341,22 +340,21 @@ class Metrics(object):
             if 'f1' in self.metrics_list:
                 f1 = _f1_score(prediction, labels)
             bleu_scores = {}
-            if 'bleu' in self.metrics_list:
-                bleu_scores['bleu'] = _bleu(prediction, labels)
+            if 'bleu-4' in self.metrics_list:
+                bleu_scores['bleu-4'] = _bleu(prediction, labels)
             if 'bleu-1' in self.metrics_list:
-                bleu_scores['bleu-4'] = bleu_scores['bleu']
                 for i in range(3):
                     weights = [1 / (i + 1) for _ in range(i + 1)]
                     bleu_scores[f'bleu-{i + 1}'] = _bleu(prediction, labels, weights)
-            if 'rouge' in self.metrics_list:
+            if 'rouge-L' in self.metrics_list:
                 rouge1, rouge2, rougeL = _rouge(prediction, labels)
             with self._lock():
                 if 'f1' in self.metrics:
                     self.metrics['f1'] += f1
                     self.metrics['f1_cnt'] += 1
-                if 'bleu' in self.metrics:
-                    self.metrics['bleu'] += bleu_scores.pop('bleu')
-                    self.metrics['bleu_cnt'] += 1
+                if 'bleu-4' in self.metrics:
+                    self.metrics['bleu-4'] += bleu_scores.pop('bleu-4')
+                    self.metrics['bleu-4_cnt'] += 1
                 if 'bleu-1' in self.metrics:
                     for b, b_score in bleu_scores.items():
                         self.metrics[b] += b_score
