@@ -12,6 +12,7 @@ The only arguments that need to be modified for this to be run are:
 Help strings for the other arguments can be found in run.py
 """
 
+
 def set_args():
     args = add_args()
     args['dialogs_path'] = '/home/ParlAI/parlai/mturk/tasks/acute_eval/example'
@@ -28,7 +29,7 @@ def set_args():
         len(args['model_comparisons'])
         * args['pairs_per_matchup']
         / (args['task_description']['num_subtasks'] - 1)
-    ) # release enough hits to finish all annotations requested
+    )  # release enough hits to finish all annotations requested
     args['block_qualification'] = 'onboarding_qual_name'
     args['assignment_duration_in_seconds'] = 600
     args['reward'] = 0.5

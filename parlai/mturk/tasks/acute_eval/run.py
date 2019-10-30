@@ -12,7 +12,7 @@ import time
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import StaticMTurkManager
 from parlai.mturk.core.worlds import StaticMTurkTaskWorld
-from parlai_internal.mturk.tasks.pairwise_dialogue_eval.task_config import task_config
+from parlai.mturk.tasks.pairwise_dialogue_eval.task_config import task_config
 import parlai.mturk.core.mturk_utils as mturk_utils
 
 
@@ -260,10 +260,9 @@ def setup_task_queue(opt):
             task_queue.put(desired_tasks[internal_id])
     # limit number of hits worker can do by default
     if opt['max_hits_per_worker'] == 0:
-        opt['max_hits_per_worker'] = (
-            (len(desired_tasks) + len(onboarding_tasks))
-            / opt['comparisons_per_hit']
-        )
+        opt['max_hits_per_worker'] = (len(desired_tasks) + len(onboarding_tasks)) / opt[
+            'comparisons_per_hit'
+        ]
 
 
 def make_task_from_ids(
@@ -331,7 +330,7 @@ def get_new_task_data(worker, tasks_per_hit):
         except Queue.Empty:
             break
         tries += 1
-        if ( # make sure worker has not seen these conversations before
+        if (  # make sure worker has not seen these conversations before
             next_task['task_specs']['internal_id'] not in completed_tasks
             and next_task['conversations'][0] not in seen_conversations
             and next_task['conversations'][1] not in seen_conversations
@@ -388,9 +387,7 @@ def return_task_data(worker_id, task_data):
                     subtask_data['conversations'][1]
                 )
             except ValueError():
-                print(
-                    "WARNING: couldn't remove task from worker's history"
-                )
+                print("WARNING: couldn't remove task from worker's history")
 
 
 def get_onboarding_tasks(worker_id, tasks_per_hit):
