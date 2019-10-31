@@ -1,0 +1,7 @@
+# .coveragerc to control coverage.py
+[run]
+omit =
+    # omit anything in a .eggs directory anywhere
+    .eggs/*
+    # omit init files
+    *__init__.py
