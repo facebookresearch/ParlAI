@@ -1,7 +1,13 @@
 # .coveragerc to control coverage.py
 [run]
+source =
+    # include these directories
+    ./parlai/
+    ./projects/
+    ./examples/
+    ./website/
+    ./docs/
+
 omit =
-    # omit anything in a .eggs directory anywhere
-    .eggs/*
     # omit init files
     *__init__.py
