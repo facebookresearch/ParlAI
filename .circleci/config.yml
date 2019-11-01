@@ -276,7 +276,7 @@ jobs:
           name: minimum docformat dependencies
           working_directory: ~/ParlAI
           command: |
-            pip install -q gitpython docformat  # only what's needed to lint
+            pip install -q gitpython docformatter  # only what's needed to lint
       - run:
           name: docformat
           working_directory: ~/ParlAI
