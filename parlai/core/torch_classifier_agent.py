@@ -94,7 +94,9 @@ class TorchClassifierAgent(TorchAgent):
 
         # set up classes
         if opt.get('classes') is None and opt.get('classes_from_file') is None:
-            raise RuntimeError('Must specify --classes or --classes-from-file argument.')
+            raise RuntimeError(
+                'Must specify --classes or --classes-from-file argument.'
+            )
         if not shared:
             if opt['classes_from_file'] is not None:
                 with open(opt['classes_from_file']) as f:
