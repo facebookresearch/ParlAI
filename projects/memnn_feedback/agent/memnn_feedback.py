@@ -289,9 +289,10 @@ class MemnnFeedbackAgent(Agent):
             cand_answers_with_beta[i][selected_answer_inds[i]] += ' ' + self.beta_word
 
         # get candidate embeddings after adding beta_word to the selected candidate
-        cand_answers_tensor_with_beta, cand_answers_lengths_with_beta = self.parse_cands(
-            cand_answers_with_beta
-        )
+        (
+            cand_answers_tensor_with_beta,
+            cand_answers_lengths_with_beta,
+        ) = self.parse_cands(cand_answers_with_beta)
         cands_embeddings_with_beta = self.model.answer_embedder(
             cand_answers_lengths_with_beta, cand_answers_tensor_with_beta
         )

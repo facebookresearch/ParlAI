@@ -595,7 +595,7 @@ class FairseqAgent(TorchAgent):
                 scored = list(self.scorer.score_batched_itr([s], cuda=self.use_cuda))
                 scores = [s[3][0]['score'].item() for s in scored]
                 # intentional hanging comma here; argsort returns a list
-                ranked, = argsort(scores, batch.candidates[i], descending=True)
+                (ranked,) = argsort(scores, batch.candidates[i], descending=True)
                 reranked_cands.append(ranked)
 
         # Next generate freely to create our response

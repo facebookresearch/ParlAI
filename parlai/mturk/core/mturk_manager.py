@@ -1679,7 +1679,11 @@ class MTurkManager:
             mturk_utils.subscribe_to_hits(hit_type_id, self.is_sandbox, self.topic_arn)
 
         for _i in range(num_hits):
-            mturk_page_url, hit_id, mturk_response = mturk_utils.create_hit_with_hit_type(
+            (
+                mturk_page_url,
+                hit_id,
+                mturk_response,
+            ) = mturk_utils.create_hit_with_hit_type(
                 opt=self.opt,
                 page_url=mturk_chat_url,
                 hit_type_id=hit_type_id,
