@@ -96,14 +96,14 @@ class TorchClassifierAgent(TorchAgent):
         if opt.get('classes') is None and opt.get('classes_from_file') is None:
             raise RuntimeError('Must specify --classes or --classes-from-file argument.')
         if not shared:
-            if opt["classes_from_file"] is not None:
+            if opt['classes_from_file'] is not None:
                 with open(opt['classes_from_file']) as f:
                     self.class_list = f.read().splitlines()
             else:
                 self.class_list = opt['classes']
             self.class_dict = {val: i for i, val in enumerate(self.class_list)}
             if opt.get('class_weights', None) is not None:
-                self.class_weights = opt['class_weights'] 
+                self.class_weights = opt['class_weights']
             else:
                 self.class_weights = [1.0 for c in self.class_list]
             self.reset_metrics()
