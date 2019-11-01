@@ -22,6 +22,7 @@ NOT_OK_CLASS = '__notok__'
 class _BaseSafetyTeacher(FixedDialogTeacher, ABC):
     """
     Abstract parent class for single turn safety teachers.
+
     Not meant to be a standalone teacher.
     """
 

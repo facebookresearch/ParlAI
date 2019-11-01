@@ -5,8 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-This downloads a pretrained language model BERT
-(Devlin et al. https://arxiv.org/abs/1810.04805). It relies on the pytorch
+This downloads a pretrained language model BERT (Devlin et al.
+
+https://arxiv.org/abs/1810.04805). It relies on the pytorch
 implementation provided by Hugging Face
 (https://github.com/huggingface/pytorch-pretrained-BERT).
 """

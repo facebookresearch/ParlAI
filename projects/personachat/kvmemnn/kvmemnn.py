@@ -33,8 +33,11 @@ def maintain_dialog_history(
     useStartEndIndices=True,
     usePersonas=True,
 ):
-    """Keeps track of dialog history, up to a truncation length.
-    Either includes replies from the labels, model, or not all using param 'replies'."""
+    """
+    Keeps track of dialog history, up to a truncation length.
+
+    Either includes replies from the labels, model, or not all using param 'replies'.
+    """
 
     def parse(txt):
         txt = txt.lower()
@@ -96,9 +99,10 @@ def maintain_dialog_history(
 
 
 def load_cands(path):
-    """Load global fixed set of candidate labels that the teacher provides
-    every example (the true labels for a specific example are also added to
-    this set, so that it's possible to get the right answer).
+    """
+    Load global fixed set of candidate labels that the teacher provides every example
+    (the true labels for a specific example are also added to this set, so that it's
+    possible to get the right answer).
     """
     if path is None:
         return None
@@ -133,7 +137,8 @@ def load_cands(path):
 
 
 class KvmemnnAgent(Agent):
-    """Simple implementation of the memnn algorithm with 1 hop
+    """
+    Simple implementation of the memnn algorithm with 1 hop.
     """
 
     OPTIM_OPTS = {
@@ -154,7 +159,9 @@ class KvmemnnAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
+        """
+        Add command-line arguments specifically for this agent.
+        """
         KvmemnnAgent.dictionary_class().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Kvmemnn Arguments')
         agent.add_argument('--hops', type=int, default=1, help='num hops')
@@ -280,7 +287,9 @@ class KvmemnnAgent(Agent):
         )
 
     def __init__(self, opt, shared=None):
-        """Set up model if shared params not set, otherwise no work to do."""
+        """
+        Set up model if shared params not set, otherwise no work to do.
+        """
         super().__init__(opt, shared)
         opt = self.opt
         if opt.get('batchsize', 1) > 1:
@@ -380,10 +389,11 @@ class KvmemnnAgent(Agent):
             print("[ Interactive mode ]")
 
     def override_opt(self, new_opt):
-        """Set overridable opts from loaded opt file.
+        """
+        Set overridable opts from loaded opt file.
 
-        Print out each added key and each overriden key.
-        Only override args specific to the model.
+        Print out each added key and each overriden key. Only override args specific to
+        the model.
         """
         model_args = {
             'hiddensize',
@@ -413,7 +423,9 @@ class KvmemnnAgent(Agent):
         return self.opt
 
     def parse(self, text):
-        """Convert string to token indices."""
+        """
+        Convert string to token indices.
+        """
         text = text.lower()
         text = text.replace("n't", " not")
         vec = self.dict.txt2vec(text)
@@ -426,7 +438,9 @@ class KvmemnnAgent(Agent):
         return Variable(torch.LongTensor(p).unsqueeze(1))
 
     def v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         if type(vec) == Variable:
             vec = vec.data
         if type(vec) == torch.LongTensor and vec.dim() == 2:
@@ -439,15 +453,21 @@ class KvmemnnAgent(Agent):
         return self.dict.vec2txt(new_vec)
 
     def zero_grad(self):
-        """Zero out optimizer."""
+        """
+        Zero out optimizer.
+        """
         self.optimizer.zero_grad()
 
     def update_params(self):
-        """Do one optimization step."""
+        """
+        Do one optimization step.
+        """
         self.optimizer.step()
 
     def reset(self):
-        """Reset observation and episode_done."""
+        """
+        Reset observation and episode_done.
+        """
         self.observation = None
         self.episode_done = True
         self.cands_done = []
@@ -459,7 +479,9 @@ class KvmemnnAgent(Agent):
         self.optimizer = optim_class(self.model.parameters(), **kwargs)
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """
+        Share internal states between parent and child instances.
+        """
         shared = super().share()
         shared['dict'] = self.dict
         shared['model'] = self.model
@@ -548,7 +570,9 @@ class KvmemnnAgent(Agent):
         return metrics
 
     def same(self, y1, y2):
-        """Check if two tensors are the same, within small margin of error."""
+        """
+        Check if two tensors are the same, within small margin of error.
+        """
         if len(y1) != len(y2):
             return False
         if abs((y1 - y2).sum().data.sum()) > 0.00001:
@@ -596,9 +620,11 @@ class KvmemnnAgent(Agent):
             )
 
     def predict(self, xs, ys=None, cands=None, cands_txt=None, obs=None):
-        """Produce a prediction from our model.
-        Update the model using the targets if available, otherwise rank
-        candidates as well if they are available and param is set.
+        """
+        Produce a prediction from our model.
+
+        Update the model using the targets if available, otherwise rank candidates as
+        well if they are available and param is set.
         """
         self.start = time.time()
         if xs is None:
@@ -778,7 +804,9 @@ class KvmemnnAgent(Agent):
         return [{}] * xs.size(0)
 
     def batchify(self, observations):
-        """Convert a list of observations into input & target tensors."""
+        """
+        Convert a list of observations into input & target tensors.
+        """
 
         def valid(obs):
             # check if this is an example our model should actually process
@@ -885,7 +913,9 @@ class KvmemnnAgent(Agent):
         super().shutdown()
 
     def save(self, path=None):
-        """Save model parameters if model_file is set."""
+        """
+        Save model parameters if model_file is set.
+        """
         path = self.opt.get('model_file', None) if path is None else path
         if path and hasattr(self, 'model'):
             data = {}
@@ -898,7 +928,9 @@ class KvmemnnAgent(Agent):
                 pickle.dump(self.opt, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def load(self, path):
-        """Return opt and model states."""
+        """
+        Return opt and model states.
+        """
         with open(path, 'rb') as read:
             print('Loading existing model params from ' + path)
             data = torch.load(read)

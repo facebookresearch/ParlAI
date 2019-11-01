@@ -24,8 +24,10 @@ from tqdm import tqdm
 
 
 class BiEncoderRankerAgent(TorchRankerAgent):
-    """ TorchRankerAgent implementation of the biencoder.
-        It is a standalone Agent. It might be called by the Both Encoder.
+    """
+    TorchRankerAgent implementation of the biencoder.
+
+    It is a standalone Agent. It might be called by the Both Encoder.
     """
 
     @staticmethod
@@ -72,7 +74,8 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         )
 
     def set_vocab_candidates(self, shared):
-        """Load the tokens from the vocab as candidates
+        """
+        Load the tokens from the vocab as candidates.
 
         self.vocab_candidates will contain a [num_cands] list of strings
         self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
@@ -133,7 +136,8 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                 self.vocab_candidate_encs = None
 
     def vectorize_fixed_candidates(self, cands_batch):
-        """Override from TorchRankerAgent.
+        """
+        Override from TorchRankerAgent.
         """
         return [
             self._vectorize_text(
@@ -215,14 +219,17 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         return embedding_ctxt.mm(cand_vecs.t())
 
     def share(self):
-        """Share model parameters."""
+        """
+        Share model parameters.
+        """
         shared = super().share()
         shared['vocab_candidate_encs'] = self.vocab_candidate_encs
         return shared
 
 
 class BiEncoderModule(torch.nn.Module):
-    """ Groups context_encoder and cand_encoder together.
+    """
+    Groups context_encoder and cand_encoder together.
     """
 
     def __init__(self, opt):
@@ -265,8 +272,10 @@ class BiEncoderModule(torch.nn.Module):
 
 
 def to_bert_input(token_idx, null_idx):
-    """ token_idx is a 2D tensor int.
-        return token_idx, segment_idx and mask
+    """
+    token_idx is a 2D tensor int.
+
+    return token_idx, segment_idx and mask
     """
     segment_idx = token_idx * 0
     mask = token_idx != null_idx

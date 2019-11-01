@@ -38,8 +38,8 @@ from urllib.parse import unquote
 
 
 def split_tokenize(text):
-    """Splits tokens based on whitespace after adding whitespace around
-    punctuation.
+    """
+    Splits tokens based on whitespace after adding whitespace around punctuation.
     """
     return (
         text.replace('.', ' . ')
@@ -133,8 +133,9 @@ class PersonasGenerator(object):
 
 
 class RoleOnboardWorld(MTurkOnboardWorld):
-    """A world that provides
-       the appropriate instructions during onboarding"""
+    """
+    A world that provides the appropriate instructions during onboarding.
+    """
 
     def __init__(self, opt, mturk_agent, role):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -166,10 +167,10 @@ class RoleOnboardWorld(MTurkOnboardWorld):
 
 
 class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
-    """World where two agents have a dialogue; one chats freely, perhaps based
-        on a persona, while the other is the 'wizard', who bases his/her
-        responses on documents (i.e. sentences) retrieved based on what the
-        other agent says.
+    """
+    World where two agents have a dialogue; one chats freely, perhaps based on a
+    persona, while the other is the 'wizard', who bases his/her responses on documents
+    (i.e. sentences) retrieved based on what the other agent says.
     """
 
     def __init__(
@@ -248,8 +249,10 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         return False
 
     def parley(self):
-        """Each agent acts; when the APPRENTICE says something, the
-        WIZARD is given retrieved documents based on the text response"""
+        """
+        Each agent acts; when the APPRENTICE says something, the WIZARD is given
+        retrieved documents based on the text response.
+        """
         self.turn_idx += 1
 
         # Initial Message Value
@@ -262,7 +265,9 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         '''
         if self.turn_idx == 1:
             for idx, agent in enumerate(self.agents):
-                '''If we are giving the persona, do that :)'''
+                """
+                If we are giving the persona, do that :)
+                """
                 control_msg['text'] = self.get_instruction(
                     tag='start', agent_id=agent.id
                 )
@@ -420,7 +425,9 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
             msg_info['shown_passages'] = passages
 
             if agent.id == WIZARD:
-                '''Give Wizard the Relevant Passages'''
+                """
+                Give Wizard the Relevant Passages.
+                """
                 control_msg['text'] = ''
                 control_msg['self_retrieved_passages'] = passages
                 agent.observe(validate(control_msg))
@@ -550,10 +557,10 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         print('{}: Data successfully saved at {}.'.format(self.world_tag, filename))
 
     def check_wizard_quality(self):
-        '''Determines whether to soft-block this turker or not
-           Only called if the conversation finishes
-           Returns True if the Wizard is good
-        '''
+        """
+        Determines whether to soft-block this turker or not Only called if the
+        conversation finishes Returns True if the Wizard is good.
+        """
         num_good_sents = len(
             list(
                 filter(
@@ -596,9 +603,9 @@ class MTurkWizardOfWikipediaWorld(MultiAgentDialogWorld):
         )
 
     def shutdown(self):
-        """Shutdown all mturk agents in parallel, otherwise if one mturk agent
-        is disconnected then it could prevent other mturk agents from
-        completing.
+        """
+        Shutdown all mturk agents in parallel, otherwise if one mturk agent is
+        disconnected then it could prevent other mturk agents from completing.
         """
         global shutdown_agent
 

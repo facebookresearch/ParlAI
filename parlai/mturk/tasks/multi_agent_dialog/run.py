@@ -16,11 +16,11 @@ from parlai.mturk.tasks.multi_agent_dialog.task_config import task_config
 
 def main():
     """
-    This task consists of one local human agent and two MTurk agents,
-    each MTurk agent will go through the onboarding step to provide
-    information about themselves, before being put into a conversation.
-    You can end the conversation by sending a message ending with
-    `[DONE]` from human_1.
+    This task consists of one local human agent and two MTurk agents, each MTurk agent
+    will go through the onboarding step to provide information about themselves, before
+    being put into a conversation.
+
+    You can end the conversation by sending a message ending with `[DONE]` from human_1.
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

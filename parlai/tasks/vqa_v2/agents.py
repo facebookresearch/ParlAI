@@ -58,8 +58,9 @@ class DefaultDataset(VQADataset):
 
 
 class OeTeacher(FixedDialogTeacher):
-    """VQA v2.0 Open-Ended teacher, which loads the json VQA data and
-    implements the ``get`` method to return additional metadata.
+    """
+    VQA v2.0 Open-Ended teacher, which loads the json VQA data and implements the
+    ``get`` method to return additional metadata.
     """
 
     def __init__(self, opt, shared=None):
@@ -110,8 +111,9 @@ class OeTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
         # pull up the currently queued example
@@ -154,8 +156,8 @@ class OeTeacher(FixedDialogTeacher):
 
 class AllTeacher(OeTeacher):
     """
-    VQA v2.0 Open-Ended teacher, which inherits from OeTeacher and
-    gives access to the multiple choice answer.
+    VQA v2.0 Open-Ended teacher, which inherits from OeTeacher and gives access to the
+    multiple choice answer.
     """
 
     def act(self):

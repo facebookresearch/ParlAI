@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Provide functionality for loading images."""
+"""
+Provide functionality for loading images.
+"""
 
 import parlai.core.build_data as build_data
 
@@ -17,7 +19,9 @@ _cache_size = 84000
 
 
 class ImageLoader:
-    """Extract image feature using pretrained CNN network."""
+    """
+    Extract image feature using pretrained CNN network.
+    """
 
     def __init__(self, opt):
         self.opt = opt.copy()
@@ -76,7 +80,8 @@ class ImageLoader:
         )
 
     def _init_resnet_cnn(self):
-        """Lazily initialize preprocessor model.
+        """
+        Lazily initialize preprocessor model.
 
         When image_mode is one of the ``resnet`` varieties
         """
@@ -93,7 +98,8 @@ class ImageLoader:
             self.netCNN.cuda()
 
     def _init_resnext_cnn(self):
-        """Lazily initialize preprocessor model
+        """
+        Lazily initialize preprocessor model.
 
         When image_mode is one of the ``resnext101_..._wsl`` varieties
         """
@@ -192,7 +198,9 @@ class ImageLoader:
         return ''.join(asc)
 
     def load(self, path):
-        """Load from a given path."""
+        """
+        Load from a given path.
+        """
         opt = self.opt
         mode = opt.get('image_mode', 'raw')
         is_zip = False

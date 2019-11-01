@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Simple agent which repeats back the labels sent to it.
+"""
+Simple agent which repeats back the labels sent to it.
 
 By default, replies with a single random label from the list of labels sent to
 it, if any. If the ``label_candidates`` field is set, will fill the ``text_candidates``

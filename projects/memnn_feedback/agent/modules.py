@@ -264,7 +264,9 @@ class Decoder(nn.Module):
         self.rnn = nn.GRU(input_size, hidden_size, num_layers)
 
     def hidden_to_idx(self, hidden, dropout=False):
-        """Converts hidden state vectors into indices into the dictionary."""
+        """
+        Converts hidden state vectors into indices into the dictionary.
+        """
         if hidden.size(0) > 1:
             raise RuntimeError('Bad dimensions of tensor:', hidden)
         hidden = hidden.squeeze(0)

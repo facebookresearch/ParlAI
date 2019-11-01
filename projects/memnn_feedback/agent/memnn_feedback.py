@@ -20,8 +20,9 @@ from .modules import MemNN, Decoder, to_tensors
 
 
 class MemnnFeedbackAgent(Agent):
-    """ Memory Network agent for question answering that supports
-    reward-based learning (RBI), forward prediction (FP), and imitation learning (IM).
+    """
+    Memory Network agent for question answering that supports reward-based learning
+    (RBI), forward prediction (FP), and imitation learning (IM).
 
     For more details on settings see: https://arxiv.org/abs/1604.06045.
 

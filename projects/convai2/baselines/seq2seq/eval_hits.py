@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Evaluate pre-trained model trained for hits@1 metric.
+"""
+Evaluate pre-trained model trained for hits@1 metric.
+
 This seq2seq model was trained on convai2:self.
 """
 

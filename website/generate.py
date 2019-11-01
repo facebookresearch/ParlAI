@@ -31,7 +31,9 @@ def _read_file(filename):
 
 
 def _mkdirp(directory):
-    """Equivalent to mkdir -p"""
+    """
+    Equivalent to mkdir -p.
+    """
     if not os.path.exists(directory):
         os.makedirs(directory)
 

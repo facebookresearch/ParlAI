@@ -3,10 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""World Runner Module.
+"""
+World Runner Module.
 
-The World Runner provides the manager with utility functions for running
-overworlds, onboard worlds, and task worlds.
+The World Runner provides the manager with utility functions for running overworlds,
+onboard worlds, and task worlds.
 """
 import shared_utils as utils
 import time
@@ -16,7 +17,8 @@ import logging
 
 
 class MessengerWorldRunner:
-    """World Runner.
+    """
+    World Runner.
 
     Launches worlds, overworlds, etc. Helper for MessengerManager
     """
@@ -38,7 +40,9 @@ class MessengerWorldRunner:
             print("{} DEBUG: {}".format(time, text))
 
     def shutdown(self):
-        """Shutdown the world runner."""
+        """
+        Shutdown the world runner.
+        """
         for _, task in self.tasks.items():
             if task.world is not None:
                 task.world.shutdown()
@@ -49,7 +53,8 @@ class MessengerWorldRunner:
         self._log("Shutdown complete.")
 
     def _run_world(self, task, world_name, agents):
-        """Run a world until completion.
+        """
+        Run a world until completion.
 
         :param task:
             TaskState. State of the given task.
@@ -77,7 +82,8 @@ class MessengerWorldRunner:
         return ret_val, world_data
 
     def launch_task_world(self, task_name, world_name, agents):
-        """Launch a task world.
+        """
+        Launch a task world.
 
         Return the job's future.
 
@@ -103,7 +109,8 @@ class MessengerWorldRunner:
         return fut
 
     def launch_overworld(self, task_name, overworld_name, onboard_map, overworld_agent):
-        """Launch an overworld and a subsequent onboarding world.
+        """
+        Launch an overworld and a subsequent onboarding world.
 
         Return the job's future
 
