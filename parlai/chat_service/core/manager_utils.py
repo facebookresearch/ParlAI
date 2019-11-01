@@ -166,6 +166,7 @@ class ChatServiceMessageSocket:
                 pass
             time.sleep(0.8)
 
+
 class ChatServiceMessageSender(ABC):
     """ChatServiceMessageSender is a wrapper around requests that simplifies the
     the process of sending content.
@@ -173,6 +174,8 @@ class ChatServiceMessageSender(ABC):
 
     @abstractmethod
     def send_read(self, receiver_id):
+        pass
 
     @abstractmethod
     def typing_on(self, receiver_id, persona_id=None):
+        pass
