@@ -13,11 +13,11 @@ from parlai.core.agents import Agent
 class ChatServiceAgent(ABC, Agent):
     """Base class for a person on a chat serivce that can act in a ParlAI world"""
 
-    def __init__(self, opt, manager, id):
+    def __init__(self, opt, manager, receiver_id, task_id):
         super().__init__(opt)
         self.manager = manager
-        self.id = id
-
+        self.id = receiver_id
+        self.task_id = task_id
         self.acted_packets = {}
         self.data = {}
         self.msg_queue = Queue()
