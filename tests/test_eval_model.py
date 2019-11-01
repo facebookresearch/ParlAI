@@ -13,6 +13,23 @@ import parlai.utils.testing as testing_utils
 class TestEvalModel(unittest.TestCase):
     """Basic tests on the eval_model.py example."""
 
+    def test_noevalmode(self):
+        """
+        Ensure you get an error trying to use eval_model with -dt train.
+        """
+        with self.assertRaises(ValueError):
+            testing_utils.eval_model(
+                task='integration_tests', model='repeat_label', datatype='train'
+            )
+
+    def test_evalmode(self):
+        """
+        Eval_model with -dt train:evalmode should be okay.
+        """
+        testing_utils.eval_model(
+            task='integration_tests', model='repeat_label', datatype='train:evalmode'
+        )
+
     def test_output(self):
         """Test output of running eval_model"""
         parser = setup_args()
