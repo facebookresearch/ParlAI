@@ -141,7 +141,6 @@ class ChatServiceManager(ABC):
         self.overworld = self.config['overworld']
         self.world_path = self.config['world_path']
         self.world_module = shared_utils.get_world_module(self.world_path)
-        # self.page_id = self.config['page_id'] # To be a part of additional_args
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
@@ -161,6 +160,7 @@ class ChatServiceManager(ABC):
     @abstractmethod
     def parse_additional_args(self, opt):
         """Parse any other service specific args here."""
+        # page id for messenger to be obtained here
 
     def _get_port(self):
         """Return the port number currently being used."""
@@ -267,8 +267,8 @@ class ChatServiceManager(ABC):
         :param message:
             message sent from agent
         """
-        if self.page_id is None:
-            self.page_id = message['recipient']['id']
+        if self.service_reference_id is None:
+            self.service_reference_id = message['recipient']['id']
 
         agent_id = message['sender']['id']
         if self.opt['password'] is not None:
@@ -344,7 +344,7 @@ class ChatServiceManager(ABC):
             Name of world whose pool should now contain agent
         """
         with self.agent_pool_change_condition:
-            # self._log_debug('Adding agent {} to pool...'.format(agent.messenger_id))
+            # self._log_debug('Adding agent {} to pool...'.format(agent.service_id))
             # time agent entered agent_pool
             agent.time_in_pool.setdefault(world_type, time.time())
             # add agent to pool
@@ -361,7 +361,7 @@ class ChatServiceManager(ABC):
             bool, whether to mark an agent as removed from the pool
         """
         with self.agent_pool_change_condition:
-            # self._log_debug('Removing agent {} from pool...'.format(agent.messenger_id))
+            # self._log_debug('Removing agent {} from pool...'.format(agent.service_id))
             if world_type in self.agent_pool and agent in self.agent_pool[world_type]:
                 self.agent_pool[world_type].remove(agent)
                 # reset agent's time_in_pool
@@ -370,8 +370,8 @@ class ChatServiceManager(ABC):
                 # maybe mark agent as removed
                 if mark_removed:
                     agent.stored_data['removed_from_pool'] = True
-                    if self.page_id is not None:
-                        self.mark_removed(int(agent.messenger_id), int(self.page_id))
+                    if self.service_reference_id is not None:
+                        self.mark_removed(int(agent.service_id), int(self.service_reference_id))
 
     def _create_agent(self, agent_id):
         """Initialize an agent and return it.
@@ -458,7 +458,7 @@ class ChatServiceManager(ABC):
                 agent_state.set_active_agent(agent_state.get_overworld_agent())
 
                 agent_state.stored_data['removed_after_timeout'] = True
-                self.after_agent_removed(agent_state.messenger_id)
+                self.after_agent_removed(agent_state.service_id)
 
                 # reset wait message state
                 agent_state.stored_data['seen_wait_message'] = False
@@ -471,11 +471,11 @@ class ChatServiceManager(ABC):
                     or not agent_state.stored_data['seen_wait_message']
                 ):
                     self.observe_message(
-                        agent_state.messenger_id,
+                        agent_state.service_id,
                         'Pairing is taking longer than expected. '
                         'If you wish to exit, type *EXIT*.',
                     )
-                    self.message_sender.typing_on(agent_state.messenger_id)
+                    self.message_sender.typing_on(agent_state.service_id)
                     agent_state.stored_data['seen_wait_message'] = True
 
     def start_task(self):
