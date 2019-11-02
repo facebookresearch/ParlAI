@@ -371,7 +371,9 @@ class ChatServiceManager(ABC):
                 if mark_removed:
                     agent.stored_data['removed_from_pool'] = True
                     if self.service_reference_id is not None:
-                        self.mark_removed(int(agent.service_id), int(self.service_reference_id))
+                        self.mark_removed(
+                            int(agent.service_id), int(self.service_reference_id)
+                        )
 
     def _create_agent(self, agent_id):
         """Initialize an agent and return it.
