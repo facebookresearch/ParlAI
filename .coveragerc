@@ -2,10 +2,16 @@
 [run]
 branch = True
 source =
-    # include these directories
     .
 
+# make sure we report these folders
+include =
+    parlai/*
+    projects/*
+    examples/*
+    tests/*
+
+# skip these files
 omit =
-    # omit init files
-    *__init__.py
+    */__init__.py
     .eggs/*
