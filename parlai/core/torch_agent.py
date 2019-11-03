@@ -682,6 +682,8 @@ class TorchAgent(ABC, Agent):
             self.metrics['clip'] = 0.0
             # number of calls to optimizer.step()
             self.metrics['updates'] = 0
+            # unk tokens norms
+            self.metrics['unk_tokens'] = 0.0
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
@@ -1008,6 +1010,9 @@ class TorchAgent(ABC, Agent):
 
         if self.use_cuda:
             metrics['gpu_mem_percent'] = round_sigfigs(self._gpu_usage(), sigfigs=3)
+
+        if self.metrics['unk_tokens']:
+            metrics['unk_tokens'] = self.metrics['unk_tokens']
 
         return metrics
 
@@ -1497,6 +1502,9 @@ class TorchAgent(ABC, Agent):
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
+        if ys is not None:
+            self.metrics['unk_tokens'] += (ys == self.UNK_IDX).sum().item()
+
         return Batch(
             text_vec=xs,
             text_lengths=x_lens,
@@ -1713,6 +1721,7 @@ class TorchAgent(ABC, Agent):
         self.metrics['gnorm'] = 0.0
         self.metrics['clip'] = 0.0
         self.metrics['updates'] = 0
+        self.metrics['unk_tokens'] = 0
 
     def act(self):
         """Call batch_act with the singleton batch."""

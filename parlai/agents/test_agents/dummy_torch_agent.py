@@ -22,6 +22,9 @@ class MockDict(Agent):
     BEG_IDX = 1001
     end_token = '__end__'
     END_IDX = 1002
+    unk_token = '__unk__'
+    UNK_IDX = 1003
+
     p1_token = '__p1__'
     P1_IDX = 2001
     p2_token = '__p2__'
@@ -39,6 +42,8 @@ class MockDict(Agent):
             return self.BEG_IDX
         elif key == self.end_token:
             return self.END_IDX
+        elif key == self.unk_token:
+            return self.UNK_IDX
         elif key == self.p1_token:
             return self.P1_IDX
         elif key == self.p2_token:
