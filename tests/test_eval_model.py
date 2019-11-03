@@ -8,6 +8,7 @@ from examples.eval_model import setup_args
 import ast
 import unittest
 import parlai.utils.testing as testing_utils
+from parlai.core.utils import Opt
 
 
 class TestEvalModel(unittest.TestCase):
@@ -19,7 +20,11 @@ class TestEvalModel(unittest.TestCase):
         """
         with self.assertRaises(ValueError):
             testing_utils.eval_model(
-                task='integration_tests', model='repeat_label', datatype='train'
+                {
+                    'task': 'integration_tests',
+                    'model': 'repeat_label',
+                    'datatype': 'train',
+                }
             )
 
     def test_evalmode(self):
@@ -27,7 +32,11 @@ class TestEvalModel(unittest.TestCase):
         Eval_model with -dt train:evalmode should be okay.
         """
         testing_utils.eval_model(
-            task='integration_tests', model='repeat_label', datatype='train:evalmode'
+            {
+                'task': 'integration_tests',
+                'model': 'repeat_label',
+                'datatype': 'train:evalmode',
+            }
         )
 
     def test_output(self):
