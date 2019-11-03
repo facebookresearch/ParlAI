@@ -683,7 +683,7 @@ class TorchAgent(ABC, Agent):
             # number of calls to optimizer.step()
             self.metrics['updates'] = 0
             # unk tokens norms
-            self.metrics['unk_tokens'] = 0.0
+            self.metrics['unk_tokens'] = 0
         else:
             # copy initialized data from shared table
             self.opt = shared['opt']
