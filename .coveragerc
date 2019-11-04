@@ -1,8 +1,6 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-source =
-    .
 
 # make sure we report these folders
 include =
