@@ -4,11 +4,15 @@
 import parlai.core.build_data as build_data
 import os
 from .download_images import download_images
+from parlai.core.build_data import DownloadableFile
 
-
-URLS = ['http://parl.ai/downloads/personality_captions/' + 'personality_captions.tgz']
-FILE_NAMES = ['personality_captions.tgz']
-SHA256 = ['e0979d3ac0854395ee74f2c61a6bc467838cc292c3a9a62e891d8230d3a01365']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/personality_captions/personality_captions.tgz',
+        'personality_captions.tgz',
+        'e0979d3ac0854395ee74f2c61a6bc467838cc292c3a9a62e891d8230d3a01365',
+    )
+]
 
 
 def build(opt):
@@ -21,10 +25,10 @@ def build(opt):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
 
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        # Download the data.
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         build_data.mark_done(dpath, version)
 

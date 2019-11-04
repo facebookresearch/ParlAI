@@ -5,10 +5,15 @@
 # LICENSE file in the root directory of this source tree.
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
 
-URLS = ['http://parl.ai/downloads/wizard_of_wikipedia/' + 'wizard_of_wikipedia.tgz']
-FILE_NAMES = ['wizard_of_wikipedia.tgz']
-SHA256 = ['2a549627a83fea745efa2076a41d1c0078ad002ab2b54eae6a4e3d3d66ae24b7']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/wizard_of_wikipedia/wizard_of_wikipedia.tgz',
+        'wizard_of_wikipedia.tgz',
+        '2a549627a83fea745efa2076a41d1c0078ad002ab2b54eae6a4e3d3d66ae24b7',
+    )
+]
 
 
 def build(opt):
@@ -20,7 +25,9 @@ def build(opt):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-        for zipfile in [FILE_NAMES[0]]:
-            build_data.untar(dpath, zipfile)
+
+        # Download the data.
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
+
         build_data.mark_done(dpath, version)

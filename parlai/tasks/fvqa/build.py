@@ -4,12 +4,17 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['https://dl.dropboxusercontent.com/s/iyz6l7jhbt6jb7q/new_dataset_release.zip']
-FILE_NAMES = ['FVQA.zip']
-SHA256 = ['66d1831a61d1282fb0c95c01435eda9b465961d507c1e166e4c32b89687c3c26']
+RESOURCES = [
+    DownloadableFile(
+        'https://dl.dropboxusercontent.com/s/iyz6l7jhbt6jb7q/new_dataset_release.zip',
+        'FVQA.zip',
+        '66d1831a61d1282fb0c95c01435eda9b465961d507c1e166e4c32b89687c3c26',
+    )
+]
 
 
 def build(opt):
@@ -24,10 +29,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

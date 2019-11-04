@@ -5,29 +5,36 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = [
-    'http://parl.ai/downloads/COCO-IMG/train2017.zip',
-    'http://parl.ai/downloads/COCO-IMG/val2017.zip',
-    'http://parl.ai/downloads/COCO-IMG/test2017.zip',
-    'http://images.cocodataset.org/annotations/annotations_trainval2017.zip',
-    'http://images.cocodataset.org/annotations/image_info_test2017.zip',
-]
-FILE_NAMES = [
-    'train2017.zip',
-    'val2017.zip',
-    'test2017.zip',
-    'annotations_trainval2017.zip',
-    'image_info_test2017.zip',
-]
-SHA256 = [
-    'f9f102e5336ede4060bb06e1aca438b85f9be18c21960837079c1a88530d498c',
-    '4f7e2ccb2866ec5041993c9cf2a952bbed69647b115d0f74da7ce8f4bef82f05',
-    'c7908c3c9f94ba2f3340ebbeec58c25db6be8774f18d68c2f15d0e369d95baba',
-    '113a836d90195ee1f884e704da6304dfaaecff1f023f49b6ca93c4aaae470268',
-    'e52f412dd7195ac8f98d782b44c6dd30ea10241e9f42521f67610fbe055a74f8',
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/COCO-IMG/train2017.zip',
+        'train2017.zip',
+        'f9f102e5336ede4060bb06e1aca438b85f9be18c21960837079c1a88530d498c',
+    ),
+    DownloadableFile(
+        'http://parl.ai/downloads/COCO-IMG/val2017.zip',
+        'val2017.zip',
+        '4f7e2ccb2866ec5041993c9cf2a952bbed69647b115d0f74da7ce8f4bef82f05',
+    ),
+    DownloadableFile(
+        'http://parl.ai/downloads/COCO-IMG/test2017.zip',
+        'test2017.zip',
+        'c7908c3c9f94ba2f3340ebbeec58c25db6be8774f18d68c2f15d0e369d95baba',
+    ),
+    DownloadableFile(
+        'http://images.cocodataset.org/annotations/annotations_trainval2017.zip',
+        'annotations_trainval2017.zip',
+        '113a836d90195ee1f884e704da6304dfaaecff1f023f49b6ca93c4aaae470268',
+    ),
+    DownloadableFile(
+        'http://images.cocodataset.org/annotations/image_info_test2017.zip',
+        'image_info_test2017.zip',
+        'e52f412dd7195ac8f98d782b44c6dd30ea10241e9f42521f67610fbe055a74f8',
+    ),
 ]
 
 
@@ -43,10 +50,8 @@ def buildImage(opt):
         build_data.make_dir(dpath)
 
         # Download the image data.
-        build_data.download_check(dpath, URLS[:3], FILE_NAMES[:3], SHA256)
-
-        for zipfile in FILE_NAMES[:3]:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES[:3]:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
@@ -67,11 +72,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # download the data.
-
-        build_data.download_check(dpath, URLS[:3], FILE_NAMES[:3], SHA256)
-
-        for zipfile in FILE_NAMES[3:]:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES[3:]:
+            donwloadable_file.download_file(dpath)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

@@ -6,11 +6,17 @@
 
 import os
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 
-URLS = ['1WtbXCv3vPB5ql6w0FVDmAEMmWadbrCuG']
-FILE_NAMES = ['dialogue_nli.zip']
-SHA256 = ['1164b0d9a0a1a6006891a6d4435a6a813464bc9b1e2f1ec5ce28c47267ad5e42']
+RESOURCES = [
+    DownloadableFile(
+        '1WtbXCv3vPB5ql6w0FVDmAEMmWadbrCuG',
+        'dialogue_nli.zip',
+        '1164b0d9a0a1a6006891a6d4435a6a813464bc9b1e2f1ec5ce28c47267ad5e42',
+        from_google=True,
+    )
+]
 
 
 def build(opt):
@@ -29,10 +35,8 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256, from_google=True)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

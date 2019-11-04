@@ -10,14 +10,16 @@ import parlai.core.build_data as build_data
 import os
 import json
 import re
+from parlai.core.build_data import DownloadableFile
 
-URLS = [
-    'https://raw.githubusercontent.com/salesforce/decanlp/'
-    + 'd594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/'
-    + 'schema.txt'
+RESOURCES = [
+    DownloadableFile(
+        'https://raw.githubusercontent.com/salesforce/decanlp/d594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/schema.txt',
+        'schema.txt',
+        '31da9bee05796bbe0f6c957f54d1eb82eb5c644a8ee59f2ff1fa890eff3885dd',
+        zipped=False,
+    )
 ]
-FILE_NAMES = ['schema.txt']
-SHA256 = ['31da9bee05796bbe0f6c957f54d1eb82eb5c644a8ee59f2ff1fa890eff3885dd']
 
 
 def build(opt):
@@ -32,7 +34,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         pattern = '\\[.*\\]'
 
@@ -51,7 +54,7 @@ def build(opt):
             return results
 
         schemas = []
-        with open(os.path.join(dpath, FILE_NAMES[0])) as schema_file:
+        with open(os.path.join(dpath, RESOURCES[0].file_name)) as schema_file:
             schema = []
             for line in schema_file:
                 if len(line.split()) == 0:

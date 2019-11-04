@@ -4,14 +4,18 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = [
-    'https://raw.githubusercontent.com/deepmipt/turing-data/master/data_1501534800.tar.gz'
+RESOURCES = [
+    DownloadableFile(
+        'https://raw.githubusercontent.com/deepmipt/turing-data/master/data_1501534800.tar.gz',
+        'data_1501534800.tar.gz',
+        'f1a4e7ee7264220cef6bf067b77d6f501023877643e77516c7acd66fbcdf0aaf',
+    )
 ]
-FILE_NAMES = ['data_1501534800.tar.gz']
-SHA256 = ['f1a4e7ee7264220cef6bf067b77d6f501023877643e77516c7acd66fbcdf0aaf']
 
 
 def build(opt):
@@ -25,10 +29,8 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         os.rename(
             os.path.join(dpath, 'data_train_' + version + '.json'),

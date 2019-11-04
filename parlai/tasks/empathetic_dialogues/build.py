@@ -6,12 +6,17 @@
 
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['http://parl.ai/downloads/empatheticdialogues/empatheticdialogues.tar.gz']
-FILE_NAMES = ['empatheticdialogues.tar.gz']
-SHA256 = ['240c492cb6199a315722f716bfcc14f13ea6605f1cec67349153b606be92f6f2']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/empatheticdialogues/empatheticdialogues.tar.gz',
+        'empatheticdialogues.tar.gz',
+        '240c492cb6199a315722f716bfcc14f13ea6605f1cec67349153b606be92f6f2',
+    )
+]
 
 
 def build(opt):
@@ -26,10 +31,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

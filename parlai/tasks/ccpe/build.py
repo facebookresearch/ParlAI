@@ -3,12 +3,18 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['https://storage.googleapis.com/dialog-data-corpus/CCPE-M-2019/data.json']
-FILE_NAMES = ['ccpe.json']
-SHA256 = ['14abc40f5ab93eb68607454968f0e3af21aeb75d8c37b8b19bf9eeb957907a42']
+RESOURCES = [
+    DownloadableFile(
+        'https://storage.googleapis.com/dialog-data-corpus/CCPE-M-2019/data.json',
+        'ccpe.json',
+        '4ff051ea7ea60cf0f480c911c7e2cfed56434e2e2c9ea8965ac5e26365773f0a',
+        zipped=False,
+    )
+]
 
 
 def build(opt):
@@ -23,7 +29,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

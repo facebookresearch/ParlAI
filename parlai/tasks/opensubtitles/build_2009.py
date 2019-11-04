@@ -9,6 +9,15 @@ import parlai.core.build_data as build_data
 import gzip
 import os
 import re
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'http://opus.lingfil.uu.se/download.php?f=OpenSubtitles/en.tar.gz',
+        'OpenSubtitles.tar.gz',
+        'aef6d57db36c221b8cff1cf2356309874c27ef6a36bb8ca714509b37d0db29bc',
+    )
+]
 
 
 def _regularize(sent):
@@ -72,11 +81,6 @@ def create_fb_format(inpath, outpath):
                     handle.write(''.join(dialog))
 
 
-URLS = ['http://opus.lingfil.uu.se/download.php?f=OpenSubtitles/en.tar.gz']
-FILE_NAMES = ['OpenSubtitles.tar.gz']
-SHA256 = ['aef6d57db36c221b8cff1cf2356309874c27ef6a36bb8ca714509b37d0db29bc']
-
-
 def build(datapath):
     dpath = os.path.join(datapath, 'OpenSubtitles')
     version = '2'
@@ -89,10 +93,8 @@ def build(datapath):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         create_fb_format(os.path.join(dpath, 'OpenSubtitles', 'en'), dpath)
 

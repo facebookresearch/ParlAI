@@ -5,12 +5,20 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 
 URLS = ['http://parl.ai/downloads/dstc7/dstc7.tar.gz']
 FILE_NAMES = ['dstc7.tar.gz']
 SHA256 = ['aa3acec0aedb660f1549cdd802f01e5bc9c5b9dc06f10764c5e20686aa4d5571']
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/dstc7/dstc7.tar.gz',
+        'dstc7.tar.gz',
+        'aa3acec0aedb660f1549cdd802f01e5bc9c5b9dc06f10764c5e20686aa4d5571',
+    )
+]
 
 
 def build(opt):
@@ -25,10 +33,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

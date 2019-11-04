@@ -5,12 +5,17 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['http://parl.ai/downloads/booktest/booktest.tar.bz2']
-FILE_NAMES = ['booktest.tar.bz2']
-SHA256 = ['4079481d19c7681e3256c06ffd2781a230aca4a8d9390f3a5932c33e4b857c9d']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/booktest/booktest.tar.bz2',
+        'booktest.tar.bz2',
+        '4079481d19c7681e3256c06ffd2781a230aca4a8d9390f3a5932c33e4b857c9d',
+    )
+]
 
 
 def build(opt):
@@ -25,9 +30,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

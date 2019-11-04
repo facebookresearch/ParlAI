@@ -13,6 +13,22 @@ except ImportError:
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/Marsan-Ma/chat_corpus/raw/master/twitter_en_big.txt.gz.partaa',
+        'twitter_en_big.txt.gz.partaa',
+        '833eabfebd577f5ff381c82f6544eef7b5036af65e625b07e799cfb17218861f',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://github.com/Marsan-Ma/chat_corpus/raw/master/twitter_en_big.txt.gz.partab',
+        'twitter_en_big.txt.gz.partab',
+        'cc406fdd6d46ef6c1d2fad0e044751ba9a08f40dd23e2bcf9f7125df2879bd23',
+        zipped=False,
+    ),
+]
 
 
 def replace_emoji(x):
@@ -69,21 +85,6 @@ def create_fb_format(data, dpath):
     fw3.close()
 
 
-URLS = [
-    'https://github.com/Marsan-Ma/chat_corpus/raw/master/'
-    + "twitter_en_big.txt.gz.partaa",
-    'https://github.com/Marsan-Ma/chat_corpus/raw/master/'
-    + "twitter_en_big.txt.gz.partab",
-]
-
-FILE_NAMES = ["twitter_en_big.txt.gz.partaa", "twitter_en_big.txt.gz.partab"]
-
-SHA256 = [
-    '833eabfebd577f5ff381c82f6544eef7b5036af65e625b07e799cfb17218861f',
-    'cc406fdd6d46ef6c1d2fad0e044751ba9a08f40dd23e2bcf9f7125df2879bd23',
-]
-
-
 def build(opt):
     version = 'v1.1'
     dpath = os.path.join(opt['datapath'], 'Twitter')
@@ -96,10 +97,11 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
-        file1 = os.path.join(dpath, FILE_NAMES[0])
-        file2 = os.path.join(dpath, FILE_NAMES[1])
+        file1 = os.path.join(dpath, RESOURCES[0].file_name)
+        file2 = os.path.join(dpath, RESOURCES[1].file_name)
         file3 = "twitter_en_big.txt.gz"
         outzipfile = os.path.join(dpath, file3)
         build_data.cat(file1, file2, outzipfile)

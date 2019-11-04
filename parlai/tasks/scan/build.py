@@ -7,6 +7,15 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/scan/scan.tgz',
+        'scan.tgz',
+        '7d6695159fab47ef13a8fadd1f5020d5ab500196e71d5114fd52bc9b7fc8d17f',
+    )
+]
 
 
 def create_fb_format(outpath, dtype, inpath):
@@ -28,11 +37,6 @@ def create_fb_format(outpath, dtype, inpath):
                     fout.write(s + '\n\n')
 
 
-URLS = ['http://parl.ai/downloads/scan/' + 'scan.tgz']
-FILE_NAMES = ['scan.tgz']
-SHA256 = ['7d6695159fab47ef13a8fadd1f5020d5ab500196e71d5114fd52bc9b7fc8d17f']
-
-
 def build(opt):
     version = 'v1.0'
     dpath = os.path.join(opt['datapath'], 'SCAN')
@@ -45,9 +49,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         create_fb_format(dpath, 'train', os.path.join(dpath, 'tasks_train_simple.txt'))
         create_fb_format(dpath, 'valid', os.path.join(dpath, 'tasks_train_simple.txt'))

@@ -8,10 +8,15 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
 
-URLS = ['http://nlp.cs.washington.edu/zeroshot/' + 'relation_splits.tar.bz2']
-FILE_NAMES = ['relation_splits.tar.bz2']
-SHA256 = ['e33d0e367b6e837370da17a2d09d217e0a92f8d180f7abb3fd543a2d1726b2b4']
+RESOURCES = [
+    DownloadableFile(
+        'http://nlp.cs.washington.edu/zeroshot/relation_splits.tar.bz2',
+        'relation_splits.tar.bz2',
+        'e33d0e367b6e837370da17a2d09d217e0a92f8d180f7abb3fd543a2d1726b2b4',
+    )
+]
 
 
 def build(opt):
@@ -28,9 +33,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

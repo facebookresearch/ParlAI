@@ -8,17 +8,19 @@
 import parlai.core.build_data as build_data
 import os
 import json
+from parlai.core.build_data import DownloadableFile
 
-URLS = [
-    'https://computing.ece.vt.edu/~abhshkdz/data/visdial/' + 'visdial_0.9_train.zip',
-    'https://computing.ece.vt.edu/~abhshkdz/data/visdial/' + 'visdial_0.9_val.zip',
-]
-
-FILE_NAMES = ['visdial_0.9_train.zip', 'visdial_0.9_val.zip']
-
-SHA256 = [
-    'a778d5d39d855b6194272f5800871a4a4b3673b00c9dc28d611443e7ca071290',
-    '08f5ee1d0cb12620b311cb7efbce4bb43a586871f002adba541614877d6f3960',
+RESOURCES = [
+    DownloadableFile(
+        'https://computing.ece.vt.edu/~abhshkdz/data/visdial/visdial_0.9_train.zip',
+        'visdial_0.9_train.zip',
+        'a778d5d39d855b6194272f5800871a4a4b3673b00c9dc28d611443e7ca071290',
+    ),
+    DownloadableFile(
+        'https://computing.ece.vt.edu/~abhshkdz/data/visdial/visdial_0.9_val.zip',
+        'visdial_0.9_val.zip',
+        '08f5ee1d0cb12620b311cb7efbce4bb43a586871f002adba541614877d6f3960',
+    ),
 ]
 
 
@@ -35,13 +37,12 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         print('processing unpacked files')
         # Use 1000 examples from training set as validation.
-        json1 = os.path.join(dpath, FILE_NAMES[0].rsplit('.', 1)[0] + '.json')
+        json1 = os.path.join(dpath, RESOURCES[0].file_name.rsplit('.', 1)[0] + '.json')
         with open(json1) as t_json:
             train_data = json.load(t_json)
 
@@ -65,7 +66,7 @@ def build(opt):
         os.remove(json1)
 
         # Use validation data as test.
-        json2 = os.path.join(dpath, FILE_NAMES[1].rsplit('.', 1)[0] + '.json')
+        json2 = os.path.join(dpath, RESOURCES[1].file_name.rsplit('.', 1)[0] + '.json')
         test_json = json2.rsplit('.', 1)[0] + '_test.json'
         build_data.move(json2, test_json)
 

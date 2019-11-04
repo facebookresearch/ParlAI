@@ -6,10 +6,15 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
 
-URLS = ['https://github.com/clic-lab/nlvr/archive/master.zip']
-FILE_NAMES = ['nlvr.zip']
-SHA256 = ['32694f83835bd28b86b0f2734efa9544401ed18bd954649b50d1375d43e56b8b']
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/clic-lab/nlvr/archive/master.zip',
+        'nlvr.zip',
+        '32694f83835bd28b86b0f2734efa9544401ed18bd954649b50d1375d43e56b8b',
+    )
+]
 
 
 def build(opt):
@@ -25,11 +30,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the data from github
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        # Download the data.
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark as done
         build_data.mark_done(dpath, version_string=version)

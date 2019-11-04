@@ -5,12 +5,17 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['http://parl.ai/downloads/dbll/dbll.tgz']
-FILE_NAMES = ['dbll.tgz']
-SHA256 = ['d8c727dac498b652c7f5de6f72155dce711ff46c88401a303399d3fad4db1e68']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/dbll/dbll.tgz',
+        'dbll.tgz',
+        'd8c727dac498b652c7f5de6f72155dce711ff46c88401a303399d3fad4db1e68',
+    )
+]
 
 
 def build(opt):
@@ -25,10 +30,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

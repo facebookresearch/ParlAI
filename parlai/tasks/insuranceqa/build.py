@@ -8,6 +8,7 @@
 import gzip
 import os
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 
 
@@ -209,9 +210,13 @@ class ParseInsuranceQAV2(ParseInsuranceQA):
         fout.close()
 
 
-URLS = ['https://github.com/shuzi/insuranceQA/archive/master.zip']
-FILE_NAMES = ['insuranceqa.zip']
-SHA256 = ['53e1c4a68734c6a0955dcba50d5a2a9926004d4cd4cda2e988cc7b990a250fbf']
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/shuzi/insuranceQA/archive/master.zip',
+        'insuranceqa.zip',
+        '53e1c4a68734c6a0955dcba50d5a2a9926004d4cd4cda2e988cc7b990a250fbf',
+    )
+]
 
 
 def build(opt):
@@ -226,10 +231,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         ParseInsuranceQAV1.build(dpath)
         ParseInsuranceQAV2.build(dpath)

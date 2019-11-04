@@ -6,12 +6,15 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
 
-URLS = [
-    'https://www.repository.cam.ac.uk/bitstream/handle/1810/294507/MULTIWOZ2.1.zip?sequence=1&isAllowed=y'
+RESOURCES = [
+    DownloadableFile(
+        'https://www.repository.cam.ac.uk/bitstream/handle/1810/294507/MULTIWOZ2.1.zip?sequence=1&isAllowed=y',
+        'MULTIWOZ2.1.zip',
+        'd377a176f5ec82dc9f6a97e4653d4eddc6cad917704c1aaaa5a8ee3e79f63a8e',
+    )
 ]
-FILE_NAMES = ['MULTIWOZ2.1.zip']
-SHA256 = ['d377a176f5ec82dc9f6a97e4653d4eddc6cad917704c1aaaa5a8ee3e79f63a8e']
 
 
 def build(opt):
@@ -24,11 +27,8 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        # uncompress it
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        # Download the data.
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         build_data.mark_done(dpath, version_string=version)

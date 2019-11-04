@@ -8,10 +8,16 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
 
-URLS = ["1ytVZ4AhubFDOEL7o7XrIRIyhU8g9wvKA"]
-FILE_NAMES = ['qangaroo.zip']
-SHA256 = ['2f512869760cdad76a022a1465f025b486ae79dc5b8f0bf3ad901a4caf2d3050']
+RESOURCES = [
+    DownloadableFile(
+        '1ytVZ4AhubFDOEL7o7XrIRIyhU8g9wvKA',
+        'qangaroo.zip',
+        '2f512869760cdad76a022a1465f025b486ae79dc5b8f0bf3ad901a4caf2d3050',
+        from_google=True,
+    )
+]
 
 
 def build(opt):
@@ -26,9 +32,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256, from_google=True)
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

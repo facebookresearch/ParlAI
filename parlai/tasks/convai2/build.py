@@ -5,12 +5,18 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['http://parl.ai/downloads/convai2/convai2_fix_723.tgz']
-FILE_NAMES = ['convai2_fix_723.tgz']
-SHA256 = ['d0ae89defe2fd0b0a4221eaa642a457d7d40cef475f54798119c7f3b8dd9361d']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/convai2/convai2_fix_723.tgz',
+        'convai2_fix_723.tgz',
+        'd0ae89defe2fd0b0a4221eaa642a457d7d40cef475f54798119c7f3b8dd9361d',
+    )
+]
 
 
 def build_fb_format():
@@ -29,10 +35,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version)

@@ -5,12 +5,17 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['http://parl.ai/downloads/flickr30k/flickr30k.tgz']
-FILE_NAMES = ['flickr30k.tgz']
-SHA256 = ['932a43ea1ba0dafa5a533bee825dfc6b7cbcd94038b5addd6cdb6f7f2a8a229a']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/flickr30k/flickr30k.tgz',
+        'flickr30k.tgz',
+        '932a43ea1ba0dafa5a533bee825dfc6b7cbcd94038b5addd6cdb6f7f2a8a229a',
+    )
+]
 
 
 def build(opt):
@@ -24,11 +29,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the image data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        # Download the data.
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

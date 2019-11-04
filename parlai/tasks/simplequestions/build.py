@@ -7,10 +7,15 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
 
-URLS = ['http://parl.ai/downloads/simplequestions/' + 'simplequestions.tar.gz']
-FILE_NAMES = ['simplequestions.tar.gz']
-SHA256 = ['f1155f195e5c0c0392e69ef0a31e90f925b03210c13abe467ee07de0637d2c6f']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/simplequestions/simplequestions.tar.gz',
+        'simplequestions.tar.gz',
+        'f1155f195e5c0c0392e69ef0a31e90f925b03210c13abe467ee07de0637d2c6f',
+    )
+]
 
 
 def build(opt):
@@ -25,9 +30,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

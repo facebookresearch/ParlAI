@@ -5,12 +5,16 @@
 
 import os
 import json
-
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 
-URLS = ['http://lnsigo.mipt.ru/export/datasets/convai/convai2_wild_evaluation_0.2.tgz']
-FILE_NAMES = ['convai2_wild_evaluation_0.2.tgz']
-SHA256 = ['d40ff70275c8d1939a8081707edcf4e71072097d18b9998100a1099d23e29801']
+RESOURCES = [
+    DownloadableFile(
+        'http://lnsigo.mipt.ru/export/datasets/convai/convai2_wild_evaluation_0.2.tgz',
+        'convai2_wild_evaluation_0.2.tgz',
+        'd40ff70275c8d1939a8081707edcf4e71072097d18b9998100a1099d23e29801',
+    )
+]
 
 
 def make_parlai_format(data: list, dpath: str):
@@ -62,10 +66,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         output_fname = 'convai2_wild_evaluation.json'
         output_path = os.path.join(dpath, output_fname)

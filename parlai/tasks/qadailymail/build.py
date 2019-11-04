@@ -7,6 +7,16 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        '0BwmD_VLjROrfN0xhTDVteGQ3eG8',
+        'qadailymail.tar.gz',
+        '77bfe0d91dbc9774991bbce59895743adfc984eafffc328a7b1d34a89e2b5646',
+        from_google=True,
+    )
+]
 
 
 def _process(fname, fout):
@@ -34,11 +44,6 @@ def create_fb_format(outpath, dtype, inpath):
                 _process(fname, fout)
 
 
-URLS = ['0BwmD_VLjROrfN0xhTDVteGQ3eG8']
-FILE_NAMES = ['qadailymail.tar.gz']
-SHA256 = ['77bfe0d91dbc9774991bbce59895743adfc984eafffc328a7b1d34a89e2b5646']
-
-
 def build(opt):
     version = 'v1.0'
     dpath = os.path.join(opt['datapath'], 'QADailyMail')
@@ -51,9 +56,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256, from_google=True)
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         ext = os.path.join('dailymail', 'questions')
         create_fb_format(dpath, 'train', os.path.join(dpath, ext, 'training'))

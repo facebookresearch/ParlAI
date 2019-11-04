@@ -4,12 +4,18 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['http://people.ict.usc.edu/~gordon/downloads/COPA-resources.tgz']
-FILE_NAMES = ['COPA-resources.tgz']
-SHA256 = ['5145348834d2081ad90da0397d1db3d70fa044e506bd8ce224194d24b04cdbbe']
+RESOURCES = [
+    DownloadableFile(
+        'http://people.ict.usc.edu/~gordon/downloads/COPA-resources.tgz',
+        'COPA-resources.tgz',
+        '5145348834d2081ad90da0397d1db3d70fa044e506bd8ce224194d24b04cdbbe',
+    )
+]
 
 
 def build(opt):
@@ -25,10 +31,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

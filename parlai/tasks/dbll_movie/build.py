@@ -6,12 +6,17 @@
 #
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.tasks.dbll_babi.build as dbll_babi_build
 import parlai.tasks.wikimovies.build as wikimovies_build
 
-URLS = ['http://parl.ai/downloads/dbll/dbll.tgz']
-FILE_NAMES = ['dbll.tgz']
-SHA256 = ['d8c727dac498b652c7f5de6f72155dce711ff46c88401a303399d3fad4db1e68']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/dbll/dbll.tgz',
+        'dbll.tgz',
+        'd8c727dac498b652c7f5de6f72155dce711ff46c88401a303399d3fad4db1e68',
+    )
+]
 
 
 def build(opt):

@@ -4,12 +4,17 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['https://github.com/facebookresearch/end-to-end-negotiator/archive/master.zip']
-FILE_NAMES = ['negotiation.zip']
-SHA256 = ['0f62af6ced9d0c41183118ccce4ef012886fce7ccbe23565280c5f0da358a2e5']
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/facebookresearch/end-to-end-negotiator/archive/master.zip',
+        'negotiation.zip',
+        '0f62af6ced9d0c41183118ccce4ef012886fce7ccbe23565280c5f0da358a2e5',
+    )
+]
 
 
 def build(opt):
@@ -25,11 +30,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the data from github
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        # Download the data.
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark as done
         build_data.mark_done(dpath, version_string=version)

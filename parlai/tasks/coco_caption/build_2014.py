@@ -5,21 +5,31 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = [
-    'http://parl.ai/downloads/COCO-IMG/train2014.zip',
-    'http://parl.ai/downloads/COCO-IMG/val2014.zip',
-    'http://parl.ai/downloads/COCO-IMG/test2014.zip',
-    'http://parl.ai/downloads/coco_caption/dataset_coco.tgz',
-]
-FILE_NAMES = ['train2014.zip', 'val2014.zip', 'test2014.zip', 'dataset_coco.tgz']
-SHA256 = [
-    'f9f102e5336ede4060bb06e1aca438b85f9be18c21960837079c1a88530d498c',
-    'e3cb2caf99e37157c48a99883cc8c57eed8ea3942a501c1abf6f7d9c040ddea8',
-    'ead40c62230cb2cf70ff4c8b4c70abdc260a7556e77b3282621d06d8e2e35bdf',
-    '85fac3c266af928bfec5bbd35f24e2371417f8977350e1de86276455643b09d0',
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/COCO-IMG/train2014.zip',
+        'train2014.zip',
+        'f9f102e5336ede4060bb06e1aca438b85f9be18c21960837079c1a88530d498c',
+    ),
+    DownloadableFile(
+        'http://parl.ai/downloads/COCO-IMG/val2014.zip',
+        'val2014.zip',
+        'e3cb2caf99e37157c48a99883cc8c57eed8ea3942a501c1abf6f7d9c040ddea8',
+    ),
+    DownloadableFile(
+        'http://parl.ai/downloads/COCO-IMG/test2014.zip',
+        'test2014.zip',
+        'ead40c62230cb2cf70ff4c8b4c70abdc260a7556e77b3282621d06d8e2e35bdf',
+    ),
+    DownloadableFile(
+        'http://parl.ai/downloads/coco_caption/dataset_coco.tgz',
+        'dataset_coco.tgz',
+        '85fac3c266af928bfec5bbd35f24e2371417f8977350e1de86276455643b09d0',
+    ),
 ]
 
 
@@ -35,10 +45,8 @@ def buildImage(opt):
         build_data.make_dir(dpath)
 
         # Download the image data.
-        build_data.download_check(dpath, URLS[:3], FILE_NAMES[:3], SHA256)
-
-        for zipfile in FILE_NAMES[:3]:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES[:3]:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
@@ -59,10 +67,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # download the data.
-        build_data.download_check(dpath, [URLS[3]], [FILE_NAMES[3]], SHA256)
-
-        # uncompress it
-        build_data.untar(dpath, FILE_NAMES[3])
+        for donwloadable_file in RESOURCES[3:]:
+            donwloadable_file.download_file(dpath)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

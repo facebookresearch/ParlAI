@@ -8,15 +8,20 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
 
-URLS = [
-    'https://github.com/salesforce/WikiSQL/raw/master/' + 'data.tar.bz2',
-    'https://github.com/salesforce/WikiSQL/raw/master/lib/' + 'query.py',
-]
-FILE_NAMES = ['data.tar.bz2', 'query.py']
-SHA256 = [
-    '755c728ab188e364575705c8641f3fafd86fb089cb8b08e8c03f01832aae0881',
-    'f539150bea6cd07a5dca226abcced6f9d356d216f5c3d70107693613f1fbeb25',
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/salesforce/WikiSQL/raw/master/data.tar.bz2',
+        'data.tar.bz2',
+        '755c728ab188e364575705c8641f3fafd86fb089cb8b08e8c03f01832aae0881',
+    ),
+    DownloadableFile(
+        'https://github.com/salesforce/WikiSQL/raw/master/lib/query.py',
+        'query.py',
+        'f539150bea6cd07a5dca226abcced6f9d356d216f5c3d70107693613f1fbeb25',
+        zipped=False,
+    ),
 ]
 
 
@@ -32,9 +37,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-        for zipfile in [FILE_NAMES[0]]:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

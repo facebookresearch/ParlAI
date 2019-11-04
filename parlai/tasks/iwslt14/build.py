@@ -6,12 +6,17 @@
 #
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-URLS = ['http://parl.ai/downloads/iwslt14/iwslt14.tgz']
-FILE_NAMES = ['iwslt14.tgz']
-SHA256 = ['af4a96dbc7f792a9ba96cb1a56b314a15ea940fc7ea155aef72c19dc52d0ef84']
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/iwslt14/iwslt14.tgz',
+        'iwslt14.tgz',
+        'af4a96dbc7f792a9ba96cb1a56b314a15ea940fc7ea155aef72c19dc52d0ef84',
+    )
+]
 
 
 def build(opt):
@@ -26,10 +31,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
-
-        for zipfile in FILE_NAMES:
-            build_data.untar(dpath, zipfile)
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

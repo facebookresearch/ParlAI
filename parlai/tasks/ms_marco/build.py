@@ -9,6 +9,28 @@ import json
 import os
 import tqdm
 import parlai.core.build_data as build_data
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://msmarco.blob.core.windows.net/msmarco/train_v2.1.json.gz',
+        'train.gz',
+        'e91745411ca81e441a3bb75deb71ce000dc2fc31334085b7d499982f14218fe2',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://msmarco.blob.core.windows.net/msmarco/dev_v2.1.json.gz',
+        'valid.gz',
+        '5b3c9c20d1808ee199a930941b0d96f79e397e9234f77a1496890b138df7cb3c',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://msmarco.blob.core.windows.net/msmarco/eval_v2.1_public.json.gz',
+        'test.gz',
+        '05ac0e448450d507e7ff8e37f48a41cc2d015f5bd2c7974d2445f00a53625db6',
+        zipped=False,
+    ),
+]
 
 
 def read_file(filename):
@@ -72,21 +94,6 @@ def create_fb_format(outpath, dtype, inpath):
             fout2.write('1 {}\t{}\t\t{}\n'.format(lq, '|'.join(ans), '|'.join(cands)))
 
 
-URL = 'https://msmarco.blob.core.windows.net/msmarco/'
-
-URL_NAMES = ["train_v2.1.json.gz", "dev_v2.1.json.gz", "eval_v2.1_public.json.gz"]
-
-URLS = list(map(lambda x: URL + x, URL_NAMES))
-
-FILE_NAMES = ['train.gz', 'valid.gz', 'test.gz']
-
-SHA256 = [
-    'e91745411ca81e441a3bb75deb71ce000dc2fc31334085b7d499982f14218fe2',
-    '5b3c9c20d1808ee199a930941b0d96f79e397e9234f77a1496890b138df7cb3c',
-    '05ac0e448450d507e7ff8e37f48a41cc2d015f5bd2c7974d2445f00a53625db6',
-]
-
-
 # Download and build the data if it does not exist.
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'MS_MARCO')
@@ -99,8 +106,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the data
-        build_data.download_check(dpath, URLS, FILE_NAMES, SHA256)
+        # Download the data.
+        for donwloadable_file in RESOURCES:
+            donwloadable_file.download_file(dpath)
 
         create_fb_format(dpath, "train", os.path.join(dpath, 'train.gz'))
         # os.remove(os.path.join(dpath, 'train.gz'))
