@@ -6,6 +6,6 @@ ParlAI is set up into several main directories:
 - **tasks**: contains code for the different tasks/datasets available from within ParlAI
 - **zoo**: contains code to directly download and use pretrained models from our model zoo
 - **mturk**: contains code for setting up Mechanical Turk, as well as sample MTurk tasks
-- **messenger**: contains code for interfacing with Facebook Messenger
+- **chat_service**: contains code for interfacing with chat services, such as Facebook Messenger
 
 See the top level README for more information (one directory above).

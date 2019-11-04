@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.worlds import World
-from parlai.messenger.core.worlds import OnboardWorld
+from parlai.chat_service.services.messenger.worlds import OnboardWorld
 
 
 # ---------- Echo demo ---------- #

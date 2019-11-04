@@ -7,7 +7,6 @@
 import logging
 import time
 import uuid
-import os
 import yaml
 import importlib
 from collections import namedtuple
