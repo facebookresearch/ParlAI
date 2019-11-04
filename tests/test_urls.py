@@ -18,6 +18,7 @@ TO_SKIP = [
     './parlai/tasks/taskntalk',
     './parlai/tasks/integration_tests',
     './parlai/tasks/dialog_babi_plus',
+    './parlai/tasks/decanlp'
 ]
 
 SPECIFIC_BUILDS = {
