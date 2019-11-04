@@ -375,7 +375,7 @@ class ChatServiceManager(ABC):
                             int(agent.service_id), int(self.service_reference_id)
                         )
 
-    def _create_agent(self, agent_id):
+    def _create_agent(self, task_id, agent_id):
         """Initialize an agent and return it.
 
         Called each time an agent is placed into a new task.
@@ -383,7 +383,7 @@ class ChatServiceManager(ABC):
         :param agent_id:
             int agent id
         """
-        return ChatServiceAgent(self.opt, self, agent_id)
+        return ChatServiceAgent(self.opt, self, task_id, agent_id)
 
     def _get_agent(self, agent_id, task_id):
         """Return agent object for given agent ID and task ID.

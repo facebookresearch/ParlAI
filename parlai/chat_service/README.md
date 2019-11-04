@@ -5,6 +5,7 @@ This is an instruction manual to be used as reference on how to configure ParlAI
 To maintain consistency we are trying to enforce a deterministic message format throughout this task. If a particular chat service doesn't adhere to this format, one must use ```restructure_message()``` to adapt the messages to this format before the messages being used. The message format is defined below:
 ```config
 {
+  mid: # ID of this message
   recipient: {id: #id of message recipient}
   sender: {id: #id of message sender}
   text: # text of the message
