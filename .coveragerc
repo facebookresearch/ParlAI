@@ -3,13 +3,9 @@
 branch = True
 
 # make sure we report these folders
-include =
-    parlai/*
-    projects/*
-    examples/*
-    tests/*
+source =
+    .
 
 # skip these files
 omit =
-    */__init__.py
     .eggs/*
