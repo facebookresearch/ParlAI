@@ -455,6 +455,9 @@ class ParlaiParser(argparse.ArgumentParser):
             type=str,
             help='/path/to/config/file for a given task.',
         )
+        websockets.add_argument(
+            '--port', default=35496, type=int, help='Port to run the websocket handler'
+        )
 
     def add_messenger_args(self):
         """Add Facebook Messenger arguments."""

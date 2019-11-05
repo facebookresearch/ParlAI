@@ -334,9 +334,9 @@ class WebsocketManager:
         self.app = self._make_app()
         self.app.listen(self.port)
         # Must use a tornado callback to run the main loop
-        callack_time = shared_utils.THREAD_MEDIUM_SLEEP * 1000
+        callback_time = shared_utils.THREAD_MEDIUM_SLEEP * 1000
         tornado.ioloop.PeriodicCallback(
-            callback=self._manager_loop_fn, callback_time=callack_time
+            callback=self._manager_loop_fn, callback_time=callback_time
         ).start()
         tornado.ioloop.IOLoop.current().start()
 
@@ -344,7 +344,7 @@ class WebsocketManager:
         """Defined to shutown the tornado application"""
         tornado.ioloop.IOLoop.current().stop()
 
-    def _new_message(self, message, socketID):
+    def _on_new_message(self, message, socketID):
         """Callback when a new message is received
         Args:
             message: string. Message from client
@@ -426,7 +426,7 @@ class WebsocketManager:
         """
         Starts the tornado application
         """
-        message_callback = self._new_message
+        message_callback = self._on_new_message
 
         options['log_to_stderr'] = True
         tornado.options.parse_command_line([])

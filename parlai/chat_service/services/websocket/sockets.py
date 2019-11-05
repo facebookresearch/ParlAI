@@ -17,9 +17,12 @@ class MessageSocketHandler(WebSocketHandler):
     subs = {}
 
     def __init__(self, *args, **kwargs):
-        self.message_callback = kwargs.pop('message_callback', None)
+        def _default_callback(message, socketID):
+            logging.warn(f"No callback defined for new WebSocket messages.")
+
+        self.message_callback = kwargs.pop('message_callback', _default_callback)
         self.sid = get_rand_id()
-        super(MessageSocketHandler, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def open(self):
         """

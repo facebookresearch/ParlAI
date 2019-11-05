@@ -42,7 +42,7 @@ class WebsocketAgent(Agent):
             self.manager.observe_message(self.id, msg)
 
     def put_data(self, message):
-        """Put data into the message queue if it hasn't already been seen"""
+        """Put data into the message queue"""
         logging.info(f"Received new message: {message}")
         action = {'episode_done': False, 'text': message}
         self.msg_queue.put(action)
@@ -54,6 +54,11 @@ class WebsocketAgent(Agent):
             return self.msg_queue.get()
 
         return None
+
+    def mark_inactive(self):
+        # some kind of behavior to send a message when a user is marked as
+        # being inactive. Could be useful. Should return a message to be sent
+        pass
 
     def act(self, timeout=None):
         """Pulls a message from the message queue. If none exist returns None
