@@ -28,8 +28,6 @@ from agents import WebsocketAgent
 import tornado
 from tornado.options import options
 
-PORT = 35496
-
 
 class WebsocketManager:
     """
@@ -40,7 +38,7 @@ class WebsocketManager:
     def __init__(self, opt):
         """Create a WebsocketManager using the given setup options"""
         self.subs = []
-        self.port = opt.get('port', PORT)
+        self.port = opt.get('port')
         self.opt = opt
         self.app = None
         self.debug = opt.get('debug', True)
