@@ -13,18 +13,20 @@ import time
 import datetime
 import logging
 import threading
+import traceback
+import sys
 from parlai.core.agents import create_agent
+
 # TODO: Use generalized module (Issue #2079)
 from parlai.chat_service.services.messenger.messenger_manager import AgentState
+
 # TODO: Use a generalized World Runner module (Issue #2079)
 from parlai.chat_service.services.messenger.world_runner import MessengerWorldRunner
 import parlai.chat_service.services.messenger.shared_utils as shared_utils
-from parlai.chat_service.services.websocket.sockets import (
-    MessageSocketHandler,
-)
+from parlai.chat_service.services.websocket.sockets import MessageSocketHandler
 from agents import WebsocketAgent
 import tornado
-from tornado.options import define, options
+from tornado.options import options
 
 PORT = 35496
 
@@ -34,6 +36,7 @@ class WebsocketManager:
     Manages interactions between agents on a websocket as well as direct interactions
     between agents and an overworld.
     """
+
     def __init__(self, opt):
         """Create a WebsocketManager using the given setup options"""
         self.subs = []
@@ -74,7 +77,6 @@ class WebsocketManager:
         self.taskworld_map = {
             task: cfg.task_name for task, cfg in self.task_configs.items()
         }
-
 
     def check_timeout_in_pool(self, world_type, agent_pool, max_time_in_pool):
         """Check for timed-out agents in pool.
@@ -240,6 +242,7 @@ class WebsocketManager:
     def _manager_loop_fn(self):
         """An iteration of the manager's main loop to launch worlds.
         """
+
         def _done_callback(fut):
             """Log and raise exception of task world, if there is one.
 
@@ -328,7 +331,6 @@ class WebsocketManager:
         """Begin handling task.
         """
         self.running = True
-        logger = logging.getLogger("MainLogger")
         self.app = self._make_app()
         self.app.listen(self.port)
         # Must use a tornado callback to run the main loop
@@ -377,7 +379,6 @@ class WebsocketManager:
             agent = agent_state.get_active_agent()
             agent.put_data(message)
 
-
     def _on_first_message(self, message, socketID):
         """Handle first message from player.
 
@@ -395,7 +396,7 @@ class WebsocketManager:
         self.messenger_agent_states[socketID] = agent_state
 
         future = self.world_runner.launch_overworld(
-            task_id, self.overworld, self.onboard_map, agent,
+            task_id, self.overworld, self.onboard_map, agent
         )
 
         def _done_callback(fut):
@@ -430,9 +431,16 @@ class WebsocketManager:
         options['log_to_stderr'] = True
         tornado.options.parse_command_line([])
 
-        return tornado.web.Application([
-            (r"/websocket", MessageSocketHandler, {'message_callback': message_callback}),
-        ], debug=self.debug)
+        return tornado.web.Application(
+            [
+                (
+                    r"/websocket",
+                    MessageSocketHandler,
+                    {'message_callback': message_callback},
+                )
+            ],
+            debug=self.debug,
+        )
 
     def observe_message(self, socket_id, text):
         """Send a message through the message manager.
@@ -443,9 +451,7 @@ class WebsocketManager:
             string text to send
         """
         asyncio.set_event_loop(asyncio.new_event_loop())
-        return MessageSocketHandler.subs[socket_id].write_message(
-            text
-        )
+        return MessageSocketHandler.subs[socket_id].write_message(text)
 
     def _log_debug(self, text):
         time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')

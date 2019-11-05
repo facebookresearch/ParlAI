@@ -8,6 +8,7 @@ from tornado.websocket import WebSocketHandler
 import uuid
 import logging
 
+
 def get_rand_id():
     return str(uuid.uuid4())
 
@@ -27,12 +28,8 @@ class MessageSocketHandler(WebSocketHandler):
         """
         if self.sid not in self.subs.values():
             self.subs[self.sid] = self
-            logging.info(
-                f"Opened new socket from ip: {self.request.remote_ip}"
-            )
-            logging.info(
-                f"Current subscribers: {self.subs}",
-            )
+            logging.info(f"Opened new socket from ip: {self.request.remote_ip}")
+            logging.info(f"Current subscribers: {self.subs}")
 
     def on_close(self):
         """Runs when a socket is closed"""

@@ -39,18 +39,12 @@ class WebsocketAgent(Agent):
             raise ValueError("Payload not supported yet by websockets")
         else:
             msg = act['text']
-            resp = self.manager.observe_message(
-                self.id,
-                msg,
-            )
+            self.manager.observe_message(self.id, msg)
 
     def put_data(self, message):
         """Put data into the message queue if it hasn't already been seen"""
         logging.info(f"Received new message: {message}")
-        action = {
-            'episode_done': False,
-            'text': message,
-        }
+        action = {'episode_done': False, 'text': message}
         self.msg_queue.put(action)
 
     def get_new_act_message(self):
@@ -85,7 +79,6 @@ class WebsocketAgent(Agent):
             if msg is not None and self.message_request_time is not None:
                 self.message_request_time = None
         return msg
-
 
     def act_blocking(self, timeout=None):
         """Repeatedly loop until we retrieve a message from the queue"""

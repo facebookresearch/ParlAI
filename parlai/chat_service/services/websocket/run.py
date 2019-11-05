@@ -7,8 +7,6 @@
 from parlai.core.params import ParlaiParser
 from parlai.chat_service.services.websocket.websocket_manager import WebsocketManager
 from parlai.chat_service.services.messenger import shared_utils as utils
-import logging
-import sys
 
 
 def setup_args():
@@ -28,6 +26,7 @@ def run(opt):
         raise
     finally:
         manager.shutdown()
+
 
 if __name__ == '__main__':
     opt = setup_args()
