@@ -295,12 +295,6 @@ class TorchGeneratorAgent(TorchAgent):
         agent.add_argument(
             '--topp', type=float, default=0.9, help='p used in nucleus sampling'
         )
-        agent.add_argument(
-            '--output-token-losses',
-            action='store_true',
-            hidden=True,
-            help='Display per-token loss breakdown. Useful for debugging.',
-        )
 
         super(TorchGeneratorAgent, cls).add_cmdline_args(argparser)
         return agent
@@ -312,7 +306,7 @@ class TorchGeneratorAgent(TorchAgent):
         self.beam_size = opt.get('beam_size', 1)
         self.beam_min_length = opt.get('beam_min_length', 1)
         self.beam_block_ngram = opt.get('beam_block_ngram', -1)
-        self.output_token_losses = opt.get('output_token_losses', False)
+        self.output_token_losses = opt.get('verbose', False)
 
         if shared:
             # set up shared properties
@@ -373,7 +367,7 @@ class TorchGeneratorAgent(TorchAgent):
 
         self.reset()
 
-    def build_criterion(self, reduce=True):
+    def build_criterion(self):
         """
         Construct and return the loss function.
 
@@ -381,9 +375,7 @@ class TorchGeneratorAgent(TorchAgent):
 
         If overridden, this model should produce a sum that can be used for a per-token loss.
         """
-        return torch.nn.CrossEntropyLoss(
-            ignore_index=self.NULL_IDX, reduction='sum' if reduce else 'none'
-        )
+        return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
 
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
@@ -517,7 +509,7 @@ class TorchGeneratorAgent(TorchAgent):
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
         score_view = scores.view(-1, scores.size(-1))
-        loss = self.criterion(score_view, batch.label_vec.view(-1))
+        loss = self.criterion(score_view, batch.label_vec.view(-1)).sum()
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)
         target_tokens = notnull.long().sum().item()
@@ -563,10 +555,7 @@ class TorchGeneratorAgent(TorchAgent):
         # Get non-aggregated losses
         scores, _, _ = model_output
         score_view = scores.view(-1, scores.size(-1))
-        criterion = self.build_criterion(reduce=False)
-        if self.use_cuda:
-            criterion.cuda()
-        losses = criterion(score_view, labels.view(-1)).view(len(labels), -1)
+        losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
 
         # Zip decoded tokens with losses
         token_losses = []
@@ -592,9 +581,7 @@ class TorchGeneratorAgent(TorchAgent):
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
-            loss, model_output = self.compute_loss(
-                batch, return_output=True
-            )  # noqa: F841  we need the side effects
+            loss, model_output = self.compute_loss(batch, return_output=True)
             self.metrics['loss'] += loss.item()
             if self.output_token_losses:
                 token_losses = self._construct_token_losses(
