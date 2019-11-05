@@ -13,7 +13,7 @@ RESOURCES = [
     DownloadableFile(
         'http://parl.ai/downloads/COCO-IMG/train2017.zip',
         'train2017.zip',
-        'f9f102e5336ede4060bb06e1aca438b85f9be18c21960837079c1a88530d498c',
+        '69a8bb58ea5f8f99d24875f21416de2e9ded3178e903f1f7603e283b9e06d929',
     ),
     DownloadableFile(
         'http://parl.ai/downloads/COCO-IMG/val2017.zip',
