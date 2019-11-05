@@ -38,10 +38,7 @@ class WebsocketAgent(Agent):
         if 'payload' in act:
             raise ValueError("Payload not supported yet by websockets")
         else:
-            if act['id'] != '':
-                msg = '{}: {}'.format(act['id'], act['text'])
-            else:
-                msg = act['text']
+            msg = act['text']
             resp = self.manager.observe_message(
                 self.id,
                 msg,

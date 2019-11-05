@@ -133,8 +133,6 @@ class WebsocketManager:
                 # maybe mark agent as removed
                 if mark_removed:
                     agent.stored_data['removed_from_pool'] = True
-                    if self.page_id is not None:
-                        self.mark_removed(int(agent.messenger_id), int(self.page_id))
 
     def add_agent_to_pool(self, agent, world_type='default'):
         """Add the agent to pool.
@@ -239,7 +237,9 @@ class WebsocketManager:
         if 'model_file' in self.opt or 'model' in self.opt:
             self.opt['shared_bot_params'] = create_agent(self.opt).share()
 
-    def _manager_iteration(self):
+    def _manager_loop_fn(self):
+        """An iteration of the manager's main loop to launch worlds.
+        """
         def _done_callback(fut):
             """Log and raise exception of task world, if there is one.
 
@@ -306,7 +306,6 @@ class WebsocketManager:
                     assign_role_function(agents)
                     # Allow task creator to filter out workers and run
                     # versions of the task that require fewer agents
-                    agents = [a for a in agents if a.disp_id is not None]
                     for a in agents:
                         # Remove selected workers from the agent pool
                         self.remove_agent_from_pool(
@@ -332,9 +331,10 @@ class WebsocketManager:
         logger = logging.getLogger("MainLogger")
         self.app = self._make_app()
         self.app.listen(self.port)
+        # Must use a tornado callback to run the main loop
         callack_time = shared_utils.THREAD_MEDIUM_SLEEP * 1000
         tornado.ioloop.PeriodicCallback(
-            callback=self._manager_iteration, callback_time=callack_time
+            callback=self._manager_loop_fn, callback_time=callack_time
         ).start()
         tornado.ioloop.IOLoop.current().start()
 
@@ -356,10 +356,7 @@ class WebsocketManager:
         agent_state = self.get_agent_state(socketID)
         if agent_state.get_active_agent() is None:
             # return agent to overworld
-            if (
-                'text' in message['message']
-                and message['message']['text'].upper() == 'EXIT'
-            ):
+            if message.upper() == 'EXIT':
                 # remove agent from agent_pool
                 to_remove = []
                 for world_type, _time in agent_state.time_in_pool.items():
@@ -368,6 +365,7 @@ class WebsocketManager:
                     self.remove_agent_from_pool(
                         agent_state, world_type, mark_removed=False
                     )
+                agent_state.stored_data['seen_wait_message'] = False
                 agent_state.set_active_agent(agent_state.get_overworld_agent())
             else:
                 self.observe_message(
