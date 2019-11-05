@@ -680,7 +680,7 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     ) -> str:
         """
         Displays the loss associated with each token. Can be used for debugging generative models.
-        
+
         See TorchGeneratorAgent._construct_token_losses for an example implementation.
         """
         key = 'token_losses'
