@@ -306,6 +306,7 @@ class TorchGeneratorAgent(TorchAgent):
         self.beam_size = opt.get('beam_size', 1)
         self.beam_min_length = opt.get('beam_min_length', 1)
         self.beam_block_ngram = opt.get('beam_block_ngram', -1)
+        self.output_token_losses = opt.get('verbose', False)
 
         if shared:
             # set up shared properties
@@ -374,7 +375,7 @@ class TorchGeneratorAgent(TorchAgent):
 
         If overridden, this model should produce a sum that can be used for a per-token loss.
         """
-        return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
+        return torch.nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
 
     def _v2t(self, vec):
         """Convert token indices to string of tokens."""
@@ -508,7 +509,7 @@ class TorchGeneratorAgent(TorchAgent):
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
         score_view = scores.view(-1, scores.size(-1))
-        loss = self.criterion(score_view, batch.label_vec.view(-1))
+        loss = self.criterion(score_view, batch.label_vec.view(-1)).sum()
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)
         target_tokens = notnull.long().sum().item()
@@ -550,6 +551,25 @@ class TorchGeneratorAgent(TorchAgent):
             else:
                 raise e
 
+    def _construct_token_losses(self, labels, model_output):
+        # Get non-aggregated losses
+        scores, _, _ = model_output
+        score_view = scores.view(-1, scores.size(-1))
+        losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
+
+        # Zip decoded tokens with losses
+        token_losses = []
+        for i, label in enumerate(labels):
+            token_losses.append(
+                list(
+                    zip(
+                        [self.dict[token] for token in label.tolist()],
+                        losses[i].tolist(),
+                    )
+                )
+            )
+        return token_losses
+
     def eval_step(self, batch):
         """Evaluate a single batch of examples."""
         if batch.text_vec is None:
@@ -557,11 +577,16 @@ class TorchGeneratorAgent(TorchAgent):
         bsz = batch.text_vec.size(0)
         self.model.eval()
         cand_scores = None
+        token_losses = None
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
-            loss = self.compute_loss(batch)  # noqa: F841  we need the side effects
+            loss, model_output = self.compute_loss(batch, return_output=True)
             self.metrics['loss'] += loss.item()
+            if self.output_token_losses:
+                token_losses = self._construct_token_losses(
+                    batch.label_vec, model_output
+                )
 
         preds = None
         if self.skip_generation:
@@ -600,7 +625,7 @@ class TorchGeneratorAgent(TorchAgent):
                 cand_choices.append([batch.candidates[i][o] for o in ordering])
 
         text = [self._v2t(p) for p in preds] if preds is not None else None
-        return Output(text, cand_choices)
+        return Output(text, cand_choices, token_losses=token_losses)
 
     def _treesearch_factory(self, device):
         method = self.opt.get('inference', 'greedy')

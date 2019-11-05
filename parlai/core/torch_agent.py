@@ -1542,12 +1542,11 @@ class TorchAgent(ABC, Agent):
         """
         if output is None:
             return batch_reply
-        if output.text is not None:
-            for i, response in zip(valid_inds, output.text):
-                batch_reply[i]['text'] = response
-        if output.text_candidates is not None:
-            for i, cands in zip(valid_inds, output.text_candidates):
-                batch_reply[i]['text_candidates'] = cands
+        for k, v in output.items():
+            if v is None:
+                continue
+            for i, sub_val in zip(valid_inds, v):
+                batch_reply[i][k] = sub_val
         return batch_reply
 
     def last_reply(self, use_reply='label'):
