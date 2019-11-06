@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
 import sys
+import logging
+import datetime
 import threading
 import time
 import traceback
@@ -14,9 +15,6 @@ import parlai.chat_service.services.messenger.server_utils as server_utils
 import parlai.chat_service.services.messenger.shared_utils as shared_utils
 from parlai.chat_service.services.messenger.world_runner import MessengerWorldRunner
 from abc import ABC, abstractmethod
-
-
-parent_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 class AgentState:
@@ -143,6 +141,10 @@ class ChatServiceManager(ABC):
         self.confirm_message_delivery = self._confirm_message_delivery
         self.handle_message_read = self._handle_message_read
         self.handle_bot_read = self._handle_bot_read
+
+    def _log_debug(self, text):
+        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        shared_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
 
     def _parse_config(self, opt):
         """
@@ -319,10 +321,7 @@ class ChatServiceManager(ABC):
         agent_state = self.get_agent_state(agent_id)
         if agent_state.get_active_agent() is None:
             # return agent to overworld
-            if (
-                'text' in message['message']
-                and message['message']['text'].upper() == 'EXIT'
-            ):
+            if message.get("text", "") and message['message']['text'].upper() == 'EXIT':
                 # remove agent from agent_pool
                 to_remove = []
                 for world_type, _time in agent_state.time_in_pool.items():
@@ -357,7 +356,7 @@ class ChatServiceManager(ABC):
             Name of world whose pool should now contain agent
         """
         with self.agent_pool_change_condition:
-            # self._log_debug('Adding agent {} to pool...'.format(agent.service_id))
+            self._log_debug('Adding agent {} to pool...'.format(agent.service_id))
             # time agent entered agent_pool
             agent.time_in_pool.setdefault(world_type, time.time())
             # add agent to pool
@@ -374,7 +373,7 @@ class ChatServiceManager(ABC):
             bool, whether to mark an agent as removed from the pool
         """
         with self.agent_pool_change_condition:
-            # self._log_debug('Removing agent {} from pool...'.format(agent.service_id))
+            self._log_debug('Removing agent {} from pool...'.format(agent.service_id))
             if world_type in self.agent_pool and agent in self.agent_pool[world_type]:
                 self.agent_pool[world_type].remove(agent)
                 # reset agent's time_in_pool
@@ -508,23 +507,22 @@ class ChatServiceManager(ABC):
             """
             e = fut.exception()
             if e is not None:
-                # shared_utils.print_and_log(
-                #     logging.ERROR,
-                #     'World {} had error {}'.format(world_type, repr(e)),
-                #     should_print=True,
-                # )
+                shared_utils.print_and_log(
+                    logging.ERROR,
+                    'World {} had error {}'.format(world_type, repr(e)),
+                    should_print=True,
+                )
                 traceback.print_exc(file=sys.stdout)
                 for agent in agents:
                     self.observe_message(
                         agent.id, 'Sorry, this world closed. Returning to overworld.'
                     )
             else:
-                # shared_utils.print_and_log(
-                #     logging.INFO,
-                #     'World {} had no error'.format(world_type),
-                #     should_print=True,
-                # )
-                pass
+                shared_utils.print_and_log(
+                    logging.INFO,
+                    'World {} had no error'.format(world_type),
+                    should_print=True,
+                )
             self.active_worlds[task_id] = None
             for agent in agents:
                 self.after_agent_removed(agent.id)
@@ -546,9 +544,9 @@ class ChatServiceManager(ABC):
 
                     needed_agents = self.max_agents_for[world_type]
                     if len(agent_pool) >= needed_agents:
-                        # shared_utils.print_and_log(
-                        #     logging.INFO, 'starting pool', should_print=True
-                        # )
+                        shared_utils.print_and_log(
+                            logging.INFO, 'starting pool', should_print=True
+                        )
                         # enough agents in pool to start new conversation
                         self.conversation_index += 1
                         task_id = 't_{}'.format(self.conversation_index)
@@ -602,8 +600,7 @@ class ChatServiceManager(ABC):
                 self.message_socket.keep_running = False
             self._expire_all_conversations()
         except BaseException as e:
-            # shared_utils.print_and_log(logging.ERROR, f'world ended in error: {e}')
-            print(e)
+            shared_utils.print_and_log(logging.ERROR, f'world ended in error: {e}')
 
         finally:
             if not self.bypass_server_setup:

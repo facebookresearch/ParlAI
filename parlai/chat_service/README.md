@@ -2,22 +2,27 @@
 This is an instruction manual to be used as reference on how to configure ParlAI for an arbitrary chat service.
 
 ## Message Format
-To maintain consistency we are trying to enforce a deterministic message format throughout this task. If a particular chat service doesn't adhere to this format, one must use ```restructure_message()``` to adapt the messages to this format before the messages being used. The message format is defined below:
+To maintain consistency we are trying to enforce a deterministic message format throughout this task. If a particular chat service doesn't adhere to this format, one must use ```restructure_message()``` to adapt the messages to this format before the messages are used. The message format is defined below:
 ```config
 {
   mid: # ID of this message
-  recipient: {id: #id of message recipient}
-  sender: {id: #id of message sender}
+  recipient: {
+    id: #id of message recipient
+  }
+  sender: {
+    id: #id of message sender
+  }
   text: # text of the message
   attachment: # attachment of the message
 }
 ```
-### TBD
-- messaging_type: # TODO [RESPONSE, UPLOAD]
-- quickreplies: # TODO
+### Additional Message fields
+These define a non-exhaustive list of keys that one could use in the message dict for ease-of-use
+- messaging_type: # TODO [RESPONSE, UPDATE]
+- quickreplies: Auto-suggested replies
 - persona_id: # TODO
-- name: # TODO
-- profile_picture_url: # TODO
+- name: Display name of the user
+- profile_picture_url: URL to the profile picture of the user
 
 
 ## Config
@@ -25,11 +30,16 @@ Below is the standard config format and hierarchy to be followed across all chat
 
 ```config
 - tasks:  # List of available tasks/worlds for a user to enter
-    - default:  # name of the task
-    - onboard_world: # World in which user is first send upon selecting the task. Can collect necessary data from user in this world, as well as provide instructions etc.
-    - task_world: # Actual task world
-    - timeout: # Agent message timeout - how long to wait for the agent to send a message before assuming they have disconnected.
-    - agents_required: # Number of agents required to run the task world, e.g. 2 for a two player game, 1 for a one-player experience, etc.
+    - <task 1 name>
+      - onboard_world: # World in which user is first send upon selecting the task. Can collect necessary data from user in this world, as well as provide instructions etc.
+      - task_world: # Actual task world
+      - timeout: # Agent message timeout - how long to wait for the agent to send a message before assuming they have disconnected.
+      - agents_required: # Number of agents required to run the task world, e.g. 2 for a two player game, 1 for a one-player experience, etc.
+    - <task 2 name>
+      - onboard_world:
+      - task_world:
+      - timeout:
+      - agents_required:
 - task_name: # name of the overall task
 - world_module: # module in which all of the worlds exist (relative path i.e. `parlai.chat_service....`
 - overworld: # Name of the overworld; where the agent is first sent upon messaging the service
