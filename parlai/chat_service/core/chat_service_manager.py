@@ -109,6 +109,19 @@ class AgentState:
 
 
 class ChatServiceManager(ABC):
+    class ChatServiceMessageSender(ABC):
+        """ChatServiceMessageSender is a wrapper around requests that simplifies the
+        the process of sending content.
+        """
+
+        @abstractmethod
+        def send_read(self, receiver_id):
+            pass
+
+        @abstractmethod
+        def typing_on(self, receiver_id, persona_id=None):
+            pass
+
     def __init__(self, opt):
         """Create a ChatServiceManager using the given setup options."""
         # Manager attributes
