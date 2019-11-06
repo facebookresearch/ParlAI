@@ -8,7 +8,7 @@
 The World Runner provides the manager with utility functions for running
 overworlds, onboard worlds, and task worlds.
 """
-import shared_utils as utils
+from . import shared_utils as utils
 import time
 import datetime
 from concurrent import futures
