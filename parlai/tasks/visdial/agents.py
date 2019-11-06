@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
-from .build import build, buildImage
+from .build import build
+from parlai.tasks.coco_caption.build_2014 import buildImage
 
 from PIL import Image
 import json
@@ -33,7 +34,7 @@ def _path(opt):
         opt['datapath'], 'VisDial-v0.9', 'visdial_0.9_' + suffix + '.json'
     )
 
-    image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
+    image_path = os.path.join(opt['datapath'], 'COCO-IMG-2014', img_suffix)
 
     return data_path, image_path
 

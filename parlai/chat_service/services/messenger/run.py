@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 """Messenger Runner."""
 from parlai.core.params import ParlaiParser
-from parlai.messenger.core.messenger_manager import MessengerManager
-import importlib
+from parlai.chat_service.services.messenger.messenger_manager import MessengerManager
 import shared_utils as utils
 
 
