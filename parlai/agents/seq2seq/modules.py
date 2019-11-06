@@ -410,16 +410,15 @@ class RNNDecoder(nn.Module):
         if self.attn_time == 'pre':
             # modify input vectors with attention
             # attention module requires we do this one step at a time
-            new_xes = []
+            new_hidden = hidden
+            output = []
             for i in range(seqlen):
-                nx, _ = self.attention(xes[:, i : i + 1], hidden, attn_params)
-                new_xes.append(nx)
-            xes = torch.cat(new_xes, 1).to(xes.device)
+                nx, _ = self.attention(xes[:, i : i + 1], new_hidden, attn_params)
+                o, new_hidden = self.rnn(nx, new_hidden)
+                output.append(o)
+            output = torch.cat(output, dim=1).to(xes.device)
 
-        if self.attn_time != 'post':
-            # no attn, we can just trust the rnn to run through
-            output, new_hidden = self.rnn(xes, hidden)
-        else:
+        if self.attn_time == 'post':
             # uh oh, post attn, we need run through one at a time, and do the
             # attention modifications
             new_hidden = hidden
