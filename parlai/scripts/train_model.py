@@ -704,13 +704,7 @@ class TrainLoop:
         with world:
             while True:
                 # do one example / batch of examples
-                try:
-                    world.parley()
-                except StopTrainException:
-                    if is_distributed():
-                        raise Error("StopTrainException not supported for "
-                                            "distributed mode")
-                    break
+                world.parley()
 
                 self.parleys += 1
 
@@ -750,7 +744,13 @@ class TrainLoop:
                     or self._total_epochs - self.last_valid_epoch
                     >= self.val_every_n_epochs
                 ):
-                    stop_training = self.validate()
+                    try:
+                        stop_training = self.validate()
+                    except StopTrainException:
+                        if is_distributed():
+                            raise Error("StopTrainException not supported for "
+                                                "distributed mode")
+                        break
                     self.last_valid_epoch = self._total_epochs
                     if stop_training:
                         break
