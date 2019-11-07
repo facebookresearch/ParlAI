@@ -440,6 +440,25 @@ class ParlaiParser(argparse.ArgumentParser):
         mturk.set_defaults(is_debug=False)
         mturk.set_defaults(verbose=False)
 
+    def add_websockets_args(self):
+        """Add websocket arguments."""
+        websockets = self.add_argument_group('Websockets')
+        websockets.add_argument(
+            '--debug',
+            dest='is_debug',
+            action='store_true',
+            help='print and log all server interactions and messages',
+        )
+        websockets.add_argument(
+            '--config-path',
+            default=None,
+            type=str,
+            help='/path/to/config/file for a given task.',
+        )
+        websockets.add_argument(
+            '--port', default=35496, type=int, help='Port to run the websocket handler'
+        )
+
     def add_messenger_args(self):
         """Add Facebook Messenger arguments."""
         messenger = self.add_argument_group('Facebook Messenger')
