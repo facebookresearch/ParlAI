@@ -192,7 +192,8 @@ class ChatServiceManager(ABC):
     def _complete_setup(self):
         """
         Complete necessary setup items. Consider this as a unified method for
-        setting up. Call every other functions used in setup from here
+        setting up. Call every other functions used in setup from here.
+        To be called during instantiation
         """
 
     @abstractmethod
@@ -287,7 +288,7 @@ class ChatServiceManager(ABC):
 
         agent_id = message['sender']['id']
         if self.opt['password'] is not None:
-            if message['message']['text'] != self.opt['password']:
+            if message['text'] != self.opt['password']:
                 self.observe_message(
                     agent_id,
                     'Sorry, this conversation bot is password-protected. If '
@@ -321,7 +322,7 @@ class ChatServiceManager(ABC):
         agent_state = self.get_agent_state(agent_id)
         if agent_state.get_active_agent() is None:
             # return agent to overworld
-            if message.get("text", "") and message['message']['text'].upper() == 'EXIT':
+            if message.get("text", "") and message['text'].upper() == 'EXIT':
                 # remove agent from agent_pool
                 to_remove = []
                 for world_type, _time in agent_state.time_in_pool.items():

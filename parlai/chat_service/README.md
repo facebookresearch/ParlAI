@@ -18,9 +18,9 @@ To maintain consistency we are trying to enforce a deterministic message format 
 ```
 ### Additional Message fields
 These define a non-exhaustive list of keys that one could use in the message dict for ease-of-use
-- messaging_type: # TODO [RESPONSE, UPDATE]
+- messaging_type: whether the message is a text message or an image upload [RESPONSE, UPDATE]
 - quickreplies: Auto-suggested replies
-- persona_id: # TODO
+- persona_id: id of the persona that is interacting
 - name: Display name of the user
 - profile_picture_url: URL to the profile picture of the user
 
