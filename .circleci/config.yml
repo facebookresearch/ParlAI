@@ -47,6 +47,14 @@ setup: &setup
       . ~/venv/bin/activate
       python --version
       pip3 install --progress-bar off --upgrade pip
+      pip3 install --progress-bar off coverage
+      pip3 install --progress-bar off codecov
+
+codecov: &codecov
+  run:
+    name: Coverage report
+    command: |
+      codecov
 
 installdeps: &installdeps
   run:
@@ -134,7 +142,8 @@ jobs:
       - <<: *installtorchcpu36
       - run:
           name: Data tests
-          command: python setup.py test -s tests.suites.datatests -v
+          command: coverage run setup.py test -s tests.suites.datatests -v
+      - <<: *codecov
 
   unittests_osx:
     <<: *osx_cpu37
@@ -153,7 +162,8 @@ jobs:
       - <<: *installtorchcpuosx
       - run:
           name: Unit tests (OSX)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_36:
     <<: *standard_cpu36
@@ -172,7 +182,8 @@ jobs:
       - <<: *installtorchcpu36
       - run:
           name: Unit tests (py36)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_37:
     <<: *standard_cpu37
@@ -191,7 +202,8 @@ jobs:
       - <<: *installtorchcpu37
       - run:
           name: Unit tests (py37)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_gpu11:
     <<: *gpu
@@ -211,7 +223,8 @@ jobs:
       - <<: *installtorchgpu11
       - run:
           name: Unit tests (GPU; pytorch 1.1)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   unittests_gpu12:
     <<: *gpu
@@ -231,7 +244,8 @@ jobs:
       - <<: *installtorchgpu12
       - run:
           name: Unit tests (GPU; pytorch >= 1.2)
-          command: python setup.py test -s tests.suites.unittests -v
+          command: coverage run setup.py test -s tests.suites.unittests -v
+      - <<: *codecov
 
   black:
     <<: *standard_cpu36
@@ -295,10 +309,11 @@ jobs:
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: python setup.py test -s tests.suites.nightly_gpu -v
+          command: coverage run setup.py test -s tests.suites.nightly_gpu -v
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.1)
           command: sh tests/test_quickstart.sh
+      - <<: *codecov
 
   mturk_tests:
     <<: *standard_cpu36
@@ -316,7 +331,8 @@ jobs:
             - "~/venv/lib"
       - run:
           name: All mturk tests
-          command: python setup.py test -s tests.suites.mturk -v
+          command: coverage run setup.py test -s tests.suites.mturk -v
+      - <<: *codecov
 
   build_website:
     <<: *standard_cpu36
@@ -334,6 +350,7 @@ jobs:
             - "~/venv/lib"
       - <<: *installtorchcpu36
       - <<: *buildwebsite
+      - <<: *codecov
 
   deploy_website:
     <<: *standard_cpu36
