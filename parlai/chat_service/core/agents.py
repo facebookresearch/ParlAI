@@ -90,7 +90,7 @@ class ChatServiceAgent(ABC, Agent):
         return msg
 
     def _check_timeout(self, timeout=None):
-        """Return whether enough more time has passed than the timeout amount"""
+        """Return whether enough time has passed than the timeout amount"""
         if timeout:
             return time.time() - self.message_request_time > timeout
         return False
