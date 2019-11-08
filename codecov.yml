@@ -1,10 +1,5 @@
 coverage:
   status:
-    project:
-      default:
-        enabled: yes
-        target: 10%
-    patch:
-      default:
-        enabled: yes
-        target: 10%
+    project: off
+    patch: off
+    changes: off
