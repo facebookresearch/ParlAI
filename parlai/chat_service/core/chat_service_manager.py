@@ -304,9 +304,10 @@ class ChatServiceManager(ABC):
         self.messenger_agent_states[agent_id] = agent_state
 
         # launch overworld
-        _ = self.world_runner.launch_overworld(
+        future = self.world_runner.launch_overworld(
             task_id, self.overworld, self.onboard_map, agent
-        )  # labeled as future but lint throws error
+        )
+        self.agent_id_to_overworld_future[agent_id] = future
 
     def _on_new_message(self, message):
         """Put an incoming message onto the correct agent's message queue.

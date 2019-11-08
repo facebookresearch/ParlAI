@@ -22,7 +22,7 @@ class ChatServiceAgent(ABC, Agent):
         self.data = {}
         self.msg_queue = Queue()
         self.observed_packets = {}
-
+        self.message_request_time = None
         self.stored_data = {}
         # initialize stored data
         self.set_stored_data()
@@ -43,6 +43,8 @@ class ChatServiceAgent(ABC, Agent):
             list of quick replies
         :param persona_id:
             identifier of persona
+        :return:
+            a dictionary of a json response from the manager observing a payload
         """
         return self.manager.observe_payload(
             receiver_id, data, quick_replies, persona_id
@@ -87,12 +89,23 @@ class ChatServiceAgent(ABC, Agent):
         msg = self.get_new_act_message()
         return msg
 
-    def act_blocking(self):
+    def _check_timeout(self, timeout=None):
+        """Return whether enough more time has passed than the timeout amount"""
+        if timeout:
+            return time.time() - self.message_request_time > timeout
+        return False
+
+    def act_blocking(self, timeout=None):
         """Repeatedly loop until we retrieve a message from the queue."""
         while True:
+            if self.message_request_time is None:
+                self.message_request_time = time.time()
             msg = self.act()
             if msg is not None:
+                self.message_request_time = None
                 return msg
+            if self._check_timeout(timeout):
+                return None
             time.sleep(0.2)
 
     def episode_done(self):
