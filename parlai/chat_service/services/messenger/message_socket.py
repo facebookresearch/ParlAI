@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import parlai.chat_service.core.manager_utils.ChatServiceMessageSocket as ChatServiceMessageSocket
+from parlai.chat_service.core.manager_utils import ChatServiceMessageSocket
 
 # Socket handler
 class MessageSocket(ChatServiceMessageSocket):
