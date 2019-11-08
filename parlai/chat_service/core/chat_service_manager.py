@@ -249,7 +249,7 @@ class ChatServiceManager(ABC):
         return valid_pools
 
     @abstractmethod
-    def restructure_message():
+    def restructure_message(self):
         """Use this function to restructure the message into the provided format."""
 
     @abstractmethod
@@ -309,6 +309,17 @@ class ChatServiceManager(ABC):
         )
         self.agent_id_to_overworld_future[agent_id] = future
 
+        def _done_callback(fut):
+            """Log and raise exception of overworld (if there is one)."""
+            e = fut.exception()
+            if e is not None:
+                self._log_debug('{} returned with error {}'.format(task_id, repr(e)))
+                if self.debug:
+                    raise e
+
+        future.add_done_callback(_done_callback)
+        self.agent_id_to_overworld_future[agent_id] = future
+        
     def _on_new_message(self, message):
         """Put an incoming message onto the correct agent's message queue.
 
