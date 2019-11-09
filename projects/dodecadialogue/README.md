@@ -16,5 +16,5 @@ of the tasks, providing a strong baseline for this challenge.
 
 ## Paper
 
-[Link](https://tbd).
+[Link](http://parl.ai/projects/dodecadialogue/dodecadialogue.pdf)
  
