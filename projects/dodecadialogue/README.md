@@ -27,3 +27,13 @@ of the tasks, providing a strong baseline for this challenge.
 ## Baseline Results
 
 <p align="center"><img width="85%" src="Baseline.png" /></p>
+
+## Baseline Compared to Existing Approaches
+
+<p align="center"><img width="85%" src="Comparison.png" /></p>
+
+## Model Examples
+
+<p align="center"><img width="85%" src="wizard.png" /></p>
+
+<p align="center"><img width="85%" src="image_chat.png" /></p>
