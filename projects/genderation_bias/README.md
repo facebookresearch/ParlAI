@@ -18,5 +18,5 @@ and human evaluation---that our models generate less gendered, but still engagin
 
 ## Paper
 
-[Link](http://parl.ai/projects/dodecadialogue/genderation_bias.pdf).
+Link coming soon.
  
