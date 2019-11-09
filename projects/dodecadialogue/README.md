@@ -2,6 +2,8 @@
 
 ### _Open-Domain Knowledge and Image Grounded Conversational Agents_
 
+Kurt Shuster, Da Ju, Stephen Roller, Emily Dinan, Y-Lan Boureau, Jason Weston
+
 ## Abstract
 
 We introduce  _dodeca_Dialogue:  a set of 12 tasks which measure if a conversational agent can communicate
@@ -18,3 +20,7 @@ of the tasks, providing a strong baseline for this challenge.
 
 [Link](https://drive.google.com/open?id=1WFf5hqMdjJ9MaCU76lCUwNm5G6wWiX6y)
  
+## _dodeca_Dialogue Subtasks
+
+
+## Baseline Results
