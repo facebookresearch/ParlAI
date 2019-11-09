@@ -31,7 +31,7 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Chit-chat
 
-- **dodecaDialogue** [[project]](https://parl.ai/projects/dodecadialogue/).
+- **_dodeca_ Dialogue** [[project]](https://parl.ai/projects/dodecadialogue/).
   _Set of 12 (existing) tasks for building an agent that can see and talk. We build a strong baseline system with SOTA on many tasks._
 
 - **Dialogue Natural Language Inference** [[external website]](https://wellecks.github.io/dialogue_nli/).
