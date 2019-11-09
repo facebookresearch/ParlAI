@@ -6,7 +6,7 @@ Kurt Shuster, Da Ju, Stephen Roller, Emily Dinan, Y-Lan Boureau, Jason Weston
 
 ## Abstract
 
-We introduce  _dodeca_Dialogue:  a set of 12 tasks which measure if a conversational agent can communicate
+We introduce  dodecaDialogue:  a set of 12 tasks which measure if a conversational agent can communicate
 engagingly with personality and empathy, ask questions, answer questions by utilizing knowledge resources,
 discuss topics and situations, and perceive and converse about images. By multi-tasking on such a broad
 large-scale set of data we hope to both move towards and measure progress in producing a single unified agent
@@ -20,7 +20,7 @@ of the tasks, providing a strong baseline for this challenge.
 
 [Link](https://drive.google.com/open?id=1WFf5hqMdjJ9MaCU76lCUwNm5G6wWiX6y)
 
-## _dodeca_Dialogue Subtasks
+## dodecaDialogue Subtasks
 
 <p align="center"><img width="85%" src="Tasks.png" /></p>
 
