@@ -16,5 +16,5 @@ We demonstrate the efficacy of our approach across several dialogue tasks.
 
 ## Paper
 
-[Link](http://parl.ai/projects/dodecadialogue/dialogue_unlikelihood.pdf).
+Link coming soon.
  
