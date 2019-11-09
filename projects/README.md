@@ -48,7 +48,7 @@ _Task & models for chitchat with a given persona._
 - **Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
   _Task and method for improving the detection of offensive language in the context of dialogue._
 
-- **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/generation_bias/).
+- **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/).
   _Analysis and methods for mitigating gender bias in dialogue generation, using LIGHT as a testbed._
 
 ## Knowledge Grounded
