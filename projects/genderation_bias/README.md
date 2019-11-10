@@ -1,5 +1,6 @@
 ## Queens are Powerful too: Mitigating Gender Bias in Dialogue Generation
 
+Emily Dinan, Angela Fan, Adina Williams, Jack Urbanek, Douwe Kiela, Jason Weston
 
 ## Abstract
 
@@ -18,5 +19,5 @@ and human evaluation---that our models generate less gendered, but still engagin
 
 ## Paper
 
-Link coming soon.
+[Link](https://drive.google.com/open?id=1NU-YsvoMF1X8jivr1QtZb4Aq63oRbQjU)
  
