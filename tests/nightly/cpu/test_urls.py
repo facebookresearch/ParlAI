@@ -43,7 +43,7 @@ class TestUtils(unittest.TestCase):
                             ('parlai.tasks.' + task + '.build')
                         )
                         file_list = mod.RESOURCES
-                    except:
+                    except (ModuleNotFoundError, AttributeError):
                         continue
                     for f in file_list:
                         with self.subTest(f"{task}: {f.url}"):
