@@ -78,8 +78,8 @@ def build(opt):
 
         # Download the data.
         # Download the data.
-        for donwloadable_file in RESOURCES:
-            donwloadable_file.download_file(dpath)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         for i, f in enumerate(RESOURCES[2:5]):
             dt = data_type[i]

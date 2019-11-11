@@ -28,8 +28,8 @@ def build(opt):
             build_data.remove_dir(data_path)
         build_data.make_dir(data_path)
 
-        for donwloadable_file in RESOURCES:
-            donwloadable_file.download_file(data_path)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(data_path)
 
         os.rename(
             os.path.join(data_path, 'data_train_' + version + '.json'),

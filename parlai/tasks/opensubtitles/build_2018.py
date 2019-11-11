@@ -337,8 +337,8 @@ def build(datapath, use_history):
 
         if len(glob.glob(untar_path + '/*/*/*.xml')) != NUM_SUBTITLES_FILES:
             # Download the data.
-            for donwloadable_file in RESOURCES:
-                donwloadable_file.download_file(dpath)
+            for downloadable_file in RESOURCES:
+                downloadable_file.download_file(dpath)
 
         create_fb_format(untar_path, dpath, use_history)
 

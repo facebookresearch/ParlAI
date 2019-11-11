@@ -35,8 +35,8 @@ def buildImage(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        for donwloadable_file in RESOURCES[:1]:
-            donwloadable_file.download_file(dpath)
+        for downloadable_file in RESOURCES[:1]:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
@@ -57,8 +57,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        for donwloadable_file in RESOURCES[1:]:
-            donwloadable_file.download_file(dpath)
+        for downloadable_file in RESOURCES[1:]:
+            downloadable_file.download_file(dpath)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

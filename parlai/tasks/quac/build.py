@@ -98,8 +98,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        for donwloadable_file in RESOURCES:
-            donwloadable_file.download_file(dpath)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         with open(os.path.join(dpath, RESOURCES[0].file_name)) as f:
             data = json.load(f)['data']

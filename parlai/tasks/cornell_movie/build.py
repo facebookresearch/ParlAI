@@ -70,8 +70,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        for donwloadable_file in RESOURCES:
-            donwloadable_file.download_file(dpath)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         dpext = os.path.join(dpath, 'cornell movie-dialogs corpus')
         create_fb_format(

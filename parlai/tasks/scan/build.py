@@ -49,8 +49,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        for donwloadable_file in RESOURCES:
-            donwloadable_file.download_file(dpath)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         create_fb_format(dpath, 'train', os.path.join(dpath, 'tasks_train_simple.txt'))
         create_fb_format(dpath, 'valid', os.path.join(dpath, 'tasks_train_simple.txt'))
