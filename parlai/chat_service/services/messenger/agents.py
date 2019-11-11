@@ -12,15 +12,12 @@ from parlai.chat_service.core.agents import ChatServiceAgent
 class MessengerAgent(ChatServiceAgent):
     """Base class for a person on messenger that can act in a ParlAI world"""
 
-    def __init__(self, opt, manager, task_id, messenger_psid, page_id):
-        super().__init__(opt, manager, messenger_psid, task_id)
+    def __init__(self, opt, manager, task_id, receiver_id, page_id):
+        super().__init__(opt, manager, receiver_id, task_id)
         self.active = True
         self.disp_id = 'NewUser'
         self.message_partners = []
         self.page_id = page_id
-
-        # initialize stored data
-        super().set_stored_data()
 
     def observe(self, act):
         """Send an agent a message through the mturk manager"""
