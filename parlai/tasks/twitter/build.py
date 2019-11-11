@@ -13,6 +13,22 @@ except ImportError:
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/Marsan-Ma/chat_corpus/raw/master/twitter_en_big.txt.gz.partaa',
+        'twitter_en_big.txt.gz.partaa',
+        '833eabfebd577f5ff381c82f6544eef7b5036af65e625b07e799cfb17218861f',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://github.com/Marsan-Ma/chat_corpus/raw/master/twitter_en_big.txt.gz.partab',
+        'twitter_en_big.txt.gz.partab',
+        'cc406fdd6d46ef6c1d2fad0e044751ba9a08f40dd23e2bcf9f7125df2879bd23',
+        zipped=False,
+    ),
+]
 
 
 def replace_emoji(x):
@@ -81,14 +97,11 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname1 = "twitter_en_big.txt.gz.partaa"
-        fname2 = "twitter_en_big.txt.gz.partab"
-        url = 'https://github.com/Marsan-Ma/chat_corpus/raw/master/'
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
-        file1 = os.path.join(dpath, fname1)
-        file2 = os.path.join(dpath, fname2)
+        file1 = os.path.join(dpath, RESOURCES[0].file_name)
+        file2 = os.path.join(dpath, RESOURCES[1].file_name)
         file3 = "twitter_en_big.txt.gz"
         outzipfile = os.path.join(dpath, file3)
         build_data.cat(file1, file2, outzipfile)

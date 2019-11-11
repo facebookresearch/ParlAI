@@ -10,7 +10,7 @@ from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 
 from .base_agent import _BaseSafetyTeacher
-from .build import build, MULTI_TURN_DATA
+from .build import build
 
 import copy
 import json
@@ -22,6 +22,7 @@ import sys as _sys
 # Constants
 OK_CLASS = '__ok__'
 NOT_OK_CLASS = '__notok__'
+MULTI_TURN_DATA = 'multi_turn_safety.json'
 
 
 class StandardTeacher(_BaseSafetyTeacher):
