@@ -11,10 +11,6 @@ ParlAI via FB Messenger.
 
 import logging
 import os
-import sys
-import threading
-import time
-import traceback
 import datetime
 
 from parlai.core.agents import create_agent
@@ -23,12 +19,9 @@ from parlai.chat_service.core.manager_utils import ChatServiceMessageSocket
 from parlai.chat_service.services.messenger.message_sender import MessageSender
 import parlai.chat_service.services.messenger.server_utils as server_utils
 import parlai.chat_service.services.messenger.shared_utils as shared_utils
-from parlai.chat_service.core.manager_utils import ChatServiceWorldRunner
+from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
-
-from parlai.chat_service.core.chat_service_manager import AgentState
-from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 
 
 class MessengerManager(ChatServiceManager):
@@ -46,11 +39,6 @@ class MessengerManager(ChatServiceManager):
         # Read in Config
         self._parse_config(opt)
         self._complete_setup()
-
-    # Helpers and internal manager methods #
-    def _log_debug(self, text):
-        time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        shared_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
 
     def parse_additional_args(self, opt):
         self.service_reference_id = self.config['page_id']
