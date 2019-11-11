@@ -7,7 +7,6 @@
 from tornado.websocket import WebSocketHandler
 import uuid
 import logging
-import json
 
 
 def get_rand_id():
