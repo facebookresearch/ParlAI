@@ -17,7 +17,6 @@ from parlai.core.agents import create_agent
 from parlai.chat_service.services.messenger.agents import MessengerAgent
 from parlai.chat_service.core.manager_utils import ChatServiceMessageSocket
 from parlai.chat_service.services.messenger.message_sender import MessageSender
-import parlai.chat_service.services.messenger.server_utils as server_utils
 import parlai.chat_service.services.messenger.shared_utils as shared_utils
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 

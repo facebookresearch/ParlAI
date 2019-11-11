@@ -14,13 +14,11 @@ class MessengerAgent(ChatServiceAgent):
 
     def __init__(self, opt, manager, task_id, messenger_psid, page_id):
         super().__init__(opt, manager, messenger_psid, task_id)
-
         self.active = True
         self.disp_id = 'NewUser'
         self.message_partners = []
         self.page_id = page_id
 
-        self.stored_data = {}
         # initialize stored data
         super().set_stored_data()
 
