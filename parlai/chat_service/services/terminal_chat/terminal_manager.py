@@ -41,7 +41,11 @@ class TerminalManager(ChatServiceManager):
     def _handle_bot_read(self, agent_id):
         """Use this function to handle/execute events once the bot has observed the message."""
         raise NotImplementedError
-
+    
+    def _confirm_message_delivery(self, event):
+        """A callback for when messages are marked as delivered"""
+        raise NotImplementedError
+    
     def setup_server(self):
         """Prepare the Chat Service server for handling messages."""
         raise NotImplementedError
