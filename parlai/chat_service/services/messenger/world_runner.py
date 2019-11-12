@@ -31,6 +31,24 @@ class MessengerWorldRunner:
         self.system_done = False
         self.opt = opt
         self.tasks = {}  # task ID to task
+        self.initialized = False
+
+        def _is_done_initializing(fut):
+            if fut.result():
+                print(fut.result())
+            if self.debug:
+                print("DEBUG: Call to `module_initialize` has completed...")
+            self.initialized = True
+
+        if hasattr(self._world_module, "module_initialize"):
+            self._log("Initializing world module...")
+            # perform any module intialization steps
+            init_fn = self._world_module.module_initialize
+            self.init_fut = self.executor.submit(init_fn, opt, manager)
+            self.init_fut.add_done_callback(_is_done_initializing)
+        else:
+            self._log("World module does not have `module initialize` function")
+            self.initialized = True
 
     def _log(self, text):
         if self.debug:

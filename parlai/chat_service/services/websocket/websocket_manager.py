@@ -8,6 +8,7 @@ Contains implementation of the WebsocketManager which helps run ParlAI via
 websockets
 """
 
+import json
 import asyncio
 import logging
 import traceback
@@ -102,6 +103,15 @@ class WebsocketManager(ChatServiceManager):
             for agent in agents:
                 agent_state = self.get_agent_state(agent.id)
                 agent_state.set_active_agent(agent_state.get_overworld_agent())
+
+        for agent_id, overworld_fut in self.agent_id_to_overworld_future.items():
+            if overworld_fut.done():
+                try:
+                    overworld_fut.result()
+                except Exception as e:
+                    self.agent_id_to_overworld_future.pop(agent_id, None)
+                    self.messenger_agent_states.pop(agent_id, None)
+                    raise e
 
         with self.agent_pool_change_condition:
             valid_pools = self._get_unique_pool()
@@ -213,18 +223,36 @@ class WebsocketManager(ChatServiceManager):
             debug=self.debug,
         )
 
-    def observe_message(self, socket_id, text):
+    def observe_message(self, socket_id, message, quick_replies=None):
         """Send a message through the message manager.
 
         :param socket_id:
             int identifier for agent socket to send message to
-        :param text:
+        :param message:
             string text to send
         """
-        asyncio.set_event_loop(asyncio.new_event_loop())
-        return MessageSocketHandler.subs[socket_id].write_message(text)
+        if type(message) == str:
+            image = False
+            mime_type = 'text/plain'
+            body = message
+        else:
+            image = message['type'] == 'image'
+            mime_type = message['mime_type']
+            body = message['body']
 
-    def restructure_message():
+        message = json.dumps(
+            {
+                'image': image,
+                'body': body.replace('\n', '<br />'),
+                'mime_type': mime_type,
+                'quick_replies': quick_replies,
+            }
+        )
+
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        return MessageSocketHandler.subs[socket_id].write_message(message)
+
+    def restructure_message(self):
         pass
 
     def _handle_bot_read(self, agent_id):
