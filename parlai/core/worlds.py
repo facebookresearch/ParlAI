@@ -574,7 +574,7 @@ class MultiWorld(World):
         if self.new_world:
             self.new_world = False
             self.parleys = 0
-            if self.random:
+            if False:
                 # select random world
                 self.world_idx = random.choices(
                     self.task_choices, cum_weights=self.cum_task_weights
@@ -732,6 +732,33 @@ class BatchWorld(World):
                 acts[agent_idx] = agents[agent_idx].act()
                 batch_actions.append(acts[agent_idx])
         return batch_actions
+
+    def parley_init(self):
+        """
+        Update the current subworld.
+
+        If we are in the middle of an episode, keep the same world and finish this
+        episode. If we have finished this episode, pick a new world (either in a
+        random or round-robin fashion).
+        """
+        self.parleys = self.parleys + 1
+        if self.world_idx >= 0 and self.worlds[self.world_idx].episode_done():
+            self.new_world = True
+        if self.new_world:
+            self.new_world = False
+            self.parleys = 0
+            if self.random:
+                # select random world
+                self.world_idx = random.choices(
+                    self.task_choices, cum_weights=self.cum_task_weights
+                )[0]
+            else:
+                # do at most one full loop looking for unfinished world
+                for _ in range(len(self.worlds)):
+                    self.world_idx = (self.world_idx + 1) % len(self.worlds)
+                    if not self.worlds[self.world_idx].epoch_done():
+                        # if this world has examples ready, break
+                        break
 
     def parley(self):
         """
