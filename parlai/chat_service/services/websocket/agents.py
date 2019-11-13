@@ -73,17 +73,17 @@ class WebsocketAgent(ChatServiceAgent):
         buffered = BytesIO()
         image.save(buffered, format=image.format)
         img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
-        msg = {
-            'type': 'image',
-            'body': img_str,
-            'mime_type': Image.MIME[image.format],
-        }
+        msg = {'type': 'image', 'body': img_str, 'mime_type': Image.MIME[image.format]}
         return msg
 
     def put_data(self, message):
         """Put data into the message queue"""
         logging.info(f"Received new message: {message}")
         message = json.loads(message['text'])
-        action = {'episode_done': False, 'image': message['image'], 'text': message['body']}
+        action = {
+            'episode_done': False,
+            'image': message['image'],
+            'text': message['body'],
+        }
         self._queue_action(action, self.action_id)
         self.action_id += 1
