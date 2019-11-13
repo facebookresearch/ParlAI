@@ -8,6 +8,15 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/ubuntu/ubuntu.tar.gz',
+        'ubuntu.tar.gz',
+        '87caf297381287247cbff3aa7cc2f4609f3b12c40e8535688168d7413740e0d0',
+    )
+]
 
 
 def build(opt):
@@ -22,10 +31,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'ubuntu.tar.gz'
-        url = 'http://parl.ai/downloads/ubuntu/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

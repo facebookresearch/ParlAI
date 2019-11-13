@@ -13,6 +13,7 @@ import pickle
 import random
 import time
 import traceback
+from typing import Any, Dict, List
 import warnings
 
 from parlai.core.message import Message
@@ -48,6 +49,7 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'eval_labels_vec',
     'text_vec',
     'label_candidates_vecs',
+    'token_losses',
 }
 
 
@@ -672,6 +674,25 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
     ignore_fields provides a list of fields in the msgs which should not be
     displayed.
     """
+
+    def _token_losses_line(
+        msg: Dict[str, Any], ignore_fields: List[str], space: str
+    ) -> str:
+        """
+        Displays the loss associated with each token. Can be used for debugging generative models.
+
+        See TorchGeneratorAgent._construct_token_losses for an example implementation.
+        """
+        key = 'token_losses'
+        token_losses = msg.get(key, None)
+        if key in ignore_fields or not token_losses:
+            return None
+        # Reduce losses to 4 significant figures
+        formatted_tl = ' | '.join(
+            [f"{tl[0]} {float('{:.4g}'.format(tl[1]))}" for tl in token_losses]
+        )
+        return f'{space}[{key}]: {formatted_tl}'
+
     lines = []
     episode_done = False
     ignore_fields = ignore_fields.split(',')
@@ -705,6 +726,10 @@ def display_messages(msgs, prettify=False, ignore_fields='', max_len=1000):
         for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
             if msg.get(field) and field not in ignore_fields:
                 lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
+        # Handling this separately since we need to clean up the raw output before displaying.
+        token_loss_line = _token_losses_line(msg, ignore_fields, space)
+        if token_loss_line:
+            lines.append(token_loss_line)
 
     if episode_done:
         lines.append('- - - - - - - - - - - - - - - - - - - - -')
