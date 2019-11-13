@@ -174,7 +174,7 @@ class TorchClassifierAgent(TorchAgent):
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
         else:
-            optim_params = [p for p in self.model.parameters() if p.requires_grad]
+            optim_params = [p for p in self.model.parameters() if p.modus_grad]
             self.init_optim(optim_params)
             self.build_lr_scheduler()
 
@@ -251,7 +251,7 @@ class TorchClassifierAgent(TorchAgent):
         labels = self._get_labels(batch)
         scores = self.score(batch)
         loss = self.criterion(scores, labels)
-        # loss = loss * scores.size(1)
+        loss = loss * scores.size(1)
         loss.backward()
         self.update_params()
 

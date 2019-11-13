@@ -311,7 +311,7 @@ class TorchRankerAgent(TorchAgent):
         else:
             _, ranks = scores.sort(1, descending=True)
         for b in range(batchsize):
-            rank = (ranks[b] == label_inds[b]).nonzero()
+            rank = (ranks[b] == label_inds[b].nonzero()[0]).nonzero()
             rank = rank.item() if len(rank) == 1 else scores.size(1)
             self.metrics['rank'] += 1 + rank
             self.metrics['mrr'] += 1.0 / (1 + rank)
@@ -432,6 +432,7 @@ class TorchRankerAgent(TorchAgent):
         cands, cand_vecs, label_inds = self._build_candidates(
             batch, source=self.eval_candidates, mode='eval'
         )
+        # import ipdb; ipdb.set_trace()
 
         cand_encs = None
         if self.encode_candidate_vecs and self.eval_candidates in ['fixed', 'vocab']:
@@ -445,7 +446,6 @@ class TorchRankerAgent(TorchAgent):
                 cand_encs = self.fixed_candidate_encs
             elif self.eval_candidates == 'vocab':
                 cand_encs = self.vocab_candidate_encs
-
         scores = self.score_candidates(batch, cand_vecs, cand_encs=cand_encs)
         if self.rank_top_k > 0:
             _, ranks = scores.topk(
@@ -460,7 +460,7 @@ class TorchRankerAgent(TorchAgent):
             self.metrics['loss'] += loss.item()
             self.metrics['examples'] += batchsize
             for b in range(batchsize):
-                rank = (ranks[b] == label_inds[b]).nonzero()
+                rank = (ranks[b] == label_inds[b].nonzero()[0]).nonzero()
                 rank = rank.item() if len(rank) == 1 else scores.size(1)
                 self.metrics['rank'] += 1 + rank
                 self.metrics['mrr'] += 1.0 / (1 + rank)
@@ -579,6 +579,7 @@ class TorchRankerAgent(TorchAgent):
                 exception of self.NULL_IDX.
         """
         label_vecs = batch.label_vec  # [bsz] list of lists of LongTensors
+        # import ipdb; ipdb.set_trace()
         label_inds = None
         batchsize = (
             batch.text_vec.size(0)
@@ -658,13 +659,17 @@ class TorchRankerAgent(TorchAgent):
                 )
 
             cands = batch.candidates
+            # import ipdb; ipdb.set_trace()
             cand_vecs = padded_3d(
                 batch.candidate_vecs,
                 self.NULL_IDX,
                 use_cuda=self.use_cuda,
                 fp16friendly=self.fp16,
             )
-            if label_vecs is not None:
+            if (
+                label_vecs is not None
+                and batch.id != 'internal:vqa_v2:PersonalityTeacher'
+            ):
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
                 for i, label_vec in enumerate(label_vecs):
@@ -702,7 +707,10 @@ class TorchRankerAgent(TorchAgent):
             cands = self.fixed_candidates
             cand_vecs = self.fixed_candidate_vecs
 
-            if label_vecs is not None:
+            if (
+                label_vecs is not None
+                and batch.id != 'internal:vqa_v2:PersonalityTeacher'
+            ):
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
                 for batch_idx, label_vec in enumerate(label_vecs):
@@ -713,6 +721,7 @@ class TorchRankerAgent(TorchAgent):
                     label_vec_pad[0 : label_vec.size(0)] = label_vec
                     label_inds[batch_idx] = self._find_match(cand_vecs, label_vec_pad)
                     if label_inds[batch_idx] == -1:
+                        # import ipdb; ipdb.set_trace()
                         bad_batch = True
                 if bad_batch:
                     if self.ignore_bad_candidates and not self.is_training:
@@ -735,7 +744,7 @@ class TorchRankerAgent(TorchAgent):
             # the set of vocab candidates
         else:
             raise Exception("Unrecognized source: %s" % source)
-
+        # import ipdb; ipdb.set_trace()
         return (cands, cand_vecs, label_inds)
 
     @staticmethod

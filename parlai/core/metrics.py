@@ -431,6 +431,7 @@ class Metrics(object):
         correct = 0
         prediction = observation.get('text', None)
         if prediction is not None:
+            # import ipdb; ipdb.set_trace()
             if _exact_match(prediction, labels):
                 correct = 1
             with self._lock():
